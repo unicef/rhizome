@@ -115,16 +115,15 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let indicatorStep = (
+    let firstIndicatorStep = (
       <div>
         <p className='chart-wizard__para'>Which indicators will be included in the new chart?</p>
         <IndicatorDropdownMenu
-          text='Add Indicators'
+          text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || 'Add Indicators'}
           icon='fa-plus'
           indicators={this.state.data.indicatorList}
-          sendValue={ChartWizardActions.addIndicator}>
+          sendValue={ChartWizardActions.addFirstIndicator}>
         </IndicatorDropdownMenu>
-        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator}/>
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'chart-type')}>Next</span>
       </div>
     )
@@ -224,8 +223,8 @@ let ChartWizard = React.createClass({
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title='2. Select Indicator' refer='indicator'>
-            {indicatorStep}
+          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='indicator'>
+            {firstIndicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
             {chartTypeStep}

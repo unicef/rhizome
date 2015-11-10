@@ -179,6 +179,12 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
+  onAddFirstIndicator(index) {
+    this.data.indicatorSelected[0] = this.indicatorIndex[index]
+    this.filterChartTypeByIndicator()
+    this.previewChart()
+  },
+
   onAddIndicator(index) {
     this.data.indicatorSelected.push(this.indicatorIndex[index])
     if (this.data.indicatorSelected.length === 1) {
