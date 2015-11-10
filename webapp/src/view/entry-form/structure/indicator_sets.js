@@ -6,9 +6,9 @@ module.exports = [
             'location_level': 1,
             'indicators': [
                 { 'type': 'section-header', 'title': 'Resources' },
-                { 'id': 44 }, 
-                { 'id': 43 }, 
-                { 'id': 32 }, 
+                { 'id': 44 },
+                { 'id': 43 },
+                { 'id': 32 },
                 { 'id': 31 }
             ]
 
@@ -94,7 +94,7 @@ module.exports = [
                 { 'id': 208, 'name': 'Number of vaccination teams with at least 1 member from the local community' },
                 { 'id': 42, 'name': 'Number of vaccinators and SMs operating in HRDs trained on professional IPC package in last 6 months' },
 
-                { 'type': 'section-header', 'title': 'Performance of FLWs' },           
+                { 'type': 'section-header', 'title': 'Performance of FLWs' },
                 { 'id': 213, 'name': 'Number of absences before re-visit' },
                 { 'id': 214, 'name': 'Number of absences after re-visit' },
                 { 'id': 222, 'name': 'Number of microplans with minimum social data out of 10 randomly selected microplans from previous campaign in selected HR areas' },

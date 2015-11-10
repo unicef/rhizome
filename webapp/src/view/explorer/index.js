@@ -113,7 +113,6 @@ module.exports = {
         return
       }
 
-      debugger
       var self = this
 
       var locationNames = _.indexBy(this.locations, 'value')
