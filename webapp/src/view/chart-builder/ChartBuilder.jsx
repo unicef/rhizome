@@ -144,7 +144,7 @@ module.exports = React.createClass({
     </div>)
     var groupBy = (<div className='grouping'>
       <div className='titleDiv'>Group By</div>
-      <RadioGroup name='groupby' horizontal={true} value={this.state.store.groupByRadioValue}
+      <RadioGroup name='groupby' horizontal value={this.state.store.groupByRadioValue}
                   values={this.state.store.groupByRadios} onChange={ChartBuilderActions.selectGroupByRadio}/>
     </div>)
     var chooseAxis = (<div className='grouping'>
@@ -158,7 +158,7 @@ module.exports = React.createClass({
     var formatXAxis = (
       <div className='grouping'>
         <div className='titleDiv'>X Format</div>
-        <RadioGroup name='xFormat' horizontal={true} value={this.state.store.xFormatRadioValue}
+        <RadioGroup name='xFormat' horizontal value={this.state.store.xFormatRadioValue}
                     values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectXFormatRadio}/>
       </div>
     )
@@ -170,12 +170,12 @@ module.exports = React.createClass({
           {this.state.store.chartTypes[this.state.store.selectedChart].groupBy ? groupBy : null}
           <div className='grouping'>
             <div className='titleDiv'>Show</div>
-            <RadioGroup name='show' horizontal={true} value={this.state.store.locationRadioValue}
+            <RadioGroup name='show' horizontal value={this.state.store.locationRadioValue}
                         values={this.state.store.locationRadios} onChange={ChartBuilderActions.selectShowLocationRadio}/>
           </div>
           <div className='grouping'>
             <div className='titleDiv'>Time Span</div>
-            <RadioGroup name='time' horizontal={true} value={this.state.store.timeRadioValue}
+            <RadioGroup name='time' horizontal value={this.state.store.timeRadioValue}
                         values={this.state.store.timeRadios()} onChange={ChartBuilderActions.selectTimeRadio}/>
           </div>
           {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? formatXAxis : null}
@@ -183,7 +183,7 @@ module.exports = React.createClass({
             <div className='titleDiv'>
               {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? 'Y ' : null}Format
             </div>
-            <RadioGroup name='format' horizontal={true} value={this.state.store.formatRadioValue}
+            <RadioGroup name='format' horizontal value={this.state.store.formatRadioValue}
                         values={this.state.store.formatRadios()} onChange={ChartBuilderActions.selectFormatRadio}/>
           </div>
           {this.state.store.chartTypes[this.state.store.selectedChart].chooseAxis ? chooseAxis : null}
@@ -202,7 +202,7 @@ module.exports = React.createClass({
                 <DropdownMenu
                   icon='fa-globe'
                   text={locationSelection}
-                  searchable={true}
+                  searchable
                   onSearch={_.partial(this.setFilter, 'location')}>
                   {locations}
                 </DropdownMenu>

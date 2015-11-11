@@ -1,3 +1,5 @@
+'use strict'
+
 import React from 'react'
 import Reflux from 'reflux'
 import _ from 'lodash'
@@ -107,7 +109,7 @@ let ChartWizard = React.createClass({
         <DropdownMenu
           icon='fa-globe'
           text={this.state.data.location && this.state.data.location.name || 'Select Location'}
-          searchable={true}
+          searchable
           onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>

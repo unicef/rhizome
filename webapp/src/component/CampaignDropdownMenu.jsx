@@ -71,7 +71,7 @@ var CampaignDropdownMenu = React.createClass({
 
     return (
       <DropdownMenu icon='fa-calendar'
-        searchable={true}
+        searchable
         onSearch={this._setPattern}
         {...props}>
 

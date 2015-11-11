@@ -182,7 +182,7 @@ module.exports = React.createClass({
                className='description small-12'
                value={this.state.title}
                onChange={this._updateNewTitle}
-               autoFocus={true} />
+               autoFocus />
         <div className='cd-title float-none'>Choose a Layout</div>
         <LayoutOptions values={LayoutDefaultSettings.values}
                        value={this.state.store.layout}

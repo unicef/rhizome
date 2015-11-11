@@ -189,7 +189,7 @@ var SimpleForm = React.createClass({
             contentType={'indicator_tag'}
             componentTitle='Add Tags to Indicators'
             onClick={this.addTagToIndicator}
-            smallItemCouldClick={true}
+            smallItemCouldClick
             onSmallItemClick={this.removeTagFromIndicator} />
           <br />
           <SimpleFormComponent
@@ -197,9 +197,9 @@ var SimpleForm = React.createClass({
             contentType='indicator_calc'
             componentTitle='Add Calculations to Indicators'
             onClick={this.addCalculationToIndicator}
-            smallItemCouldClick={true}
+            smallItemCouldClick
             onSmallItemClick={this.removeCalculationFromIndicator}
-            smallIDCouldClick={true}
+            smallIDCouldClick
             smallIDBaseUrl='/ufadmin/manage/indicator/' />
         </div>
       )

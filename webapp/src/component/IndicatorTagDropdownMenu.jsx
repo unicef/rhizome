@@ -63,7 +63,7 @@ var IndicatorTagDropdownMenu = React.createClass({
 
     return (
       <DropdownMenu
-        searchable={true}
+        searchable
         text={selected_name}
         onSearch={this._setPattern}
         {...props}>

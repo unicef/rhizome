@@ -60,7 +60,7 @@ var IndicatorDropdownMenu = React.createClass({
 
     return (
       <DropdownMenu
-        searchable={true}
+        searchable
         onSearch={this._setPattern}
         {...props}>
         {indicators}
