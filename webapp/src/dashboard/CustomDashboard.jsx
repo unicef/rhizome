@@ -186,10 +186,6 @@ var CustomDashboard = React.createClass({
           </div>
         )
     }
-
-    return (
-      <div className='row cd-charts'>{charts} {addChart}</div>
-    )
   }
 })
 
