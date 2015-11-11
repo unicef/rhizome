@@ -108,8 +108,9 @@ let ChartWizard = React.createClass({
           icon='fa-globe'
           text={this.state.data.location && this.state.data.location.name || 'Select Location'}
           searchable={true}
-          onSearch={this.setLocationSearch} />
+          onSearch={this.setLocationSearch}>
           {locations}
+        </DropdownMenu>
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'first-indicator')}>Next</span>
       </div>
     )
