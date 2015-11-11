@@ -188,7 +188,7 @@ module.exports = React.createClass({
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
         <a href='#'
-           className={'cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
+           className={'create-dashboard cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
            onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>)
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
@@ -304,9 +304,11 @@ module.exports = React.createClass({
             {settingFilter}
           </div>
           <div className='large-6 columns'>
-            <div className='large-6 columns cd-header-title'>Dashboard Title</div>
-            <div className='large-6 columns'>
-              <TitleInput class='description' initialText={this.state.title} save={this._updateTitle}/>
+            <div className='row'>
+              <div className='large-6 medium-4 small-6 columns cd-header-title'>Dashboard Title</div>
+              <div className='large-6 medium-8 small-6 columns'>
+                <TitleInput class='description' initialText={this.state.title} save={this._updateTitle}/>
+              </div>
             </div>
           </div>
         </form>
@@ -321,15 +323,17 @@ module.exports = React.createClass({
               </button>
             </div>
             <div className='large-7 columns'>
-              <div className='large-2 columns'>
-                <div className='description-text'>Description&ensp;:</div>
-              </div>
-              <div className='large-5 columns'>
-                <TitleInput class='description' initialText={this.state.description}
-                            save={this._updateDescription}/>
-              </div>
-              <div className='large-5 columns'>
-                <div className='description-text'>Changes are saved when you make them.</div>
+              <div className='row'>
+                <div className='large-2 columns'>
+                  <div className='description-text'>Description&ensp;:</div>
+                </div>
+                <div className='large-5 columns'>
+                  <TitleInput class='description' initialText={this.state.description}
+                              save={this._updateDescription}/>
+                </div>
+                <div className='large-5 columns'>
+                  <div className='description-text'>Changes are saved when you make them.</div>
+                </div>
               </div>
             </div>
             <div className='large-3 columns'>

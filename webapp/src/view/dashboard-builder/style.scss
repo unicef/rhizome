@@ -2,6 +2,8 @@
 @import "foundation/components/block-grid";
 @import "foundation/components/grid";
 
+$break-width: 960px;
+
 @media #{$small-up} {
   .dashboard-builder-container {
     max-width: 70%;
@@ -21,7 +23,6 @@
 
 .empty-dashboard-add-container {
   margin: 215px auto;
-  width: 500px;
   text-align: center;
   .new-dashboard-font {
     font-size: 0.9rem;
@@ -36,6 +37,7 @@
   text-transform: uppercase;
   text-align: center;
   font-size: 0.625rem;
+  width: 100%;
   &:hover {
     color: $rhz-font-color !important;
     background-color: #426281;
@@ -47,11 +49,10 @@
   background-color: #F3F3F3;
 
   .description-text {
-    position: relative;
-    top: 10px;
     font-size: 11px;
     text-transform: uppercase;
     text-align: right;
+    padding: 10px 0;
   }
 
   .description {
@@ -59,3 +60,10 @@
   }
 }
 
+@media (max-width: $break-width) {
+  .cd-footer {
+    .description-text {
+      text-align: left;
+    }
+  }
+}
