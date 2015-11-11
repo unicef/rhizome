@@ -44,7 +44,8 @@ _.extend(BulletChart.prototype, {
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + height,
         'width': this._width,
-        'height': height
+        'height': height,
+        'style': 'border-radius: 30px;'
       })
 
     // Append the x-axis container and a blank background
@@ -229,7 +230,7 @@ _.extend(BulletChart.prototype, {
 
     compareValue
       .attr({
-        'x': 0,
+        'x': 2,
         'y': 0,
         'text-anchor': 'start',
         'dy': (options.lineHeight / 4) + 'em',
