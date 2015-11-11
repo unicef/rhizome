@@ -134,7 +134,7 @@ _.extend(PieChart.prototype, {
         return (
           <Tooltip left={evt.pageX} top={evt.pageY}>
             <div>
-              <p>{options.name(d)}:&ensp{options.format(options.value(d))}</p>
+              <p>{options.name(d)}:&ensp;{options.format(options.value(d))}</p>
             </div>
           </Tooltip>
         )
