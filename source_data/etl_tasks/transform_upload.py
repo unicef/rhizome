@@ -4,7 +4,7 @@ import json
 
 from django.conf import settings
 
-from source_data.models import * 
+from source_data.models import *
 
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
@@ -55,6 +55,34 @@ class DocTransform(object):
         self.process_file()
         self.upsert_source_object_map()
 
+    def apply_doc_config_to_csv_df(self, csv_df):
+        '''
+        Currenlty this only applies to the 'Location Code Column Length'
+        configuration which allows us to ingest the ODK data at the one level
+        higher than it is collected.
+
+        This is a short term solution, but saves us massive ammounts of work
+        in Mapping, and also makes it such that we don't need to create location
+        IDs for the 10k settlements in Nigeria.
+        '''
+
+        try:
+            location_code_column_length = int(DocumentDetail.objects.get(
+                document_id = self.document.id,
+                doc_detail_type_id = DocDetailType.objects.get(name=\
+                    'Location Code Column Length')
+            ).doc_detail_value)
+
+            ## truncate the location_codes in accordance to the value above ##
+            csv_df[self.location_column] = csv_df[self.location_column]\
+                .apply(lambda x: str(x)[:location_code_column_length])
+
+        except ObjectDoesNotExist:
+            pass
+
+        return csv_df
+
+
     def process_file(self):
         '''
         Takes a file and dumps the data into the source submission table.
@@ -66,16 +94,18 @@ class DocTransform(object):
         raw_csv_df = read_csv(full_file_path)
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
 
+        ## transform the raw data based on the documents configurations ##
+        doc_df = self.apply_doc_config_to_csv_df(csv_df)
+
         doc_obj = Document.objects.get(id = self.document.id)
-        doc_obj.file_header = list(csv_df.columns.values)
+        doc_obj.file_header = list(doc_df.columns.values)
         doc_obj.save()
 
-        ## this probably break the test..shoudl see if i can get this in init ##
         self.file_header = doc_obj.file_header
 
         batch = {}
 
-        for submission in csv_df.itertuples():
+        for submission in doc_df.itertuples():
 
             ss, instance_guid = self.process_raw_source_submission(submission)
 
