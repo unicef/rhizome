@@ -50,7 +50,11 @@ var DataTable = React.createClass({
         // if already sorted descending by this, sort ascending
         // if already sorted ascending by this, remove sort
         var sortKey = !isSortedOnColumn || !isSortAscending ? dataKey : undefined;
-        var sortOrder = !isSortedOnColumn ? 'descending' : !isSortAscending ? 'ascending' : undefined;
+        var sortOrder = !isSortedOnColumn
+          ? 'descending'
+          : !isSortAscending
+            ? 'ascending'
+            : undefined;
         this.props.onChangeSort(sortKey, sortOrder);
     },
 
