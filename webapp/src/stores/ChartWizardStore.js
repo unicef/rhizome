@@ -139,7 +139,7 @@ let ChartWizardStore = Reflux.createStore({
 
         if (chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
           this.data.campaign = this.campaignIndex[chartDef.campaignValue]
-        } else{
+        } else {
           this.data.campaign = this.data.campaignFilteredList.length > 0
             ? this.campaignIndex[this.data.campaignFilteredList[0].id]
             : null
@@ -210,6 +210,8 @@ let ChartWizardStore = Reflux.createStore({
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
 
+    this.data.chartDef.x = this.data.indicatorSelected[0].id
+
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
     this.previewChart()
@@ -241,12 +243,8 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onChangeXAxis (value) {
-    this.data.chartDef.x = value
-    this.previewChart()
-  },
-
   onChangeYAxis (value) {
+    this.data.indicatorSelected[1] = this.indicatorIndex[value]
     this.data.chartDef.y = value
     this.previewChart()
   },

@@ -69,6 +69,7 @@ let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data')],
 
   propTypes: {
+    chartDef: React.PropTypes.object,
     save: React.PropTypes.func,
     cancel: React.PropTypes.func
   },
@@ -177,12 +178,32 @@ let ChartWizard = React.createClass({
     let optionStep = (
       <div>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        <IndicatorDropdownMenu
-          text='Add Indicators'
-          icon='fa-plus'
-          indicators={this.state.data.indicatorList}
-          sendValue={ChartWizardActions.addIndicator} />
-        <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
+        {findChartType(this.state.data.chartDef.type).chooseAxis
+          ? (
+            <div>
+              <h4>X Axis</h4>
+              <ul className='list'>
+                <li>{this.state.data.indicatorSelected[0].name}</li>
+              </ul>
+              <h4>Y Axis</h4>
+              <IndicatorDropdownMenu
+                text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
+                icon='fa-plus'
+                indicators={this.state.data.indicatorList}
+                sendValue={ChartWizardActions.changeYAxis} />
+            </div>
+          )
+          : (
+            <div>
+              <IndicatorDropdownMenu
+                text='Add Indicators'
+                icon='fa-plus'
+                indicators={this.state.data.indicatorList}
+                sendValue={ChartWizardActions.addIndicator} />
+              <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
+            </div>
+          )
+        }
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
@@ -233,7 +254,7 @@ let ChartWizard = React.createClass({
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
+          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
             {firstIndicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
