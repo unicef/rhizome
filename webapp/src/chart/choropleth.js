@@ -26,7 +26,7 @@ var DEFAULTS = {
   name: _.property('properties.name')
 }
 
-function _calculateBounds (features) {
+function _calculateBounds(features) {
   var lat = _.property(1)
   var lng = _.property(0)
 
@@ -50,14 +50,14 @@ function _calculateBounds (features) {
   return [[left, top], [right, bottom]]
 }
 
-function _calculateCenter (bounds) {
+function _calculateCenter(bounds) {
   var lat = bounds[1][1] + ((bounds[0][1] - bounds[1][1]) / 2)
   var lng = bounds[0][0] + ((bounds[1][0] - bounds[0][0]) / 2)
 
   return [lng, lat]
 }
 
-function ChoroplethMap () {
+function ChoroplethMap() {
 }
 
 _.extend(ChoroplethMap.prototype, {
@@ -192,6 +192,42 @@ _.extend(ChoroplethMap.prototype, {
           return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
         })
     }
+
+    var maxVaccinatedChildren;
+
+    if (options.vaccinatedData.length > 0) {
+      var maxObject = _.max(options.vaccinatedData, function(d) {
+        if (options.vaccinatedValue(d)) {
+          return options.vaccinatedValue(d);
+        }
+        return 0;
+      });
+
+      maxVaccinatedChildren = options.vaccinatedValue(maxObject);
+    }
+
+    if (maxVaccinatedChildren) {
+      var radius = d3.scale.sqrt()
+        .domain([0, maxVaccinatedChildren])
+        .range([0, 20]);
+
+      svg.append("g")
+        .attr("class", "bubble")
+        .selectAll("circle")
+        .data(options.vaccinatedData)
+        .enter().append("circle")
+        .attr("transform", function (d) {
+          return "translate(" + path.centroid(d) + ")";
+        })
+        .attr("r", function (d) {
+          return radius(options.vaccinatedValue(d));
+        })
+        .style({
+          'opacity': 0.4,
+          'fill': '#D5EBF7',
+          'stroke': '#FFFFFF'
+        });
+    }
   },
 
   _onMouseMove: function (d, options) {
@@ -200,7 +236,7 @@ _.extend(ChoroplethMap.prototype, {
     var render = function () {
       return React.createElement(
         Tooltip,
-        { left: evt.pageX + 2, top: evt.pageY + 2 },
+        {left: evt.pageX + 2, top: evt.pageY + 2},
         options.name(d)
       )
     }

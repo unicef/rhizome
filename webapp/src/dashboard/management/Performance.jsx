@@ -78,6 +78,8 @@ var Performance = React.createClass({
 
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value')
 
+    var vaccinatedData = data.vaccinatedChildrenByProvince;
+
     if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
       var num = d3.format('n')
 
@@ -153,12 +155,14 @@ var Performance = React.createClass({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-                   aspect: 0.555,
-                   domain: _.constant([0, 0.1]),
-                   value: _.property('properties[475]'),
-                   yFormat: pct,
-                   onClick: d => { DashboardActions.navigate({ location: d }) }
-                 }}/>
+              vaccinatedData: vaccinatedData,
+              aspect  : 0.555,
+              domain  : _.constant([0, 0.1]),
+              value   : _.property('properties[475]'),
+              vaccinatedValue : _.property('properties[177]'),
+              yFormat : pct,
+              onClick : d => { DashboardActions.navigate({ location : d }) }
+            }}/>
         </section>
 
         <section className='transit-points medium-1 column'>
