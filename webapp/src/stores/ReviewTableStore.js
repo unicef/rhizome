@@ -1,6 +1,5 @@
 'use strict'
 
-var _ = require('lodash')
 var api = require('data/api')
 var Reflux = require('reflux')
 var parseSchema = require('ufadmin/utils/parseSchema')

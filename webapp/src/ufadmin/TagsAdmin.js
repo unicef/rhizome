@@ -3,7 +3,6 @@ var React = require('react')
 var api = require('../data/api')
 
 var {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
   } = require('react-datascope')

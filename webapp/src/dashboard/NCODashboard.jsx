@@ -1,6 +1,5 @@
 'use strict'
 
-var _ = require('lodash')
 var React = require('react')
 
 var Overview = require('dashboard/nco/Overview.jsx')

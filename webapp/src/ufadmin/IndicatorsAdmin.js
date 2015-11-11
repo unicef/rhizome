@@ -3,10 +3,9 @@ var React = require('react')
 var api = require('../data/api')
 
 var {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
-  } = require('react-datascope')
+} = require('react-datascope')
 var AdminPage = require('./AdminPage')
 
 const fields = {

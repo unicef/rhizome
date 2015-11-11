@@ -4,10 +4,8 @@ var _ = require('lodash')
 var React = require('react')
 var Reflux = require('reflux')
 
-var NavMenu = require('component/NavMenu.jsx')
 var NavMenuItem = require('component/NavMenuItem.jsx')
 var NavigationStore = require('stores/NavigationStore')
-var MenuControl = require('mixin/MenuControl')
 
 module.exports = React.createClass({
   mixins: [

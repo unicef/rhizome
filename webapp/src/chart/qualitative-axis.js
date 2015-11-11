@@ -16,17 +16,6 @@ function qualitativeAxis () {
 
   function axis (selection) {
     selection.each(function () {
-      var n = d3.range(_threshold.range().length)
-
-      var fill = _.flow(
-        d3.scale.ordinal()
-          .domain(_threshold.range())
-          .range(n),
-        d3.scale.linear()
-          .domain(d3.extent(n))
-          .range(_colors)
-      )
-
       var tick = d3.select(this).selectAll('.tick')
         .data(_threshold.range())
 

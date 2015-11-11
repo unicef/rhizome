@@ -2,11 +2,7 @@ var _ = require('lodash')
 var React = require('react')
 const {
   Datascope, LocalDatascope,
-  SimpleDataTable, SimpleDataTableColumn,
   ClearQueryLink,
-  Paginator,
-  SearchBar,
-  FilterPanel, FilterDateRange, FilterInputRadio
   } = require('react-datascope')
 
 var parseSchema = require('./utils/parseSchema')
@@ -121,7 +117,6 @@ var AdminPage = React.createClass({
   },
 
   renderFilters () {
-    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
     var { areFiltersVisible } = this.state
     return areFiltersVisible
       ? <div className='row'>

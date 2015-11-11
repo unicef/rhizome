@@ -2,9 +2,6 @@ var _ = require('lodash')
 var Reflux = require('reflux')
 var React = require('react')
 
-var DropdownMenu = require('component/DropdownMenu.jsx')
-var NavigationStore = require('stores/NavigationStore')
-
 var DocOverviewActions = require('actions/DocOverviewActions')
 var DocOverviewStore = require('stores/DocOverviewStore')
 
@@ -69,8 +66,6 @@ var DocOverview = React.createClass({
   },
 
   render () {
-    var doc_id = this.props.doc_id
-    var doc_tab = this.props.doc_tab
     var doc_deets = this.state.doc_deets
 
     if (!doc_deets) return this.renderLoading()

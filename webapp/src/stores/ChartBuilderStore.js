@@ -3,61 +3,60 @@ var Reflux = require('reflux/src')
 var ChartBuilderActions = require('actions/ChartBuilderActions')
 
 var _ = require('lodash')
-var treeify = require('data/transform/treeify')
-var ancestoryString = require('data/transform/ancestryString')
 var api = require('data/api')
 var d3 = require('d3')
 var moment = require('moment')
-var colors = require('colors')
-var Vue = require('vue') // for tooltip display
 var processChartData = require('./chartBuilder/processChartData')
 
-function melt (data, indicatorArray) {
-  var dataset = data.objects
-  var baseIndicators = _.map(indicatorArray, function (indicator) {
-    return { indicator: indicator + '', value: 0 }
-  })
-  var o = _(dataset)
-    .map(function (d) {
-      var base = _.omit(d, 'indicators')
-      var indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
-      return _.map(indicatorFullList, function (indicator) {
-        return _.assign({}, base, indicator)
-      })
-    })
-    .flatten()
-    .value()
-  return o
-}
-function _groupBySeries (data, groups, groupBy) {
-  return _(data)
-    .groupBy(groupBy)
-    .map(function (d, ind) {
-      return seriesObject(
-        _.sortBy(d, _.method('campaign.start_date.getTime')),
-        ind,
-        null,
-        groups
-      )
-    })
-    .value()
-}
+// function melt (data, indicatorArray) {
+//   var dataset = data.objects
+//   var baseIndicators = _.map(indicatorArray, function (indicator) {
+//     return { indicator: indicator + '', value: 0 }
+//   })
+//   var o = _(dataset)
+//     .map(function (d) {
+//       var base = _.omit(d, 'indicators')
+//       var indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
+//       return _.map(indicatorFullList, function (indicator) {
+//         return _.assign({}, base, indicator)
+//       })
+//     })
+//     .flatten()
+//     .value()
+//   return o
+// }
 
-function seriesObject (d, ind, collection, indicators) {
-  return {
-    name: indicators[ind].name,
-    values: d
-  }
-}
-var canDisplayChart = function () {
+// function _groupBySeries (data, groups, groupBy) {
+//   return _(data)
+//     .groupBy(groupBy)
+//     .map(function (d, ind) {
+//       return seriesObject(
+//         _.sortBy(d, _.method('campaign.start_date.getTime')),
+//         ind,
+//         null,
+//         groups
+//       )
+//     })
+//     .value()
+// }
+
+// function seriesObject (d, ind, collection, indicators) {
+//   return {
+//     name: indicators[ind].name,
+//     values: d
+//   }
+// }
+
+function canDisplayChart () {
   if (this.indicatorsSelected.length > 0 && this.campaignSelected.id && this.chartData.length > 0) {
     return true
   } else {
     return false
   }
 }
-var canDisplayChartReason = function () {
-  var reason
+
+function canDisplayChartReason () {
+  let reason
   if (this.indicatorsSelected.length === 0) {
     reason = 'Please select at least one indicator'
   } else if (!this.campaignSelected.id) {
@@ -70,39 +69,39 @@ var canDisplayChartReason = function () {
   return reason
 }
 
-function _columnData (data, groups, groupBy) {
-  var columnData = _(data)
-    .groupBy(groupBy)
-    .map(_.partialRight(seriesObject, groups))
-    .value()
-  var largestGroup = []
-  _.each(columnData, function (series) {
-    if (series.values.length > largestGroup.length) {
-      largestGroup = series.values
-    }
-  })
-  var baseGroup = _.map(largestGroup, function (group) {
-    return {
-      campaign: group.campaign,
-      value: 0,
-      y: 0,
-      y0: 0
-    }
-  })
-  _.each(columnData, function (series) {
-    var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length), { location: series.values[0].location, indicator: series.values[0].indicator }))
-    series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
-  })
+// function _columnData (data, groups, groupBy) {
+//   var columnData = _(data)
+//     .groupBy(groupBy)
+//     .map(_.partialRight(seriesObject, groups))
+//     .value()
+//   var largestGroup = []
+//   _.each(columnData, function (series) {
+//     if (series.values.length > largestGroup.length) {
+//       largestGroup = series.values
+//     }
+//   })
+//   var baseGroup = _.map(largestGroup, function (group) {
+//     return {
+//       campaign: group.campaign,
+//       value: 0,
+//       y: 0,
+//       y0: 0
+//     }
+//   })
+//   _.each(columnData, function (series) {
+//     var baseGroupValues = _.merge(_.cloneDeep(baseGroup), _.fill(Array(baseGroup.length), { location: series.values[0].location, indicator: series.values[0].indicator }))
+//     series.values = _.assign(baseGroupValues, _.cloneDeep(series.values))
+//   })
 
-  var stack = d3.layout.stack()
-    .order('default')
-    .offset('zero')
-    .values(function (d) { return d.values })
-    .x(function (d) { return d.campaign.start_date })
-    .y(function (d) { return d.value })
+//   var stack = d3.layout.stack()
+//     .order('default')
+//     .offset('zero')
+//     .values(function (d) { return d.values })
+//     .x(function (d) { return d.campaign.start_date })
+//     .y(function (d) { return d.value })
 
-  return stack(columnData)
-}
+//   return stack(columnData)
+// }
 
 function formatTimeRange (val) {
   switch (val) {
@@ -126,6 +125,7 @@ var chartOptions = {
   y: _.property('value'),
   yFormat: d3.format(',.0f')
 }
+
 module.exports = Reflux.createStore({
   data: {
     locationList: [],
@@ -208,24 +208,24 @@ module.exports = Reflux.createStore({
     this.resetChartDef()
 
     var self = this
-    var locationPromise = api.locations().then(function (items) {
-      self._locationIndex = _.indexBy(items.objects, 'id')
-      self.data.locationList = _(items.objects)
-      .map(function (location) {
-        return {
-          'title': location.name,
-          'value': location.id,
-          'parent': location.parent_location_id
-        }
-      })
-      .sortBy('title')
-      .reverse() // I do not know why this works, but it does
-      .thru(_.curryRight(treeify)('value'))
-      .map(ancestoryString)
-      .value()
-      self.trigger(self.data)
-      self.aggregateLocations()
-    })
+    // var locationPromise = api.locations().then(function (items) {
+    //   self._locationIndex = _.indexBy(items.objects, 'id')
+    //   self.data.locationList = _(items.objects)
+    //   .map(function (location) {
+    //     return {
+    //       'title': location.name,
+    //       'value': location.id,
+    //       'parent': location.parent_location_id
+    //     }
+    //   })
+    //   .sortBy('title')
+    //   .reverse() // I do not know why this works, but it does
+    //   .thru(_.curryRight(treeify)('value'))
+    //   .map(ancestoryString)
+    //   .value()
+    //   self.trigger(self.data)
+    //   self.aggregateLocations()
+    // })
 
     api.indicatorsTree().then(function (items) {
       self._indicatorIndex = _.indexBy(items.flat, 'id')

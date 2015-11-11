@@ -8,7 +8,6 @@ var React = require('react')
 var Carousel = require('nuka-carousel')
 var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx')
 
-var colors = require('colors')
 var Chart = require('component/Chart.jsx')
 var YtDChart = require('component/YtDChart.jsx')
 

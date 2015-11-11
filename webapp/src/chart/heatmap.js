@@ -49,7 +49,6 @@ _.extend(Heatmap.prototype, {
 
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
-    var margin = options.margin
 
     var svg = this._svg = d3.select(el)
         .append('svg')

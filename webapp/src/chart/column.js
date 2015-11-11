@@ -6,7 +6,6 @@ var d3 = require('d3')
 var browser = require('util/browser')
 var label = require('chart/renderer/label')
 var color = require('util/color')
-var legend = require('chart/renderer/legend')
 
 var defaults = {
   margin: {
@@ -202,23 +201,6 @@ _.extend(ColumnChart.prototype, {
       })
 
     var fmt = _.flow(options.y, options.yFormat)
-    var labels = _(data)
-      .map(function (s) {
-        return _.assign({},
-          _.max(options.values(s), options.x),
-          { name: options.name(s) }
-        )
-      })
-      .map(function (d) {
-        return {
-          text: d.name + ' ' + fmt(d),
-          x: x(d),
-          y: y(d),
-          defined: _.isFinite(d.value)
-        }
-      })
-      .reverse()
-      .value()
 
     var seriesLabel = label()
       .addClass('series')

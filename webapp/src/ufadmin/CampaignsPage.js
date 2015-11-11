@@ -1,8 +1,6 @@
 var React = require('react')
-var _ = require('lodash')
 var moment = require('moment')
 var DatePicker = require('component/DatePicker.jsx')
-var api = require('../data/api')
 
 var CampaignsPage = (function () {
   return {

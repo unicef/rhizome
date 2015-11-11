@@ -1,14 +1,9 @@
 var React = require('react')
-var _ = require('lodash')
-
-var api = require('../data/api')
 
 var {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
-  Paginator, SearchBar,
-  FilterPanel, FilterDateRange
-  } = require('react-datascope')
+  Paginator, SearchBar
+} = require('react-datascope')
 var AdminPage = require('./AdminPage')
 
 const fields = {

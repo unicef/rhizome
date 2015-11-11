@@ -1,8 +1,5 @@
 var _ = require('lodash')
 var React = require('react')
-var Reflux = require('reflux')
-
-var RegionTitleMenu = require('component/RegionTitleMenu')
 var Modal = require('react-modal')
 
 var SubmissionModalStore = require('stores/SubmissionModalStore')

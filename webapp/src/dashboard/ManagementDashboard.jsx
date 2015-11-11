@@ -9,7 +9,6 @@ var Performance = require('dashboard/management/Performance.jsx')
 var Access = require('dashboard/management/Access.jsx')
 var SocialData = require('dashboard/management/SocialData.jsx')
 var BulletChartSection = require('./BulletChartSection.jsx')
-var DonutChart = require('component/DonutChart.jsx')
 
 var ManagementDashboard = React.createClass({
   propTypes: {

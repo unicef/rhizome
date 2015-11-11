@@ -2,11 +2,8 @@
 
 var _ = require('lodash')
 var d3 = require('d3')
-var moment = require('moment')
 
-var browser = require('util/browser')
 var colors = require('util/color')
-var legend = require('chart/renderer/legend')
 
 var React = require('react')
 var Layer = require('react-layer')
@@ -40,7 +37,6 @@ _.extend(PieChart.prototype, {
 
   initialize: function (el, data, opts) {
     var options = this._options = _.defaults({}, options, DEFAULTS)
-    var margin = options.margin
 
     this._height = this._width = _.get(options, 'size', el.clientWidth)
 

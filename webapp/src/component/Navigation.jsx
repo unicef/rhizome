@@ -7,7 +7,6 @@ var Reflux = require('reflux')
 var NavMenu = require('component/NavMenu.jsx')
 var NavMenuItem = require('component/NavMenuItem.jsx')
 var NavigationStore = require('stores/NavigationStore')
-var PermissionStore = require('stores/PermissionStore')
 
 var Navigation = React.createClass({
   mixins: [

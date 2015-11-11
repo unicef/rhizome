@@ -2,8 +2,6 @@
 
 var React = require('react')
 
-var MenuControl = require('mixin/MenuControl')
-
 var NavMenu = React.createClass({
   mixins: [
     require('mixin/MenuControl')

@@ -4,10 +4,6 @@ var _ = require('lodash')
 var Reflux = require('reflux/src')
 var api = require('data/api')
 
-var treeify = require('data/transform/treeify')
-var ancestoryString = require('data/transform/ancestryString')
-var moment = require('moment')
-
 var DashboardActions = require('actions/DashboardActions')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js')
 
@@ -150,14 +146,7 @@ var DashboardBuilderStore = Reflux.createStore({
     this.trigger(this.data)
   },
   onDeleteDashboard: function () {
-    var data = {
-      description: this.data.dashboardDescription,
-      title: this.data.dashboardTitle,
-      default_office_id: null,
-      dashboard_json: JSON.stringify(this.data.dashboard.charts)
-    }
     delete this.data.dashboard.charts
-    var dj = JSON.stringify(this.data.dashboard.dashboard_json)
     this.data.dashboard.id = ''
 
     api.save_dashboard({ id: '', title: this.data.dashboard.title }).then(function (response) {

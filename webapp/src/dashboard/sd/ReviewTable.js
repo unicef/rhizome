@@ -8,12 +8,7 @@ var api = require('data/api.js')
 
 const {
   Datascope, LocalDatascope,
-  SimpleDataTable, SimpleDataTableColumn,
-  ClearQueryLink,
-  Paginator,
-  SearchBar,
-  FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope')
+} = require('react-datascope')
 
 var parseSchema = require('ufadmin/utils/parseSchema')
 
@@ -145,9 +140,6 @@ var ReviewTable = React.createClass({
   },
 
   renderFilters () {
-    var filterExpander = this.state.areFiltersVisible ? '[-]' : '[+]'
-    var { areFiltersVisible } = this.state
-
     return (
       <div className='row'>
       <div className='medium-7 columns'>

@@ -2,7 +2,6 @@
 
 var _ = require('lodash')
 var React = require('react')
-var moment = require('moment')
 
 var DropdownMenu = require('component/DropdownMenu.jsx')
 var MenuItem = require('component/MenuItem.jsx')

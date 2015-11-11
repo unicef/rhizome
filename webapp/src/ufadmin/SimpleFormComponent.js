@@ -2,8 +2,6 @@
 var _ = require('lodash')
 var React = require('react')
 var Reflux = require('reflux')
-var ReactRouter = require('react-router')
-var { Route, Router } = ReactRouter
 
 var SimpleFormStore = require('stores/SimpleFormStore')
 var SimpleFormActions = require('actions/SimpleFormActions')

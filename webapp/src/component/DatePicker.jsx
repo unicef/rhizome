@@ -1,6 +1,5 @@
 'use strict'
 
-var moment = require('moment')
 var React = require('react')
 var DateTimePicker = require('react-widgets/lib/DateTimePicker')
 

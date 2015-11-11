@@ -11,7 +11,6 @@ var dashboardInit = require('data/dashboardInit')
 var RegionStore = require('stores/RegionStore')
 var CampaignStore = require('stores/CampaignStore')
 var IndicatorStore = require('stores/IndicatorStore')
-var GeoStore = require('stores/GeoStore')
 
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],

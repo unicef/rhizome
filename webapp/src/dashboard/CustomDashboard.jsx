@@ -94,8 +94,6 @@ var CustomDashboard = React.createClass({
   },
 
   render: function () {
-    var numCharts = this.props.dashboard.charts.length
-
     var data = this.props.data
     var loading = this.props.loading
     var campaign = this.props.campaign

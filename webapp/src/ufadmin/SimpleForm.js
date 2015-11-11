@@ -5,8 +5,6 @@ var React = require('react')
 var page = require('page')
 var Reflux = require('reflux')
 var ReactJson = require('react-json')
-var ReactRouter = require('react-router')
-var { Route, Router } = ReactRouter
 
 var SimpleFormStore = require('stores/SimpleFormStore')
 var SimpleFormActions = require('actions/SimpleFormActions')

@@ -10,10 +10,6 @@ var series = function (values, name) {
   }
 }
 
-var indicatorForCampaign = function (campaign, indicator) {
-  return d => d.campaign.id === campaign && d.indicator.id === indicator
-}
-
 var percentage = function (dataset) {
   var total = _(dataset).pluck('value').sum()
 
@@ -51,7 +47,6 @@ function generateMissedChildrenChartData (original) {
 function preparePolioCasesData (original) {
   var campaign = original.campaign
   var year = ''
-  var month = ''
   var totalCases = null
   var newCases = null
 

@@ -16,14 +16,11 @@ var SourceDataDashboardAction = require('actions/SourceDataDashboardActions')
 
 var TitleMenu = require('component/TitleMenu.jsx')
 var MenuItem = require('component/MenuItem.jsx')
-var ReactCSSTransitionGroup = require('react/lib/ReactCSSTransitionGroup')
 
 var {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
-  Paginator, SearchBar,
-  FilterPanel, FilterDateRange
-  } = require('react-datascope')
+  Paginator, SearchBar
+} = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
   mixins: [

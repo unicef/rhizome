@@ -22,7 +22,6 @@ module.exports = React.createClass({
   render: function () {
     var campaign = this.props.campaign
     var year = ''
-    var month = ''
     var totalCases = null
     var newCases = null
     var loading = this.props.loading

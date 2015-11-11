@@ -26,10 +26,7 @@ var MenuControl = {
       var items = this.props.children
       var offset = dom.documentOffset(React.findDOMNode(this))
       var props = _.omit(this.props, 'text', 'icon', 'size')
-
       var x = (offset.right + offset.left) / 2
-
-      var onBlur = this.onBlur || _.noop
 
       var menu = (
         <Menu x={x} y={offset.bottom}

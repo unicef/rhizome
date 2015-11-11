@@ -1,9 +1,6 @@
 'use strict'
 
-var _ = require('lodash')
 var React = require('react')
-
-var moment = require('moment')
 
 var CampaignMenuItem = React.createClass({
   propTypes: {
@@ -25,7 +22,6 @@ var CampaignMenuItem = React.createClass({
 
   render: function () {
     var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)'
-    var date = moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
 
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>

@@ -58,8 +58,6 @@ var MenuItem = React.createClass({
   },
 
   render: function () {
-    var self = this
-    // COMPUTED PROPERTIES
     var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0
     var itemStyle = {'paddingLeft': (this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px')}
 

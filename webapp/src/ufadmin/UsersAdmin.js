@@ -1,19 +1,15 @@
 const React = require('react')
-const _ = require('lodash')
 const {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator,
-  SearchBar,
-  FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope')
+  SearchBar
+} = require('react-datascope')
 
 const AdminPage = require('./AdminPage')
 
 const api = require('../data/api')
 
 // display rules for datascope fields
-const yesNoRenderer = (val) => val ? 'Yes' : 'No'
 const checkmarkRenderer = (val) => val ? '✓' : ""
 const fields = {
   edit_link: {

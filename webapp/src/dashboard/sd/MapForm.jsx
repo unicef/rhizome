@@ -1,7 +1,6 @@
 var _ = require('lodash')
 var moment = require('moment')
 var React = require('react')
-var Reflux = require('reflux')
 
 var RegionTitleMenu = require('component/RegionTitleMenu')
 var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
@@ -14,15 +13,6 @@ var appElement = document.getElementById('main')
 
 Modal.setAppElement(appElement)
 Modal.injectCSS()
-
-const {
-  Datascope, LocalDatascope,
-  SimpleDataTable, SimpleDataTableColumn,
-  ClearQueryLink,
-  Paginator,
-  SearchBar,
-  FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope')
 
 var MapForm = React.createClass({
   propTypes: {

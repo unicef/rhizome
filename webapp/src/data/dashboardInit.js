@@ -209,9 +209,6 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     var sectionName = _.get(chart, 'section', '__none__')
     var chartName   = _.get(chart, 'id', _.camelCase(chart.title))
     var section     = _.get(results, sectionName, {})
-    var locationProp  = chart.location === 'sublocations'
-      ? 'location.parent_location_id'
-      : 'location.id'
 
     if (chart.locationValue) {
       var chartLocation = locationsById[chart.locationValue]

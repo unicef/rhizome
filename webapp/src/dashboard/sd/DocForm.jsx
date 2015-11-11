@@ -4,7 +4,6 @@ var Reflux = require('reflux')
 
 var TitleMenu = require('component/TitleMenu.jsx')
 var MenuItem = require('component/MenuItem.jsx')
-var FileInput = require('react-file-input')
 var Dropzone = require('react-dropzone')
 
 var DocFormActions = require('actions/DocFormActions')
@@ -44,8 +43,6 @@ var DocForm = React.createClass({
   // when a file is passed to the input field, retrieve the contents as a
   // base64-encoded data URI and save it to the component's state
   handleFile: function (file) {
-    var self = this
-
     var reader = new FileReader()
 
     reader.onload = function (upload) {
@@ -56,7 +53,6 @@ var DocForm = React.createClass({
 
   setDocConfig: function (config_type, config_val) {
     var self = this
-    var doc_detail_type_lookup = {}
 
     var doc_detail_meta = self.state.doc_detail_meta
     var doc_detail_type = doc_detail_meta[config_type]

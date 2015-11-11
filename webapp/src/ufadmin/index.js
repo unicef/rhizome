@@ -2,7 +2,7 @@
 
 var React = require('react')
 var Router = require('react-router')
-var {Route, DefaultRoute, RouteHandler, Link} = Router
+var {Route, RouteHandler, Link} = Router
 var SimpleForm = require('./SimpleForm')
 
 var AdminApp = React.createClass({

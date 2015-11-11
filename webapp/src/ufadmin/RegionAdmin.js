@@ -2,12 +2,10 @@
 
 var React = require('react')
 var {
-  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator,
-  SearchBar,
-  FilterPanel, FilterDateRange, FilterInputRadio
-  } = require('react-datascope')
+  SearchBar
+} = require('react-datascope')
 
 var api = require('../data/api')
 

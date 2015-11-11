@@ -2,12 +2,7 @@
 
 var _ = require('lodash')
 var d3 = require('d3')
-var moment = require('moment')
-var React = require('react')
 
-var browser = require('util/browser')
-var colors = require('colors')
-var data = require('util/data')
 var format = require('util/format')
 var hoverLine = require('chart/behavior/hover-line')
 var label = require('chart/renderer/label')
@@ -173,14 +168,6 @@ _.extend(AreaChart.prototype, {
         .width(width)
         .height(height)
         .align(false))
-
-    var gx = svg.select('.x.axis')
-      .call(d3.svg.axis()
-        .tickFormat(options.xFormat)
-        .outerTickSize(0)
-        .ticks(4)
-        .scale(xScale)
-        .orient('bottom'))
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()

@@ -126,8 +126,6 @@ module.exports = React.createClass({
 
   render: function () {
     var campaign = this.props.campaign
-    var showHelp = this.props.showHelp
-    var hideHelp = this.props.hideHelp
     var data = this.props.data
     var loading = this.props.loading
     var dataColorRange =  ['#DB5344', '#79909F', '#2FB0D3']
