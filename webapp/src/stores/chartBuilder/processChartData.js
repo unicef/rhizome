@@ -3,7 +3,6 @@ var d3 = require('d3')
 var colors = require('colors')
 var moment = require('moment')
 var api = require('data/api')
-var Vue = require('vue') // for tooltip display
 var path = require('vue/src/parsers/path')
 var util = require('util/data')
 
@@ -54,14 +53,7 @@ function value (datapoint) {
 
 var tooltipDiv = document.createElement('div') // Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
 document.body.appendChild(tooltipDiv)
-function nullValuesToZero (values) {
-  _.each(values, function (value) {
-    if (_.isNull(value.value)) {
-      value.value = 0
-    }
-  })
 
-}
 function _columnData (data, groups, groupBy) {
   var columnData = _(data)
     .groupBy(groupBy)
@@ -269,7 +261,6 @@ module.exports = {
     })
   },
   processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
-    var indicatorsIndex = _.indexBy(indicators, 'id')//
     var locationsIndex = _.indexBy(locations, 'id')
 
     return dataPromise.then(function (data) {
@@ -280,7 +271,7 @@ module.exports = {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-          return d.indicator === xAxis
+          return parseInt(d.indicator, 10) === xAxis
         })
         .pluck('value')
         .value()
@@ -288,7 +279,9 @@ module.exports = {
       var range = d3.extent(_(data.objects)
         .pluck('indicators')
         .flatten()
-        .filter(function (d) { return d.indicator === yAxis })
+        .filter(function (d) {
+          return parseInt(d.indicator, 10) === yAxis
+        })
         .pluck('value')
         .value()
       )
@@ -333,7 +326,6 @@ module.exports = {
         .thru(util.unpivot)
         .forEach(function (d) {
           d.indicator = indicatorsIndex[d.indicator]
-          var temp = d.location
           d.location = locationsIndex[d.location]
         })
         .groupBy(function (d) {
