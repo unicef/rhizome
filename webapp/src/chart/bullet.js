@@ -209,7 +209,7 @@ _.extend(BulletChart.prototype, {
     label
       .attr({
         'x': w,
-        'y': -15,
+        'y': 0,
         'text-anchor': 'end',
         'dy': (options.lineHeight / 4) + 'em',
         'transform': 'translate(0, ' + (h / 2) + ')',
