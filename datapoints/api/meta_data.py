@@ -123,9 +123,20 @@ class IndicatorTagResource(BaseModelResource):
         except KeyError:
             id = None
 
+        tag_name = post_data['tag_name'];
+
         defaults = {
-            'tag_name': post_data['tag_name']
+            'tag_name': tag_name
         }
+
+        try:
+            parent_tag_id = int(post_data['parent_tag_id'])
+            defaults = {
+                'tag_name': tag_name,
+                'parent_tag_id': parent_tag_id
+            }
+        except KeyError:
+            pass
 
         tag, created = IndicatorTag.objects.update_or_create(
             id=id, \
