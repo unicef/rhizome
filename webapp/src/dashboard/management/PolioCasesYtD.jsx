@@ -25,7 +25,8 @@ module.exports = React.createClass({
     var totalCases = null
     var newCases = null
     var loading = this.props.loading
-
+    var month = null
+    
     if (campaign) {
       var m = moment(campaign.start_date, 'YYYY-MM-DD')
       year = m.format('YYYY')
