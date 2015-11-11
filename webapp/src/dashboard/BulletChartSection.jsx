@@ -55,8 +55,8 @@ function _marker (data, campaign) {
 function _targetRanges (indicator) {
   var targets = _(_.get(indicator, 'bound_json'))
     .map(function (bound) {
-      var lower = _.isFinite(bound.mn_val) ? bound.mn_val: -Infinity
-      var upper = _.isFinite(bound.mx_val) ? bound.mx_val: Infinity
+      var lower = _.isFinite(bound.mn_val) ? bound.mn_val : -Infinity
+      var upper = _.isFinite(bound.mx_val) ? bound.mx_val : Infinity
 
       return _.assign({}, bound, {
         mn_val: lower,

@@ -77,7 +77,9 @@ var DataTable = React.createClass({
                 _.map(this.props.schema.fields, function (field) {
                     var isSortedOnColumn = field.name === _this2.props.sortKey,
                         isSortAscending = (_this2.props.sortOrder || '').toLowerCase().indexOf('asc') === 0,
-                        sortArrow = isSortedOnColumn ? isSortAscending ? ' ▲' : ' ▼' : '';
+                        sortArrow = isSortedOnColumn
+                          ? isSortAscending ? ' ▲' : ' ▼'
+                          : ''
 
                     return React.createElement(FixedDataTable.Column, {
                         label: field.title + sortArrow,

@@ -16,7 +16,7 @@ var HomepageCarouselDecorators = [
       },
       getButtonStyles (disabled) {
         return {
-          opacity: disabled ? 0.3: 0.7
+          opacity: disabled ? 0.3 : 0.7
         }
       }
     }),
@@ -35,7 +35,7 @@ var HomepageCarouselDecorators = [
       },
       getButtonStyles (disabled) {
         return {
-          opacity: disabled ? 0.3: 0.7
+          opacity: disabled ? 0.3 : 0.7
         }
       }
     }),
@@ -94,7 +94,7 @@ var HomepageCarouselDecorators = [
           padding: 0,
           outline: 0,
           fontSize: 36,
-          opacity: active ? 1: 0.5
+          opacity: active ? 1 : 0.5
         }
       }
     }),
@@ -103,4 +103,3 @@ var HomepageCarouselDecorators = [
 ]
 
 module.exports = HomepageCarouselDecorators
-

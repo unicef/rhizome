@@ -312,7 +312,7 @@ module.exports = React.createClass({
             </div>
           </div>
         </form>
-        {this.state.store.dashboard.charts.length ? dashboard: addDashboardLinkContainer}
+        {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className='cd-footer'>
           <div className='row'>
             <div className='large-2 columns'>
@@ -348,7 +348,7 @@ module.exports = React.createClass({
     if (!this.state.store.loaded) {
       return (<div>loading</div>)
     } else if (this.state.chartBuilderActive) {
-      var chartDef = (_.isNull(this.state.chartBuilderindex) ? null: this.state.store.dashboard.charts[this.state.chartBuilderindex])
+      var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex])
       return (
         <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
                      cancel={this.cancelEditChart}/>

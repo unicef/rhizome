@@ -16,7 +16,7 @@ let PreviewScreen = React.createClass({
     return (
       <div className='preview-screen'>
         <h1>Preview</h1>
-        {this.props.isLoading ? loading: this.props.children}
+        {this.props.isLoading ? loading : this.props.children}
       </div>
     )
   }

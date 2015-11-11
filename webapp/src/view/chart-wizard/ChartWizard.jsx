@@ -183,8 +183,8 @@ let ChartWizard = React.createClass({
         <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
-        {findChartType(this.state.data.chartDef.type).groupBy ? groupBy: null}
-        {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel: null}
+        {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
+        {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
         {findChartType(this.state.data.chartDef.type).chooseAxis
           ? (
             <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
@@ -231,7 +231,7 @@ let ChartWizard = React.createClass({
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name: ''}`} refer='first-indicator'>
+          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ?  ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
             {firstIndicatorStep}
           </ChartWizardStep>
           <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
@@ -249,7 +249,8 @@ let ChartWizard = React.createClass({
         </ChartWizardStepList>
         <PreviewScreen isLoading={this.state.data.isLoading}>
           {this.state.data.canDisplayChart
-            ? chart: (<div className='empty'>No Data</div>)
+            ? chart
+            : (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
         <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>
