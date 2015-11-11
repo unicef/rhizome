@@ -23,7 +23,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function AreaChart () {
+function AreaChart() {
 }
 
 _.extend(AreaChart.prototype, {
@@ -64,10 +64,10 @@ _.extend(AreaChart.prototype, {
     var domain = _.isFunction(options.domain)
       ? options.domain(series)
       : d3.extent(_(series)
-          .map(options.values)
-          .flatten()
-          .map(options.x)
-          .value())
+      .map(options.values)
+      .flatten()
+      .map(options.x)
+      .value())
 
     var xScale = d3.time.scale()
       .domain(domain)
@@ -76,10 +76,10 @@ _.extend(AreaChart.prototype, {
     var range = _.isFunction(options.range)
       ? options.range(series)
       : d3.extent(_(series)
-          .map(options.values)
-          .flatten()
-          .map(options.y)
-          .value())
+      .map(options.values)
+      .flatten()
+      .map(options.y)
+      .value())
 
     range[0] = 0
 
@@ -168,6 +168,14 @@ _.extend(AreaChart.prototype, {
         .width(width)
         .height(height)
         .align(false))
+
+    svg.select('.x.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.xFormat)
+        .outerTickSize(0)
+        .ticks(4)
+        .scale(xScale)
+        .orient('bottom'))
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()

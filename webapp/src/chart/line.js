@@ -23,7 +23,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function LineChart () {
+function LineChart() {
 }
 
 _.extend(LineChart.prototype, {
@@ -66,10 +66,10 @@ _.extend(LineChart.prototype, {
     var domain = _.isFunction(options.domain)
       ? options.domain(series)
       : d3.extent(_(series)
-          .map(options.values)
-          .flatten()
-          .map(options.x)
-          .value())
+      .map(options.values)
+      .flatten()
+      .map(options.x)
+      .value())
 
     var dataXScale = d3.time.scale()
       .domain(domain)
@@ -78,10 +78,10 @@ _.extend(LineChart.prototype, {
     var range = _.isFunction(options.range)
       ? options.range(series)
       : d3.extent(_(series)
-          .map(options.values)
-          .flatten()
-          .map(options.y)
-          .value())
+      .map(options.values)
+      .flatten()
+      .map(options.y)
+      .value())
 
     range[0] = Math.min(range[0], 0)
 
@@ -137,14 +137,18 @@ _.extend(LineChart.prototype, {
       .value()
 
     var legendColorScale = d3.scale.ordinal()
-        .domain(_(labels)
-        .map(function (d) { return d.text })
+      .domain(_(labels)
+        .map(function (d) {
+          return d.text
+        })
         .uniq()
         .sortBy()
         .value())
-        .range(colorRange)
+      .range(colorRange)
 
-    var legendColor = _.flow(function (d) { return d.text }, legendColorScale)
+    var legendColor = _.flow(function (d) {
+      return d.text
+    }, legendColorScale)
 
     svg.select('.annotation').selectAll('.series.label')
       .data(labels)
@@ -178,6 +182,14 @@ _.extend(LineChart.prototype, {
           .value()
       )
     )
+
+    svg.select('.x.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.xFormat)
+        .outerTickSize(0)
+        .ticks(4)
+        .scale(dataXScale)
+        .orient('bottom'))
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
