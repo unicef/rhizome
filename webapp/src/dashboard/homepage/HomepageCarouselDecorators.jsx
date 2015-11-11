@@ -55,7 +55,7 @@ var HomepageCarouselDecorators = [
                     <button
                       style={self.getButtonStyles(self.props.currentSlide === index)}
                       onClick={self.props.goToSlide.bind(null, index)}>
-                      &bull
+                      &bull;
                     </button>
                   </li>
                 )
@@ -75,7 +75,7 @@ var HomepageCarouselDecorators = [
         return {
           position: 'relative',
           margin: 0,
-          top: 25,
+          top: 30,
           padding: 0
         }
       },
