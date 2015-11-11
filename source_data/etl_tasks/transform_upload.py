@@ -3,6 +3,7 @@ from pandas import notnull
 import json
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 from source_data.models import *
 
