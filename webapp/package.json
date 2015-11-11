@@ -76,6 +76,7 @@
     "node": ">=0.10.0"
   },
   "standard": {
+    "globals": ["describe", "context", "it"],
     "ignore": []
   }
 }
