@@ -9,10 +9,6 @@ var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
 var List = require('component/list/List.jsx')
 
 module.exports = React.createClass({
-  propTypes: {
-    // group_id: React.propTypes.number
-  },
-
   mixins: [ Reflux.connect(GroupFormStore, 'store') ],
 
   componentWillMount: function () {

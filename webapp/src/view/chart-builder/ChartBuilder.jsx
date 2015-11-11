@@ -48,13 +48,6 @@ function campaignDisplayFormat (campaign) {
 }
 
 module.exports = React.createClass({
-  propTypes: {
-    chartDef: React.PropTypes.object,
-    // location: React.PropTypes.string,
-    // callback: React.PropTypes.function,
-    // cancel: React.PropTypes.function,
-    // children: React.PropTypes.array,
-  },
   mixins: [Reflux.connect(ChartBuilderStore, 'store')],
   getInitialState: function () {
     return {

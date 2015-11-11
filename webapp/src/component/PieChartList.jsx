@@ -11,8 +11,7 @@ var PieChartList = React.createClass({
     keyPrefix: React.PropTypes.string.isRequired,
     options: React.PropTypes.object,
     name: React.PropTypes.func,
-    emptyText: React.PropTypes.string,
-    loading: React.PropTypes.bool
+    emptyText: React.PropTypes.string
   },
 
   getDefaultProps: function () {

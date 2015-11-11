@@ -23,6 +23,10 @@ var {
 } = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
+  mixins: [
+    Reflux.connect(SourceDataDashboardStore)
+  ],
+
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
     data: React.PropTypes.object.isRequired,
@@ -30,13 +34,9 @@ var SourceDataDashboard = React.createClass({
     locations: React.PropTypes.object.isRequired,
     doc_id: React.PropTypes.number.isRequired,
     doc_tab: React.PropTypes.string.isRequired,
-    loading: React.PropTypes.bool,
-    campaign: React.PropTypes.object
-  },
 
-  mixins: [
-    Reflux.connect(SourceDataDashboardStore)
-  ],
+    loading: React.PropTypes.bool
+  },
 
   getInitialState: function () {
     return {

@@ -11,9 +11,7 @@ module.exports = React.createClass({
     onBlur: React.PropTypes.func,
     searchable: React.PropTypes.bool,
     x: React.PropTypes.number,
-    y: React.PropTypes.number,
-    // search: React.PropTypes.string,
-    // children: React.PropTypes.array,
+    y: React.PropTypes.number
   },
 
   getDefaultProps: function () {

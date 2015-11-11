@@ -1,12 +1,6 @@
 var React = require('react')
 
 module.exports = React.createClass({
-  propTypes: {
-    initialText: React.PropTypes.string,
-    class: React.PropTypes.string,
-    save: React.PropTypes.function,
-  },
-
   getInitialState: function (){
     return {
       text: this.props.initialText

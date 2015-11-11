@@ -32,9 +32,6 @@ var moment = require('moment')
 window.perf = React.addons.Perf
 
 module.exports = React.createClass({
-  propTypes: {
-    // dashboard_id: React.propTypes.number
-  },
   mixins: [Reflux.connect(DashboardBuilderStore, 'store'),
     Reflux.connect(DataStore, 'dataStore'),
     Reflux.connect(DashboardStore, 'dashboardStore'),
