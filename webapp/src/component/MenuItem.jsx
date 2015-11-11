@@ -6,12 +6,12 @@ var MenuItem = React.createClass({
     sendValue: React.PropTypes.func.isRequired,
     title: React.PropTypes.string.isRequired,
     value: React.PropTypes.string.isRequired,
-
     ancestryString: React.PropTypes.string,
     children: React.PropTypes.array,
     depth: React.PropTypes.number,
     filtered: React.PropTypes.bool,
-    displayTitle: React.PropTypes.string
+    displayTitle: React.PropTypes.string,
+    // noValue: React.PropTypes.bool,
   },
 
   statics: {

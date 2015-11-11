@@ -113,9 +113,9 @@ module.exports = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.array.isRequired,
-
     cols: React.PropTypes.number,
-    data: React.PropTypes.array
+    data: React.PropTypes.array,
+    loading: React.PropTypes.bool,
   },
 
   getDefaultProps: function () {

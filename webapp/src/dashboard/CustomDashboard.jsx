@@ -79,7 +79,11 @@ var CustomDashboard = React.createClass({
     onDeleteChart: React.PropTypes.func,
     onEditChart: React.PropTypes.func,
     onMoveForward: React.PropTypes.func,
-    onMoveBackward: React.PropTypes.func
+    onMoveBackward: React.PropTypes.func,
+    loading: React.PropTypes.bool,
+    dashboard: React.PropTypes.object,
+    // data: React.PropTypes.array,
+    // campaign: React.PropTypes.object,
   },
 
   getDefaultProps: function () {

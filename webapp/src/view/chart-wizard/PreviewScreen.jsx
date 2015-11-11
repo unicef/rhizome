@@ -3,6 +3,7 @@ import React from 'react'
 let PreviewScreen = React.createClass({
   propTypes: {
     isLoading: React.PropTypes.bool
+    // children: React.PropTypes.array
   },
 
   render () {

@@ -6,7 +6,8 @@ module.exports = React.createClass({
     value: React.PropTypes.number.isRequired,
     name: React.PropTypes.string.isRequired,
     onChange: React.PropTypes.func.isRequired,
-    horizontal: React.PropTypes.bool
+    horizontal: React.PropTypes.bool,
+    title: React.PropTypes.string
   },
   getDefaultProps: function () {
     return {

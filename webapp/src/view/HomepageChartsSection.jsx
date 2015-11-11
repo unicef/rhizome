@@ -4,6 +4,11 @@ var React = require('react')
 var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx')
 
 var HomepageChartsSection = React.createClass({
+  propTypes: {
+    date: React.propTypes.string,
+    location: React.propTypes.string,
+    data: React.propTypes.object
+  },
   getManagementDashboardUrl: function () {
     var [year, month] = this.props.date.split('-')
     return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
@@ -27,27 +32,27 @@ var HomepageChartsSection = React.createClass({
     if (this.props.location === 'Nigeria') {
       controls =
         <div className='chart-button-group'>
-        <a href={this.getManagementDashboardUrl()} className='chart-button small-4 columns'>
-          Country<br />overview
-        </a>
+          <a href={this.getManagementDashboardUrl()} className='chart-button small-4 columns'>
+            Country<br />overview
+          </a>
 
-        <a href={this.getDistrictSummaryUrl()} className='chart-button small-4 columns'>
-          District<br />summary
-        </a>
+          <a href={this.getDistrictSummaryUrl()} className='chart-button small-4 columns'>
+            District<br />summary
+          </a>
 
-        <a href={this.getNGACampaignMonitoringUrl()} className='chart-button small-4 columns'>
-          NGA Campaign<br />Monitoring
-        </a>
+          <a href={this.getNGACampaignMonitoringUrl()} className='chart-button small-4 columns'>
+            NGA Campaign<br />Monitoring
+          </a>
         </div>
     } else {
       controls =
         <dev className='chart-button-group'>
-        <a href={this.getManagementDashboardUrl()} className='chart-button small-6 columns'>
-          Country<br />overview
-        </a>
-        <a href={this.getDistrictSummaryUrl()} className='chart-button small-6 columns'>
-          District<br />summary
-        </a>
+          <a href={this.getManagementDashboardUrl()} className='chart-button small-6 columns'>
+            Country<br />overview
+          </a>
+          <a href={this.getDistrictSummaryUrl()} className='chart-button small-6 columns'>
+            District<br />summary
+          </a>
         </dev>
     }
 
@@ -60,7 +65,6 @@ var HomepageChartsSection = React.createClass({
             {controls}
           </div>
         </div>
-
       </div>
     )
   }

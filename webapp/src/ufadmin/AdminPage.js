@@ -10,7 +10,11 @@ var parseSchema = require('./utils/parseSchema')
 var AdminPage = React.createClass({
   propTypes: {
     title: React.PropTypes.string.isRequired,
-    getData: React.PropTypes.func.isRequired
+    getData: React.PropTypes.func.isRequired,
+    schema: React.PropTypes.object,
+    // fields: React.PropTypes.object,
+    // datascopeFilters: React.PropTypes.array,
+    // children: React.PropTypes.array,
   },
   getInitialState: function () {
     return {

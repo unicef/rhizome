@@ -25,7 +25,6 @@ module.exports = React.createClass({
   propTypes: {
     data: React.PropTypes.array.isRequired,
     type: React.PropTypes.string.isRequired,
-
     id: React.PropTypes.string,
     loading: React.PropTypes.bool,
     options: React.PropTypes.object
