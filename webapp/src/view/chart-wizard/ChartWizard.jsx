@@ -155,19 +155,6 @@ let ChartWizard = React.createClass({
         <RadioGroup name='time' title='Time Range'
           value={this.state.data.timeValue}
           values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'other-indicator')}>Next</span>
-      </div>
-    )
-
-    let otherIndicatorStep = (
-      <div>
-        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        <IndicatorDropdownMenu
-          text='Add Indicators'
-          icon='fa-plus'
-          indicators={this.state.data.indicatorList}
-          sendValue={ChartWizardActions.addIndicator} />
-        <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'option')}>Next</span>
       </div>
     )
@@ -186,6 +173,14 @@ let ChartWizard = React.createClass({
 
     let optionStep = (
       <div>
+        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
+        <IndicatorDropdownMenu
+          text='Add Indicators'
+          icon='fa-plus'
+          indicators={this.state.data.indicatorList}
+          sendValue={ChartWizardActions.addIndicator} />
+        <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
+
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy: null}
         {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel: null}
@@ -244,13 +239,10 @@ let ChartWizard = React.createClass({
           <ChartWizardStep title='4. Select Time Range' refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='5. Select Additional Indicators' refer='other-indicator'>
-            {otherIndicatorStep}
-          </ChartWizardStep>
-          <ChartWizardStep title='6. Customise Options' refer='option'>
+          <ChartWizardStep title='5. Customise Options' refer='option'>
             {optionStep}
           </ChartWizardStep>
-          <ChartWizardStep title='7. Preview' refer='preview'>
+          <ChartWizardStep title='6. Preview' refer='preview'>
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>
