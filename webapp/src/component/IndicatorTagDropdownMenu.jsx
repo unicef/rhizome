@@ -47,7 +47,7 @@ var IndicatorTagDropdownMenu = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return nextProps.text !== this.props.text
+    return nextProps.text !== this.props.text || nextProps.tag_tree !== this.props.tag_tree
   },
 
   render: function () {

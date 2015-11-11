@@ -98,7 +98,7 @@ var SimpleForm = React.createClass({
 
   setParentTag: function (e) {
     var extraFormData = {'parent_tag_id': e}
-    this.setState({ 'extraFormData': extraFormData })
+    this.setState({'extraFormData': extraFormData})
   },
 
   render: function () {
@@ -108,7 +108,7 @@ var SimpleForm = React.createClass({
     var formData = this.state.store.formData
 
     // TODO -> pull this from the DB
-    var formSettings = {'form': true, fields: {'tag_name': { type: 'string', editing: false }}}
+    var formSettings = {'form': true, fields: {'tag_name': {type: 'string', editing: false}}}
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {
@@ -130,9 +130,9 @@ var SimpleForm = React.createClass({
       }
     }
 
-    var additionalFormComponents
+    var additionalFormComponents = ''
     if (contentType === 'indicator_tag' && dataObject) {
-      var selected = this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag__tag_name || 'No Parent'
+      var selected = this.state.extraFormData['parent_tag_id'] || dataObject.parent_tag_id || 'No Parent'
       var tagTree = this.state.tagTree
 
       additionalFormComponents = (
@@ -146,7 +146,7 @@ var SimpleForm = React.createClass({
         </div>
       )
     }
-    if (contentType === 'indicator') {
+    else if (contentType === 'indicator') {
       additionalFormComponents = ''
     }
 
@@ -154,32 +154,30 @@ var SimpleForm = React.createClass({
     if (this.state.store.objectId !== -1) {
       idInfo = (
         <div>
-         <h5>id: {this.state.store.objectId}</h5>
-         <br />
+          <h5>id: {this.state.store.objectId}</h5>
+          <br />
         </div>
       )
     }
 
-    var base_form = (
-      <div>
-        <h2>Manage Admin Page</h2>
-        {idInfo}
-        <ReactJson value={formData} settings={formSettings} ref='form_data'/>
-        {additionalFormComponents}
-        <br />
-        <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.onSubmit }>Save</button>
-      </div>)
-
     var baseFormSuccess = ''
     if (this.state.store.saveSuccess) {
-      baseFormSuccess = <i className='fa fa-check'> saved successfully </i>
+      baseFormSuccess = <i className='fa fa-check'> Saved successfully </i>
+
       var newId = this.state.store.objectId
       this.state.store.saveSuccess = false
-      page('/ufadmin/manage/' + contentType + '/' + newId)
+
+      if(this.props.params && this.props.params.id){
+        page('/ufadmin/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
+      }
+      else{
+        page('/ufadmin/manage/' + contentType + '/' + newId)
+      }
+
       SimpleFormActions.initialize(newId, contentType)
     }
 
-    var subFormList
+    let subFormList = ''
 
     if (contentType === 'indicator') {
       subFormList = (
@@ -208,7 +206,14 @@ var SimpleForm = React.createClass({
     return (
       <div className='row'>
         <div className='small-8 columns'>
-          {base_form}
+          <div>
+            <h2>Manage Admin Page</h2>
+            {idInfo}
+            <ReactJson value={formData} settings={formSettings} ref='form_data'/>
+            {additionalFormComponents}
+            <br />
+            <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.onSubmit }>Save</button>
+          </div>
           <div>{baseFormSuccess}</div>
         </div>
         <div className='small-4 columns'>
