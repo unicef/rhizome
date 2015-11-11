@@ -6,4 +6,4 @@ export default {
     port: 8000,
     version: '1.0.0'
   }
-};
+}

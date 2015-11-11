@@ -1,4 +1,3 @@
-import gulp from 'gulp'
 import path from 'path'
 
 export default {
@@ -8,9 +7,9 @@ export default {
     'docs*/_build/**/*.*',
     'manage.py',
     'requirements.txt'
-  ].map((file)=> {
-      return path.join(process.cwd(), '..') + '/' + file;
-    }),
+  ].map(file => {
+    return path.join(process.cwd(), '..') + '/' + file
+  }),
   dest: path.join(process.cwd(), '../dist'),
   options: {
     filename: 'rhizome.zip'

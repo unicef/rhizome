@@ -1,6 +1,4 @@
 import gulp from 'gulp'
-import path from 'path'
-import gutil from 'gulp-util'
 import requireDir from 'require-dir'
 import gulpTaskConfig from './tasks/libs/gulp-task-config'
 

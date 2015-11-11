@@ -3,11 +3,11 @@ import zip from 'gulp-zip'
 
 const TASK_NAME = 'package'
 
-function packageTask() {
-  gulp.autoRegister(TASK_NAME, (config)=> {
+function packageTask () {
+  gulp.autoRegister(TASK_NAME, config => {
     return gulp.src(config.src)
       .pipe(zip(config.options.filename))
-      .pipe(gulp.dest(config.dest));
+      .pipe(gulp.dest(config.dest))
   })
 }
 

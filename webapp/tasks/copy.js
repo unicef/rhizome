@@ -3,9 +3,9 @@ import rename from 'gulp-rename'
 
 const TASK_NAME = 'copy'
 
-function copyOnce(fileConf) {
+function copyOnce (fileConf) {
   return gulp.src(fileConf.src)
-    .pipe(rename((pathObj)=> {
+    .pipe(rename(pathObj => {
       if (fileConf.options.flatten) {
         pathObj.dirname = ''
       }
@@ -17,9 +17,9 @@ function copyOnce(fileConf) {
     .pipe(gulp.pipeTimer(TASK_NAME))
 }
 
-function copy() {
-  return gulp.autoRegister(TASK_NAME, copyOnce, (config)=> {
-    gulp.watch(config.src, ()=> {
+function copy () {
+  return gulp.autoRegister(TASK_NAME, copyOnce, (config) => {
+    gulp.watch(config.src, () => {
       copyOnce(config)
     })
   })

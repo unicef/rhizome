@@ -7,7 +7,7 @@ import autoprefixer from 'gulp-autoprefixer'
 
 const TASK_NAME = 'sass'
 
-function sassOnce(fileConf) {
+function sassOnce (fileConf) {
   return gulp.src(fileConf.entry)
     .pipe(gulpSass(fileConf.options))
     .on('error', gulpSass.logError)
@@ -17,9 +17,9 @@ function sassOnce(fileConf) {
     .pipe(gulp.pipeTimer(TASK_NAME))
 }
 
-function sass() {
-  return gulp.autoRegister(TASK_NAME, sassOnce, (config)=> {
-    gulp.watch(config.src, (evt)=> {
+function sass () {
+  return gulp.autoRegister(TASK_NAME, sassOnce, config => {
+    gulp.watch(config.src, evt => {
       gutil.log(evt.type, evt.path)
       sassOnce(config)
     })

@@ -32,13 +32,13 @@ export default {
   }
 }
 
-function middlewareNope() {
-  return (req, res, next)=> {
+function middlewareNope () {
+  return (req, res, next) => {
     return next()
   }
 }
 
-function proxyTo(route, remoteUrl) {
+function proxyTo (route, remoteUrl) {
   const options = url.parse(remoteUrl)
   options.route = route
   return proxyMiddleware(options)

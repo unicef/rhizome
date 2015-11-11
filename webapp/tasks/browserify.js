@@ -13,7 +13,7 @@ import uglify from 'gulp-uglify'
 
 const TASK_NAME = 'browserify'
 
-function whenInProductionDoUglify() {
+function whenInProductionDoUglify () {
   if (process.env.NODE_ENV === 'production') {
     return streamify(uglify({
       compress: {
@@ -24,28 +24,28 @@ function whenInProductionDoUglify() {
   return gutil.noop()
 }
 
-function wrapWithPluginError(originalError) {
-  let message;
+function wrapWithPluginError (originalError) {
+  let message
 
   if (typeof originalError === 'string') {
-    message = originalError;
+    message = originalError
   } else {
-    message = originalError.message.toString();
+    message = originalError.message.toString()
   }
   if (process.env.NODE_ENV === 'production') {
-    throw new Error(message);
+    throw new Error(message)
   }
 
-  gutil.log(new gutil.PluginError(TASK_NAME, message));
+  gutil.log(new gutil.PluginError(TASK_NAME, message))
 }
 
-function bundle(config) {
+function bundle (config) {
   return config.bundler.bundle()
-    .on('error', (err)=> {
+    .on('error', err => {
       wrapWithPluginError(err)
     })
     .pipe(source(config.entry))
-    .pipe(rename((obj)=> {
+    .pipe(rename(obj => {
       obj.dirname = ''
       obj.basename = config.options.basename || obj.basename
       obj.extname = '.js'
@@ -54,8 +54,7 @@ function bundle(config) {
     .pipe(gulp.dest(config.dest))
 }
 
-function browserifyOnce(config = {}) {
-
+function browserifyOnce (config = {}) {
   if (!config.bundler) {
     config.bundler = browserify(config.options)
   }
@@ -66,36 +65,27 @@ function browserifyOnce(config = {}) {
     config.entry = _.uniqueId('vendor_')
   }
 
-  [
-    'plugin',
-    'require',
-    'external'
-  ].forEach((method)=> {
-      [].concat(config.options[method])
-        .forEach((args)=> {
-          if (args) {
-            config.bundler[method].apply(config.bundler, [].concat(args))
-          }
-        })
-    })
-
+  ['plugin', 'require', 'external'].forEach(method => {
+    [].concat(config.options[method])
+      .forEach(args => {
+        if (args) {
+          config.bundler[method].apply(config.bundler, [].concat(args))
+        }
+      })
+  })
   return bundle(config)
-
 }
 
-function browserifyTask() {
-
-  return gulp.autoRegister(TASK_NAME, browserifyOnce, (config)=> {
-
+function browserifyTask () {
+  return gulp.autoRegister(TASK_NAME, browserifyOnce, config => {
     config.bundler = browserify(_.merge({}, config.options, watchify.args))
     config.bundler = watchify(config.bundler)
 
     config.bundler.on('update', bundle.bind(null, config))
-    config.bundler.on('time', (time)=> {
+    config.bundler.on('time', time => {
       gutil.log(gutil.colors.cyan('watchify'),
         're-bundled', 'after', gutil.colors.magenta(time > 1000 ? time / 1000 + ' s' : time + ' ms'))
     })
-
   })
 }
 

@@ -6,7 +6,7 @@ import mergeStream from 'merge-stream'
 
 let options = {}
 
-export default function bindToGulp(gulp) {
+export default function bindToGulp (gulp) {
   gulp.DEV_MODE = DEV_MODE
   gulp.config = config
   gulp.pipeTimer = pipeTimer
@@ -15,25 +15,24 @@ export default function bindToGulp(gulp) {
 
 export const DEV_MODE = 'devMode'
 
-export function config(path, value) {
+export function config (path, value) {
   if (value) {
     return _.set(options, path, value)
   }
   return _.get(options, path)
 }
 
-export function pipeTimer(taskname = 'some task') {
-
+export function pipeTimer (taskname = 'some task') {
   const startTime = new Date()
 
   return through(start, end)
 
-  function start() {
+  function start () {
   }
 
-  function end() {
+  function end () {
     if (gulp.config(DEV_MODE)) {
-      this.on('end', ()=> {
+      this.on('end', () => {
         const time = new Date() - startTime
         gutil.log('Watcher:',
           '\'' + gutil.colors.cyan(taskname) + '\'',
@@ -43,11 +42,9 @@ export function pipeTimer(taskname = 'some task') {
     }
     this.queue(null)
   }
-
 }
 
-export function autoRegister(TASK_NAME, bundleFn, devModelFn) {
-
+export function autoRegister (TASK_NAME, bundleFn, devModelFn) {
   const conf = gulp.config(['tasks', TASK_NAME])
 
   if (conf.files && _.isArray(conf.files)) {
@@ -56,8 +53,7 @@ export function autoRegister(TASK_NAME, bundleFn, devModelFn) {
 
   return register(conf)
 
-  function register(commonOptions, config) {
-
+  function register (commonOptions, config) {
     if (_.isObject(config)) {
       config.options = _.merge({}, commonOptions, config.options)
     } else {
@@ -69,7 +65,5 @@ export function autoRegister(TASK_NAME, bundleFn, devModelFn) {
     }
 
     return bundleFn(config)
-
   }
-
 }

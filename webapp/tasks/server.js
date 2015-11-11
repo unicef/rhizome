@@ -3,12 +3,12 @@ import browserSync from 'browser-sync'
 
 const TASK_NAME = 'server'
 
-function serverOnce(fileConf) {
+function serverOnce (fileConf) {
   browserSync(fileConf.options)
 }
 
-function server() {
-  gulp.autoRegister(TASK_NAME, serverOnce, (config)=> {
+function server () {
+  gulp.autoRegister(TASK_NAME, serverOnce, config => {
     gulp.watch(config.src)
       .on('change', browserSync.reload)
   })
