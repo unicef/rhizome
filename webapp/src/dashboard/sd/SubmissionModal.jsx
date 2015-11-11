@@ -34,9 +34,9 @@ var SubmissionModal = React.createClass({
     this.setState({modalIsOpen: false})
   },
 
-  render: function () {
-    var source_submission_id = this.props.source_submission_id
-    var modalStyle = {width: 650, height: 500, marginLeft: 400}
+    render: function () {
+        var source_submission_id = this.props.source_submission_id;
+        var modalStyle = {width: '450', height: '75%', marginLeft: '20%'};
 
     var submission_data = []
     if (this.state.modalIsOpen &&
