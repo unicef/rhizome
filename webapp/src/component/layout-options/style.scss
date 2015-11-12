@@ -22,7 +22,7 @@
 
   img {
     width: 100%;
-    border: 1px solid $rhz-button-bg-color;
+    margin-bottom: .5em;
   }
   input[type="radio"] {
     display: none;
@@ -32,8 +32,15 @@
     }
   }
   &.active {
-    img {
-      background: $rhz-background-color
+    .layout-option__img_wrapper {
+      border: 5px solid $rhz-button-bg-color;
+      transition: .5s border;
     }
   }
+  &.inactive {
+    .layout-option__img_wrapper {
+      border: 5px solid transparent;
+    }
+  }
+
 }
