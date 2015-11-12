@@ -24,7 +24,7 @@ let LayoutOptions = React.createClass({
                   className={'medium-4 small-12 layout-option ' + (self.props.value === radio.value ? 'active' : 'inactive')}>
                 <label htmlFor={radioID}>
                   <h3> {radio.name} </h3>
-                  <div className="layout-option__img_wrapper">
+                  <div className='layout-option__img_wrapper'>
                     <img src={radio.src} alt="" />
                   </div>
                 </label>
