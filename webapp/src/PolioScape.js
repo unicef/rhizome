@@ -33,26 +33,29 @@ React.render(
 
 module.exports = {
   Explorer: function (el) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-explorer': require('./view/explorer') }
     })
+    return vue
   },
   Dashboard: function (el) {
     React.render(React.createElement(require('view/Dashboard.jsx')), el)
   },
   DataEntry: function (el) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-entry-form': require('./view/entry-form') }
     })
+    return vue
   },
   UserAccount: function (el, user_id) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-user-account': require('./view/user-account') },
       data: {'user_id': user_id}
     })
+    return vue
   },
   LandingPage: function (el) {
     React.render(React.createElement(LandingPage), el)

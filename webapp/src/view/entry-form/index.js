@@ -130,7 +130,6 @@ module.exports = {
         })
 
       ]).then(function (allData) {
-        console.log('ALL DATA ', allData[0])
         self.$data.locationData = allData[0]
         self.$data.indicators = allData[1]
         self.$data.campaigns = allData[2]
@@ -377,9 +376,7 @@ module.exports = {
                     return api.datapointUpsert(upsert_options)
                   }
                   // callback to specifically handle response
-                  cell.withResponse = function (response) {
-                    // console.log('done!', response)
-                  }
+                  cell.withResponse = function (response) {}
                   // callback to handle error
                   cell.withError = function (error) {
                     console.log(error)
@@ -398,28 +395,16 @@ module.exports = {
                   break
               }
 
-              // add cell to row
               row.push(cell)
             })
           } // end normal indicator row
 
-          // add row to main array
           rows.push(row)
         })
 
         self.table.rows = rows
         self.table.columns = columns
       }
-
-      // var withError = function (err) {
-      //  console.log(err)
-
-      //  // finished fetching data
-      //  self.table.loading = false
-
-      //  window.alert('There was an error loading the data.')
-
-      // }
 
       api.datapointsRaw(options).then(withSuccess, function (err) {
         self.table.loading = false
