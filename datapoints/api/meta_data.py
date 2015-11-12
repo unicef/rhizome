@@ -5,7 +5,7 @@ import time
 from tastypie.resources import ALL
 from tastypie import fields
 
-
+from pandas import DataFrame
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 
@@ -767,6 +767,7 @@ class GeoJsonResult(object):
     type = unicode()
     properties = dict()
     geometry = dict()
+    parent_location_id = int()
 
 
 class GeoResource(BaseNonModelResource):
@@ -779,6 +780,7 @@ class GeoResource(BaseNonModelResource):
     type = fields.CharField(attribute='type')
     properties = fields.DictField(attribute='properties')
     geometry = fields.DictField(attribute='geometry')
+    parent_location_id = fields.IntegerField(attribute='parent_location_id')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = GeoJsonResult
@@ -801,22 +803,34 @@ class GeoResource(BaseNonModelResource):
             self.err = err
             return []
 
-        polygon_values_list = LocationPolygon.objects.filter(location_id__in= \
-                                                                 locations_to_return).values()
+        with_parent = None
+        try:
+            with_parent = request.GET['with_parent']
+        except KeyError:
+            pass
 
         features = []
 
-        for p in polygon_values_list:
-            geo_dict = json.loads(p['geo_json'])
-
-            geo_obj = GeoJsonResult()
-            geo_obj.location_id = p['location_id']
-            geo_obj.geometry = geo_dict['geometry']
-            geo_obj.type = geo_dict['type']
-            geo_obj.properties = {'location_id': p['location_id']}
-
-            features.append(geo_obj)
-
+        if with_parent is None:
+            polygon_values_list = LocationPolygon.objects.filter(location_id__in=locations_to_return).values()
+            for p in polygon_values_list:
+                geo_dict = json.loads(p['geo_json'])
+                geo_obj = GeoJsonResult()
+                geo_obj.location_id = p['location_id']
+                geo_obj.geometry = geo_dict['geometry']
+                geo_obj.type = geo_dict['type']
+                geo_obj.properties = {'location_id': p['location_id']}
+                features.append(geo_obj)
+        else:
+            polygon_values_list = LocationPolygon.objects.select_related('location').filter(location_id__in=locations_to_return).all()
+            for p in polygon_values_list:
+                geo_obj = GeoJsonResult()
+                geo_obj.location_id = p.location.id
+                geo_obj.geometry = p.geo_json['geometry']
+                geo_obj.type = p.geo_json['type']
+                geo_obj.properties = {'location_id': p.location.id}
+                geo_obj.parent_location_id = p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
+                features.append(geo_obj)
         return features
 
     def obj_get_list(self, bundle, **kwargs):
