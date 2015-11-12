@@ -160,6 +160,13 @@ _.extend(AreaChart.prototype, {
       .sortBy('y')
       .value()
 
+    var total = 0
+    _.forEach(series, (d) => {
+      var last = _.max(options.values(d), options.x)
+      total += options.y(last)
+    })
+    var fm = d3.format(',.1%')
+
     svg.select('.annotation')
       .selectAll('.series.label')
       .data(labels)
@@ -176,6 +183,20 @@ _.extend(AreaChart.prototype, {
         .ticks(4)
         .scale(xScale)
         .orient('bottom'))
+
+    if (total !== 0) {
+      svg.select('.annotation')
+      .append('text')
+      .attr('x', this._width - 90)
+      .attr('y', -15)
+      .attr('width', 10)
+      .attr('height', 10)
+      .style({
+        'font-size': '15px;'
+      })
+      .text('TOTAL ' + fm(total))
+    }
+
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
