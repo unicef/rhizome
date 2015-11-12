@@ -66,13 +66,13 @@ function findChartType (type) {
 }
 
 let ChartWizard = React.createClass({
-  mixins: [Reflux.connect(ChartWizardStore, 'data')],
-
   propTypes: {
     chartDef: React.PropTypes.object,
     save: React.PropTypes.func,
     cancel: React.PropTypes.func
   },
+
+  mixins: [Reflux.connect(ChartWizardStore, 'data')],
 
   getInitialState () {
     return {
