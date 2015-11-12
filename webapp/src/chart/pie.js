@@ -78,10 +78,6 @@ _.extend(PieChart.prototype, {
 
     svg.attr({
       'viewBox': '0 0 ' + this._width + ' ' + this._height
-    })
-      .style({
-        'width': this._width + 'px',
-        'height': this._height + 'px'
       })
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
