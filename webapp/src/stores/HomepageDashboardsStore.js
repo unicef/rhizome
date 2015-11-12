@@ -6,7 +6,7 @@ var moment = require('moment')
 
 var api = require('data/api')
 var builtins = require('dashboard/builtin')
-var dashboardInit = require('data/dashboardInit')
+var DashboardInit = require('data/dashboardInit')
 
 var RegionStore = require('stores/RegionStore')
 var CampaignStore = require('stores/CampaignStore')
@@ -198,7 +198,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           indicators: indicators
         },
         _.pick(dashboardDef.dashboard, ['location', 'date']), {
-          data: dashboardInit(
+          data: DashboardInit.dashboardInit(
             dashboardDef.dashboard,
             data.data,
             dashboardDef.location,

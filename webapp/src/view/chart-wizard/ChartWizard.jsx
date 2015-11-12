@@ -183,7 +183,7 @@ let ChartWizard = React.createClass({
             <div>
               <h4>X Axis</h4>
               <ul className='list'>
-                <li>{this.state.data.indicatorSelected[0].name}</li>
+                <li>{this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name}</li>
               </ul>
               <h4>Y Axis</h4>
               <IndicatorDropdownMenu

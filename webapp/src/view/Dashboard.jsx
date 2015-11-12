@@ -7,7 +7,7 @@ var page = require('page')
 var moment = require('moment')
 
 var api = require('data/api')
-var dashboardInit = require('data/dashboardInit')
+var DashboardInit = require('data/dashboardInit')
 var builtins = require('dashboard/builtin')
 
 var TitleMenu = require('component/TitleMenu.jsx')
@@ -269,7 +269,7 @@ var Dashboard = React.createClass({
         .value()
     )
 
-    var data = dashboardInit(
+    var data = DashboardInit.dashboardInit(
       dashboardDef,
       this.state.data,
       location,

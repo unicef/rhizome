@@ -5,7 +5,7 @@ var React = require('react')
 var Reflux = require('reflux/src')
 var ChartWizard = require('view/chart-wizard/ChartWizard.jsx')
 
-var dashboardInit = require('data/dashboardInit')
+var DashboardInit = require('data/dashboardInit')
 
 var DataActions = require('actions/DataActions')
 var DataStore = require('stores/DataStore')
@@ -20,8 +20,6 @@ var IndicatorStore = require('stores/IndicatorStore')
 var GeoStore = require('stores/GeoStore')
 var GeoActions = require('actions/GeoActions')
 var AppActions = require('actions/AppActions')
-var RegionTitleMenu = require('component/RegionTitleMenu.jsx')
-var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx')
 var TitleInput = require('component/TitleInput.jsx')
 var LayoutOptions = require('component/layout-options/LayoutOptions.jsx')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options')
@@ -45,8 +43,8 @@ module.exports = React.createClass({
   },
   componentDidMount: function () {
     DashboardBuilderActions.initialize(this.props.dashboardId)
-    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardBuilderStore, this._onDataLoaded)
+    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
@@ -131,24 +129,6 @@ module.exports = React.createClass({
       }
     }
   },
-  _setCampaign: function (id) {
-    var campaign = _.find(this.state.dashboardStore.campaigns, c => c.id === id)
-
-    if (campaign) {
-      DashboardActions.setDashboard({
-        dashboard: this.state.store.dashboard,
-        date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
-      })
-    }
-  },
-
-  _setRegion: function (id) {
-    var location = _.find(this.state.dashboardStore.locations, r => r.id === id)
-
-    if (location) {
-      DashboardActions.setDashboard({dashboard: this.state.store.dashboard, location: location.name})
-    }
-  },
 
   _onDataLoaded: function () {
     if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
@@ -211,7 +191,7 @@ module.exports = React.createClass({
 
     var campaign = this.state.dashboardStore.campaign
     var dashboardDef = this.state.store.dashboard
-    var loading = this.state.dashboardStore.loading
+    var loaded = this.state.dashboardStore.loaded
     var location = this.state.dashboardStore.location
 
     var indicators = IndicatorStore.getById.apply(
@@ -222,13 +202,11 @@ module.exports = React.createClass({
         .uniq()
         .value()
     )
-    var data = dashboardInit(
+    let data = DashboardInit.customDashboardInit(
       dashboardDef,
       this.state.dataStore.data,
-      location,
-      campaign,
-      this.state.dashboardStore.locations,
-      this.state.dashboardStore.allCampaigns,
+      this.state.store.locations,
+      this.state.store.campaigns,
       indicators,
       GeoStore.features
     )
@@ -236,9 +214,7 @@ module.exports = React.createClass({
       campaign: campaign,
       dashboard: dashboardDef,
       data: data,
-      indicators: indicators,
-      loading: loading,
-      location: location,
+      loading: !loaded,
       editable: true,
       onAddChart: this.newChart,
       onEditChart: this.editChart,
@@ -261,10 +237,6 @@ module.exports = React.createClass({
       .sortBy('start_date')
       .reverse()
       .value()
-
-    if (campaign.office_id !== location.office_id) {
-      campaign = campaigns[0]
-    }
 
     var addDashboardLinkContainer = (
       <div className='empty-dashboard-add-container'>

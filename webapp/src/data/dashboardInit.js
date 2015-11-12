@@ -170,12 +170,16 @@ var process = {
   'ScatterChart': scatter
 }
 
+function customDashboardInit (dashboard, data, locations, campaigns, indicators, features) {
+  return dashboardInit(dashboard, data, locations[0], campaigns[0], locations, campaigns, indicators, features)
+}
+
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
 
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
-  var locationsById    = _.indexBy(locationList, 'id')
+  var locationsById = _.indexBy(locationList, 'id')
   var campaignsById = _.indexBy(campaignList, 'id')
 
   // Merge location metadata into the properties object of each geographic feature
@@ -198,8 +202,8 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     }
   })
 
-  var selectedCampaign = campaign;
-  var selectedLocation = location;
+  var selectedCampaign = campaign
+  var selectedLocation = location
 
   // Build up an object representing the data where each property of the object
   // corresponse to a section in the dashboard. Each section is an object where
@@ -207,8 +211,8 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
   // that can be used by that chart
   _.each(dashboard.charts, (chart, i) => {
     var sectionName = _.get(chart, 'section', '__none__')
-    var chartName   = _.get(chart, 'id', _.camelCase(chart.title))
-    var section     = _.get(results, sectionName, {})
+    var chartName = _.get(chart, 'id', _.camelCase(chart.title))
+    var section = _.get(results, sectionName, {})
 
     if (chart.locationValue) {
       var chartLocation = locationsById[chart.locationValue]
@@ -245,4 +249,7 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
   return results
 }
 
-module.exports = dashboardInit
+module.exports = {
+  dashboardInit: dashboardInit,
+  customDashboardInit: customDashboardInit
+}
