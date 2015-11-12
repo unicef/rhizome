@@ -6,11 +6,12 @@ let LayoutOptions = React.createClass({
   propTypes: {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,
-    onClick: React.PropTypes.func.isRequired
+    onChange: React.PropTypes.func.isRequired,
+    onClick: React.PropTypes.func.isRequired,
   },
 
   _handleChange (event) {
-    this.props.onChange(event.target.value)
+    this.props.onChange(parseInt(event.target.value, 10))
   },
 
   render () {
@@ -20,10 +21,12 @@ let LayoutOptions = React.createClass({
       var radioID = 'layout-option-id-' + radio.value
 
       return <div href='#' key={radio.value}
-                   className={'medium-4 small-12 layout-option ' + (self.props.value === radio.value ? 'active' : 'inactive')}>
+                  className={'medium-4 small-12 layout-option ' + (self.props.value === radio.value ? 'active' : 'inactive')}>
                 <label htmlFor={radioID}>
-                  <img src={radio.src} alt="" />
                   <h3> {radio.name} </h3>
+                  <div className='layout-option__img_wrapper'>
+                    <img src={radio.src} alt="" />
+                  </div>
                 </label>
                 <input type='radio'
                  name={radio.name}

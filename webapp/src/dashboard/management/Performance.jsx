@@ -78,8 +78,6 @@ var Performance = React.createClass({
 
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value')
 
-    var vaccinatedData = data.vaccinatedChildrenByProvince;
-
     if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
       var num = d3.format('n')
 
@@ -112,6 +110,25 @@ var Performance = React.createClass({
     var pct = d3.format('%')
 
     var missedChildrenMap = data.missedChildrenByProvince
+
+    var vaccinatedData = data.vaccinatedChildrenByProvince
+
+    var maxVaccinatedChildren = 0
+
+    var vaccinatedValue = _.property('properties[177]')
+
+    if (vaccinatedData.length > 0) {
+      var maxObject = _.max(vaccinatedData, function (d) {
+        if (vaccinatedValue(d)) {
+          return vaccinatedValue(d)
+        }
+        return 0
+      })
+
+      if (vaccinatedValue(maxObject) > 0) {
+        maxVaccinatedChildren = vaccinatedValue(maxObject)
+      }
+    }
 
     return (
       <div>
@@ -152,14 +169,16 @@ var Performance = React.createClass({
         <section className='medium-3 columns'>
           <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
-                 data={[missedChildrenMap,vaccinatedData]}
+                 data={missedChildrenMap}
                  loading={loading}
                  options={{
+              vaccinatedData: vaccinatedData,
               aspect  : 0.555,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
-              vaccinatedValue : _.property('properties[177]'),
+              vaccinatedValue : vaccinatedValue,
               yFormat : pct,
+              maxRadius: maxVaccinatedChildren,
               onClick : d => { DashboardActions.navigate({ location : d }) }
             }}/>
         </section>

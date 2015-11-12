@@ -113,7 +113,7 @@ module.exports = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.array.isRequired,
-
+    loading: React.PropTypes.bool,
     cols: React.PropTypes.number,
     data: React.PropTypes.array
   },
@@ -128,7 +128,7 @@ module.exports = React.createClass({
     var campaign = this.props.campaign
     var data = this.props.data
     var loading = this.props.loading
-    var dataColorRange =  ['#DB5344', '#79909F', '#2FB0D3']
+    var dataColorRange = ['#DB5344', '#79909F', '#2FB0D3']
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
 
     var charts = _(this.props.indicators)

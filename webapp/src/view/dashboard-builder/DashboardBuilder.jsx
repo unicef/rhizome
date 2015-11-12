@@ -25,19 +25,19 @@ var LayoutOptions = require('component/layout-options/LayoutOptions.jsx')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options')
 var CustomDashboard = require('dashboard/CustomDashboard.jsx')
 
-var moment = require('moment')
-
 window.perf = React.addons.Perf
 
 module.exports = React.createClass({
+  propTypes: {
+    dashboardId: React.PropTypes.number
+  },
+
   mixins: [Reflux.connect(DashboardBuilderStore, 'store'),
     Reflux.connect(DataStore, 'dataStore'),
     Reflux.connect(DashboardStore, 'dashboardStore'),
     Reflux.ListenerMixin
   ],
-  propTypes: {
-    dashboardId: React.PropTypes.number
-  },
+
   componentWillMount: function () {
     AppActions.init()
   },
@@ -192,7 +192,6 @@ module.exports = React.createClass({
     var campaign = this.state.dashboardStore.campaign
     var dashboardDef = this.state.store.dashboard
     var loaded = this.state.dashboardStore.loaded
-    var location = this.state.dashboardStore.location
 
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,
@@ -226,17 +225,6 @@ module.exports = React.createClass({
     var dashboard = React.createElement(
       CustomDashboard,
       dashboardProps)
-
-    var campaigns = _(this.state.dashboardStore.campaigns)
-      .filter(c => c.office_id === location.office_id)
-      .map(campaign => {
-        return _.assign({}, campaign, {
-          slug: moment(campaign.start_date).format('MMMM YYYY')
-        })
-      })
-      .sortBy('start_date')
-      .reverse()
-      .value()
 
     var addDashboardLinkContainer = (
       <div className='empty-dashboard-add-container'>

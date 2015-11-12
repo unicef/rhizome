@@ -10,7 +10,6 @@ module.exports = Reflux.createActions([
   'removeTagFromIndicator',
   'addCalculationToIndicator',
   'removeCalculationFromIndicator',
-  'addIndicatorCalc',
   'getTagTree',
   'initIndicatorToTag',
   'initIndicatorToCalc',

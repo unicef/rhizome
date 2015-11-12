@@ -6,7 +6,6 @@ var Vue = require('vue')
 var LandingPage = require('view/LandingPage.jsx')
 var DashboardNav = require('component/DashboardNav.jsx')
 var DashboardList = require('view/dashboard-list/DashboardList.jsx')
-var Navigation = require('component/Navigation.jsx')
 var AdminApp = require('./ufadmin')
 var CampaignsPage = require('./ufadmin/CampaignsPage.js')
 var GroupForm = require('view/group-form/GroupForm.jsx')
@@ -28,37 +27,35 @@ Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'))
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'))
 
 React.render(
-  React.createElement(Navigation),
-  document.getElementById('main-nav')
-)
-
-React.render(
   React.createElement(DashboardNav),
   document.getElementById('dashboards-nav')
 )
 
 module.exports = {
   Explorer: function (el) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-explorer': require('./view/explorer') }
     })
+    return vue
   },
   Dashboard: function (el) {
     React.render(React.createElement(require('view/Dashboard.jsx')), el)
   },
   DataEntry: function (el) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-entry-form': require('./view/entry-form') }
     })
+    return vue
   },
   UserAccount: function (el, user_id) {
-    new Vue({
+    let vue = new Vue({
       el: el,
       components: { 'uf-user-account': require('./view/user-account') },
       data: {'user_id': user_id}
     })
+    return vue
   },
   LandingPage: function (el) {
     React.render(React.createElement(LandingPage), el)
