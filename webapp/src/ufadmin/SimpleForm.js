@@ -12,10 +12,6 @@ var SimpleFormComponent = require('./SimpleFormComponent')
 var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
 
 var SimpleForm = React.createClass({
-  propTypes: {
-    params: React.PropTypes.object
-  },
-
   mixins: [
     Reflux.connect(SimpleFormStore, 'store')
   ],
