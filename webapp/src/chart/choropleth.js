@@ -102,8 +102,15 @@ _.extend(ChoroplethMap.prototype, {
     var svg = this._svg
     var g = svg.select('.data')
 
-    var features = _.reject(data[0], 'properties.isBorder')
-    var vaccinatedData = data[1]
+    var features
+    var vaccinatedData = []
+
+    if (data.length>0) {
+      features = _.reject(data[0], 'properties.isBorder')
+      vaccinatedData = data[1]
+    } else {
+      features = _.reject(data, 'properties.isBorder')
+    }
 
     var bounds = _calculateBounds(features)
     var center = _calculateCenter(bounds)
@@ -194,46 +201,33 @@ _.extend(ChoroplethMap.prototype, {
         })
     }
 
-    var maxVaccinatedChildren = 0;
-
     if (vaccinatedData.length > 0) {
-      var maxObject = _.max(vaccinatedData, function (d) {
-        if (options.vaccinatedValue(d)) {
-          return options.vaccinatedValue(d);
-        }
-        return 0;
-      });
+      var radius = d3.scale.sqrt ()
+        .domain ([0, options.maxRadius])
+        .range ([0, 20])
 
-      if (options.vaccinatedValue(maxObject) > 0) {
-        maxVaccinatedChildren = options.vaccinatedValue(maxObject);
-      }
+      var bubbles = svg.selectAll ('circle').data (vaccinatedData);
+
+      bubbles.enter ().append ("circle")
+      bubbles.attr ("transform", function (d) {
+        return "translate(" + path.centroid (d) + ")"
+      })
+        .attr ("r", function (d) {
+          var v = options.vaccinatedValue (d)
+          if (v) {
+            return radius (v)
+          }
+          return 0
+        })
+        .style ({
+          'opacity': 0.5,
+          'fill': '#D5EBF7',
+          'stroke': '#FFFFFF'
+        })
+
+      bubbles.exit ().remove ()
+
     }
-
-    var radius = d3.scale.sqrt()
-      .domain([0, maxVaccinatedChildren])
-      .range([0, 20]);
-
-    var bubbles = svg.selectAll('circle').data(vaccinatedData);
-
-    bubbles.enter().append("circle")
-    bubbles.attr("transform", function (d) {
-      return "translate(" + path.centroid(d) + ")";
-    })
-    .attr("r", function (d) {
-      var v = options.vaccinatedValue(d);
-      if (v) {
-        return radius(v);
-      }
-      return 0;
-    })
-    .style({
-      'opacity': 0.5,
-      'fill': '#D5EBF7',
-      'stroke': '#FFFFFF'
-    })
-
-    bubbles.exit().remove();
-
   },
 
   _onMouseMove: function (d, options) {
