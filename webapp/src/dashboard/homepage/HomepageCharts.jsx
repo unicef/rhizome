@@ -17,7 +17,8 @@ var HomepageCharts = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     data: React.PropTypes.object,
-    loading: React.PropTypes.bool
+    loading: React.PropTypes.bool,
+    location: React.PropTypes.string
   },
 
   getDefaultProps: function () {
