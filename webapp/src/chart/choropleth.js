@@ -194,9 +194,6 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     if (options.vaccinatedData && options.vaccinatedData.length>0) {
-      var radius = d3.scale.sqrt ()
-        .domain ([0, options.maxRadius])
-        .range ([0, 20])
 
       var bubbles = svg.selectAll ('circle').data (options.vaccinatedData);
 
@@ -207,7 +204,7 @@ _.extend(ChoroplethMap.prototype, {
         .attr ("r", function (d) {
           var v = options.vaccinatedValue (d)
           if (v) {
-            return radius (v)
+            return options.radius (v)
           }
           return 0
         })
@@ -218,7 +215,6 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       bubbles.exit ().remove ()
-
     }
   },
 
