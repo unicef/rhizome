@@ -15,7 +15,7 @@ var IndicatorStore = require('stores/IndicatorStore')
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],
 
-  init: function () {
+  onInitialize () {
     this.onFetchDashboards()
   },
 
@@ -152,7 +152,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     return Promise.all(promises)
   },
 
-  onFetchDashboards: function ( ) {
+  onFetchDashboards: function () {
     var dashboardDefs = [
       {
         name: 'homepage-afghanistan',
