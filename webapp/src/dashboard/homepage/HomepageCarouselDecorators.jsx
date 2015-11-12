@@ -5,6 +5,10 @@ var React = require('react')
 var HomepageCarouselDecorators = [
   {
     component: React.createClass({
+      propTypes: {
+        currentSlide: React.PropTypes.number.isRequired,
+        previousSlide: React.PropTypes.func
+      },
       render () {
         return (
             <div className='navigator-button'
@@ -24,6 +28,12 @@ var HomepageCarouselDecorators = [
   },
   {
     component: React.createClass({
+      propTypes: {
+        currentSlide: React.PropTypes.number.isRequired,
+        slidesToScroll: React.PropTypes.number,
+        slideCount: React.PropTypes.number,
+        nextSlide: React.PropTypes.func
+      },
       render () {
         return (
             <div className='navigator-button'
