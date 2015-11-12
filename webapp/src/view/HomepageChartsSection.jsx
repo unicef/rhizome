@@ -35,7 +35,7 @@ var HomepageChartsSection = React.createClass({
           District<br />summary
         </a>
 
-        <a href={this.getNGACampaignMonitoringUrl()} className='chart-button small-4 columns'>
+        <a href={this.getNGACampaignMonitoringUrl()} className='chart-button chart__button--response small-4 columns'>
           NGA Campaign<br />Monitoring
         </a>
         </div>

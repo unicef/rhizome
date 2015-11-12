@@ -1,5 +1,11 @@
 @import "variables";
 
+@include respond-to(medium-screens) {
+  .chart__button--response{
+    padding: 10px 0 !important;
+  }
+}
+
 .homepage-charts {
   padding: 2px;
 }
