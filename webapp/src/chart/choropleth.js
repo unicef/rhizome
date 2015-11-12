@@ -102,12 +102,7 @@ _.extend(ChoroplethMap.prototype, {
     var svg = this._svg
     var g = svg.select('.data')
 
-    var features = _.reject(data[0], 'properties.isBorder')
-    var vaccinatedData
-
-    if (data.length>1) {
-      vaccinatedData = data[1]
-    }
+    var features = _.reject(data, 'properties.isBorder')
 
     var bounds = _calculateBounds(features)
     var center = _calculateCenter(bounds)
@@ -198,12 +193,12 @@ _.extend(ChoroplethMap.prototype, {
         })
     }
 
-    if (vaccinatedData && vaccinatedData.length>0) {
+    if (options.vaccinatedData && options.vaccinatedData.length>0) {
       var radius = d3.scale.sqrt ()
         .domain ([0, options.maxRadius])
         .range ([0, 20])
 
-      var bubbles = svg.selectAll ('circle').data (vaccinatedData);
+      var bubbles = svg.selectAll ('circle').data (options.vaccinatedData);
 
       bubbles.enter ().append ("circle")
       bubbles.attr ("transform", function (d) {

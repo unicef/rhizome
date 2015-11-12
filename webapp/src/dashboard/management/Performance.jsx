@@ -169,9 +169,10 @@ var Performance = React.createClass({
         <section className='medium-3 columns'>
           <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
-                 data={[missedChildrenMap,vaccinatedData]}
+                 data={missedChildrenMap}
                  loading={loading}
                  options={{
+              vaccinatedData: vaccinatedData,
               aspect  : 0.555,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
