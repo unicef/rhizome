@@ -5,7 +5,8 @@
     "dev": "gulp dev",
     "build": "NODE_ENV=production gulp build",
     "test": "gulp lint && gulp mocha",
-    "package": "npm run build && gulp package"
+    "package": "npm run build && gulp package",
+    "standard": "watch 'standard'"
   },
   "dependencies": {
     "babel-runtime": "^5.8.20",
@@ -70,6 +71,7 @@
     "standard": "^5.3.1",
     "through": "^2.3.8",
     "vinyl-source-stream": "^1.1.0",
+    "watch": "^0.16.0",
     "watchify": "^3.3.1"
   },
   "engines": {
