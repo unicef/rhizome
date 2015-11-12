@@ -11,7 +11,8 @@ var MenuItem = React.createClass({
     children: React.PropTypes.array,
     depth: React.PropTypes.number,
     filtered: React.PropTypes.bool,
-    displayTitle: React.PropTypes.string
+    displayTitle: React.PropTypes.string,
+    noValue: React.PropTypes.bool
   },
 
   statics: {

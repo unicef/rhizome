@@ -11,7 +11,12 @@ module.exports = React.createClass({
     onBlur: React.PropTypes.func,
     searchable: React.PropTypes.bool,
     x: React.PropTypes.number,
-    y: React.PropTypes.number
+    y: React.PropTypes.number,
+    children: React.PropTypes.array,
+    search: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.bool
+    ])
   },
 
   getDefaultProps: function () {
@@ -24,7 +29,7 @@ module.exports = React.createClass({
     }
   },
 
-  getInitialState: function (){
+  getInitialState: function () {
     return {
       maxHeight: 'none',
       marginLeft: 0,
@@ -33,7 +38,7 @@ module.exports = React.createClass({
     }
   },
 
-  componentDidMount: function (){
+  componentDidMount: function () {
     window.addEventListener('resize', this._onResize)
 
     this._onResize()
@@ -87,7 +92,7 @@ module.exports = React.createClass({
     })
   },
 
-  render: function (){
+  render: function () {
     var itemlistStyle = { maxHeight: this.state.maxHeight }
     var containerStyle = { marginLeft: this.state.marginLeft }
     var position = {

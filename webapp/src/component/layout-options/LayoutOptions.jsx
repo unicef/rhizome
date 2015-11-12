@@ -6,7 +6,8 @@ let LayoutOptions = React.createClass({
   propTypes: {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,
-    onChange: React.PropTypes.func.isRequired
+    onChange: React.PropTypes.func.isRequired,
+    onClick: React.PropTypes.func.isRequired,
   },
 
   _handleChange (event) {

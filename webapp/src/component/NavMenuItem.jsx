@@ -5,7 +5,8 @@ var React = require('react')
 
 var NavMenuItem = React.createClass({
   propTypes: {
-    href: React.PropTypes.string.isRequired
+    href: React.PropTypes.string.isRequired,
+    children: React.PropTypes.array
   },
 
   statics: {

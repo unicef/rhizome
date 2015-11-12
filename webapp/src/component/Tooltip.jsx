@@ -8,7 +8,8 @@ var dom = require('util/dom')
 var Tooltip = React.createClass({
   propTypes: {
     top: React.PropTypes.number.isRequired,
-    left: React.PropTypes.number.isRequired
+    left: React.PropTypes.number.isRequired,
+    children: React.PropTypes.array
   },
 
   getInitialState: function () {
