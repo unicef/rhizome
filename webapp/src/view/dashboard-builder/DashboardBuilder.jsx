@@ -274,23 +274,6 @@ module.exports = React.createClass({
       </div>
     )
 
-    var settingFilter = ''
-    if (dashboardDef.builtin === true) {
-      settingFilter = (<div className='row'>
-        <div className='large-6 columns'>
-          <CampaignTitleMenu
-            campaigns={campaigns}
-            selected={campaign}
-            sendValue={this._setCampaign}/>
-        </div>
-        <div className='large-6 columns'>
-          <RegionTitleMenu
-            locations={this.state.dashboardStore.locations}
-            selected={location}
-            sendValue={this._setRegion}/>
-        </div>
-      </div>)
-    }
     var showAddChartButton = () => {
       let layout = this.state.store.dashboard.layout
       let numCharts = this.state.store.dashboard.charts.length
@@ -304,7 +287,6 @@ module.exports = React.createClass({
       <div>
         <form className='inline no-print row cd-bg-color'>
           <div className='large-6 columns'>
-            {settingFilter}
           </div>
           <div className='large-6 columns'>
             <div className='row'>
