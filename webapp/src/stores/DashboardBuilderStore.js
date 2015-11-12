@@ -55,8 +55,6 @@ var DashboardBuilderStore = Reflux.createStore({
         this.data.campaigns = campaigns
 
         this.data.dashboard = dashboard.objects[0]
-        this.data.dashboardTitle = this.data.dashboard.title
-        this.data.dashboardDescription = this.data.dashboard.description
 
         this.data.loaded = true
 
@@ -178,9 +176,6 @@ var DashboardBuilderStore = Reflux.createStore({
       dashboard_json: JSON.stringify(this.data.dashboard.charts)
     }
     api.save_dashboard(data).then(function (response) {
-      console.log(response)
-      // self.data.charts = response.objects[0].dashboard_json
-      // self.trigger(self.data)
     })
   },
   onUpdateChart: function (chartDef, index) {

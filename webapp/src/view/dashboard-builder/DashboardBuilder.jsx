@@ -88,7 +88,7 @@ module.exports = React.createClass({
     }
   },
   _deleteDashboard: function () {
-    if (window.confirm('Delete dashboard "' + this.state.store.dashboardTitle + '"?')) {
+    if (window.confirm('Delete dashboard "' + this.state.title + '"?')) {
       // FIXME
       DashboardBuilderActions.deleteDashboard()
     }
@@ -132,8 +132,11 @@ module.exports = React.createClass({
 
   _onDataLoaded: function () {
     if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
-      DashboardActions.setDashboard({dashboard: this.state.store.dashboard})
-      this.setState({title: this.state.store.dashboardTitle, description: this.state.store.dashboardDescription})
+      DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
+      this.setState({
+        title: this.state.store.dashboard.title,
+        description: this.state.store.dashboard.description
+      })
     }
   },
 
@@ -171,7 +174,7 @@ module.exports = React.createClass({
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
         <a href='#'
-           className={'create-dashboard cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
+           className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
            onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>)
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
