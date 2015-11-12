@@ -189,7 +189,6 @@ module.exports = React.createClass({
       )
     }
 
-    var campaign = this.state.dashboardStore.campaign
     var dashboardDef = this.state.store.dashboard
     var loaded = this.state.dashboardStore.loaded
 
@@ -210,7 +209,7 @@ module.exports = React.createClass({
       GeoStore.features
     )
     var dashboardProps = {
-      campaign: campaign,
+      campaigns: this.state.store.campaigns,
       dashboard: dashboardDef,
       data: data,
       loading: !loaded,

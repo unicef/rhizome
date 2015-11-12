@@ -291,9 +291,18 @@ var Dashboard = React.createClass({
       doc_id: doc_id
     }
 
-    var dashboard = React.createElement(
-      _.get(LAYOUT, dashboardName, CustomDashboard),
-      dashboardProps)
+    let customDashboardProps = {
+      campaigns: this.state.allCampaigns,
+      dashboard: dashboardDef,
+      data: data,
+      indicators: indicators,
+      loading: loading,
+      location: location
+    }
+
+    let dashboard = Object.keys(LAYOUT).indexOf(dashboardName) >= 0
+      ? React.createElement(LAYOUT[dashboardName], dashboardProps)
+      : React.createElement(CustomDashboard, customDashboardProps)
 
     var campaigns = _(this.state.campaigns)
       .filter(c => c.office_id === location.office_id)

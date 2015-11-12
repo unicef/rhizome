@@ -24,7 +24,6 @@ function getOptions (chart, campaign, data) {
       if (chart.hasOwnProperty('xFormat')) {
         opts.xFormat = _.isString(chart.xFormat) ? d3.format(chart.xFormat) : chart.xFormat
       }
-
       break
 
     case 'ChoroplethMap':
@@ -94,9 +93,10 @@ var CustomDashboard = React.createClass({
   },
 
   render: function () {
+    let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+
     var data = this.props.data
     var loading = this.props.loading
-    var campaign = this.props.campaign
     var editable = this.props.editable
 
     var charts = _.map(this.props.dashboard.charts, (chart, i) => {
@@ -139,6 +139,7 @@ var CustomDashboard = React.createClass({
           break
       }
 
+      let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
       var options = getOptions(chart, campaign, data)
 
       return (
