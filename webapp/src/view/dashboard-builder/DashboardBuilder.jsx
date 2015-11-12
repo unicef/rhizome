@@ -37,11 +37,14 @@ module.exports = React.createClass({
     Reflux.connect(DashboardStore, 'dashboardStore'),
     Reflux.ListenerMixin
   ],
+  propTypes: {
+    dashboardId: React.PropTypes.number
+  },
   componentWillMount: function () {
     AppActions.init()
   },
   componentDidMount: function () {
-    DashboardBuilderActions.initialize(this.props.dashboard_id)
+    DashboardBuilderActions.initialize(this.props.dashboardId)
     this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardBuilderStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
@@ -148,7 +151,7 @@ module.exports = React.createClass({
   },
 
   _onDataLoaded: function () {
-    if (this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
+    if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
       DashboardActions.setDashboard({dashboard: this.state.store.dashboard})
       this.setState({title: this.state.store.dashboardTitle, description: this.state.store.dashboardDescription})
     }
@@ -350,7 +353,7 @@ module.exports = React.createClass({
     } else if (this.state.chartBuilderActive) {
       var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex])
       return (
-        <ChartWizard dashboardId={this.props.dashboard_id} chartDef={chartDef} save={this.saveChart}
+        <ChartWizard dashboardId={this.props.dashboardId} chartDef={chartDef} save={this.saveChart}
                      cancel={this.cancelEditChart}/>
       )
     } else {

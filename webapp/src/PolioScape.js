@@ -69,9 +69,9 @@ module.exports = {
   HomepageCharts: function (el) {
     React.render(React.createElement(HomepageChartsView), el)
   },
-  DashboardBuilder: function (el, dashboard_id) {
+  DashboardBuilder: function (el, dashboardId) {
     var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
-    React.render(React.createElement(DashboardBuilder, { dashboard_id: dashboard_id }), el)
+    React.render(React.createElement(DashboardBuilder, { dashboardId: dashboardId }), el)
   },
   ChartBuilder: function (el, dashboard_id) {
     var ChartBuilder = require('view/chart-builder/ChartBuilder.jsx')
