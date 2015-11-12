@@ -102,6 +102,13 @@ module.exports = {
       'locations'  : 'sublocations',
       'timeRange'  : 0,
 			'indicators' : [177]
+    }, {
+      'title'      : 'Access Challenged District by Province',
+      'section'    : 'performance',
+      'type'       : 'ChoroplethMap',
+      'locations'  : 'sublocations',
+      'timeRange'  : 0,
+			'indicators' : [203]
 		}
 	]
 };
