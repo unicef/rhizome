@@ -70,7 +70,7 @@ var HomepageCharts = React.createClass({
       <div>
         <h4 className='chart-title'>Missed children, {missedChildrenData.location}</h4>
         <Chart type='ChoroplethMap'
-        data={missedChildrenData.missedChildrenMap}
+        data={[missedChildrenData.missedChildrenMap]}
         loading={loading}
         options={{
           domain: _.constant([0, 0.1]),
