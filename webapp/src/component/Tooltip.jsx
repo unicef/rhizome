@@ -9,7 +9,7 @@ var Tooltip = React.createClass({
   propTypes: {
     top: React.PropTypes.number.isRequired,
     left: React.PropTypes.number.isRequired,
-    children: React.PropTypes.array
+    children: React.PropTypes.string
   },
 
   getInitialState: function () {
