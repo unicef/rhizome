@@ -84,7 +84,6 @@ module.exports = {
     CampaignsPage.render(id_start_date, id_end_date)
   },
   GroupForm: function (el, group_id) {
-    // React.render(React.createElement(GroupForm), el)
     React.render(React.createElement(GroupForm, { group_id: group_id }), el)
   }
 }
