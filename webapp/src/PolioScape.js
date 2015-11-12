@@ -6,7 +6,6 @@ var Vue = require('vue')
 var LandingPage = require('view/LandingPage.jsx')
 var DashboardNav = require('component/DashboardNav.jsx')
 var DashboardList = require('view/dashboard-list/DashboardList.jsx')
-var Navigation = require('component/Navigation.jsx')
 var AdminApp = require('./ufadmin')
 var CampaignsPage = require('./ufadmin/CampaignsPage.js')
 var GroupForm = require('view/group-form/GroupForm.jsx')
@@ -26,11 +25,6 @@ Vue.filter('num', require('./filter/num'))
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'))
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'))
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'))
-
-React.render(
-  React.createElement(Navigation),
-  document.getElementById('main-nav')
-)
 
 React.render(
   React.createElement(DashboardNav),
