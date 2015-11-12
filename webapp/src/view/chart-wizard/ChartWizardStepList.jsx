@@ -3,7 +3,8 @@ import React from 'react'
 let ChartWizardStepList = React.createClass({
   propTypes: {
     active: React.PropTypes.string,
-    onToggle: React.PropTypes.func
+    onToggle: React.PropTypes.func,
+    children: React.PropTypes.arrayOf(React.PropTypes.element)
   },
 
   render () {

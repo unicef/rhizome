@@ -5,7 +5,8 @@ let ChartWizardStep = React.createClass({
     title: React.PropTypes.string,
     onToggle: React.PropTypes.func,
     active: React.PropTypes.string,
-    refer: React.PropTypes.string
+    refer: React.PropTypes.string,
+    children: React.PropTypes.element
   },
 
   activeStep () {
