@@ -134,6 +134,9 @@ class AggRefreshTestCase(TestCase):
         for the aggregate location (parent location, in this case Nigeria) is as
         expected.
 
+        In addition to the datapoints in the test file, i insert a null valu
+        to ensure that any null won't corrpupt the calculation.
+
         python manage.py test datapoints.tests.test_agg.AggRefreshTestCase.test_location_aggregation --settings=rhizome.settings.test
 
         '''
@@ -143,7 +146,7 @@ class AggRefreshTestCase(TestCase):
         cache_location_tree()
 
         indicator_id, campaign_id, raw_location_id,\
-            agg_location_id = 22,111,12910,12907
+            agg_location_id, null_location_id = 22,111,12910,12907,12931
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
@@ -155,7 +158,9 @@ class AggRefreshTestCase(TestCase):
             ).values_list('id','value')
 
         sum_dp_value = sum([y for x,y in dps])
-        dp_ids = [x for x,y in dps]
+
+        ## now create a a null value ##
+        self.create_datapoint(null_location_id, campaign_id, indicator_id, None)
 
         ag_r = AggRefresh()
 
@@ -185,6 +190,9 @@ class AggRefreshTestCase(TestCase):
             location_id = agg_location_id
         ).value
 
+        print agg_value
+        self.assertEqual(agg_value, sum_dp_value)
+
         ######################################################
         ## ensure that any raw data will override aggregate ##
         ######################################################
@@ -192,8 +200,6 @@ class AggRefreshTestCase(TestCase):
         override_value = 909090
         agg_override_dp = self.create_datapoint(agg_location_id,campaign_id,\
             indicator_id, override_value)
-
-        dp_ids.append(agg_override_dp.id)
 
         ar = AggRefresh()
 
@@ -215,19 +221,19 @@ class AggRefreshTestCase(TestCase):
         self.set_up()
         self.create_raw_datapoints()
         indicator_id, campaign_id, raw_location_id,\
-            agg_location_id = 22,111,12910,12907
+            agg_location_id, location_id_with_null_value = 22,111,12910,12907
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
 
-        dps = DataPoint.objects.filter(\
+        dp_values = DataPoint.objects.filter(\
             indicator_id = indicator_id,
             campaign_id = campaign_id,
             location_id__in = location_ids
-            ).values_list('id','value')
+            ).values_list('value',flat=True)
 
-        sum_dp_value = sum([y for x,y in dps])
-        dp_ids = [x for x,y in dps]
+
+        sum_dp_value = sum(dp_values)
 
         cr = AggRefresh()
 

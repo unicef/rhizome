@@ -41,7 +41,7 @@ class AggRefresh(object):
         self.dwc_batch, self.dwc_tuple_dict = [],{}
 
         if CacheJob.objects.filter(date_completed=None):
-            return 'AGG IS RUNNING'
+            return
 
         self.campaign_id = campaign_id
 
@@ -51,8 +51,7 @@ class AggRefresh(object):
                 self.campaign_id = DataPoint.objects.filter(cache_job_id=-1)[0]\
                     .campaign_id
             except IndexError:
-                return 'NOTHING_TO_PROCESS'
-
+                return
 
         self.cache_job = CacheJob.objects.create(
             is_error = False,
@@ -105,7 +104,6 @@ class AggRefresh(object):
 
         agg_dp_batch, tuple_dict = [],{}
         location_tree_columns = ['location_id','parent_location_id']
-
 
         dp_df = DataFrame(list(DataPoint.objects\
             .filter(campaign_id = self.campaign_id)\
@@ -281,7 +279,10 @@ class AggRefresh(object):
                     row_data.campaign_id)
 
                 ## this one line is where the calculation happens ##
-                calculated_value = (row_data.value_x / row_data.value_y)
+                try:
+                    calculated_value = (row_data.value_x / row_data.value_y)
+                except ZeroDivisionError:
+                    calculated_value = 0
 
                 self.dwc_tuple_dict[row_tuple] = calculated_value
 
@@ -315,8 +316,11 @@ class AggRefresh(object):
                     row_data.campaign_id)
 
                 ## this one line is where the calculation happens ##
-                calculated_value = (row_data.value_x -row_data.value_y) / \
-                    row_data.value_x
+                try:
+                    calculated_value = (row_data.value_x -row_data.value_y) / \
+                        row_data.value_x
+                except ZeroDivisionError:
+                    calculated_value = 0
 
 
                 self.dwc_tuple_dict[row_tuple] = calculated_value
@@ -353,15 +357,3 @@ class AggRefresh(object):
             .values_list('id',flat=True)
 
         return dp_ids
-
-    def get_location_ids_to_process(self):
-
-        location_cursor = location.objects.raw('''
-            SELECT DISTINCT
-                location_id as id
-            FROM datapoint d
-            WHERE cache_job_id = %s''',[self.cache_job.id])
-
-        location_ids = [r.id for r in location_cursor]
-
-        return location_ids
