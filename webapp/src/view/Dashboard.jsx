@@ -148,7 +148,6 @@ var Dashboard = React.createClass({
 
   _setlocation: function (id) {
     var location = _.find(this.state.locations, r => r.id === id)
-    // console.log('_setlocation:', id, location)
 
     if (!location) {
       return
@@ -241,7 +240,6 @@ var Dashboard = React.createClass({
   },
 
   render: function () {
-    // console.log('RENDER', this.state.location)
     if (!(this.state.loaded && this.state.dashboard)) {
       var style = {
         fontSize: '2rem',

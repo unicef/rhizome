@@ -14,6 +14,12 @@ var formatUtil = require('util/format')
 var legend = require('chart/renderer/legend')
 
 var District = React.createClass({
+  propTypes: {
+    indicators: React.PropTypes.object,
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool
+  },
+
   getInitialState: function () {
     return {
       showEmpty: false
