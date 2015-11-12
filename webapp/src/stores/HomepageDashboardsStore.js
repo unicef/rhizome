@@ -145,11 +145,9 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   countriesPromise: function () {
-    var promises = [1, 2, 3].map(function (locationId) {
-      return api.geo({ parent_location__in: locationId })
+    return api.geo({ parent_location__in: "1,2,3", with_parent: true }).then(response => {
+      return _(response.objects.features).flatten().groupBy('parent_location_id').values().value()
     })
-
-    return Promise.all(promises)
   },
 
   onFetchDashboards: function ( ) {
@@ -219,7 +217,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           .map((item) => {
             return {
               data: item[0],
-              features: _(item[1].objects.features).flatten().value()
+              features: item[1]
             }
           }).map((item) => {
             return {

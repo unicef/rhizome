@@ -5,7 +5,7 @@ import time
 from tastypie.resources import ALL
 from tastypie import fields
 
-from pandas import DataFrame
+
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 
