@@ -143,24 +143,30 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
+
         cache_location_tree()
 
         indicator_id, campaign_id, raw_location_id,\
-            agg_location_id, null_location_id = 22,111,12910,12907,12931
+            agg_location_id, null_location_id = 22,111,12910,12907,12928
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
 
+
+        DataPoint.objects.filter(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = null_location_id
+        ).update(value=None)
+
         dps = DataPoint.objects.filter(\
             indicator_id = indicator_id,
             campaign_id = campaign_id,
-            location_id__in = location_ids
-            ).values_list('id','value')
+            location_id__in = location_ids,
+            value__isnull = False
+        ).values_list('id','value')
 
         sum_dp_value = sum([y for x,y in dps])
-
-        ## now create a a null value ##
-        self.create_datapoint(null_location_id, campaign_id, indicator_id, None)
 
         ag_r = AggRefresh()
 
@@ -190,7 +196,6 @@ class AggRefreshTestCase(TestCase):
             location_id = agg_location_id
         ).value
 
-        print agg_value
         self.assertEqual(agg_value, sum_dp_value)
 
         ######################################################
@@ -221,7 +226,7 @@ class AggRefreshTestCase(TestCase):
         self.set_up()
         self.create_raw_datapoints()
         indicator_id, campaign_id, raw_location_id,\
-            agg_location_id, location_id_with_null_value = 22,111,12910,12907
+            agg_location_id = 22,111,12910,12907
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
