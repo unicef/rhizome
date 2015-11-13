@@ -127,7 +127,7 @@ var Performance = React.createClass ({
         return radius (v)
       }
     }
-    
+
     return (
       <div>
         <div className='medium-6 columns'>
@@ -182,6 +182,7 @@ var Performance = React.createClass ({
         </section>
 
         <section className='transit-points medium-1 column'>
+          <h4 className='font-bold'>Missed Children</h4>
           <h4>Transit Points</h4>
 
           {vaccinated}
