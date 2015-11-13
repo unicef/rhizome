@@ -1,4 +1,5 @@
 @import "../../styles/variables";
+@import "foundation/components/grid";
 
 .layout-options-container {
   margin-bottom: 10px;
@@ -11,14 +12,6 @@
 .layout-option {
   display: inline-block;
   text-align: center;
-
-  padding: 0 5px;
-  &:nth-last-child(1) {
-    padding: 0 0 0 10px;
-  }
-  &:first-child {
-    padding: 0 10px 0 0;
-  }
 
   img {
     width: 100%;
@@ -42,5 +35,16 @@
       border: 5px solid transparent;
     }
   }
+}
 
+@media #{$small-up} {
+  .layout-option {
+    padding: 0 5px;
+    &:nth-last-child(1) { padding: 0 0 0 10px; }
+    &:first-child { padding: 0 10px 0 0; }
+  }
+}
+
+.layout-option--label {
+  margin-bottom: 1em;
 }

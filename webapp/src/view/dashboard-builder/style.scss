@@ -1,5 +1,4 @@
 @import "../../styles/variables";
-@import "foundation/components/block-grid";
 @import "foundation/components/grid";
 
 $break-width: 960px;
@@ -17,6 +16,10 @@ $break-width: 960px;
       font-size: 13px;
       margin-bottom: 4px;
       padding: 10px 0;
+    }
+
+    .cd-button {
+      margin-bottom: 10em;
     }
   }
 }
