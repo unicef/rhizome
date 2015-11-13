@@ -237,7 +237,7 @@ _.extend(ChoroplethMap.prototype, {
         )
       ).attr('transform', function () {
         var bbox = this.getBoundingClientRect()
-        return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
+        return 'translate(' + w + ', ' + ((h - bbox.height) / 2) + ')'
       })
     }
 
