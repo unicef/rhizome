@@ -1,4 +1,5 @@
 var React = require('react')
+var api = require('../data/api')
 
 var {
   SimpleDataTable, SimpleDataTableColumn,
