@@ -23,7 +23,7 @@ function findMatches (item, re) {
   return matches
 }
 
-module.exports = {
+export default {
   replace: true,
   template: require('./template.html'),
 

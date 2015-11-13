@@ -170,4 +170,4 @@ var SimpleFormStore = Reflux.createStore({
 
 })
 
-module.exports = SimpleFormStore
+export default SimpleFormStore

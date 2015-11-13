@@ -57,4 +57,4 @@ var RegionAdmin = React.createClass({
   }
 })
 
-module.exports = RegionAdmin
+export default RegionAdmin

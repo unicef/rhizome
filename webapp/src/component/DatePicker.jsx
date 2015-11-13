@@ -30,5 +30,5 @@ var DatePicker = React.createClass({
   }
 })
 
-module.exports = DatePicker
+export default DatePicker
 

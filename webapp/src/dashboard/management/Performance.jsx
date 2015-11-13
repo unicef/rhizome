@@ -208,4 +208,4 @@ var Performance = React.createClass({
   }
 })
 
-module.exports = Performance
+export default Performance

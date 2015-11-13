@@ -69,4 +69,4 @@ const UsersAdmin = React.createClass({
   }
 })
 
-module.exports = UsersAdmin
+export default UsersAdmin

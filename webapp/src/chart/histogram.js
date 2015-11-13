@@ -130,4 +130,4 @@ _.extend(Histogram.prototype, {
   }
 })
 
-module.exports = Histogram
+export default Histogram

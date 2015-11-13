@@ -97,4 +97,4 @@ var MenuItem = React.createClass({
   }
 })
 
-module.exports = MenuItem
+export default MenuItem

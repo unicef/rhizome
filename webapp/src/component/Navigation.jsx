@@ -84,4 +84,4 @@
 //    }
 //  })
 //
-//  module.exports = Navigation
+//  export default Navigation

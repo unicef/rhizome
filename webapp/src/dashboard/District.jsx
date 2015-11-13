@@ -261,4 +261,4 @@ var District = React.createClass({
   }
 })
 
-module.exports = District
+export default District

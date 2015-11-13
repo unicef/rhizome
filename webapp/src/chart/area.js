@@ -228,4 +228,4 @@ _.extend(AreaChart.prototype, {
   }
 })
 
-module.exports = AreaChart
+export default AreaChart

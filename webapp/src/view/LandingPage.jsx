@@ -83,7 +83,7 @@ function _campaignRow (campaign, i) {
   )
 }
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [
     Reflux.connect(NavigationStore)
   ],

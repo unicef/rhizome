@@ -20,7 +20,7 @@ var scales = {
   }
 }
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   ready: function () {

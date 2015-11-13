@@ -7,7 +7,7 @@ import React from 'react'
 
 import Chart from 'component/Chart.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     data: React.PropTypes.array.isRequired,
     id: React.PropTypes.string,

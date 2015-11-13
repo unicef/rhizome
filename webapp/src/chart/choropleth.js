@@ -321,4 +321,4 @@ _.extend(ChoroplethMap.prototype, {
   }
 })
 
-module.exports = ChoroplethMap
+export default ChoroplethMap

@@ -42,4 +42,4 @@ campaign.fetch = function (id) {
   return campaign
 }
 
-module.exports = campaign
+export default campaign

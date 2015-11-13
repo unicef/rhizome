@@ -6,7 +6,7 @@ import React from 'react'
 
 import YtDChart from 'component/YtDChart.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object,
     data: React.PropTypes.array,

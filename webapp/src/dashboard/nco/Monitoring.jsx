@@ -157,4 +157,4 @@ var Monitoring = React.createClass({
 
 })
 
-module.exports = Monitoring
+export default Monitoring

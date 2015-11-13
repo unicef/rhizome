@@ -33,4 +33,4 @@ var Impact = React.createClass({
   }
 })
 
-module.exports = Impact
+export default Impact

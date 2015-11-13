@@ -20,7 +20,7 @@ function timeAxis (value) {
   return m.format('MMM')
 }
 
-module.exports = {
+export default {
   general: general,
   timeAxis: timeAxis
 }

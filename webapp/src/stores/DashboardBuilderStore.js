@@ -197,4 +197,4 @@ var DashboardBuilderStore = Reflux.createStore({
   }
 })
 
-module.exports = DashboardBuilderStore
+export default DashboardBuilderStore

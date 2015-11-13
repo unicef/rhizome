@@ -21,4 +21,4 @@ var SourceDataDashboardStore = Reflux.createStore({
   }
 })
 
-module.exports = SourceDataDashboardStore
+export default SourceDataDashboardStore

@@ -360,4 +360,4 @@ function hoverLine () {
   return chart
 }
 
-module.exports = hoverLine
+export default hoverLine

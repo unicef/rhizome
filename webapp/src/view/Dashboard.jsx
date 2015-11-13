@@ -377,4 +377,4 @@ var Dashboard = React.createClass({
   }
 })
 
-module.exports = Dashboard
+export default Dashboard

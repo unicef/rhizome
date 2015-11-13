@@ -31,7 +31,7 @@ React.render(
   document.getElementById('dashboards-nav')
 )
 
-module.exports = {
+export default {
   Explorer: function (el) {
     let vue = new Vue({
       el: el,

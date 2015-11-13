@@ -330,4 +330,4 @@ function label () {
   return chart
 }
 
-module.exports = label
+export default label

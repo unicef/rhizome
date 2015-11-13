@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'id': -8,
   'title': 'Homepage Nigeria',
   'builtin': true,

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'id': -7,
   'title': 'Homepage Pakistan',
   'builtin': true,

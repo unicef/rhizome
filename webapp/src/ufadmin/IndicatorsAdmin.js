@@ -52,4 +52,4 @@ var IndicatorsAdmin = React.createClass({
   }
 })
 
-module.exports = IndicatorsAdmin
+export default IndicatorsAdmin

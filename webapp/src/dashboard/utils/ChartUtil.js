@@ -190,7 +190,7 @@ function prepareUnderImmunizedData (original) {
   }
 }
 
-module.exports = {
+export default {
   preparePolioCasesData: preparePolioCasesData,
   prepareMissedChildrenData: prepareMissedChildrenData,
   prepareUnderImmunizedData: prepareUnderImmunizedData

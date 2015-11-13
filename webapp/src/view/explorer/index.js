@@ -11,7 +11,7 @@ import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   data: function () {

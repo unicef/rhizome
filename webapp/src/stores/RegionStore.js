@@ -44,4 +44,4 @@ var RegionStore = Reflux.createStore({
   }
 })
 
-module.exports = RegionStore
+export default RegionStore

@@ -263,7 +263,7 @@ function tagTree (q) {
   })
 }
 
-module.exports = {
+export default {
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
   datapoints: datapoint,
   indicatorsTree: indicatorsTree,

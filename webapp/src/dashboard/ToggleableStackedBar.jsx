@@ -64,4 +64,4 @@ var ToggleableStackedBar = React.createClass({
   }
 })
 
-module.exports = ToggleableStackedBar
+export default ToggleableStackedBar

@@ -72,4 +72,4 @@ var IndicatorDropdownMenu = React.createClass({
   }
 })
 
-module.exports = IndicatorDropdownMenu
+export default IndicatorDropdownMenu

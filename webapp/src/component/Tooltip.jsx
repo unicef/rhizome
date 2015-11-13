@@ -74,4 +74,4 @@ var Tooltip = React.createClass({
   }
 })
 
-module.exports = Tooltip
+export default Tooltip

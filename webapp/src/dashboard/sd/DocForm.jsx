@@ -166,4 +166,4 @@ var DocForm = React.createClass({
   }
 })
 
-module.exports = DocForm
+export default DocForm

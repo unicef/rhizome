@@ -83,4 +83,4 @@ var MenuControl = {
   }
 }
 
-module.exports = MenuControl
+export default MenuControl

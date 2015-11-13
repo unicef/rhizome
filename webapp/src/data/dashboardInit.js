@@ -248,7 +248,7 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
   return results
 }
 
-module.exports = {
+export default {
   dashboardInit: dashboardInit,
   customDashboardInit: customDashboardInit
 }

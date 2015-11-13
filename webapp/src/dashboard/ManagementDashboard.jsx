@@ -125,4 +125,4 @@ var ManagementDashboard = React.createClass({
   }
 })
 
-module.exports = ManagementDashboard
+export default ManagementDashboard

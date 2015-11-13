@@ -100,4 +100,4 @@ function qualitativeAxis () {
   return axis
 }
 
-module.exports = qualitativeAxis
+export default qualitativeAxis

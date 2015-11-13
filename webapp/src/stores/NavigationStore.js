@@ -123,4 +123,4 @@ var NavigationStore = Reflux.createStore({
   }
 })
 
-module.exports = NavigationStore
+export default NavigationStore

@@ -246,4 +246,4 @@ _.extend(Heatmap.prototype, {
   }
 })
 
-module.exports = Heatmap
+export default Heatmap

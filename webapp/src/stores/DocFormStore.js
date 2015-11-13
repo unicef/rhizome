@@ -61,4 +61,4 @@ var DocFormStore = Reflux.createStore({
   }
 })
 
-module.exports = DocFormStore
+export default DocFormStore

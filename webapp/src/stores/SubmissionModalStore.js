@@ -14,4 +14,4 @@ var SubmissionModalStore = Reflux.createStore({
   }
 })
 
-module.exports = SubmissionModalStore
+export default SubmissionModalStore

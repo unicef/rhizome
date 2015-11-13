@@ -195,4 +195,4 @@ var DataStore = Reflux.createStore({
   }
 })
 
-module.exports = DataStore
+export default DataStore

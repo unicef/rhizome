@@ -321,4 +321,4 @@ _.extend(ColumnChart.prototype, {
 
 })
 
-module.exports = ColumnChart
+export default ColumnChart

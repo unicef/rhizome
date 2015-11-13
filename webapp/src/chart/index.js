@@ -82,4 +82,4 @@ ChartFactory.prototype.initialize = function (el, data, options) {
   this.update(data, options)
 }
 
-module.exports = ChartFactory
+export default ChartFactory

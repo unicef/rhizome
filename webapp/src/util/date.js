@@ -23,6 +23,6 @@ function parseDuration (value) {
   return [Number(toks[0]), toks[1]]
 }
 
-module.exports = {
+export default {
   parseDuration: parseDuration
 }

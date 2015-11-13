@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'id': -2,
   'title': 'NGA Campaign Monitoring',
   'builtin': true,

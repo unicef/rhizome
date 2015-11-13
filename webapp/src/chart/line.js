@@ -210,4 +210,4 @@ _.extend(LineChart.prototype, {
   }
 })
 
-module.exports = LineChart
+export default LineChart

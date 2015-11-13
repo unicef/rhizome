@@ -45,4 +45,4 @@ var PieChartList = React.createClass({
 
 })
 
-module.exports = PieChartList
+export default PieChartList

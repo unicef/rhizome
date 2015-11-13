@@ -60,4 +60,4 @@ var HomepageChartsView = React.createClass({
   }
 })
 
-module.exports = HomepageChartsView
+export default HomepageChartsView

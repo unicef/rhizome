@@ -1,5 +1,5 @@
 'use strict'
-module.exports = {
+export default {
   template: require('./template.html'),
   computed: {
     display: function () {

@@ -2,7 +2,7 @@
 
 import _ from 'lodash'
 
-module.exports = {
+export default {
   replace: true,
   inherit: true,
   template: require('./menuItem.html'),

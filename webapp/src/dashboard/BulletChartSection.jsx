@@ -109,7 +109,7 @@ function _valueText (value, targets) {
   return ''
 }
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.array.isRequired,

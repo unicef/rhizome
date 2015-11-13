@@ -39,4 +39,4 @@ var DonutChart = React.createClass({
   }
 })
 
-module.exports = DonutChart
+export default DonutChart

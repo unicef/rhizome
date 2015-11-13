@@ -107,4 +107,4 @@ var Access = React.createClass({
   }
 })
 
-module.exports = Access
+export default Access

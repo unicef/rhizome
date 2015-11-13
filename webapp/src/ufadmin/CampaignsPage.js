@@ -37,4 +37,4 @@ var CampaignsPage = (function () {
   }
 })()
 
-module.exports = CampaignsPage
+export default CampaignsPage

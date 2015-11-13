@@ -83,4 +83,4 @@ var RegionTitleMenu = React.createClass({
   }
 })
 
-module.exports = RegionTitleMenu
+export default RegionTitleMenu

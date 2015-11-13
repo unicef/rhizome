@@ -24,6 +24,6 @@ function scale (categories, palette) {
     .range(range)
 }
 
-module.exports = {
+export default {
   scale: scale
 }

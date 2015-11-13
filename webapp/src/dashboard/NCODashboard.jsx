@@ -50,4 +50,4 @@ var NCODashboard = React.createClass({
   }
 })
 
-module.exports = NCODashboard
+export default NCODashboard

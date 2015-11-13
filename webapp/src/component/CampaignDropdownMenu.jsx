@@ -86,4 +86,4 @@ var CampaignDropdownMenu = React.createClass({
   }
 })
 
-module.exports = CampaignDropdownMenu
+export default CampaignDropdownMenu

@@ -6,6 +6,6 @@ function tokenize (s, sep) {
   })
 }
 
-module.exports = {
+export default {
   tokenize: tokenize
 }

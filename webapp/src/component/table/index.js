@@ -3,7 +3,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 
-module.exports = {
+export default {
   template: require('./template.html'),
   ready: function () {
     _.defaults(this.$data, {

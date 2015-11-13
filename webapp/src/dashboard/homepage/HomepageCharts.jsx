@@ -136,4 +136,4 @@ var HomepageCharts = React.createClass({
   }
 })
 
-module.exports = HomepageCharts
+export default HomepageCharts

@@ -76,4 +76,4 @@ var IndicatorTagDropdownMenu = React.createClass({
   }
 })
 
-module.exports = IndicatorTagDropdownMenu
+export default IndicatorTagDropdownMenu

@@ -51,4 +51,4 @@ var IndicatorStore = Reflux.createStore({
   }
 })
 
-module.exports = IndicatorStore
+export default IndicatorStore

@@ -52,4 +52,4 @@ var TagsAdmin = React.createClass({
   }
 })
 
-module.exports = TagsAdmin
+export default TagsAdmin

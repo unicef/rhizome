@@ -55,4 +55,4 @@ var CampaignsAdmin = React.createClass({
   }
 })
 
-module.exports = CampaignsAdmin
+export default CampaignsAdmin

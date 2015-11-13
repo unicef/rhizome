@@ -97,4 +97,4 @@ var DocOverview = React.createClass({
   }
 })
 
-module.exports = DocOverview
+export default DocOverview

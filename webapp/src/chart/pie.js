@@ -156,4 +156,4 @@ _.extend(PieChart.prototype, {
   }
 })
 
-module.exports = PieChart
+export default PieChart

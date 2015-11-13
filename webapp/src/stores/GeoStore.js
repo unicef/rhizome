@@ -33,4 +33,4 @@ var GeoStore = Reflux.createStore({
   }
 })
 
-module.exports = GeoStore
+export default GeoStore

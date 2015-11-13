@@ -48,4 +48,4 @@ var DropdownMenu = React.createClass({
   }
 })
 
-module.exports = DropdownMenu
+export default DropdownMenu

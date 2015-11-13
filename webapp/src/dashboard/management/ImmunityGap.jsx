@@ -44,4 +44,4 @@ var ImmunityGap = React.createClass({
   }
 })
 
-module.exports = ImmunityGap
+export default ImmunityGap

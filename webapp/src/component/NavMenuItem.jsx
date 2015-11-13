@@ -30,4 +30,4 @@ var NavMenuItem = React.createClass({
   }
 })
 
-module.exports = NavMenuItem
+export default NavMenuItem

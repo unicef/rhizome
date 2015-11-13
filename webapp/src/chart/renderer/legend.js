@@ -154,4 +154,4 @@ function legend () {
   return chart
 }
 
-module.exports = legend
+export default legend

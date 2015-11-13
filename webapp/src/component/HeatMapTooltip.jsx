@@ -91,4 +91,4 @@ var HeatMapTooltip = React.createClass({
   }
 })
 
-module.exports = HeatMapTooltip
+export default HeatMapTooltip

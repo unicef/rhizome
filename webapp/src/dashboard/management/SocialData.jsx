@@ -64,4 +64,4 @@ var SocialData = React.createClass({
   }
 })
 
-module.exports = SocialData
+export default SocialData

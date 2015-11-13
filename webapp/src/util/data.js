@@ -123,7 +123,7 @@ function unpivot (data) {
     .value()
 }
 
-module.exports = {
+export default {
   accessor: accessor,
   defined: defined,
   max: max,

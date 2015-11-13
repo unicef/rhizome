@@ -2,7 +2,7 @@
 
 import d3 from 'd3'
 
-module.exports = function (value, format) {
+export default function (value, format) {
   if (arguments.length < 2) {
     format = 'n'
   }

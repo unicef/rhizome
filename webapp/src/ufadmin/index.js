@@ -39,7 +39,7 @@ var routes = (
   </Route>
 )
 
-module.exports = {
+export default {
   render: function (container) {
     Router.run(routes, Router.HistoryLocation, Handler => {
       React.render(<Handler />, container)

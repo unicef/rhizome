@@ -139,4 +139,4 @@ var SimpleFormComponent = React.createClass({
   }
 })
 
-module.exports = SimpleFormComponent
+export default SimpleFormComponent

@@ -29,4 +29,4 @@ var CampaignStore = Reflux.createStore({
   }
 })
 
-module.exports = CampaignStore
+export default CampaignStore

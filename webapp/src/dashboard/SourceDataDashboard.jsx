@@ -224,4 +224,4 @@ var SourceDataDashboard = React.createClass({
   }
 })
 
-module.exports = SourceDataDashboard
+export default SourceDataDashboard

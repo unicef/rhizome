@@ -28,4 +28,4 @@ function flattenChildren (root, childrenKey, arr, filterCondition, maxDepth) {
   return arr
 }
 
-module.exports = flattenChildren
+export default flattenChildren

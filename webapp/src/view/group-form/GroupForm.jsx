@@ -8,7 +8,7 @@ import GroupFormActions from 'actions/GroupFormActions'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     group_id: React.PropTypes.oneOfType([
       React.PropTypes.string,

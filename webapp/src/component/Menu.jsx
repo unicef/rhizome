@@ -5,7 +5,7 @@ import Search from 'component/Search.jsx'
 
 import dom from 'util/dom'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     onSearch: React.PropTypes.func,
     onBlur: React.PropTypes.func,

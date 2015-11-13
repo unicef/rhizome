@@ -38,4 +38,4 @@ var CampaignMenuItem = React.createClass({
 
 })
 
-module.exports = CampaignMenuItem
+export default CampaignMenuItem

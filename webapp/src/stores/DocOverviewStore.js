@@ -57,4 +57,4 @@ var DocOverviewStore = Reflux.createStore({
   }
 })
 
-module.exports = DocOverviewStore
+export default DocOverviewStore

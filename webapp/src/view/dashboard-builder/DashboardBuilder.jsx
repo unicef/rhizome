@@ -27,7 +27,7 @@ import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
 window.perf = React.addons.Perf
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     dashboardId: React.PropTypes.number
   },

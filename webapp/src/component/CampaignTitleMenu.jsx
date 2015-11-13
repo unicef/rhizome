@@ -28,4 +28,4 @@ var CampaignTitleMenu = React.createClass({
   }
 })
 
-module.exports = CampaignTitleMenu
+export default CampaignTitleMenu

@@ -41,4 +41,4 @@ var TitleMenu = React.createClass({
 
 })
 
-module.exports = TitleMenu
+export default TitleMenu

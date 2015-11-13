@@ -35,4 +35,4 @@ var PermissionStore = Reflux.createStore({
   }
 })
 
-module.exports = PermissionStore
+export default PermissionStore

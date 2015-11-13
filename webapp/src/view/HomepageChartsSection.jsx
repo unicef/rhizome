@@ -71,4 +71,4 @@ var HomepageChartsSection = React.createClass({
   }
 })
 
-module.exports = HomepageChartsSection
+export default HomepageChartsSection

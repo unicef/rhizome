@@ -143,7 +143,7 @@ function _getIndicator (d) {
   return d.indicator.short_name
 }
 
-module.exports = {
+export default {
   init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })

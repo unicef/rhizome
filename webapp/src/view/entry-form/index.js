@@ -8,7 +8,7 @@ import Dropdown from '../../component/dropdown'
 import flattenChildren from '../../data/transform/flattenChildren'
 import treeify from '../../data/transform/treeify'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   data: function () {

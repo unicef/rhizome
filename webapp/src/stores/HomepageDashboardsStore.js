@@ -274,4 +274,4 @@ var HomepageDashboardsStore = Reflux.createStore({
   }
 })
 
-module.exports = HomepageDashboardsStore
+export default HomepageDashboardsStore

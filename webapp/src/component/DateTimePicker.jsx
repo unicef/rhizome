@@ -46,4 +46,4 @@ var DateRangePicker = React.createClass({
   }
 })
 
-module.exports = DateRangePicker
+export default DateRangePicker

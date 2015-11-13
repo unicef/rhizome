@@ -101,7 +101,7 @@ function parentOf (parent, child) {
   return result
 }
 
-module.exports = {
+export default {
   contains: contains,
   contentArea: contentArea,
   dimensions: dimensions,

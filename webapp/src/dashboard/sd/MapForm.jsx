@@ -115,4 +115,4 @@ var MapForm = React.createClass({
   }
 })
 
-module.exports = MapForm
+export default MapForm

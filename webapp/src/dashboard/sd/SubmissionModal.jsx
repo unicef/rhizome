@@ -65,4 +65,4 @@ var SubmissionModal = React.createClass({
   }
 })
 
-module.exports = SubmissionModal
+export default SubmissionModal

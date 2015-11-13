@@ -1,4 +1,4 @@
-module.exports = [
+export default [
   require('./management'),
   require('./district'),
   require('./nco'),

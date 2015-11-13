@@ -20,4 +20,4 @@ var MapFormStore = Reflux.createStore({
   }
 })
 
-module.exports = MapFormStore
+export default MapFormStore

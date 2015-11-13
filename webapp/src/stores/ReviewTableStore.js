@@ -61,4 +61,4 @@ var ReviewTableStore = Reflux.createStore({
   }
 })
 
-module.exports = ReviewTableStore
+export default ReviewTableStore

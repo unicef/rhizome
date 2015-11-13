@@ -112,4 +112,4 @@ var HomepageCarouselDecorators = [
   }
 ]
 
-module.exports = HomepageCarouselDecorators
+export default HomepageCarouselDecorators

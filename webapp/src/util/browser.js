@@ -2,7 +2,7 @@
 
 'use strict'
 
-module.exports = {
+export default {
   isIE: function () {
     return ('ActiveXObject' in window)
   }

@@ -9,7 +9,7 @@ import dom from '../../util/dom'
 import util from '../../util/data'
 import treeify from '../../data/transform/treeify'
 
-module.exports = Vue.extend({
+export default Vue.extend({
   template: require('./template.html'),
 
   // Object mapping property names of response objects to property names for the

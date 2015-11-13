@@ -118,4 +118,4 @@ var Breakdown = React.createClass({
 
 })
 
-module.exports = Breakdown
+export default Breakdown

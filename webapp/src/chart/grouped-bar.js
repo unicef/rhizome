@@ -210,4 +210,4 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
   }
 })
 
-module.exports = BarChart
+export default BarChart

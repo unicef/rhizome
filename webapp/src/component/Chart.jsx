@@ -21,7 +21,7 @@ function isEmpty (type, data, options) {
   return _(data).map(getValue).all(_.negate(_.isFinite))
 }
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     data: React.PropTypes.array.isRequired,
     type: React.PropTypes.string.isRequired,

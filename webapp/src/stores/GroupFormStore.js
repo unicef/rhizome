@@ -5,7 +5,7 @@ import _ from 'lodash'
 import api from 'data/api'
 import GroupFormActions from 'actions/GroupFormActions'
 
-module.exports = Reflux.createStore({
+export default Reflux.createStore({
   data: {
     groupId: null,
     groupName: null,

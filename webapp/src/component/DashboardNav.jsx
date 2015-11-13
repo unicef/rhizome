@@ -7,7 +7,7 @@ import Reflux from 'reflux'
 import NavMenuItem from 'component/NavMenuItem.jsx'
 import NavigationStore from 'stores/NavigationStore'
 
-module.exports = React.createClass({
+export default React.createClass({
   mixins: [
     Reflux.connect(NavigationStore),
     require('mixin/MenuControl')

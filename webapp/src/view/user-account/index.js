@@ -6,7 +6,7 @@ import treeify from '../../data/transform/treeify'
 import ancestoryString from '../../data/transform/ancestryString'
 import MenuVue from '../../component/vue-menu'
 
-module.exports = {
+export default {
   template: require('./template.html'),
   data: function () {
     return {

@@ -6,7 +6,7 @@ import Vue from 'vue'
 
 import dom from '../../util/dom'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   inherit: true,

@@ -26,4 +26,4 @@
 //
 //  })
 //
-//  module.exports = NavMenu
+//  export default NavMenu

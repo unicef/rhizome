@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-module.exports = function parseSchema (data) {
+export default function parseSchema (data) {
   var _data = _.isArray(data) ? data : Object.keys(data.objects[0])
 
   var fields = _data.map(f => {

@@ -194,4 +194,4 @@ var CustomDashboard = React.createClass({
   }
 })
 
-module.exports = CustomDashboard
+export default CustomDashboard

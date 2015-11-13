@@ -12,4 +12,4 @@ function setAncestryStringRecursive (data) {
   return data
 }
 
-module.exports = setAncestryStringRecursive
+export default setAncestryStringRecursive

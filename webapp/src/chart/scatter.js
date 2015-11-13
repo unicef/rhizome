@@ -173,4 +173,4 @@ _.extend(ScatterPlot.prototype, {
   }
 })
 
-module.exports = ScatterPlot
+export default ScatterPlot
