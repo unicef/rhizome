@@ -86,8 +86,8 @@ _.extend(PieChart.prototype, {
       .attr('transform', 'translate(' + (w / 2) + ', ' + (h / 2) + ')')
 
     var arc = d3.svg.arc()
-      .innerRadius(s / 2 * options.innerRadius)
-      .outerRadius(s / 2 * (options.outerRadius === null ? 1 : options.outerRadius))
+      .innerRadius(s / 2 * (options.innerRadius ? options.innerRadius : 0))
+      .outerRadius(s / 2 * (options.outerRadius ? options.outerRadius : 1))
 
     svg.select('.bg')
       .datum({
