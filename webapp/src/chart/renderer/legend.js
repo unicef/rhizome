@@ -9,6 +9,8 @@ function legend () {
   var _padding = 5
   var _scale = d3.scale.category20b()
   var _size = 7
+  var _fontSize = 65
+  var _margin = 20
 
   function fill (d, i) {
     if (!_interactive || _filled(d, i)) {
@@ -142,7 +144,10 @@ function legend () {
   }
 
   function translate (d, i) {
-    return 'translate(0, ' + (i * (_size + _padding)) + ')'
+    if (i%2 === 0) {
+      return 'translate(' + _margin + ', ' + (i/2 * (_size + _padding)) + ')'
+    }
+    return 'translate(' + (_fontSize + _size + _margin) + ', ' + ((i-1)/2 * (_size + _padding)) + ')'
   }
 
   return chart
