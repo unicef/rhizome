@@ -42,10 +42,7 @@ module.exports = React.createClass({
     AppActions.init()
   },
   componentDidMount: function () {
-    DashboardActions.initialize()
     DashboardBuilderActions.initialize(this.props.dashboardId)
-    this.listenTo(DashboardBuilderStore, this._onDataLoaded)
-    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
@@ -207,13 +204,13 @@ module.exports = React.createClass({
     let data = DashboardInit.customDashboardInit(
       dashboardDef,
       this.state.dataStore.data,
-      this.state.store.locations,
-      this.state.store.campaigns,
+      this.state.dashboardStore.locations,
+      this.state.dashboardStore.campaigns,
       indicators,
       GeoStore.features
     )
     var dashboardProps = {
-      campaigns: this.state.store.campaigns,
+      campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,
       data: data,
       loading: !loaded,

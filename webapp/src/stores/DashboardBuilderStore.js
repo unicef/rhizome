@@ -18,44 +18,20 @@ var DashboardBuilderStore = Reflux.createStore({
   },
 
   data: {
-    charts: [],
-    locations: [],
-    campaigns: [],
-    indicators: {},
     loaded: false,
     newDashboard: false,
-    dashboardTitle: '',
-    dashboardDescription: '',
     layout: LayoutDefaultSettings.defaultValue
   },
 
   onInitialize: function (id) {
-    var self = this
-    this.data.dashboardId = id
+    this.dashboardId = id
     if (_.isNull(id)) {
       this.data.newDashboard = true
       this.data.loaded = true
       this.trigger(this.data)
     } else {
-      Promise.all([
-        RegionStore.getlocationsPromise(),
-        RegionStore.getLocationTypesPromise(),
-        CampaignStore.getCampaignsPromise(),
-        api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' })
-      ]).then(([locations, locationTypes, campaigns, dashboard]) => {
-        let locationIdx = _.indexBy(locations, 'id')
-        let types = _.indexBy(locationTypes, 'id')
-
-        locations.forEach(location => {
-          location.location_type = _.get(types[location.location_type_id], 'name')
-          location.parent = locationIdx[location.parent_location_id]
-        })
-
-        this.data.locations = locations
-        this.data.campaigns = campaigns
-
+      api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' }).then(dashboard => {
         this.data.dashboard = dashboard.objects[0]
-
         this.data.loaded = true
 
         api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
@@ -64,6 +40,7 @@ var DashboardBuilderStore = Reflux.createStore({
             result.id = chart.id
             return result
           })
+          DashboardActions.setDashboard({ dashboard: this.data.dashboard })
           this.trigger(this.data)
         }, function (err) {
           console.log(err)
@@ -86,7 +63,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
     // just save the chart.
     var data = {
-      dashboard_id: this.data.dashboardId,
+      dashboard_id: this.dashboardId,
       chart_json: JSON.stringify(chartDef)
     }
 
