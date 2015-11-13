@@ -34,7 +34,7 @@ var SourceDataDashboard = React.createClass({
     locations: React.PropTypes.object.isRequired,
     doc_id: React.PropTypes.number.isRequired,
     doc_tab: React.PropTypes.string.isRequired,
-
+    campaign: React.PropTypes.object,
     loading: React.PropTypes.bool
   },
 
