@@ -13,7 +13,8 @@ var Access = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.object.isRequired,
-    data: React.PropTypes.object
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool
   },
 
   render: function () {

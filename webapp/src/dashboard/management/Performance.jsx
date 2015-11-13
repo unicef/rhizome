@@ -25,7 +25,8 @@ var Performance = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     data: React.PropTypes.object,
-    loading: React.PropTypes.bool
+    loading: React.PropTypes.bool,
+    location: React.PropTypes.string
   },
 
   getDefaultProps: function () {
@@ -70,7 +71,7 @@ var Performance = React.createClass({
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
-    var sortedConversions = _.sortBy(data.conversions,'campaign.start_date')
+    var sortedConversions = _.sortBy(data.conversions, 'campaign.start_date')
     var conversions = _(sortedConversions)
       .groupBy('indicator.short_name')
       .map(series)
@@ -172,15 +173,15 @@ var Performance = React.createClass({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-              vaccinatedData: vaccinatedData,
-              aspect  : 0.555,
-              domain  : _.constant([0, 0.1]),
-              value   : _.property('properties[475]'),
-              vaccinatedValue : vaccinatedValue,
-              yFormat : pct,
-              maxRadius: maxVaccinatedChildren,
-              onClick : d => { DashboardActions.navigate({ location : d }) }
-            }}/>
+                   vaccinatedData: vaccinatedData,
+                   aspect: 0.555,
+                   domain: _.constant([0, 0.1]),
+                   value: _.property('properties[475]'),
+                   vaccinatedValue: vaccinatedValue,
+                   yFormat: pct,
+                   maxRadius: maxVaccinatedChildren,
+                   onClick: d => { DashboardActions.navigate({ location: d }) }
+                 }}/>
         </section>
 
         <section className='transit-points medium-1 column'>
