@@ -7,7 +7,7 @@ var MapForm = require('dashboard/sd/MapForm.jsx')
 var api = require('data/api.js')
 
 const {
-  Datascope, LocalDatascope,
+  Datascope, LocalDatascope
 } = require('react-datascope')
 
 var parseSchema = require('ufadmin/utils/parseSchema')
@@ -20,7 +20,10 @@ var ReviewTable = React.createClass({
     loading: React.PropTypes.bool.isRequired,
     location: React.PropTypes.object.isRequired,
     campaign: React.PropTypes.object.isRequired,
-    doc_tab: React.PropTypes.string.isRequired
+    doc_tab: React.PropTypes.string.isRequired,
+    doc_id: React.PropTypes.number,
+    datascopeFilters: React.PropTypes.string,
+    children: React.PropTypes.string
   },
 
   getInitialState: function () {
