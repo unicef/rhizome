@@ -208,7 +208,7 @@ module.exports = {
   processChoroplethMap: function (dataPromise, locations) {
     var locationsIndex = _.indexBy(locations, 'id')
 
-    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) })])
+    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
       var index = _.indexBy(data, 'location')
       var chartOptions = {
