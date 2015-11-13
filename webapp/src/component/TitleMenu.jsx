@@ -31,7 +31,7 @@ var TitleMenu = React.createClass({
   render: function () {
     return (
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
-        {this.props.text.toUpperCase()}
+        {this.props.text}
         <a className='menu-button fa-stack'>
           <i className={'fa fa-stack-1x ' + this.props.icon}></i>
         </a>
