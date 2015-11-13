@@ -104,7 +104,7 @@ class AggRefresh(object):
         '''
 
         agg_dp_batch, tuple_dict = [],{}
-        location_tree_columns = ['location_id','parent_location_id']
+        location_tree_columns = ['location_id','parent_location_id','lvl']
 
         dp_df = DataFrame(list(DataPoint.objects\
             .filter(campaign_id = self.campaign_id)\
@@ -118,12 +118,26 @@ class AggRefresh(object):
             .filter(location_id__in=list(dp_df['location_id'].unique()))
             .values_list(*location_tree_columns)),columns=location_tree_columns)
 
-        ## join the location tree to the datapoints and group by parent location
-        grouped_df = DataFrame(no_nan_dp_df.merge(location_tree_df)\
+        ## join the location tree to the datapoints
+        joined_location_df = no_nan_dp_df.merge(location_tree_df)
+
+        ## filter the joined dataframe so that we aggregate at the highest
+        ## level for which there is stored data.  If we do not do this, then
+        ## if we ingest both, district and province level data, the national
+        ## will be double the value that it should be.
+
+        max_location_lvl_for_indicator_df = DataFrame(joined_location_df\
+            .groupby(['indicator_id'])['lvl'].min()) # highest lvl per indicator
+        max_location_lvl_for_indicator_df.reset_index(level=0, inplace=True)
+
+        ## filter df to keep the data for the highest level per indicator ##
+        prepped_for_sum_df = joined_location_df\
+            .merge(max_location_lvl_for_indicator_df,on=['indicator_id','lvl'])
+
+        ## group by parent_location_id and take the sum ##
+        grouped_df = DataFrame(prepped_for_sum_df\
             .groupby(['parent_location_id', 'indicator_id','campaign_id'])\
             ['value'].sum())
-
-        # print grouped_df
 
         ## add aggregate values to the tuple dict ##
         for ix, dp in grouped_df.iterrows():
@@ -140,8 +154,6 @@ class AggRefresh(object):
         for dp_unique_key, value in tuple_dict.iteritems():
             dp_dict =  dict(zip(('location_id','indicator_id','campaign_id')\
                 ,dp_unique_key))
-
-            # print value
 
             dp_dict['value'] = value
             dp_dict['cache_job_id'] = self.cache_job.id

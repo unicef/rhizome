@@ -38,6 +38,8 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
+        cache_location_tree()
+
     def create_metadata(self):
         '''
         Creating the Indicator, location, Campaign, meta data needed for the
@@ -144,8 +146,6 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
-
-        cache_location_tree()
 
         indicator_id, campaign_id, raw_location_id,\
             agg_location_id, null_location_id,NaN_location_id = \

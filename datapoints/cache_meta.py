@@ -118,6 +118,10 @@ def cache_location_tree():
     	,lvl
     FROM location_tree;
 
+    -- temporary hack to make the lvl 0 for countries --
+    update location_tree set lvl = 0
+    where location_id = parent_location_id;
+
     SELECT * FROM location_tree;
     ''')
 
