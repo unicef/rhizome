@@ -78,7 +78,11 @@ var CustomDashboard = React.createClass({
     onDeleteChart: React.PropTypes.func,
     onEditChart: React.PropTypes.func,
     onMoveForward: React.PropTypes.func,
-    onMoveBackward: React.PropTypes.func
+    onMoveBackward: React.PropTypes.func,
+    campaigns: React.PropTypes.array,
+    data: React.PropTypes.object,
+    loading: React.PropTypes.bool,
+    dashboard: React.PropTypes.object
   },
 
   getDefaultProps: function () {
@@ -126,7 +130,7 @@ var CustomDashboard = React.createClass({
       }
 
       let cols = ''
-      switch(this.props.dashboard.layout) {
+      switch (this.props.dashboard.layout) {
         case 1: // Single
           cols = 'small-12 end columns'
           break
@@ -152,7 +156,7 @@ var CustomDashboard = React.createClass({
     })
 
     var addChart
-    switch(this.props.dashboard.layout) {
+    switch (this.props.dashboard.layout) {
       case 2: // Default (Basic)
         return (
           <div className='layout-basic'>

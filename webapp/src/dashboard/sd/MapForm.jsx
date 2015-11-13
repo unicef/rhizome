@@ -20,7 +20,8 @@ var MapForm = React.createClass({
     source_object_code: React.PropTypes.string.isRequired,
     locations: React.PropTypes.object.isRequired,
     campaigns: React.PropTypes.object.isRequired,
-    indicators: React.PropTypes.object.isRequired
+    indicators: React.PropTypes.object.isRequired,
+    onModalClose: React.PropTypes.func
   },
 
   getInitialState: function () {
