@@ -49,12 +49,10 @@ function preparePolioCasesData (original) {
   var year = ''
   var totalCases = null
   var newCases = null
-  var month = null
 
   if (campaign) {
     var m = moment(campaign.start_date, 'YYYY-MM-DD')
     year = m.format('YYYY')
-    month = m.format('MMM')
 
     // Sum all of the reported Polio cases for the year
     totalCases = _(original.data)
@@ -66,8 +64,10 @@ function preparePolioCasesData (original) {
     newCases = _.get(
       _.find(
         original.data,
-        function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
-      'value')
+        function (d) { return d.campaign.start_date.getTime() === m.valueOf() }
+      ),
+      'value'
+    )
   }
 
   // Set the title based on whether there is data

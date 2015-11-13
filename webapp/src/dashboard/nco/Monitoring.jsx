@@ -74,7 +74,7 @@ var Monitoring = React.createClass({
       .value())
 
     var range = d3.extent(union
-      .filter(d => _.includes([274,272], d.indicator.id))
+      .filter(d => _.includes([274, 272], d.indicator.id))
       .pluck('value')
       .value())
 

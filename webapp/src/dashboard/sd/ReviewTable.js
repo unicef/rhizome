@@ -37,7 +37,6 @@ var ReviewTable = React.createClass({
       schema: null,
       query: {},
       loading: false,
-      data: {},
       dashboardStore: {}
     }
   },

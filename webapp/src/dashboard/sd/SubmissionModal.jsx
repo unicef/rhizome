@@ -31,9 +31,9 @@ var SubmissionModal = React.createClass({
     this.setState({modalIsOpen: false})
   },
 
-    render: function () {
-        var source_submission_id = this.props.source_submission_id;
-        var modalStyle = {width: '450', height: '75%', marginLeft: '20%'};
+  render: function () {
+    var source_submission_id = this.props.source_submission_id
+    var modalStyle = {width: '450', height: '75%', marginLeft: '20%'}
 
     var submission_data = []
     if (this.state.modalIsOpen &&
@@ -46,21 +46,22 @@ var SubmissionModal = React.createClass({
       })
     }
 
-    return <div>
-      <button
-        className='tiny'
-        onClick={this.openModal}
-        > view raw data!
-      </button>
-      <Modal
-        style={modalStyle}
-        isOpen={this.state.modalIsOpen}
-        onRequestClose={this.closeModal}
-        >
-        <h1> Source_submission_id: {source_submission_id} </h1>
-        {submission_data}
-      </Modal>
-    </div>
+    return (
+      <div>
+        <button
+          className='tiny'
+          onClick={this.openModal} >
+          view raw data!
+        </button>
+        <Modal
+          style={modalStyle}
+          isOpen={this.state.modalIsOpen}
+          onRequestClose={this.closeModal} >
+          <h1> Source_submission_id: {source_submission_id} </h1>
+          {submission_data}
+        </Modal>
+      </div>
+    )
   }
 })
 

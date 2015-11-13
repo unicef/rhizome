@@ -43,7 +43,7 @@ var DocForm = React.createClass({
   // when a file is passed to the input field, retrieve the contents as a
   // base64-encoded data URI and save it to the component's state
   handleFile: function (file) {
-    var reader = new FileReader()
+    var reader = new window.FileReader()
 
     reader.onload = function (upload) {
       DocFormActions.getData(file, upload)

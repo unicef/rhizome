@@ -1,19 +1,19 @@
 'use strict'
 
-var _ = require ('lodash')
-var d3 = require ('d3')
-var moment = require ('moment')
-var React = require ('react')
+var _ = require('lodash')
+var d3 = require('d3')
+var moment = require('moment')
+var React = require('react')
 
-var Chart = require ('component/Chart.jsx')
-var PieChartList = require ('component/PieChartList.jsx')
+var Chart = require('component/Chart.jsx')
+var PieChartList = require('component/PieChartList.jsx')
 
-var DashboardActions = require ('actions/DashboardActions')
+var DashboardActions = require('actions/DashboardActions')
 
 var series = function (values, name) {
   return {
     name: name,
-    values: _.sortBy (values, _.result ('campaign.start_date.getTime'))
+    values: _.sortBy(values, _.result('campaign.start_date.getTime'))
   }
 }
 
@@ -21,7 +21,7 @@ var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator
 }
 
-var Performance = React.createClass ({
+var Performance = React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     data: React.PropTypes.object,
@@ -37,23 +37,23 @@ var Performance = React.createClass ({
   },
 
   generateMissedChildrenChartData: function (originalData) {
-    var stack = d3.layout.stack ()
-      .order ('default')
-      .offset ('zero')
-      .values (_.property ('values'))
-      .x (_.property ('campaign.start_date'))
-      .y (_.property ('value'))
+    var stack = d3.layout.stack()
+      .order('default')
+      .offset('zero')
+      .values(_.property('values'))
+      .x(_.property('campaign.start_date'))
+      .y(_.property('value'))
 
     var missed
     try {
-      missed = _ (originalData)
-        .groupBy ('indicator.short_name')
-        .map (series)
-        .thru (stack)
-        .value ()
+      missed = _(originalData)
+        .groupBy('indicator.short_name')
+        .map(series)
+        .thru(stack)
+        .value()
     } catch (err) {
-      console.error (err)
-      console.log (`Data error in ${originalData}`)
+      console.error(err)
+      console.log(`Data error in ${originalData}`)
       missed = []
     }
 
@@ -63,52 +63,52 @@ var Performance = React.createClass ({
   render: function () {
     var data = this.props.data
     var campaign = this.props.campaign
-    var upper = moment (campaign.start_date, 'YYYY-MM-DD')
-    var lower = upper.clone ().startOf ('month').subtract (1, 'year')
+    var upper = moment(campaign.start_date, 'YYYY-MM-DD')
+    var lower = upper.clone().startOf('month').subtract(1, 'year')
     var loading = this.props.loading
     var location = this.props.location
     var colors = ['#377EA4', '#B6D0D4']
 
-    var missed = this.generateMissedChildrenChartData (data.missedChildren)
+    var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
-    var sortedConversions = _.sortBy (data.conversions, 'campaign.start_date')
-    var conversions = _ (sortedConversions)
-      .groupBy ('indicator.short_name')
-      .map (series)
-      .value ()
+    var sortedConversions = _.sortBy(data.conversions, 'campaign.start_date')
+    var conversions = _(sortedConversions)
+      .groupBy('indicator.short_name')
+      .map(series)
+      .value()
 
-    var vaccinated = _.get (_.find (data.transitPoints, indicatorForCampaign (campaign.id, 177)), 'value')
+    var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value')
 
-    if (!_.isUndefined (vaccinated) && !_.isNull (vaccinated)) {
-      var num = d3.format ('n')
+    if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
+      var num = d3.format('n')
 
       vaccinated = (
-        <p><strong>{num (vaccinated)}</strong> children vaccinated at transit points.</p>
+        <p><strong>{num(vaccinated)}</strong> children vaccinated at transit points.</p>
       )
     } else {
       vaccinated = (<p>No vaccination data.</p>)
     }
 
-    var planned = _.get (_.find (data.transitPoints, indicatorForCampaign (campaign.id, 204)), 'value')
-    var inPlace = _.get (_.find (data.transitPoints, indicatorForCampaign (campaign.id, 175)), 'value')
-    var withSM = _.get (_.find (data.transitPoints, indicatorForCampaign (campaign.id, 176)), 'value')
+    var planned = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 204)), 'value')
+    var inPlace = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 175)), 'value')
+    var withSM = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 176)), 'value')
 
     var transitPoints = []
-    if ((!_.any ([inPlace, planned], _.isUndefined)) && (!_.any ([inPlace, planned], _.isNull))) {
-      transitPoints.push ([{
+    if ((!_.any([inPlace, planned], _.isUndefined)) && (!_.any([inPlace, planned], _.isNull))) {
+      transitPoints.push([{
         title: inPlace + ' / ' + planned + ' in place',
         value: inPlace / planned
       }])
     }
 
-    if ((!_.any ([withSM, inPlace], _.isUndefined)) && (!_.any ([withSM, inPlace], _.isNull))) {
-      transitPoints.push ([{
+    if ((!_.any([withSM, inPlace], _.isUndefined)) && (!_.any([withSM, inPlace], _.isNull))) {
+      transitPoints.push([{
         title: withSM + ' / ' + inPlace + ' have a social mobilizer',
         value: withSM / inPlace
       }])
     }
 
-    var pct = d3.format ('%')
+    var pct = d3.format('%')
 
     var missedChildrenMap = data.missedChildrenByProvince
 
@@ -116,15 +116,15 @@ var Performance = React.createClass ({
 
     var maxRadius = 20
 
-    var radius = d3.scale.sqrt ()
-      .domain ([0, maxVaccinatedChildren])
-      .range ([0, maxRadius])
+    var radius = d3.scale.sqrt()
+      .domain([0, maxVaccinatedChildren])
+      .range([0, maxRadius])
 
     function _chooseRadius (v) {
       if (v > maxVaccinatedChildren) {
-        return maxRadius;
+        return maxRadius
       } else {
-        return radius (v)
+        return radius(v)
       }
     }
 
@@ -151,33 +151,33 @@ var Performance = React.createClass ({
           <section>
             <h4>Conversions</h4>
             <Chart type='LineChart'
-                   data={conversions}
-                   loading={loading}
-                   options={{
-                     aspect: 2.26,
-                     domain: _.constant([lower.toDate(), upper.toDate()]),
-                     range: _.constant([0, 1]),
-                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                     xFormat: d => moment(d).format('MMM YYYY'),
-                     yFormat: pct
-                   }}/>
+              data={conversions}
+              loading={loading}
+              options={{
+                aspect: 2.26,
+                domain: _.constant([lower.toDate(), upper.toDate()]),
+                range: _.constant([0, 1]),
+                x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                xFormat: d => moment(d).format('MMM YYYY'),
+                yFormat: pct
+              }}/>
           </section>
         </div>
 
         <section className='medium-3 columns'>
           <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
-                 data={missedChildrenMap}
-                 loading={loading}
-                 options={{
-              aspect  : 0.555,
-              domain  : _.constant([0, 0.1]),
-              value   : _.property('properties[475]'),
+            data={missedChildrenMap}
+            loading={loading}
+            options={{
+              aspect: 0.555,
+              domain: _.constant([0, 0.1]),
+              value: _.property('properties[475]'),
               bubblesValue: _.property('properties[177]'),
               stripesValue: _.property('properties[203]'),
-              yFormat : pct,
-              radius:  _.partial(_chooseRadius, _),
-              onClick : d => { DashboardActions.navigate({ location : d }) }
+              yFormat: pct,
+              radius: _.partial(_chooseRadius, _),
+              onClick: d => { DashboardActions.navigate({ location: d }) }
             }}/>
         </section>
 

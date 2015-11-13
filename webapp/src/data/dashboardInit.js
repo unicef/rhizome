@@ -175,7 +175,6 @@ function customDashboardInit (dashboard, data, locations, campaigns, indicators,
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
-
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
@@ -224,7 +223,7 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     if (chart.campaignValue) {
       var chartCampaign = campaignsById[chart.campaignValue]
       if (chartCampaign) campaign = chartCampaign
-    } else{
+    } else {
       campaign = selectedCampaign
     }
 
