@@ -29,6 +29,7 @@ var DashboardBuilderStore = Reflux.createStore({
     } else {
       api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' }).then(dashboard => {
         this.data.dashboard = dashboard.objects[0]
+        this.data.layout = dashboard.objects[0].layout
         this.data.loaded = true
 
         api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
