@@ -23,17 +23,17 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function AreaChart() {
-}
+function AreaChart () {}
 
 _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-    series = _(series).each(serie => {
+    series = _(series).filter(serie => {
       serie.values = _(serie.values).reject(item => {
         return item.value === null
       }).value()
+      return serie.values.length > 0
     }).value()
 
     options = _.assign(this._options, options)
@@ -196,7 +196,6 @@ _.extend(AreaChart.prototype, {
       })
       .text('TOTAL ' + fm(total))
     }
-
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
