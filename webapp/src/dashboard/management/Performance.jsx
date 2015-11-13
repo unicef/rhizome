@@ -135,7 +135,7 @@ var Performance = React.createClass({
         </div>
 
         <div className='medium-2 columns'>
-          <section>
+          <div>
             <h4>Missed Children</h4>
             <Chart type='AreaChart' data={missed}
                    loading={loading}
@@ -146,9 +146,9 @@ var Performance = React.createClass({
                      xFormat: d => moment(d).format('MMM YYYY'),
                      yFormat: d3.format(',.1%')
                    }}/>
-          </section>
+          </div>
 
-          <section>
+          <div>
             <h4>Conversions</h4>
             <Chart type='LineChart'
               data={conversions}
@@ -161,10 +161,10 @@ var Performance = React.createClass({
                 xFormat: d => moment(d).format('MMM YYYY'),
                 yFormat: pct
               }}/>
-          </section>
+          </div>
         </div>
 
-        <section className='medium-3 columns'>
+        <div className='medium-3 columns'>
           <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
             data={missedChildrenMap}
@@ -179,26 +179,30 @@ var Performance = React.createClass({
               radius: _.partial(_chooseRadius, _),
               onClick: d => { DashboardActions.navigate({ location: d }) }
             }}/>
-        </section>
+        </div>
 
-        <section className='transit-points medium-1 column'>
-          <h4 className='font-bold'>Missed Children</h4>
-          <h4>Transit Points</h4>
+        <div className='transit-points medium-1 column'>
+          <div>
+            <h4>Transit Points</h4>
 
-          {vaccinated}
+            {vaccinated}
 
-          <PieChartList
-            loading={loading}
-            keyPrefix='transit-points'
-            name={_.property('[0].title')}
-            data={transitPoints}
-            options={{
-              domain: _.constant([0, 1]),
-              size: 24,
-              palette: colors
-            }}
-            emptyText='No transit point data available'/>
-        </section>
+            <PieChartList
+              loading={loading}
+              keyPrefix='transit-points'
+              name={_.property('[0].title')}
+              data={transitPoints}
+              options={{
+                domain: _.constant([0, 1]),
+                size: 24,
+                palette: colors
+              }}
+              emptyText='No transit point data available'/>
+          </div>
+          <div>
+            <h4 className="font-bold">Missed Children</h4>
+          </div>
+        </div>
       </div>
     )
   }
