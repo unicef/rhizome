@@ -4,6 +4,11 @@ var React = require('react')
 var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx')
 
 var HomepageChartsSection = React.createClass({
+  propTypes: {
+    date: React.PropTypes.string,
+    location: React.PropTypes.string,
+    data: React.PropTypes.object
+  },
   getManagementDashboardUrl: function () {
     var [year, month] = this.props.date.split('-')
     return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
