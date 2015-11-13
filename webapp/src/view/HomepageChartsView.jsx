@@ -1,10 +1,10 @@
 'use strict'
 
-var React = require('react')
-var Reflux = require('reflux')
+import React from 'react'
+import Reflux from 'reflux'
 
-var HomepageChartsSection = require('view/HomepageChartsSection.jsx')
-var HomepageDashboardsStore = require('stores/HomepageDashboardsStore')
+import HomepageChartsSection from 'view/HomepageChartsSection.jsx'
+import HomepageDashboardsStore from 'stores/HomepageDashboardsStore'
 
 import HomepageDashboardsActions from 'actions/HomepageDashboardsActions'
 
@@ -60,4 +60,4 @@ var HomepageChartsView = React.createClass({
   }
 })
 
-module.exports = HomepageChartsView
+export default HomepageChartsView

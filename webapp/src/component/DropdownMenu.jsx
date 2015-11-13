@@ -1,6 +1,6 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
 var DropdownMenu = React.createClass({
   mixins: [
@@ -48,4 +48,4 @@ var DropdownMenu = React.createClass({
   }
 })
 
-module.exports = DropdownMenu
+export default DropdownMenu

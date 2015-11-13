@@ -1,8 +1,8 @@
 'use strict'
 
-var Reflux = require('reflux')
+import Reflux from 'reflux'
 
-module.exports = Reflux.createActions([
+export default Reflux.createActions([
   'initialize',
   'setDashboard',
   'navigate'

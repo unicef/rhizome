@@ -1,6 +1,6 @@
-var _ = require('lodash')
-var moment = require('moment')
-var api = require('../api')
+import _ from 'lodash'
+import moment from 'moment'
+import api from '../api'
 
 function update (campaign, obj) {
   'use strict'
@@ -42,4 +42,4 @@ campaign.fetch = function (id) {
   return campaign
 }
 
-module.exports = campaign
+export default campaign

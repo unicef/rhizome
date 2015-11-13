@@ -1,15 +1,15 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 var {
   SimpleDataTable, SimpleDataTableColumn,
   Paginator,
   SearchBar
 } = require('react-datascope')
 
-var api = require('../data/api')
+import api from '../data/api'
 
-var AdminPage = require('./AdminPage')
+import AdminPage from './AdminPage'
 
 const fields = {
   edit_link: {
@@ -57,4 +57,4 @@ var RegionAdmin = React.createClass({
   }
 })
 
-module.exports = RegionAdmin
+export default RegionAdmin

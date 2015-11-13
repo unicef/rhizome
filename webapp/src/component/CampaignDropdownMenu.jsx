@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var moment = require('moment')
+import _ from 'lodash'
+import React from 'react'
+import moment from 'moment'
 
-var DropdownMenu = require('component/DropdownMenu.jsx')
-var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
+import DropdownMenu from 'component/DropdownMenu.jsx'
+import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 
 function searchValue (campaign) {
   var m = moment(campaign.start_date)
@@ -86,4 +86,4 @@ var CampaignDropdownMenu = React.createClass({
   }
 })
 
-module.exports = CampaignDropdownMenu
+export default CampaignDropdownMenu

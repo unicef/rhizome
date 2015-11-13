@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
 
-var Chart = require('component/Chart.jsx')
+import Chart from 'component/Chart.jsx'
 
 var HeatMapTooltip = React.createClass({
   propTypes: {
@@ -91,4 +91,4 @@ var HeatMapTooltip = React.createClass({
   }
 })
 
-module.exports = HeatMapTooltip
+export default HeatMapTooltip

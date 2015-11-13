@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
 var NavMenuItem = React.createClass({
   propTypes: {
@@ -30,4 +30,4 @@ var NavMenuItem = React.createClass({
   }
 })
 
-module.exports = NavMenuItem
+export default NavMenuItem

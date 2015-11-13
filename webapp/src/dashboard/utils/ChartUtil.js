@@ -1,7 +1,7 @@
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
+import React from 'react'
 
 var series = function (values, name) {
   return {
@@ -190,7 +190,7 @@ function prepareUnderImmunizedData (original) {
   }
 }
 
-module.exports = {
+export default {
   preparePolioCasesData: preparePolioCasesData,
   prepareMissedChildrenData: prepareMissedChildrenData,
   prepareUnderImmunizedData: prepareUnderImmunizedData

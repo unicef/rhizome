@@ -1,13 +1,13 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
+import React from 'react'
 
-var Chart = require('component/Chart.jsx')
+import Chart from 'component/Chart.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     data: React.PropTypes.array.isRequired,
     id: React.PropTypes.string,

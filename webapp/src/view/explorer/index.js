@@ -1,17 +1,17 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
+import React from 'react'
 
-var api = require('../../data/api')
-var Dropdown = require('../../component/dropdown')
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
-var List = require('component/list/List.jsx')
-var DateRangePicker = require('component/DateTimePicker.jsx')
+import api from '../../data/api'
+import Dropdown from '../../component/dropdown'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
+import DateRangePicker from 'component/DateTimePicker.jsx'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   data: function () {

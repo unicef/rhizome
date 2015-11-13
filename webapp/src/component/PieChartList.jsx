@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var Chart = require('component/Chart.jsx')
+import Chart from 'component/Chart.jsx'
 
 var PieChartList = React.createClass({
   propTypes: {
@@ -45,4 +45,4 @@ var PieChartList = React.createClass({
 
 })
 
-module.exports = PieChartList
+export default PieChartList

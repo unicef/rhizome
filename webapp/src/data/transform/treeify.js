@@ -1,6 +1,6 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
-module.exports = function treeify (data, idKey) {
+export default function treeify (data, idKey) {
   'use strict'
   var index = _.indexBy(data, idKey)
   var roots = []

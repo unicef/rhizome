@@ -1,18 +1,18 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Layer = require('react-layer')
+import _ from 'lodash'
+import React from 'react'
+import Layer from 'react-layer'
 import d3 from 'd3'
 
-var Chart = require('component/Chart.jsx')
-var HeatMapTooltip = require('component/HeatMapTooltip.jsx')
-var Tooltip = require('component/Tooltip.jsx')
+import Chart from 'component/Chart.jsx'
+import HeatMapTooltip from 'component/HeatMapTooltip.jsx'
+import Tooltip from 'component/Tooltip.jsx'
 
-var DashboardActions = require('actions/DashboardActions')
+import DashboardActions from 'actions/DashboardActions'
 
-var formatUtil = require('util/format')
-var legend = require('chart/renderer/legend')
+import formatUtil from 'util/format'
+import legend from 'chart/renderer/legend'
 
 var District = React.createClass({
   propTypes: {
@@ -261,4 +261,4 @@ var District = React.createClass({
   }
 })
 
-module.exports = District
+export default District

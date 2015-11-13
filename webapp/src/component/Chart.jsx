@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var ChartFactory = require('chart')
+import ChartFactory from 'chart'
 
 function isEmpty (type, data, options) {
   // Bullet charts get special treatment because they're considered empty if
@@ -21,7 +21,7 @@ function isEmpty (type, data, options) {
   return _(data).map(getValue).all(_.negate(_.isFinite))
 }
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     data: React.PropTypes.array.isRequired,
     type: React.PropTypes.string.isRequired,

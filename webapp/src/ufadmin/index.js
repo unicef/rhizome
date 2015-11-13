@@ -1,9 +1,9 @@
 'use strict'
 
-var React = require('react')
-var Router = require('react-router')
+import React from 'react'
+import Router from 'react-router'
 var {Route, RouteHandler, Link} = Router
-var SimpleForm = require('./SimpleForm')
+import SimpleForm from './SimpleForm'
 
 var AdminApp = React.createClass({
   contextTypes: {
@@ -39,7 +39,7 @@ var routes = (
   </Route>
 )
 
-module.exports = {
+export default {
   render: function (container) {
     Router.run(routes, Router.HistoryLocation, Handler => {
       React.render(<Handler />, container)

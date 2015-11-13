@@ -1,12 +1,12 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux')
-var moment = require('moment')
+import _ from 'lodash'
+import Reflux from 'reflux'
+import moment from 'moment'
 
-var api = require('data/api')
+import api from 'data/api'
 
-var DataActions = require('actions/DataActions')
+import DataActions from 'actions/DataActions'
 
 function melt (d) {
   var base = _.omit(d, 'indicators')
@@ -195,4 +195,4 @@ var DataStore = Reflux.createStore({
   }
 })
 
-module.exports = DataStore
+export default DataStore

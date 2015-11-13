@@ -1,15 +1,15 @@
 'use strict'
 
-var React = require('react')
-var Vue = require('vue')
+import React from 'react'
+import Vue from 'vue'
 
-var LandingPage = require('view/LandingPage.jsx')
-var DashboardNav = require('component/DashboardNav.jsx')
-var DashboardList = require('view/dashboard-list/DashboardList.jsx')
-var AdminApp = require('./ufadmin')
-var CampaignsPage = require('./ufadmin/CampaignsPage.js')
-var GroupForm = require('view/group-form/GroupForm.jsx')
-var HomepageChartsView = require('view/HomepageChartsView.jsx')
+import LandingPage from 'view/LandingPage.jsx'
+import DashboardNav from 'component/DashboardNav.jsx'
+import DashboardList from 'view/dashboard-list/DashboardList.jsx'
+import AdminApp from './ufadmin'
+import CampaignsPage from './ufadmin/CampaignsPage.js'
+import GroupForm from 'view/group-form/GroupForm.jsx'
+import HomepageChartsView from 'view/HomepageChartsView.jsx'
 
 Vue.config.debug = true
 
@@ -31,7 +31,7 @@ React.render(
   document.getElementById('dashboards-nav')
 )
 
-module.exports = {
+export default {
   Explorer: function (el) {
     let vue = new Vue({
       el: el,

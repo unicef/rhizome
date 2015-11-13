@@ -1,6 +1,6 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     initialText: React.PropTypes.string,
     save: React.PropTypes.func,

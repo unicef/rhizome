@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var dom = require('util/dom')
+import dom from 'util/dom'
 
 var Tooltip = React.createClass({
   propTypes: {
@@ -74,4 +74,4 @@ var Tooltip = React.createClass({
   }
 })
 
-module.exports = Tooltip
+export default Tooltip

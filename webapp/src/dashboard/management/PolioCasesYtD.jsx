@@ -1,12 +1,12 @@
 'use strict'
 
-var _ = require('lodash')
-var moment = require('moment')
-var React = require('react')
+import _ from 'lodash'
+import moment from 'moment'
+import React from 'react'
 
-var YtDChart = require('component/YtDChart.jsx')
+import YtDChart from 'component/YtDChart.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object,
     data: React.PropTypes.array,

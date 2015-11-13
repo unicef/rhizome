@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var format = require('util/format')
-var hoverLine = require('chart/behavior/hover-line')
-var label = require('chart/renderer/label')
+import format from 'util/format'
+import hoverLine from 'chart/behavior/hover-line'
+import label from 'chart/renderer/label'
 
 var DEFAULTS = {
   margin: {
@@ -210,4 +210,4 @@ _.extend(LineChart.prototype, {
   }
 })
 
-module.exports = LineChart
+export default LineChart

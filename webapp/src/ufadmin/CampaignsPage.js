@@ -1,6 +1,6 @@
-var React = require('react')
-var moment = require('moment')
-var DatePicker = require('component/DatePicker.jsx')
+import React from 'react'
+import moment from 'moment'
+import DatePicker from 'component/DatePicker.jsx'
 
 var CampaignsPage = (function () {
   return {
@@ -37,4 +37,4 @@ var CampaignsPage = (function () {
   }
 })()
 
-module.exports = CampaignsPage
+export default CampaignsPage

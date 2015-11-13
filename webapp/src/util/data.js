@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var path = require('vue/src/parsers/path')
+import _ from 'lodash'
+import path from 'vue/src/parsers/path'
 
 /**
  * Return an accessor name for `prop`.
@@ -123,7 +123,7 @@ function unpivot (data) {
     .value()
 }
 
-module.exports = {
+export default {
   accessor: accessor,
   defined: defined,
   max: max,

@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux/src')
-var api = require('data/api')
+import _ from 'lodash'
+import Reflux from 'reflux/src'
+import api from 'data/api'
 
-var DashboardActions = require('actions/DashboardActions')
-var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js')
+import DashboardActions from 'actions/DashboardActions'
+import LayoutDefaultSettings from 'dashboard/builtin/layout-options.js'
 
 var DashboardBuilderStore = Reflux.createStore({
   listenables: [require('actions/DashboardBuilderActions')],
@@ -197,4 +197,4 @@ var DashboardBuilderStore = Reflux.createStore({
   }
 })
 
-module.exports = DashboardBuilderStore
+export default DashboardBuilderStore

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   values: [
     { name: 'Single Chart Layout', value: 1, src: '/static/img/layout-icons/single.svg' },
     { name: 'Basic Layout', value: 2, src: '/static/img/layout-icons/default.svg' },

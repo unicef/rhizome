@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
 /**
  * @constructor
@@ -330,4 +330,4 @@ function label () {
   return chart
 }
 
-module.exports = label
+export default label

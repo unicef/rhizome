@@ -1,4 +1,4 @@
-module.exports = function (name) {
+export default function (name) {
   'use strict'
 
   function model (data) {

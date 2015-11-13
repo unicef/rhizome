@@ -1,7 +1,7 @@
 'use strict'
 
-var api = require('data/api')
-var Reflux = require('reflux')
+import api from 'data/api'
+import Reflux from 'reflux'
 
 var MapFormStore = Reflux.createStore({
   init: function () {},
@@ -20,4 +20,4 @@ var MapFormStore = Reflux.createStore({
   }
 })
 
-module.exports = MapFormStore
+export default MapFormStore

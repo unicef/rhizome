@@ -2,10 +2,10 @@
 
 'use strict'
 
-var _ = require('lodash')
-var Vue = require('vue')
+import _ from 'lodash'
+import Vue from 'vue'
 
-var dom = require('util/dom')
+import dom from 'util/dom'
 
 function findMatches (item, re) {
   var matches = []
@@ -23,7 +23,7 @@ function findMatches (item, re) {
   return matches
 }
 
-module.exports = {
+export default {
   replace: true,
   template: require('./template.html'),
 

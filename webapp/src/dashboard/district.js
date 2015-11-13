@@ -1,16 +1,16 @@
 /* global window */
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
-var page = require('page')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
+import page from 'page'
+import React from 'react'
 
-var api = require('data/api')
-var util = require('util/data')
+import api from 'data/api'
+import util from 'util/data'
 
-var Chart = require('component/Chart.jsx')
+import Chart from 'component/Chart.jsx'
 
 var RANGE_ORDER = {
   'bad': 0,
@@ -68,7 +68,7 @@ function _getBoundOrder (bound) {
   return _.get(RANGE_ORDER, bound.bound_name, Infinity)
 }
 
-module.exports = {
+export default {
   template: require('./district.html'),
 
   data: function () {

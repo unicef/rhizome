@@ -1,8 +1,8 @@
 'use strict'
 
-var _ = require('lodash')
+import _ from 'lodash'
 
-module.exports = {
+export default {
   replace: true,
 
   template: require('./cell.html'),

@@ -1,7 +1,7 @@
 'use strict'
 
-var Reflux = require('reflux')
-var api = require('data/api')
+import Reflux from 'reflux'
+import api from 'data/api'
 
 var RegionStore = Reflux.createStore({
   init () {
@@ -44,4 +44,4 @@ var RegionStore = Reflux.createStore({
   }
 })
 
-module.exports = RegionStore
+export default RegionStore

@@ -1,8 +1,8 @@
 'use strict'
 
-var _ = require('lodash')
-var api = require('data/api')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import api from 'data/api'
+import Reflux from 'reflux'
 
 var DocFormStore = Reflux.createStore({
   listenables: [require('actions/DocFormActions')],
@@ -61,4 +61,4 @@ var DocFormStore = Reflux.createStore({
   }
 })
 
-module.exports = DocFormStore
+export default DocFormStore

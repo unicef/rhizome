@@ -1,7 +1,7 @@
 'use strict'
 
-var Reflux = require('reflux')
-var api = require('data/api')
+import Reflux from 'reflux'
+import api from 'data/api'
 
 var PermissionStore = Reflux.createStore({
   init () {
@@ -35,4 +35,4 @@ var PermissionStore = Reflux.createStore({
   }
 })
 
-module.exports = PermissionStore
+export default PermissionStore

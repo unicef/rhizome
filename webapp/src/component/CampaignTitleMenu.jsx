@@ -1,10 +1,10 @@
 'use strict'
 
-var React = require('react')
-var moment = require('moment')
+import React from 'react'
+import moment from 'moment'
 
-var TitleMenu = require('component/TitleMenu.jsx')
-var CampaignMenuItem = require('component/CampaignMenuItem.jsx')
+import TitleMenu from 'component/TitleMenu.jsx'
+import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 
 var CampaignTitleMenu = React.createClass({
   propTypes: {
@@ -28,4 +28,4 @@ var CampaignTitleMenu = React.createClass({
   }
 })
 
-module.exports = CampaignTitleMenu
+export default CampaignTitleMenu

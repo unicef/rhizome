@@ -1,6 +1,6 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
 var TitleMenu = React.createClass({
   mixins: [
@@ -41,4 +41,4 @@ var TitleMenu = React.createClass({
 
 })
 
-module.exports = TitleMenu
+export default TitleMenu

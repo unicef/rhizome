@@ -1,6 +1,6 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
 var HomepageCarouselDecorators = [
   {
@@ -112,4 +112,4 @@ var HomepageCarouselDecorators = [
   }
 ]
 
-module.exports = HomepageCarouselDecorators
+export default HomepageCarouselDecorators

@@ -1,6 +1,6 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,

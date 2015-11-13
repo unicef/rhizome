@@ -1,4 +1,4 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
 /**
  * Assemble a flat array with all an object's nested children (deep)
@@ -28,4 +28,4 @@ function flattenChildren (root, childrenKey, arr, filterCondition, maxDepth) {
   return arr
 }
 
-module.exports = flattenChildren
+export default flattenChildren

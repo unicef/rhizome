@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var DropdownMenu = require('component/DropdownMenu.jsx')
-var MenuItem = require('component/MenuItem.jsx')
+import DropdownMenu from 'component/DropdownMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
 
 function findMatches (item, re) {
   var matches = []
@@ -72,4 +72,4 @@ var IndicatorDropdownMenu = React.createClass({
   }
 })
 
-module.exports = IndicatorDropdownMenu
+export default IndicatorDropdownMenu

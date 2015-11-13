@@ -1,6 +1,6 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     items: React.PropTypes.arrayOf(React.PropTypes.object).isRequired, // [{id:1,title:'abc'},...]
     removeItem: React.PropTypes.func.isRequired

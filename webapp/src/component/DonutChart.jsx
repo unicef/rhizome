@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var Chart = require('component/Chart.jsx')
+import Chart from 'component/Chart.jsx'
 
 var DonutChart = React.createClass({
   propTypes: {
@@ -39,4 +39,4 @@ var DonutChart = React.createClass({
   }
 })
 
-module.exports = DonutChart
+export default DonutChart

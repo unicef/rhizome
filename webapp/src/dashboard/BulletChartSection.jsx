@@ -1,13 +1,13 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var Layer = require('react-layer')
-var React = require('react')
-var moment = require('moment')
+import _ from 'lodash'
+import d3 from 'd3'
+import Layer from 'react-layer'
+import React from 'react'
+import moment from 'moment'
 
-var Chart = require('component/Chart.jsx')
-var Tooltip = require('component/Tooltip.jsx')
+import Chart from 'component/Chart.jsx'
+import Tooltip from 'component/Tooltip.jsx'
 
 function _domain (data) {
   var lower = _(data)
@@ -109,7 +109,7 @@ function _valueText (value, targets) {
   return ''
 }
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.array.isRequired,

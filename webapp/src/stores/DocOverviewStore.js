@@ -1,7 +1,7 @@
 'use strict'
 
-var api = require('data/api')
-var Reflux = require('reflux')
+import api from 'data/api'
+import Reflux from 'reflux'
 
 var DocOverviewStore = Reflux.createStore({
   listenables: [require('actions/DocOverviewActions')],
@@ -57,4 +57,4 @@ var DocOverviewStore = Reflux.createStore({
   }
 })
 
-module.exports = DocOverviewStore
+export default DocOverviewStore

@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var TitleMenu = require('component/TitleMenu.jsx')
-var MenuItem = require('component/MenuItem.jsx')
+import TitleMenu from 'component/TitleMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
 
 var RegionTitleMenu = React.createClass({
   propTypes: {
@@ -83,4 +83,4 @@ var RegionTitleMenu = React.createClass({
   }
 })
 
-module.exports = RegionTitleMenu
+export default RegionTitleMenu

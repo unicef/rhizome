@@ -1,10 +1,10 @@
 'use strict'
 
-var Reflux = require('reflux')
-var api = require('data/api')
-var _ = require('lodash')
+import Reflux from 'reflux'
+import api from 'data/api'
+import _ from 'lodash'
 
-var SimpleFormActions = require('actions/SimpleFormActions')
+import SimpleFormActions from 'actions/SimpleFormActions'
 
 var SimpleFormStore = Reflux.createStore({
   data: {
@@ -170,4 +170,4 @@ var SimpleFormStore = Reflux.createStore({
 
 })
 
-module.exports = SimpleFormStore
+export default SimpleFormStore

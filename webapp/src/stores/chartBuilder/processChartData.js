@@ -1,10 +1,10 @@
-var _ = require('lodash')
-var d3 = require('d3')
-var colors = require('colors')
-var moment = require('moment')
-var api = require('data/api')
-var path = require('vue/src/parsers/path')
-var util = require('util/data')
+import _ from 'lodash'
+import d3 from 'd3'
+import colors from 'colors'
+import moment from 'moment'
+import api from 'data/api'
+import path from 'vue/src/parsers/path'
+import util from 'util/data'
 
 function melt (data, indicatorArray) {
   var dataset = data.objects
@@ -143,7 +143,7 @@ function _getIndicator (d) {
   return d.indicator.short_name
 }
 
-module.exports = {
+export default {
   init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })

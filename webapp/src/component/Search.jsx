@@ -1,8 +1,8 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
-var dom = require('util/dom')
+import dom from 'util/dom'
 
 var Search = React.createClass({
   propTypes: {
@@ -79,4 +79,4 @@ var Search = React.createClass({
   }
 })
 
-module.exports = Search
+export default Search

@@ -1,7 +1,7 @@
 'use strict'
 
-var React = require('react')
-var HomepageCharts = require('dashboard/homepage/HomepageCharts.jsx')
+import React from 'react'
+import HomepageCharts from 'dashboard/homepage/HomepageCharts.jsx'
 
 var HomepageChartsSection = React.createClass({
   propTypes: {
@@ -71,4 +71,4 @@ var HomepageChartsSection = React.createClass({
   }
 })
 
-module.exports = HomepageChartsSection
+export default HomepageChartsSection

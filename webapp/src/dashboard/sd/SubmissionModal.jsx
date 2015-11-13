@@ -1,8 +1,8 @@
-var _ = require('lodash')
-var React = require('react')
-var Modal = require('react-modal')
+import _ from 'lodash'
+import React from 'react'
+import Modal from 'react-modal'
 
-var SubmissionModalStore = require('stores/SubmissionModalStore')
+import SubmissionModalStore from 'stores/SubmissionModalStore'
 
 var appElement = document.getElementById('main')
 Modal.setAppElement(appElement)
@@ -65,4 +65,4 @@ var SubmissionModal = React.createClass({
   }
 })
 
-module.exports = SubmissionModal
+export default SubmissionModal

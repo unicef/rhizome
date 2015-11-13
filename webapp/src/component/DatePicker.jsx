@@ -1,7 +1,7 @@
 'use strict'
 
-var React = require('react')
-var DateTimePicker = require('react-widgets/lib/DateTimePicker')
+import React from 'react'
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
 var DatePicker = React.createClass({
   propTypes: {
@@ -30,5 +30,5 @@ var DatePicker = React.createClass({
   }
 })
 
-module.exports = DatePicker
+export default DatePicker
 

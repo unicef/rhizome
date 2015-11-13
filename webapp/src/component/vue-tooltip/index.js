@@ -1,12 +1,12 @@
 /* global window */
 'use strict'
 
-var _ = require('lodash')
-var Vue = require('vue')
+import _ from 'lodash'
+import Vue from 'vue'
 
-var dom = require('../../util/dom')
+import dom from '../../util/dom'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   inherit: true,

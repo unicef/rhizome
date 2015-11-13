@@ -1,12 +1,12 @@
 'use strict'
-var Vue = require('vue')
-var _ = require('lodash')
-var api = require('../../data/api')
-var treeify = require('../../data/transform/treeify')
-var ancestoryString = require('../../data/transform/ancestryString')
-var MenuVue = require('../../component/vue-menu')
+import Vue from 'vue'
+import _ from 'lodash'
+import api from '../../data/api'
+import treeify from '../../data/transform/treeify'
+import ancestoryString from '../../data/transform/ancestryString'
+import MenuVue from '../../component/vue-menu'
 
-module.exports = {
+export default {
   template: require('./template.html'),
   data: function () {
     return {

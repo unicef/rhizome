@@ -1,7 +1,7 @@
 'use strict'
 
-var d3 = require('d3')
-var moment = require('moment')
+import d3 from 'd3'
+import moment from 'moment'
 
 function general (value) {
   var mantissa = Math.abs(value) - Math.floor(Math.abs(value))
@@ -20,7 +20,7 @@ function timeAxis (value) {
   return m.format('MMM')
 }
 
-module.exports = {
+export default {
   general: general,
   timeAxis: timeAxis
 }

@@ -1,15 +1,15 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
-var Layer = require('react-layer')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
+import Layer from 'react-layer'
 
-var Tooltip = require('component/Tooltip.jsx')
+import Tooltip from 'component/Tooltip.jsx'
 
-var browser = require('util/browser')
+import browser from 'util/browser'
 
-var legend = require('chart/renderer/legend')
+import legend from 'chart/renderer/legend'
 
 var DEFAULTS = {
   aspect: 1,
@@ -321,4 +321,4 @@ _.extend(ChoroplethMap.prototype, {
   }
 })
 
-module.exports = ChoroplethMap
+export default ChoroplethMap

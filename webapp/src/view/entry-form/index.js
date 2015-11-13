@@ -1,14 +1,14 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var api = require('../../data/api')
-var Dropdown = require('../../component/dropdown')
-var flattenChildren = require('../../data/transform/flattenChildren')
-var treeify = require('../../data/transform/treeify')
+import api from '../../data/api'
+import Dropdown from '../../component/dropdown'
+import flattenChildren from '../../data/transform/flattenChildren'
+import treeify from '../../data/transform/treeify'
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   data: function () {

@@ -1,14 +1,14 @@
 'use strict'
 
-var React = require('react')
-var Reflux = require('reflux')
+import React from 'react'
+import Reflux from 'reflux'
 
-var GroupFormStore = require('stores/GroupFormStore')
-var GroupFormActions = require('actions/GroupFormActions')
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
-var List = require('component/list/List.jsx')
+import GroupFormStore from 'stores/GroupFormStore'
+import GroupFormActions from 'actions/GroupFormActions'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
 
-module.exports = React.createClass({
+export default React.createClass({
   propTypes: {
     group_id: React.PropTypes.oneOfType([
       React.PropTypes.string,

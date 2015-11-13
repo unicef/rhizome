@@ -1,7 +1,7 @@
 /* global document, window, MouseEvent */
 'use strict'
 
-var _ = require('lodash')
+import _ from 'lodash'
 
 function intStyle (el, property) {
   var style = window.getComputedStyle(el)
@@ -101,7 +101,7 @@ function parentOf (parent, child) {
   return result
 }
 
-module.exports = {
+export default {
   contains: contains,
   contentArea: contentArea,
   dimensions: dimensions,

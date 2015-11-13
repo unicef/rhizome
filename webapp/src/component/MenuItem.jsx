@@ -1,5 +1,5 @@
-var React = require('react')
-var _ = require('lodash')
+import React from 'react'
+import _ from 'lodash'
 
 var MenuItem = React.createClass({
   propTypes: {
@@ -97,4 +97,4 @@ var MenuItem = React.createClass({
   }
 })
 
-module.exports = MenuItem
+export default MenuItem

@@ -1,21 +1,21 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var api = require('data/api.js')
-var moment = require('moment')
-var page = require('page')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import api from 'data/api.js'
+import moment from 'moment'
+import page from 'page'
+import Reflux from 'reflux'
 
-var NavigationStore = require('stores/NavigationStore')
-var ReviewTable = require('dashboard/sd/ReviewTable.js')
-var DocOverview = require('dashboard/sd/DocOverview.jsx')
-var DocForm = require('dashboard/sd/DocForm.jsx')
-var SourceDataDashboardStore = require('stores/SourceDataDashboardStore')
-var SourceDataDashboardAction = require('actions/SourceDataDashboardActions')
+import NavigationStore from 'stores/NavigationStore'
+import ReviewTable from 'dashboard/sd/ReviewTable.js'
+import DocOverview from 'dashboard/sd/DocOverview.jsx'
+import DocForm from 'dashboard/sd/DocForm.jsx'
+import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
+import SourceDataDashboardAction from 'actions/SourceDataDashboardActions'
 
-var TitleMenu = require('component/TitleMenu.jsx')
-var MenuItem = require('component/MenuItem.jsx')
+import TitleMenu from 'component/TitleMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,
@@ -224,4 +224,4 @@ var SourceDataDashboard = React.createClass({
   }
 })
 
-module.exports = SourceDataDashboard
+export default SourceDataDashboard

@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import Reflux from 'reflux'
 
-var api = require('data/api')
+import api from 'data/api'
 
 var IndicatorStore = Reflux.createStore({
   listenables: [require('actions/AppActions')],
@@ -51,4 +51,4 @@ var IndicatorStore = Reflux.createStore({
   }
 })
 
-module.exports = IndicatorStore
+export default IndicatorStore

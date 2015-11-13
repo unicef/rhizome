@@ -1,11 +1,11 @@
-var React = require('react')
-var api = require('../data/api')
+import React from 'react'
+import api from '../data/api'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
 } = require('react-datascope')
-var AdminPage = require('./AdminPage')
+import AdminPage from './AdminPage'
 
 const fields = {
   edit_link: {
@@ -55,4 +55,4 @@ var CampaignsAdmin = React.createClass({
   }
 })
 
-module.exports = CampaignsAdmin
+export default CampaignsAdmin

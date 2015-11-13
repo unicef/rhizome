@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
 function _inherit (d) {
   return [d]
@@ -100,4 +100,4 @@ function qualitativeAxis () {
   return axis
 }
 
-module.exports = qualitativeAxis
+export default qualitativeAxis

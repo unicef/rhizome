@@ -1,16 +1,16 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux')
-var moment = require('moment')
+import _ from 'lodash'
+import Reflux from 'reflux'
+import moment from 'moment'
 
-var api = require('data/api')
-var builtins = require('dashboard/builtin')
-var DashboardInit = require('data/dashboardInit')
+import api from 'data/api'
+import builtins from 'dashboard/builtin'
+import DashboardInit from 'data/dashboardInit'
 
-var RegionStore = require('stores/RegionStore')
-var CampaignStore = require('stores/CampaignStore')
-var IndicatorStore = require('stores/IndicatorStore')
+import RegionStore from 'stores/RegionStore'
+import CampaignStore from 'stores/CampaignStore'
+import IndicatorStore from 'stores/IndicatorStore'
 
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],
@@ -274,4 +274,4 @@ var HomepageDashboardsStore = Reflux.createStore({
   }
 })
 
-module.exports = HomepageDashboardsStore
+export default HomepageDashboardsStore

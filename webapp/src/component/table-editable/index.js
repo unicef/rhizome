@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
 var formats = {
   percent: d3.format('%')
@@ -20,7 +20,7 @@ var scales = {
   }
 }
 
-module.exports = {
+export default {
   template: require('./template.html'),
 
   ready: function () {

@@ -1,6 +1,6 @@
 'use strict'
 
-var _ = require('lodash')
+import _ from 'lodash'
 
 function setAncestryStringRecursive (data) {
   _.each(_.get(data, 'children', []), function (child) {
@@ -12,4 +12,4 @@ function setAncestryStringRecursive (data) {
   return data
 }
 
-module.exports = setAncestryStringRecursive
+export default setAncestryStringRecursive

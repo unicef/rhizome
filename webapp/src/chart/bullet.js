@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var qualitativeAxis = require('./qualitative-axis')
+import qualitativeAxis from './qualitative-axis'
 
 var defaults = {
   domain: _.constant([0, 1]),
@@ -244,4 +244,4 @@ _.extend(BulletChart.prototype, {
   resize: function (el) {}
 })
 
-module.exports = BulletChart
+export default BulletChart

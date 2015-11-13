@@ -1,12 +1,12 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
-var moment = require('moment')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
+import moment from 'moment'
 
-var Chart = require('component/Chart.jsx')
-var ChartUtil = require('../utils/ChartUtil.js')
+import Chart from 'component/Chart.jsx'
+import ChartUtil from '../utils/ChartUtil.js'
 
 var ImmunityGap = React.createClass({
   propTypes: {
@@ -44,4 +44,4 @@ var ImmunityGap = React.createClass({
   }
 })
 
-module.exports = ImmunityGap
+export default ImmunityGap

@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   'id': -4,
   'title': 'Source Data',
   'builtin': true,
