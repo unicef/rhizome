@@ -154,17 +154,17 @@ var HomepageDashboardsStore = Reflux.createStore({
     var dashboardDefs = [
       {
         name: 'homepage-afghanistan',
-        date: '2015-03',
+        date: '2015-08',
         location: 'Afghanistan'
       },
       {
         name: 'homepage-pakistan',
-        date: '2015-03',
+        date: '2015-09',
         location: 'Pakistan'
       },
       {
         name: 'homepage-nigeria',
-        date: '2015-03',
+        date: '2015-09',
         location: 'Nigeria'
       }
     ]
@@ -213,7 +213,9 @@ var HomepageDashboardsStore = Reflux.createStore({
         .map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        var dashboards = _.zip([d1, d2, d3], countries)
+        var dashboards = _.zip([d3, d1, d2], countries)
+        // temporarily hacked country order ( to render homepage charts )
+        // in correct order. Need to use location_id to bind the shape features
           .map((item) => {
             return {
               data: item[0],
