@@ -1,7 +1,7 @@
 /* global document, window, MouseEvent */
 'use strict'
 
-var _ = require('lodash')
+import _ from 'lodash'
 
 function intStyle (el, property) {
   var style = window.getComputedStyle(el)

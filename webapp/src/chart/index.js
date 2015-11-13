@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var browser = require('util/browser')
+import browser from 'util/browser'
 
 var CHARTS = {
   BarChart: require('./bar'),

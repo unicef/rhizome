@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-var NavigationStore = require('stores/NavigationStore')
-var PermissionStore = require('stores/PermissionStore')
+import NavigationStore from 'stores/NavigationStore'
+import PermissionStore from 'stores/PermissionStore'
 
 // function _loadCampaigns (campaigns, offices) {
 //   var recent = _(campaigns)

@@ -1,9 +1,9 @@
 'use strict'
 
-var React = require('react')
-var Router = require('react-router')
+import React from 'react'
+import Router from 'react-router'
 var {Route, RouteHandler, Link} = Router
-var SimpleForm = require('./SimpleForm')
+import SimpleForm from './SimpleForm'
 
 var AdminApp = React.createClass({
   contextTypes: {

@@ -1,9 +1,9 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
-var PolioCasesYTD = require('dashboard/management/PolioCasesYTD.jsx')
-var ImmunityGap = require('dashboard/management/ImmunityGap.jsx')
+import PolioCasesYTD from 'dashboard/management/PolioCasesYTD.jsx'
+import ImmunityGap from 'dashboard/management/ImmunityGap.jsx'
 
 var Impact = React.createClass({
   propTypes: {

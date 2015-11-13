@@ -1,9 +1,9 @@
-var _ = require('lodash')
-var Reflux = require('reflux')
-var React = require('react')
+import _ from 'lodash'
+import Reflux from 'reflux'
+import React from 'react'
 
-var DocOverviewActions = require('actions/DocOverviewActions')
-var DocOverviewStore = require('stores/DocOverviewStore')
+import DocOverviewActions from 'actions/DocOverviewActions'
+import DocOverviewStore from 'stores/DocOverviewStore'
 
 var DocOverview = React.createClass({
   mixins: [

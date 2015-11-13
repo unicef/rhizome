@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var d3 = require('d3')
+import _ from 'lodash'
+import React from 'react'
+import d3 from 'd3'
 
-var DonutChart = require('component/DonutChart.jsx')
-var Chart = require('component/Chart.jsx')
+import DonutChart from 'component/DonutChart.jsx'
+import Chart from 'component/Chart.jsx'
 
 function donutLabel (data, labelText) {
   var value = _.get(data, '[0].value')

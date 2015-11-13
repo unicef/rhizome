@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Layer = require('react-layer')
+import _ from 'lodash'
+import React from 'react'
+import Layer from 'react-layer'
 
-var Menu = require('component/Menu.jsx')
-var dom = require('util/dom')
+import Menu from 'component/Menu.jsx'
+import dom from 'util/dom'
 
 var MenuControl = {
   getDefaultProps: function () {

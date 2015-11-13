@@ -1,4 +1,4 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
 module.exports = function treeify (data, idKey) {
   'use strict'

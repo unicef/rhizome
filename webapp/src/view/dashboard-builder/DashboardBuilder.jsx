@@ -1,29 +1,29 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux/src')
-var ChartWizard = require('view/chart-wizard/ChartWizard.jsx')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux/src'
+import ChartWizard from 'view/chart-wizard/ChartWizard.jsx'
 
-var DashboardInit = require('data/dashboardInit')
+import DashboardInit from 'data/dashboardInit'
 
-var DataActions = require('actions/DataActions')
-var DataStore = require('stores/DataStore')
+import DataActions from 'actions/DataActions'
+import DataStore from 'stores/DataStore'
 
-var DashboardBuilderActions = require('actions/DashboardBuilderActions')
-var DashboardBuilderStore = require('stores/DashboardBuilderStore')
+import DashboardBuilderActions from 'actions/DashboardBuilderActions'
+import DashboardBuilderStore from 'stores/DashboardBuilderStore'
 
-var DashboardActions = require('actions/DashboardActions')
-var DashboardStore = require('stores/DashboardStore')
+import DashboardActions from 'actions/DashboardActions'
+import DashboardStore from 'stores/DashboardStore'
 
-var IndicatorStore = require('stores/IndicatorStore')
-var GeoStore = require('stores/GeoStore')
-var GeoActions = require('actions/GeoActions')
-var AppActions = require('actions/AppActions')
-var TitleInput = require('component/TitleInput.jsx')
-var LayoutOptions = require('component/layout-options/LayoutOptions.jsx')
-var LayoutDefaultSettings = require('dashboard/builtin/layout-options')
-var CustomDashboard = require('dashboard/CustomDashboard.jsx')
+import IndicatorStore from 'stores/IndicatorStore'
+import GeoStore from 'stores/GeoStore'
+import GeoActions from 'actions/GeoActions'
+import AppActions from 'actions/AppActions'
+import TitleInput from 'component/TitleInput.jsx'
+import LayoutOptions from 'component/layout-options/LayoutOptions.jsx'
+import LayoutDefaultSettings from 'dashboard/builtin/layout-options'
+import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
 window.perf = React.addons.Perf
 

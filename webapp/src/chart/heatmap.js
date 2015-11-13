@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var formatUtil = require('util/format')
+import formatUtil from 'util/format'
 
 function _sortValue (s, sortCol) {
   // jshint validthis: true

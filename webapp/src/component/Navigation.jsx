@@ -1,12 +1,12 @@
 //  'use strict'
 //
-//  var _ = require('lodash')
-//  var React = require('react')
-//  var Reflux = require('reflux')
+//  import _ from 'lodash'
+//  import React from 'react'
+//  import Reflux from 'reflux'
 //
-//  var NavMenu = require('component/NavMenu.jsx')
-//  var NavMenuItem = require('component/NavMenuItem.jsx')
-//  var NavigationStore = require('stores/NavigationStore')
+//  import NavMenu from 'component/NavMenu.jsx'
+//  import NavMenuItem from 'component/NavMenuItem.jsx'
+//  import NavigationStore from 'stores/NavigationStore'
 //
 //  var Navigation = React.createClass({
 //    mixins: [

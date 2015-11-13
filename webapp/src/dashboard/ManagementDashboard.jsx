@@ -1,14 +1,14 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var moment = require('moment')
+import _ from 'lodash'
+import React from 'react'
+import moment from 'moment'
 
-var Impact = require('dashboard/management/Impact.jsx')
-var Performance = require('dashboard/management/Performance.jsx')
-var Access = require('dashboard/management/Access.jsx')
-var SocialData = require('dashboard/management/SocialData.jsx')
-var BulletChartSection = require('./BulletChartSection.jsx')
+import Impact from 'dashboard/management/Impact.jsx'
+import Performance from 'dashboard/management/Performance.jsx'
+import Access from 'dashboard/management/Access.jsx'
+import SocialData from 'dashboard/management/SocialData.jsx'
+import BulletChartSection from './BulletChartSection.jsx'
 
 var ManagementDashboard = React.createClass({
   propTypes: {

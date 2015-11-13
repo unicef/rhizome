@@ -1,7 +1,7 @@
 'use strict'
 
-var _ = require('lodash')
-var Vue = require('vue')
+import _ from 'lodash'
+import Vue from 'vue'
 
 module.exports = {
   template: require('./template.html'),

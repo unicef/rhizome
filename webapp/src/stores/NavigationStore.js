@@ -1,13 +1,13 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux')
-var moment = require('moment')
+import _ from 'lodash'
+import Reflux from 'reflux'
+import moment from 'moment'
 
-var CampaignStore = require('stores/CampaignStore')
+import CampaignStore from 'stores/CampaignStore'
 
-var api = require('data/api')
-var builtins = require('dashboard/builtin')
+import api from 'data/api'
+import builtins from 'dashboard/builtin'
 
 var NavigationStore = Reflux.createStore({
   init: function () {

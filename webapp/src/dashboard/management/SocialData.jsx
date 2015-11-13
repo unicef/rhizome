@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
 
-var DonutChart = require('component/DonutChart.jsx')
+import DonutChart from 'component/DonutChart.jsx'
 
 var indicatorForCampaign = function (campaign, indicator) {
   return d => d.campaign.id === campaign && d.indicator.id === indicator

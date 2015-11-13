@@ -1,9 +1,9 @@
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var Search = require('component/Search.jsx')
+import Search from 'component/Search.jsx'
 
-var dom = require('util/dom')
+import dom from 'util/dom'
 
 module.exports = React.createClass({
   propTypes: {

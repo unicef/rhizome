@@ -1,12 +1,12 @@
-var React = require('react')
+import React from 'react'
 
-var api = require('../data/api')
+import api from '../data/api'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
 } = require('react-datascope')
-var AdminPage = require('./AdminPage')
+import AdminPage from './AdminPage'
 
 const fields = {
   edit_link: {

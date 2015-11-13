@@ -1,9 +1,9 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var ChartFactory = require('chart')
+import ChartFactory from 'chart'
 
 function isEmpty (type, data, options) {
   // Bullet charts get special treatment because they're considered empty if

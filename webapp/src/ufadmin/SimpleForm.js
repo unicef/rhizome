@@ -1,15 +1,15 @@
 'use strict'
 
-var api = require('data/api')
-var React = require('react')
-var page = require('page')
-var Reflux = require('reflux')
-var ReactJson = require('react-json')
+import api from 'data/api'
+import React from 'react'
+import page from 'page'
+import Reflux from 'reflux'
+import ReactJson from 'react-json'
 
-var SimpleFormStore = require('stores/SimpleFormStore')
-var SimpleFormActions = require('actions/SimpleFormActions')
-var SimpleFormComponent = require('./SimpleFormComponent')
-var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
+import SimpleFormStore from 'stores/SimpleFormStore'
+import SimpleFormActions from 'actions/SimpleFormActions'
+import SimpleFormComponent from './SimpleFormComponent'
+import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
 
 var SimpleForm = React.createClass({
   propTypes: {

@@ -1,13 +1,13 @@
-var _ = require('lodash')
-var moment = require('moment')
-var React = require('react')
+import _ from 'lodash'
+import moment from 'moment'
+import React from 'react'
 
-var RegionTitleMenu = require('component/RegionTitleMenu')
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
-var CampaignDropdownMenu = require('component/CampaignDropdownMenu.jsx')
+import RegionTitleMenu from 'component/RegionTitleMenu'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 
-var MapFormStore = require('stores/MapFormStore')
-var Modal = require('react-modal')
+import MapFormStore from 'stores/MapFormStore'
+import Modal from 'react-modal'
 
 var appElement = document.getElementById('main')
 

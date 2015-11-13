@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-var NavMenuItem = require('component/NavMenuItem.jsx')
-var NavigationStore = require('stores/NavigationStore')
+import NavMenuItem from 'component/NavMenuItem.jsx'
+import NavigationStore from 'stores/NavigationStore'
 
 module.exports = React.createClass({
   mixins: [

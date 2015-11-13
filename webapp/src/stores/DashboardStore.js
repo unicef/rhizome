@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var Reflux = require('reflux')
-var moment = require('moment')
+import _ from 'lodash'
+import Reflux from 'reflux'
+import moment from 'moment'
 
-var RegionStore = require('stores/RegionStore')
-var CampaignStore = require('stores/CampaignStore')
+import RegionStore from 'stores/RegionStore'
+import CampaignStore from 'stores/CampaignStore'
 
 var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],

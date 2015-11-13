@@ -1,17 +1,17 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
 
-var React = require('react')
-var Carousel = require('nuka-carousel')
-var HomepageCarouselDecorators = require('./HomepageCarouselDecorators.jsx')
+import React from 'react'
+import Carousel from 'nuka-carousel'
+import HomepageCarouselDecorators from './HomepageCarouselDecorators.jsx'
 
-var Chart = require('component/Chart.jsx')
-var YtDChart = require('component/YtDChart.jsx')
+import Chart from 'component/Chart.jsx'
+import YtDChart from 'component/YtDChart.jsx'
 
-var ChartUtil = require('../utils/ChartUtil.js')
+import ChartUtil from '../utils/ChartUtil.js'
 
 var HomepageCharts = React.createClass({
   propTypes: {

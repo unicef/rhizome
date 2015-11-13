@@ -1,7 +1,7 @@
 'use strict'
 
-var Reflux = require('reflux')
-var api = require('data/api')
+import Reflux from 'reflux'
+import api from 'data/api'
 
 var CampaignStore = Reflux.createStore({
   init () {

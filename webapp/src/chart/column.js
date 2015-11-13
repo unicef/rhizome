@@ -1,11 +1,11 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var browser = require('util/browser')
-var label = require('chart/renderer/label')
-var color = require('util/color')
+import browser from 'util/browser'
+import label from 'chart/renderer/label'
+import color from 'util/color'
 
 var defaults = {
   margin: {

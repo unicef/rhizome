@@ -1,13 +1,13 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
-var moment = require('moment')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
+import moment from 'moment'
 
-var Chart = require('component/Chart.jsx')
-var DonutChart = require('component/DonutChart.jsx')
-var PieChartList = require('component/PieChartList.jsx')
+import Chart from 'component/Chart.jsx'
+import DonutChart from 'component/DonutChart.jsx'
+import PieChartList from 'component/PieChartList.jsx'
 
 var Access = React.createClass({
   propTypes: {

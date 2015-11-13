@@ -1,4 +1,4 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
 /**
  * Assemble a flat array with all an object's nested children (deep)

@@ -1,6 +1,6 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
 var CampaignMenuItem = React.createClass({
   propTypes: {

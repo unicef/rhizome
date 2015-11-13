@@ -1,19 +1,19 @@
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 import Reflux from 'reflux'
-var DashboardStore = require('stores/DashboardStore')
+import DashboardStore from 'stores/DashboardStore'
 
 import DashboardActions from 'actions/DashboardActions'
 
-var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx')
-var MapForm = require('dashboard/sd/MapForm.jsx')
-var api = require('data/api.js')
+import SubmissionModal from 'dashboard/sd/SubmissionModal.jsx'
+import MapForm from 'dashboard/sd/MapForm.jsx'
+import api from 'data/api.js'
 
 const {
   Datascope, LocalDatascope
 } = require('react-datascope')
 
-var parseSchema = require('ufadmin/utils/parseSchema')
+import parseSchema from 'ufadmin/utils/parseSchema'
 
 var ReviewTable = React.createClass({
   propTypes: {

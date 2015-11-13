@@ -1,9 +1,9 @@
 'use strict'
 
-var Reflux = require('reflux')
-var _ = require('lodash')
+import Reflux from 'reflux'
+import _ from 'lodash'
 
-var api = require('data/api')
+import api from 'data/api'
 
 var GeoStore = Reflux.createStore({
   listenables: [require('actions/GeoActions')],

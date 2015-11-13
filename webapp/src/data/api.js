@@ -4,12 +4,12 @@
 
 var BASE_URL = '/api'
 
-var _ = require('lodash')
-var request = require('superagent')
+import _ from 'lodash'
+import request from 'superagent'
 var prefix = require('superagent-prefix')(BASE_URL)
 
-var treeify = require('../data/transform/treeify')
-var campaign = require('../data/model/campaign')
+import treeify from '../data/transform/treeify'
+import campaign from '../data/model/campaign'
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {

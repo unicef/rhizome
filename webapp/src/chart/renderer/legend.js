@@ -1,6 +1,6 @@
 'use strict'
 
-var d3 = require('d3')
+import d3 from 'd3'
 
 function legend () {
   var _clickHandler = null

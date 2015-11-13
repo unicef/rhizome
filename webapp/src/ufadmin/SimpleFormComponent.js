@@ -1,12 +1,12 @@
 'use strict'
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-var SimpleFormStore = require('stores/SimpleFormStore')
-var SimpleFormActions = require('actions/SimpleFormActions')
-var IndicatorTagDropdownMenu = require('component/IndicatorTagDropdownMenu.jsx')
-var IndicatorDropdownMenu = require('component/IndicatorDropdownMenu.jsx')
+import SimpleFormStore from 'stores/SimpleFormStore'
+import SimpleFormActions from 'actions/SimpleFormActions'
+import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 
 var SimpleFormComponent = React.createClass({
   propTypes: {

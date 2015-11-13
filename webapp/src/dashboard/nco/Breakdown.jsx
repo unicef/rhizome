@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 
-var Chart = require('component/Chart.jsx')
-var ToggleableStackedBar = require('dashboard/ToggleableStackedBar.jsx')
+import Chart from 'component/Chart.jsx'
+import ToggleableStackedBar from 'dashboard/ToggleableStackedBar.jsx'
 
 function prep (data) {
   return _(data)

@@ -1,9 +1,9 @@
 'use strict'
 
-var React = require('react')
+import React from 'react'
 
-var Overview = require('dashboard/nco/Overview.jsx')
-var Breakdown = require('dashboard/nco/Breakdown.jsx')
+import Overview from 'dashboard/nco/Overview.jsx'
+import Breakdown from 'dashboard/nco/Breakdown.jsx'
 
 var NCODashboard = React.createClass({
   propTypes: {

@@ -1,6 +1,6 @@
 //  'use strict'
 //
-//  var React = require('react')
+//  import React from 'react'
 //
 //  var NavMenu = React.createClass({
 //    mixins: [

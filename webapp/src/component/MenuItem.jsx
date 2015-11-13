@@ -1,5 +1,5 @@
-var React = require('react')
-var _ = require('lodash')
+import React from 'react'
+import _ from 'lodash'
 
 var MenuItem = React.createClass({
   propTypes: {

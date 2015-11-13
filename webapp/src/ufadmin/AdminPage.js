@@ -1,11 +1,11 @@
-var _ = require('lodash')
-var React = require('react')
+import _ from 'lodash'
+import React from 'react'
 const {
   Datascope, LocalDatascope,
   ClearQueryLink
   } = require('react-datascope')
 
-var parseSchema = require('./utils/parseSchema')
+import parseSchema from './utils/parseSchema'
 
 var AdminPage = React.createClass({
   propTypes: {

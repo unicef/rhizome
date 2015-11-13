@@ -1,10 +1,10 @@
-var _ = require('lodash')
-var d3 = require('d3')
-var colors = require('colors')
-var moment = require('moment')
-var api = require('data/api')
-var path = require('vue/src/parsers/path')
-var util = require('util/data')
+import _ from 'lodash'
+import d3 from 'd3'
+import colors from 'colors'
+import moment from 'moment'
+import api from 'data/api'
+import path from 'vue/src/parsers/path'
+import util from 'util/data'
 
 function melt (data, indicatorArray) {
   var dataset = data.objects

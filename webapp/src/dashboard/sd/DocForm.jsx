@@ -1,13 +1,13 @@
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-var TitleMenu = require('component/TitleMenu.jsx')
-var MenuItem = require('component/MenuItem.jsx')
-var Dropzone = require('react-dropzone')
+import TitleMenu from 'component/TitleMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+import Dropzone from 'react-dropzone'
 
-var DocFormActions = require('actions/DocFormActions')
-var DocFormStore = require('stores/DocFormStore')
+import DocFormActions from 'actions/DocFormActions'
+import DocFormStore from 'stores/DocFormStore'
 
 var DocForm = React.createClass({
   // see here: https:// fitacular.com/blog/react/2014/06/23/react-file-upload-base64/

@@ -1,32 +1,32 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
-var page = require('page')
-var moment = require('moment')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
+import page from 'page'
+import moment from 'moment'
 
-var api = require('data/api')
-var DashboardInit = require('data/dashboardInit')
-var builtins = require('dashboard/builtin')
+import api from 'data/api'
+import DashboardInit from 'data/dashboardInit'
+import builtins from 'dashboard/builtin'
 
-var TitleMenu = require('component/TitleMenu.jsx')
-var RegionTitleMenu = require('component/RegionTitleMenu')
-var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx')
-var MenuItem = require('component/MenuItem.jsx')
+import TitleMenu from 'component/TitleMenu.jsx'
+import RegionTitleMenu from 'component/RegionTitleMenu'
+import CampaignTitleMenu from 'component/CampaignTitleMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
 
-var CustomDashboard = require('dashboard/CustomDashboard.jsx')
+import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
-var DashboardStore = require('stores/DashboardStore')
-var DataStore = require('stores/DataStore')
-var GeoStore = require('stores/GeoStore')
-var IndicatorStore = require('stores/IndicatorStore')
-var NavigationStore = require('stores/NavigationStore')
+import DashboardStore from 'stores/DashboardStore'
+import DataStore from 'stores/DataStore'
+import GeoStore from 'stores/GeoStore'
+import IndicatorStore from 'stores/IndicatorStore'
+import NavigationStore from 'stores/NavigationStore'
 
-var AppActions = require('actions/AppActions')
-var DashboardActions = require('actions/DashboardActions')
-var DataActions = require('actions/DataActions')
-var GeoActions = require('actions/GeoActions')
+import AppActions from 'actions/AppActions'
+import DashboardActions from 'actions/DashboardActions'
+import DataActions from 'actions/DataActions'
+import GeoActions from 'actions/GeoActions'
 
 var LAYOUT = {
   'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),

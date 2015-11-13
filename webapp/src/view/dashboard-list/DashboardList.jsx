@@ -1,10 +1,10 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react')
-var Reflux = require('reflux')
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
 
-var api = require('data/api')
+import api from 'data/api'
 
 var _tableRow = function (row) {
   var path = '/datapoints/' + _.kebabCase(row.title) + '/'
@@ -19,7 +19,7 @@ var _tableRow = function (row) {
     )
 }
 
-var NavigationStore = require('stores/NavigationStore')
+import NavigationStore from 'stores/NavigationStore'
 
 module.exports = React.createClass({
   mixins: [

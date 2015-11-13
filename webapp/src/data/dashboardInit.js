@@ -1,8 +1,8 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var moment = require('moment')
+import _ from 'lodash'
+import d3 from 'd3'
+import moment from 'moment'
 
 /**
  * Return the facet value for a datum given a path.

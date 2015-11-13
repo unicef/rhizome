@@ -1,6 +1,6 @@
-var _ = require('lodash')
-var moment = require('moment')
-var api = require('../api')
+import _ from 'lodash'
+import moment from 'moment'
+import api from '../api'
 
 function update (campaign, obj) {
   'use strict'

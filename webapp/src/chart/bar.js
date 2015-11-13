@@ -1,16 +1,16 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
-var React = require('react')
-var Layer = require('react-layer')
+import _ from 'lodash'
+import d3 from 'd3'
+import React from 'react'
+import Layer from 'react-layer'
 
-var ColumnChart = require('./column')
-var Tooltip = require('component/Tooltip.jsx')
+import ColumnChart from './column'
+import Tooltip from 'component/Tooltip.jsx'
 
-var browser = require('util/browser')
-var color = require('util/color')
-var legend = require('chart/renderer/legend')
+import browser from 'util/browser'
+import color from 'util/color'
+import legend from 'chart/renderer/legend'
 
 var defaults = {
   barHeight: 14,

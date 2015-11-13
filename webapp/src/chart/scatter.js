@@ -1,13 +1,13 @@
 'use strict'
 
-var _ = require('lodash')
-var d3 = require('d3')
+import _ from 'lodash'
+import d3 from 'd3'
 
-var React = require('react')
-var Layer = require('react-layer')
-var Tooltip = require('component/Tooltip.jsx')
+import React from 'react'
+import Layer from 'react-layer'
+import Tooltip from 'component/Tooltip.jsx'
 
-var palette = require('colors')
+import palette from 'colors'
 
 var defaults = {
   hoverRadius: 5,

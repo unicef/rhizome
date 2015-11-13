@@ -1,4 +1,4 @@
-var _ = require('lodash')
+import _ from 'lodash'
 
 module.exports = function parseSchema (data) {
   var _data = _.isArray(data) ? data : Object.keys(data.objects[0])

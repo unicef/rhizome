@@ -2,12 +2,12 @@
 
 'use strict'
 
-var _ = require('lodash')
-var Vue = require('vue')
+import _ from 'lodash'
+import Vue from 'vue'
 
-var dom = require('../../util/dom')
-var util = require('../../util/data')
-var treeify = require('../../data/transform/treeify')
+import dom from '../../util/dom'
+import util from '../../util/data'
+import treeify from '../../data/transform/treeify'
 
 module.exports = Vue.extend({
   template: require('./template.html'),

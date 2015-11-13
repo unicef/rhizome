@@ -1,6 +1,6 @@
 'use strict'
 
-var d3 = require('d3')
+import d3 from 'd3'
 
 module.exports = function (value, format) {
   if (arguments.length < 2) {

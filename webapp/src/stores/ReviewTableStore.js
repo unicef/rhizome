@@ -1,8 +1,8 @@
 'use strict'
 
-var api = require('data/api')
-var Reflux = require('reflux')
-var parseSchema = require('ufadmin/utils/parseSchema')
+import api from 'data/api'
+import Reflux from 'reflux'
+import parseSchema from 'ufadmin/utils/parseSchema'
 
 var ReviewTableStore = Reflux.createStore({
   listenables: [require('actions/ReviewTableActions')],
