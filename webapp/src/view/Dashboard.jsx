@@ -54,11 +54,10 @@ var Dashboard = React.createClass({
   },
 
   getallDashboards: function () {
-    var self = this
-    api.get_dashboard().then(function (response) {
+    api.get_dashboard().then(response => {
       var customDashboards = _(response.objects).sortBy('title').value()
       var allDashboards = builtins.concat(customDashboards)
-      self.setState({allDashboards: allDashboards})
+      this.setState({allDashboards: allDashboards})
     })
   },
 
@@ -82,9 +81,7 @@ var Dashboard = React.createClass({
       'RhizomeDB'
     ].join(' - ')
 
-    if (document.title !== title) {
-      document.title = title
-    }
+    document.title = title
   },
 
   componentDidMount: function () {
@@ -198,13 +195,11 @@ var Dashboard = React.createClass({
   },
 
   _showDefault: function (ctx) {
-    var self = this
-
-    api.get_dashboard().then(function (response) {
+    api.get_dashboard().then(response => {
       var customDashboards = _(response.objects).sortBy('title').value()
       var allDashboards = builtins.concat(customDashboards)
-      self.setState({allDashboards: allDashboards})
-      self._getDashboard(ctx.params.dashboard).then(dashboard => {
+      this.setState({ allDashboards: allDashboards })
+      this._getDashboard(ctx.params.dashboard).then(dashboard => {
         DashboardActions.setDashboard({
           dashboard
         })
@@ -296,8 +291,7 @@ var Dashboard = React.createClass({
       dashboard: dashboardDef,
       data: data,
       indicators: indicators,
-      loading: loading,
-      location: location
+      loading: loading
     }
 
     let dashboard = Object.keys(LAYOUT).indexOf(dashboardName) >= 0

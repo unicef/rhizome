@@ -25,9 +25,9 @@ var DashboardStore = Reflux.createStore({
       var locationIdx = _.indexBy(locations, 'id')
       var types = _.indexBy(locationsTypes, 'id')
 
-      _.each(this.locations, function (r) {
-        r.location_type = _.get(types[r.location_type_id], 'name')
-        r.parent = locationIdx[r.parent_location_id]
+      this.locations.forEach(location => {
+        location.location_type = _.get(types[location.location_type_id], 'name')
+        location.parent = locationIdx[location.parent_location_id]
       })
 
       this.loaded = true
@@ -60,7 +60,7 @@ var DashboardStore = Reflux.createStore({
 
   setDashboardInternal: function (dashboard) {
     this.indicators = {}
-    _.each(dashboard.charts, this.addChartDefinition)
+    dashboard.charts.forEach(this.addChartDefinition)
 
     var locations = this.locations
     var campaigns = this.campaigns
@@ -72,9 +72,9 @@ var DashboardStore = Reflux.createStore({
       })
       .sortBy('name')
 
-    var location = _.find(locations, function (r) {
-      return r.name === this.location
-    }.bind(this))
+    var location = _.find(locations, location => {
+      return location.name === this.location
+    })
 
     if (!location) {
       location = topLevellocations.first()
@@ -127,9 +127,9 @@ var DashboardStore = Reflux.createStore({
       var locationIdx = _.indexBy(locations, 'id')
       var types = _.indexBy(locationsTypes, 'id')
 
-      _.each(this.locations, function (r) {
-        r.location_type = _.get(types[r.location_type_id], 'name')
-        r.parent = locationIdx[r.parent_location_id]
+      this.locations.forEach(location => {
+        location.location_type = _.get(types[location.location_type_id], 'name')
+        location.parent = locationIdx[location.parent_location_id]
       })
 
       this.setDashboardInternal(dashboard)
@@ -140,7 +140,7 @@ var DashboardStore = Reflux.createStore({
   addChartDefinition: function (chart) {
     var base = _.omit(chart, 'indicators', 'title')
 
-    _.each(chart.indicators, function (id) {
+    chart.indicators.forEach(id => {
       var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity
       var hash = [id, chart.startOf, chart.locations].join('-')
 
@@ -150,7 +150,7 @@ var DashboardStore = Reflux.createStore({
           indicators: [id]
         }, base)
       }
-    }.bind(this))
+    })
   }
 })
 
