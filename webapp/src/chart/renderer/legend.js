@@ -4,7 +4,9 @@ var d3 = require('d3')
 
 function legend () {
   var _clickHandler = null
-  var _filled = function () { return true }
+  var _filled = function () {
+    return true
+  }
   var _interactive = false
   var _padding = 5
   var _scale = d3.scale.category20b()
@@ -78,7 +80,7 @@ function legend () {
           'x': _size + _padding,
           'y': _size / 2
         })
-    .style('font-size', Math.max(_size * 7 / 9, 9))
+        .style('font-size', Math.max(_size * 7 / 9, 9))
 
       series.exit()
         .transition()
@@ -144,10 +146,9 @@ function legend () {
   }
 
   function translate (d, i) {
-    if (i%2 === 0) {
-      return 'translate(' + _margin + ', ' + (i/2 * (_size + _padding)) + ')'
-    }
-    return 'translate(' + (_fontSize + _size + _margin) + ', ' + ((i-1)/2 * (_size + _padding)) + ')'
+    return i % 2 === 0
+      ? 'translate(' + _margin + ', ' + (i / 2 * (_size + _padding)) + ')'
+      : 'translate(' + (_fontSize + _size + _margin) + ', ' + ((i - 1) / 2 * (_size + _padding)) + ')'
   }
 
   return chart

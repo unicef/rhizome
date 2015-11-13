@@ -89,7 +89,12 @@ _.extend(ChoroplethMap.prototype, {
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'legend')
     svg.append('g').attr('class', 'bubbles')
+    svg.select('.bubbles').append('g').attr('class', 'data')
+    svg.select('.bubbles').append('g').attr('class', 'legend')
+
     svg.append('g').attr('class', 'stripes')
+    svg.select('.stripes').append('g').attr('class', 'data')
+    svg.select('.stripes').append('g').attr('class', 'legend')
 
     var lineWidth = 10
     var lineHeight = 10
@@ -238,10 +243,14 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
-      var bubbles = svg.selectAll('circle').data(features)
+      var bubbles = svg.selectAll('.bubbles').select('.data')
+      var bubbleData = bubbles.selectAll('circle')
+        .data(features, function (d, i) {
+          return _.get(d, 'properties.location_id', i)
+        })
 
-      bubbles.enter().append('circle')
-      bubbles.attr('transform', function (d) {
+      bubbleData.enter().append('circle')
+      bubbleData.attr('transform', function (d) {
         return 'translate(' + path.centroid(d) + ')'
       })
         .attr('r', function (d) {
@@ -254,18 +263,19 @@ _.extend(ChoroplethMap.prototype, {
           'stroke': '#FFFFFF'
         })
 
-      bubbles.exit().remove()
+      bubbleData.exit().remove()
     }
 
     if (!_.isUndefined(options.stripesValue)) {
-      var stripe = svg.select('.stripes').selectAll('.location')
+      var stripes = svg.select('.stripes').select('.data')
+      var stripeData = stripes.selectAll('.location')
         .data(features, function (d, i) {
           return _.get(d, 'properties.location_id', i)
         })
 
-      stripe.enter().append('path')
+      stripeData.enter().append('path')
 
-      stripe.attr({
+      stripeData.attr({
         'd': path,
         'class': 'location'
       })
@@ -280,7 +290,7 @@ _.extend(ChoroplethMap.prototype, {
           return _.isFinite(v) ? 1 : 0
         })
 
-      stripe.exit().remove()
+      stripeData.exit().remove()
     }
   },
 
