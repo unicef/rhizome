@@ -4,9 +4,6 @@ var _ = require('lodash')
 var Reflux = require('reflux/src')
 var api = require('data/api')
 
-var RegionStore = require('stores/RegionStore')
-var CampaignStore = require('stores/CampaignStore')
-
 var DashboardActions = require('actions/DashboardActions')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js')
 

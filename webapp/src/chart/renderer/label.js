@@ -113,7 +113,7 @@ function label () {
     var newBounds = findBounds(data)
     var delta = newBounds.cy - origBounds.cy
 
-    if (top + delta < 0) {
+    if (newBounds.top + delta < 0) {
       delta = -newBounds.top
     }
 

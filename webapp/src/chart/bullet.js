@@ -127,14 +127,11 @@ _.extend(BulletChart.prototype, {
       'height': h + margin.top + margin.bottom
     })
 
-    svg.select('.data').
-      call(qualitativeAxis()
-        .height(h + margin.top + margin.bottom)
-        .scale(xScale)
-        .threshold(d3.scale.threshold()
-          .domain(options.thresholds)
-          .range(options.targets)
-      )
+    svg.select('.data')
+      .call(qualitativeAxis()
+      .height(h + margin.top + margin.bottom)
+      .scale(xScale)
+      .threshold(d3.scale.threshold().domain(options.thresholds).range(options.targets))
     )
 
     var g = svg.select('.data')

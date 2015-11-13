@@ -79,7 +79,7 @@ _.extend(ColumnChart.prototype, {
   },
 
   update: function (data, options) {
-    var options = _.assign(this._options, options)
+    options = _.assign(this._options, options)
     var margin = options.margin
 
     var h = this._height - margin.top - margin.bottom

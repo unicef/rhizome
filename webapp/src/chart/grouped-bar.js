@@ -37,7 +37,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
   defaults: defaults,
 
   update: function (data, options) {
-    var options = _.assign(this._options, options)
+    options = _.assign(this._options, options)
     var margin = options.margin
 
     var l = _(data).map(options.values).map('length').max() * data.length

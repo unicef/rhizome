@@ -117,7 +117,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
     var location = _.find(locations, function (r) {
       return r.name === dashboard.location
-    }.bind(this))
+    })
 
     if (!location) {
       location = topLevelLocations.first()
@@ -127,7 +127,7 @@ var HomepageDashboardsStore = Reflux.createStore({
       .filter(function (c) {
         return c.office_id === location.office_id &&
           (!dashboard.date || _.startsWith(c.start_date, dashboard.date))
-      }.bind(this))
+      })
       .sortBy('start_date')
       .last()
 
@@ -145,7 +145,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   countriesPromise: function () {
-    return api.geo({ parent_location__in: "1,2,3", with_parent: true }, null, {'cache-control': 'max-age=604800, public'}).then(response => {
+    return api.geo({ parent_location__in: '1,2,3', with_parent: true }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
       return _(response.objects.features).flatten().groupBy('parent_location_id').values().value()
     })
   },
@@ -268,7 +268,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           indicators: [id]
         }, base)
       }
-    }.bind(this))
+    })
 
     return indicators
   }

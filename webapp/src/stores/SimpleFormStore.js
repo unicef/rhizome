@@ -48,7 +48,7 @@ var SimpleFormStore = Reflux.createStore({
   onInitialize: function (object_id, content_type) {
     var self = this
     if (!object_id) {
-      var object_id = -1
+      object_id = -1
     }
 
     self.data.objectId = object_id

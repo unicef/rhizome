@@ -65,9 +65,9 @@ _.extend(PieChart.prototype, {
       .reverse()
       .value()
 
-    var data = [{value: 0}, {value: 0}];
+    var data = [{value: 0}, {value: 0}]
     if (values[0] && values[0].value) {
-      data[0].value = Math.round(values[0].value * 100) / 100;
+      data[0].value = Math.round(values[0].value * 100) / 100
       data[1].value = 1 - data[0].value
     }
 
@@ -79,7 +79,7 @@ _.extend(PieChart.prototype, {
 
     svg.attr({
       'viewBox': '0 0 ' + this._width + ' ' + this._height
-      })
+    })
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 

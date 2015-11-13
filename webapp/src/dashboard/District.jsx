@@ -3,6 +3,7 @@
 var _ = require('lodash')
 var React = require('react')
 var Layer = require('react-layer')
+import d3 from 'd3'
 
 var Chart = require('component/Chart.jsx')
 var HeatMapTooltip = require('component/HeatMapTooltip.jsx')

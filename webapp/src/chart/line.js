@@ -23,8 +23,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function LineChart() {
-}
+function LineChart () {}
 
 _.extend(LineChart.prototype, {
   defaults: DEFAULTS,

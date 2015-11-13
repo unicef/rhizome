@@ -147,8 +147,7 @@ var SimpleForm = React.createClass({
             sendValue={ this.setParentTag } />
         </div>
       )
-    }
-    else if (contentType === 'indicator') {
+    } else if (contentType === 'indicator') {
       additionalFormComponents = ''
     }
 
@@ -169,10 +168,9 @@ var SimpleForm = React.createClass({
       var newId = this.state.store.objectId
       this.state.store.saveSuccess = false
 
-      if(this.props.params && this.props.params.id){
+      if (this.props.params && this.props.params.id) {
         page('/ufadmin/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
-      }
-      else{
+      } else {
         page('/ufadmin/manage/' + contentType + '/' + newId)
       }
 

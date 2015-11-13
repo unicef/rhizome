@@ -83,7 +83,7 @@ _.extend(Heatmap.prototype, {
 
     var xScale = d3.scale.ordinal()
         .domain(_.map(options.headers, options.headerText))
-        .rangeBands([0, w], .1)
+        .rangeBands([0, w], 0.1)
 
     var x = _.flow(options.column, xScale)
 
@@ -92,7 +92,7 @@ _.extend(Heatmap.prototype, {
 
     var yScale = d3.scale.ordinal()
       .domain(_(data).sortBy(sortValue, this).map(options.seriesName).value())
-      .rangeBands([0, h], .1)
+      .rangeBands([0, h], 0.1)
 
     var y = _.flow(options.seriesName, yScale)
 
@@ -123,7 +123,7 @@ _.extend(Heatmap.prototype, {
       .remove()
 
     row.on('mouseover', function (d, i) {
-      self._onRowOver.apply(self, [d, i])
+      self._onRowOver([d, i])
     })
     .transition()
     .duration(750)

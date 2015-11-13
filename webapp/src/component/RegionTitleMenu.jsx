@@ -20,8 +20,8 @@ var RegionTitleMenu = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return nextProps.locations.length !== this.props.locations.length
-      || nextProps.selected.id !== this.props.selected.id
+    return nextProps.locations.length !== this.props.locations.length ||
+      nextProps.selected.id !== this.props.selected.id
   },
 
   _setFilter: function (pattern) {
