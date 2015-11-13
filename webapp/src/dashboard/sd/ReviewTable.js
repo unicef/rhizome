@@ -1,6 +1,9 @@
 var _ = require('lodash')
 var React = require('react')
+import Reflux from 'reflux'
 var DashboardStore = require('stores/DashboardStore')
+
+import DashboardActions from 'actions/DashboardActions'
 
 var SubmissionModal = require('dashboard/sd/SubmissionModal.jsx')
 var MapForm = require('dashboard/sd/MapForm.jsx')
@@ -26,12 +29,16 @@ var ReviewTable = React.createClass({
     children: React.PropTypes.string
   },
 
+  mixins: [Reflux.connect(DashboardStore, 'dashboardStore')],
+
   getInitialState: function () {
     return {
       data: null,
       schema: null,
       query: {},
-      loading: false
+      loading: false,
+      data: {},
+      dashboardStore: {}
     }
   },
 
@@ -70,7 +77,9 @@ var ReviewTable = React.createClass({
     })
   },
 
-  componentWillReceiveProps: function (nextProps) {},
+  componentDidMount () {
+    DashboardActions.initialize()
+  },
 
   componentWillUpdate: function (nextProps, nextState) {
     // FIXME -> needs cleanup
@@ -103,8 +112,8 @@ var ReviewTable = React.createClass({
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
               indicators={this.state.indicators}
-              campaigns={DashboardStore.campaigns}
-              locations={DashboardStore.locations}
+              campaigns={this.state.dashboardStore.campaigns}
+              locations={this.state.dashboardStore.locations}
               source_object_map_id={id}
               key={id}
               onModalClose={this._callApi}

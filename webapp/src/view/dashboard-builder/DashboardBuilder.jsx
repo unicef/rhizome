@@ -32,7 +32,8 @@ module.exports = React.createClass({
     dashboardId: React.PropTypes.number
   },
 
-  mixins: [Reflux.connect(DashboardBuilderStore, 'store'),
+  mixins: [
+    Reflux.connect(DashboardBuilderStore, 'store'),
     Reflux.connect(DataStore, 'dataStore'),
     Reflux.connect(DashboardStore, 'dashboardStore'),
     Reflux.ListenerMixin
@@ -43,8 +44,6 @@ module.exports = React.createClass({
   },
   componentDidMount: function () {
     DashboardBuilderActions.initialize(this.props.dashboardId)
-    this.listenTo(DashboardBuilderStore, this._onDataLoaded)
-    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
@@ -160,23 +159,24 @@ module.exports = React.createClass({
 
   render: function () {
     if (this.state.store.newDashboard) {
-      return (<form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
-        <h1>Create a New Custom Dashboard</h1>
-
-        <div className='cd-title small-12'>Dashboard Title</div>
-        <input type='text'
-               className='description small-12'
-               value={this.state.title}
-               onChange={this._updateNewTitle}
-               autoFocus />
-        <div className='cd-title float-none'>Choose a Layout</div>
-        <LayoutOptions values={LayoutDefaultSettings.values}
-                       value={this.state.store.layout}
-                       onChange={DashboardBuilderActions.changeLayout} />
-        <a href='#'
-           className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
-           onClick={DashboardBuilderActions.addDashboard}>Next</a>
-      </form>)
+      return (
+        <form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
+          <h1>Create a New Custom Dashboard</h1>
+          <div className='cd-title small-12'>Dashboard Title</div>
+          <input type='text'
+            className='description small-12'
+            value={this.state.title}
+            onChange={this._updateNewTitle}
+            autoFocus />
+          <div className='cd-title float-none'>Choose a Layout</div>
+          <LayoutOptions values={LayoutDefaultSettings.values}
+            value={this.state.store.layout}
+            onChange={DashboardBuilderActions.changeLayout} />
+          <a href='#'
+            className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
+            onClick={DashboardBuilderActions.addDashboard}>Next</a>
+        </form>
+      )
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
       var style = {
         fontSize: '2rem',
@@ -206,13 +206,13 @@ module.exports = React.createClass({
     let data = DashboardInit.customDashboardInit(
       dashboardDef,
       this.state.dataStore.data,
-      this.state.store.locations,
-      this.state.store.campaigns,
+      this.state.dashboardStore.locations,
+      this.state.dashboardStore.campaigns,
       indicators,
       GeoStore.features
     )
     var dashboardProps = {
-      campaigns: this.state.store.campaigns,
+      campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,
       data: data,
       loading: !loaded,
