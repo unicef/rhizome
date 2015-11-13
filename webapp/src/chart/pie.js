@@ -16,6 +16,7 @@ function _domain (data, options) {
 var DEFAULTS = {
   domain: _domain,
   innerRadius: 0,
+  outerRadius: 1,
   margin: {
     top: 0,
     right: 0,
@@ -35,10 +36,10 @@ function PieChart () {
 _.extend(PieChart.prototype, {
   defaults: DEFAULTS,
 
-  initialize: function (el, data, opts) {
-    var options = this._options = _.defaults({}, options, DEFAULTS)
+  initialize: function (el, data, options) {
+    var opts = this._options = _.defaults({}, options, DEFAULTS)
 
-    this._height = this._width = _.get(options, 'size', el.clientWidth)
+    this._height = this._width = _.get(opts, 'size', el.clientWidth)
 
     var svg = this._svg = d3.select(el).append('svg').attr('class', 'pie')
 
@@ -86,8 +87,8 @@ _.extend(PieChart.prototype, {
       .attr('transform', 'translate(' + (w / 2) + ', ' + (h / 2) + ')')
 
     var arc = d3.svg.arc()
-      .innerRadius(s / 2 * (options.innerRadius ? options.innerRadius : 0))
-      .outerRadius(s / 2 * (options.outerRadius ? options.outerRadius : 1))
+      .innerRadius(s / 2 * options.innerRadius)
+      .outerRadius(s / 2 * options.outerRadius)
 
     svg.select('.bg')
       .datum({
