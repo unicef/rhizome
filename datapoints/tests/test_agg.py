@@ -147,17 +147,23 @@ class AggRefreshTestCase(TestCase):
         cache_location_tree()
 
         indicator_id, campaign_id, raw_location_id,\
-            agg_location_id, null_location_id = 22,111,12910,12907,12928
+            agg_location_id, null_location_id,NaN_location_id = \
+            22,111,12910,12907,12928,12913
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
-
 
         DataPoint.objects.filter(
             indicator_id = indicator_id,
             campaign_id = campaign_id,
             location_id = null_location_id
         ).update(value=None)
+
+        DataPoint.objects.filter(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = NaN_location_id
+        ).update(value='NaN')
 
         dps = DataPoint.objects.filter(\
             indicator_id = indicator_id,
