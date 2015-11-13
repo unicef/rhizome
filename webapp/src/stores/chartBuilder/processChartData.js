@@ -145,23 +145,17 @@ function _getIndicator (d) {
 
 module.exports = {
   init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
-    var indicatorArray = _.map(indicators, _.property('id'))
-    var meltPromise = dataPromise.then(function (data) {
-      return melt(data, indicatorArray)
-    })
-    if (chartType === 'LineChart') {
-      return this.processLineChart(meltPromise, lower, upper, groups, groupBy)
-    } else if (chartType === 'PieChart') {
-      return this.processPieChart(meltPromise, indicators)
-    } else if (chartType === 'ChoroplethMap') {
-      return this.processChoroplethMap(meltPromise, locations)
-    } else if (chartType === 'ColumnChart') {
-      return this.processColumnChart(meltPromise, lower, upper, groups, groupBy)
-    } else if (chartType === 'ScatterChart') {
-      return this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis)
-    } else if (chartType === 'BarChart') {
-      return this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
+    let indicatorArray = _.map(indicators, _.property('id'))
+    let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
+    let chartProcessors = {
+      LineChart: this.processLineChart(meltPromise, lower, upper, groups, groupBy),
+      PieChart: this.processPieChart(meltPromise, indicators),
+      ChoroplethMap: this.processChoroplethMap(meltPromise, locations),
+      ColumnChart: this.processColumnChart(meltPromise, lower, upper, groups, groupBy),
+      ScatterChart: this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis),
+      BarChart: this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis),
     }
+    return chartProcessors[chartType]
   },
   processLineChart: function (dataPromise, lower, upper, groups, groupBy) {
     return dataPromise.then(function (data) {
