@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull
+from numpy import nan,isnan
 from django.test import TestCase
 
 from datapoints.models import *
@@ -172,7 +173,7 @@ class AggRefreshTestCase(TestCase):
             value__isnull = False
         ).values_list('id','value')
 
-        sum_dp_value = sum([y for x,y in dps])
+        sum_dp_value = sum([y for x,y in dps if not isnan(y)])
 
         ag_r = AggRefresh()
 

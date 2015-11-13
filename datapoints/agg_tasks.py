@@ -1,5 +1,6 @@
 import pandas as pd
 from pandas import DataFrame
+from pandas import notnull
 
 from datapoints.models import *
 
@@ -109,29 +110,38 @@ class AggRefresh(object):
             .filter(campaign_id = self.campaign_id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
+        ## NaN to None
+        no_nan_dp_df = dp_df.where((notnull(dp_df)), None)
+
         ## represents the location heirarchy as a cache from the location table
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in=list(dp_df['location_id'].unique()))
             .values_list(*location_tree_columns)),columns=location_tree_columns)
 
         ## join the location tree to the datapoints and group by parent location
-        grouped_df = DataFrame(dp_df.merge(location_tree_df)\
+        grouped_df = DataFrame(no_nan_dp_df.merge(location_tree_df)\
             .groupby(['parent_location_id', 'indicator_id','campaign_id'])\
             ['value'].sum())
+
+        # print grouped_df
 
         ## add aggregate values to the tuple dict ##
         for ix, dp in grouped_df.iterrows():
             tuple_dict[ix] = dp.value
 
         ## now add the raw data to the dict ( overriding agregate if exists )
-        for ix, dp in dp_df.iterrows():
-            tuple_dict[(dp.location_id, dp.indicator_id, dp.campaign_id)] \
-                = dp.value
+        for ix, dp in no_nan_dp_df.iterrows():
+            ## dont override null value from parent if sum exists for children
+            if dp.value and dp.value != 'NaN' :
+                tuple_dict[(dp.location_id, dp.indicator_id, dp.campaign_id)] \
+                    = dp.value
 
         ## now prep the batch for the bulk insert ##
         for dp_unique_key, value in tuple_dict.iteritems():
             dp_dict =  dict(zip(('location_id','indicator_id','campaign_id')\
                 ,dp_unique_key))
+
+            # print value
 
             dp_dict['value'] = value
             dp_dict['cache_job_id'] = self.cache_job.id
