@@ -1,7 +1,6 @@
 /* Welcome to Compass. Use this file to define print styles.
  * Import this file using the following HTML or equivalent:
  * <link href="/stylesheets/print.css" media="print" rel="stylesheet" type="text/css" /> */
-
 @import "settings";
 
 // Make sure that importing these to components doesn't dump all the HTML
@@ -11,23 +10,22 @@ $include-html-block-grid-classes: false;
 @import "foundation/components/block-grid";
 @import "foundation/components/grid";
 
-
 @import "variables";
 
 $total-columns: 8;
 
 @page {
-	margin: 0;
+  margin: 0;
 }
 
 body {
-	margin: 0.25in;
+  margin: 0.25in;
 }
 
 form,
 nav,
 header {
-	display: none !important;
+  display: none !important;
 }
 
 .navigation-bar {
@@ -38,105 +36,125 @@ header {
   display: none !important;
 }
 
-@include grid-html-classes($size:small);
-@include block-grid-html-classes($size:small,$include-spacing:false);
+@include grid-html-classes($size: small);
+@include block-grid-html-classes($size: small, $include-spacing: false);
 
 @media (min-width: 8in) {
-	@include grid-html-classes($size:medium);
-  @include block-grid-html-classes($size:medium,$include-spacing:false);
+  @include grid-html-classes($size: medium);
+  @include block-grid-html-classes($size: medium, $include-spacing: false);
 }
 
 @media (min-width: 10.5in) {
-	@include grid-html-classes($size:large);
-  @include block-grid-html-classes($size:large,$include-spacing:false);
+  @include grid-html-classes($size: large);
+  @include block-grid-html-classes($size: large, $include-spacing: false);
 }
 
 h4,
 h6 {
-	margin-top: 0;
-	margin-bottom: 0;
+  margin-top: 0;
+  margin-bottom: 0;
 }
 
 .highlight {
-	color: $secondary-color !important;
+  color: $secondary-color !important;
+}
+
+#main {
+  padding-bottom: 0;
 }
 
 #management-dashboard {
-	color: #a7aeaf;
-  
-	h1 {
-		display    : inline-block;
-		font-size  : 25pt;
-		font-weight: bold;
+  color: #a7aeaf;
 
-		.location {
-			text-transform: uppercase;
-		}
+  h1 {
+    display: inline-block;
+    font-size: 20pt;
+    font-weight: bold;
 
-		.campaign {
-			font-weight: normal;
-		}
-	}
+    .location {
+      text-transform: uppercase;
+    }
 
-	h2 {
-		display    : inline-block;
-		font-size  : 6pt;
-		line-height: 1;
-	}
+    .campaign {
+      font-weight: normal;
+    }
+  }
 
-	h3 {
-	  background: $rhz-chart-title-bg-color !important;
-	  color: $rhz-chart-title-color !important;
-	  text-transform: uppercase;
-	  font-family: serif;
-	  padding: 2px 4px;
-	  margin: 10px 0;
-	}
+  h2 {
+    display: inline-block;
+    font-size: 5pt;
+    line-height: 1;
+  }
+
+  h3 {
+    background: $rhz-chart-title-bg-color !important;
+    color: $rhz-chart-title-color !important;
+    text-transform: uppercase;
+    font-family: serif;
+    padding: 2px 2px;
+    margin: 8px 0;
+  }
+
+  h4 {
+    font-size: 12px;
+  }
+
+  .chart {
+    margin-bottom: 10px;
+  }
+
+  .print__message--social {
+    font-size: x-small
+  }
 }
 
 .ie #management-dashboard {
-	#polio-cases-ytd svg {
-		width : 6.843cm;
-		height: 3.894cm;
-	}
+  #polio-cases-ytd svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
 
-	#immunity-gap svg {
-		width : 6.843cm;
-		height: 3.894cm;
-	}
+  #immunity-gap svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
 
-	#inaccessible-children svg {
-		width : 6.843cm;
-		height: 2.66cm;
-	}
+  #inaccessible-children svg {
+    width: 6.843cm;
+    height: 2.66cm;
+  }
 
-	#missed-children svg {
-		width : 6.845cm;
-		height: 3.028cm;
-	}
+  #missed-children svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
 
-	#conversions svg {
-		width : 6.845cm;
-		height: 3.028cm;
-	}
+  #conversions svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
 
-	#missed-children-map svg {
-		width : 6.845cm;
-		height: 6.81672137cm;
-	}
+  #missed-children-map svg {
+    width: 6.845cm;
+    height: 6.81672137cm;
+  }
 
-	#missed-children-legend {
-		height: 2cm;
-	}
+  #missed-children-legend {
+    height: 2cm;
+  }
 
-	.bullet-chart svg {
-		width : 3.247cm;
-		height: 1.022cm;
-	}
+  .bullet-chart svg {
+    width: 3.247cm;
+    height: 1.022cm;
+  }
+
+  .print__message--social {
+    font-size: x-small
+  }
 }
 
 .logo {
-	display: inline;
-	height : 25pt;
-	float  : right;
+  display: inline;
+  height: 25pt;
+  float: right;
 }
