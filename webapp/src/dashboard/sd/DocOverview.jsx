@@ -42,9 +42,6 @@ var DocOverview = React.createClass({
     if (nextProps.doc_id !== this.props.doc_id) {
       return
     }
-    if (nextProps.doc_deets !== this.props.doc_deets) {
-      return
-    }
   },
 
   pullDocDetailTypes () {
