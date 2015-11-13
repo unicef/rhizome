@@ -89,6 +89,9 @@ _.extend (ChoroplethMap.prototype, {
     g.append ('g').attr ('class', 'data')
     g.append ('g').attr ('class', 'legend')
 
+    svg.append('g').attr('class', 'bubbles')
+    svg.append('g').attr('class', 'stripes')
+
     var lineWidth = 10
     var lineHeight = 10
     var lineInterval = 5
@@ -238,7 +241,7 @@ _.extend (ChoroplethMap.prototype, {
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
-      var bubbles = svg.selectAll ('circle').data (features);
+      var bubbles = svg.select('.bubbles').selectAll ('circle').data (features);
 
       bubbles.enter ().append ("circle")
       bubbles.attr ("transform", function (d) {
@@ -261,7 +264,7 @@ _.extend (ChoroplethMap.prototype, {
     }
 
     if (!_.isUndefined(options.stripesValue)) {
-      var stripe = svg.selectAll ('.stripe')
+      var stripe = svg.select('.stripes').selectAll ('.location')
         .data (features, function (d, i) {
         return _.get (d, 'properties.location_id', i)
       })
@@ -270,7 +273,7 @@ _.extend (ChoroplethMap.prototype, {
 
       stripe.attr ({
         'd': path,
-        'class': 'stripe'
+        'class': 'location'
       })
         .style ('fill', function (d) {
           var v = options.stripesValue (d)
