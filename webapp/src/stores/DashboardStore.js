@@ -136,18 +136,6 @@ var DashboardStore = Reflux.createStore({
     }))
   },
 
-  onSetlocation: function (id) {
-    var location = _.find(this.locations, function (r) {
-      return r.id === id
-    }.bind(this))
-
-    if (location) {
-      this.trigger({
-        location: location
-      })
-    }
-  },
-
   // helpers
   addChartDefinition: function (chart) {
     var base = _.omit(chart, 'indicators', 'title')

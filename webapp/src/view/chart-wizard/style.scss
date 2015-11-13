@@ -102,3 +102,42 @@
   line-height: 16px;
   margin: 0 0 15px;
 }
+
+.chart-select {
+  padding: 0 25px;
+
+  .chart-box-wrapper {
+    padding: 10px;
+    display: inline-block;
+    margin: 0;
+
+    .chart-box {
+      border-radius: 5px;
+      text-align: center;
+      padding: 5px 8px;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+
+    .chart-icon {
+      width: 80px;
+      display: block;
+      text-align: center;
+    }
+
+    &.active {
+      background-color: #436380;
+      color: #fff;
+      .chart-box {
+        opacity: 1.0;
+      }
+    }
+
+    &:hover:not(.active) {
+      background-color: lighten(#436380, 50%);
+      .chart-box {
+        opacity: 1.0;
+      }
+    }
+  }
+}

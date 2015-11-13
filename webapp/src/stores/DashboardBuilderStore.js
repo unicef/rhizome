@@ -4,6 +4,9 @@ var _ = require('lodash')
 var Reflux = require('reflux/src')
 var api = require('data/api')
 
+var RegionStore = require('stores/RegionStore')
+var CampaignStore = require('stores/CampaignStore')
+
 var DashboardActions = require('actions/DashboardActions')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options.js')
 
@@ -34,48 +37,41 @@ var DashboardBuilderStore = Reflux.createStore({
       this.data.loaded = true
       this.trigger(this.data)
     } else {
-      api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' })
-        .then(function (response) {
-          self.data.dashboard = response.objects[0]
-          self.data.dashboardTitle = response.objects[0].title
-          self.data.dashboardDescription = response.objects[0].description
-          self.data.loaded = true
+      Promise.all([
+        RegionStore.getlocationsPromise(),
+        RegionStore.getLocationTypesPromise(),
+        CampaignStore.getCampaignsPromise(),
+        api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' })
+      ]).then(([locations, locationTypes, campaigns, dashboard]) => {
+        let locationIdx = _.indexBy(locations, 'id')
+        let types = _.indexBy(locationTypes, 'id')
 
-          api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
-            self.data.dashboard.charts = res.objects.map(chart => {
-              var result = chart.chart_json
-              result.id = chart.id
-              return result
-            })
-            self.trigger(self.data)
-          }, function (err) {
-            console.log(err)
-            self.data.dashboard.charts = []
-            self.trigger(self.data)
-          })
+        locations.forEach(location => {
+          location.location_type = _.get(types[location.location_type_id], 'name')
+          location.parent = locationIdx[location.parent_location_id]
         })
-    }
-  },
 
-  setDashboard: function () {
-    var date = '2013-03'
-    var locationIdx = _.indexBy(this.data.locations, 'id')
-    var topLevelLocations = _(this.data.locations)
-      .filter(function (r) {
-        return !locationIdx.hasOwnProperty(r.parent_location_id)
+        this.data.locations = locations
+        this.data.campaigns = campaigns
+
+        this.data.dashboard = dashboard.objects[0]
+
+        this.data.loaded = true
+
+        api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
+          this.data.dashboard.charts = res.objects.map(chart => {
+            let result = chart.chart_json
+            result.id = chart.id
+            return result
+          })
+          this.trigger(this.data)
+        }, function (err) {
+          console.log(err)
+          this.data.dashboard.charts = []
+          this.trigger(this.data)
+        })
       })
-      .sortBy('name')
-    this.data.location = topLevelLocations.first()
-    this.data.campaign = _(this.data.campaigns)
-      .filter(function (c) {
-        return c.office_id === this.data.location.office_id &&
-          (!date || _.startsWith(c.start_date, date))
-      }.bind(this))
-      .sortBy('start_date')
-      .last()
-
-    this.data.loading = false
-    this.trigger(this.data)
+    }
   },
 
   onAddChart: function (chartDef) {
@@ -180,9 +176,6 @@ var DashboardBuilderStore = Reflux.createStore({
       dashboard_json: JSON.stringify(this.data.dashboard.charts)
     }
     api.save_dashboard(data).then(function (response) {
-      console.log(response)
-      // self.data.charts = response.objects[0].dashboard_json
-      // self.trigger(self.data)
     })
   },
   onUpdateChart: function (chartDef, index) {

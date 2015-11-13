@@ -6,6 +6,8 @@ var Reflux = require('reflux')
 var HomepageChartsSection = require('view/HomepageChartsSection.jsx')
 var HomepageDashboardsStore = require('stores/HomepageDashboardsStore')
 
+import HomepageDashboardsActions from 'actions/HomepageDashboardsActions'
+
 var HomepageChartsView = React.createClass({
   mixins: [
     Reflux.ListenerMixin,
@@ -16,6 +18,10 @@ var HomepageChartsView = React.createClass({
     return {
       dashboards: []
     }
+  },
+
+  componentWillMount () {
+    HomepageDashboardsActions.initialize()
   },
 
   render: function () {

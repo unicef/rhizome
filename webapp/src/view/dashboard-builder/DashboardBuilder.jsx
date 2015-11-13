@@ -5,7 +5,7 @@ var React = require('react')
 var Reflux = require('reflux/src')
 var ChartWizard = require('view/chart-wizard/ChartWizard.jsx')
 
-var dashboardInit = require('data/dashboardInit')
+var DashboardInit = require('data/dashboardInit')
 
 var DataActions = require('actions/DataActions')
 var DataStore = require('stores/DataStore')
@@ -20,33 +20,31 @@ var IndicatorStore = require('stores/IndicatorStore')
 var GeoStore = require('stores/GeoStore')
 var GeoActions = require('actions/GeoActions')
 var AppActions = require('actions/AppActions')
-var RegionTitleMenu = require('component/RegionTitleMenu.jsx')
-var CampaignTitleMenu = require('component/CampaignTitleMenu.jsx')
 var TitleInput = require('component/TitleInput.jsx')
 var LayoutOptions = require('component/layout-options/LayoutOptions.jsx')
 var LayoutDefaultSettings = require('dashboard/builtin/layout-options')
 var CustomDashboard = require('dashboard/CustomDashboard.jsx')
 
-var moment = require('moment')
-
 window.perf = React.addons.Perf
 
 module.exports = React.createClass({
+  propTypes: {
+    dashboardId: React.PropTypes.number
+  },
+
   mixins: [Reflux.connect(DashboardBuilderStore, 'store'),
     Reflux.connect(DataStore, 'dataStore'),
     Reflux.connect(DashboardStore, 'dashboardStore'),
     Reflux.ListenerMixin
   ],
-  propTypes: {
-    dashboardId: React.PropTypes.number
-  },
+
   componentWillMount: function () {
     AppActions.init()
   },
   componentDidMount: function () {
     DashboardBuilderActions.initialize(this.props.dashboardId)
-    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardBuilderStore, this._onDataLoaded)
+    this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
@@ -90,7 +88,7 @@ module.exports = React.createClass({
     }
   },
   _deleteDashboard: function () {
-    if (window.confirm('Delete dashboard "' + this.state.store.dashboardTitle + '"?')) {
+    if (window.confirm('Delete dashboard "' + this.state.title + '"?')) {
       // FIXME
       DashboardBuilderActions.deleteDashboard()
     }
@@ -131,29 +129,14 @@ module.exports = React.createClass({
       }
     }
   },
-  _setCampaign: function (id) {
-    var campaign = _.find(this.state.dashboardStore.campaigns, c => c.id === id)
-
-    if (campaign) {
-      DashboardActions.setDashboard({
-        dashboard: this.state.store.dashboard,
-        date: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY-MM')
-      })
-    }
-  },
-
-  _setRegion: function (id) {
-    var location = _.find(this.state.dashboardStore.locations, r => r.id === id)
-
-    if (location) {
-      DashboardActions.setDashboard({dashboard: this.state.store.dashboard, location: location.name})
-    }
-  },
 
   _onDataLoaded: function () {
     if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
-      DashboardActions.setDashboard({dashboard: this.state.store.dashboard})
-      this.setState({title: this.state.store.dashboardTitle, description: this.state.store.dashboardDescription})
+      DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
+      this.setState({
+        title: this.state.store.dashboard.title,
+        description: this.state.store.dashboard.description
+      })
     }
   },
 
@@ -191,7 +174,7 @@ module.exports = React.createClass({
                        value={this.state.store.layout}
                        onChange={DashboardBuilderActions.changeLayout} />
         <a href='#'
-           className={'create-dashboard cd-button float-right ' + (this.state.store.dashboardTitle.length ? '' : 'disabled')}
+           className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
            onClick={DashboardBuilderActions.addDashboard}>Next</a>
       </form>)
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
@@ -209,10 +192,8 @@ module.exports = React.createClass({
       )
     }
 
-    var campaign = this.state.dashboardStore.campaign
     var dashboardDef = this.state.store.dashboard
-    var loading = this.state.dashboardStore.loading
-    var location = this.state.dashboardStore.location
+    var loaded = this.state.dashboardStore.loaded
 
     var indicators = IndicatorStore.getById.apply(
       IndicatorStore,
@@ -222,23 +203,19 @@ module.exports = React.createClass({
         .uniq()
         .value()
     )
-    var data = dashboardInit(
+    let data = DashboardInit.customDashboardInit(
       dashboardDef,
       this.state.dataStore.data,
-      location,
-      campaign,
-      this.state.dashboardStore.locations,
-      this.state.dashboardStore.allCampaigns,
+      this.state.store.locations,
+      this.state.store.campaigns,
       indicators,
       GeoStore.features
     )
     var dashboardProps = {
-      campaign: campaign,
+      campaigns: this.state.store.campaigns,
       dashboard: dashboardDef,
       data: data,
-      indicators: indicators,
-      loading: loading,
-      location: location,
+      loading: !loaded,
       editable: true,
       onAddChart: this.newChart,
       onEditChart: this.editChart,
@@ -251,21 +228,6 @@ module.exports = React.createClass({
       CustomDashboard,
       dashboardProps)
 
-    var campaigns = _(this.state.dashboardStore.campaigns)
-      .filter(c => c.office_id === location.office_id)
-      .map(campaign => {
-        return _.assign({}, campaign, {
-          slug: moment(campaign.start_date).format('MMMM YYYY')
-        })
-      })
-      .sortBy('start_date')
-      .reverse()
-      .value()
-
-    if (campaign.office_id !== location.office_id) {
-      campaign = campaigns[0]
-    }
-
     var addDashboardLinkContainer = (
       <div className='empty-dashboard-add-container'>
         <span className='cd-button new-dashboard-font' onClick={this.newChart}>
@@ -274,23 +236,6 @@ module.exports = React.createClass({
       </div>
     )
 
-    var settingFilter = ''
-    if (dashboardDef.builtin === true) {
-      settingFilter = (<div className='row'>
-        <div className='large-6 columns'>
-          <CampaignTitleMenu
-            campaigns={campaigns}
-            selected={campaign}
-            sendValue={this._setCampaign}/>
-        </div>
-        <div className='large-6 columns'>
-          <RegionTitleMenu
-            locations={this.state.dashboardStore.locations}
-            selected={location}
-            sendValue={this._setRegion}/>
-        </div>
-      </div>)
-    }
     var showAddChartButton = () => {
       let layout = this.state.store.dashboard.layout
       let numCharts = this.state.store.dashboard.charts.length
@@ -304,7 +249,6 @@ module.exports = React.createClass({
       <div>
         <form className='inline no-print row cd-bg-color'>
           <div className='large-6 columns'>
-            {settingFilter}
           </div>
           <div className='large-6 columns'>
             <div className='row'>
