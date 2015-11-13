@@ -85,7 +85,6 @@ var Dashboard = React.createClass({
   },
 
   componentDidMount: function () {
-    // Reflux.ListenerMixin will unmount listeners
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
 

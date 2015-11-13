@@ -42,6 +42,7 @@ module.exports = React.createClass({
     AppActions.init()
   },
   componentDidMount: function () {
+    DashboardActions.initialize()
     DashboardBuilderActions.initialize(this.props.dashboardId)
     this.listenTo(DashboardBuilderStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDataLoaded)

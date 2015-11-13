@@ -13,12 +13,15 @@ var DashboardStore = Reflux.createStore({
   init: function () {
     this.loaded = true
     this.indicators = {}
-    Promise.all([
+  },
+
+  onInitialize () {
+    return Promise.all([
       RegionStore.getlocationsPromise(),
       RegionStore.getLocationTypesPromise(),
       CampaignStore.getCampaignsPromise()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns) => {
+    .then(([locations, locationsTypes, campaigns]) => {
       this.locations = locations
       this.campaigns = campaigns
 
@@ -37,7 +40,7 @@ var DashboardStore = Reflux.createStore({
         locations: this.locations,
         campaigns: this.campaigns
       })
-    }))
+    })
   },
 
   getQueries: function () {
@@ -115,25 +118,13 @@ var DashboardStore = Reflux.createStore({
     this.location = definition.location || this.location
     this.date = definition.date || this.date
 
-    Promise.all([
-      RegionStore.getlocationsPromise(),
-      RegionStore.getLocationTypesPromise(),
-      CampaignStore.getCampaignsPromise()
-    ])
-    .then(_.spread((locations, locationsTypes, campaigns) => {
-      this.locations = locations
-      this.campaigns = campaigns
-
-      var locationIdx = _.indexBy(locations, 'id')
-      var types = _.indexBy(locationsTypes, 'id')
-
-      this.locations.forEach(location => {
-        location.location_type = _.get(types[location.location_type_id], 'name')
-        location.parent = locationIdx[location.parent_location_id]
-      })
-
+    if (this.campaigns || this.locations) {
       this.setDashboardInternal(dashboard)
-    }))
+    } else {
+      this.onInitialize().then(() => {
+        this.setDashboardInternal(dashboard)
+      })
+    }
   },
 
   // helpers
