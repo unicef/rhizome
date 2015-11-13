@@ -5,6 +5,7 @@ module.exports = React.createClass({
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,
     name: React.PropTypes.string.isRequired,
+    prefix: React.PropTypes.string,
     horizontal: React.PropTypes.bool,
     title: React.PropTypes.string,
     onChange: React.PropTypes.func.isRequired
@@ -21,11 +22,11 @@ module.exports = React.createClass({
     var radios = this.props.values.map((radio, index) => {
       return (
         <div key={radio.value} className={this.props.horizontal ? 'horizontal' : null}>
-          <input type='radio' name={this.props.name} id={radio.value}
+          <input type='radio' name={this.props.name} id={`${this.props.prefix}${radio.value}`}
             value={radio.value}
             checked={this.props.value === index ? 'checked' : false}
             onChange={this.props.onChange.bind(null, index)}/>
-          <label htmlFor={radio.value}>{radio.title}</label>
+          <label htmlFor={`${this.props.prefix}${radio.value}`}>{radio.title}</label>
         </div>
       )
     })

@@ -217,9 +217,6 @@ let ChartWizard = React.createClass({
               yFormatValue={this.state.data.yFormatValue}
               onYFormatChange={ChartWizardActions.changeYFormatRadio}
               formatValues={builderDefinitions.formats}
-              indicatorArray={this.state.data.indicatorSelected}
-              onXAxisChange={ChartWizardActions.changeXAxis}
-              onYAxisChange={ChartWizardActions.changeYAxis}
             />
           )
           : (
