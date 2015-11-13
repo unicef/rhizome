@@ -275,7 +275,6 @@ _.extend (ChoroplethMap.prototype, {
         .style ('fill', function (d) {
           var v = options.stripesValue (d)
           var lineColor = _.isFinite (options.value(d)) ? '#ffffff' : '#cccccc'
-          console.log(lineColor)
           svg.selectAll('line').style('stroke', lineColor)
           return _.isFinite (v) ? 'url(#stripe)' : '#fff'
         })
