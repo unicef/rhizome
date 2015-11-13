@@ -248,10 +248,7 @@ _.extend(ChoroplethMap.prototype, {
       })
         .attr('r', function (d) {
           var v = options.bubblesValue(d)
-          if (v) {
-            return options.radius(v)
-          }
-          return 0
+          return v ? options.radius(v) : 0
         })
         .style({
           'opacity': 0.5,
