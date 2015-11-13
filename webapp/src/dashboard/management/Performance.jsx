@@ -200,7 +200,7 @@ var Performance = React.createClass({
               emptyText='No transit point data available'/>
           </div>
           <div>
-            <h4 className="font-bold">Missed Children</h4>
+            <h4 className='font-bold'>Missed Children</h4>
           </div>
         </div>
       </div>

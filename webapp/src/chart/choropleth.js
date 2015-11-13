@@ -239,7 +239,6 @@ _.extend(ChoroplethMap.prototype, {
         var bbox = this.getBoundingClientRect()
         return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
       })
-
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
