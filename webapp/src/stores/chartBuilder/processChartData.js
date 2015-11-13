@@ -153,7 +153,7 @@ module.exports = {
       ChoroplethMap: this.processChoroplethMap(meltPromise, locations),
       ColumnChart: this.processColumnChart(meltPromise, lower, upper, groups, groupBy),
       ScatterChart: this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis),
-      BarChart: this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis),
+      BarChart: this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
     }
     return chartProcessors[chartType]
   },
