@@ -10,7 +10,7 @@ const AdminPage = require('./AdminPage')
 const api = require('../data/api')
 
 // display rules for datascope fields
-const checkmarkRenderer = (val) => val ? '✓' : ""
+const checkmarkRenderer = (val) => val ? '✓' : ''
 const fields = {
   edit_link: {
     title: 'Edit',
