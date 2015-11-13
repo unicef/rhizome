@@ -83,7 +83,7 @@ var Performance = React.createClass({
       var num = d3.format('n')
 
       vaccinated = (
-        <p><strong>{num(vaccinated)}</strong> children vaccinated at transit points.</p>
+        <p><strong>{num (vaccinated)}</strong> children vaccinated</p>
       )
     } else {
       vaccinated = (<p>No vaccination data.</p>)
