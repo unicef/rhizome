@@ -90,6 +90,13 @@ _.extend(AreaChart.prototype, {
     var x = _.flow(options.x, xScale)
     var y = _.flow(options.y, yScale)
 
+    var points = _(series).map(function (s) {
+    // Set the series name on each datapoint for easy retrieval
+      return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
+    })
+      .flatten()
+      .value()
+
     // Set up the hover interaction
     svg.attr('class', 'area')
       .call(hoverLine()
@@ -104,13 +111,7 @@ _.extend(AreaChart.prototype, {
         .value(options.y)
         .seriesName(_.property('seriesName'))
         .sort(true)
-        .datapoints(_(series).map(function (s) {
-          // Set the series name on each datapoint for easy retrieval
-          return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
-        })
-          .flatten()
-          .value()
-      )
+        .datapoints(points)
     )
 
     var g = svg.select('.data')
@@ -184,7 +185,17 @@ _.extend(AreaChart.prototype, {
         .scale(xScale)
         .orient('bottom'))
 
-    if (total !== 0) {
+    var isTrue = false
+    var isNotInaccessible = (points) => {
+      _.forEach(points, function (point) {
+        if (point.seriesName !== 'Inaccessible Children') {
+          isTrue = true
+        }
+      })
+      return isTrue
+    }
+
+    if (total !== 0 && isNotInaccessible(points)) {
       svg.select('.annotation')
       .append('text')
       .attr('x', this._width - 90)
