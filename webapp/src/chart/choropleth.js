@@ -88,7 +88,6 @@ _.extend(ChoroplethMap.prototype, {
 
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'legend')
-
     svg.append('g').attr('class', 'bubbles')
     svg.append('g').attr('class', 'stripes')
 
@@ -221,26 +220,24 @@ _.extend(ChoroplethMap.prototype, {
 
     var ticks = _.map(
       colorScale.range(),
-        c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+      c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
     )
 
     if (_.every(colorScale.domain(), _.isNaN)) {
       svg.select('.legend').selectAll('*').remove()
     } else {
       svg.select('.legend')
-        .call(legend()
-          .scale(d3.scale.ordinal()
-            .domain(ticks)
-            .range(colorScale.range()))
-      )
-        .attr('transform', function () {
-          var bbox = this.getBoundingClientRect()
-          return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
-        })
+        .call(legend().scale(
+          d3.scale.ordinal().domain(ticks).range(colorScale.range())
+        )
+      ).attr('transform', function () {
+        var bbox = this.getBoundingClientRect()
+        return 'translate(' + (w - bbox.width) + ', ' + (h - bbox.height) + ')'
+      })
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
-      var bubbles = svg.select('.bubbles').selectAll('circle').data(features)
+      var bubbles = svg.selectAll('circle').data(features)
 
       bubbles.enter().append('circle')
       bubbles.attr('transform', function (d) {
