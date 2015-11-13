@@ -89,38 +89,42 @@ _.extend (ChoroplethMap.prototype, {
     g.append ('g').attr ('class', 'data')
     g.append ('g').attr ('class', 'legend')
 
+    var lineWidth = 10
+    var lineHeight = 10
+    var lineInterval = 5
+
     var defs = svg.append ('defs')
 
     var pattern = defs.append ('pattern')
       .attr ({
       'id': 'stripe',
       'patternUnits': 'userSpaceOnUse',
-      'width': 20,
-      'height': 20
-    })
-
-    pattern.append ('line')
-      .attr ({
-      'x1': 10,
-      'y1': 0,
-      'x2': 0,
-      'y2': 20
+      'width': lineWidth,
+      'height': lineHeight
     })
 
     pattern.append ('line')
       .attr ({
       'x1': 0,
       'y1': 0,
-      'x2': -10,
-      'y2': 20
+      'x2': -lineInterval,
+      'y2': lineHeight
     })
 
     pattern.append ('line')
       .attr ({
-      'x1': 20,
+      'x1': lineInterval,
       'y1': 0,
-      'x2': 10,
-      'y2': 20
+      'x2': 0,
+      'y2': lineHeight
+    })
+
+    pattern.append ('line')
+      .attr ({
+      'x1': 2*lineInterval,
+      'y1': 0,
+      'x2': lineInterval,
+      'y2': lineHeight
     })
 
     pattern.selectAll ('line')
@@ -128,8 +132,6 @@ _.extend (ChoroplethMap.prototype, {
       'stroke-linecap': 'square',
       'stroke-linejoin': 'miter',
       'stroke-width': 1,
-      'fill': '#cccccc',
-      'stroke': '#cccccc'
     })
 
     this.update (data)
@@ -235,7 +237,7 @@ _.extend (ChoroplethMap.prototype, {
         })
     }
 
-    if (options.bubblesValue) {
+    if (!_.isUndefined(options.bubblesValue)) {
       var bubbles = svg.selectAll ('circle').data (features);
 
       bubbles.enter ().append ("circle")
@@ -258,7 +260,7 @@ _.extend (ChoroplethMap.prototype, {
       bubbles.exit ().remove ()
     }
 
-    if (options.stripesValue) {
+    if (!_.isUndefined(options.stripesValue)) {
       var stripe = svg.selectAll ('.stripe')
         .data (features, function (d, i) {
         return _.get (d, 'properties.location_id', i)
@@ -271,13 +273,16 @@ _.extend (ChoroplethMap.prototype, {
         'class': 'stripe'
       })
         .style ('fill', function (d) {
-        var v = options.stripesValue (d)
-        return _.isFinite (v) ? 'url(#stripe)' : '#fff'
-      })
+          var v = options.stripesValue (d)
+          var lineColor = _.isFinite (options.value(d)) ? '#ffffff' : '#cccccc'
+          console.log(lineColor)
+          svg.selectAll('line').style('stroke', lineColor)
+          return _.isFinite (v) ? 'url(#stripe)' : '#fff'
+        })
         .style ('opacity', function (d) {
-        var v = options.stripesValue (d)
-        return _.isFinite (v) ? 1 : 0
-      })
+          var v = options.stripesValue (d)
+          return _.isFinite (v) ? 1 : 0
+        })
 
       stripe.exit ().remove ()
     }
