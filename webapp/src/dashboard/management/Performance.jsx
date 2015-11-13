@@ -112,8 +112,6 @@ var Performance = React.createClass ({
 
     var missedChildrenMap = data.missedChildrenByProvince
 
-    var vaccinatedData = data.vaccinatedChildrenByProvince
-
     var maxVaccinatedChildren = 5000
 
     var maxRadius = 20
@@ -129,7 +127,7 @@ var Performance = React.createClass ({
         return radius (v)
       }
     }
-
+    
     return (
       <div>
         <div className='medium-6 columns'>
@@ -172,11 +170,11 @@ var Performance = React.createClass ({
                  data={missedChildrenMap}
                  loading={loading}
                  options={{
-              vaccinatedData: vaccinatedData,
               aspect  : 0.555,
               domain  : _.constant([0, 0.1]),
               value   : _.property('properties[475]'),
-              vaccinatedValue : _.property('properties[177]'),
+              bubblesValue: _.property('properties[177]'),
+              stripesValue: _.property('properties[203]'),
               yFormat : pct,
               radius:  _.partial(_chooseRadius, _),
               onClick : d => { DashboardActions.navigate({ location : d }) }
