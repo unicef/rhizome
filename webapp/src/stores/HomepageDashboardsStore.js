@@ -146,26 +146,27 @@ var HomepageDashboardsStore = Reflux.createStore({
 
   countriesPromise: function () {
     return api.geo({ parent_location__in: '1,2,3', with_parent: true }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
-      return _(response.objects.features).flatten().groupBy('parent_location_id').values().value()
+      return _(response.objects.features).flatten().groupBy('parent_location_id')
+      .filter(item => item.length > 0).sortBy(item => item[0].parent_location_id).value()
     })
   },
 
   onFetchDashboards: function () {
     var dashboardDefs = [
       {
+        name: 'homepage-nigeria',
+        date: '2015-04',
+        location: 'Nigeria'
+      },
+      {
         name: 'homepage-afghanistan',
-        date: '2015-08',
+        date: '2015-04',
         location: 'Afghanistan'
       },
       {
         name: 'homepage-pakistan',
         date: '2015-09',
         location: 'Pakistan'
-      },
-      {
-        name: 'homepage-nigeria',
-        date: '2015-09',
-        location: 'Nigeria'
       }
     ]
 
@@ -213,9 +214,7 @@ var HomepageDashboardsStore = Reflux.createStore({
         .map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        var dashboards = _.zip([d3, d1, d2], countries)
-        // temporarily hacked country order ( to render homepage charts )
-        // in correct order. Need to use location_id to bind the shape features
+        var dashboards = _.zip([d1, d2, d3], countries)
           .map((item) => {
             return {
               data: item[0],
