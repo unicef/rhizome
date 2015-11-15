@@ -20,7 +20,8 @@ var DEFAULTS = {
   x: _.property('campaign.start_date'),
   xFormat: format.timeAxis,
   y: _.property('value'),
-  yFormat: d3.format(',d')
+  yFormat: d3.format(',d'),
+  type: true
 }
 
 function AreaChart () {}
@@ -111,6 +112,7 @@ _.extend(AreaChart.prototype, {
         .value(options.y)
         .seriesName(_.property('seriesName'))
         .sort(true)
+        .type(options.type)
         .datapoints(points)
     )
 
@@ -185,17 +187,9 @@ _.extend(AreaChart.prototype, {
         .scale(xScale)
         .orient('bottom'))
 
-    var isTrue = false
-    var isNotInaccessible = (points) => {
-      _.forEach(points, function (point) {
-        if (point.seriesName !== 'Inaccessible Children') {
-          isTrue = true
-        }
-      })
-      return isTrue
-    }
+    var isTrue = _.some(points, 'seriesName', 'Inaccessible Children')
 
-    if (total !== 0 && isNotInaccessible(points)) {
+    if (total !== 0 && !isTrue) {
       svg.select('.annotation')
       .append('text')
       .attr('x', this._width - 90)
