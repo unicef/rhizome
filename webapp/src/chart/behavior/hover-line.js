@@ -7,20 +7,27 @@ import label from '../renderer/label'
 
 function hoverLine () {
   var datapoints = []
-  var diff = function (a, b) { return a - b }
+  var diff = function (a, b) {
+    return a - b
+  }
   var height = 1
   var seriesName = null
   var _sort = false
   var top = 0
   var width = 1
-  var x = function (d) { return d.x }
+  var x = function (d) {
+    return d.x
+  }
   var xFormat = String
   var xScale = d3.scale.linear()
-  var y = function (d) { return d.y }
+  var y = function (d) {
+    return d.y
+  }
   var yFormat = String
   var yScale = d3.scale.linear()
   var _value = _.property('value')
   var colorRange = '#000000'
+  var type = ''
 
   // Use this to keep track of what value we're currently hovering over so we
   // can bail out of onMouseMove if the movement wouldn't change our display
@@ -158,6 +165,15 @@ function hoverLine () {
     return chart
   }
 
+  chart.type = function (value) {
+    if (!arguments.length) {
+      return type
+    }
+
+    type = value
+    return chart
+  }
+
   function axisTranslate (d) {
     // jshint validthis:true
     var box = this.getBBox()
@@ -263,11 +279,11 @@ function hoverLine () {
       .transition()
       .duration(300)
       .attr('transform', axisTranslate)
-    .attr({
-      'dy': '.71em',
-      'y': '9'
-    })
-    .style('opacity', 1)
+      .attr({
+        'dy': '.71em',
+        'y': '9'
+      })
+      .style('opacity', 1)
 
     xLabel.exit()
       .transition()
@@ -285,10 +301,21 @@ function hoverLine () {
         return {
           x: xScale(x(d)),
           y: yScale(y(d)),
-          text: name + yFormat(_value(d))
+          text: name + yFormat(_value(d)),
+          value: _value(d)
         }
       })
       .value()
+
+    if (type) {
+      labelData.push({
+        x: 330,
+        y: -10,
+        text: 'TOTAL ' + yFormat(_.sum(labelData, function (d) {
+          return d.value
+        }))
+      })
+    }
 
     if (_sort) {
       labelData.sort(function (a, b) {
@@ -310,23 +337,29 @@ function hoverLine () {
 
     var colorScale = d3.scale.ordinal()
       .domain(_(labelData)
-      .map(function (d) { return d.text })
-      .uniq()
-      .sortBy()
-      .value())
+        .map(function (d) {
+          return d.text
+        })
+        .uniq()
+        .sortBy()
+        .value())
       .range(colorRange)
 
-    var color = _.flow(function (d) { return d.text }, colorScale)
+    var color = _.flow(function (d) {
+      return d.text
+    }, colorScale)
 
     labelGroup.selectAll('.hover.label')
-      .data(function (d) { return d })
+      .data(function (d) {
+        return d
+      })
       .call(label().addClass('hover').width(width).height(height).scale(color))
 
-      // Determine the label orientation based on the bounding box. We prefer
-      // left-aligned, but if that gets cut off, we will right-align the text
-      // var box = this.getBBox()
-      // var pos = xScale(data[0])
-      // var anchor = (pos + box.width + 2) < width ? 'start' : 'end'
+    // Determine the label orientation based on the bounding box. We prefer
+    // left-aligned, but if that gets cut off, we will right-align the text
+    // var box = this.getBBox()
+    // var pos = xScale(data[0])
+    // var anchor = (pos + box.width + 2) < width ? 'start' : 'end'
 
     svg.selectAll('.series.label')
       .transition()
