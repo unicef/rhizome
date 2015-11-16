@@ -15,14 +15,6 @@ class AggRefreshTestCase(TestCase):
     '''
     from datapoints.agg_tasks import AggRefresh
     mr = AggRefresh()
-
-    ## or ##
-
-    from datapoints.agg_tasks import AggRefresh
-    from datapoints.models import DataPoint, location
-    r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
-    dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-    mr = AggRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
