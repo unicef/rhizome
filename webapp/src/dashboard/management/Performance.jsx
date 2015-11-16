@@ -185,8 +185,8 @@ var Performance = React.createClass({
           <div>
             <h4 className='font-bold'>Missed Children</h4>
           </div>
-          <div>
-            <h4>Transit Points</h4>
+          <div className='transit-point'>
+            <h4 className='font-bold'>Transit Points</h4>
             {vaccinated}
             <PieChartList loading={loading}
                           keyPrefix='transit-points'
