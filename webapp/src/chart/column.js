@@ -186,6 +186,9 @@ _.extend(ColumnChart.prototype, {
         .tickFormat(options.xFormat)
         .scale(dataXScale))
 
+    svg.select('.x.axis').selectAll('.domain').data([0])
+      .attr("d", "M" + 0 + "," + 0 + "V0H" + w + "V" + 0);
+
     svg.select('.y.axis')
       .call(d3.svg.axis()
         .orient('right')

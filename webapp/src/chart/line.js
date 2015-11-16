@@ -190,6 +190,9 @@ _.extend(LineChart.prototype, {
         .scale(dataXScale)
         .orient('bottom'))
 
+    svg.select('.x.axis').selectAll('.domain').data([0])
+      .attr("d", "M" + 0 + "," + 0 + "V0H" + width + "V" + 0);
+
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(options.yFormat)
