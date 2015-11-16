@@ -177,6 +177,7 @@ var Performance = React.createClass({
                    stripesValue: _.property('properties[203]'),
                    yFormat: pct,
                    radius: _.partial(_chooseRadius, _),
+                   maxRadius: maxRadius,
                    onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </div>

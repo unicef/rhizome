@@ -274,17 +274,26 @@ _.extend(ChoroplethMap.prototype, {
 
       bubbleLegend.append('circle')
         .attr('r', function (d) { return options.radius(d) })
+        .attr('cy', function (d) { return (options.maxRadius - options.radius(d)) })
         .style({
           'opacity': 0.5,
           'fill': 'transparent',
           'stroke': '#AAAAAA'
         })
 
-      bubbleLegend.append('text')
-        .attr('transform', function (d, i) {
-          return 'translate(' + 19 + ', ' + i * 15 + ')'
+      bubbleLegend.append('line')
+        .attr({
+          x1: -(2.5 * options.maxRadius),
+          y1: function (d) { return (options.maxRadius - 2 * options.radius(d)) },
+          x2: 0,
+          y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
         })
+
+      bubbleLegend.append('text')
+        .attr('dx', -(2.5 * options.maxRadius))
+        .attr('dy', function (d) { return (options.maxRadius - 2 * options.radius(d)) })
         .text(function (d) { return d })
+        .style('fill', '#AAAAAA')
     }
 
     if (!_.isUndefined(options.stripesValue)) {
