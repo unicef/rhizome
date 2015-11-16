@@ -225,7 +225,7 @@ _.extend(ChoroplethMap.prototype, {
 
     var ticks = _.map(
       colorScale.range(),
-      c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+        c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
     )
 
     if (_.every(colorScale.domain(), _.isNaN)) {
@@ -236,8 +236,7 @@ _.extend(ChoroplethMap.prototype, {
           d3.scale.ordinal().domain(ticks).range(colorScale.range())
         )
       ).attr('transform', function () {
-        var bbox = this.getBoundingClientRect()
-        return 'translate(' + w + ', ' + ((h - bbox.height) / 2) + ')'
+        return 'translate(' + w + ', ' + 0 + ')'
       })
     }
 
@@ -290,6 +289,39 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       stripeData.exit().remove()
+
+      var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
+      var stripeLegendText = ['No data collected', 'Access challenged area']
+      var stripeLegend = svg.select('.stripes').select('.legend')
+        .attr('transform', function () {
+          return 'translate(' + w + ', ' + 50 + ')'
+        })
+        .selectAll('.series').data(stripeLegendText)
+        .enter().append('g')
+        .attr('class', 'series')
+        .attr('transform', function (d, i) {
+          return 'translate(' + 19 + ', ' + i * 15 + ')'
+        })
+
+      stripeLegend.append('rect')
+        .attr('width', 9)
+        .attr('height', 9)
+        .style({
+          'fill': stripeLegendColor,
+          'stroke': '#cccccc',
+          'stroke-width': 1
+        })
+
+      stripeLegend.append('text')
+        .attr({
+          'x': 15,
+          'y': 3.5,
+          'dy': '0.4em'
+        })
+        .style('text-anchor', 'start')
+        .text(function (d) {
+          return d
+        })
     }
   },
 

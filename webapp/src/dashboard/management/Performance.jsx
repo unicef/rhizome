@@ -151,56 +151,53 @@ var Performance = React.createClass({
           <div>
             <h4>Conversions</h4>
             <Chart type='LineChart'
-              data={conversions}
-              loading={loading}
-              options={{
-                aspect: 2.26,
-                domain: _.constant([lower.toDate(), upper.toDate()]),
-                range: _.constant([0, 1]),
-                x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
-                xFormat: d => moment(d).format('MMM YYYY'),
-                yFormat: pct
-              }}/>
+                   data={conversions}
+                   loading={loading}
+                   options={{
+                     aspect: 2.26,
+                     domain: _.constant([lower.toDate(), upper.toDate()]),
+                     range: _.constant([0, 1]),
+                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                     xFormat: d => moment(d).format('MMM YYYY'),
+                     yFormat: pct
+                   }}/>
           </div>
         </div>
 
         <div className='medium-3 columns'>
           <h4>{location}, country overview</h4>
           <Chart type='ChoroplethMap'
-            data={missedChildrenMap}
-            loading={loading}
-            options={{
-              aspect: 0.555,
-              domain: _.constant([0, 0.1]),
-              value: _.property('properties[475]'),
-              bubblesValue: _.property('properties[177]'),
-              stripesValue: _.property('properties[203]'),
-              yFormat: pct,
-              radius: _.partial(_chooseRadius, _),
-              onClick: d => { DashboardActions.navigate({ location: d }) }
-            }}/>
+                 data={missedChildrenMap}
+                 loading={loading}
+                 options={{
+                   aspect: 0.555,
+                   domain: _.constant([0, 0.1]),
+                   value: _.property('properties[475]'),
+                   bubblesValue: _.property('properties[177]'),
+                   stripesValue: _.property('properties[203]'),
+                   yFormat: pct,
+                   radius: _.partial(_chooseRadius, _),
+                   onClick: d => { DashboardActions.navigate({ location: d }) }
+                 }}/>
         </div>
 
         <div className='transit-points medium-1 column'>
           <div>
-            <h4>Transit Points</h4>
-
-            {vaccinated}
-
-            <PieChartList
-              loading={loading}
-              keyPrefix='transit-points'
-              name={_.property('[0].title')}
-              data={transitPoints}
-              options={{
-                domain: _.constant([0, 1]),
-                size: 24,
-                palette: colors
-              }}
-              emptyText='No transit point data available'/>
+            <h4 className='font-bold'>Missed Children</h4>
           </div>
           <div>
-            <h4 className='font-bold'>Missed Children</h4>
+            <h4>Transit Points</h4>
+            {vaccinated}
+            <PieChartList loading={loading}
+                          keyPrefix='transit-points'
+                          name={_.property('[0].title')}
+                          data={transitPoints}
+                          emptyText='No transit point data available'
+                          options={{ 
+                            domain: _.constant([0, 1]), 
+                            size: 24, 
+                            palette: colors 
+                          }}/>
           </div>
         </div>
       </div>
