@@ -194,10 +194,10 @@ var Performance = React.createClass({
                           name={_.property('[0].title')}
                           data={transitPoints}
                           emptyText='No transit point data available'
-                          options={{ 
-                            domain: _.constant([0, 1]), 
-                            size: 24, 
-                            palette: colors 
+                          options={{
+                            domain: _.constant([0, 1]),
+                            size: 24,
+                            palette: colors
                           }}/>
           </div>
           <div>
