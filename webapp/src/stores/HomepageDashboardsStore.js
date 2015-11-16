@@ -144,29 +144,32 @@ var HomepageDashboardsStore = Reflux.createStore({
     }
   },
 
-  countriesPromise: function () {
-    return api.geo({ parent_location__in: '1,2,3', with_parent: true }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
-      return _(response.objects.features).flatten().groupBy('parent_location_id')
-      .filter(item => item.length > 0).sortBy(item => item[0].parent_location_id).value()
+  countriesPromise: function (list) {
+    return api.geo({ parent_location__in: list.join(','), with_parent: true }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
+      var locations = _(response.objects.features).flatten().groupBy('parent_location_id').value()
+      return list.map(item => locations[item])
     })
   },
 
   onFetchDashboards: function () {
     var dashboardDefs = [
       {
-        name: 'homepage-nigeria',
-        date: '2015-04',
-        location: 'Nigeria'
-      },
-      {
         name: 'homepage-afghanistan',
-        date: '2015-04',
-        location: 'Afghanistan'
+        date: '2015-08',
+        location: 'Afgh anistan',
+        id: 2
       },
       {
         name: 'homepage-pakistan',
         date: '2015-09',
-        location: 'Pakistan'
+        location: 'Pakistan',
+        id: 3
+      },
+      {
+        name: 'homepage-nigeria',
+        date: '2015-09',
+        location: 'Nigeria',
+        id: 1
       }
     ]
 
@@ -175,7 +178,7 @@ var HomepageDashboardsStore = Reflux.createStore({
       RegionStore.getLocationTypesPromise(),
       CampaignStore.getCampaignsPromise(),
       IndicatorStore.getIndicatorsPromise(),
-      this.countriesPromise()
+      this.countriesPromise(dashboardDefs.map(item => item.id))
     ])
     .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
       var partialPrepare = _.partial((dashboard) => {
