@@ -1,5 +1,6 @@
 from datapoints.models import *
 from source_data.models import SourceObjectMap
+from pandas import read_csv, notnull, DataFrame, concat
 
 def cache_indicator_abstracted():
     '''
@@ -79,54 +80,69 @@ def calculate_campaign_percentage_complete():
 
 def cache_location_tree():
 
-    rt_raw = LocationTree.objects.raw(
-    '''
-    TRUNCATE TABLE location_tree;
+    location_tree_batch,location_df_list = [],[]
 
-    INSERT INTO location_tree
-    (parent_location_id, immediate_parent_id, location_id, lvl)
+    ## process locations from the lowest admin level and work up to country ##
+    location_type_loop_order = LocationType.objects.all()\
+        .values_list('id',flat=True).order_by('-admin_level')
 
+    for lt_id in location_type_loop_order:
+        location_df_list.append(process_location_tree_lvl(lt_id))
 
-    WITH RECURSIVE location_tree(parent_location_id, immediate_parent_id, location_id, lvl) AS
-    (
+    all_lvl_location_tree_df = concat(location_df_list).drop_duplicates()
+    all_lvl_location_tree_df['lvl'] = 1
 
-    SELECT
-    	rg.parent_location_id
-    	,rg.parent_location_id as immediate_parent_id
-    	,rg.id as location_id
-    	,1 as lvl
-    FROM location rg
+    for ix, location_tree in all_lvl_location_tree_df.iterrows():
 
-    UNION ALL
+        lt_dict = {
+            'location_id':location_tree.location_id,
+            'immediate_parent_id':location_tree.parent_location_id,
+            'parent_location_id':location_tree.parent_location_id,
+            'lvl':location_tree.lvl
+        }
 
-    -- recursive term --
-    SELECT
-    	r_recurs.parent_location_id
-    	,rt.parent_location_id as immediate_parent_id
-    	,rt.location_id
-    	,rt.lvl + 1
-    FROM location AS r_recurs
-    INNER JOIN location_tree AS rt
-    ON (r_recurs.id = rt.parent_location_id)
-    AND r_recurs.parent_location_id IS NOT NULL
-    )
+        location_tree_batch.append(LocationTree(**lt_dict))
 
-    SELECT
-    	COALESCE(parent_location_id, location_id)  AS parent_location_id
-    	,COALESCE(immediate_parent_id, location_id)  AS immediate_parent_id
-    	,location_id
-    	,lvl
-    FROM location_tree;
+    LocationTree.objects.all().delete()
+    LocationTree.objects.bulk_create(location_tree_batch)
 
-    -- temporary hack to make the lvl 0 for countries --
-    update location_tree set lvl = 0
-    where location_id = parent_location_id;
+def process_location_tree_lvl(location_type_id):
 
-    SELECT * FROM location_tree;
-    ''')
+    location_tree_columns = ['location_id','parent_location_id']
 
-    for x in rt_raw:
-        pass # in order to execute raw sql
+    ## get the locations to process ##
+    location_id_list = Location.objects\
+        .filter(location_type_id = location_type_id)\
+        .values_list('id',flat=True)
+
+    ## build the direct parent location heirarchy ##
+    this_lvl_df = DataFrame(list(Location.objects\
+        .filter(id__in=location_id_list)\
+        .values_list('id','parent_location_id')),columns=location_tree_columns)
+
+    ## build the level up location heirarchy ##
+    next_lvl_df = DataFrame(list(Location.objects\
+        .filter(id__in=this_lvl_df['parent_location_id'].unique())\
+        .values_list('id','parent_location_id')),\
+            columns=location_tree_columns)
+
+    ## ultimate parent has parent_location_id = location_id ##
+    this_lvl_df.parent_location_id.fillna(this_lvl_df\
+        .location_id, inplace=True)
+    next_lvl_df.parent_location_id.fillna(next_lvl_df\
+        .location_id, inplace=True)
+
+    ## merge this level, and next level
+    merged_df = this_lvl_df.merge(next_lvl_df,left_on='parent_location_id',\
+        right_on='location_id')
+
+    ## clean up the merged df and return the concatenation of all 3 ##
+    cleaned_merge_df = merged_df[['location_id_x','parent_location_id_y']]
+    cleaned_merge_df.columns = location_tree_columns
+
+    final_df = concat([next_lvl_df,this_lvl_df,cleaned_merge_df])
+
+    return final_df
 
 
 def update_source_object_names():

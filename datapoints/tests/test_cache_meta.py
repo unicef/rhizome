@@ -34,15 +34,14 @@ class CacheMetaTestCase(TestCase):
         office = Office.objects.create(name='not important')
         location_type_country = LocationType.objects.create(name='Country',\
             admin_level=0,id=1)
-        # location_type_state = LocationType.objects.create(name='State',\
-        #     admin_level=1,id=2)
-        # location_type_city = LocationType.objects.create(name='City',\
-        #     admin_level=2,id=3)
+        location_type_state = LocationType.objects.create(name='State',\
+            admin_level=1,id=2)
+        location_type_city = LocationType.objects.create(name='City',\
+            admin_level=2,id=3)
 
         location_data = {
                 'id':[1,2,3,4,5,6,7],
-                'location_type_id':[1,1,1,1,1,1,1],
-                # 'location_type_id':[1,2,3,2,2,2,3],
+                'location_type_id':[1,2,3,2,2,2,3],
                 'name': ['U.S.A.','New York State','New York City','Texas',\
                     'California','Maine','Portland, ME'],
                 'parent_location_id': [None,1,2,1,1,1,6]
@@ -51,8 +50,6 @@ class CacheMetaTestCase(TestCase):
         df = DataFrame.from_dict(location_data)
         df.set_index('id', inplace=True, drop=False, append=False)
         no_nan_df = df.where((notnull(df)), None)
-
-
 
         for ix, loc in no_nan_df.iterrows():
             location_batch.append(Location(**{
