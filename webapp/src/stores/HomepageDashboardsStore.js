@@ -177,10 +177,9 @@ var HomepageDashboardsStore = Reflux.createStore({
       RegionStore.getlocationsPromise(),
       RegionStore.getLocationTypesPromise(),
       CampaignStore.getCampaignsPromise(),
-      IndicatorStore.getIndicatorsPromise(),
-      this.countriesPromise(dashboardDefs.map(item => item.id))
+      IndicatorStore.getIndicatorsPromise()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns, indicators, countries) => {
+    .then(_.spread((locations, locationsTypes, campaigns, indicators) => {
       var partialPrepare = _.partial((dashboard) => {
         return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
       })
@@ -191,13 +190,14 @@ var HomepageDashboardsStore = Reflux.createStore({
 
       var partialDashboardInit = _.partial((country, data) => {
         var dashboardDef = _.find(enhanced, (item) => {
-          return country === item.location.name.toLowerCase()
+          return country.toLowerCase() === item.location.name.toLowerCase()
         })
 
         return _.extend({
           campaign: dashboardDef.campaign,
           location: dashboardDef.location,
-          indicators: indicators
+          indicators: indicators,
+          mapLoading: data.mapLoading
         },
         _.pick(dashboardDef.dashboard, ['location', 'date']), {
           data: DashboardInit.dashboardInit(
@@ -217,29 +217,39 @@ var HomepageDashboardsStore = Reflux.createStore({
         .map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        var dashboards = _.zip([d1, d2, d3], countries)
+        let dataPoints = [d1, d2, d3]
           .map((item) => {
             return {
-              data: item[0],
-              features: item[1]
-            }
-          }).map((item) => {
-            return {
-              data: _(item.data)
+              data: _(item)
               .pluck('objects')
               .flatten()
               .sortBy(_.method('campaign.start_date.getTime'))
               .map(this.melt)
               .flatten()
-              .value(),
-              features: item.features
+              .value()
             }
-          }).map(function (item) {
-            var country = item.data[0].campaign.slug.split('-')[0]
-            return partialDashboardInit(country, item)
           })
+
+        let dashboards = dataPoints.map(function (item) {
+          let country = item.data[0].campaign.slug.split('-')[0]
+          item.mapLoading = true
+          return partialDashboardInit(country, item)
+        })
+
         this.trigger({
           dashboards: dashboards
+        })
+
+        this.countriesPromise(dashboardDefs.map(item => item.id)).then(countries => {
+          dashboards = dataPoints.map((item, index) => {
+            item.features = countries[index]
+            item.mapLoading = false
+            return partialDashboardInit(item.data[0].campaign.slug.split('-')[0], item)
+          })
+
+          this.trigger({
+            dashboards: dashboards
+          })
         })
       }))
     }))
