@@ -25,8 +25,7 @@ var defaults = {
   yScale: d3.scale.linear
 }
 
-function ColumnChart () {
-}
+function ColumnChart () {}
 
 _.extend(ColumnChart.prototype, {
   classNames: 'chart stacked-column',
@@ -187,7 +186,7 @@ _.extend(ColumnChart.prototype, {
         .scale(dataXScale))
 
     svg.select('.x.axis').selectAll('.domain').data([0])
-      .attr("d", "M" + 0 + "," + 0 + "V0H" + w + "V" + 0);
+      .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
 
     svg.select('.y.axis')
       .call(d3.svg.axis()
@@ -200,7 +199,7 @@ _.extend(ColumnChart.prototype, {
     svg.selectAll('.y.axis text')
       .attr({
         'dx': -w,
-        'dy': 8
+        'dy': 10
       })
 
     d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
@@ -294,12 +293,12 @@ _.extend(ColumnChart.prototype, {
         })
         .tap(list => {
           if (_(list).some(item => (item.y >= h || item.y < 0))) {
-            list.forEach(item => {
-              item.y = 0
-            })
+            list.forEach(item => { item.y = 0 })
           }
         })
-        .each(item => { item.y = 0 })
+        .each(item => {
+          item.y = 0
+        })
         .reverse()
         .value()
 

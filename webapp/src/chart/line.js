@@ -29,10 +29,6 @@ _.extend(LineChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-    // //remove the null value in each series
-    // trello #427
-    // management-dashboard-conversion-rates-line-chart issue
-
     series = _(series).each(serie => {
       serie.values = _(serie.values).reject(item => {
         return item.value === null
@@ -158,7 +154,6 @@ _.extend(LineChart.prototype, {
         .align(false)
         .scale(legendColor))
 
-    // Set up the hover interaction
     svg.attr('class', 'line')
       .call(hoverLine()
         .width(width)
@@ -174,7 +169,6 @@ _.extend(LineChart.prototype, {
         .sort(true)
         .colorRange(colorRange)
         .datapoints(_(series).map(function (s) {
-          // Set the series name on each datapoint for easy retrieval
           return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
         })
           .flatten()
@@ -186,12 +180,12 @@ _.extend(LineChart.prototype, {
       .call(d3.svg.axis()
         .tickFormat(options.xFormat)
         .outerTickSize(0)
-        .ticks(4)
+        .ticks(3)
         .scale(dataXScale)
         .orient('bottom'))
 
     svg.select('.x.axis').selectAll('.domain').data([0])
-      .attr("d", "M" + 0 + "," + 0 + "V0H" + width + "V" + 0);
+      .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + width + 'V' + 0)
 
     var gy = svg.select('.y.axis')
       .call(d3.svg.axis()
@@ -204,8 +198,10 @@ _.extend(LineChart.prototype, {
     gy.selectAll('text')
       .attr({
         'x': 4,
-        'dy': -4
+        'dy': 10
       })
+
+    d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
 
     gy.selectAll('g').classed('minor', function (d) {
       return d !== range[0]
