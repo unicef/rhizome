@@ -199,6 +199,9 @@ var Performance = React.createClass({
                             palette: colors 
                           }}/>
           </div>
+          <div>
+            <h4 className='h4-wrap'>Children Vaccinated at Transit Point</h4>
+          </div>
         </div>
       </div>
     )

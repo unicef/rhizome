@@ -262,6 +262,29 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       bubbleData.exit().remove()
+
+      var bubbleLegendText = [100, 1000, 5000]
+      var bubbleLegend = svg.select('.bubbles').select('.legend')
+        .attr('transform', function () {
+          return 'translate(' + (w + 80) + ', ' + 300 + ')'
+        })
+        .selectAll('.series').data(bubbleLegendText)
+        .enter().append('g')
+        .attr('class', 'series')
+
+      bubbleLegend.append('circle')
+        .attr('r', function(d) {return options.radius(d)})
+        .style({
+          'opacity': 0.5,
+          'fill': 'transparent',
+          'stroke': '#AAAAAA'
+        })
+
+      bubbleLegend.append('text')
+        .attr('transform', function (d, i) {
+          return 'translate(' + 19 + ', ' + i * 15 + ')'
+        })
+        .text(function(d) {return d})
     }
 
     if (!_.isUndefined(options.stripesValue)) {
