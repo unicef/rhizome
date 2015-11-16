@@ -105,12 +105,12 @@ function prepareMissedChildrenData (original) {
 
   var missed = generateMissedChildrenChartData(data.missedChildren)
 
-  if (missed && missed.length > 0) {
-    missed[0].name = 'Absent'
-    missed[1].name = 'Other'
-    missed[2].name = 'Refused'
-    missed[3].name = 'Not visited'
-  }
+  //if (missed && missed.length > 0) {
+  //  missed[0].name = 'Absent'
+  //  missed[1].name = 'Other'
+  //  missed[2].name = 'Refused'
+  //  missed[3].name = 'Not visited'
+  //}
 
   var missedScale = [lower.valueOf(), upper.valueOf()]
 

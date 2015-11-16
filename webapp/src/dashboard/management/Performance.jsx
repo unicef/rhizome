@@ -71,12 +71,12 @@ var Performance = React.createClass({
 
     var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
-    if (missed && missed.length > 0) {
-      missed[0].name = 'Absent'
-      missed[1].name = 'Other'
-      missed[2].name = 'Refused'
-      missed[3].name = 'Not visited'
-    }
+    //if (missed && missed.length > 0) {
+    //  missed[0].name = 'Absent'
+    //  missed[1].name = 'Other'
+    //  missed[2].name = 'Refused'
+    //  missed[3].name = 'Not visited'
+    //}
 
     var sortedConversions = _.sortBy(data.conversions, 'campaign.start_date')
     var conversions = _(sortedConversions)
