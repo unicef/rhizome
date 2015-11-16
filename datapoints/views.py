@@ -123,7 +123,7 @@ def refresh_metadata(request):
     '''
 
     indicator_cache_data = cache_meta.cache_indicator_abstracted()
-    campaign_cache_data = cache_meta.cache_campaign_abstracted()
+    campaign_cache_data = cache_meta.calculate_campaign_percentage_complete()
     location_tree_cache_data = cache_meta.cache_location_tree()
     source_object_cache = cache_meta.update_source_object_names()
 

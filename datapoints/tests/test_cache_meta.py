@@ -38,13 +38,15 @@ class CacheMetaTestCase(TestCase):
             admin_level=1,id=2)
         location_type_city = LocationType.objects.create(name='City',\
             admin_level=2,id=3)
+        location_type_city = LocationType.objects.create(name='Neighborhood',\
+            admin_level=3,id=4)
 
         location_data = {
-                'id':[1,2,3,4,5,6,7],
-                'location_type_id':[1,2,3,2,2,2,3],
+                'id':[1,2,3,4,5,6,7,8],
+                'location_type_id':[1,2,3,2,2,2,3,4],
                 'name': ['U.S.A.','New York State','New York City','Texas',\
-                    'California','Maine','Portland, ME'],
-                'parent_location_id': [None,1,2,1,1,1,6]
+                    'California','Maine','Portland, ME','Brooklyn'],
+                'parent_location_id': [None,1,2,1,1,1,6,3]
             }
 
         df = DataFrame.from_dict(location_data)
@@ -83,3 +85,8 @@ class CacheMetaTestCase(TestCase):
         ## new york state and maine are children of USA #
         self.assertTrue((2,1) in location_tree_in_db)
         self.assertTrue((6,1) in location_tree_in_db)
+
+        ## Brooklkyn has, NYC, NYState and USA as parents ##
+        self.assertTrue((8,1) in location_tree_in_db)
+        self.assertTrue((8,2) in location_tree_in_db)
+        self.assertTrue((8,3) in location_tree_in_db)
