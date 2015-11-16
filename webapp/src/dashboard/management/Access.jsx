@@ -25,8 +25,8 @@ var Access = React.createClass({
     var inaccessible = _(data.numberOfInaccessibleChildren)
       .sortBy(_.method('campaign.start_date.getTime'))
       .groupBy('indicator.short_name')
-      .map(function (values, name) {
-        return {name: name, values: values}
+      .map(function (values) {
+        return {name: '', values: values}
       })
       .value()
 
@@ -65,6 +65,7 @@ var Access = React.createClass({
       domain: _.constant([lower.toDate(), upper.toDate()]),
       values: _.property('values'),
       x: _.property('campaign.start_date'),
+      xFormat: d => moment(d).format('MMM YYYY'),
       y: _.property('value'),
       yFormat: d3.format(',.0f')
     }

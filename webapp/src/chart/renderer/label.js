@@ -161,7 +161,8 @@ function label () {
       .append('text')
       .style({
         'opacity': 0,
-        'fill': scale
+        'fill': scale,
+        'text-anchor': 'end'
       })
       .attr({
         'dy': '-16',
