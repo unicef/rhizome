@@ -71,7 +71,7 @@ var HomepageCharts = React.createClass({
            </div>
     }
 
-    if (this.state.charts.length === 0) {
+    if (!this.state.charts.length) {
       var charts = []
 
       charts.push({
