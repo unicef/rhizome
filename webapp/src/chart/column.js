@@ -176,7 +176,7 @@ _.extend(ColumnChart.prototype, {
         .orient('bottom')
         .tickSize(0)
         .tickPadding(4)
-        .tickValues(_.filter(xScale.domain(), function (d, i, domain) {
+        .tickValues(_.filter(dataXScale.domain(), function (d, i, domain) {
           // Include every fourth tick value unless that tick is within three
           // ticks of the last value. Always include the last tick. We have to
           // do this manually because D3 ignores the ticks() value for
@@ -214,6 +214,7 @@ _.extend(ColumnChart.prototype, {
       .map(function (d) {
         return options.name(d)
       })
+      .reverse()
       .value()
 
     var fillColor = d3.scale.ordinal().range(['#B6D0D4', '#D95449'])
