@@ -299,7 +299,6 @@ _.extend(ColumnChart.prototype, {
         .each(item => {
           item.y = 0
         })
-        .reverse()
         .value()
 
       svg.select('.annotation').selectAll('.series.label')
