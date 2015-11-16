@@ -197,8 +197,10 @@ _.extend(ColumnChart.prototype, {
     svg.selectAll('.y.axis text')
       .attr({
         'dx': -w,
-        'dy': -4
+        'dy': 8
       })
+
+    d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
 
     var fmt = _.flow(options.y, options.yFormat)
 
