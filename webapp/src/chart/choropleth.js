@@ -228,16 +228,16 @@ _.extend(ChoroplethMap.prototype, {
         c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
     )
 
-    if (_.every(colorScale.domain(), _.isNaN)) {
-      svg.select('.legend').selectAll('*').remove()
-    } else {
-      svg.select('.legend')
-        .call(legend().scale(
-          d3.scale.ordinal().domain(ticks).range(colorScale.range())
-        )
-      ).attr('transform', function () {
-        return 'translate(' + w + ', ' + 0 + ')'
-      })
+    if (!options.homepage) {
+      if (_.every(colorScale.domain(), _.isNaN)) {
+        svg.select('.legend').selectAll('*').remove()
+      } else {
+        svg.select('.legend')
+          .call(legend().scale(
+            d3.scale.ordinal().domain(ticks).range(colorScale.range())
+          )
+        ).attr('transform', function () { return 'translate(' + w + ', ' + 0 + ')' })
+      }
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
