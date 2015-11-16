@@ -124,7 +124,8 @@ _.extend(AreaChart.prototype, {
 
     g.style({
       'fill': fillColor,
-      'stroke': strokeColor
+      'stroke': strokeColor,
+      'opacity': 0.5
     })
 
     g.exit().remove()
