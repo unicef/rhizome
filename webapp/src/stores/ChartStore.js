@@ -6,6 +6,19 @@ import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
 
+function filterCampaignByLocation (campaigns, location) {
+  return campaigns.filter(campaign => {
+    return campaign.office_id === location.office_id
+  })
+}
+
+function filterTimeRangeByChartType (timeRanges, chartType) {
+  let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
+  return timeRanges.filter(time => {
+    return _.includes(expectTimes, time.value)
+  })
+}
+
 function prepareChartData (chartDef) {
   let data = {}
 
@@ -32,54 +45,55 @@ function prepareChartData (chartDef) {
       .map(ancestryString)
       .value()
 
-  data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
-    ? locationIndex[chartDef.locationValue]
-    : locationIndex[data.locationList[0].value]
+    data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
+      ? locationIndex[chartDef.locationValue]
+      : locationIndex[data.locationList[0].value]
 
-  let officeId = data.location.office_id
-  api.indicatorsTree({ office_id: officeId }).then(indicators => {
-    let indicatorIndex = _.indexBy(indicators.flat, 'id')
-    data.indicatorList = _.sortBy(indicators.objects, 'title')
-    data.indicatorSelected = chartDef.indicators.map(id => {
-      return indicatorIndex[id]
-    })
-    // previewChart() // do something here
-  })
-
-  let officeIndex = _.indexBy(offices.objects, 'id')
-  let campaignList = _(campaigns.objects)
-    .map(campaign => {
-      return _.assign({}, campaign, {
-        'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-        'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-        'office': officeIndex[campaign.office_id]
+    let officeId = data.location.office_id
+    api.indicatorsTree({ office_id: officeId }).then(indicators => {
+      let indicatorIndex = _.indexBy(indicators.flat, 'id')
+      data.indicatorList = _.sortBy(indicators.objects, 'title')
+      data.indicatorSelected = chartDef.indicators.map(id => {
+        return indicatorIndex[id]
       })
+      // previewChart() // do something here
     })
-    .sortBy(_.method('start_date.getTime'))
-    .reverse()
-    .value()
 
-  let campaignIndex = _.indexBy(campaignList, 'id')
-  data.campaignFilteredList = filterCampaignByLocation(campaignList, data.location)
-  data.timeRangeFilteredList = filterTimeRangeByChartType(builderDefinitions.times, data.chartDef.type)
-  data.chartTypeFilteredList = builderDefinitions.charts
+    let officeIndex = _.indexBy(offices.objects, 'id')
+    let campaignList = _(campaigns.objects)
+      .map(campaign => {
+        return _.assign({}, campaign, {
+          'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+          'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+          'office': officeIndex[campaign.office_id]
+        })
+      })
+      .sortBy(_.method('start_date.getTime'))
+      .reverse()
+      .value()
 
-  if (chartDef.campaignValue && campaignIndex[chartDef.campaignValue]) {
-    data.campaign = campaignIndex[chartDef.campaignValue]
-  } else {
-    data.campaign = data.campaignFilteredList.length > 0
-      ? campaignIndex[data.campaignFilteredList[0].id]
-      : null
-  }
+    let campaignIndex = _.indexBy(campaignList, 'id')
+    data.campaignFilteredList = filterCampaignByLocation(campaignList, data.location)
+    data.timeRangeFilteredList = filterTimeRangeByChartType(builderDefinitions.times, data.chartDef.type)
+    data.chartTypeFilteredList = builderDefinitions.charts
 
-  if (data.indicatorSelected.length > 0) {
-    return filterChartTypeByIndicator(data)
-  }
+    if (chartDef.campaignValue && campaignIndex[chartDef.campaignValue]) {
+      data.campaign = campaignIndex[chartDef.campaignValue]
+    } else {
+      data.campaign = data.campaignFilteredList.length > 0
+        ? campaignIndex[data.campaignFilteredList[0].id]
+        : null
+    }
+
+    if (data.indicatorSelected.length > 0) {
+      return filterChartTypeByIndicator(data)
+    }
+  })
 }
 
 function filterChartTypeByIndicator (data) {
   return api.chartType(
-    {primary_indicator_id: data.indicatorSelected[0].id },
+    {primary_indicator_id: data.indicatorSelected[0].id},
     null,
     {'cache-control': 'no-cache'})
     .then(res => {
@@ -93,5 +107,9 @@ function filterChartTypeByIndicator (data) {
         this.onChangeChart(data.chartTypeFilteredList[0].name)
       }
     })
-},
+}
 
+export default {
+  prepareChartData: prepareChartData,
+  filterChartTypeByIndicator: filterChartTypeByIndicator
+}
