@@ -164,7 +164,7 @@ function label () {
         'fill': scale
       })
       .attr({
-        'dy': '-4',
+        'dy': '-16',
         'x': x,
         'y': y
       })

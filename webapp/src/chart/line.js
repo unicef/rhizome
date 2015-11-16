@@ -44,7 +44,7 @@ _.extend(LineChart.prototype, {
     var height = this._height - margin.top - margin.bottom
 
     var dataColor = options.color
-    var colorRange = ['#D95348', '#377EA3', '#82888e', '#98a0a8', '#b6c0cc']
+    var colorRange = ['#377EA3', '#D95348', '#82888e', '#98a0a8', '#b6c0cc']
 
     if (!_.isFunction(dataColor)) {
       var dataColorScale = d3.scale.ordinal()
