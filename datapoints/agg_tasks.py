@@ -73,15 +73,10 @@ class AggRefresh(object):
 
     def main(self):
         '''
-        Blindly catch any erros from the two aggregation functions.
         '''
 
-        # try:
         self.agg_datapoints()
         self.calc_datapoints()
-        # except Exception as err:
-        #     self.err = traceback.format_exc()
-        #     return 'ERROR'
 
         return 'SUCCESS'
 

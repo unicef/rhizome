@@ -54,9 +54,9 @@ class AggRefreshTestCase(TestCase):
                 status_description = 'test').id
 
         location_type1 = LocationType.objects.create(admin_level=0,\
-            name="country")
+            name="country",id=1)
         location_type2 = LocationType.objects.create(admin_level=1,\
-            name="province")
+            name="province",id=2)
 
         campaign_type1 = CampaignType.objects.create(name='test')
 
