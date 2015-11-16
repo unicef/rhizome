@@ -7,7 +7,7 @@ from datapoints.models import *
 from source_data.models import ProcessStatus, Document, SourceSubmission
 
 from datapoints.agg_tasks import AggRefresh
-from datapoints.cache_meta import cache_location_tree
+from datapoints.cache_meta import LocationTreeCache
 
 
 class AggRefreshTestCase(TestCase):
@@ -30,7 +30,8 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        cache_location_tree()
+        ltr = LocationTreeCache()
+        ltr.main()
 
     def create_metadata(self):
         '''

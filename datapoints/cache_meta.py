@@ -78,66 +78,71 @@ def calculate_campaign_percentage_complete():
         c.management_dash_pct_complete = ind_count / float(len(all_indicators))
         c.save()
 
-def cache_location_tree():
+class LocationTreeCache(object):
 
+    def __init__(self):
 
-    ## first insert the direct parent / child relationships $$
-    lt_batch = []
-    for loc in Location.objects.all().values('id','parent_location_id'):
-        lt_batch.append(LocationTree(**{
-            'location_id':loc['id'],
-            'parent_location_id':loc['parent_location_id'] or loc['id'],
-            'lvl':0,
-        }))
+        self.location_tree_columns = ['location_id','parent_location_id']
+        self.location_tree_df = DataFrame(columns=self.location_tree_columns)
 
-    LocationTree.objects.all().delete()
-    LocationTree.objects.bulk_create(lt_batch)
+    def main(self):
+        '''
+        Any and all parents attributed any and all children.  See the test
+        case for an abstracted example.
+        '''
 
-    ## now iterate from bottom to top to bottom ##
-    location_type_loop_order = LocationType.objects.all()\
-        .values_list('id',flat=True).order_by('-admin_level')
+        ## now iterate from bottom to bottom to top ##
+        location_type_loop_order = LocationType.objects.all()\
+            .values_list('id',flat=True).order_by('-admin_level')
 
-    for i,(lt_id) in enumerate(location_type_loop_order):
-        process_location_tree_lvl(lt_id)
+        for lt_id in location_type_loop_order:
+            self.process_location_tree_lvl(lt_id)
 
+        self.upsert_location_tree()
 
-def process_location_tree_lvl(location_type_id):
+    def process_location_tree_lvl(self, location_type_id):
 
-    location_tree_columns = ['location_id','parent_location_id']
+        lt_batch = []
 
-    ## get the locations to process ##
-    location_id_list = Location.objects\
-        .filter(location_type_id = location_type_id)\
-        .values_list('id',flat=True)
+        location_df = DataFrame(list(Location.objects\
+            .filter(location_type_id = location_type_id)\
+            .values_list('id','parent_location_id')),columns=self.location_tree_columns)
 
-    ## build the direct parent location heirarchy ##
-    this_lvl_df = DataFrame(list(Location.objects\
-        .filter(id__in=location_id_list)\
-        .values_list('id','parent_location_id')),columns=location_tree_columns)
+        merged_df = location_df.merge(self.location_tree_df
+            ,left_on='location_id',right_on='parent_location_id')
 
-    ## build the level up location heirarchy ##
-    next_lvl_df = DataFrame(list(Location.objects\
-        .filter(id__in=this_lvl_df['parent_location_id'].unique())\
-        .values_list('id','parent_location_id')),\
-            columns=location_tree_columns)
+        cleaned_merge_df = merged_df[['location_id_y','parent_location_id_x']]
+        cleaned_merge_df.columns = self.location_tree_columns
 
-    ## ultimate parent has parent_location_id = location_id ##
-    this_lvl_df.parent_location_id.fillna(this_lvl_df\
-        .location_id, inplace=True)
-    next_lvl_df.parent_location_id.fillna(next_lvl_df\
-        .location_id, inplace=True)
+        self.location_tree_df = concat([self.location_tree_df,location_df,\
+            cleaned_merge_df])
 
-    ## merge this level, and next level
-    merged_df = this_lvl_df.merge(next_lvl_df,left_on='parent_location_id',\
-        right_on='location_id')
+        self.location_tree_df.drop_duplicates()
 
-    ## clean up the merged df and return the concatenation of all 3 ##
-    cleaned_merge_df = merged_df[['location_id_x','parent_location_id_y']]
-    cleaned_merge_df.columns = location_tree_columns
+    def upsert_location_tree(self):
 
-    final_df = concat([next_lvl_df,this_lvl_df,cleaned_merge_df])
+        lt_batch = []
 
-    return final_df
+        ## only the ultimate parent should have itself as a parent ##
+        ## drop all NA values, then create the ultimate parents ##
+        self.location_tree_df.dropna(inplace=True)
+        for loc in Location.objects.filter(parent_location_id__isnull=True):
+            lt_batch.append(LocationTree(**{
+                'location_id':loc.id,
+                'parent_location_id':loc.id,
+                'lvl':0,
+            }))
+
+        ## iterate through the location tree df created above ##
+        for ix,loc in self.location_tree_df.iterrows():
+            lt_batch.append(LocationTree(**{
+                'location_id':loc.location_id,
+                'parent_location_id':loc.parent_location_id,
+                'lvl':0,
+            }))
+
+        LocationTree.objects.all().delete()
+        LocationTree.objects.bulk_create(lt_batch)
 
 
 def update_source_object_names():

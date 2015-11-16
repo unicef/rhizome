@@ -3,7 +3,7 @@ from numpy import nan,isnan
 from django.test import TestCase
 
 from datapoints.models import LocationType, Location, LocationTree, Office
-from datapoints.cache_meta import cache_location_tree
+from datapoints.cache_meta import LocationTreeCache
 
 class CacheMetaTestCase(TestCase):
     '''
@@ -66,13 +66,17 @@ class CacheMetaTestCase(TestCase):
         Location.objects.bulk_create(location_batch)
 
         ## now use the following function to transform the location_tree ##
-        cache_location_tree()
+        ltc = LocationTreeCache()
+        ltc.main()
 
         location_tree_in_db = LocationTree.objects.all()\
             .values_list('location_id','parent_location_id')
 
-        ## the ultimate parent, should have a row in which itself is parent ##
+        ## the ultimate parent, should have a with itself is parent ##
         self.assertTrue((1,1) in location_tree_in_db)
+
+        ## Brooklyn However should not be the parent of itself ##
+        self.assertFalse((8,8) in location_tree_in_db)
 
         ## new york city has a parent of NY State AND U.S.A ##
         self.assertTrue((3,1) in location_tree_in_db)
@@ -82,11 +86,11 @@ class CacheMetaTestCase(TestCase):
         self.assertTrue((7,1) in location_tree_in_db)
         self.assertTrue((7,6) in location_tree_in_db)
 
-        ## new york state and maine are children of USA #
+        # ## new york state and maine are children of USA #
         self.assertTrue((2,1) in location_tree_in_db)
         self.assertTrue((6,1) in location_tree_in_db)
 
         ## Brooklkyn has, NYC, NYState and USA as parents ##
-        self.assertTrue((8,1) in location_tree_in_db)
-        self.assertTrue((8,2) in location_tree_in_db)
         self.assertTrue((8,3) in location_tree_in_db)
+        self.assertTrue((8,2) in location_tree_in_db)
+        self.assertTrue((8,1) in location_tree_in_db)

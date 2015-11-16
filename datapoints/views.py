@@ -124,7 +124,10 @@ def refresh_metadata(request):
 
     indicator_cache_data = cache_meta.cache_indicator_abstracted()
     campaign_cache_data = cache_meta.calculate_campaign_percentage_complete()
-    location_tree_cache_data = cache_meta.cache_location_tree()
+
+    location_tree_cache_data = cache_meta.LocationTreeCache()
+    location_tree_cache_data.main()
+
     source_object_cache = cache_meta.update_source_object_names()
 
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
