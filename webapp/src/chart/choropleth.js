@@ -273,7 +273,7 @@ _.extend(ChoroplethMap.prototype, {
         .attr('class', 'series')
 
       bubbleLegend.append('circle')
-        .attr('r', function(d) {return options.radius(d)})
+        .attr('r', function (d) { return options.radius(d) })
         .style({
           'opacity': 0.5,
           'fill': 'transparent',
@@ -284,7 +284,7 @@ _.extend(ChoroplethMap.prototype, {
         .attr('transform', function (d, i) {
           return 'translate(' + 19 + ', ' + i * 15 + ')'
         })
-        .text(function(d) {return d})
+        .text(function (d) { return d })
     }
 
     if (!_.isUndefined(options.stripesValue)) {
