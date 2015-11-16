@@ -156,7 +156,7 @@ var HomepageDashboardsStore = Reflux.createStore({
       {
         name: 'homepage-afghanistan',
         date: '2015-08',
-        location: 'Afgh anistan',
+        location: 'Afghanistan',
         id: 2
       },
       {
