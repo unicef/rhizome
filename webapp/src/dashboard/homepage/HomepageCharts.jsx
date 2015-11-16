@@ -85,7 +85,6 @@ var HomepageCharts = React.createClass({
               data={polioCasesData.data}
               loading={loading}
               options={{
-                color: _.flow(_.property('name'), polioCasesData.colors),
                 aspect: 1,
                 width: 390,
                 height: 390

@@ -88,20 +88,10 @@ function preparePolioCasesData (original) {
     )
   }
 
-  var color = d3.scale.ordinal()
-    .range(['#377EA4', '#F15046', '#82888e', '#98a0a8', '#b6c0cc'])
-    .domain(_(original.data)
-      .map(_.method('campaign.start_date.getFullYear'))
-      .uniq()
-      .sortBy()
-      .reverse()
-      .value())
-
   return {
     title: title,
     newCaseLabel: newCaseLabel,
-    data: original.data,
-    colors: color
+    data: original.data
   }
 }
 
