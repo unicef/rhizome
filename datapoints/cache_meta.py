@@ -80,38 +80,26 @@ def calculate_campaign_percentage_complete():
 
 def cache_location_tree():
 
-    location_tree_batch,location_df_list = [],[]
 
-    ## process locations from the lowest admin level and work up to country ##
+    ## first insert the direct parent / child relationships $$
+    lt_batch = []
+    for loc in Location.objects.all().values('id','parent_location_id'):
+        lt_batch.append(LocationTree(**{
+            'location_id':loc['id'],
+            'parent_location_id':loc['parent_location_id'] or loc['id'],
+            'lvl':0,
+        }))
+
+    LocationTree.objects.all().delete()
+    LocationTree.objects.bulk_create(lt_batch)
+
+    ## now iterate from bottom to top to bottom ##
     location_type_loop_order = LocationType.objects.all()\
         .values_list('id',flat=True).order_by('-admin_level')
 
     for i,(lt_id) in enumerate(location_type_loop_order):
+        process_location_tree_lvl(lt_id)
 
-        lt_df = process_location_tree_lvl(lt_id)
-        lt_df['lvl'] = i
-        location_df_list.append(lt_df)
-
-    all_lvl_location_tree_df =  concat(location_df_list)
-
-    location_df_unique = DataFrame(all_lvl_location_tree_df\
-        .groupby(['location_id','parent_location_id'])['lvl'].min())
-
-    location_df_unique.reset_index(level=[0,1], inplace=True)
-
-    for ix, location_tree in location_df_unique.iterrows():
-
-        lt_dict = {
-            'location_id':location_tree.location_id,
-            'immediate_parent_id':location_tree.parent_location_id,
-            'parent_location_id':location_tree.parent_location_id,
-            'lvl':location_tree.lvl
-        }
-
-        location_tree_batch.append(LocationTree(**lt_dict))
-
-    LocationTree.objects.all().delete()
-    LocationTree.objects.bulk_create(location_tree_batch)
 
 def process_location_tree_lvl(location_type_id):
 
