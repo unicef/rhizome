@@ -44,8 +44,7 @@ _.extend(BulletChart.prototype, {
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + height,
         'width': this._width,
-        'height': height,
-        'style': 'border-radius: 30px;'
+        'height': height
       })
 
     // Append the x-axis container and a blank background
@@ -206,9 +205,9 @@ _.extend(BulletChart.prototype, {
     label
       .attr({
         'x': w,
-        'y': 0,
+        'y': -(yScale.rangeBand() + measureHeight) / 2,
         'text-anchor': 'end',
-        'dy': (options.lineHeight / 4) + 'em',
+        'dy': -(options.lineHeight / 4) + 'em',
         'transform': 'translate(0, ' + (h / 2) + ')',
         'fill': 'inherit'
       })
