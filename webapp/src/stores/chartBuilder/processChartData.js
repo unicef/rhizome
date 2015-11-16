@@ -148,14 +148,32 @@ export default {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
     let chartProcessors = {
-      LineChart: this.processLineChart(meltPromise, lower, upper, groups, groupBy),
-      PieChart: this.processPieChart(meltPromise, indicators),
-      ChoroplethMap: this.processChoroplethMap(meltPromise, locations),
-      ColumnChart: this.processColumnChart(meltPromise, lower, upper, groups, groupBy),
-      ScatterChart: this.processScatterChart(dataPromise, locations, indicators, xAxis, yAxis),
-      BarChart: this.processBarChart(dataPromise, locations, indicators, xAxis, yAxis)
+      LineChart: {
+        fn: this.processLineChart,
+        para: [meltPromise, lower, upper, groups, groupBy]
+      },
+      PieChart: {
+        fn: this.processPieChart,
+        para: [meltPromise, locations]
+      },
+      ChoroplethMap: {
+        fn: this.processChoroplethMap,
+        para: [meltPromise, locations]
+      },
+      ColumnChart: {
+        fn: this.processColumnChart,
+        para: [meltPromise, lower, upper, groups, groupBy]
+      },
+      ScatterChart: {
+        fn: this.processScatterChart,
+        para: [dataPromise, locations, indicators, xAxis, yAxis]
+      },
+      BarChart: {
+        fn: this.processBarChart,
+        para: [dataPromise, locations, indicators, xAxis, yAxis]
+      }
     }
-    return chartProcessors[chartType]
+    return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
   },
   processLineChart: function (dataPromise, lower, upper, groups, groupBy) {
     return dataPromise.then(function (data) {
