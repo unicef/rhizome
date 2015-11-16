@@ -263,7 +263,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           <Tooltip left={evt.pageX} top={evt.pageY}>
           <div>
             <h3>{options.name(series)}</h3>
-            {options.y(d)}:&ensp{options.x(d)}
+            {options.y(d)}:&ensp;{options.x(d)}
           </div>
           </Tooltip>
         )

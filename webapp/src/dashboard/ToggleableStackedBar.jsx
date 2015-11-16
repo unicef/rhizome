@@ -32,7 +32,7 @@ var ToggleableStackedBar = React.createClass({
     return (
       <div>
         <h4>
-          <a name={name}>{this.props.title}</a>&ensp
+          <a name={name}>{this.props.title}</a>&ensp;
           <div className='medium inline'>
             <label>
               <input

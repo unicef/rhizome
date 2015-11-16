@@ -330,6 +330,7 @@ var Dashboard = React.createClass({
             <i className='fa fa-stack-2x fa-circle'></i>
             <i className='fa fa-stack-1x fa-pencil'></i>
           </a>
+          &emsp;
         </span>
       )
     }
