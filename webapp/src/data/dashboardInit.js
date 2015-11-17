@@ -29,15 +29,19 @@ function getFacet (datum, path) {
  * Recursively determine if child is a child of parent location.
  */
 function childOf (parent, child) {
-  if (!child || !child.parent_location_id) {
-    return false
+  if (child.parent) {
+    if (!child || !child.parent) {
+      return false
+    }
+
+    if (parent.id === child.parent.id) {
+      return true
+    }
+
+    return childOf(parent, child.parent)
   }
 
-  if (parent.id === child.parent_location_id) {
-    return true
-  }
-
-  return childOf(parent, child.parent)
+  return (!child || !child.parent_location_id) ? false : (parent.id === child.parent_location_id)
 }
 
 function inChart (chart, campaign, location, datum) {
