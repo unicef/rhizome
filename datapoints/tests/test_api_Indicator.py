@@ -136,7 +136,9 @@ class IndicatorResourceTest(ResourceTestCase):
 
         self.assertEqual(Indicator.objects.count(), 0)
 
-        post_data = {'name': 'New test indicator name', 'short_name': 'New test short name', 'id': -1}
+        post_data = {'name': 'New test indicator name', \
+            'short_name': 'New test short name', \
+            'id': -1,'description':'test'}
 
         resp = self.api_client.post('/api/v1/basic_indicator/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
