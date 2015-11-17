@@ -130,6 +130,7 @@ export default React.createClass({
     var loading = this.props.loading
     var dataColorRange = ['#DB5344', '#79909F', '#2FB0D3']
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
+    let isBulletChart = true
 
     var charts = _(this.props.indicators)
       .map((indicator, i) => {
@@ -161,7 +162,7 @@ export default React.createClass({
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
             <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
-            <Chart type='BulletChart' loading={loading} data={chartData} options={options}/>
+            <Chart type='BulletChart' loading={loading} data={chartData} options={options} isBulletChart={isBulletChart}/>
           </li>
         )
       })

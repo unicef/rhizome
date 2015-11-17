@@ -27,7 +27,8 @@ export default React.createClass({
     type: React.PropTypes.string.isRequired,
     id: React.PropTypes.string,
     loading: React.PropTypes.bool,
-    options: React.PropTypes.object
+    options: React.PropTypes.object,
+    isBulletChart: React.PropTypes.bool
   },
 
   getDefaultProps: function () {
@@ -52,13 +53,21 @@ export default React.createClass({
         ? (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>)
         : (<span className='empty'>No data</span>)
 
-      overlay = (
-        <div style={position} className='overlay'>
-          <div>
-            <div>{message}</div>
-          </div>
-        </div>
-      )
+      overlay = (this.props.isBulletChart)
+        ? (
+            <div style={position} className='overlay'>
+              <div>
+                <div className='bullet__chart--noDate'>{message}</div>
+              </div>
+            </div>
+          )
+        : (
+            <div style={position} className='overlay'>
+              <div>
+                <div >{message}</div>
+              </div>
+            </div>
+        )
     }
 
     return (
