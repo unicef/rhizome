@@ -20,6 +20,8 @@ var percentage = function (dataset) {
   return dataset
 }
 
+let dateFormat = d3.time.format("%B %Y")
+
 function generateMissedChildrenChartData (original) {
   var stack = d3.layout.stack()
     .order('default')
@@ -95,7 +97,8 @@ function preparePolioCasesData (original) {
   return {
     title: title,
     newCaseLabel: newCaseLabel,
-    data: original.data
+    data: original.data,
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 
@@ -117,7 +120,8 @@ function prepareMissedChildrenData (original) {
     missedChildrenMap: missedChildrenMap,
     missed: missed,
     missedScale: missedScale,
-    location: location
+    location: location,
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 
@@ -180,7 +184,8 @@ function prepareUnderImmunizedData (original) {
   return {
     data: stack(data),
     immunityScale: immunityScale,
-    color: color
+    color: color,
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 
