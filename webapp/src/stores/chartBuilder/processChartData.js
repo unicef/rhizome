@@ -143,39 +143,74 @@ function _getIndicator (d) {
   return d.indicator.short_name
 }
 
+const aspects = {
+  0: {
+    lineChart: 2.664831804,
+    pieChart: 1,
+    choroplethMap: 1,
+    columnChart: 2.664831804,
+    scatterChart: 2.664831804,
+    barChart: 2.664831804
+  },
+  1: {
+    lineChart: 2.664831804,
+    pieChart: 1,
+    choroplethMap: 1,
+    columnChart: 2.664831804,
+    scatterChart: 2.664831804,
+    barChart: 2.664831804
+  },
+  2: {
+    lineChart: 1,
+    pieChart: 1,
+    choroplethMap: 1,
+    columnChart: 1,
+    scatterChart: 1,
+    barChart: 1
+  },
+  3: {
+    lineChart: 1,
+    pieChart: 1,
+    choroplethMap: 1,
+    columnChart: 1,
+    scatterChart: 1,
+    barChart: 1
+  }
+}
+
 export default {
-  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis) {
+  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, layout) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
     let chartProcessors = {
       LineChart: {
         fn: this.processLineChart,
-        para: [meltPromise, lower, upper, groups, groupBy]
+        para: [meltPromise, lower, upper, groups, groupBy, layout]
       },
       PieChart: {
         fn: this.processPieChart,
-        para: [meltPromise, locations]
+        para: [meltPromise, locations, layout]
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations]
+        para: [meltPromise, locations, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
-        para: [meltPromise, lower, upper, groups, groupBy]
+        para: [meltPromise, lower, upper, groups, groupBy, layout]
       },
       ScatterChart: {
         fn: this.processScatterChart,
-        para: [dataPromise, locations, indicators, xAxis, yAxis]
+        para: [dataPromise, locations, indicators, xAxis, yAxis, layout]
       },
       BarChart: {
         fn: this.processBarChart,
-        para: [dataPromise, locations, indicators, xAxis, yAxis]
+        para: [dataPromise, locations, indicators, xAxis, yAxis, layout]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
   },
-  processLineChart: function (dataPromise, lower, upper, groups, groupBy) {
+  processLineChart: function (dataPromise, lower, upper, groups, groupBy, layout) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -186,7 +221,7 @@ export default {
       }
       var chartOptions = {
         domain: _.constant([lower.toDate(), upper.toDate()]),
-        aspect: 2.664831804,
+        aspect: aspects[layout].lineChart,
         values: _.property('values'),
         x: _.property('campaign.start_date'),
         xFormat: function (d) { return moment(d).format('MMM YYYY') },
@@ -196,7 +231,7 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processPieChart: function (dataPromise, indicators) {
+  processPieChart: function (dataPromise, indicators, layout) {
     var idx = _.indexBy(indicators, 'id')
 
     return dataPromise.then(function (data) {
@@ -205,6 +240,7 @@ export default {
       }
       var total = _(data).map(function (n) { return n.value }).sum()
       var chartOptions = {
+        aspect: aspects[layout].pieChart,
         domain: _.constant([0, total]),
         name: d => _.get(idx, '[' + d.indicator + '].name', ''),
         margin: {
@@ -217,14 +253,14 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations) {
+  processChoroplethMap: function (dataPromise, locations, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
       var index = _.indexBy(data, 'location')
       var chartOptions = {
-        aspect: 1,
+        aspect: aspects[layout].choroplethMap,
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         border: border.objects.features
       }
@@ -240,7 +276,7 @@ export default {
       return { options: chartOptions, data: chartData }
     }))
   },
-  processColumnChart: function (dataPromise, lower, upper, groups, groupBy) {
+  processColumnChart: function (dataPromise, lower, upper, groups, groupBy, layout) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -257,7 +293,7 @@ export default {
       var chartData = _columnData(data, groups, groupBy)
 
       var chartOptions = {
-        aspect: 2.664831804,
+        aspect: aspects[layout].columnChart,
         values: _.property('values'),
         domain: _.constant(columnScale),
         color: _.flow(
@@ -272,7 +308,7 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
+  processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return dataPromise.then(function (data) {
@@ -316,7 +352,7 @@ export default {
       var showTooltip = function () {}
       var hideTooltip = function () {}
       var chartOptions = {
-        aspect: 1.7,
+        aspect: aspects[layout].scatterChart,
         domain: _.constant(domain),
         onMouseOut: hideTooltip,
         onMouseOver: showTooltip,
@@ -327,7 +363,7 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processBarChart: function (dataPromise, locations, indicators, xAxis, yAxis) {
+  processBarChart: function (dataPromise, locations, indicators, xAxis, yAxis, layout) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -350,6 +386,7 @@ export default {
       }
 
       var chartOptions = {
+        aspect: aspects[layout].barChart,
         offset: 'zero',
         xFormat: d3.format('%')
       }

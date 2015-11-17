@@ -32,6 +32,7 @@ let ChartWizardStore = Reflux.createStore({
     chartData: [],
     chartDef: {}
   },
+  LAYOUT_PREVIEW: 0,
 
   filterCampaignByLocation (campaigns, location) {
     return campaigns.filter(campaign => {
@@ -68,16 +69,6 @@ let ChartWizardStore = Reflux.createStore({
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
     this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
-  },
-
-  integrateChartOption (chartOption) {
-    if (!chartOption.yFormat) {
-      chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
-    }
-    if (!chartOption.xFormat) {
-      chartOption.xFormat = d3.format(builderDefinitions.formats[this.data.xFormatValue].value)
-    }
-    return chartOption
   },
 
   getInitialState () {
@@ -151,6 +142,29 @@ let ChartWizardStore = Reflux.createStore({
           this.previewChart()
         })
       })
+  },
+
+  onClear () {
+    this.data = {
+      indicatorList: [],
+      indicatorSelected: [],
+      indicatorFilteredList: [],
+      locationList: [],
+      locationSelected: null,
+      campaignFilteredList: [],
+      timeRangeFilteredList: [],
+      chartTypeFilteredList: [],
+      groupByValue: 0,
+      locationLevelValue: 0,
+      timeValue: 0,
+      yFormatValue: 0,
+      xFormatValue: 0,
+      canDisplayChart: false,
+      isLoading: true,
+      chartOptions: {},
+      chartData: [],
+      chartDef: {}
+    }
   },
 
   onEditTitle (value) {
@@ -284,7 +298,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.isLoading = true
     this.trigger(this.data)
 
-    ChartDataInit.fetchChart(this.data.chartDef, this.data, this.indicatorIndex).then(chart => {
+    ChartDataInit.fetchChart(this.data.chartDef, this.data, this.indicatorIndex, this.LAYOUT_PREVIEW).then(chart => {
       this.data.canDisplayChart = true
       this.data.isLoading = false
       this.data.chartOptions = chart.options

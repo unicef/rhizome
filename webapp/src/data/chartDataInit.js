@@ -10,7 +10,7 @@ import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
 
 export default {
-  prepareData (chartDef) {
+  prepareData (chartDef, layout) {
     let data = {}
 
     return Promise.all([api.locations(), api.campaign(), api.office(), api.indicatorsTree()])
@@ -65,11 +65,11 @@ export default {
           return
         }
 
-        return this.fetchChart(chartDef, data, indicatorIndex)
+        return this.fetchChart(chartDef, data, indicatorIndex, layout)
       })
   },
 
-  fetchChart (chartDef, data, indicatorIndex) {
+  fetchChart (chartDef, data, indicatorIndex, layout) {
     let locationIndex = _.indexBy(data.locationSelected, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
@@ -93,7 +93,8 @@ export default {
       groups,
       chartDef.groupBy,
       chartDef.x,
-      chartDef.y
+      chartDef.y,
+      layout
     ).then(chart => {
       let newOptions = _.clone(chart.options)
       if (chart.options && !chart.options.yFormat) {
