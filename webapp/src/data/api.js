@@ -316,6 +316,7 @@ export default {
   uploadPost: endPoint('/source_doc/', 'post'),
   datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
+  remove_dashboard: emptyResponsePoint('/custom_dashboard', 'delete', 1, false),
   set_location_permission: endPoint('/location_permission/', 'post', 1),
   remove_indicator_from_tag: emptyResponsePoint('/indicator_to_tag', 'delete', 1, false),
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),

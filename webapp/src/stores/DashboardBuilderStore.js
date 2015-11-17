@@ -117,11 +117,8 @@ var DashboardBuilderStore = Reflux.createStore({
     this.trigger(this.data)
   },
   onDeleteDashboard: function () {
-    delete this.data.dashboard.charts
-    this.data.dashboard.id = ''
-
-    api.save_dashboard({ id: '', title: this.data.dashboard.title }).then(function (response) {
-      window.location = '/'
+    api.remove_dashboard({id: this.data.dashboard.id}).then(function () {
+      window.location = '/datapoints/dashboards/'
     })
   },
   onAddDashboard: function () {
