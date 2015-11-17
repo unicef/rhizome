@@ -25,8 +25,7 @@ var defaults = {
   yScale: d3.scale.linear
 }
 
-function ColumnChart () {
-}
+function ColumnChart () {}
 
 _.extend(ColumnChart.prototype, {
   classNames: 'chart stacked-column',
@@ -176,7 +175,7 @@ _.extend(ColumnChart.prototype, {
         .orient('bottom')
         .tickSize(0)
         .tickPadding(4)
-        .tickValues(_.filter(xScale.domain(), function (d, i, domain) {
+        .tickValues(_.filter(dataXScale.domain(), function (d, i, domain) {
           // Include every fourth tick value unless that tick is within three
           // ticks of the last value. Always include the last tick. We have to
           // do this manually because D3 ignores the ticks() value for
@@ -185,6 +184,9 @@ _.extend(ColumnChart.prototype, {
         }))
         .tickFormat(options.xFormat)
         .scale(dataXScale))
+
+    svg.select('.x.axis').selectAll('.domain').data([0])
+      .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
 
     svg.select('.y.axis')
       .call(d3.svg.axis()
@@ -197,8 +199,10 @@ _.extend(ColumnChart.prototype, {
     svg.selectAll('.y.axis text')
       .attr({
         'dx': -w,
-        'dy': -4
+        'dy': 10
       })
+
+    d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
 
     var fmt = _.flow(options.y, options.yFormat)
 
@@ -212,6 +216,7 @@ _.extend(ColumnChart.prototype, {
       .map(function (d) {
         return options.name(d)
       })
+      .reverse()
       .value()
 
     var fillColor = d3.scale.ordinal().range(['#B6D0D4', '#D95449'])
@@ -288,13 +293,12 @@ _.extend(ColumnChart.prototype, {
         })
         .tap(list => {
           if (_(list).some(item => (item.y >= h || item.y < 0))) {
-            list.forEach(item => {
-              item.y = 0
-            })
+            list.forEach(item => { item.y = 0 })
           }
         })
-        .each(item => { item.y = 0 })
-        .reverse()
+        .each(item => {
+          item.y = 0
+        })
         .value()
 
       svg.select('.annotation').selectAll('.series.label')

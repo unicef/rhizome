@@ -212,7 +212,7 @@ class BaseModelResource(ModelResource):
 
         all_form_data = {
             "indicator": {"short_name": "", "name": ""},
-            "basic_indicator": {"short_name": "", "name": ""},
+            "basic_indicator": {"short_name": "","description":"","name": ""},
             "indicator_tag": {"tag_name": ""}
         }
 

@@ -141,7 +141,7 @@ var Dashboard = React.createClass({
     })
   },
 
-  _setlocation: function (id) {
+  _setLocation: function (id) {
     var location = _.find(this.state.locations, r => r.id === id)
 
     if (!location) {
@@ -329,7 +329,7 @@ var Dashboard = React.createClass({
             <i className='fa fa-stack-2x fa-circle'></i>
             <i className='fa fa-stack-1x fa-pencil'></i>
           </a>
-          &emsp
+          &emsp;
         </span>
       )
     }
@@ -338,16 +338,16 @@ var Dashboard = React.createClass({
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
         <div className='medium-4 columns'>
+          <RegionTitleMenu
+            locations={this.state.locations}
+            selected={location}
+            sendValue={this._setLocation}/>
+        </div>
+        <div className='medium-4 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
             selected={campaign}
             sendValue={this._setCampaign}/>
-        </div>
-        <div className='medium-4 columns'>
-          <RegionTitleMenu
-            locations={this.state.locations}
-            selected={location}
-            sendValue={this._setlocation}/>
         </div>
       </div>)
     }

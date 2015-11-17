@@ -108,6 +108,11 @@ var SimpleForm = React.createClass({
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject
     var formData = this.state.store.formData
+    if (formData && formData.hasOwnProperty('description')) {
+      let description = formData.description
+      delete formData.description
+      formData.description = description
+    }
 
     // TODO -> pull this from the DB
     var formSettings = {'form': true, fields: {'tag_name': {type: 'string', editing: false}}}

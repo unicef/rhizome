@@ -234,7 +234,6 @@ class LocationTree(models.Model):
     '''
 
     parent_location = models.ForeignKey(Location, related_name='ultimate_parent')
-    immediate_parent = models.ForeignKey(Location, related_name='immediate_parent')
     location = models.ForeignKey(Location)
     lvl = models.IntegerField()
 

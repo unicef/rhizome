@@ -4,12 +4,14 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
+import NavigationStore from 'stores/NavigationStore'
+
 import api from 'data/api'
 
-var _tableRow = function (row) {
-  var path = '/datapoints/' + _.kebabCase(row.title) + '/'
-  var editPath = '/datapoints/dashboards/edit/' + row.id + '/'
-  var editLink = <span>(<a href={editPath}>edit</a>)</span>
+function _tableRow (row) {
+  let path = '/datapoints/' + _.kebabCase(row.title) + '/'
+  let editPath = '/datapoints/dashboards/edit/' + row.id + '/'
+  let editLink = <span>(<a href={editPath}>edit</a>)</span>
   return (
       <tr>
         <td><a href={path}>{row.title}</a> {editLink}</td>
@@ -19,34 +21,32 @@ var _tableRow = function (row) {
     )
 }
 
-import NavigationStore from 'stores/NavigationStore'
-
 export default React.createClass({
   mixins: [
     Reflux.connect(NavigationStore, 'store')
   ],
 
-  getInitialState: function () {
+  getInitialState () {
     return {
       customDashboards: []
     }
   },
 
-  getCustomDashboards: function () {
-    var self = this
-    api.get_dashboard().then(function (response) {
-      var customDashboards = _(response.objects).sortBy('title').value()
+  getCustomDashboards () {
+    let self = this
+    api.get_dashboard(null, null, {'cache-control': 'no-cache'}).then(response => {
+      let customDashboards = _(response.objects).sortBy('title').value()
       self.setState({customDashboards: customDashboards})
     })
   },
 
-  componentWillMount: function () {
+  componentWillMount () {
     this.getCustomDashboards()
   },
 
-  render: function () {
-    var self = this
-    var rows = self.state.customDashboards
+  render () {
+    let self = this
+    let rows = self.state.customDashboards
     if (_.isNull(rows)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
     } else if (rows.length > 0) {

@@ -225,20 +225,19 @@ _.extend(ChoroplethMap.prototype, {
 
     var ticks = _.map(
       colorScale.range(),
-      c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+        c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
     )
 
-    if (_.every(colorScale.domain(), _.isNaN)) {
-      svg.select('.legend').selectAll('*').remove()
-    } else {
-      svg.select('.legend')
-        .call(legend().scale(
-          d3.scale.ordinal().domain(ticks).range(colorScale.range())
-        )
-      ).attr('transform', function () {
-        var bbox = this.getBoundingClientRect()
-        return 'translate(' + w + ', ' + ((h - bbox.height) / 2) + ')'
-      })
+    if (!options.homepage) {
+      if (_.every(colorScale.domain(), _.isNaN)) {
+        svg.select('.legend').selectAll('*').remove()
+      } else {
+        svg.select('.legend')
+          .call(legend().scale(
+            d3.scale.ordinal().domain(ticks).range(colorScale.range())
+          )
+        ).attr('transform', function () { return 'translate(' + w + ', ' + 0 + ')' })
+      }
     }
 
     if (!_.isUndefined(options.bubblesValue)) {
@@ -263,6 +262,38 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       bubbleData.exit().remove()
+
+      var bubbleLegendText = [100, 1000, 5000]
+      var bubbleLegend = svg.select('.bubbles').select('.legend')
+        .attr('transform', function () {
+          return 'translate(' + (w + 80) + ', ' + 300 + ')'
+        })
+        .selectAll('.series').data(bubbleLegendText)
+        .enter().append('g')
+        .attr('class', 'series')
+
+      bubbleLegend.append('circle')
+        .attr('r', function (d) { return options.radius(d) })
+        .attr('cy', function (d) { return (options.maxRadius - options.radius(d)) })
+        .style({
+          'opacity': 0.5,
+          'fill': 'transparent',
+          'stroke': '#AAAAAA'
+        })
+
+      bubbleLegend.append('line')
+        .attr({
+          x1: -(2.5 * options.maxRadius),
+          y1: function (d) { return (options.maxRadius - 2 * options.radius(d)) },
+          x2: 0,
+          y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
+        })
+
+      bubbleLegend.append('text')
+        .attr('dx', -(2.5 * options.maxRadius))
+        .attr('dy', function (d) { return (options.maxRadius - 2 * options.radius(d)) })
+        .text(function (d) { return d })
+        .style('fill', '#AAAAAA')
     }
 
     if (!_.isUndefined(options.stripesValue)) {
@@ -276,7 +307,16 @@ _.extend(ChoroplethMap.prototype, {
 
       stripeData.attr({
         'd': path,
-        'class': 'location'
+        'class': function (d) {
+          var v = options.value(d)
+          var classNames = ['location']
+
+          if (_.isFinite(v)) {
+            classNames.push('clickable')
+          }
+
+          return classNames.join(' ')
+        }
       })
         .style('fill', function (d) {
           var v = options.stripesValue(d)
@@ -288,8 +328,46 @@ _.extend(ChoroplethMap.prototype, {
           var v = options.stripesValue(d)
           return _.isFinite(v) ? 1 : 0
         })
+        .on('click', function (d) {
+          options.onClick(_.get(d, 'properties.location_id'))
+        })
+        .on('mousemove', _.partial(this._onMouseMove, _, options))
+        .on('mouseout', this._onMouseOut)
 
       stripeData.exit().remove()
+
+      var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
+      var stripeLegendText = ['No data collected', 'Access challenged area']
+      var stripeLegend = svg.select('.stripes').select('.legend')
+        .attr('transform', function () {
+          return 'translate(' + w + ', ' + 50 + ')'
+        })
+        .selectAll('.series').data(stripeLegendText)
+        .enter().append('g')
+        .attr('class', 'series')
+        .attr('transform', function (d, i) {
+          return 'translate(' + 19 + ', ' + i * 15 + ')'
+        })
+
+      stripeLegend.append('rect')
+        .attr('width', 9)
+        .attr('height', 9)
+        .style({
+          'fill': stripeLegendColor,
+          'stroke': '#cccccc',
+          'stroke-width': 1
+        })
+
+      stripeLegend.append('text')
+        .attr({
+          'x': 15,
+          'y': 3.5,
+          'dy': '0.4em'
+        })
+        .style('text-anchor', 'start')
+        .text(function (d) {
+          return d
+        })
     }
   },
 

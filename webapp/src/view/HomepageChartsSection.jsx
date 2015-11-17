@@ -5,22 +5,21 @@ import HomepageCharts from 'dashboard/homepage/HomepageCharts.jsx'
 
 var HomepageChartsSection = React.createClass({
   propTypes: {
-    date: React.PropTypes.string,
     location: React.PropTypes.string,
     data: React.PropTypes.object
   },
   getManagementDashboardUrl: function () {
-    var [year, month] = this.props.date.split('-')
+    var [year, month] = this.props.data.campaign.start_date.split('-')
     return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
   },
 
   getDistrictSummaryUrl: function () {
-    var [year, month] = this.props.date.split('-')
+    var [year, month] = this.props.data.campaign.start_date.split('-')
     return `/datapoints/district-dashboard/${this.props.location}/${year}/${month}`
   },
 
   getNGACampaignMonitoringUrl: function () {
-    var [year, month] = this.props.date.split('-')
+    var [year, month] = this.props.data.campaign.start_date.split('-')
     return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
   },
 

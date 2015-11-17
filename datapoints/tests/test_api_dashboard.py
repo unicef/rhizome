@@ -1,6 +1,8 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
-from datapoints.models import CustomDashboard
+from datapoints.models import CustomDashboard, CustomChart
+
+import json
 
 class DashboardResourceTest(ResourceTestCase):
     def setUp(self):
@@ -52,3 +54,30 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertHttpApplicationError(resp)
         self.assertEqual(CustomDashboard.objects.count(), 1)
         self.assertEqual('the custom dashboard "{0}" already exists'.format(dashboard_name), response_data['error'])
+
+    def test_delete_dashboard(self):
+        dashboard_name = "test delete a dashboard"
+
+        # Create the custom dashboard
+        CustomDashboard.objects.all().delete()
+        self.assertEqual(CustomDashboard.objects.count(), 0)
+
+        dashboard = CustomDashboard.objects.create(title=dashboard_name, owner_id=self.user.id, default_office_id=1, layout=1)
+        self.assertEqual(CustomDashboard.objects.count(), 1)
+
+        # Create the custom charts
+        CustomChart.objects.all().delete()
+        self.assertEqual(CustomChart.objects.count(), 0)
+
+        chart_json = json.dumps({'foo1': 'bar1'})
+        CustomChart.objects.create(dashboard_id=dashboard.id, chart_json=chart_json)
+        chart_json = json.dumps({'foo2': 'bar2'})
+        CustomChart.objects.create(dashboard_id=dashboard.id, chart_json=chart_json)
+        self.assertEqual(CustomChart.objects.count(), 2)
+
+        delete_url = '/api/v1/custom_dashboard/?id=' + str(dashboard.id)
+
+        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+
+        self.assertEqual(CustomChart.objects.count(), 0)
+        self.assertEqual(CustomDashboard.objects.count(), 0)

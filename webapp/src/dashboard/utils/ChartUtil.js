@@ -20,6 +20,8 @@ var percentage = function (dataset) {
   return dataset
 }
 
+let dateFormat = d3.time.format('%B %Y')
+
 function generateMissedChildrenChartData (original) {
   var stack = d3.layout.stack()
     .order('default')
@@ -31,6 +33,10 @@ function generateMissedChildrenChartData (original) {
   var missed
   try {
     missed = _(original)
+      .forEach(d => {
+        if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
+        if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
+      })
       .groupBy('indicator.short_name')
       .map(series)
       .thru(stack)
@@ -88,20 +94,11 @@ function preparePolioCasesData (original) {
     )
   }
 
-  var color = d3.scale.ordinal()
-    .range(['#377EA4', '#F15046', '#82888e', '#98a0a8', '#b6c0cc'])
-    .domain(_(original.data)
-      .map(_.method('campaign.start_date.getFullYear'))
-      .uniq()
-      .sortBy()
-      .reverse()
-      .value())
-
   return {
     title: title,
     newCaseLabel: newCaseLabel,
     data: original.data,
-    colors: color
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 
@@ -123,7 +120,8 @@ function prepareMissedChildrenData (original) {
     missedChildrenMap: missedChildrenMap,
     missed: missed,
     missedScale: missedScale,
-    location: location
+    location: location,
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 
@@ -186,7 +184,8 @@ function prepareUnderImmunizedData (original) {
   return {
     data: stack(data),
     immunityScale: immunityScale,
-    color: color
+    color: color,
+    date: dateFormat(new Date(original.campaign.start_date))
   }
 }
 

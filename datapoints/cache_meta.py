@@ -1,5 +1,6 @@
 from datapoints.models import *
 from source_data.models import SourceObjectMap
+from pandas import read_csv, notnull, DataFrame, concat
 
 def cache_indicator_abstracted():
     '''
@@ -77,56 +78,71 @@ def calculate_campaign_percentage_complete():
         c.management_dash_pct_complete = ind_count / float(len(all_indicators))
         c.save()
 
-def cache_location_tree():
+class LocationTreeCache(object):
 
-    rt_raw = LocationTree.objects.raw(
-    '''
-    TRUNCATE TABLE location_tree;
+    def __init__(self):
 
-    INSERT INTO location_tree
-    (parent_location_id, immediate_parent_id, location_id, lvl)
+        self.location_tree_columns = ['location_id','parent_location_id']
+        self.location_tree_df = DataFrame(columns=self.location_tree_columns)
 
+    def main(self):
+        '''
+        Any and all parents attributed any and all children.  See the test
+        case for an abstracted example.
+        '''
 
-    WITH RECURSIVE location_tree(parent_location_id, immediate_parent_id, location_id, lvl) AS
-    (
+        ## now iterate from bottom to bottom to top ##
+        location_type_loop_order = LocationType.objects.all()\
+            .values_list('id',flat=True).order_by('-admin_level')
 
-    SELECT
-    	rg.parent_location_id
-    	,rg.parent_location_id as immediate_parent_id
-    	,rg.id as location_id
-    	,1 as lvl
-    FROM location rg
+        for lt_id in location_type_loop_order:
+            self.process_location_tree_lvl(lt_id)
 
-    UNION ALL
+        self.upsert_location_tree()
 
-    -- recursive term --
-    SELECT
-    	r_recurs.parent_location_id
-    	,rt.parent_location_id as immediate_parent_id
-    	,rt.location_id
-    	,rt.lvl + 1
-    FROM location AS r_recurs
-    INNER JOIN location_tree AS rt
-    ON (r_recurs.id = rt.parent_location_id)
-    AND r_recurs.parent_location_id IS NOT NULL
-    )
+    def process_location_tree_lvl(self, location_type_id):
 
-    SELECT
-    	COALESCE(parent_location_id, location_id)  AS parent_location_id
-    	,COALESCE(immediate_parent_id, location_id)  AS immediate_parent_id
-    	,location_id
-    	,lvl
-    FROM location_tree;
+        lt_batch = []
 
-    -- temporary hack to make the lvl 0 for countries --
-    update location_tree set lvl = 0
-    where location_id = parent_location_id;
+        location_df = DataFrame(list(Location.objects\
+            .filter(location_type_id = location_type_id)\
+            .values_list('id','parent_location_id')),columns=self.location_tree_columns)
 
-    SELECT * FROM location_tree;
-    ''')
+        merged_df = location_df.merge(self.location_tree_df
+            ,left_on='location_id',right_on='parent_location_id')
 
-    for x in rt_raw:
-        pass # in order to execute raw sql
+        cleaned_merge_df = merged_df[['location_id_y','parent_location_id_x']]
+        cleaned_merge_df.columns = self.location_tree_columns
+
+        self.location_tree_df = concat([self.location_tree_df,location_df,\
+            cleaned_merge_df])
+
+        self.location_tree_df.drop_duplicates()
+
+    def upsert_location_tree(self):
+
+        lt_batch = []
+
+        ## only the ultimate parent should have itself as a parent ##
+        ## drop all NA values, then create the ultimate parents ##
+        self.location_tree_df.dropna(inplace=True)
+        for loc in Location.objects.filter(parent_location_id__isnull=True):
+            lt_batch.append(LocationTree(**{
+                'location_id':loc.id,
+                'parent_location_id':loc.id,
+                'lvl':0,
+            }))
+
+        ## iterate through the location tree df created above ##
+        for ix,loc in self.location_tree_df.iterrows():
+            lt_batch.append(LocationTree(**{
+                'location_id':loc.location_id,
+                'parent_location_id':loc.parent_location_id,
+                'lvl':0,
+            }))
+
+        LocationTree.objects.all().delete()
+        LocationTree.objects.bulk_create(lt_batch)
 
 
 def update_source_object_names():

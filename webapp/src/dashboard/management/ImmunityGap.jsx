@@ -25,7 +25,7 @@ var ImmunityGap = React.createClass({
 
     return (
       <div>
-        <h4>Under-Immunized Children</h4>
+        <h4>Under immunized children</h4>
         <Chart type='ColumnChart'
           data={immunityGapData.data}
           loading={loading}

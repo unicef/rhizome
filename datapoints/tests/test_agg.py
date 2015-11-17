@@ -7,7 +7,7 @@ from datapoints.models import *
 from source_data.models import ProcessStatus, Document, SourceSubmission
 
 from datapoints.agg_tasks import AggRefresh
-from datapoints.cache_meta import cache_location_tree
+from datapoints.cache_meta import LocationTreeCache
 
 
 class AggRefreshTestCase(TestCase):
@@ -15,14 +15,6 @@ class AggRefreshTestCase(TestCase):
     '''
     from datapoints.agg_tasks import AggRefresh
     mr = AggRefresh()
-
-    ## or ##
-
-    from datapoints.agg_tasks import AggRefresh
-    from datapoints.models import DataPoint, location
-    r_ids = location.objects.filter(parent_location_id = 12907).values_list('id',flat=True)
-    dp_ids = DataPoint.objects.filter(location_id__in=r_ids,campaign_id=111,indicator_id__in=[55]).values_list('id',flat=True)
-    mr = AggRefresh(list(dp_ids))
     '''
 
     def __init__(self, *args, **kwargs):
@@ -38,7 +30,8 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
 
-        cache_location_tree()
+        ltr = LocationTreeCache()
+        ltr.main()
 
     def create_metadata(self):
         '''
@@ -62,9 +55,9 @@ class AggRefreshTestCase(TestCase):
                 status_description = 'test').id
 
         location_type1 = LocationType.objects.create(admin_level=0,\
-            name="country")
+            name="country",id=1)
         location_type2 = LocationType.objects.create(admin_level=1,\
-            name="province")
+            name="province",id=2)
 
         campaign_type1 = CampaignType.objects.create(name='test')
 

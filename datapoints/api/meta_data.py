@@ -87,12 +87,6 @@ class IndicatorResource(BaseModelResource):
         return indicator_ids
 
 
-class OfficeResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = Office.objects.all().values()
-        resource_name = 'office'
-
-
 class CampaignTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
@@ -171,6 +165,7 @@ class BaseIndicatorResource(BaseModelResource):
         defaults = {
             'name': post_data['name'],
             'short_name': post_data['short_name'],
+            'description': post_data['description']
         }
 
         ind, created = Indicator.objects.update_or_create(
@@ -388,6 +383,14 @@ class CustomDashboardResource(BaseModelResource):
         bundle.data['id'] = dashboard.id
 
         return bundle
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        """
+
+        obj_id = int(bundle.request.GET[u'id'])
+        CustomChart.objects.filter(dashboard_id=obj_id).delete()
+        CustomDashboard.objects.filter(id=obj_id).delete()
 
     def get_object_list(self, request):
         '''
@@ -760,7 +763,57 @@ class ChartTypeTypeResource(BaseModelResource):
 
 
 
-## Result Objects for geo Resources ##
+class OfficeResult(object):
+    id = int()
+    name = unicode()
+    latest_campaign_id = int()
+
+class OfficeResource(BaseNonModelResource):
+
+    id = fields.IntegerField(attribute='id')
+    name = fields.CharField(attribute='name')
+    latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
+    top_level_location_id = fields.IntegerField(attribute='top_level_location_id')
+
+    class Meta(BaseNonModelResource.Meta):
+        object_class = OfficeResult
+        resource_name = 'office'
+        filtering = {
+            "id": ALL,
+        }
+
+    def obj_get_list(self, bundle, **kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional build_agg_rc_dfing may be applied
+        '''
+
+        return self.get_object_list(bundle.request)
+
+
+    def get_object_list(self,request):
+
+        ## temporary -- this should be based on start_date / data completeness
+        latest_campaign_lookup = {1:43, 2:41, 3:45}
+        location_lookup = {1:1, 2:2, 3:3}
+
+        qs = []
+        for row in Office.objects.all():
+
+            office_obj = OfficeResult()
+            office_obj.id = row.id
+            office_obj.name = row.name
+            office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
+            office_obj.top_level_location_id = location_lookup[row.id]
+
+            qs.append(office_obj)
+
+        return qs
+
+    def dehydrate(self, bundle):
+
+        bundle.data.pop("resource_uri", None)
+        return bundle
 
 class GeoJsonResult(object):
     location_id = int()
