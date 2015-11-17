@@ -19,11 +19,11 @@ var HomepageDashboardsStore = Reflux.createStore({
     this.onFetchDashboards()
   },
 
-  getDashboardByName: function (dashboardDef) {
+  getDashboardByName: function (dashboardDef, officesIndex) {
     var obj = _.find(builtins, d => _.kebabCase(d.title) === dashboardDef.name)
 
     obj.location = dashboardDef.location
-    obj.date = dashboardDef.date
+    obj.latest_campaign_id = officesIndex[dashboardDef.id].latest_campaign_id
 
     obj.indicators = IndicatorStore.getById.apply(
       IndicatorStore,
@@ -126,7 +126,7 @@ var HomepageDashboardsStore = Reflux.createStore({
     var campaign = _(campaigns)
       .filter(function (c) {
         return c.office_id === location.office_id &&
-          (!dashboard.date || _.startsWith(c.start_date, dashboard.date))
+          (dashboard.latest_campaign_id === c.id)
       })
       .sortBy('start_date')
       .last()
@@ -155,19 +155,16 @@ var HomepageDashboardsStore = Reflux.createStore({
     var dashboardDefs = [
       {
         name: 'homepage-afghanistan',
-        date: '2015-08',
         location: 'Afghanistan',
         id: 2
       },
       {
         name: 'homepage-pakistan',
-        date: '2015-09',
         location: 'Pakistan',
         id: 3
       },
       {
         name: 'homepage-nigeria',
-        date: '2015-09',
         location: 'Nigeria',
         id: 1
       }
@@ -177,15 +174,18 @@ var HomepageDashboardsStore = Reflux.createStore({
       RegionStore.getlocationsPromise(),
       RegionStore.getLocationTypesPromise(),
       CampaignStore.getCampaignsPromise(),
-      IndicatorStore.getIndicatorsPromise()
+      IndicatorStore.getIndicatorsPromise(),
+      api.office()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns, indicators) => {
+    .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
       var partialPrepare = _.partial((dashboard) => {
         return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
       })
 
+      let officesIndex = _.indexBy(offices.objects, 'top_level_location_id')
+
       var enhanced = dashboardDefs
-        .map(this.getDashboardByName)
+        .map(item => this.getDashboardByName(item, officesIndex))
         .map(partialPrepare)
 
       var partialDashboardInit = _.partial((country, data) => {
