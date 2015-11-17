@@ -97,8 +97,8 @@ export default React.createClass({
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex)
     } else {
       DashboardBuilderActions.addChart(chartDef)
+      DataActions.fetchForChart(this.state.store.dashboard)
     }
-    DataActions.fetchForChart(this.state.store.dashboard)
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
   _onIndicatorsChange: function () {
