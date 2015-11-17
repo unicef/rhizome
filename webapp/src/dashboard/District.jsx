@@ -253,7 +253,7 @@ var District = React.createClass({
 
   _onlocationClick: function (d) {
     var params = {
-      dashboard: 'management-dashboard',
+      dashboard: 'district-dashboard',
       location: _.isString(d) ? d : d.location.name
     }
 
