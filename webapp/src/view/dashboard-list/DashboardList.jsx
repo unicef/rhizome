@@ -4,6 +4,8 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
+import NavigationStore from 'stores/NavigationStore'
+
 import api from 'data/api'
 
 var _tableRow = function (row) {
@@ -19,8 +21,6 @@ var _tableRow = function (row) {
     )
 }
 
-import NavigationStore from 'stores/NavigationStore'
-
 export default React.createClass({
   mixins: [
     Reflux.connect(NavigationStore, 'store')
@@ -34,7 +34,7 @@ export default React.createClass({
 
   getCustomDashboards: function () {
     var self = this
-    api.get_dashboard().then(function (response) {
+    api.get_dashboard(null, null, {'cache-control': 'no-cache'}).then(function (response) {
       var customDashboards = _(response.objects).sortBy('title').value()
       self.setState({customDashboards: customDashboards})
     })

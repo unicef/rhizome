@@ -6,7 +6,8 @@ var BASE_URL = '/api'
 
 import _ from 'lodash'
 import request from 'superagent'
-var prefix = require('superagent-prefix')(BASE_URL)
+import superagentPrefix from 'superagent-prefix'
+var prefix = superagentPrefix(BASE_URL)
 
 import treeify from '../data/transform/treeify'
 import campaign from '../data/model/campaign'
