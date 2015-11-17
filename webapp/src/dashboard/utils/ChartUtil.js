@@ -31,6 +31,10 @@ function generateMissedChildrenChartData (original) {
   var missed
   try {
     missed = _(original)
+      .forEach(d => {
+        if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
+        if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
+      })
       .groupBy('indicator.short_name')
       .map(series)
       .thru(stack)
@@ -104,13 +108,6 @@ function prepareMissedChildrenData (original) {
   var lower = upper.clone().startOf('month').subtract(1, 'year')
 
   var missed = generateMissedChildrenChartData(data.missedChildren)
-
-  //if (missed && missed.length > 0) {
-  //  missed[0].name = 'Absent'
-  //  missed[1].name = 'Other'
-  //  missed[2].name = 'Refused'
-  //  missed[3].name = 'Not visited'
-  //}
 
   var missedScale = [lower.valueOf(), upper.valueOf()]
 
