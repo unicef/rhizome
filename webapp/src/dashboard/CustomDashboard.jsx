@@ -7,7 +7,7 @@ import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
 
-function getOptions (chart, campaign, data) {
+function getOptions (chart, campaign) {
   var opts = {}
 
   if (chart.hasOwnProperty('yFormat')) {
