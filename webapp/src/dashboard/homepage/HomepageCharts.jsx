@@ -69,7 +69,7 @@ var HomepageCharts = React.createClass({
                    height: 390,
                    homepage: true
                  }}/>
-          <h4>Last Date: {missedChildrenData.date}</h4>
+          <h4 className="chart__title--date">Latest date: {missedChildrenData.date}</h4>
            </div>
     }
 
@@ -91,7 +91,7 @@ var HomepageCharts = React.createClass({
                 height: 390
               }}/>
           </div>
-          <h4>Last Date: {polioCasesData.date}</h4>
+          <h4 className="chart__title--date">Latest date: {polioCasesData.date}</h4>
         </div>)
       })
 
@@ -115,7 +115,7 @@ var HomepageCharts = React.createClass({
                    width: 390,
                    height: 390
                  }}/>
-          <h4>Last Date: {missedChildrenData.date}</h4>
+          <h4 className="chart__title--date">Latest date: {missedChildrenData.date}</h4>
                </div>)
       })
 
@@ -139,7 +139,7 @@ var HomepageCharts = React.createClass({
                      width: 390,
                      height: 390
                    }}/>
-            <h4>Last Date: {underImmunizedData.date}</h4>
+            <h4 className="chart__title--date">Latest date: {underImmunizedData.date}</h4>
           </div>)
       })
 
