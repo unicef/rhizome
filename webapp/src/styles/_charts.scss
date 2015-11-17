@@ -1,113 +1,113 @@
 svg {
-	overflow: visible;
+  overflow: visible;
 
-	.bg {
-		fill: $white;
-	}
+  .bg {
+    fill: $white;
+  }
 
-	.axis {
-		line {
-			fill: none;
-			stroke: $light-gray;
-			stroke-width: 1px;
-			shape-rendering: crispEdges;
-		}
+  .axis {
+    line {
+      fill: none;
+      stroke: $light-gray;
+      stroke-width: 1px;
+      shape-rendering: crispEdges;
+    }
 
-		text {
-			font-family: $font-family-sans-serif;
-			font-size: $axis-font-size;
-			fill: $oil;
-			stroke: none;
+    text {
+      font-family: $font-family-sans-serif;
+      font-size: $axis-font-size;
+      fill: $oil;
+      stroke: none;
 
-			&.annotation {
-				fill: $smoke;
-			}
-		}
+      &.annotation {
+        fill: $smoke;
+      }
+    }
 
-		.domain {
-			fill : none;
-		}
+    .domain {
+      fill: none;
+    }
 
-		&.x {
-			.domain {
-				stroke-width : 2px;
-				stroke       : $iron;
-			}
-		}
+    &.x {
+      .domain {
+        stroke-width: 2px;
+        stroke: $iron;
+      }
+    }
 
-		&.y {
-			.domain {
-				display : none;
-			}
-		}
-	}
+    &.y {
+      .domain {
+        display: none;
+      }
+    }
+  }
 
-	&.line {
-		path {
-			fill         : none;
-			stroke       : inherit;
-			stroke-width : 2px;
-		}
+  &.line {
+    path {
+      fill: none;
+      stroke: inherit;
+      stroke-width: 2px;
+    }
 
-		circle {
-			fill         : inherit;
-			stroke       : $white;
-			stroke-width : 1px;
-		}
-	}
+    circle {
+      fill: inherit;
+      stroke: $white;
+      stroke-width: 1px;
+    }
+  }
 
-	&.spaghetti {
-		path {
-			fill            : none;
-			shape-rendering : crispEdges;
-			stroke          : inherit;
-			stroke-width    : 2px;
-		}
-	}
+  &.spaghetti {
+    path {
+      fill: none;
+      shape-rendering: crispEdges;
+      stroke: inherit;
+      stroke-width: 2px;
+    }
+  }
 
-	.area,
-	.layer {
-		fill: $iron;
-		fill-opacity: 0.6;
-	}
+  .area,
+  .layer {
+    fill: $iron;
+    fill-opacity: 0.6;
+  }
 
-	.bar {
-		text{
-			font-size: rem-calc(9);
-      font-weight : bold;
-		}
-	}
+  .bar {
+    text {
+      font-size: rem-calc(9);
+      font-weight: bold;
+    }
+  }
 
-	.point {
-		fill: $white;
-		stroke-width: 1px;
-	}
+  .point {
+    fill: $white;
+    stroke-width: 1px;
+  }
 
-	.hover-tile {
-		fill-opacity: 0;
-		stroke: none;
-	}
+  .hover-tile {
+    fill-opacity: 0;
+    stroke: none;
+  }
 
-	.hover-line {
-		stroke: $oil;
-		shape-rendering: crispEdges;
-	}
+  .hover-line {
+    stroke: $oil;
+    shape-rendering: crispEdges;
+  }
 
-	.location {
-		fill: $white;
-		stroke: $aluminum;
-		stroke-width: 1px;
-	}
+  .location {
+    fill: $white;
+    stroke: $aluminum;
+    stroke-width: 1px;
+  }
 
-	.clickable {
-		cursor: pointer;
-	}
+  .clickable {
+    cursor: pointer;
+  }
 
-	.label {
-		margin      : 0;
-		padding     : 1pt 0;
-		text-shadow : $legibility-shadow;
-	}
+  .label {
+    margin: 0;
+    padding: 1pt 0;
+    text-shadow: $legibility-shadow;
+  }
 
   .legend {
     font-size: 0.625rem;
@@ -115,275 +115,274 @@ svg {
 }
 
 .choropleth {
-	position: relative;
+  position: relative;
 }
 
 .reds {
-	.q-1 {
-		background-color: $red1;
-		fill: $red1;
-	}
+  .q-1 {
+    background-color: $red1;
+    fill: $red1;
+  }
 
-	.q-2 {
-		background-color: $red2;
-		fill: $red2;
-	}
+  .q-2 {
+    background-color: $red2;
+    fill: $red2;
+  }
 
-	.q-3 {
-		background-color: $red3;
-		fill: $red3;
-	}
-	.q-4 {
-		background-color: $red4;
-		fill: $red4;
-	}
+  .q-3 {
+    background-color: $red3;
+    fill: $red3;
+  }
+  .q-4 {
+    background-color: $red4;
+    fill: $red4;
+  }
 
-	.q-5 {
-		background-color: $red5;
-		fill: $red5;
-	}
+  .q-5 {
+    background-color: $red5;
+    fill: $red5;
+  }
 
-	.q-6 {
-		background-color: #2D2525;
-		fill: #2D2525;
-	}
+  .q-6 {
+    background-color: #2D2525;
+    fill: #2D2525;
+  }
 }
 
 .chart {
-	position: relative;
-  	margin-bottom: 15px;
+  position: relative;
+  margin-bottom: 15px;
 
-	&.bar {
-		.x.axis {
-			line {
-				display : inline;
-				stroke  : $smoke;
-			}
-		}
-	}
+  &.bar {
+    .x.axis {
+      line {
+        display: inline;
+        stroke: $smoke;
+      }
+    }
+  }
 }
 
 .legend {
-	font-size: rem-calc(9);
-	list-style: none;
-	margin: 0;
+  font-size: rem-calc(9);
+  list-style: none;
+  margin: 0;
 
-	.key {
-		display: inline-block;
-		position: relative;
-		width: 1.2em;
-		height: 1.2em;
-		margin-right: 0.2em;
-		margin-bottom: -0.2em;
-	}
+  .key {
+    display: inline-block;
+    position: relative;
+    width: 1.2em;
+    height: 1.2em;
+    margin-right: 0.2em;
+    margin-bottom: -0.2em;
+  }
 
-	&.interactive {
-		.series {
-			cursor : pointer;
-		}
-	}
+  &.interactive {
+    .series {
+      cursor: pointer;
+    }
+  }
 
-	rect {
-		shape-rendering : crispEdges;
-		stroke-width    : 3;
-	}
+  rect {
+    shape-rendering: crispEdges;
+    stroke-width: 3;
+  }
 }
 
 // Bullet chart coloring
 .bad {
-	h6 {
-		color: $down-color;
-		font-weight: bold;
-	}
+  h6 {
+    color: $down-color;
+    font-weight: bold;
+  }
 
-	svg.bullet-chart {
-		.value,
-		.comparative-measure {
-			fill: $down-color;
-		}
-	}
+  svg.bullet-chart {
+    .value,
+    .comparative-measure {
+      fill: $down-color;
+    }
+  }
 }
 
 .good {
-	h6 {
-		color: $up-color;
-	}
+  h6 {
+    color: $up-color;
+  }
 
-	svg.bullet-chart {
-		.value,
-		.comparative-measure {
-			fill: $up-color;
-		}
-	}
+  svg.bullet-chart {
+    .value,
+    .comparative-measure {
+      fill: $up-color;
+    }
+  }
 }
 
 .labeled-donut {
-	position : relative;
+  position: relative;
 
-	.donut-label {
-		position    : absolute;
-		top         : 50%;
-		right       : 0;
-		left        : 0;
-		margin-top  : -0.8em;
+  .donut-label {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    left: 0;
+    margin-top: -0.8em;
 
-		font-size   : rem-calc(16);
+    font-size: 1.3em;
     font-weight: bold;
 
-		text-align  : center;
+    text-align: center;
 
-		label {
-			font-size : 0.25em;
-		}
-	}
+    label {
+      font-size: 0.25em;
+    }
+  }
 }
 
 .stacked.bar,
 .grouped-bar,
 .stacked-bar {
-	.data {
-		fill : #414849;
-	}
+  .data {
+    fill: #414849;
+  }
 
-	.axis {
-		&.x {
-			.domain {
-				display : none;
-			}
+  .axis {
+    &.x {
+      .domain {
+        display: none;
+      }
 
-			.tick {
-				line {
-					display : inline;
-					stroke  : $white;
-				}
-			}
-		}
+      .tick {
+        line {
+          display: inline;
+          stroke: $white;
+        }
+      }
+    }
 
-		&.y {
-			text {
-				text-shadow: $legibility-shadow;
-			}
-		}
-	}
+    &.y {
+      text {
+        text-shadow: $legibility-shadow;
+      }
+    }
+  }
 }
 
 .heatmap {
-	border          : none;
-	border-collapse : separate;
-	cursor          : initial;
-	overflow        : hidden;
+  border: none;
+  border-collapse: separate;
+  cursor: initial;
+  overflow: hidden;
 
-	&.sortable {
-		.x.axis {
-			.tick {
-				cursor : pointer;
-			}
-		}
+  &.sortable {
+    .x.axis {
+      .tick {
+        cursor: pointer;
+      }
+    }
 
-	}
+  }
 
-	.x.axis {
-		.domain {
-			display : none;
-		}
-	}
+  .x.axis {
+    .domain {
+      display: none;
+    }
+  }
 
-	.y.axis {
-		.tick {
-			cursor : pointer;
-		}
-	}
+  .y.axis {
+    .tick {
+      cursor: pointer;
+    }
+  }
 }
 
 #nco-dashboard {
-	.bar.chart {
-		rect {
-			cursor : pointer;
-		}
-	}
+  .bar.chart {
+    rect {
+      cursor: pointer;
+    }
+  }
 
-	.scatter {
-		.point {
-			cursor : pointer;
-		}
-	}
+  .scatter {
+    .point {
+      cursor: pointer;
+    }
+  }
 }
 
 .tooltip {
-	svg {
-		margin: 1rem 0;
-		max-width: initial;
-		width: initial;
-	}
+  svg {
+    margin: 1rem 0;
+    max-width: initial;
+    width: initial;
+  }
 
-	.histogram {
-		rect, .label {
-			fill: $white;
-			opacity: 0.6;
-		}
+  .histogram {
+    rect, .label {
+      fill: $white;
+      opacity: 0.6;
+    }
 
-		.current {
-			rect, .label {
-				opacity: 1;
-			}
-		}
+    .current {
+      rect, .label {
+        opacity: 1;
+      }
+    }
 
-		.axis {
-			opacity: 0.3;
+    .axis {
+      opacity: 0.3;
 
-			.domain {
-				stroke: $white;
-				stroke-width: 1px;
-				shape-rendering: crispEdges;
-			}
-			text {
-				fill: $white;
-			}
-		}
-	}
+      .domain {
+        stroke: $white;
+        stroke-width: 1px;
+        shape-rendering: crispEdges;
+      }
+      text {
+        fill: $white;
+      }
+    }
+  }
 }
 
 .bullet-chart {
-		rect {
-			shape-rendering: crispEdges;
-			stroke: none;
-		}
+  rect {
+    shape-rendering: crispEdges;
+    stroke: none;
+  }
 
-		.bar,
-		.comparative-measure {
-			fill: $coolgray5;
-      z-index: 999;
-		}
+  .bar,
+  .comparative-measure {
+    fill: $coolgray5;
+    z-index: 999;
+  }
 
-		.ranges {
-			.range-label {
-				fill: #666666;
-			}
-		}
+  .ranges {
+    .range-label {
+      fill: #666666;
+    }
+  }
 
-		.label {
-			text-shadow: none;
-			//fill       : $white;
+  .label {
+    text-shadow: none;
+    //fill       : $white;
 
-			&.dark {
-				fill: $oil;
-			}
-		}
+    &.dark {
+      fill: $oil;
+    }
+  }
 
-    //.tick {
-      text {
-        text-transform: uppercase;
-      }
-    //}
-	}
-
+  //.tick {
+  text {
+    text-transform: uppercase;
+  }
+  //}
+}
 
 .scatter-chart {
-	.axis {
-		.domain {
-			display : none;
-		}
-	}
+  .axis {
+    .domain {
+      display: none;
+    }
+  }
 }
 
 .bullet__chart--noDate {
