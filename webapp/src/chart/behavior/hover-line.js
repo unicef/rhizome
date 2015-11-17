@@ -323,6 +323,7 @@ function hoverLine () {
       })
     } else {
       labelData.reverse()
+      colorRange.reverse()
     }
 
     // Use a g element to position the labels horizontally at the same
