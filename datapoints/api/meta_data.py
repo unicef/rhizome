@@ -165,6 +165,7 @@ class BaseIndicatorResource(BaseModelResource):
         defaults = {
             'name': post_data['name'],
             'short_name': post_data['short_name'],
+            'description': post_data['description']
         }
 
         ind, created = Indicator.objects.update_or_create(
