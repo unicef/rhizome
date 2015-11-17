@@ -764,6 +764,7 @@ class OfficeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
     latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
+    top_level_location_id = fields.IntegerField(attribute='top_level_location_id')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = OfficeResult
@@ -785,6 +786,7 @@ class OfficeResource(BaseNonModelResource):
 
         ## temporary -- this should be based on start_date / data completeness
         latest_campaign_lookup = {1:43, 2:41, 3:45}
+        location_lookup = {1:1, 2:2, 3:3}
 
         qs = []
         for row in Office.objects.all():
@@ -793,6 +795,7 @@ class OfficeResource(BaseNonModelResource):
             office_obj.id = row.id
             office_obj.name = row.name
             office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
+            office_obj.top_level_location_id = location_lookup[row.id]
 
             qs.append(office_obj)
 
