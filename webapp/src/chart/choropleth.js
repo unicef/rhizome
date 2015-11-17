@@ -307,7 +307,16 @@ _.extend(ChoroplethMap.prototype, {
 
       stripeData.attr({
         'd': path,
-        'class': 'location'
+        'class': function (d) {
+          var v = options.value(d)
+          var classNames = ['location']
+
+          if (_.isFinite(v)) {
+            classNames.push('clickable')
+          }
+
+          return classNames.join(' ')
+        }
       })
         .style('fill', function (d) {
           var v = options.stripesValue(d)
@@ -319,6 +328,11 @@ _.extend(ChoroplethMap.prototype, {
           var v = options.stripesValue(d)
           return _.isFinite(v) ? 1 : 0
         })
+        .on('click', function (d) {
+          options.onClick(_.get(d, 'properties.location_id'))
+        })
+        .on('mousemove', _.partial(this._onMouseMove, _, options))
+        .on('mouseout', this._onMouseOut)
 
       stripeData.exit().remove()
 
