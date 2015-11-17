@@ -29,11 +29,11 @@ function getFacet (datum, path) {
  * Recursively determine if child is a child of parent location.
  */
 function childOf (parent, child) {
-  if (!child || !child.parent) {
+  if (!child || !child.parent_location_id) {
     return false
   }
 
-  if (parent.id === child.parent.id) {
+  if (parent.id === child.parent_location_id) {
     return true
   }
 
