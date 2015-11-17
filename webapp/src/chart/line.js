@@ -29,10 +29,6 @@ _.extend(LineChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (series, options) {
-    // //remove the null value in each series
-    // trello #427
-    // management-dashboard-conversion-rates-line-chart issue
-
     series = _(series).each(serie => {
       serie.values = _(serie.values).reject(item => {
         return item.value === null

@@ -177,7 +177,7 @@ export default React.createClass({
             onClick={DashboardBuilderActions.addDashboard}>Next</a>
         </form>
       )
-    } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
+    } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard) || this.state.dataStore.loading) {
       var style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -203,18 +203,10 @@ export default React.createClass({
         .uniq()
         .value()
     )
-    let data = DashboardInit.customDashboardInit(
-      dashboardDef,
-      this.state.dataStore.data,
-      this.state.dashboardStore.locations,
-      this.state.dashboardStore.campaigns,
-      indicators,
-      GeoStore.features
-    )
     var dashboardProps = {
       campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,
-      data: data,
+      data: this.state.dataStore.data,
       loading: !loaded,
       editable: true,
       onAddChart: this.newChart,

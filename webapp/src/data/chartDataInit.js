@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
+import d3 from 'd3'
 
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import processChartData from 'stores/chartBuilder/processChartData'
@@ -83,7 +84,7 @@ export default {
       campaign_end: upper.format('YYYY-MM-DD')
     }
 
-    return processChartData.init(api.datapoints(query),
+    return processChartData.init(api.datapoints(query, null, { 'cache-control': 'no-cache' }),
       chartDef.type,
       data.indicatorSelected,
       data.locationSelected,
@@ -93,6 +94,15 @@ export default {
       chartDef.groupBy,
       chartDef.x,
       chartDef.y
-    )
+    ).then(chart => {
+      let newOptions = _.clone(chart.options)
+      if (!chart.options.yFormat) {
+        newOptions.yFormat = d3.format(chartDef.yFormat)
+      }
+      if (!chart.options.xFormat) {
+        newOptions.xFormat = d3.format(chartDef.xFormat)
+      }
+      return { data: chart.data, options: newOptions }
+    })
   }
 }

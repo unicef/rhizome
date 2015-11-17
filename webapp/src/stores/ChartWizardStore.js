@@ -283,7 +283,7 @@ let ChartWizardStore = Reflux.createStore({
     ChartDataInit.fetchChart(this.data.chartDef, this.data, this.indicatorIndex).then(chart => {
       this.data.canDisplayChart = true
       this.data.isLoading = false
-      this.data.chartOptions = this.integrateChartOption(chart.options)
+      this.data.chartOptions = chart.options
       this.data.chartData = chart.data
       this.trigger(this.data)
     })
