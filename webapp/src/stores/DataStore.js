@@ -96,7 +96,6 @@ var DataStore = Reflux.createStore({
         .flatten()
         .value()
 
-
       this.trigger({
         loading: false,
         data: this.data
@@ -111,7 +110,7 @@ var DataStore = Reflux.createStore({
     })
   },
 
-  onFetchForChart: function (campaign, location, campaigns, locations, dashboard) {
+  onFetchForChart: function (dashboard) {
     var promises = dashboard.charts.map(function (def) {
       return ChartDataInit.prepareData(def)
     })

@@ -96,10 +96,10 @@ export default {
       chartDef.y
     ).then(chart => {
       let newOptions = _.clone(chart.options)
-      if (!chart.options.yFormat) {
+      if (chart.options && !chart.options.yFormat) {
         newOptions.yFormat = d3.format(chartDef.yFormat)
       }
-      if (!chart.options.xFormat) {
+      if (chart.options && !chart.options.xFormat) {
         newOptions.xFormat = d3.format(chartDef.xFormat)
       }
       return { data: chart.data, options: newOptions }

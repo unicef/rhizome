@@ -5,8 +5,6 @@ import React from 'react'
 import Reflux from 'reflux/src'
 import ChartWizard from 'view/chart-wizard/ChartWizard.jsx'
 
-import DashboardInit from 'data/dashboardInit'
-
 import DataActions from 'actions/DataActions'
 import DataStore from 'stores/DataStore'
 
@@ -17,7 +15,6 @@ import DashboardActions from 'actions/DashboardActions'
 import DashboardStore from 'stores/DashboardStore'
 
 import IndicatorStore from 'stores/IndicatorStore'
-import GeoStore from 'stores/GeoStore'
 import GeoActions from 'actions/GeoActions'
 import AppActions from 'actions/AppActions'
 import TitleInput from 'component/TitleInput.jsx'
@@ -101,6 +98,7 @@ export default React.createClass({
     } else {
       DashboardBuilderActions.addChart(chartDef)
     }
+    DataActions.fetchForChart(this.state.store.dashboard)
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
   _onIndicatorsChange: function () {
@@ -118,8 +116,7 @@ export default React.createClass({
         if (state.dashboard.builtin) {
           DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q)
         } else {
-          DataActions.fetchForChart(this.state.dashboardStore.campaign, this.state.dashboardStore.location,
-            this.state.dashboardStore.allCampaigns, this.state.dashboardStore.locations, this.state.store.dashboard)
+          DataActions.fetchForChart(this.state.store.dashboard)
         }
       }
 
@@ -195,14 +192,6 @@ export default React.createClass({
     var dashboardDef = this.state.store.dashboard
     var loaded = this.state.dashboardStore.loaded
 
-    var indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
-        .pluck('indicators')
-        .flatten()
-        .uniq()
-        .value()
-    )
     var dashboardProps = {
       campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,

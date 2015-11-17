@@ -217,6 +217,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeGroupRadio (value) {
     this.data.groupByValue = value
+    this.data.chartDef.groupBy = builderDefinitions.groups[value].value
     this.previewChart()
   },
 
@@ -228,16 +229,19 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeTimeRadio (value) {
     this.data.timeValue = value
+    this.data.chartDef.timeRange = builderDefinitions.times[value].json
     this.previewChart()
   },
 
   onChangeYFormatRadio (value) {
     this.data.yFormatValue = value
+    this.data.chartDef.yFormat = builderDefinitions.formats[value].value
     this.previewChart()
   },
 
   onChangeXFormatRadio (value) {
     this.data.xFormatValue = value
+    this.data.chartDef.xFormat = builderDefinitions.formats[value].value
     this.previewChart()
   },
 
