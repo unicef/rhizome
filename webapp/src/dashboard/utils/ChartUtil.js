@@ -20,7 +20,7 @@ var percentage = function (dataset) {
   return dataset
 }
 
-let dateFormat = d3.time.format("%B %Y")
+let dateFormat = d3.time.format('%B %Y')
 
 function generateMissedChildrenChartData (original) {
   var stack = d3.layout.stack()
