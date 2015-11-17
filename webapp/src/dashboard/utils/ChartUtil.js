@@ -62,7 +62,7 @@ function preparePolioCasesData (original) {
 
     // Sum all of the reported Polio cases for the year
     totalCases = _(original.data)
-      .filter(function (d) { return d.campaign.start_date.getFullYear() === year })
+      .filter(function (d) { return d.campaign.start_date.getFullYear().toString() === year })
       .pluck('value')
       .sum()
 
