@@ -69,6 +69,12 @@ let ChartWizardStore = Reflux.createStore({
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
     this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
+
+    this.data.chartDef.locations = builderDefinitions.locationLevels[this.data.locationLevelValue].value
+    this.data.chartDef.groupBy = builderDefinitions.groups[this.data.groupByValue].value
+    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
+    this.data.chartDef.yFormat = builderDefinitions.formats[this.data.yFormatValue].value
+    this.data.chartDef.xFormat = builderDefinitions.formats[this.data.xFormatValue].value
   },
 
   getInitialState () {
@@ -95,8 +101,8 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue]
-          ? this.locationIndex[chartDef.locationValue]
+        this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
+          ? this.locationIndex[this.data.chartDef.locationValue]
           : this.locationIndex[this.data.locationList[0].value]
 
         let officeId = this.data.location.office_id
@@ -126,7 +132,7 @@ let ChartWizardStore = Reflux.createStore({
           this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
           this.data.chartTypeFilteredList = builderDefinitions.charts
 
-          if (chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
+          if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
             this.data.campaign = this.campaignIndex[chartDef.campaignValue]
           } else {
             this.data.campaign = this.data.campaignFilteredList.length > 0
@@ -138,7 +144,7 @@ let ChartWizardStore = Reflux.createStore({
             this.filterChartTypeByIndicator()
           }
 
-          this.applyChartDef(chartDef)
+          this.applyChartDef(this.data.chartDef)
           this.previewChart()
         })
       })
@@ -217,11 +223,11 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef.type = value
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
+    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
 
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
-
     this.data.chartDef.x = this.data.indicatorSelected[0].id
 
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
