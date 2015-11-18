@@ -36,7 +36,7 @@ export default React.createClass({
     Reflux.ListenerMixin
   ],
 
-  getInitialState: function () {
+  getInitialState () {
     return {
       chartBuilderActive: false,
       chartBuilderindex: null,
@@ -45,64 +45,63 @@ export default React.createClass({
     }
   },
 
-  componentWillMount: function () {
+  componentWillMount () {
     AppActions.init()
   },
 
-  componentDidMount: function () {
+  componentDidMount () {
     DashboardBuilderActions.initialize(this.props.dashboardId)
     this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
 
-  editChart: function (index) {
+  editChart (index) {
     this.setState({chartBuilderindex: index, chartBuilderActive: true})
   },
 
-  cancelEditChart: function () {
+  cancelEditChart () {
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
 
-  moveForward: function (index) {
+  moveForward (index) {
     DashboardBuilderActions.moveForward(index)
   },
 
-  moveBackward: function (index) {
+  moveBackward (index) {
     DashboardBuilderActions.moveBackward(index)
   },
 
-  deleteChart: function (index) {
-    var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '')
-
+  deleteChart (index) {
+    let chart = _.get(this.state, `store.dashboard.charts[${index}].title`, '')
     if (_.isEmpty(chart)) {
       chart = 'this chart'
     } else {
-      chart = '"' + chart + '"'
+      chart = `"${chart}"`
     }
 
-    var dashboard = _.get(this.state, 'store.dashboard.title', '')
+    let dashboard = _.get(this.state, 'store.dashboard.title', '')
     if (_.isEmpty(dashboard)) {
       dashboard = 'the dashboard'
     }
 
-    if (window.confirm('Delete ' + chart + ' from ' + dashboard + '?')) {
+    if (window.confirm(`Delete ${chart} from ${dashboard}?`)) {
       // FIXME
       DashboardBuilderActions.removeChart(index)
     }
   },
 
-  _deleteDashboard: function () {
-    if (window.confirm('Delete dashboard "' + this.state.title + '"?')) {
+  _deleteDashboard () {
+    if (window.confirm(`Delete dashboard "${this.state.title}"?`)) {
       DashboardBuilderActions.deleteDashboard()
     }
   },
 
-  newChart: function () {
+  newChart () {
     this.setState({chartBuilderindex: null, chartBuilderActive: true})
   },
 
-  saveChart: function (chartDef) {
+  saveChart (chartDef) {
     if (!_.isNull(this.state.chartBuilderindex)) {
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex)
     } else {
@@ -112,11 +111,11 @@ export default React.createClass({
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
 
-  _onIndicatorsChange: function () {
+  _onIndicatorsChange () {
     this.forceUpdate()
   },
 
-  _onDataLoaded: function () {
+  _onDataLoaded () {
     if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
       DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
       this.setState({
@@ -126,12 +125,10 @@ export default React.createClass({
     }
   },
 
-  _onDashboardChange: function (state) {
-    var dashboardSet = this.state.dashboardStore.dashboard
-
+  _onDashboardChange (state) {
+    let dashboardSet = this.state.dashboardStore.dashboard
     if (dashboardSet) {
-      var q = DashboardStore.getQueries()
-
+      let q = DashboardStore.getQueries()
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
@@ -141,32 +138,29 @@ export default React.createClass({
           DataActions.fetchForChart(this.state.store.dashboard)
         }
       }
-
-      if (this.state.dashboardStore.hasMap) {
-        GeoActions.fetch(this.state.dashboardStore.location)
-      }
+      this.state.dashboardStore.hasMap && GeoActions.fetch(this.state.dashboardStore.location)
     }
   },
 
-  _updateTitle: function (newText) {
+  _updateTitle (newText) {
     DashboardBuilderActions.updateTitle(newText)
   },
 
-  _updateNewTitle: function (e) {
+  _updateNewTitle (e) {
     this.setState({title: e.currentTarget.value})
     DashboardBuilderActions.updateTitle(e.currentTarget.value)
   },
 
-  _updateDescription: function (newText) {
+  _updateDescription (newText) {
     DashboardBuilderActions.updateDescription(newText)
   },
 
-  _handleSubmit: function (e) {
+  _handleSubmit (e) {
     e.preventDefault()
     DashboardBuilderActions.addDashboard()
   },
 
-  render: function () {
+  render () {
     if (this.state.store.newDashboard) {
       return (
         <form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
@@ -187,11 +181,7 @@ export default React.createClass({
         </form>
       )
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard) || this.state.dataStore.loading) {
-      var style = {
-        fontSize: '2rem',
-        zIndex: 9999
-      }
-
+      let style = {fontSize: '2rem', zIndex: 9999}
       return (
         <div style={style} className='overlay'>
           <div>
@@ -201,10 +191,10 @@ export default React.createClass({
       )
     }
 
-    var dashboardDef = this.state.store.dashboard
-    var loaded = this.state.dashboardStore.loaded
+    let dashboardDef = this.state.store.dashboard
+    let loaded = this.state.dashboardStore.loaded
 
-    var dashboardProps = {
+    let dashboardProps = {
       campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,
       data: this.state.dataStore.data,
@@ -217,11 +207,9 @@ export default React.createClass({
       onMoveBackward: this.moveBackward
     }
 
-    var dashboard = React.createElement(
-      CustomDashboard,
-      dashboardProps)
+    let dashboard = React.createElement(CustomDashboard, dashboardProps)
 
-    var addDashboardLinkContainer = (
+    let addDashboardLinkContainer = (
       <div className='empty-dashboard-add-container'>
         <span className='cd-button new-dashboard-font' onClick={this.newChart}>
           <i className='fa fa-icon fa-fw fa-plus'></i>&ensp;Add New Chart to Dashboard
@@ -229,7 +217,7 @@ export default React.createClass({
       </div>
     )
 
-    var showAddChartButton = () => {
+    let showAddChartButton = () => {
       let layout = this.state.store.dashboard.layout
       let numCharts = this.state.store.dashboard.charts.length
       return (
@@ -238,7 +226,7 @@ export default React.createClass({
         (layout === 3 && numCharts < 3)
       )
     }
-    var dashboardBuilderContainer = (
+    let dashboardBuilderContainer = (
       <div>
         <form className='inline no-print row cd-bg-color'>
           <div className='large-6 columns'>
@@ -247,7 +235,7 @@ export default React.createClass({
             <div className='row'>
               <div className='large-6 medium-4 small-6 columns cd-header-title'>Dashboard Title</div>
               <div className='large-6 medium-8 small-6 columns'>
-                <TitleInput class='description' initialText={this.state.title} save={this._updateTitle}/>
+                <TitleInput className='description' initialText={this.state.title} save={this._updateTitle}/>
               </div>
             </div>
           </div>
@@ -268,7 +256,7 @@ export default React.createClass({
                   <div className='description-text'>Description&ensp;:</div>
                 </div>
                 <div className='large-5 columns'>
-                  <TitleInput class='description' initialText={this.state.description}
+                  <TitleInput className='description' initialText={this.state.description}
                               save={this._updateDescription}/>
                 </div>
                 <div className='large-5 columns'>
@@ -288,11 +276,13 @@ export default React.createClass({
     if (!this.state.store.loaded) {
       return (<div>loading</div>)
     } else if (this.state.chartBuilderActive) {
-      var chartDef = (_.isNull(this.state.chartBuilderindex) ? null : this.state.store.dashboard.charts[this.state.chartBuilderindex])
-      return (
-        <ChartWizard dashboardId={this.props.dashboardId} chartDef={chartDef} save={this.saveChart}
-                     cancel={this.cancelEditChart}/>
-      )
+      let chartDef = _.isNull(this.state.chartBuilderindex)
+        ? null
+        : this.state.store.dashboard.charts[this.state.chartBuilderindex]
+      return (<ChartWizard dashboardId={this.props.dashboardId}
+                           chartDef={chartDef}
+                           save={this.saveChart}
+                           cancel={this.cancelEditChart}/>)
     } else {
       return dashboardBuilderContainer
     }
