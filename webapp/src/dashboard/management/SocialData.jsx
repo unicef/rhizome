@@ -56,7 +56,7 @@ var SocialData = React.createClass({
                         domain: _.constant([0, 1])
                       }} />
         </div>
-        <div className='medium-4 columns print__message--social'>
+        <div className='medium-4 columns'>
           {microText}
         </div>
       </div>

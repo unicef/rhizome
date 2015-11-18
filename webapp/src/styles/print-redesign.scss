@@ -63,12 +63,17 @@ h6 {
   padding-bottom: 0;
 }
 
+.print__font {
+  font-size: x-small !important;
+}
+
 #management-dashboard {
   color: #a7aeaf;
+  font-size: xx-small;
 
   h1 {
     display: inline-block;
-    font-size: 20pt;
+    font-size: xx-small;
     font-weight: bold;
 
     .location {
@@ -82,8 +87,9 @@ h6 {
 
   h2 {
     display: inline-block;
-    font-size: 5pt;
-    line-height: 1;
+    font-size: xx-small;
+    color: #759CB8 !important;
+    padding: 0.7em
   }
 
   h3 {
@@ -95,17 +101,18 @@ h6 {
     margin: 8px 0;
   }
 
-  h4 {
-    font-size: 12px;
+  h4, h6, p {
+    font-size: xx-small;
   }
 
   .chart {
     margin-bottom: 10px;
   }
 
-  .print__message--social {
-    font-size: x-small
+  table td {
+    font-size: xx-small;
   }
+
 }
 
 .ie #management-dashboard {
@@ -146,10 +153,6 @@ h6 {
   .bullet-chart svg {
     width: 3.247cm;
     height: 1.022cm;
-  }
-
-  .print__message--social {
-    font-size: x-small
   }
 }
 

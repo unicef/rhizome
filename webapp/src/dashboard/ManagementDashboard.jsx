@@ -30,11 +30,12 @@ var ManagementDashboard = React.createClass({
 
   render: function () {
     var campaign = this.props.campaign
-    var printDate = moment(campaign.start_date).format('MMM YYYY')
+    var printDate = moment(campaign.start_date).format('MMM ‘YY')
     var data = this.props.data
     var indicators = _.indexBy(this.props.indicators, 'id')
     var loading = this.props.loading
     var location = _.get(this.props, 'location.name', '')
+    var dashboardName = 'Management Dashboard'.toUpperCase()
 
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
@@ -66,17 +67,20 @@ var ManagementDashboard = React.createClass({
     return (
       <div id='management-dashboard'>
         <div className='row print-only'>
-          <div className='small-12 columns'>
+          <div className='medium-4 columns'>
             <h1>
-              <span className='campaign'>{ printDate }</span>
               <span className='location'>{ location }</span>
+              <span className='campaign'> { printDate.toUpperCase() }</span>
             </h1>
-            <h2>
-              Polio<br />
-              Performance<br />
-              Dashboard
-            </h2>
-            <img src='/static/img/UNICEF.svg' className='logo'/>
+          </div>
+          <div className='medium-4 columns right'>
+            <div className="row">
+              <div className="medium-4 columns">
+                <h2>{dashboardName}</h2>
+              </div>
+              <div className='medium-2 columns right'>
+              </div>
+            </div>
           </div>
         </div>
 

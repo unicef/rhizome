@@ -268,7 +268,7 @@ _.extend(ChoroplethMap.prototype, {
       var bubbleLegendText = [100, 1000, 5000]
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + (w + 80) + ', ' + 300 + ')'
+          return 'translate(' + (w * 1.16) + ', ' + h + ')'
         })
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
@@ -343,7 +343,7 @@ _.extend(ChoroplethMap.prototype, {
       var stripeLegendText = ['No data collected', 'Access challenged area']
       var stripeLegend = svg.select('.stripes').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + w + ', ' + 50 + ')'
+          return 'translate(' + w + ', ' + (0.17 * h) + ')'
         })
         .selectAll('.series').data(stripeLegendText)
         .enter().append('g')
