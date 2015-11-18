@@ -41,12 +41,6 @@ function getOptions (chart, campaign, data) {
       break
 
     case 'ColumnChart':
-
-      // JD trying to get Column charts to work. See Trello #554 //
-      if (campaign === undefined || campaign === null) {
-          var campaign = chart.campaignValue
-      }
-
       var upper = moment(campaign.start_date)
       var lower = upper.clone().subtract(chart.timeRange)
 

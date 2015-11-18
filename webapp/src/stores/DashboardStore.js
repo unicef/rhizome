@@ -72,7 +72,6 @@ var DashboardStore = Reflux.createStore({
     var topLevellocations = _(locations)
       .filter(function (r) {
         return !locationIdx.hasOwnProperty(r.parent_location_id)
-        // return !locationIdx.hasOwnProperty(r.parent_location_id) && r.office_id === dashboard.default_office_id
       })
       .sortBy('name')
 
@@ -87,7 +86,6 @@ var DashboardStore = Reflux.createStore({
     var campaign = _(campaigns)
       .filter(function (c) {
         return c.office_id === location.office_id  &&
-        // return c.office_id === dashboard.default_office_id &&
           (!this.date || _.startsWith(c.start_date, this.date))
       }.bind(this))
       .sortBy('start_date')

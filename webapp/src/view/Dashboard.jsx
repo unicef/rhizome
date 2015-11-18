@@ -298,7 +298,6 @@ var Dashboard = React.createClass({
       : React.createElement(CustomDashboard, customDashboardProps)
 
     var campaigns = _(this.state.campaigns)
-      // .filter(c => c.office_id === location.office_id)
       .map(campaign => {
         return _.assign({}, campaign, {
           slug: moment(campaign.start_date).format('MMMM YYYY')
