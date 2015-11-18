@@ -20,6 +20,7 @@ var ReviewTable = React.createClass({
     title: React.PropTypes.string.isRequired,
     getData: React.PropTypes.func.isRequired,
     fields: React.PropTypes.array.isRequired,
+    header: React.PropTypes.array.isRequired,
     loading: React.PropTypes.bool.isRequired,
     location: React.PropTypes.object.isRequired,
     campaign: React.PropTypes.object.isRequired,

@@ -2,18 +2,15 @@
 
 # http://serverfault.com/questions/59838/whats-the-best-way-to-automate-backing-up-of-postgresql-databases
 
-BACKUPDIR=/var/lib/postgresql/sql_backups/
+BACKUPDIR=/some/dir/sql_backups/
 DATE=`date +%Y-%m-%dT%H:%M:%S`
 DB=rhizome
-USER=djangoapp
 
-DUMPALL="/usr/bin/pg_dumpall"
-PGDUMP="/usr/bin/pg_dump"
 PSQL="/usr/bin/psql"
 
 echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.gz ...
 
-pg_dump --verbose --format=t -f "$BACKUPDIR$DATE.sql" $DB -U $USER
+pg_dump --verbose -f "$BACKUPDIR$DATE.sql" $DB
 
 echo back up complete... zipping file
 

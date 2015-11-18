@@ -537,28 +537,13 @@ class DocumentDetailResource(BaseModelResource):
 class DocDataPointResource(BaseModelResource):
     def get_object_list(self, request):
 
-        try:
-            document_id = request.GET['document_id']
-        except KeyError:
-            document_id = None
+        queryset =  DocDataPoint.objects.filter(
+            document_id=request.GET['document_id'],
+            # campaign_id=campaign_id,
+            # location_id__in=all_location_ids,
+        )[:50].values('location__name','indicator__short_name','campaign__slug','value')
 
-        try:
-            campaign_id = request.GET['campaign_id']
-        except KeyError:
-            campaign_id = None
-
-        try:
-            location_id = request.GET['location_id']
-            all_location_ids = LocationTree.objects \
-                .filter(parent_location_id=location_id).values_list('location_id', flat=True)
-        except KeyError:
-            all_location_ids = []
-
-        return DocDataPoint.objects.filter(
-            document_id=document_id,
-            campaign_id=campaign_id,
-            location_id__in=all_location_ids,
-        ).values()
+        return queryset
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_datapoint'
@@ -646,7 +631,7 @@ class SourceSubmissionResource(BaseModelResource):
         try:
             ## see: https://trello.com/c/IGNzN87U/296-3-collapse-source-submission-adn-submission-detail
             qs = SourceSubmission.objects.filter(document_id=request.\
-                GET['document_id']).values()
+                GET['document_id'])[:50].values()
         except KeyError:
             qs = SourceSubmission.objects.filter(id=request.GET['id']).values()
 

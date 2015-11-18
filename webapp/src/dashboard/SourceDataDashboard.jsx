@@ -113,26 +113,31 @@ var SourceDataDashboard = React.createClass({
         'meta_fn': api.submissionMeta,
         'data_fn': api.submission,
         'fields': ['id', 'location_code', 'campaign_code', 'edit_link'],
+        'header': ['id', 'location_code', 'campaign_code', 'edit_link'],
         'search_fields': ['id', 'location_code', 'campaign_code']
       },
       'doc_index': {
         'data_fn': api.source_doc,
         'fields': ['id', 'doc_title', 'created_at', 'edit_link'],
+        'header': ['id', 'doc_title', 'created_at', 'edit_link'],
         'search_fields': ['id', 'doc_title']
       },
       'mapping': {
         'data_fn': api.docMap,
         'fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
+        'header': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name']
       },
       'validate': {
         'data_fn': api.docDatapoint,
-        'fields': ['id', 'document_id', 'location_id', 'indicator_id', 'campaign_id', 'value', 'edit_link'],
-        'search_fields': ['location_id', 'indicator_id', 'campaign_id']
+        'fields': ['location__name', 'indicator__short_name', 'campaign__slug', 'value', 'edit_link'],
+        'header': ['location', 'indicator', 'campaign', 'value', 'is valid'],
+        'search_fields': ['location', 'indicator', 'campaign', 'value',]
       },
       'results': {
         'data_fn': api.docResults,
         'fields': ['indicator_id', 'indicator__short_name', 'value'],
+        'header': ['indicator_id', 'indicator__short_name', 'value'],
         'search_fields': ['indicator_id', 'indicator__short_name', 'value']
       }
     }
@@ -152,6 +157,7 @@ var SourceDataDashboard = React.createClass({
       title='sample title'
       getData={table_definition[doc_tab]['data_fn']}
       fields={table_definition[doc_tab]['fields']}
+      header={table_definition[doc_tab]['header']}
       location={location}
       key={table_key}
       loading={loading}
