@@ -8,13 +8,13 @@ DB=rhizome
 
 PSQL="/usr/bin/psql"
 
-echo Backing up $DB database to $BACKUPDIR$DATE-$DB.sql.gz ...
+BACKUPFILE="$BACKUPDIR$DATE.sql"
 
-pg_dump --verbose -f "$BACKUPDIR$DATE.sql" $DB
+pg_dump --verbose -f $BACKUPFILE $DB
 
-echo back up complete... zipping file
+gzip "$BACKUPFILE"
 
-gzip "$BACKUPDIR$DATE.sql"
+cp $BACKUPFILE'.gz'  $BACKUPDIR'rhizome_latest.sql.gz'
 
 # delete backup files older than 10 days
 OLD=$(find $BACKUPDIR -type d -mtime +10)
