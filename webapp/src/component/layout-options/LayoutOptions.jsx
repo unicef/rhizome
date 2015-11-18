@@ -6,11 +6,11 @@ let LayoutOptions = React.createClass({
   propTypes: {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,
-    onChange: React.PropTypes.func.isRequired,
-    onClick: React.PropTypes.func.isRequired
+    onChange: React.PropTypes.func.isRequired
   },
 
   _handleChange (event) {
+    console.log(event.target.value);
     this.props.onChange(parseInt(event.target.value, 10))
   },
 
@@ -29,7 +29,7 @@ let LayoutOptions = React.createClass({
                  name={radio.name}
                  value={radio.value}
                  checked={this.props.value === radio.value ? 'checked' : false}
-                 onChange={this._handleChange.bind(radio)}
+                 onChange={this._handleChange}
                  id={radioID} />
               </div>
     })
