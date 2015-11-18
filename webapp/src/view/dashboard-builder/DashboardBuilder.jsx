@@ -36,14 +36,6 @@ export default React.createClass({
     Reflux.ListenerMixin
   ],
 
-  componentWillMount: function () {
-    AppActions.init()
-  },
-  componentDidMount: function () {
-    DashboardBuilderActions.initialize(this.props.dashboardId)
-    this.listenTo(DashboardStore, this._onDashboardChange)
-    this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
-  },
   getInitialState: function () {
     return {
       chartBuilderActive: false,
@@ -52,18 +44,34 @@ export default React.createClass({
       description: ''
     }
   },
+
+  componentWillMount: function () {
+    AppActions.init()
+  },
+
+  componentDidMount: function () {
+    DashboardBuilderActions.initialize(this.props.dashboardId)
+    this.listenTo(DashboardStore, this._onDataLoaded)
+    this.listenTo(DashboardStore, this._onDashboardChange)
+    this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
+  },
+
   editChart: function (index) {
     this.setState({chartBuilderindex: index, chartBuilderActive: true})
   },
+
   cancelEditChart: function () {
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
+
   moveForward: function (index) {
     DashboardBuilderActions.moveForward(index)
   },
+
   moveBackward: function (index) {
     DashboardBuilderActions.moveBackward(index)
   },
+
   deleteChart: function (index) {
     var chart = _.get(this.state, 'store.dashboard.charts[' + index + '].title', '')
 
@@ -83,15 +91,17 @@ export default React.createClass({
       DashboardBuilderActions.removeChart(index)
     }
   },
+
   _deleteDashboard: function () {
     if (window.confirm('Delete dashboard "' + this.state.title + '"?')) {
-      // FIXME
       DashboardBuilderActions.deleteDashboard()
     }
   },
+
   newChart: function () {
     this.setState({chartBuilderindex: null, chartBuilderActive: true})
   },
+
   saveChart: function (chartDef) {
     if (!_.isNull(this.state.chartBuilderindex)) {
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex)
@@ -101,9 +111,21 @@ export default React.createClass({
     }
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
+
   _onIndicatorsChange: function () {
     this.forceUpdate()
   },
+
+  _onDataLoaded: function () {
+    if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
+      DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
+      this.setState({
+        title: this.state.store.dashboard.title,
+        description: this.state.store.dashboard.description
+      })
+    }
+  },
+
   _onDashboardChange: function (state) {
     var dashboardSet = this.state.dashboardStore.dashboard
 
@@ -123,16 +145,6 @@ export default React.createClass({
       if (this.state.dashboardStore.hasMap) {
         GeoActions.fetch(this.state.dashboardStore.location)
       }
-    }
-  },
-
-  _onDataLoaded: function () {
-    if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
-      DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
-      this.setState({
-        title: this.state.store.dashboard.title,
-        description: this.state.store.dashboard.description
-      })
     }
   },
 
