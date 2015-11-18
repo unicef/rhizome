@@ -209,7 +209,7 @@ var Performance = React.createClass({
                           }}/>
           </div>
           <div>
-            <h4 className='h4-wrap'>Children Vaccinated at Transit Point</h4>
+            <h4 className='title--wrap'>Children Vaccinated at Transit Point</h4>
           </div>
         </div>
       </div>
