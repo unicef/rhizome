@@ -10,11 +10,16 @@ from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
-from datapoints.models import *
-from source_data.models import *
+from datapoints.models import Campaign, Location, Indicator, IndicatorAbstracted, IndicatorTag, CampaignType, \
+    LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
+    LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
+    ChartTypeToIndicator, Office, LocationPolygon
+from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
+    SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.agg_tasks import AggRefresh
+
 
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -60,8 +65,7 @@ class IndicatorResource(BaseModelResource):
             office_id = request.GET['office_id']
             indicator_id_list = self.get_indicator_id_by_office(office_id)
 
-            qs = IndicatorAbstracted.objects.filter(id__in= \
-                                                        indicator_id_list).values()
+            qs = IndicatorAbstracted.objects.filter(id__in=indicator_id_list).values()
         except KeyError:
             qs = IndicatorAbstracted.objects.all().values()
 
@@ -117,7 +121,7 @@ class IndicatorTagResource(BaseModelResource):
         except KeyError:
             id = None
 
-        tag_name = post_data['tag_name'];
+        tag_name = post_data['tag_name']
 
         defaults = {
             'tag_name': tag_name
@@ -133,7 +137,7 @@ class IndicatorTagResource(BaseModelResource):
             pass
 
         tag, created = IndicatorTag.objects.update_or_create(
-            id=id, \
+            id=id,
             defaults=defaults
         )
 
@@ -169,7 +173,7 @@ class BaseIndicatorResource(BaseModelResource):
         }
 
         ind, created = Indicator.objects.update_or_create(
-            id=ind_id, \
+            id=ind_id,
             defaults=defaults
         )
 
@@ -211,8 +215,7 @@ class IndicatorToTagResource(BaseModelResource):
 
         qs = IndicatorToTag.objects \
             .filter(indicator_id=indicator_id) \
-            .values('id', 'indicator_id', 'indicator__short_name', \
-                    'indicator_tag__tag_name')
+            .values('id', 'indicator_id', 'indicator__short_name', 'indicator_tag__tag_name')
 
         return qs
 
@@ -242,20 +245,19 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
 
         qs = CalculatedIndicatorComponent.objects \
             .filter(indicator_id=indicator_id) \
-            .values('id', 'indicator_id', 'indicator_component_id'
-                    , 'indicator_component__short_name', 'calculation')
+            .values('id', 'indicator_id', 'indicator_component_id', 'indicator_component__short_name', 'calculation')
 
         return qs
 
     def obj_create(self, bundle, **kwargs):
         indicator_id = bundle.data['indicator_id']
         component_id = bundle.data['component_id']
-        typeInfo = bundle.data['typeInfo']
+        type_info = bundle.data['typeInfo']
 
         it = CalculatedIndicatorComponent.objects.create(
             indicator_id=indicator_id,
             indicator_component_id=component_id,
-            calculation=typeInfo,
+            calculation=type_info,
         )
 
         bundle.obj = it
@@ -297,7 +299,7 @@ class CustomChartResource(BaseModelResource):
         }
 
         chart, created = CustomChart.objects.update_or_create(
-            id=chart_id, \
+            id=chart_id,
             defaults=defaults
         )
 
@@ -319,8 +321,8 @@ class CustomChartResource(BaseModelResource):
 
         try:
             dashboard_id = request.GET['dashboard_id']
-            chart_id_list = CustomChart.objects.filter(dashboard_id= \
-                                                           dashboard_id).values_list('id', flat=True)
+            chart_id_list = CustomChart.objects\
+                .filter(dashboard_id=dashboard_id).values_list('id', flat=True)
         except KeyError:
             pass
 
@@ -345,6 +347,7 @@ class CustomDashboardResource(BaseModelResource):
 
         post_data = bundle.data
         user_id = bundle.request.user.id
+        print post_data, user_id
 
         try:
             dash_id = int(post_data['id'])
@@ -360,7 +363,6 @@ class CustomDashboardResource(BaseModelResource):
         except KeyError:
             layout = 0
 
-
         defaults = {
             'id': dash_id,
             'title': title,
@@ -369,7 +371,7 @@ class CustomDashboardResource(BaseModelResource):
             'layout': layout
         }
 
-        if(CustomDashboard.objects.filter(title=title).count()>0 and (dash_id is None)):
+        if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
             raise DataPointsException('the custom dashboard "{0}" already exists'.format(title))
 
         dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
@@ -431,8 +433,7 @@ class DocumentResource(BaseModelResource):
         except KeyError:
             doc_title = doc_data[:10]
 
-        new_doc = self.post_doc_data(doc_data, bundle.request.user.id, \
-                                     doc_title, doc_id)
+        new_doc = self.post_doc_data(doc_data, bundle.request.user.id, doc_title, doc_id)
 
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
@@ -441,9 +442,9 @@ class DocumentResource(BaseModelResource):
 
     def post_doc_data(self, post_data, user_id, doc_title, doc_id):
 
-        ## when posting from ODK, i dont add the file_meta.. from the webapp
-        ## i do.  I should change so the post requests are consistent but
-        ## tryign to get this working for now.
+        # when posting from ODK, i dont add the file_meta.. from the webapp
+        # i do.  I should change so the post requests are consistent but
+        # tryign to get this working for now.
 
         try:
             file_meta, base64data = post_data.split(',')
@@ -507,7 +508,7 @@ class DocumentDetailResource(BaseModelResource):
         }
 
         chart, created = DocumentDetail.objects.update_or_create(
-            document_id=post_data['document_id'], \
+            document_id=post_data['document_id'],
             doc_detail_type_id=post_data['doc_detail_type_id'],
             defaults=defaults
         )
@@ -537,11 +538,11 @@ class DocumentDetailResource(BaseModelResource):
 class DocDataPointResource(BaseModelResource):
     def get_object_list(self, request):
 
-        queryset =  DocDataPoint.objects.filter(
+        queryset = DocDataPoint.objects.filter(
             document_id=request.GET['document_id'],
             # campaign_id=campaign_id,
             # location_id__in=all_location_ids,
-        )[:50].values('location__name','indicator__short_name','campaign__slug','value')
+        )[:50].values('location__name', 'indicator__short_name', 'campaign__slug', 'value')
 
         return queryset
 
@@ -572,7 +573,7 @@ class ComputedDataPointResource(BaseModelResource):
         ).values_list('source_object_map_id', flat=True)
 
         indicator_id_list = list(SourceObjectMap.objects.filter(
-            id__in=som_ids, \
+            id__in=som_ids,
             content_type='indicator',
             master_object_id__gt=0,
         ).values_list('master_object_id', flat=True))
@@ -629,9 +630,8 @@ class SourceSubmissionResource(BaseModelResource):
     def get_object_list(self, request):
 
         try:
-            ## see: https://trello.com/c/IGNzN87U/296-3-collapse-source-submission-adn-submission-detail
-            qs = SourceSubmission.objects.filter(document_id=request.\
-                GET['document_id'])[:50].values()
+            # see: https://trello.com/c/IGNzN87U/296-3-collapse-source-submission-adn-submission-detail
+            qs = SourceSubmission.objects.filter(document_id=request.GET['document_id'])[:50].values()
         except KeyError:
             qs = SourceSubmission.objects.filter(id=request.GET['id']).values()
 
@@ -655,7 +655,7 @@ class DocTransFormResource(BaseModelResource):
 
 class AggRefreshResource(BaseModelResource):
     def get_object_list(self, request):
-        cr = AggRefresh()
+        AggRefresh()
 
         queryset = DocumentDetail.objects \
             .filter(document_id=1).values()
@@ -676,27 +676,29 @@ class RefreshMasterResource(BaseModelResource):
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id=document_id,
             doc_detail_type_id=DocDetailType.objects.get(name='submission_processed_count').id,
-            defaults={'doc_detail_value': SourceSubmission.objects \
-                .filter(process_status='PROCESSED', \
-                        document_id=document_id).count() \
-                      },
+            defaults={
+                'doc_detail_value': SourceSubmission.objects.filter(
+                    process_status='PROCESSED',
+                    document_id=document_id).count()
+            },
         )
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id=document_id,
             doc_detail_type_id=DocDetailType.objects.get(name='doc_datapoint_count').id,
-            defaults={'doc_detail_value': DocDataPoint.objects \
-                .filter(document_id=document_id).count() \
-                      },
+            defaults={
+                'doc_detail_value': DocDataPoint.objects.filter(document_id=document_id).count()
+            },
         )
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id=document_id,
             doc_detail_type_id=DocDetailType.objects.get(name='datapoint_count').id,
-            defaults={'doc_detail_value': DataPoint.objects \
-                .filter(source_submission_id__in=SourceSubmission.objects \
-                        .filter(document_id=document_id).values_list('id', flat=True)).count() \
-                      },
+            defaults={
+                'doc_detail_value': DataPoint.objects.filter(
+                    source_submission_id__in=SourceSubmission.objects.filter(
+                        document_id=document_id).values_list('id', flat=True)).count()
+            },
         )
 
         queryset = DocumentDetail.objects \
@@ -728,8 +730,8 @@ class DocDetailTypeResource(BaseModelResource):
         queryset = DocDetailType.objects.all().values()
         resource_name = 'doc_detail_type'
 
-class ChartTypeTypeResource(BaseModelResource):
 
+class ChartTypeTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = ChartType.objects.all().values()
         resource_name = 'chart_type'
@@ -738,14 +740,13 @@ class ChartTypeTypeResource(BaseModelResource):
 
         try:
             primary_indicator_id = request.GET['primary_indicator_id']
-            chart_type_ids = ChartTypeToIndicator.objects.filter(indicator_id=\
-                primary_indicator_id).values_list('chart_type_id')
+            chart_type_ids = ChartTypeToIndicator.objects.filter(
+                indicator_id=primary_indicator_id)\
+                .values_list('chart_type_id')
 
             return ChartType.objects.filter(id__in=chart_type_ids).values()
         except KeyError:
             return super(ChartTypeTypeResource, self).get_object_list(request)
-
-
 
 
 class OfficeResult(object):
@@ -753,8 +754,8 @@ class OfficeResult(object):
     name = unicode()
     latest_campaign_id = int()
 
-class OfficeResource(BaseNonModelResource):
 
+class OfficeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
     latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
@@ -775,12 +776,11 @@ class OfficeResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
+    def get_object_list(self, request):
 
-    def get_object_list(self,request):
-
-        ## temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1:43, 2:41, 3:45}
-        location_lookup = {1:1, 2:2, 3:3}
+        # temporary -- this should be based on start_date / data completeness
+        latest_campaign_lookup = {1: 43, 2: 41, 3: 45}
+        location_lookup = {1: 1, 2: 2, 3: 3}
 
         qs = []
         for row in Office.objects.all():
@@ -799,6 +799,7 @@ class OfficeResource(BaseNonModelResource):
 
         bundle.data.pop("resource_uri", None)
         return bundle
+
 
 class GeoJsonResult(object):
     location_id = int()
@@ -835,7 +836,7 @@ class GeoResource(BaseNonModelResource):
 
         self.err = None
         err, locations_to_return = self.get_locations_to_return_from_url(request)
-        ## since this is not a model resource i will filter explicitly #
+        # since this is not a model resource i will filter explicitly #
 
         if err:
             self.err = err
@@ -860,14 +861,16 @@ class GeoResource(BaseNonModelResource):
                 geo_obj.properties = {'location_id': p['location_id']}
                 features.append(geo_obj)
         else:
-            polygon_values_list = LocationPolygon.objects.select_related('location').filter(location_id__in=locations_to_return).all()
+            polygon_values_list = LocationPolygon.objects.select_related('location')\
+                .filter(location_id__in=locations_to_return).all()
             for p in polygon_values_list:
                 geo_obj = GeoJsonResult()
                 geo_obj.location_id = p.location.id
                 geo_obj.geometry = p.geo_json['geometry']
                 geo_obj.type = p.geo_json['type']
                 geo_obj.properties = {'location_id': p.location.id}
-                geo_obj.parent_location_id = p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
+                geo_obj.parent_location_id =\
+                    p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
                 features.append(geo_obj)
         return features
 
@@ -890,7 +893,7 @@ class GeoResource(BaseNonModelResource):
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
-        ## get rid of the meta_dict. i will add my own meta data.
+        # get rid of the meta_dict. i will add my own meta data.
         data['type'] = "FeatureCollection"
         data['features'] = data['objects']
         data['error'] = self.err
