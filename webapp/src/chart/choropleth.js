@@ -288,6 +288,7 @@ _.extend(ChoroplethMap.prototype, {
           x2: 0,
           y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
         })
+        .style('stroke', '#AAAAAA')
 
       bubbleLegend.append('text')
         .attr('dx', -(2.5 * options.maxRadius))
