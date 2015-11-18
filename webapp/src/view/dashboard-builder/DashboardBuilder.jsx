@@ -5,8 +5,6 @@ import React from 'react'
 import Reflux from 'reflux/src'
 import ChartWizard from 'view/chart-wizard/ChartWizard.jsx'
 
-import DashboardInit from 'data/dashboardInit'
-
 import DataActions from 'actions/DataActions'
 import DataStore from 'stores/DataStore'
 
@@ -17,7 +15,6 @@ import DashboardActions from 'actions/DashboardActions'
 import DashboardStore from 'stores/DashboardStore'
 
 import IndicatorStore from 'stores/IndicatorStore'
-import GeoStore from 'stores/GeoStore'
 import GeoActions from 'actions/GeoActions'
 import AppActions from 'actions/AppActions'
 import TitleInput from 'component/TitleInput.jsx'
@@ -100,6 +97,7 @@ export default React.createClass({
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex)
     } else {
       DashboardBuilderActions.addChart(chartDef)
+      DataActions.fetchForChart(this.state.store.dashboard)
     }
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
@@ -118,8 +116,7 @@ export default React.createClass({
         if (state.dashboard.builtin) {
           DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q)
         } else {
-          DataActions.fetchForChart(this.state.dashboardStore.campaign, this.state.dashboardStore.location,
-            this.state.dashboardStore.allCampaigns, this.state.dashboardStore.locations, this.state.store.dashboard)
+          DataActions.fetchForChart(this.state.store.dashboard)
         }
       }
 
@@ -177,7 +174,7 @@ export default React.createClass({
             onClick={DashboardBuilderActions.addDashboard}>Next</a>
         </form>
       )
-    } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard)) {
+    } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard) || this.state.dataStore.loading) {
       var style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -195,26 +192,10 @@ export default React.createClass({
     var dashboardDef = this.state.store.dashboard
     var loaded = this.state.dashboardStore.loaded
 
-    var indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
-        .pluck('indicators')
-        .flatten()
-        .uniq()
-        .value()
-    )
-    let data = DashboardInit.customDashboardInit(
-      dashboardDef,
-      this.state.dataStore.data,
-      this.state.dashboardStore.locations,
-      this.state.dashboardStore.campaigns,
-      indicators,
-      GeoStore.features
-    )
     var dashboardProps = {
       campaigns: this.state.dashboardStore.campaigns,
       dashboard: dashboardDef,
-      data: data,
+      data: this.state.dataStore.data,
       loading: !loaded,
       editable: true,
       onAddChart: this.newChart,

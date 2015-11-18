@@ -7,7 +7,7 @@ import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
 
-function getOptions (chart, campaign, data) {
+function getOptions (chart, campaign) {
   var opts = {}
 
   if (chart.hasOwnProperty('yFormat')) {
@@ -107,7 +107,7 @@ var CustomDashboard = React.createClass({
       var title = chart.title
       var key = _.get(chart, 'id', _.kebabCase(title))
       var id = _.get(chart, 'id', _.camelCase(title))
-      var series = data[id]
+      var series = data[id].data
 
       var controls
       if (editable) {
@@ -144,7 +144,7 @@ var CustomDashboard = React.createClass({
       }
 
       let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
-      var options = getOptions(chart, campaign, data)
+      var options = data[id].options || getOptions(chart, campaign)
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>

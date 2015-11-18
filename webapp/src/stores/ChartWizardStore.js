@@ -5,7 +5,7 @@ import d3 from 'd3'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'
-import processChartData from 'stores/chartBuilder/processChartData'
+import ChartDataInit from 'data/chartDataInit'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
@@ -32,6 +32,7 @@ let ChartWizardStore = Reflux.createStore({
     chartData: [],
     chartDef: {}
   },
+  LAYOUT_PREVIEW: 0,
 
   filterCampaignByLocation (campaigns, location) {
     return campaigns.filter(campaign => {
@@ -68,16 +69,12 @@ let ChartWizardStore = Reflux.createStore({
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
     this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
-  },
 
-  integrateChartOption (chartOption) {
-    if (!chartOption.yFormat) {
-      chartOption.yFormat = d3.format(builderDefinitions.formats[this.data.yFormatValue].value)
-    }
-    if (!chartOption.xFormat) {
-      chartOption.xFormat = d3.format(builderDefinitions.formats[this.data.xFormatValue].value)
-    }
-    return chartOption
+    this.data.chartDef.locations = builderDefinitions.locationLevels[this.data.locationLevelValue].value
+    this.data.chartDef.groupBy = builderDefinitions.groups[this.data.groupByValue].value
+    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
+    this.data.chartDef.yFormat = builderDefinitions.formats[this.data.yFormatValue].value
+    this.data.chartDef.xFormat = builderDefinitions.formats[this.data.xFormatValue].value
   },
 
   getInitialState () {
@@ -104,8 +101,8 @@ let ChartWizardStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.data.location = chartDef.locationValue && this.locationIndex[chartDef.locationValue]
-          ? this.locationIndex[chartDef.locationValue]
+        this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
+          ? this.locationIndex[this.data.chartDef.locationValue]
           : this.locationIndex[this.data.locationList[0].value]
 
         let officeId = this.data.location.office_id
@@ -116,43 +113,64 @@ let ChartWizardStore = Reflux.createStore({
           this.data.indicatorSelected = chartDef.indicators.map(id => {
             return this.indicatorIndex[id]
           })
+
+          let officeIndex = _.indexBy(offices.objects, 'id')
+          this.campaignList = _(campaigns.objects)
+            .map(campaign => {
+              return _.assign({}, campaign, {
+                'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+                'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+                'office': officeIndex[campaign.office_id]
+              })
+            })
+            .sortBy(_.method('start_date.getTime'))
+            .reverse()
+            .value()
+
+          this.campaignIndex = _.indexBy(this.campaignList, 'id')
+          this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+          this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+          this.data.chartTypeFilteredList = builderDefinitions.charts
+
+          if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
+            this.data.campaign = this.campaignIndex[chartDef.campaignValue]
+          } else {
+            this.data.campaign = this.data.campaignFilteredList.length > 0
+              ? this.data.campaignFilteredList[0]
+              : null
+          }
+
+          if (this.data.indicatorSelected.length > 0) {
+            this.filterChartTypeByIndicator()
+          }
+
+          this.applyChartDef(this.data.chartDef)
           this.previewChart()
         })
-
-        let officeIndex = _.indexBy(offices.objects, 'id')
-        this.campaignList = _(campaigns.objects)
-          .map(campaign => {
-            return _.assign({}, campaign, {
-              'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-              'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-              'office': officeIndex[campaign.office_id]
-            })
-          })
-          .sortBy(_.method('start_date.getTime'))
-          .reverse()
-          .value()
-
-        this.campaignIndex = _.indexBy(this.campaignList, 'id')
-        this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-        this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
-        this.data.chartTypeFilteredList = builderDefinitions.charts
-
-        if (chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
-          this.data.campaign = this.campaignIndex[chartDef.campaignValue]
-        } else {
-          this.data.campaign = this.data.campaignFilteredList.length > 0
-            ? this.campaignIndex[this.data.campaignFilteredList[0].id]
-            : null
-        }
-
-        if (this.data.indicatorSelected.length > 0) {
-          this.filterChartTypeByIndicator()
-        }
-
-        this.applyChartDef(chartDef)
-
-        this.previewChart()
       })
+  },
+
+  onClear () {
+    this.data = {
+      indicatorList: [],
+      indicatorSelected: [],
+      indicatorFilteredList: [],
+      locationList: [],
+      locationSelected: null,
+      campaignFilteredList: [],
+      timeRangeFilteredList: [],
+      chartTypeFilteredList: [],
+      groupByValue: 0,
+      locationLevelValue: 0,
+      timeValue: 0,
+      yFormatValue: 0,
+      xFormatValue: 0,
+      canDisplayChart: false,
+      isLoading: true,
+      chartOptions: {},
+      chartData: [],
+      chartDef: {}
+    }
   },
 
   onEditTitle (value) {
@@ -205,11 +223,11 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef.type = value
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
+    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
 
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
-
     this.data.chartDef.x = this.data.indicatorSelected[0].id
 
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
@@ -219,6 +237,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeGroupRadio (value) {
     this.data.groupByValue = value
+    this.data.chartDef.groupBy = builderDefinitions.groups[value].value
     this.previewChart()
   },
 
@@ -230,16 +249,19 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeTimeRadio (value) {
     this.data.timeValue = value
+    this.data.chartDef.timeRange = builderDefinitions.times[value].json
     this.previewChart()
   },
 
   onChangeYFormatRadio (value) {
     this.data.yFormatValue = value
+    this.data.chartDef.yFormat = builderDefinitions.formats[value].value
     this.previewChart()
   },
 
   onChangeXFormatRadio (value) {
     this.data.xFormatValue = value
+    this.data.chartDef.xFormat = builderDefinitions.formats[value].value
     this.previewChart()
   },
 
@@ -282,41 +304,11 @@ let ChartWizardStore = Reflux.createStore({
     this.data.isLoading = true
     this.trigger(this.data)
 
-    let chartType = this.data.chartDef.type
-    let groupBy = builderDefinitions.groups[this.data.groupByValue].value
-    let indicatorIndex = _.indexBy(this.data.indicatorSelected, 'id')
-    let locationIndex = _.indexBy(this.data.locationSelected, 'id')
-    let groups = this.data.groupByValue === 0 ? indicatorIndex : locationIndex
-    let start = moment(this.data.campaign.start_date)
-    let lower = this.data.timeRangeFilteredList[this.data.timeValue].getLower(start)
-    let upper = start.clone().startOf('month')
-    let indicatorArray = _.map(this.data.indicatorSelected, _.property('id'))
-    let query = {
-      indicator__in: indicatorArray,
-      location__in: _.map(this.data.locationSelected, _.property('id')),
-      campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
-      campaign_end: upper.format('YYYY-MM-DD')
-    }
-
-    processChartData.init(api.datapoints(query),
-      chartType,
-      this.data.indicatorSelected,
-      this.data.locationSelected,
-      lower,
-      upper,
-      groups,
-      groupBy,
-      this.data.chartDef.x,
-      this.data.chartDef.y)
-    .then(chart => {
-      if (!chart.options || !chart.data) {
-        this.data.canDisplayChart = false
-      } else {
-        this.data.canDisplayChart = true
-        this.data.chartOptions = this.integrateChartOption(chart.options)
-        this.data.chartData = chart.data
-      }
+    ChartDataInit.fetchChart(this.data.chartDef, this.data, this.indicatorIndex, this.LAYOUT_PREVIEW).then(chart => {
+      this.data.canDisplayChart = true
       this.data.isLoading = false
+      this.data.chartOptions = chart.options
+      this.data.chartData = chart.data
       this.trigger(this.data)
     })
   }

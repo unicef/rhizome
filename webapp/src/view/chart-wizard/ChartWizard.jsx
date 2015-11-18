@@ -85,6 +85,10 @@ let ChartWizard = React.createClass({
     ChartWizardActions.initialize(this.chartDef)
   },
 
+  componentWillReceiveProps () {
+    ChartWizardActions.clear()
+  },
+
   saveChart () {
     ChartWizardActions.saveChart(this.props.save)
   },
