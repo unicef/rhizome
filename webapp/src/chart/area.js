@@ -155,12 +155,24 @@ _.extend(AreaChart.prototype, {
           text: options.seriesName(d) + ' ' + options.yFormat(v),
           x: x(last),
           y: y(last),
-          defined: _.isFinite(v)
+          defined: _.isFinite(v),
+          value: v
         }
       })
       .filter('defined')
       .sortBy('y')
       .value()
+
+    if (options.type) {
+      var v = _.sum(labels, d => { return d.value })
+      labels.push({
+        x: width,
+        y: 0,
+        text: 'TOTAL ' + options.yFormat(v),
+        defined: _.isFinite(v),
+        value: v
+      })
+    }
 
     svg.select('.annotation')
       .selectAll('.series.label')
