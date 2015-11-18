@@ -103,6 +103,7 @@ export default {
       if (chart.options && !chart.options.xFormat) {
         newOptions.xFormat = d3.format(chartDef.xFormat)
       }
+      newOptions.chartInDashboard = true
       return { data: chart.data, options: newOptions }
     })
   }

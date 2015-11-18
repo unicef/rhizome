@@ -232,11 +232,13 @@ _.extend(ChoroplethMap.prototype, {
       if (_.every(colorScale.domain(), _.isNaN)) {
         svg.select('.legend').selectAll('*').remove()
       } else {
+        let legendXPosition = options.chartInDashboard ? 0 : w
+
         svg.select('.legend')
           .call(legend().scale(
             d3.scale.ordinal().domain(ticks).range(colorScale.range())
           )
-        ).attr('transform', function () { return 'translate(' + w + ', ' + 0 + ')' })
+        ).attr('transform', function () { return 'translate(' + legendXPosition + ', ' + 0 + ')' })
       }
     }
 

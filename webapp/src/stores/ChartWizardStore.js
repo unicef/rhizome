@@ -1,7 +1,6 @@
 import Reflux from 'reflux'
 import _ from 'lodash'
 import moment from 'moment'
-import d3 from 'd3'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import api from 'data/api'

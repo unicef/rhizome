@@ -96,7 +96,7 @@ function preparePolioCasesData (original) {
     title: title,
     newCaseLabel: newCaseLabel,
     data: original.data,
-    date: moment(original.campaign.start_date).format("MMMM YYYY")
+    date: moment(original.campaign.start_date).format('MMMM YYYY')
   }
 }
 
@@ -119,7 +119,7 @@ function prepareMissedChildrenData (original) {
     missed: missed,
     missedScale: missedScale,
     location: location,
-    date: moment(original.campaign.start_date).format("MMMM YYYY")
+    date: moment(original.campaign.start_date).format('MMMM YYYY')
   }
 }
 
@@ -183,7 +183,7 @@ function prepareUnderImmunizedData (original) {
     data: stack(data),
     immunityScale: immunityScale,
     color: color,
-    date: moment(original.campaign.start_date).format("MMMM YYYY")
+    date: moment(original.campaign.start_date).format('MMMM YYYY')
   }
 }
 

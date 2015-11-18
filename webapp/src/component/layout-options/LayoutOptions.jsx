@@ -10,7 +10,6 @@ let LayoutOptions = React.createClass({
   },
 
   _handleChange (event) {
-    console.log(event.target.value);
     this.props.onChange(parseInt(event.target.value, 10))
   },
 
