@@ -192,7 +192,7 @@ export default {
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations, layout]
+        para: [meltPromise, locations, xAxis, yAxis, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
@@ -252,15 +252,28 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations, layout) {
+  processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
 
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
-      var index = _.indexBy(data, 'location')
+      let indicatorIndex = _(data).groupBy('indicator').value()
+
+      var index = _.indexBy(indicatorIndex[xAxis], 'location')
+      let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
+      let maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
+      const maxRadius = 30
+      let radius = (v) =>{
+        return d3.scale.sqrt().domain([0, maxValue]).range([0, maxRadius])(v)
+      }
+      let legend = [0.05, 0.2, 1].map(ratio => ratio * maxValue)
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
+        bubblesValue: _.property('properties.bubbleValue'),
+        radius: _.partial(radius, _),
+        maxRadius: maxRadius,
+        legend, legend,
         border: border.objects.features
       }
       if (!data || data.length === 0) {
@@ -268,10 +281,15 @@ export default {
       }
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
+        let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
         return _.merge({}, feature, {
-          properties: { value: _.get(location, 'value') }
+          properties: {
+            value: _.get(location, 'value'),
+            bubbleValue: _.get(bubbleLocation, 'value')
+          }
         })
       })
+      console.log(chartData.map(d => d.properties));
       return { options: chartOptions, data: chartData }
     }))
   },
@@ -315,7 +333,7 @@ export default {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-          return parseInt(d.indicator, 10) === xAxis
+          return +d.indicator === xAxis
         })
         .pluck('value')
         .value()
@@ -324,7 +342,7 @@ export default {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-          return parseInt(d.indicator, 10) === yAxis
+          return +d.indicator === yAxis
         })
         .pluck('value')
         .value()

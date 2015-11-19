@@ -200,6 +200,7 @@ var Performance = React.createClass({
                    stripesValue: _.property('properties[203]'),
                    yFormat: pct,
                    radius: _.partial(_chooseRadius, _),
+                   legend: [100, 1000, 5000],
                    maxRadius: maxRadius,
                    bubblesTitle: ['Children Vaccinated at', 'Transit Point'],
                    onClick: d => { DashboardActions.navigate({ location: d }) }
