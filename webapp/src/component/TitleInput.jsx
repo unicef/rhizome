@@ -22,6 +22,6 @@ export default React.createClass({
     this.setState({text: e.currentTarget.value})
   },
   render: function () {
-    return (<input type='text' className={this.props.class} value={this.state.text} onChange={this._updateText}/>)
+    return (<input type='text' className={this.props.className} value={this.state.text} onChange={this._updateText}/>)
   }
 })

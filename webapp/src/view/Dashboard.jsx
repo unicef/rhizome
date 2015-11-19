@@ -354,7 +354,7 @@ var Dashboard = React.createClass({
     return (
       <div>
         <div classNameName='clearfix'></div>
-        <form className='inline no-print search-criteria'>
+        <form className='inline no-print cd-titlebar'>
           <div className='row'>
             <div className='medium-4 columns'>
               {settingFilter}
@@ -362,7 +362,7 @@ var Dashboard = React.createClass({
             <div className='medium-2 columns'>
               <div>
                 {edit}
-                <TitleMenu text={dashboardName} icon='fa-chevron-down'>
+                <TitleMenu text={dashboardName} icon='fa-chevron-down' className='cd-titlebar-margin'>
                   {dashboardItems}
                 </TitleMenu>
               </div>

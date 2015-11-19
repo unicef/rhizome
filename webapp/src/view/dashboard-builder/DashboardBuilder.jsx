@@ -228,14 +228,17 @@ export default React.createClass({
     }
     let dashboardBuilderContainer = (
       <div>
-        <form className='inline no-print row cd-bg-color'>
-          <div className='large-6 columns'>
-          </div>
+        <form className='inline no-print row cd-titlebar'>
+          <div className='large-6 columns'> </div>
           <div className='large-6 columns'>
             <div className='row'>
-              <div className='large-6 medium-4 small-6 columns cd-header-title'>Dashboard Title</div>
-              <div className='large-6 medium-8 small-6 columns'>
-                <TitleInput className='description' initialText={this.state.title} save={this._updateTitle}/>
+              <div className='large-6 medium-4 small-12 columns'>
+                <label className='cd-title-label cd-titlebar-margin'>Dashboard Title</label>
+              </div>
+              <div className='large-6 medium-8 small-12 columns'>
+                <TitleInput className='cd-title-input cd-titlebar-margin'
+                            initialText={this.state.title}
+                            save={this._updateTitle}/>
               </div>
             </div>
           </div>
@@ -253,7 +256,7 @@ export default React.createClass({
             <div className='large-7 columns'>
               <div className='row'>
                 <div className='large-2 columns'>
-                  <div className='description-text'>Description&ensp;:</div>
+                  <label className='description-text'>Description&ensp;:</label>
                 </div>
                 <div className='large-5 columns'>
                   <TitleInput className='description' initialText={this.state.description}

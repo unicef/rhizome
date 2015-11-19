@@ -32,22 +32,6 @@ form {
   }
 }
 
-.cd-bg-color {
-  background-color: $rhz-background-color;
-  .description {
-    margin: 10px 0;
-    border: 1px solid #344B61;
-  }
-
-  .cd-header-title {
-    font-size: 1rem;
-    padding: 22px;
-    text-transform: uppercase;
-    text-align: right;
-    color: #FEFEFE;
-  }
-}
-
 input[type="text"],
 input[type="password"],
 .text-field {

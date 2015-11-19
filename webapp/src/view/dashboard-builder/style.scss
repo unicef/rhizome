@@ -1,7 +1,6 @@
 @import "../../styles/variables";
-@import "foundation/components/grid";
 
-$break-width: 960px;
+@import "foundation/components/block-grid";
 
 @media #{$small-up} {
   .dashboard-builder-container {
@@ -22,6 +21,43 @@ $break-width: 960px;
       margin-bottom: 10em;
     }
   }
+}
+
+@media #{$medium-up} {
+  .cd-title-label {
+    position: relative;
+    top: .5em;
+    text-align: right;
+  }
+}
+
+@media #{$large-up} {
+  .cd-footer {
+    .description-text {
+      text-align: right !important;
+    }
+  }
+}
+
+.dropdown-list {
+  background-color: #fff;
+  color: $rhz-background-color;
+  font-size: 0.825rem;
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+
+  a {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: $rhz-background-color;
+  }
+}
+
+.title-font {
+  font-weight: 600;
 }
 
 .empty-dashboard-add-container {
@@ -50,23 +86,28 @@ $break-width: 960px;
 .cd-footer {
   padding: 20px 10px 0;
   background-color: #F3F3F3;
-
   .description-text {
     font-size: 11px;
     text-transform: uppercase;
-    text-align: right;
+    text-align: left;
     padding: 10px 0;
   }
-
   .description {
     border: 1px solid $rhz-button-bg-color;
   }
 }
 
-@media (max-width: $break-width) {
-  .cd-footer {
-    .description-text {
-      text-align: left;
-    }
+.cd-titlebar {
+  background-color: $rhz-background-color;
+  .cd-title-label {
+    font-size: 0.825rem;
+    text-transform: uppercase;
+    color: #FEFEFE;
+  }
+  .cd-title {
+    border: 1px solid #344B61;
+  }
+  .cd-titlebar-margin {
+    margin: 12px 0;
   }
 }
