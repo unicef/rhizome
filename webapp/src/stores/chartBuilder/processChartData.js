@@ -165,7 +165,7 @@ const aspects = {
     choroplethMap: 1,
     columnChart: 1,
     scatterChart: 1,
-    barChart: 1
+    barChart: 1.5
   },
   3: {
     lineChart: 1,
