@@ -132,7 +132,7 @@ var SourceDataDashboard = React.createClass({
         'data_fn': api.docDatapoint,
         'fields': ['location__name', 'indicator__short_name', 'campaign__slug', 'value', 'edit_link'],
         'header': ['location', 'indicator', 'campaign', 'value', 'is valid'],
-        'search_fields': ['location', 'indicator', 'campaign', 'value',]
+        'search_fields': ['location', 'indicator', 'campaign', 'value']
       },
       'results': {
         'data_fn': api.docResults,

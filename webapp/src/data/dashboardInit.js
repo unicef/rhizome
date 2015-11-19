@@ -164,10 +164,6 @@ var process = {
   'ScatterChart': scatter
 }
 
-function customDashboardInit (dashboard, data, locations, campaigns, indicators, features) {
-  return dashboardInit(dashboard, data, locations[0], campaigns[0], locations, campaigns, indicators, features)
-}
-
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
   var results = {}
 
@@ -243,6 +239,5 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 }
 
 export default {
-  dashboardInit: dashboardInit,
-  customDashboardInit: customDashboardInit
+  dashboardInit: dashboardInit
 }

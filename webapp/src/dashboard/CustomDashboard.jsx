@@ -103,11 +103,22 @@ var CustomDashboard = React.createClass({
     var loading = this.props.loading
     var editable = this.props.editable
 
+    if (loading) {
+      let style = {fontSize: '2rem', zIndex: 9999}
+      return (
+        <div style={style} className='overlay'>
+          <div>
+            <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
+          </div>
+        </div>
+      )
+    }
+
     var charts = _.map(this.props.dashboard.charts, (chart, i) => {
       var title = chart.title
       var key = _.get(chart, 'id', _.kebabCase(title))
       var id = _.get(chart, 'id', _.camelCase(title))
-      var series = data[id].data
+      var series = data[id] && data[id].data
 
       var controls
       if (editable) {
@@ -144,7 +155,7 @@ var CustomDashboard = React.createClass({
       }
 
       let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
-      var options = data[id].options || getOptions(chart, campaign)
+      let options = data[id] && data[id].options || getOptions(chart, campaign)
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>

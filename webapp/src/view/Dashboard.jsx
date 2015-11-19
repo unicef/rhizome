@@ -262,39 +262,39 @@ var Dashboard = React.createClass({
         .value()
     )
 
-    var data = DashboardInit.dashboardInit(
-      dashboardDef,
-      this.state.data,
-      location,
-      campaign,
-      this.state.locations,
-      this.state.allCampaigns,
-      indicators,
-      GeoStore.features
-    )
-
-    var dashboardProps = {
-      campaign: campaign,
-      dashboard: dashboardDef,
-      data: data,
-      indicators: indicators,
-      loading: loading,
-      location: location,
-      doc_tab: doc_tab,
-      doc_id: doc_id
+    let dashboard
+    if (Object.keys(LAYOUT).indexOf(dashboardName) >= 0) {
+      let data = DashboardInit.dashboardInit(
+        dashboardDef,
+        this.state.data,
+        location,
+        campaign,
+        this.state.locations,
+        this.state.allCampaigns,
+        indicators,
+        GeoStore.features
+      )
+      let dashboardProps = {
+        campaign: campaign,
+        dashboard: dashboardDef,
+        data: data,
+        indicators: indicators,
+        loading: loading,
+        location: location,
+        doc_tab: doc_tab,
+        doc_id: doc_id
+      }
+      dashboard = React.createElement(LAYOUT[dashboardName], dashboardProps)
+    } else {
+      let customDashboardProps = {
+        campaigns: this.state.allCampaigns,
+        dashboard: dashboardDef,
+        data: Array.isArray(this.state.data) ? {} : this.state.data,
+        indicators: indicators,
+        loading: loading
+      }
+      dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
-
-    let customDashboardProps = {
-      campaigns: this.state.allCampaigns,
-      dashboard: dashboardDef,
-      data: data,
-      indicators: indicators,
-      loading: loading
-    }
-
-    let dashboard = Object.keys(LAYOUT).indexOf(dashboardName) >= 0
-      ? React.createElement(LAYOUT[dashboardName], dashboardProps)
-      : React.createElement(CustomDashboard, customDashboardProps)
 
     var campaigns = _(this.state.campaigns)
       .map(campaign => {
