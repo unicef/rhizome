@@ -4,7 +4,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import YtDChart from 'component/YtDChart.jsx'
+import YTDChart from 'component/YTDChart.jsx'
 
 export default React.createClass({
   propTypes: {
@@ -66,7 +66,7 @@ export default React.createClass({
         {title}
         <div style={{ position: 'relative' }}>
           {newCaseLabel}
-          <YtDChart id='polio-cases-ytd'
+          <YTDChart id='polio-cases-ytd'
             data={this.props.data}
             loading={loading}
             options={{

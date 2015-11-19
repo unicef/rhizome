@@ -9,7 +9,7 @@ import Carousel from 'nuka-carousel'
 import HomepageCarouselDecorators from './HomepageCarouselDecorators.jsx'
 
 import Chart from 'component/Chart.jsx'
-import YtDChart from 'component/YtDChart.jsx'
+import YTDChart from 'component/YTDChart.jsx'
 
 import ChartUtil from '../utils/ChartUtil.js'
 
@@ -82,7 +82,7 @@ var HomepageCharts = React.createClass({
           {polioCasesData.title}
           <div style={{ position: 'relative' }}>
             {polioCasesData.newCaseLabel}
-            <YtDChart
+            <YTDChart
               data={polioCasesData.data}
               loading={loading}
               options={{

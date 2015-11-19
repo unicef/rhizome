@@ -26,7 +26,7 @@ var Impact = React.createClass({
     return (
       <div className='medium-2 columns'>
         <h3>Impact</h3>
-        <PolioCasesYTD data={data.PolioCasesYTD} campaign={campaign} loading={loading} />
+        <PolioCasesYTD data={data.polioCasesYtd} campaign={campaign} loading={loading} />
         <ImmunityGap data={data.underImmunizedChildren} campaign={campaign} loading={loading} />
       </div>
     )
