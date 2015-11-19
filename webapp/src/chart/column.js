@@ -38,9 +38,15 @@ _.extend(ColumnChart.prototype, {
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width / aspect)
 
+    this._topLegendHeight = 0
+    if (options && options.chartInDashboard && data && data.length && data.length > 0) {
+      this._topLegendHeight = data.length * 10
+    }
+
+
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
-        'viewBox': '0 0 ' + this._width + ' ' + this._height,
+        'viewBox': '0 0 ' + this._width + ' ' + (this._height + this._topLegendHeight),
         'class': this.classNames
       })
 
@@ -83,6 +89,7 @@ _.extend(ColumnChart.prototype, {
 
     var h = this._height - margin.top - margin.bottom
     var w = this._width - margin.left - margin.right
+    let topLegendHeight = this._topLegendHeight
     var dataMarginLeft = 25
 
     var domain
@@ -102,11 +109,6 @@ _.extend(ColumnChart.prototype, {
       .rangeBands([dataMarginLeft, w], options.padding)
 
     var x = _.flow(options.x, dataXScale)
-
-    let topLegendHeight = 0
-    if (options && options.chartInDashboard && data && data.length && data.length > 0) {
-      topLegendHeight = data.length * 10
-    }
 
     var range
     if (_.isFunction(options.range)) {
