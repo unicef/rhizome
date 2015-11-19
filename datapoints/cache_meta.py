@@ -17,18 +17,25 @@ def cache_indicator_abstracted():
     tag_df = DataFrame(list(IndicatorToTag.objects.all()\
         .values_list(*tag_cols)),columns = tag_cols)
 
+    ## get bounds ##
+    bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+    bound_df = DataFrame(list(IndicatorBound.objects.all()\
+        .values_list(*bound_cols)),columns = bound_cols)
+
     ind_abstract_batch = []
     for ind in Indicator.objects.all():
 
         ## filter the tag_df to this indicator and add to object
-        filtered_tag = tag_df[tag_df['indicator_id'] == \
+        filtered_tag_df = tag_df[tag_df['indicator_id'] == \
             ind.id]
-        ind.tag_json = list(filtered_tag['indicator_tag_id'].unique())
+        ind.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
 
-        # filtered_bound = tag_df[tag_df['indicator_id'] == \
-        #     ind.id]
-
-        ind.bound_json = []
+        ## filter the bounds, then create a list of dicts
+        ## where each row has it's own dictionary ##
+        filtered_bound_df = bound_df[bound_df['indicator_id'] == \
+            ind.id]
+        ind.bound_json = bound_list_of_dicts = [row.to_dict() for ix, row in\
+            filtered_bound_df.iterrows()]
 
         ind_abstract_batch.append(ind)
 

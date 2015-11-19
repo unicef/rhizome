@@ -140,17 +140,17 @@ class CacheMetaTestCase(TestCase):
         # ## are the tags properly pivoted into json ? ##
         self.assertEqual(target_tag_json.sort(), ind_abstract.tag_json.sort())
 
-        # ## do indicator bounds get properly transformed into json ? ##
-        # self.assertEqual(bound_dict_1['bound_name'],\
-        #     ind_abstract.bound_json[0]['bound_name'])
-        # self.assertEqual(bound_dict_1['mn_val'],\
-        #     ind_abstract.bound_json[0]['mn_val'])
-        # self.assertEqual(bound_dict_1['mx_val'],\
-        #     ind_abstract.bound_json[0]['mx_val'])
-        #
-        # self.assertEqual(bound_dict_2['bound_name'],\
-        #     ind_abstract.bound_json[1]['bound_name'])
-        # self.assertEqual(bound_dict_2['mn_val'],\
-        #     ind_abstract.bound_json[1]['mn_val'])
-        # self.assertEqual(bound_dict_2['mx_val'],\
-        #     ind_abstract.bound_json[1]['mx_val'])
+        ## do indicator bounds get properly transformed into json ? ##
+        self.assertEqual(bound_dict_1['bound_name'],\
+            ind_abstract.bound_json[0]['bound_name'])
+        self.assertEqual(bound_dict_1['mn_val'],\
+            ind_abstract.bound_json[0]['mn_val'])
+        self.assertEqual(bound_dict_1['mx_val'],\
+            ind_abstract.bound_json[0]['mx_val'])
+
+        self.assertEqual(bound_dict_2['bound_name'],\
+            ind_abstract.bound_json[1]['bound_name'])
+        self.assertEqual(bound_dict_2['mn_val'],\
+            ind_abstract.bound_json[1]['mn_val'])
+        self.assertEqual(bound_dict_2['mx_val'],\
+            ind_abstract.bound_json[1]['mx_val'])
