@@ -115,12 +115,20 @@ function prepareMissedChildrenData (original) {
   var missedChildrenMap = data.missedChildrenByProvince
 
   var sumData = []
-  var maxRange = 1
-  if (missed.length > 1) {
+  var maxRange
+  if (missed.length >= 1) {
     missed[0].values.forEach((d, i) => {
-      sumData[i] = d.value + missed[1].values[i].value + missed[2].values[i].value + missed[3].values[i].value
+      sumData.push(missed.reduce((sum, n) => {
+        var sumValue = typeof (sum) === 'object' ? sum.values[i].value : sum
+        var nValue = n.values[i].value
+        return sumValue + nValue
+      }))
     })
     maxRange = _.ceil(_.max(sumData), 2)
+  }
+
+  if (!maxRange) {
+    maxRange = 1
   }
 
   return {
