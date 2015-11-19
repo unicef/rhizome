@@ -1,11 +1,9 @@
-from datetime import datetime
-
 from django.db import models
-from django.conf import settings
 
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
+
 
 class CacheJob(models.Model):
     '''
@@ -37,12 +35,12 @@ class Indicator(models.Model):
     indicators take a look at the CalculatedIndicatorComponent model.
     '''
 
-    short_name = models.CharField(max_length=255,unique=True)
-    name = models.CharField(max_length=255,unique=True)
+    short_name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
-    slug = AutoSlugField(populate_from='name',unique=True,max_length=255)
+    slug = AutoSlugField(populate_from='name', unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -95,7 +93,7 @@ class CalculatedIndicatorComponent(models.Model):
     '''
 
     indicator = models.ForeignKey(Indicator, related_name='indicator_master')
-    indicator_component = models.ForeignKey(Indicator,related_name='indicator_component')
+    indicator_component = models.ForeignKey(Indicator, related_name='indicator_component')
     calculation = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
@@ -104,6 +102,7 @@ class CalculatedIndicatorComponent(models.Model):
 
     class Meta:
         db_table = 'calculated_indicator_component'
+
 
 class IndicatorBound(models.Model):
     '''
@@ -118,12 +117,12 @@ class IndicatorBound(models.Model):
     bound_name = models.CharField(max_length=255)
     direction = models.IntegerField(default=1)
 
-
     def __unicode__(self):
         return unicode(self.bound_name.name)
 
     class Meta:
         db_table = 'indicator_bound'
+
 
 class IndicatorTag(models.Model):
     '''
@@ -138,10 +137,11 @@ class IndicatorTag(models.Model):
     '''
 
     tag_name = models.CharField(max_length=255)
-    parent_tag = models.ForeignKey("self",null=True)
+    parent_tag = models.ForeignKey("self", null=True)
 
     class Meta:
         db_table = 'indicator_tag'
+
 
 class IndicatorToTag(models.Model):
     '''
@@ -153,8 +153,9 @@ class IndicatorToTag(models.Model):
 
     class Meta:
         db_table = 'indicator_to_tag'
-        unique_together = ('indicator','indicator_tag')
-        ordering = [('-id')]
+        unique_together = ('indicator', 'indicator_tag')
+        ordering = ('-id',)
+
 
 class Office(models.Model):
     '''
@@ -181,6 +182,7 @@ class Office(models.Model):
             ('view_office', 'View office'),
         )
 
+
 class LocationType(models.Model):
     '''
     Country, Province, District, Sub-District, Settlement.
@@ -202,6 +204,7 @@ class LocationType(models.Model):
     class Meta:
         db_table = 'location_type'
 
+
 class Location(models.Model):
     '''
     A point in space with a name, location_code, office_id, lat/lon, and parent
@@ -209,22 +212,22 @@ class Location(models.Model):
     aggregate statistics based on the information stored at the leaf leve.
     '''
 
-
-    name = models.CharField(max_length=255,unique=True)
+    name = models.CharField(max_length=255, unique=True)
     location_code = models.CharField(max_length=255, unique=True)
     location_type = models.ForeignKey(LocationType)
     office = models.ForeignKey(Office)
-    latitude = models.FloatField(null=True,blank=True)
-    longitude = models.FloatField(null=True,blank=True)
-    slug = AutoSlugField(populate_from='name',max_length=255,unique=True)
+    latitude = models.FloatField(null=True, blank=True)
+    longitude = models.FloatField(null=True, blank=True)
+    slug = AutoSlugField(populate_from='name', max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now=True)
-    parent_location = models.ForeignKey("self",null=True)
+    parent_location = models.ForeignKey("self", null=True)
 
     def __unicode__(self):
         return unicode(self.name)
 
     class Meta:
         db_table = 'location'
+
 
 class LocationTree(models.Model):
     '''
@@ -240,7 +243,8 @@ class LocationTree(models.Model):
 
     class Meta:
         db_table = 'location_tree'
-        unique_together = [('parent_location','location')]
+        unique_together = ('parent_location', 'location')
+
 
 class LocationPolygon(models.Model):
     '''
@@ -270,6 +274,7 @@ class CampaignType(models.Model):
     class Meta:
         db_table = 'campaign_type'
 
+
 class Campaign(models.Model):
     '''
     A period in time in wich a campaign was initaited by the country office.
@@ -279,10 +284,9 @@ class Campaign(models.Model):
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name',unique=True)
+    slug = AutoSlugField(populate_from='get_full_name', unique=True)
     management_dash_pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
-
 
     def __unicode__(self):
         return unicode(self.slug)
@@ -293,7 +297,7 @@ class Campaign(models.Model):
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
-        unique_together = ('office','start_date')
+        unique_together = ('office', 'start_date')
 
 
 class DataPoint(models.Model):
@@ -320,21 +324,22 @@ class DataPoint(models.Model):
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey('source_data.SourceSubmission')
-    cache_job = models.ForeignKey(CacheJob,default=-1)
+    cache_job = models.ForeignKey(CacheJob, default=-1)
 
     def get_val(self):
         return self.value
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator','location','campaign')
+        unique_together = ('indicator', 'location', 'campaign')
+
 
 class DocDataPoint(models.Model):
     '''
     For Validation of upload datapoints.
     '''
 
-    document = models.ForeignKey('source_data.Document') ## redundant
+    document = models.ForeignKey('source_data.Document')  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
@@ -346,6 +351,7 @@ class DocDataPoint(models.Model):
 
     class Meta:
         db_table = 'doc_datapoint'
+
 
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
@@ -362,14 +368,15 @@ class DataPointEntry(DataPoint):
 class DataPointComputed(models.Model):
 
     value = models.FloatField()
-    cache_job = models.ForeignKey(CacheJob,default=-1)
+    cache_job = models.ForeignKey(CacheJob, default=-1)
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
 
     class Meta:
         db_table = 'datapoint_with_computed'
-        unique_together = ('location','campaign','indicator')
+        unique_together = ('location', 'campaign', 'indicator')
+
 
 class AggDataPoint(models.Model):
 
@@ -377,11 +384,11 @@ class AggDataPoint(models.Model):
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
     value = models.FloatField()
-    cache_job = models.ForeignKey(CacheJob,default=-1)
+    cache_job = models.ForeignKey(CacheJob, default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'
-        unique_together = ('location','campaign','indicator')
+        unique_together = ('location', 'campaign', 'indicator')
 
 
 class LocationPermission(models.Model):
@@ -403,7 +410,7 @@ class LocationPermission(models.Model):
 
     class Meta:
         db_table = 'location_permission'
-        unique_together = ('user','location','read_write')
+        unique_together = ('user', 'location', 'read_write')
 
 
 class IndicatorPermission(models.Model):
@@ -419,7 +426,7 @@ class IndicatorPermission(models.Model):
 
     class Meta:
         db_table = 'indicator_permission'
-        unique_together = ('group','indicator')
+        unique_together = ('group', 'indicator')
 
 
 class UserGroup(models.Model):
@@ -449,37 +456,40 @@ class CustomDashboard(models.Model):
     so be careful when testing!
     '''
 
-    title = models.CharField(max_length=255,unique=True)
+    title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=1000)
     owner = models.ForeignKey('auth.User')
-    default_office = models.ForeignKey(Office,null=True)
+    default_office = models.ForeignKey(Office, null=True)
     layout = models.IntegerField(default=0, null=True)
 
     class Meta:
         db_table = 'custom_dashboard'
+
 
 class CustomChart(models.Model):
     '''
     '''
 
     dashboard = models.ForeignKey(CustomDashboard)
-    chart_json  = JSONField()
+    chart_json = JSONField()
 
     class Meta:
         db_table = 'custom_chart'
 
+
 class ChartType(models.Model):
 
-    name = models.CharField(max_length=255,unique=True)
+    name = models.CharField(max_length=255, unique=True)
 
     class Meta:
         db_table = 'chart_type'
 
+
 class ChartTypeToIndicator(models.Model):
 
-    indicator = models.ForeignKey(Indicator,related_name='indicator')
-    chart_type = models.ForeignKey(ChartType,related_name='chart_type')
+    indicator = models.ForeignKey(Indicator, related_name='indicator')
+    chart_type = models.ForeignKey(ChartType, related_name='chart_type')
 
     class Meta:
         db_table = 'chart_type_to_indicator'
-        unique_together = ('indicator','chart_type')
+        unique_together = ('indicator', 'chart_type')
