@@ -388,7 +388,7 @@ export default {
       var chartOptions = {
         aspect: aspects[layout].barChart,
         offset: 'zero',
-        xFormat: d3.format('%')
+        yFormat: String
       }
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
       return { options: chartOptions, data: chartData }
