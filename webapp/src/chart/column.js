@@ -103,6 +103,11 @@ _.extend(ColumnChart.prototype, {
 
     var x = _.flow(options.x, dataXScale)
 
+    let topLegendHeight = 0
+    if (options && options.chartInDashboard && data && data.length && data.length > 0) {
+      topLegendHeight = data.length * 10
+    }
+
     var range
     if (_.isFunction(options.range)) {
       range = options.range(data)
@@ -131,12 +136,12 @@ _.extend(ColumnChart.prototype, {
     }
 
     var svg = this._svg
-    var g = svg.select('.data')
+    var g = svg.select('.data').attr('transform', 'translate(0,' + topLegendHeight + ')')
     var series = g.selectAll('.bar').data(data)
 
     svg.select('.bg')
       .attr({
-        'height': h + margin.top,
+        'height': h + margin.top + topLegendHeight,
         'width': w,
         'x': margin.left
       })
@@ -169,6 +174,7 @@ _.extend(ColumnChart.prototype, {
     column.exit().remove()
 
     svg.select('.x.axis')
+      .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
       .call(d3.svg.axis()
         .orient('bottom')
         .tickSize(0)
@@ -187,6 +193,7 @@ _.extend(ColumnChart.prototype, {
       .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
 
     svg.select('.y.axis')
+      .attr('transform', 'translate(0,' + topLegendHeight + ')')
       .call(d3.svg.axis()
         .orient('right')
         .tickFormat(options.yFormat)
