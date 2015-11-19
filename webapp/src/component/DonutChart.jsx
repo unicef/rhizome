@@ -27,12 +27,12 @@ var DonutChart = React.createClass({
     var label
     var labelStyle = ''
 
-    if (this.props.options.pieType) {
-      labelStyle = 'label__value'
-    }
+    // if (this.props.options.pieType) {
+    //  labelStyle = 'label__value'
+    // }
 
     if (!_.isEmpty(labelText) && labelText !== '0%') {
-      label = (<p className={'donut-label '+ labelStyle} style={this.props.labelStyle}>{labelText}</p>)
+      label = (<p className={'donut-label ' + labelStyle} style={this.props.labelStyle}>{labelText}</p>)
     }
 
     return (

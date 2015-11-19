@@ -43,7 +43,6 @@ _.extend(ColumnChart.prototype, {
       this._topLegendHeight = data.length * 10
     }
 
-
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + (this._height + this._topLegendHeight),
