@@ -27,7 +27,7 @@ function hoverLine () {
   var yScale = d3.scale.linear()
   var _value = _.property('value')
   var colorRange = '#000000'
-  var type = ''
+  var total = ''
 
   // Use this to keep track of what value we're currently hovering over so we
   // can bail out of onMouseMove if the movement wouldn't change our display
@@ -165,12 +165,12 @@ function hoverLine () {
     return chart
   }
 
-  chart.type = function (value) {
+  chart.total = function (value) {
     if (!arguments.length) {
-      return type
+      return total
     }
 
-    type = value
+    total = value
     return chart
   }
 
@@ -307,7 +307,7 @@ function hoverLine () {
       })
       .value()
 
-    if (type) {
+    if (total) {
       labelData.unshift({
         x: width,
         y: 0,

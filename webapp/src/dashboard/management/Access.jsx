@@ -75,7 +75,8 @@ var Access = React.createClass({
       x: _.property('campaign.start_date'),
       xFormat: d => moment(d).format('MMM YYYY'),
       y: _.property('value'),
-      yFormat: d3.format(',.0f')
+      yFormat: d3.format(',.0f'),
+      total: false
     }
 
     return (

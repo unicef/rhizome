@@ -20,8 +20,7 @@ var DEFAULTS = {
   x: _.property('campaign.start_date'),
   xFormat: format.timeAxis,
   y: _.property('value'),
-  yFormat: d3.format(',d'),
-  type: true
+  yFormat: d3.format(',d')
 }
 
 function AreaChart () {}
@@ -110,7 +109,7 @@ _.extend(AreaChart.prototype, {
         .value(options.y)
         .seriesName(_.property('seriesName'))
         .sort(true)
-        .type(options.type)
+        .total(options.total)
         .datapoints(points)
     )
 
@@ -163,7 +162,7 @@ _.extend(AreaChart.prototype, {
       .sortBy('y')
       .value()
 
-    if (options.type) {
+    if (options.total) {
       var v = _.sum(labels, d => { return d.value })
       labels.unshift({
         x: width,
