@@ -172,12 +172,7 @@ function prepareUnderImmunizedData (original) {
     _.method('getTime')
   )
 
-  var color = _.flow(
-    _.property('name'),
-    d3.scale.ordinal()
-      .domain(_(data).pluck('name').sortBy().value())
-      .range(['#D95449', '#B6D0D4'])
-  )
+  var color = ['#D95449', '#B6D0D4']
 
   return {
     data: stack(data),
