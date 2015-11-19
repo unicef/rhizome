@@ -146,9 +146,7 @@ var CustomDashboard = React.createClass({
           cols = 'small-12 end columns'
           break
         case 3: // Triptych
-          cols = chart.type === 'BarChart'
-            ? 'small-10 end columns'
-            : 'medium-4 columns end cd-chart-size'
+          cols = 'medium-4 columns end cd-chart-size'
           break
         default: // Default (Basic)
           break
