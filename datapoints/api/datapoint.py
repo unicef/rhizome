@@ -4,18 +4,20 @@ import numpy as np
 from pandas import DataFrame, pivot_table, notnull
 from tastypie import fields
 from tastypie import http
-from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.resources import ALL
+from tastypie.exceptions import ImmediateHttpResponse, NotFound
 from tastypie.utils.mime import build_content_type
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.sessions.models import Session
-from django.contrib.auth.models import User
 
-from datapoints.models import *
-from datapoints.api.meta_data import *
+from datapoints.api.base import BaseModelResource, BaseNonModelResource
+from datapoints.models import DataPointComputed, Campaign, Location, Indicator, DataPointEntry
+# from datapoints.api.meta_data import foo
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
+
 
 class ResultObject(object):
     '''
@@ -27,6 +29,7 @@ class ResultObject(object):
     campaign = None
     indicators = list()
 
+
 class DataPointResource(BaseNonModelResource):
     '''
     This is the class that coincides with the /api/v1/datapoint endpoint.
@@ -34,9 +37,9 @@ class DataPointResource(BaseNonModelResource):
 
     error = None
     parsed_params = {}
-    location = fields.IntegerField(attribute = 'location')
-    campaign = fields.IntegerField(attribute = 'campaign')
-    indicators = fields.ListField(attribute = 'indicators')
+    location = fields.IntegerField(attribute='location')
+    campaign = fields.IntegerField(attribute='campaign')
+    indicators = fields.ListField(attribute='indicators')
 
     class Meta(BaseNonModelResource.Meta):
         '''
@@ -52,9 +55,9 @@ class DataPointResource(BaseNonModelResource):
         note - authentication inherited from parent class
         '''
 
-        object_class = ResultObject # use the class above to devine the response
-        resource_name = 'datapoint' # cooresponds to the URL of the resource
-        max_limit = None # return all rows by default ( limit defaults to 20 )
+        object_class = ResultObject  # use the class above to devine the response
+        resource_name = 'datapoint'  # cooresponds to the URL of the resource
+        max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
     def __init__(self, *args, **kwargs):
@@ -77,16 +80,15 @@ class DataPointResource(BaseNonModelResource):
         desired_format = self.determine_format(request)
         serialized = self.serialize(request, data, desired_format)
 
-        response = response_class(content=serialized,\
-            content_type=build_content_type(desired_format), **response_kwargs)
+        response = response_class(
+            content=serialized, content_type=build_content_type(desired_format), **response_kwargs)
 
         if desired_format == 'text/csv':
             response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
 
         return response
 
-
-    def get_object_list(self,request):
+    def get_object_list(self, request):
         '''
         This is where the action happens in this resource.  AFter passing the
         url paremeters, get the list of locations based on the parameters passed
@@ -113,18 +115,19 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        ## Pivot the data on request instead of caching ##
-        ## in the datapoint_abstracted table ##
-        df_columns = ['indicator_id','campaign_id','location_id','value']
-        dwc_df = DataFrame(list(DataPointComputed.objects.filter(
-            campaign__in = self.parsed_params['campaign__in'],
-            location__in = location_ids,
-            indicator__in = self.parsed_params['indicator__in']
-        ).values_list(*df_columns)),columns=df_columns)
+        # Pivot the data on request instead of caching ##
+        # in the datapoint_abstracted table ##
+        df_columns = ['indicator_id', 'campaign_id', 'location_id', 'value']
+        dwc_df = DataFrame(
+            list(DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=location_ids,
+                indicator__in=self.parsed_params['indicator__in'])
+                .values_list(*df_columns)), columns=df_columns)
 
         try:
-            p_table = pivot_table(dwc_df, values='value', index=['indicator_id'],\
-                columns=['location_id','campaign_id'],aggfunc=np.sum)
+            p_table = pivot_table(
+                dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
         except KeyError:
             return results
 
@@ -134,14 +137,12 @@ class DataPointResource(BaseNonModelResource):
 
         for row, indicator_dict in pivoted_data.iteritems():
 
-            indicator_objects = [{'indicator': unicode(k) ,'value':v}\
-                for k,v in indicator_dict.iteritems()]
+            indicator_objects = [{'indicator': unicode(k), 'value': v} for k, v in indicator_dict.iteritems()]
 
-            missing_indicators = list(set(self.parsed_params['indicator__in']) -
-                set(indicator_dict.keys()))
+            missing_indicators = list(set(self.parsed_params['indicator__in']) - set(indicator_dict.keys()))
 
             for ind in missing_indicators:
-                indicator_objects.append({'indicator':ind,'value':None})
+                indicator_objects.append({'indicator': ind, 'value': None})
 
             r = ResultObject()
             r.location = row[0]
@@ -151,8 +152,7 @@ class DataPointResource(BaseNonModelResource):
 
         return results
 
-
-    def obj_get_list(self,bundle,**kwargs):
+    def obj_get_list(self, bundle, **kwargs):
         '''
         Outer method for get_object_list... this calls get_object_list and
         could be a point at which additional build_agg_rc_dfing may be applied
@@ -160,14 +160,13 @@ class DataPointResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def obj_get(self):
+    def obj_get(self, bundle, **kwargs):
         # get one object from data source
         pk = int(kwargs['pk'])
         try:
-            return data[pk]
+            return bundle.data[pk]
         except KeyError:
             raise NotFound("Object not found")
-
 
     def alter_list_data_to_serialize(self, request, data):
         '''
@@ -176,23 +175,22 @@ class DataPointResource(BaseNonModelResource):
         add the total_count to the meta object as well
         '''
 
-        ## get rid of the meta_dict. i will add my own meta data.
+        # get rid of the meta_dict. i will add my own meta data.
         # data['meta'].pop("limit",None)
 
-        ## iterate over parsed_params
+        # iterate over parsed_params
         meta_dict = {}
-        for k,v in self.parsed_params.iteritems():
+        for k, v in self.parsed_params.iteritems():
             meta_dict[k] = v
 
-        ## add metadata to response
+        # add metadata to response
         data['requested_params'] = meta_dict
 
-        ## add errors if it exists
+        # add errors if it exists
         if self.error:
             data['error'] = self.error
         else:
             data['error'] = None
-
 
         return data
 
@@ -206,13 +204,11 @@ class DataPointResource(BaseNonModelResource):
 
         return bundle
 
+    # #########################
+    # ### HELPER METHODS #####
+    # #########################
 
-    ##########################
-    ##### HELPER METHODS #####
-    ##########################
-
-
-    def parse_url_params(self,query_dict):
+    def parse_url_params(self, query_dict):
         '''
         For the query dict return another dictionary ( or error ) in accordance
         to the expected ( both required and optional ) parameters in the request
@@ -220,30 +216,30 @@ class DataPointResource(BaseNonModelResource):
         '''
         parsed_params = {}
 
-        ## try to find optional parameters in the dictionary. If they are not
-        ## there return the default values ( given in the dict below)
-        optional_params = {'the_limit':10000,'the_offset':0,'agg_level':'mixed',\
-            'campaign_start':'2012-01-01','campaign_end':'2900-01-01' ,\
-            'campaign__in':None,'location__in': None}
+        # try to find optional parameters in the dictionary. If they are not
+        # there return the default values ( given in the dict below)
+        optional_params = {
+            'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
+            'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
+            'campaign__in': None, 'location__in': None}
 
-        for k,v in optional_params.iteritems():
+        for k, v in optional_params.iteritems():
             try:
                 parsed_params[k] = query_dict[k]
             except KeyError:
                 parsed_params[k] = v
 
-        ## find the Required Parameters and if they
-        ## dont exists return an error to the response
+        # find the Required Parameters and if they
+        # dont exists return an error to the response
         required_params = {'indicator__in': None}
 
-        for k,v in required_params.iteritems():
+        for k, v in required_params.iteritems():
 
             try:
-                parsed_params[k] = [ int(p) for p in  query_dict[k].split(',') ]
+                parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
             except KeyError as err:
                 err_msg = '%s is a required parameter!' % err
-                return err_msg , None
-
+                return err_msg, None
 
         campaign_in_param = parsed_params['campaign__in']
 
@@ -252,7 +248,7 @@ class DataPointResource(BaseNonModelResource):
 
         else:
             campaign_ids = self.get_campaign_list(
-                parsed_params['campaign_start'],parsed_params['campaign_end']
+                parsed_params['campaign_start'], parsed_params['campaign_end']
             )
 
         parsed_params['campaign__in'] = campaign_ids
@@ -261,16 +257,15 @@ class DataPointResource(BaseNonModelResource):
 
         return None
 
-
-    def get_campaign_list(self,campaign_start,campaign_end):
+    def get_campaign_list(self, campaign_start, campaign_end):
         '''
         Based on the parameters passed for campaigns, start/end or __in
         return to the parsed params dictionary a list of campaigns to query
         '''
 
         cs = Campaign.objects.filter(
-            start_date__gte = campaign_start,\
-            start_date__lte = campaign_end,\
+            start_date__gte=campaign_start,
+            start_date__lte=campaign_end,
         )
 
         campaign__in = [c.id for c in cs]
@@ -283,7 +278,7 @@ class DataPointEntryResource(BaseModelResource):
     required_keys = [
         # 'datapoint_id',
         'indicator_id', 'location_id',
-        'campaign_id', 'value', #'changed_by_id',
+        'campaign_id', 'value',  # 'changed_by_id',
     ]
     # for validating foreign keys
     keys_models = {
@@ -291,10 +286,9 @@ class DataPointEntryResource(BaseModelResource):
         'campaign_id': Campaign,
         'indicator_id': Indicator
     }
-    location = fields.IntegerField(attribute = 'location_id')
-    campaign = fields.IntegerField(attribute = 'campaign_id')
-    indicator = fields.IntegerField(attribute = 'indicator_id')
-
+    location = fields.IntegerField(attribute='location_id')
+    campaign = fields.IntegerField(attribute='campaign_id')
+    indicator = fields.IntegerField(attribute='indicator_id')
 
     class Meta():
         # note - auth inherited from parent class #
@@ -302,14 +296,13 @@ class DataPointEntryResource(BaseModelResource):
         allowed_methods = ['get', 'post']
         resource_name = 'datapointentry'
         always_return_data = True
-        max_limit = None # no pagination
+        max_limit = None  # no pagination
         filtering = {
             'indicator': ALL,
             'campaign': ALL,
             'location': ALL,
         }
         serializer = CustomJSONSerializer()
-
 
     def save(self, bundle, skip_errors=False):
         '''
@@ -340,7 +333,6 @@ class DataPointEntryResource(BaseModelResource):
         m2m_bundle = self.hydrate_m2m(bundle)
         self.save_m2m(m2m_bundle)
         return bundle
-
 
     def obj_create(self, bundle, **kwargs):
         """
@@ -387,7 +379,7 @@ class DataPointEntryResource(BaseModelResource):
                 bundle.request,
                 self.make_error_response(e),
                 response_class=http.HttpApplicationError
-                )
+            )
             raise ImmediateHttpResponse(response=response)
 
     def obj_update(self, bundle, **kwargs):
@@ -416,7 +408,7 @@ class DataPointEntryResource(BaseModelResource):
                 return user.id
 
     def is_delete_request(self, bundle):
-        if bundle.data.has_key('value') and bundle.data['value'] == None:
+        if 'value' in bundle.data and bundle.data['value'] is None:
             return True
         else:
             return False
@@ -424,7 +416,6 @@ class DataPointEntryResource(BaseModelResource):
     def obj_delete(self, bundle, **kwargs):
         """This is here to prevent an objects from ever being deleted."""
         pass
-
 
     def obj_delete_list(self, bundle, **kwargs):
         """This is here to prevent a list of objects from
@@ -437,7 +428,8 @@ class DataPointEntryResource(BaseModelResource):
         (i.e. data should have passed validate_object first)
         """
         try:
-            obj = DataPointEntry.objects.get(location_id=int(data['location_id']),
+            obj = DataPointEntry.objects.get(
+                location_id=int(data['location_id']),
                 campaign_id=int(data['campaign_id']),
                 indicator_id=int(data['indicator_id']),
             )
@@ -447,12 +439,15 @@ class DataPointEntryResource(BaseModelResource):
 
     def hydrate(self, bundle):
 
-        if hasattr(bundle, 'obj') and isinstance(bundle.obj, DataPointEntry) \
-            and hasattr(bundle.obj, 'location_id') and bundle.obj.location_id is not None \
-            and hasattr(bundle.obj, 'campaign_id') and bundle.obj.location_id is not None \
-            and hasattr(bundle.obj, 'indicator_id') and bundle.obj.location_id is not None:
+        if hasattr(bundle, 'obj') \
+            and isinstance(bundle.obj, DataPointEntry) \
+            and hasattr(bundle.obj, 'location_id') \
+            and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'campaign_id') \
+            and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'indicator_id') \
+                and bundle.obj.location_id is not None:
             # we get here if there's an existing datapoint being modified
-
             pass
         else:
             # we get here if we're inserting a brand new datapoint
@@ -472,7 +467,7 @@ class DataPointEntryResource(BaseModelResource):
         # hack: bundle will only have a response attr if this is a POST or PUT request
         if hasattr(bundle, 'response'):
             bundle.data = bundle.response
-        else: # otherwise, this is a GET request
+        else:  # otherwise, this is a GET request
             bundle.data['datapoint_id'] = bundle.data['id']
             del bundle.data['id']
             for key in ['campaign', 'indicator', 'location']:
@@ -482,13 +477,12 @@ class DataPointEntryResource(BaseModelResource):
                 del bundle.data[key]
         return bundle
 
-
     def validate_object(self, obj):
         """
         Check that object has all the right fields, yadda yadda yadda.
         """
         for key in self.required_keys:
-            if not key in obj:
+            if key not in obj:
                 raise InputError(2, 'Required metadata missing: {0}'.format(key))
 
         # ensure that metadata values are valid
@@ -498,7 +492,7 @@ class DataPointEntryResource(BaseModelResource):
             except ValueError:
                 raise InputError(4, 'Invalid metadata value: {0}'.format(key))
             try:
-                instance = model.objects.get(id=key_id)
+                model.objects.get(id=key_id)
             except (ValueError, ObjectDoesNotExist):
                 raise InputError(3, 'Could not find record for metadata value: {0}'.format(key))
 
@@ -516,15 +510,15 @@ class DataPointEntryResource(BaseModelResource):
         # User.objects.get(id=user_id)
 
         # ensure that location, campaign, and indicator, if present, are valid values
-        if obj.has_key('location_id'):
+        if 'location_id' in obj:
             location_id = int(obj['location_id'])
             Location.objects.get(id=location_id)
 
-        if obj.has_key('campaign_id'):
+        if 'campaign_id' in obj:
             campaign_id = int(obj['campaign_id'])
             Campaign.objects.get(id=campaign_id)
 
-        if obj.has_key('indicator_id'):
+        if 'indicator_id' in obj:
             indicator_id = int(obj['indicator_id'])
             Indicator.objects.get(id=indicator_id)
 
