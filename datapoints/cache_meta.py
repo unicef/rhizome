@@ -21,6 +21,7 @@ def cache_indicator_abstracted():
             ,i.name
             ,i.slug
             ,i.description
+            ,i.data_format
             ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END AS bound_json
             ,CASE WHEN CAST(y.tag_json as varchar) = '[null]' then '[]' ELSE y.tag_json END AS tag_json
         FROM (
