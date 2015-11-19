@@ -12,44 +12,30 @@ def cache_indicator_abstracted():
     data without any transformation on request.
     '''
 
-    i_raw = Indicator.objects.raw("""
+    ## get tags ##
+    tag_cols = ['indicator_id','indicator_tag_id']
+    tag_df = DataFrame(list(IndicatorToTag.objects.all()\
+        .values_list(*tag_cols)),columns = tag_cols)
+
+    ind_abstract_batch = []
+    for ind in Indicator.objects.all():
+
+        ## filter the tag_df to this indicator and add to object
+        filtered_tag = tag_df[tag_df['indicator_id'] == \
+            ind.id]
+        ind.tag_json = list(filtered_tag['indicator_tag_id'].unique())
+
+        # filtered_bound = tag_df[tag_df['indicator_id'] == \
+        #     ind.id]
+
+        ind.bound_json = []
+
+        ind_abstract_batch.append(ind)
+
+    IndicatorAbstracted.objects.all().delete()
+    IndicatorAbstracted.objects.bulk_create(ind_abstract_batch)
 
 
-        SELECT
-             i.id
-            ,i.short_name
-            ,i.name
-            ,i.slug
-            ,i.description
-            ,i.data_format
-            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END AS bound_json
-            ,CASE WHEN CAST(y.tag_json as varchar) = '[null]' then '[]' ELSE y.tag_json END AS tag_json
-        FROM (
-            SELECT
-            	i.id
-            	,json_agg(row_to_json(ib.*)) as bound_json
-            FROM indicator i
-            LEFT JOIN indicator_bound ib
-            ON i.id = ib.indicator_id
-            GROUP BY i.id
-        )x
-		INNER JOIN (
-            SELECT
-            	i.id
-            	,json_agg(itt.indicator_tag_id) as tag_json
-            FROM indicator i
-            LEFT JOIN indicator_to_tag itt
-            ON i.id = itt.indicator_id
-
-            GROUP BY i.id
-		) y
-		ON y.id = x.id
-        INNER JOIN indicator i
-        ON x.id = i.id
-
-    """)
-
-    upsert_meta_data(i_raw, IndicatorAbstracted)
 
 
 def calculate_campaign_percentage_complete():
