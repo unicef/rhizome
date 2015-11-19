@@ -322,5 +322,4 @@ export default {
   remove_indicator_from_tag: emptyResponsePoint('/indicator_to_tag', 'delete', 1, false),
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),
   post_source_object_map: endPoint('/source_object_map/', 'post', 1, false)
-
 }

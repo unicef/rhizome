@@ -17,6 +17,8 @@ var DashboardBuilderStore = Reflux.createStore({
   data: {
     loaded: false,
     newDashboard: false,
+    dashboardTitle: '',
+    dashboardDescription: '',
     layout: LayoutDefaultSettings.defaultValue
   },
 
@@ -31,6 +33,8 @@ var DashboardBuilderStore = Reflux.createStore({
         this.data.dashboard = dashboard.objects[0]
         this.data.layout = dashboard.objects[0].layout
         this.data.loaded = true
+        this.data.dashboardTitle = dashboard.objects[0].title
+        this.data.dashboardDescription = dashboard.objects[0].description
 
         api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
           this.data.dashboard.charts = res.objects.map(chart => {
@@ -147,7 +151,10 @@ var DashboardBuilderStore = Reflux.createStore({
       layout: this.data.layout,
       dashboard_json: JSON.stringify(this.data.dashboard.charts)
     }
-    api.save_dashboard(data).then(function (response) {
+    api.save_dashboard(data).then(res => {
+      console.log(res)
+    }, err => {
+      console.log(err)
     })
   },
   onUpdateChart: function (chartDef, index) {
@@ -171,7 +178,6 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onUpdateTitle: function (title) {
     this.data.dashboardTitle = title
-    // this.trigger(this.data)
     clearTimeout(this.timer)
     if (this.data.dashboard) {
       this.timer = setTimeout(function () {
@@ -181,8 +187,6 @@ var DashboardBuilderStore = Reflux.createStore({
   },
   onUpdateDescription: function (description) {
     this.data.dashboardDescription = description
-    // this.trigger(this.data)
-
     clearTimeout(this.timer)
     this.timer = setTimeout(function () {
       this.saveDashboard()

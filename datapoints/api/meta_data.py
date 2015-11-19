@@ -347,7 +347,6 @@ class CustomDashboardResource(BaseModelResource):
 
         post_data = bundle.data
         user_id = bundle.request.user.id
-        print post_data, user_id
 
         try:
             dash_id = int(post_data['id'])
@@ -358,6 +357,8 @@ class CustomDashboardResource(BaseModelResource):
 
         title = post_data['title']
 
+        description = post_data['description']
+
         try:
             layout = int(post_data['layout'])
         except KeyError:
@@ -366,6 +367,7 @@ class CustomDashboardResource(BaseModelResource):
         defaults = {
             'id': dash_id,
             'title': title,
+            'description': description,
             'owner_id': user_id,
             'default_office_id': default_office_id,
             'layout': layout
@@ -375,15 +377,9 @@ class CustomDashboardResource(BaseModelResource):
             raise DataPointsException('the custom dashboard "{0}" already exists'.format(title))
 
         dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
-        # try:
-        #
-        # except:
-        #     raise ImmediateHttpResponse(
-        #         HttpForbidden("This custom dashboard already exists."))
 
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
-
         return bundle
 
     def obj_delete_list(self, bundle, **kwargs):
