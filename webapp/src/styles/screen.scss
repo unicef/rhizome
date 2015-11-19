@@ -333,14 +333,13 @@ table {
 .button-bar {
   .button-bar__edit {
     display: inline-block;
-    padding: 5px;
-    background-color: white;
-    color: #436380;
+    padding: 0 3px;
+    color: white;
     font-size: 14px;
     cursor: pointer;
 
     &:hover {
-      color: lighten(#436380, 20%);
+      color: darken(white, 20%);
     }
   }
 }

@@ -47,6 +47,10 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       l * options.barHeight + (l - 1) * options.barHeight * options.padding)
     var w = this._width - margin.left - margin.right
 
+    if (options.chartInDashboard) {
+      h = _.get(options, 'height', this._width / options.aspect)
+    }
+
     var sortIdx = 0
     var sortBy = this.sortBy
 

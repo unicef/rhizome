@@ -64,7 +64,7 @@ export default React.createClass({
         : (
             <div style={position} className='overlay'>
               <div>
-                <div >{message}</div>
+                <div>{message}</div>
               </div>
             </div>
         )

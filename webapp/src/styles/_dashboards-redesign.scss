@@ -66,6 +66,18 @@ $total-columns: 8;
   }
 }
 
+.custom-dashboard__chart-title {
+  background: $rhz-chart-title-bg-color;
+  color: $rhz-chart-title-color;
+  text-transform: uppercase;
+  font-family: ADELLE REGULAR;
+  font-size: 0.75rem;
+  padding: 5px;
+  margin: 10px 0;
+  border: none;
+  font-weight: bold;
+}
+
 .font-bold {
   font-weight: bold;
 }
