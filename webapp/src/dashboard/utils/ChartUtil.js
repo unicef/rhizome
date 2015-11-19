@@ -121,7 +121,7 @@ function prepareMissedChildrenData (original) {
       sumData[i] = d.value + missed[1].values[i].value + missed[2].values[i].value + missed[3].values[i].value
     })
     maxRange = _.ceil(_.max(sumData), 2)
-    }
+  }
 
   return {
     missedChildrenMap: missedChildrenMap,
@@ -129,7 +129,7 @@ function prepareMissedChildrenData (original) {
     missedScale: missedScale,
     location: location,
     date: moment(original.campaign.start_date).format('MMMM YYYY'),
-    range : _.constant([0, maxRange])
+    range: _.constant([0, maxRange])
   }
 }
 

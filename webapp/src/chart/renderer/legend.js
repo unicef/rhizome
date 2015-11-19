@@ -11,8 +11,8 @@ function legend () {
   var _padding = 5
   var _scale = d3.scale.category20b()
   var _size = 7
-  var _fontSize = 65
-  var _margin = 20
+  // var _fontSize = 65
+  // var _margin = 20
 
   function fill (d, i) {
     if (!_interactive || _filled(d, i)) {
@@ -147,8 +147,6 @@ function legend () {
 
   function translate (d, i) {
     return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
-
-
     /*
     //The old logic render the legend in two columns
     return i % 2 !== 0

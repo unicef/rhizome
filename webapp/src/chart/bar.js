@@ -58,7 +58,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     let topLegendHeight = 0
     let legendPaddingTop = 0
-    if(data && data.length && data.length > 1){
+    if (data && data.length && data.length > 1) {
       legendPaddingTop = 18
       topLegendHeight = legendPaddingTop + data.length * 13.8
     }
