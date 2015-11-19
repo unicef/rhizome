@@ -109,48 +109,38 @@ class CacheMetaTestCase(TestCase):
         })
 
         ## tags ##
-        ind_tag_1 = IndicatorTag.objects.create(tag_name='tag1')
-        ind_tag_2 = IndicatorTag.objects.create(tag_name='tag2')
+        ind_tag_0 = IndicatorTag.objects.create(tag_name='tag1')
+        ind_tag_1 = IndicatorTag.objects.create(tag_name='tag2')
 
+        indicator_to_tag_0 = IndicatorToTag.objects.create(
+            indicator = ind,indicator_tag = ind_tag_0
+        )
         indicator_to_tag_1 = IndicatorToTag.objects.create(
             indicator = ind,indicator_tag = ind_tag_1
         )
-        indicator_to_tag_2 = IndicatorToTag.objects.create(
-            indicator = ind,indicator_tag = ind_tag_2
-        )
 
         ## bounds ##
-        bound_dict_1 = {u'indicator_id': ind.id, u'mn_val':10, u'mx_val':20,\
-            u'bound_name':u'Good'}
-        bound_dict_2 = {'indicator_id': ind.id, u'mn_val':20, u'mx_val':30,\
-            u'bound_name':u'Bad'}
+        bound_dict_0 = {u'indicator_id': ind.id, u'mn_val':10,\
+            u'mx_val':20, u'bound_name':u'Good'}
+        bound_dict_1 = {'indicator_id': ind.id, u'mn_val':20,\
+            u'mx_val':30,u'bound_name':u'Bad'}
 
+        ind_bound_0 = IndicatorBound.objects.create(**bound_dict_0)
         ind_bound_1 = IndicatorBound.objects.create(**bound_dict_1)
-        ind_bound_2 = IndicatorBound.objects.create(**bound_dict_2)
 
         cache_indicator_abstracted()
 
         ind_abstract = IndicatorAbstracted.objects.get(id=ind.id)
-        target_tag_json = [ind_tag_1.id, ind_tag_2.id]
-        target_bound_json = [bound_dict_1, bound_dict_2]
+        target_tag_json = [ind_tag_0.id, ind_tag_1.id]
+        target_bound_json = [bound_dict_0, bound_dict_1]
 
         ## is the short_name the same ? ##
         self.assertEqual(ind.short_name, ind_abstract.short_name)
 
         # ## are the tags properly pivoted into json ? ##
-        self.assertEqual(target_tag_json.sort(), ind_abstract.tag_json.sort())
+        self.assertEqual(target_tag_json.sort(), \
+            ind_abstract.tag_json.sort())
 
-        ## do indicator bounds get properly transformed into json ? ##
-        self.assertEqual(bound_dict_1['bound_name'],\
-            ind_abstract.bound_json[0]['bound_name'])
-        self.assertEqual(bound_dict_1['mn_val'],\
-            ind_abstract.bound_json[0]['mn_val'])
-        self.assertEqual(bound_dict_1['mx_val'],\
-            ind_abstract.bound_json[0]['mx_val'])
-
-        self.assertEqual(bound_dict_2['bound_name'],\
-            ind_abstract.bound_json[1]['bound_name'])
-        self.assertEqual(bound_dict_2['mn_val'],\
-            ind_abstract.bound_json[1]['mn_val'])
-        self.assertEqual(bound_dict_2['mx_val'],\
-            ind_abstract.bound_json[1]['mx_val'])
+        ## do indicator bounds properly transformed into json ? ##
+        self.assertEqual(bound_dict_0,ind_abstract.bound_json[0])
+        self.assertEqual(bound_dict_1,ind_abstract.bound_json[1])
