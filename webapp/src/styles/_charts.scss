@@ -226,9 +226,9 @@ svg {
 
   .donut-label {
     position: absolute;
-    top: 28%;
+    top: 50%;
     right: 0;
-    left: -40%;
+    left: 0;
     margin-top: -0.8em;
     font-size: 14px;
     font-weight: bold;
@@ -392,4 +392,9 @@ svg {
   font-size: 15px;
   margin-top: 10%;
   margin-left: -15%;
+}
+
+.label__value {
+  top: 28% !important;
+  left: -48% !important;
 }
