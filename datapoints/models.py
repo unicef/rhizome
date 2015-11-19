@@ -118,7 +118,7 @@ class IndicatorBound(models.Model):
     direction = models.IntegerField(default=1)
 
     def __unicode__(self):
-        return unicode(self.bound_name.name)
+        return unicode(self.bound_name)
 
     class Meta:
         db_table = 'indicator_bound'

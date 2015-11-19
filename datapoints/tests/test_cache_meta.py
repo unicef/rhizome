@@ -1,9 +1,13 @@
+import json
+
 from pandas import read_csv, notnull, DataFrame
 from numpy import nan,isnan
 from django.test import TestCase
 
-from datapoints.models import LocationType, Location, LocationTree, Office
+from datapoints.models import LocationType, Location, LocationTree, Office,\
+    Indicator, IndicatorBound, IndicatorToTag, IndicatorAbstracted, IndicatorTag
 from datapoints.cache_meta import LocationTreeCache
+from datapoints.cache_meta import cache_indicator_abstracted
 
 class CacheMetaTestCase(TestCase):
     '''
@@ -94,3 +98,59 @@ class CacheMetaTestCase(TestCase):
         self.assertTrue((8,3) in location_tree_in_db)
         self.assertTrue((8,2) in location_tree_in_db)
         self.assertTrue((8,1) in location_tree_in_db)
+
+    def test_cache_indicator_abstracted(self):
+        '''
+        '''
+        ind = Indicator.objects.create(**{
+            'name':'test name',
+            'short_name':'test short name',
+            'description':'test description',
+        })
+
+        ## tags ##
+        ind_tag_1 = IndicatorTag.objects.create(tag_name='tag1')
+        ind_tag_2 = IndicatorTag.objects.create(tag_name='tag2')
+
+        indicator_to_tag_1 = IndicatorToTag.objects.create(
+            indicator = ind,indicator_tag = ind_tag_1
+        )
+        indicator_to_tag_2 = IndicatorToTag.objects.create(
+            indicator = ind,indicator_tag = ind_tag_2
+        )
+
+        ## bounds ##
+        bound_dict_1 = {u'indicator_id': ind.id, u'mn_val':10, u'mx_val':20,\
+            u'bound_name':u'Good'}
+        bound_dict_2 = {'indicator_id': ind.id, u'mn_val':20, u'mx_val':30,\
+            u'bound_name':u'Bad'}
+
+        ind_bound_1 = IndicatorBound.objects.create(**bound_dict_1)
+        ind_bound_2 = IndicatorBound.objects.create(**bound_dict_2)
+
+        cache_indicator_abstracted()
+
+        ind_abstract = IndicatorAbstracted.objects.get(id=ind.id)
+        target_tag_json = [ind_tag_1.id, ind_tag_2.id]
+        target_bound_json = [bound_dict_1, bound_dict_2]
+
+        ## is the short_name the same ? ##
+        self.assertEqual(ind.short_name, ind_abstract.short_name)
+
+        ## are the tags properly pivoted into json ? ##
+        self.assertEqual(target_tag_json, ind_abstract.tag_json)
+
+        ## do indicator bounds get properly transformed into json ? ##
+        self.assertEqual(bound_dict_1['bound_name'],\
+            ind_abstract.bound_json[0]['bound_name'])
+        self.assertEqual(bound_dict_1['mn_val'],\
+            ind_abstract.bound_json[0]['mn_val'])
+        self.assertEqual(bound_dict_1['mx_val'],\
+            ind_abstract.bound_json[0]['mx_val'])
+
+        self.assertEqual(bound_dict_2['bound_name'],\
+            ind_abstract.bound_json[1]['bound_name'])
+        self.assertEqual(bound_dict_2['mn_val'],\
+            ind_abstract.bound_json[1]['mn_val'])
+        self.assertEqual(bound_dict_2['mx_val'],\
+            ind_abstract.bound_json[1]['mx_val'])
