@@ -1,11 +1,14 @@
 import json
 import traceback
 
+from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse
+from django.middleware.csrf import _sanitize_token, constant_time_compare
+from django.utils.http import same_origin
+
 from tastypie.authorization import Authorization
-from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, \
-    MultiAuthentication
+from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication, MultiAuthentication
 from tastypie.resources import ModelResource, Resource
 from tastypie.cache import SimpleCache
 from tastypie import http
@@ -18,6 +21,7 @@ except ImportError:
 
 from datapoints.models import LocationType, Location
 from datapoints.api.serialize import CustomSerializer
+
 
 class DataPointsException(Exception):
     defaultMessage = "Sorry, this request could not be processed."
@@ -36,8 +40,8 @@ class CustomSessionAuthentication(SessionAuthentication):
         """
         """
 
-        ## this is the line i have to override in order to get
-        ## POST request to successfully authenticate ##
+        # this is the line i have to override in order to get
+        # POST request to successfully authenticate ##
         if request.method in ('GET', 'POST', 'DELETE'):
             return request.user.is_authenticated()
 
@@ -99,8 +103,7 @@ class BaseModelResource(ModelResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(CustomSessionAuthentication(), \
-                                             ApiKeyAuthentication())
+        authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get', 'post', 'delete']
@@ -137,17 +140,17 @@ class BaseModelResource(ModelResource):
             response = method(request, **kwargs)
         except Exception as error:
 
-            errorCode = DataPointsException.defaultCode
-            errorMessage = DataPointsException.defaultMessage
+            error_code = DataPointsException.defaultCode
+            error_message = DataPointsException.defaultMessage
 
             if isinstance(error, DataPointsException):
-                errorCode = error.code
-                errorMessage = error.message
+                error_code = error.code
+                error_message = error.message
 
             data = {
                 'traceback': traceback.format_exc(),
-                'error': errorMessage,
-                'code': errorCode
+                'error': error_message,
+                'code': error_code
             }
 
             return self.error_response(
@@ -170,39 +173,39 @@ class BaseModelResource(ModelResource):
         objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         bundles = []
 
-        ## this is a temporary hack to get data_entry working ##
-        ## long term fix is to make DataPointEntryResource a NonModelResource
-        ## https://trello.com/c/skxxpzYj/327-rp-bug-2005-cannot-load-entry-form-in-enter-data-via-form
+        # this is a temporary hack to get data_entry working ##
+        # long term fix is to make DataPointEntryResource a NonModelResource
+        # https://trello.com/c/skxxpzYj/327-rp-bug-2005-cannot-load-entry-form-in-enter-data-via-form
         if self.Meta.resource_name == 'datapointentry':
             return super(ModelResource, self).get_list(request, **kwargs)
 
         if len(objects) > 0:
-            ## find json_fields ( should be explicit here and check data type)
-            ## of the field, but for this works..
+            # find json_fields ( should be explicit here and check data type)
+            # of the field, but for this works..
             json_obj_keys = [k for k, v in objects[0].items() if 'json' in k]
 
         for obj in objects:
 
-            ## serialize json fields ##
+            # serialize json fields ##
             for json_key in json_obj_keys:
                 obj[json_key] = json.loads(obj[json_key])
 
-            ## hack lvl attribute
-            if obj.has_key('location_type_id'):
+            # hack lvl attribute
+            if 'location_type_id' in obj:
                 obj['lvl'] = obj['location_type_id'] - 1
 
             bundles.append(obj)
 
         response_meta = {
-            'limit': None,  ## paginator.get_limit(),
-            'offset': None,  ## paginator.get_offset(),
+            'limit': None,  # paginator.get_limit(),
+            'offset': None,  # paginator.get_offset(),
             'total_count': len(objects),
             'form_data': self.get_form_data()
         }
 
         response_data = {
             'objects': bundles,
-            'meta': response_meta,  ## add paginator info here..
+            'meta': response_meta,  # add paginator info here..
             'error': None,
         }
 
@@ -212,7 +215,7 @@ class BaseModelResource(ModelResource):
 
         all_form_data = {
             "indicator": {"short_name": "", "name": ""},
-            "basic_indicator": {"short_name": "","description":"","name": ""},
+            "basic_indicator": {"short_name": "", "description": "", "name": ""},
             "indicator_tag": {"tag_name": ""}
         }
 
@@ -237,8 +240,7 @@ class BaseNonModelResource(Resource):
     '''
 
     class Meta():
-        authentication = MultiAuthentication(CustomSessionAuthentication(), \
-                                             ApiKeyAuthentication())
+        authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
         allowed_methods = ['get', 'post']
         authorization = Authorization()
         always_return_data = True
@@ -257,8 +259,7 @@ class BaseNonModelResource(Resource):
             None, None
 
         try:
-            self.location__in = [int(r) for r in query_dict['location__in'] \
-                .split(',')]
+            self.location__in = [int(r) for r in query_dict['location__in'].split(',')]
         except KeyError:
             pass
         except ValueError:
@@ -266,8 +267,7 @@ class BaseNonModelResource(Resource):
 
         try:
             admin_level = query_dict['admin_level']
-            self.location_type_id = LocationType.objects.get(admin_level= \
-                                                                 admin_level).id
+            self.location_type_id = LocationType.objects.get(admin_level=admin_level).id
         except KeyError:
             self.location_type_id = None
         except ObjectDoesNotExist:
@@ -277,8 +277,7 @@ class BaseNonModelResource(Resource):
             return err, []
 
         try:
-            self.parent_location__in = [int(r) for r in query_dict['parent_location__in'] \
-                .split(',')]
+            self.parent_location__in = [int(r) for r in query_dict['parent_location__in'].split(',')]
         except KeyError:
             pass
         except ValueError:
@@ -300,20 +299,20 @@ class BaseNonModelResource(Resource):
 
         '''
 
-        ## attach these to self and return only error #
+        # attach these to self and return only error #
         err = self.parse_url_strings(request.GET)
 
         if err:
             self.err = err
             return err, []
 
-        ## CASE 1 ##
+        # CASE 1 ##
         if self.location__in is not None:
 
             location_ids = Location.objects.filter(id__in=self.location__in) \
                 .values_list('id', flat=True)
 
-        ## CASE 2 ##
+        # CASE 2 ##
         elif self.parent_location__in is not None and self.location_type_id is not None:
 
             location_qs = Location.objects.raw('''
@@ -328,16 +327,14 @@ class BaseNonModelResource(Resource):
 
             location_ids = [l.id for l in location_qs]
 
-        ## CASE 3 #
+        # CASE 3 #
 
         elif self.parent_location__in is not None and self.location_type_id is None:
 
-            location_ids = list(self.parent_location__in) + list(Location.objects.filter(parent_location__in= \
-                                                                                             self.parent_location__in).values_list(
-                'id', flat=True))
+            location_ids = list(self.parent_location__in) + list(Location.objects.filter(
+                parent_location__in=self.parent_location__in).values_list('id', flat=True))
 
-
-        ## CASE 4 ##
+        # CASE 4 ##
         else:
             location_ids = Location.objects.filter(parent_location_id__isnull=True). \
                 values_list('id', flat=True)
