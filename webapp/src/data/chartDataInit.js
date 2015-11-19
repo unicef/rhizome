@@ -96,6 +96,9 @@ export default {
       chartDef.y,
       layout
     ).then(chart => {
+      if (!chart.data) {
+        return { data: null, options: null }
+      }
       let newOptions = _.clone(chart.options)
       if (chart.options && !chart.options.yFormat) {
         newOptions.yFormat = d3.format(chartDef.yFormat)

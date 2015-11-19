@@ -248,7 +248,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeTimeRadio (value) {
     this.data.timeValue = value
-    this.data.chartDef.timeRange = builderDefinitions.times[value].json
+    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[value].json
     this.previewChart()
   },
 

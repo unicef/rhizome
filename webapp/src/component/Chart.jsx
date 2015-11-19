@@ -78,11 +78,13 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    this._chart = ChartFactory(
-      this.props.type,
-      React.findDOMNode(this),
-      this.props.data,
-      this.props.options)
+    if (!isEmpty(this.props.type, this.props.data, this.props.options)) {
+      this._chart = ChartFactory(
+        this.props.type,
+        React.findDOMNode(this),
+        this.props.data,
+        this.props.options)
+    }
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
