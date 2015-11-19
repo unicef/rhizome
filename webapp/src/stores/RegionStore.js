@@ -8,7 +8,7 @@ var RegionStore = Reflux.createStore({
     this.locations = []
     this.LocationTypes = []
 
-    this.locationsPromise = api.locations()
+    this.locationsPromise = api.locations(null, null, { 'cache-control': 'max-age=604800, public' })
       .then(data => {
         this.locations = data.objects
         this.trigger({
