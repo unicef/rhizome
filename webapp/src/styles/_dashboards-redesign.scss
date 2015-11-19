@@ -7,58 +7,58 @@ $include-html-block-grid-classes: false;
 
 $total-columns: 8;
 @media #{$small-up} {
-	#management-dashboard {
-		@include grid-html-classes($size:small);
-		@include block-grid-html-classes($size:small,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: small);
+    @include block-grid-html-classes($size: small, $include-spacing: false);
+  }
 }
 
 @media #{$medium-up} {
-	#management-dashboard {
-		@include grid-html-classes($size:medium);
-		@include block-grid-html-classes($size:medium,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: medium);
+    @include block-grid-html-classes($size: medium, $include-spacing: false);
+  }
 }
 
 @media #{$large-up} {
-	#management-dashboard {
-		@include grid-html-classes($size:large);
-		@include block-grid-html-classes($size:large,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: large);
+    @include block-grid-html-classes($size: large, $include-spacing: false);
+  }
 }
 
 @media print {
-	#management-dashboard {
-		@include grid-html-classes($size:small);
-		@include block-grid-html-classes($size:small,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: small);
+    @include block-grid-html-classes($size: small, $include-spacing: false);
+  }
 }
 
 @media print and (min-width: 8in) {
-	#management-dashboard {
-		@include grid-html-classes($size:medium);
-		@include block-grid-html-classes($size:medium,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: medium);
+    @include block-grid-html-classes($size: medium, $include-spacing: false);
+  }
 }
 
 @media print and (min-width: 10.5in) {
-	#management-dashboard {
-		@include grid-html-classes($size:large);
-		@include block-grid-html-classes($size:large,$include-spacing:false);
-	}
+  #management-dashboard {
+    @include grid-html-classes($size: large);
+    @include block-grid-html-classes($size: large, $include-spacing: false);
+  }
 }
 
 #management-dashboard {
   h3 {
-	background: $rhz-chart-title-bg-color;
-  color: $rhz-chart-title-color;
-  text-transform: uppercase;
-  font-family: ADELLE REGULAR;
-  font-size: 0.75rem;
-  padding: 2px 4px;
-	margin: 10px 0;
-	border: none;
-	font-weight: bold;
+    background: $rhz-chart-title-bg-color;
+    color: $rhz-chart-title-color;
+    text-transform: uppercase;
+    font-family: ADELLE REGULAR;
+    font-size: 0.75rem;
+    padding: 0px 4px;
+    margin: 10px 0;
+    border: none;
+    font-weight: bold;
   }
 
   .choropleth-map {
@@ -74,6 +74,6 @@ $total-columns: 8;
   margin-top: 60%;
 }
 
-.title--wrap{
+.title--wrap {
   white-space: normal;
 }
