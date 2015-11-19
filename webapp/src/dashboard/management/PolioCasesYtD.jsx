@@ -21,6 +21,7 @@ export default React.createClass({
   },
 
   render: function () {
+    var data = this.props.data
     var campaign = this.props.campaign
     var year = ''
     var totalCases = null
@@ -32,7 +33,7 @@ export default React.createClass({
       year = m.format('YYYY')
 
       // Sum all of the reported Polio cases for the year
-      totalCases = _(this.props.data)
+      totalCases = _(data)
         .filter(function (d) { return d.campaign.start_date.getFullYear().toString() === year })
         .pluck('value')
         .sum()
@@ -40,13 +41,13 @@ export default React.createClass({
       // Find the number of reported cases for this campaign
       newCases = _.get(
         _.find(
-          this.props.data,
+          data,
           function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
         'value')
     }
 
     // Set the title based on whether there is data
-    var title = _.isEmpty(this.props.data)
+    var title = _.isEmpty(data)
     ? (<h4>Wild Polio Cases</h4>)
     : (<h4 style={{'color': '#F15046'}}>
         {totalCases} Polio cases this year
@@ -67,11 +68,8 @@ export default React.createClass({
         <div style={{ position: 'relative' }}>
           {newCaseLabel}
           <YTDChart id='polio-cases-ytd'
-            data={this.props.data}
-            loading={loading}
-            options={{
-              aspect: 2.26
-            }} />
+            data={data}
+            loading={loading} />
         </div>
       </div>
     )

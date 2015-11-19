@@ -58,12 +58,17 @@ export default React.createClass({
     // Convert a 2-digit month number to a 3-character month name
     // var fmtMonth = function (d) { return moment(d, 'MM').format('MMM') }
 
+    var maxCases = _(series).pluck('values').flatten().pluck('total').max()
+    var length = maxCases.toString().length
+    var maxRange = _.ceil(maxCases, -(length - 1))
+
     var props = _.merge({},
       _.omit(this.props, 'id', 'data'), {
         data: series,
         options: {
+          aspect: 2.26,
           domain: _.constant([moment({ M: 0 }).toDate(), moment({ M: 11 }).toDate()]),
-          range: _.constant([0, _(series).pluck('values').flatten().pluck('total').max()]),
+          range: _.constant([0, maxRange]),
           x: _.property('x'),
           xFormat: d3.time.format('%b'),
           y: _.property('total')
