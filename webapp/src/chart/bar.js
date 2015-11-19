@@ -56,6 +56,13 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       })
     }
 
+    let topLegendHeight = 0
+    let legendPaddingTop = 0
+    if(data && data.length && data.length > 1){
+      legendPaddingTop = 18
+      topLegendHeight = legendPaddingTop + data.length * 13.8
+    }
+
     // d3.layout.stack stacks the y-value, but we want to stack the x value,
     // so we swap x and y in the layout definition.
     var stack = d3.layout.stack()
@@ -132,7 +139,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     var svg = this._svg
 
-    var canvasH = h + margin.top + margin.bottom
+    var canvasH = h + margin.top + margin.bottom + topLegendHeight
     var canvasW = w + margin.left + margin.right
 
     svg.attr('viewBox', '0 0 ' + canvasW + ' ' + canvasH)
@@ -146,7 +153,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     svg.select('.bg')
       .attr({
-        'height': h,
+        'height': h + topLegendHeight,
         'width': w,
         'x': margin.left,
         'y': margin.top
@@ -212,7 +219,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
     if (data.length > 1) {
       // Show the legend if we have at least two series
       svg.select('.legend')
-        .attr('transform', 'translate(' + (w + 4) + ', 0)')
+        .attr('transform', 'translate(0,' + (h + legendPaddingTop) + ')')
         .call(legend()
           .interactive(true)
           .scale(colorScale)

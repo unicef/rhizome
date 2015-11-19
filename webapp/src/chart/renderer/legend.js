@@ -146,9 +146,15 @@ function legend () {
   }
 
   function translate (d, i) {
-    return i % 2 === 0
+    return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
+
+
+    /*
+    //The old logic render the legend in two columns
+    return i % 2 !== 0
       ? 'translate(' + _margin + ', ' + (i / 2 * (_size + _padding)) + ')'
       : 'translate(' + (_fontSize + _size + _margin) + ', ' + ((i - 1) / 2 * (_size + _padding)) + ')'
+    */
   }
 
   return chart
