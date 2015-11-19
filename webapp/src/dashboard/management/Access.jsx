@@ -60,12 +60,19 @@ var Access = React.createClass({
     var lower = m.clone().startOf('month').subtract(1, 'year')
     var upper = m.clone().endOf('month')
 
-    let totalNumber = 0
+    let totalNumber
 
     if (campaign && data.numberOfInaccessibleChildren.length > 0) {
       totalNumber = _.get(_.find(data.numberOfInaccessibleChildren,
         function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
         'value')
+    }
+
+    var labelText
+    if (totalNumber) {
+      labelText = (<h4><span style={{'font-weight': 'bold'}}>{totalNumber}</span> Children were inaccessible</h4>)
+    } else {
+      labelText = (<h4>No inaccessible children data</h4>)
     }
 
     var chartOptions = {
@@ -82,7 +89,7 @@ var Access = React.createClass({
     return (
       <div className='row'>
         <div className='medium-4 columns'>
-          <h4><span style={{'font-weight': 'bold'}}>{totalNumber}</span><span> Children were inaccessible</span></h4>
+          {labelText}
           <Chart type='AreaChart' data={inaccessible}
                  loading={loading}
                  options={chartOptions}/>
