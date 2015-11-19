@@ -83,8 +83,10 @@ _.extend(PieChart.prototype, {
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
+    let g
+
     if (this._options.pieType) {
-      var g = svg.select('.data')
+      g = svg.select('.data')
       .attr('transform', 'translate(' + 50 + ', ' + 50 + ')')
     } else {
       g = svg.select('.data')
