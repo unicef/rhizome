@@ -82,7 +82,7 @@ _.extend(LineChart.prototype, {
 
     var yScale = options.scale()
       .domain(range)
-      .range([height, 0])
+      .range([0.95 * height, 0])
 
     var x = _.flow(options.x, dataXScale)
     var y = _.flow(options.y, yScale)
