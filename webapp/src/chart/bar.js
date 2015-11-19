@@ -216,11 +216,12 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           .ticks(3)
           .scale(yScale))
 
+
     if (data.length > 1) {
       // Show the legend if we have at least two series
       svg.select('.legend')
         .attr('transform', 'translate(0,' + (h + legendPaddingTop) + ')')
-        .call(legend()
+        .call(legend(options)
           .interactive(true)
           .scale(colorScale)
           .filled(function (d, i) {
