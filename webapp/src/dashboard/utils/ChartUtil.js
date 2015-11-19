@@ -114,12 +114,22 @@ function prepareMissedChildrenData (original) {
 
   var missedChildrenMap = data.missedChildrenByProvince
 
+  var sumData = []
+  var maxRange = 1
+  if (missed.length > 1) {
+    missed[0].values.forEach((d, i) => {
+      sumData[i] = d.value + missed[1].values[i].value + missed[2].values[i].value + missed[3].values[i].value
+    })
+    maxRange = _.ceil(_.max(sumData), 2)
+    }
+
   return {
     missedChildrenMap: missedChildrenMap,
     missed: missed,
     missedScale: missedScale,
     location: location,
-    date: moment(original.campaign.start_date).format('MMMM YYYY')
+    date: moment(original.campaign.start_date).format('MMMM YYYY'),
+    range : _.constant([0, maxRange])
   }
 }
 
@@ -174,11 +184,28 @@ function prepareUnderImmunizedData (original) {
 
   var color = ['#D95449', '#B6D0D4']
 
+  var sumData = []
+
+  if (data.length > 1) {
+    data[0].values.forEach((d, i) => {
+      sumData[i] = d.value + data[1].values[i].value
+    })
+  }
+
+  var maxRange = 1
+  if (!_.isEmpty(sumData)) {
+    maxRange = _.ceil(_.max(sumData), 1)
+    if (Math.round(maxRange * 100) % 4 !== 0) {
+      maxRange = _.ceil(maxRange + 0.1, 1)
+    }
+  }
+
   return {
     data: stack(data),
     immunityScale: immunityScale,
     color: color,
-    date: moment(original.campaign.start_date).format('MMMM YYYY')
+    date: moment(original.campaign.start_date).format('MMMM YYYY'),
+    range: _.constant([0, maxRange])
   }
 }
 

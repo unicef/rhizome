@@ -112,6 +112,7 @@ var HomepageCharts = React.createClass({
                    x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
                    xFormat: d => moment(d).format('MMM YYYY'),
                    yFormat: d3.format(',.1%'),
+                   range: missedChildrenData.range,
                    width: 390,
                    height: 390
                  }}/>
@@ -136,6 +137,7 @@ var HomepageCharts = React.createClass({
                      xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
                      y0: _.property('y0'),
                      yFormat: d3.format('%'),
+                     range: underImmunizedData.range,
                      width: 390,
                      height: 390
                    }}/>
