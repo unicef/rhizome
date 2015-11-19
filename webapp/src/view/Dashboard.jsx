@@ -26,7 +26,7 @@ import DashboardActions from 'actions/DashboardActions'
 import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
 
-var LAYOUT = {
+const LAYOUT = {
   'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
   'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
   'District Dashboard': require('dashboard/District.jsx'),
@@ -39,7 +39,7 @@ var Dashboard = React.createClass({
     Reflux.connect(DataStore)
   ],
 
-  getInitialState: function () {
+  getInitialState () {
     return {
       locations: [],
       campaigns: [],
@@ -51,15 +51,15 @@ var Dashboard = React.createClass({
     }
   },
 
-  getallDashboards: function () {
-    api.get_dashboard().then(response => {
-      var customDashboards = _(response.objects).sortBy('title').value()
-      var allDashboards = builtins.concat(customDashboards)
+  getallDashboards () {
+    api.get_dashboard().then(res => {
+      let customDashboards = _(res.objects).sortBy('title').value()
+      let allDashboards = builtins.concat(customDashboards)
       this.setState({allDashboards: allDashboards})
     })
   },
 
-  componentWillMount: function () {
+  componentWillMount () {
     this.getallDashboards()
     page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
@@ -67,13 +67,13 @@ var Dashboard = React.createClass({
     AppActions.init()
   },
 
-  componentWillUpdate: function (nextProps, nextState) {
+  componentWillUpdate (nextProps, nextState) {
     if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
       return
     }
 
-    var campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
-    var title = [
+    let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
+    let title = [
       nextState.dashboard.title,
       [nextState.location.name, campaign].join(' '),
       'RhizomeDB'
@@ -82,7 +82,7 @@ var Dashboard = React.createClass({
     document.title = title
   },
 
-  componentDidMount: function () {
+  componentDidMount () {
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
 
@@ -92,13 +92,13 @@ var Dashboard = React.createClass({
     this.listenTo(GeoStore, () => this.forceUpdate())
   },
 
-  _onDashboardChange: function (state) {
-    var fetchData = this.state.loaded
+  _onDashboardChange (state) {
+    let fetchData = this.state.loaded
 
     this.setState(state)
 
     if (fetchData) {
-      var q = DashboardStore.getQueries()
+      let q = DashboardStore.getQueries()
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
@@ -119,7 +119,7 @@ var Dashboard = React.createClass({
     }
   },
 
-  _onNavigationChange: function (nav) {
+  _onNavigationChange (nav) {
     if (NavigationStore.loaded) {
       page({
         click: false
@@ -127,8 +127,8 @@ var Dashboard = React.createClass({
     }
   },
 
-  _setCampaign: function (id) {
-    var campaign = _.find(this.state.campaigns, c => c.id === id)
+  _setCampaign (id) {
+    let campaign = _.find(this.state.campaigns, c => c.id === id)
 
     if (!campaign) {
       return
@@ -139,8 +139,8 @@ var Dashboard = React.createClass({
     })
   },
 
-  _setLocation: function (id) {
-    var location = _.find(this.state.locations, r => r.id === id)
+  _setLocation (id) {
+    let location = _.find(this.state.locations, r => r.id === id)
 
     if (!location) {
       return
@@ -151,14 +151,14 @@ var Dashboard = React.createClass({
     })
   },
 
-  _setDashboard: function (slug) {
+  _setDashboard (slug) {
     this._navigate({
       dashboard: slug
     })
   },
 
-  _getDashboard: function (slug) {
-    var dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+  _getDashboard (slug) {
+    let dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
 
     if (dashboard.id <= 0) {
       return new Promise(resolve => {
@@ -167,22 +167,22 @@ var Dashboard = React.createClass({
     } else {
       return api.get_chart({dashboard_id: dashboard.id}, null, {'cache-control': 'no-cache'}).then(res => {
         dashboard.charts = res.objects.map(chart => {
-          var result = chart.chart_json
+          let result = chart.chart_json
           result.id = chart.id
           return result
         })
         return dashboard
-      }, function (err) {
+      }, err => {
         console.log(err)
         dashboard.charts = []
       })
     }
   },
 
-  _navigate: function (params) {
-    var slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
-    var location = _.get(params, 'location', this.state.location.name)
-    var campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+  _navigate (params) {
+    let slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
+    let location = _.get(params, 'location', this.state.location.name)
+    let campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
     if (_.isNumber(location)) {
       location = _.find(this.state.locations, r => r.id === location).name
     }
@@ -190,10 +190,10 @@ var Dashboard = React.createClass({
     page('/datapoints/' + [slug, location, campaign].join('/'))
   },
 
-  _showDefault: function (ctx) {
-    api.get_dashboard().then(response => {
-      var customDashboards = _(response.objects).sortBy('title').value()
-      var allDashboards = builtins.concat(customDashboards)
+  _showDefault (ctx) {
+    api.get_dashboard().then(res => {
+      let customDashboards = _(res.objects).sortBy('title').value()
+      let allDashboards = builtins.concat(customDashboards)
       this.setState({ allDashboards: allDashboards })
       this._getDashboard(ctx.params.dashboard).then(dashboard => {
         DashboardActions.setDashboard({
@@ -203,7 +203,7 @@ var Dashboard = React.createClass({
     })
   },
 
-  _show: function (ctx) {
+  _show (ctx) {
     NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
       DashboardActions.setDashboard({
         dashboard,
@@ -213,9 +213,9 @@ var Dashboard = React.createClass({
     })
   },
 
-  _showSourceData: function (ctx) {
+  _showSourceData (ctx) {
     NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      var doc_tab = ctx.params.doc_tab
+      let doc_tab = ctx.params.doc_tab
 
       this.setState({
         doc_id: ctx.params.doc_id,
@@ -230,9 +230,9 @@ var Dashboard = React.createClass({
     })
   },
 
-  render: function () {
+  render () {
     if (!(this.state.loaded && this.state.dashboard)) {
-      var style = {
+      let style = {
         fontSize: '2rem',
         zIndex: 9999
       }
@@ -246,12 +246,12 @@ var Dashboard = React.createClass({
       )
     }
 
-    var {campaign, loading, location, doc_id, doc_tab} = this.state
+    let {campaign, loading, location, doc_id, doc_tab} = this.state
 
-    var dashboardDef = this.state.dashboard
-    var dashboardName = _.get(dashboardDef, 'title', '')
+    let dashboardDef = this.state.dashboard
+    let dashboardName = _.get(dashboardDef, 'title', '')
 
-    var indicators = IndicatorStore.getById.apply(
+    let indicators = IndicatorStore.getById.apply(
       IndicatorStore,
       _(_.get(dashboardDef, 'charts', []))
         .pluck('indicators')
@@ -294,7 +294,7 @@ var Dashboard = React.createClass({
       dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
 
-    var campaigns = _(this.state.campaigns)
+    let campaigns = _(this.state.campaigns)
       .map(campaign => {
         return _.assign({}, campaign, {
           slug: moment(campaign.start_date).format('MMMM YYYY')
@@ -308,7 +308,7 @@ var Dashboard = React.createClass({
       campaign = campaigns[0]
     }
 
-    var dashboardItems = MenuItem.fromArray(
+    let dashboardItems = MenuItem.fromArray(
       _.map(this.state.allDashboards, d => {
         return {
           title: d.title,
@@ -317,7 +317,7 @@ var Dashboard = React.createClass({
       }),
       this._setDashboard)
 
-    var edit
+    let edit
     if (dashboardDef.owned_by_current_user) {
       edit = (
         <span>
@@ -331,7 +331,7 @@ var Dashboard = React.createClass({
       )
     }
 
-    var settingFilter = ''
+    let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
         <div className='medium-4 columns'>
