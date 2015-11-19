@@ -73,14 +73,11 @@ var ManagementDashboard = React.createClass({
               <span className='campaign'> { printDate.toUpperCase() }</span>
             </h1>
           </div>
-          <div className='medium-4 columns right'>
-            <div className="row">
-              <div className="medium-4 columns">
-                <h2>{dashboardName}</h2>
-              </div>
-              <div className='medium-2 columns right'>
-              </div>
-            </div>
+          <div className='medium-2 medium-offset-1 columns'>
+            <h2>{dashboardName}</h2>
+          </div>
+          <div className='medium-1 columns right'>
+            <img src='/static/img/RhizomeLogo.png' className='logo' width='100%'/>
           </div>
         </div>
 
