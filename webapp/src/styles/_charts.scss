@@ -226,14 +226,12 @@ svg {
 
   .donut-label {
     position: absolute;
-    top: 50%;
+    top: 28%;
     right: 0;
-    left: 0;
+    left: -40%;
     margin-top: -0.8em;
-
     font-size: 14px;
     font-weight: bold;
-
     text-align: center;
 
     label {
@@ -367,18 +365,15 @@ svg {
 
   .label {
     text-shadow: none;
-    //fill       : $white;
 
     &.dark {
       fill: $oil;
     }
   }
 
-  //.tick {
   text {
     text-transform: uppercase;
   }
-  //}
 }
 
 .scatter-chart {
@@ -391,4 +386,10 @@ svg {
 
 .bullet__chart--noDate {
   text-align: left;
+}
+
+.micro__text {
+  font-size: 15px;
+  margin-top: 10%;
+  margin-left: -15%;
 }

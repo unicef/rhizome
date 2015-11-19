@@ -15,12 +15,14 @@ var SocialData = React.createClass({
     campaign: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.object.isRequired,
     data: React.PropTypes.object,
-    loading: React.PropTypes.bool
+    loading: React.PropTypes.bool,
+    pieType: React.PropTypes.bool
   },
 
   render: function () {
     var campaign = this.props.campaign
     var loading = this.props.loading
+    var pieType = this.props.pieType
 
     var data = _.filter(this.props.data,
         d => d.campaign.id === campaign.id && _.isFinite(d.value))
@@ -50,13 +52,15 @@ var SocialData = React.createClass({
         <div className='medium-4 columns'>
           <DonutChart data={socialData} label={planLabel}
                       loading={loading}
+                      pieType={pieType}
                       options={{
                         innerRadius: 0.3,
                         outerRadius: 0.5,
+                        pieType: this.props.pieType,
                         domain: _.constant([0, 1])
                       }} />
         </div>
-        <div className='medium-4 columns'>
+        <div className='medium-4 columns micro__text'>
           {microText}
         </div>
       </div>

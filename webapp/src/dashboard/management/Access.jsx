@@ -107,6 +107,7 @@ var Access = React.createClass({
                       options={{
                         innerRadius: 0.3,
                         outerRadius: 0.5,
+                        pieType: true,
                         domain: _.constant([0, 1])
                       }} />
         </div>
