@@ -1,10 +1,11 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.conf import settings
 from pandas import read_csv, notnull
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.models import *
-from datapoints.models import*
+from datapoints.models import *
 
 class TransformUploadTestCase(TestCase):
 
