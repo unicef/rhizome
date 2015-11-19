@@ -83,7 +83,7 @@ _.extend(ColumnChart.prototype, {
 
     var h = this._height - margin.top - margin.bottom
     var w = this._width - margin.left - margin.right
-    var dataMarginLeft = 20
+    var dataMarginLeft = 25
 
     var domain
 

@@ -55,7 +55,7 @@
 // Allows the use of rem-calc() or lower-bound() in your settings
 @import "foundation/functions";
 
-$axis-font-size: rem-calc(10);
+$axis-font-size: rem-calc(12);
 
 // The default font-size is set to 100% of the browser style sheet (usually 16px)
 // for compatibility with browser-based text zoom or user-set defaults.
@@ -123,6 +123,7 @@ $secondary-color: #ffcc67;
 $success-color: $primary-color; // #43AC6A;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
+$axis-font-color: #939598;
 
 // Cool grays for charts
 
