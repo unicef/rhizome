@@ -51,7 +51,7 @@ var HomepageCharts = React.createClass({
     })
 
     var polioCasesData = ChartUtil.preparePolioCasesData({
-      data: this.props.data.impact.polioCasesYtd,
+      data: this.props.data.impact.PolioCasesYTD,
       campaign: this.props.campaign
     })
 
