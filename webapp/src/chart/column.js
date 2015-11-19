@@ -9,7 +9,7 @@ import color from 'util/color'
 
 var defaults = {
   margin: {
-    top: 12,
+    top: 30,
     right: 0,
     bottom: 12,
     left: 0
