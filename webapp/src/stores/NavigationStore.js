@@ -42,11 +42,12 @@ var NavigationStore = Reflux.createStore({
       })
     } else {
       return api.get_chart({ dashboard_id: dashboard.id }, null, {'cache-control': 'no-cache'}).then(res => {
-        dashboard.charts = res.objects.map(chart => {
+        let charts = res.objects.map(chart => {
           var result = chart.chart_json
           result.id = chart.id
           return result
         })
+        dashboard.charts = _.sortBy(charts, _.property('id'))
         return dashboard
       }, function (err) {
         console.log(err)

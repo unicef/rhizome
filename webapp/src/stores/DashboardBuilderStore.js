@@ -37,11 +37,12 @@ var DashboardBuilderStore = Reflux.createStore({
         this.data.dashboardDescription = dashboard.objects[0].description
 
         api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
-          this.data.dashboard.charts = res.objects.map(chart => {
+          let charts = res.objects.map(chart => {
             let result = chart.chart_json
             result.id = chart.id
             return result
           })
+          this.data.dashboard.charts = _.sortBy(charts, _.property('id'))
           DashboardActions.setDashboard({ dashboard: this.data.dashboard })
           this.trigger(this.data)
         }, err => {
