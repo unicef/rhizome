@@ -165,7 +165,7 @@ _.extend(AreaChart.prototype, {
 
     if (options.type) {
       var v = _.sum(labels, d => { return d.value })
-      labels.push({
+      labels.unshift({
         x: width,
         y: 0,
         text: 'TOTAL ' + options.yFormat(v),

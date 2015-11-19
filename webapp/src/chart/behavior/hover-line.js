@@ -308,7 +308,7 @@ function hoverLine () {
       .value()
 
     if (type) {
-      labelData.push({
+      labelData.unshift({
         x: width,
         y: 0,
         text: 'TOTAL ' + yFormat(_.sum(labelData, function (d) {
