@@ -49,6 +49,16 @@
       background-color: inherit;
     }
   }
+  .chart--placeholder {
+    background-color: white;
+    height: 521px;
+    margin: 2px;
+    .chart--placeholder__loading {
+      padding-top: 40%;
+      font-size: 4em;
+      text-align: center;
+    }
+  }
 }
 
 #afghanistan-chart, #pakistan-chart {

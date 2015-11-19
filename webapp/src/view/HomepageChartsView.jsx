@@ -26,20 +26,25 @@ var HomepageChartsView = React.createClass({
 
   render: function () {
     if (this.state.dashboards.length === 0) {
-      var style = {
-        fontSize: '2rem',
-        zIndex: 9999
-      }
-
       return (
-        <div style={style} className='overlay'>
-          <div>
-            <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
+        <div>
+          <div className='large-4 columns chart-container'>
+            <div className='chart--placeholder'>
+              <div className='chart--placeholder__loading'><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
+            </div>
           </div>
-        </div>
-      )
+          <div className='large-4 columns chart-container'>
+            <div className='chart--placeholder'>
+              <div className='chart--placeholder__loading'><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
+            </div>
+          </div>
+          <div className='large-4 columns chart-container'>
+            <div className='chart--placeholder'>
+              <div className='chart--placeholder__loading'><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
+            </div>
+          </div>
+        </div>)
     }
-
     var list = []
     this.state.dashboards.dashboards.forEach(function (item) {
       var dashboardProps = {
@@ -50,12 +55,12 @@ var HomepageChartsView = React.createClass({
         mapLoading: item.mapLoading
       }
 
-      list.push(<HomepageChartsSection location={item.location} data={dashboardProps} />)
+      list.push(<HomepageChartsSection location={item.location} data={dashboardProps}/>)
     })
 
     return (
       <div>
-      {list}
+        {list}
       </div>
     )
   }
