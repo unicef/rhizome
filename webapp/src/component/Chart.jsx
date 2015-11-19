@@ -82,8 +82,7 @@ export default React.createClass({
       this.props.type,
       React.findDOMNode(this),
       this.props.data,
-      this.props.options
-    )
+      this.props.options)
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {

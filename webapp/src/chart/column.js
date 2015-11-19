@@ -191,7 +191,7 @@ _.extend(ColumnChart.prototype, {
         .orient('right')
         .tickFormat(options.yFormat)
         .tickSize(w)
-        .ticks(3)
+        .ticks(2)
         .scale(yScale))
 
     svg.selectAll('.y.axis text')
