@@ -1,5 +1,3 @@
-'use strict'
-
 import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'

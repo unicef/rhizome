@@ -1,5 +1,3 @@
-'use strict'
-
 import api from 'data/api'
 import React from 'react'
 import page from 'page'

@@ -1,5 +1,3 @@
-'use strict'
-
 import React from 'react'
 
 import Overview from 'dashboard/nco/Overview.jsx'

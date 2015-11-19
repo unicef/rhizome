@@ -1,5 +1,3 @@
-'use strict'
-
 import d3 from 'd3'
 
 var colors = ['#377EA4', '#B6D0D4']

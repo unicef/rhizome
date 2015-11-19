@@ -1,19 +1,12 @@
 export default function (name) {
-  'use strict'
-
   function model (data) {
-    var series = {
+    let series = {
       points: data
     }
 
     if (name) {
-      if (typeof name === 'function') {
-        series.name = name(data)
-      } else {
-        series.name = name
-      }
+      series.name = typeof name === 'function' ? name(data) : name
     }
-
     return series
   }
 

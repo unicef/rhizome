@@ -4,7 +4,7 @@ export default React.createClass({
   propTypes: {
     initialText: React.PropTypes.string,
     save: React.PropTypes.func,
-    class: React.PropTypes.string
+    className: React.PropTypes.string
   },
 
   getInitialState: function () {

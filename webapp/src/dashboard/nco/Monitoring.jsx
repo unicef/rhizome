@@ -1,5 +1,3 @@
-'use strict'
-
 import _ from 'lodash'
 import React from 'react'
 import d3 from 'd3'

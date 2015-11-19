@@ -1,4 +1,4 @@
-'use strict'
+
 import Vue from 'vue'
 import _ from 'lodash'
 import api from '../../data/api'

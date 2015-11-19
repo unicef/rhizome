@@ -1,5 +1,3 @@
-'use strict'
-
 import api from 'data/api'
 import Reflux from 'reflux'
 import parseSchema from 'ufadmin/utils/parseSchema'

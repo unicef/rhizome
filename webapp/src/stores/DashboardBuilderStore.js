@@ -1,5 +1,3 @@
-'use strict'
-
 import _ from 'lodash'
 import Reflux from 'reflux/src'
 import api from 'data/api'

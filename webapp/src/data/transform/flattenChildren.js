@@ -4,8 +4,6 @@ import _ from 'lodash'
  * Assemble a flat array with all an object's nested children (deep)
  */
 function flattenChildren (root, childrenKey, arr, filterCondition, maxDepth) {
-  'use strict'
-
   arr = arr || []
 
   if (!_.isNumber(maxDepth)) {

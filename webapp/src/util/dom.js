@@ -1,6 +1,4 @@
 /* global document, window, MouseEvent */
-'use strict'
-
 import _ from 'lodash'
 
 function intStyle (el, property) {

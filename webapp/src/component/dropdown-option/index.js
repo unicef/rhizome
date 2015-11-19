@@ -1,4 +1,4 @@
-'use strict'
+
 export default {
   template: require('./template.html'),
   computed: {

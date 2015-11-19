@@ -1,5 +1,3 @@
-'use strict'
-
 import React from 'react'
 import HomepageCharts from 'dashboard/homepage/HomepageCharts.jsx'
 

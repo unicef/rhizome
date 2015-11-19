@@ -1,7 +1,5 @@
 /* jshint browser: true */
 /* global Promise */
-'use strict'
-
 var BASE_URL = '/api'
 
 import _ from 'lodash'

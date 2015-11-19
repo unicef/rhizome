@@ -1,5 +1,3 @@
-'use strict'
-
 import React from 'react'
 
 let LayoutOptions = React.createClass({

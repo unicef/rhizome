@@ -1,5 +1,3 @@
-'use strict'
-
 /**
  * Split a string into tokens that can be passed to moment.duration.
  *
