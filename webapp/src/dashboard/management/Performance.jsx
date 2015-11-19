@@ -128,6 +128,15 @@ var Performance = React.createClass({
       .domain([0, maxVaccinatedChildren])
       .range([0, maxRadius])
 
+    var sumData = []
+    var maxRange = 1
+    if (missed.length > 1) {
+      missed[0].values.forEach((d, i) => {
+        sumData[i] = d.value + missed[1].values[i].value + missed[2].values[i].value + missed[3].values[i].value
+      })
+      maxRange = _.ceil(_.max(sumData), 2)
+    }
+
     function _chooseRadius (v) {
       if (v > maxVaccinatedChildren) {
         return maxRadius
@@ -152,7 +161,8 @@ var Performance = React.createClass({
                      domain: _.constant([lower.valueOf(), upper.valueOf()]),
                      x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
                      xFormat: d => moment(d).format('MMM YYYY'),
-                     yFormat: d3.format(',.1%')
+                     yFormat: d3.format(',.1%'),
+                     range: _.constant([0, maxRange])
                    }}/>
           </div>
 
