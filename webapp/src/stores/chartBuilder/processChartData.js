@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import colors from 'colors'
 import moment from 'moment'
 import api from 'data/api'
 import path from 'vue/src/parsers/path'
@@ -296,9 +295,6 @@ export default {
         aspect: aspects[layout].columnChart,
         values: _.property('values'),
         domain: _.constant(columnScale),
-        color: _.flow(
-          _.property('name'),
-          d3.scale.ordinal().range(colors)),
         x: function (d) {
           var start = d.campaign.start_date
           return moment(start).startOf('month').toDate().getTime()

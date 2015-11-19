@@ -144,11 +144,9 @@ _.extend(ColumnChart.prototype, {
     series.enter().append('g')
       .attr('class', 'bar')
 
-    var fill = options.hasOwnProperty('color')
-      ? options.color
-      : _.flow(options.name, color.scale(_.map(data, options.name)))
+    let fill = color.scale(data.map(options.name))
 
-    series.style('fill', fill)
+    series.style('fill', _.flow(options.name, fill))
     series.exit().remove()
 
     var hover = d3.dispatch('over', 'out')
@@ -216,10 +214,8 @@ _.extend(ColumnChart.prototype, {
       .map(function (d) {
         return options.name(d)
       })
-      .reverse()
       .value()
 
-    var fillColor = d3.scale.ordinal().range(['#B6D0D4', '#D95449'])
     var legend = svg.select('.legend').selectAll('*')
       .data(legendText)
       .enter().append('g')
@@ -231,7 +227,7 @@ _.extend(ColumnChart.prototype, {
       .attr('y', -25)
       .attr('width', 10)
       .attr('height', 10)
-      .style('fill', fillColor)
+      .style('fill', fill)
 
     legend.append('text')
       .attr('x', w - 20)

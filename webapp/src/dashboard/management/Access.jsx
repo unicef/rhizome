@@ -60,11 +60,9 @@ var Access = React.createClass({
     var lower = m.clone().startOf('month').subtract(1, 'year')
     var upper = m.clone().endOf('month')
 
-    var totalNumber = 0;
+    let totalNumber = 0
 
     if (campaign && data.numberOfInaccessibleChildren.length > 0) {
-      var year = m.format('YYYY')
-
       totalNumber = _.get(_.find(data.numberOfInaccessibleChildren,
         function (d) { return d.campaign.start_date.getTime() === m.valueOf() }),
         'value')
