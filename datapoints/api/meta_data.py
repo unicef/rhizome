@@ -357,7 +357,10 @@ class CustomDashboardResource(BaseModelResource):
 
         title = post_data['title']
 
-        description = post_data['description']
+        try:
+            description = post_data['description']
+        except KeyError:
+            description = ''
 
         try:
             layout = int(post_data['layout'])

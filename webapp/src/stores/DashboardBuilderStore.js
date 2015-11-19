@@ -10,7 +10,7 @@ import LayoutDefaultSettings from 'dashboard/builtin/layout-options.js'
 var DashboardBuilderStore = Reflux.createStore({
   listenables: [require('actions/DashboardBuilderActions')],
 
-  getInitialState: function () {
+  getInitialState () {
     return this.data
   },
 
@@ -22,7 +22,7 @@ var DashboardBuilderStore = Reflux.createStore({
     layout: LayoutDefaultSettings.defaultValue
   },
 
-  onInitialize: function (id) {
+  onInitialize (id) {
     this.dashboardId = id
     if (_.isNull(id)) {
       this.data.newDashboard = true
@@ -44,7 +44,7 @@ var DashboardBuilderStore = Reflux.createStore({
           })
           DashboardActions.setDashboard({ dashboard: this.data.dashboard })
           this.trigger(this.data)
-        }, function (err) {
+        }, err => {
           console.log(err)
           this.data.dashboard.charts = []
           this.trigger(this.data)
@@ -53,7 +53,7 @@ var DashboardBuilderStore = Reflux.createStore({
     }
   },
 
-  onAddChart: function (chartDef) {
+  onAddChart (chartDef) {
     // in this api do not need set the chart id.
     // chartDef.id = chartDef.title + (new Date()).valueOf()
 
@@ -77,7 +77,8 @@ var DashboardBuilderStore = Reflux.createStore({
       this.trigger(this.data)
     })
   },
-  onRemoveChart: function (index) {
+
+  onRemoveChart (index) {
     var chart = this.data.dashboard.charts.splice(index, 1)[0]
     DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
@@ -94,7 +95,8 @@ var DashboardBuilderStore = Reflux.createStore({
       this.trigger(this.data)
     })
   },
-  onMoveForward: function (index) {
+
+  onMoveForward (index) {
     var newIndex
     if (index === this.data.dashboard.charts.length - 1) {
       newIndex = 0
@@ -107,7 +109,8 @@ var DashboardBuilderStore = Reflux.createStore({
     this.saveDashboard()
     this.trigger(this.data)
   },
-  onMoveBackward: function (index) {
+
+  onMoveBackward (index) {
     var newIndex
     if (index === 0) {
       newIndex = this.data.dashboard.charts.length - 1
@@ -120,29 +123,32 @@ var DashboardBuilderStore = Reflux.createStore({
     this.saveDashboard()
     this.trigger(this.data)
   },
-  onDeleteDashboard: function () {
-    api.remove_dashboard({id: this.data.dashboard.id}).then(function () {
+
+  onDeleteDashboard () {
+    api.remove_dashboard({id: this.data.dashboard.id}).then(() => {
       window.location = '/datapoints/dashboards/'
     })
   },
-  onAddDashboard: function () {
+
+  onAddDashboard () {
     var data = {
       title: this.data.dashboardTitle,
+      description: '',
       default_office_id: null,
       dashboard_json: '[]',
       layout: this.data.layout
     }
-    api.save_dashboard(data).then(function (response) {
-      if (response.objects.id) {
-        window.location = '/datapoints/dashboards/edit/' + response.objects.id
+    api.save_dashboard(data).then(res => {
+      if (res.objects.id) {
+        window.location = '/datapoints/dashboards/edit/' + res.objects.id
       } else {
         window.alert('There was an error saving your chart')
       }
-    }, function (response) {
-      window.alert(response.msg)
+    }, res => {
+      window.alert(res.msg)
     })
   },
-  saveDashboard: function () {
+  saveDashboard () {
     var data = {
       id: this.data.dashboard.id,
       description: this.data.dashboardDescription,
@@ -157,7 +163,8 @@ var DashboardBuilderStore = Reflux.createStore({
       console.log(err)
     })
   },
-  onUpdateChart: function (chartDef, index) {
+
+  onUpdateChart (chartDef, index) {
     this.data.dashboard.charts[index] = chartDef
     DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
@@ -176,7 +183,8 @@ var DashboardBuilderStore = Reflux.createStore({
       this.trigger(this.data)
     })
   },
-  onUpdateTitle: function (title) {
+
+  onUpdateTitle (title) {
     this.data.dashboardTitle = title
     clearTimeout(this.timer)
     if (this.data.dashboard) {
@@ -185,14 +193,16 @@ var DashboardBuilderStore = Reflux.createStore({
       }.bind(this), 1000)
     }
   },
-  onUpdateDescription: function (description) {
+
+  onUpdateDescription (description) {
     this.data.dashboardDescription = description
     clearTimeout(this.timer)
     this.timer = setTimeout(function () {
       this.saveDashboard()
     }.bind(this), 1000)
   },
-  onChangeLayout: function (value) {
+
+  onChangeLayout (value) {
     this.data.layout = value
     this.trigger(this.data)
   }
