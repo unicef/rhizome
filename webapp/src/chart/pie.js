@@ -23,8 +23,8 @@ var DEFAULTS = {
   },
   value: _.property('value'),
   name: _.property('indicator.short_name'),
-  format: function (d) {
-    return d3.format((Math.abs(d) < 1) ? '.4f' : 'n')(d)
+  yFormat: function (d) {
+    return d3.format((Math.abs(d) < 1) ? '%' : 'n')(d)
   }
 }
 
@@ -65,10 +65,13 @@ _.extend(PieChart.prototype, {
       .reverse()
       .value()
 
-    var data = [{value: 0}, {value: 0}]
-    if (values[0] && values[0].value) {
-      data[0].value = Math.round(values[0].value * 100) / 100
-      data[1].value = 1 - data[0].value
+    let data = []
+    if (values.length === 1) {
+      // assume single indicator respresenting perentage
+      data.push({ value: Math.round(values[0].value * 100) / 100 })
+      data.push({ value: 1 - data[0].value})
+    } else {
+      data = values
     }
 
     var w = this._width - margin.left - margin.right
@@ -144,12 +147,14 @@ _.extend(PieChart.prototype, {
       'stroke': '#fff'
     }).on('mousemove', d => {
       var evt = d3.event
-
       var render = function () {
+        let tip = options.name(d)
+          ? `${options.name(d)}: ${options.yFormat(options.value(d))}`
+          : options.yFormat(options.value(d))
         return (
           <Tooltip left={evt.pageX} top={evt.pageY}>
             <div>
-              <p>{d3.format('%')(options.value(d))}</p>
+              <p>{tip}</p>
             </div>
           </Tooltip>
         )

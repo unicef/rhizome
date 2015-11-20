@@ -171,7 +171,6 @@ _.extend(ColumnChart.prototype, {
       .on('mouseout', hover.out)
 
     column.exit().remove()
-
     svg.select('.x.axis')
       .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
       .call(d3.svg.axis()

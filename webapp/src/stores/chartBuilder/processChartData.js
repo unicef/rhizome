@@ -188,7 +188,7 @@ export default {
       },
       PieChart: {
         fn: this.processPieChart,
-        para: [meltPromise, locations, layout]
+        para: [meltPromise, indicators, layout]
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
