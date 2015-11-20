@@ -76,10 +76,11 @@ var NavigationStore = Reflux.createStore({
             return moment(c.start_date, 'YYYY-MM-DD').valueOf()
           })
 
-        // Build the path for the dashboard
-        var path = ''
+        let path
         try {
-          path = '/' + office.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
+          path = d.builtin
+            ? '/' + office.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
+            : '/'
         } catch (err) {
           path = '/'
         }
