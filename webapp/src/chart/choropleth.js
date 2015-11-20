@@ -277,7 +277,7 @@ _.extend(ChoroplethMap.prototype, {
       var bubbleLegendText = [100, 1000, 5000]
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + (w * 1.16) + ', ' + h + ')'
+          return 'translate(' + (w * 1.16) + ', ' + (0.9 * h) + ')'
         })
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
@@ -362,8 +362,8 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       stripeLegend.append('rect')
-        .attr('width', 9)
-        .attr('height', 9)
+        .attr('width', 11)
+        .attr('height', 11)
         .style({
           'fill': stripeLegendColor,
           'stroke': '#cccccc',
@@ -372,11 +372,14 @@ _.extend(ChoroplethMap.prototype, {
 
       stripeLegend.append('text')
         .attr({
-          'x': 15,
+          'x': 16,
           'y': 3.5,
-          'dy': '0.4em'
+          'dy': 6
         })
-        .style('text-anchor', 'start')
+        .style({
+          'text-anchor': 'start',
+          'font-size': 10
+        })
         .text(function (d) {
           return d
         })

@@ -8,9 +8,9 @@ function legend (chartOptions) {
   }
 
   var _interactive = false
-  var _padding = 5
+  var _padding = 6
   var _scale = d3.scale.category20b()
-  var _size = 7
+  var _size = 8
   var _fontSize = 65
   var _margin = 20
 
@@ -80,7 +80,7 @@ function legend (chartOptions) {
           'x': _size + _padding,
           'y': _size / 2
         })
-        .style('font-size', Math.max(_size * 7 / 9, 9))
+        .style('font-size', _size + 2)
 
       series.exit()
         .transition()
