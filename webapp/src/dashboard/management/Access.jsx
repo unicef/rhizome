@@ -4,7 +4,6 @@ import React from 'react'
 import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
-import DonutChart from 'component/DonutChart.jsx'
 import PieChartList from 'component/PieChartList.jsx'
 
 var Access = React.createClass({
@@ -108,13 +107,13 @@ var Access = React.createClass({
         <div className='medium-2 columns'>
           <h4>Districts with<br />
             Access Plan</h4>
-          <DonutChart data={plans} label={planLabel}
+          <Chart type='PieChart' data={plans}
                       loading={loading}
                       options={{
                         innerRadius: 0.3,
                         outerRadius: 0.5,
-                        pieType: true,
-                        domain: _.constant([0, 1])
+                        domain: _.constant([0, 1]),
+                        percentage: planLabel(plans)
                       }} />
         </div>
 

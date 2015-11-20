@@ -47,6 +47,8 @@ _.extend(PieChart.prototype, {
       .append('g').attr('class', 'data')
       .append('path').attr('class', 'bg')
 
+    g.append('g').attr('class', 'annotation')
+
     this.update(data)
   },
 
@@ -81,15 +83,25 @@ _.extend(PieChart.prototype, {
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
-    let g
-
-    // if (this._options.pieType) {
-    //  g = svg.select('.data')
-    //  .attr('transform', 'translate(' + 50 + ', ' + 50 + ')')
-    // //} else {
-    g = svg.select('.data')
+    let g = svg.select('.data')
       .attr('transform', 'translate(' + (w / 2) + ', ' + (h / 2) + ')')
-    // }
+
+    if (options.percentage) {
+      var annotation = svg.select('.annotation').selectAll('.percentage').data([options.percentage])
+      annotation.enter().append('text')
+      annotation.attr('class', 'percentage')
+        .attr({
+          'x': w / 2,
+          'y': h / 2,
+          'dy': 5
+        })
+        .style({
+          'text-anchor': 'middle',
+          'opacity': d => { return d === '0%' ? 0 : 1 }
+        })
+        .text(d => { return d })
+      annotation.exit().remove()
+    }
 
     var arc = d3.svg.arc()
       .innerRadius(s / 2 * options.innerRadius)

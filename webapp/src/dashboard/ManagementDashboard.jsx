@@ -34,7 +34,6 @@ var ManagementDashboard = React.createClass({
     var loading = this.props.loading
     var location = _.get(this.props, 'location.name', '')
     var dashboardName = 'Management Dashboard'.toUpperCase()
-    var pieType = true
 
     var sections = _(this.props.dashboard.charts)
       .groupBy('section')
@@ -114,7 +113,7 @@ var ManagementDashboard = React.createClass({
             <div className='row'>
               <div className='medium-4 columns right'>
                 <h3>Microplan Social Data Usage</h3>
-                <SocialData data={data.__none__.microplans} campaign={campaign} loading={loading} pieType={pieType}/>
+                <SocialData data={data.__none__.microplans} campaign={campaign} loading={loading}/>
               </div>
             </div>
           </div>
