@@ -69,7 +69,7 @@ _.extend(PieChart.prototype, {
     if (values.length === 1) {
       // assume single indicator respresenting perentage
       data.push({ value: Math.round(values[0].value * 100) / 100 })
-      data.push({ value: 1 - data[0].value})
+      data.push({ value: 1 - data[0].value })
     } else {
       data = values
     }
