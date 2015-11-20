@@ -1,4 +1,3 @@
-import Crypto from 'crypto'
 export default function () {
-  return Crypto.randomBytes(5).toString('hex')
+  return Math.round(Math.random() * 1E16).toString(16)
 }
