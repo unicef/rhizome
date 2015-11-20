@@ -335,13 +335,13 @@ var Dashboard = React.createClass({
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
-        <div className='medium-4 columns'>
+        <div className='medium-6 columns'>
           <RegionTitleMenu
             locations={this.state.locations}
             selected={location}
             sendValue={this._setLocation}/>
         </div>
-        <div className='medium-4 columns'>
+        <div className='medium-6 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
             selected={campaign}
