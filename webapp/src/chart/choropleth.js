@@ -55,6 +55,14 @@ function _calculateCenter (bounds) {
   return [lng, lat]
 }
 
+function _valueForLocation (data, options, locationObject) {
+  let locationIndex = (_.select(data, function(d) {
+    return d.location_id == locationObject.location_id
+  }))[0]
+
+  return options.value(locationIndex)
+}
+
 function ChoroplethMap () {
 }
 
@@ -216,7 +224,7 @@ _.extend(ChoroplethMap.prototype, {
       .on('click', function (d) {
         options.onClick(_.get(d, 'properties.location_id'))
       })
-      .on('mousemove', _.partial(this._onMouseMove, _, options))
+      .on('mousemove', _.partial(this._onMouseMove, _, options, data))
       .on('mouseout', this._onMouseOut)
 
     location.exit().remove()
@@ -372,14 +380,16 @@ _.extend(ChoroplethMap.prototype, {
     }
   },
 
-  _onMouseMove: function (d, options) {
+  _onMouseMove: function (d, options, data) {
     var evt = d3.event
+
+    var locationValue = options.name(d) + ': ' + options.yFormat(_valueForLocation(data, options, d) || 0)
 
     var render = function () {
       return React.createElement(
         Tooltip,
         {left: evt.pageX + 2, top: evt.pageY + 2},
-        options.name(d)
+        locationValue
       )
     }
 
