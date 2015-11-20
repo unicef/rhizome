@@ -4,16 +4,18 @@ import time
 
 from tastypie.resources import ALL
 from tastypie import fields
-
+from tastypie.bundle import Bundle
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
+from pandas import DataFrame
+from pandas import notnull
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
-from datapoints.models import Campaign, Location, Indicator, IndicatorAbstracted, IndicatorTag, CampaignType, \
+from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, LocationPolygon
+    ChartTypeToIndicator, Office, LocationPolygon, IndicatorBound, IndicatorToTag
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -49,27 +51,160 @@ class LocationResource(BaseModelResource):
         queryset = Location.objects.all().values()
         resource_name = 'location'
 
+class IndicatorResult(object):
+    id = int()
+    description = unicode()
+    short_name = unicode()
+    slug = unicode()
+    name = unicode()
+    data_format = unicode()
+    bound_json = list()
+    tag_json = list()
 
-class IndicatorResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorAbstracted.objects.all().values()
+
+class IndicatorResource(BaseNonModelResource):
+    id = fields.IntegerField(attribute='id')
+    name = fields.CharField(attribute='name')
+    short_name = fields.CharField(attribute='short_name')
+    slug = fields.CharField(attribute='slug')
+    description = fields.CharField(attribute='description')
+    data_format = fields.CharField(attribute='data_format')
+    bound_json = fields.ListField(attribute='bound_json')
+    tag_json = fields.ListField(attribute='tag_json')
+
+    class Meta(BaseNonModelResource.Meta):
+        object_class = IndicatorResult
         resource_name = 'indicator'
-        filtering = {
-            "id": ALL,
-            "name": ALL,
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        if isinstance(bundle_or_obj, Bundle):
+            kwargs['pk'] = bundle_or_obj.obj.id
+        else:
+            kwargs['pk'] = bundle_or_obj.id
+
+        return kwargs
+
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        try:
+            ind_id = int(post_data['id'])
+            if ind_id == -1:
+                ind_id = None
+        except KeyError:
+            ind_id = None
+
+        defaults = {
+            'name': post_data['name'],
+            'short_name': post_data['short_name'],
+            'description': post_data['description']
         }
 
-    def get_object_list(self, request):
+        ind, created = Indicator.objects.update_or_create(
+            id=ind_id,
+            defaults=defaults
+        )
+
+        bundle.obj = ind
+        bundle.data['id'] = ind.id
+
+        return bundle
+
+
+    def obj_get_list(self, bundle, **kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional build_agg_rc_dfing may be applied
+        '''
+
+        return self.get_object_list(bundle.request)
+
+    def get_indicator_ids_from_request(self, request):
+        '''
+        '''
+
+        try:
+            indicator_id_list = [request.GET['id']]
+            return indicator_id_list
+        except KeyError:
+            pass
+
+        try:
+            x = request.GET['id__in'].split(',')
+            return x
+        except KeyError:
+            pass
 
         try:
             office_id = request.GET['office_id']
-            indicator_id_list = self.get_indicator_id_by_office(office_id)
-
-            qs = IndicatorAbstracted.objects.filter(id__in=indicator_id_list).values()
+            return self.get_indicator_id_by_office(office_id)
         except KeyError:
-            qs = IndicatorAbstracted.objects.all().values()
+            pass
 
-        return qs
+        return None
+
+    def build_indicator_queryset(self, indicator_id_list):
+        '''
+        Based on the indicator_ids, we make 3 requests, one for the indicators
+        one for the bounds, and another for the tags.
+        '''
+
+        tag_cols = ['indicator_id','indicator_tag_id']
+        bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+
+        if indicator_id_list:
+            ## get tags ##
+            tag_df = DataFrame(list(IndicatorToTag.objects.filter(indicator_id__in=\
+                indicator_id_list).values_list(*tag_cols)),columns = tag_cols)
+
+            bound_df = DataFrame(list(IndicatorBound.objects\
+                .filter(indicator_id__in=indicator_id_list)\
+                .values_list(*bound_cols)),columns = bound_cols)
+
+            qs = Indicator.objects.filter(id__in=indicator_id_list)
+        else:
+            tag_df = DataFrame(list(IndicatorToTag.objects.all()\
+                .values_list(*tag_cols)),columns = tag_cols)
+
+            bound_df = DataFrame(list(IndicatorBound.objects.all()\
+                .values_list(*bound_cols)),columns = bound_cols)
+
+            qs = Indicator.objects.all()
+
+        bound_df = bound_df.where((notnull(bound_df)), None)
+        tag_df = tag_df.where((notnull(tag_df)), None)
+
+        return qs, bound_df, tag_df
+
+    def get_object_list(self, request):
+        indicator_batch = []
+
+        indicator_id_list = self.get_indicator_ids_from_request(request)
+        qs, bound_df, tag_df = self.build_indicator_queryset(indicator_id_list)
+
+        for row in qs:
+
+            ## create the ResultObject and assign the basic variables ##
+            ir = IndicatorResult()
+            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format\
+                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format\
+
+            ## look up the bounds / tags from the data two DFs created above ##
+            filtered_tag_df = tag_df[tag_df['indicator_id'] == \
+                row.id]
+            filtered_bound_df = bound_df[bound_df['indicator_id'] == \
+                row.id]
+
+            ir.bound_json= [row.to_dict() for ix, row in\
+                filtered_bound_df.iterrows()]
+            ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
+
+            indicator_batch.append(ir)
+
+        return indicator_batch
 
     def get_indicator_id_by_office(self, office_id):
 
@@ -149,42 +284,6 @@ class IndicatorTagResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
         resource_name = 'indicator_tag'
-        filtering = {
-            "id": ALL,
-        }
-
-
-class BaseIndicatorResource(BaseModelResource):
-    def obj_create(self, bundle, **kwargs):
-
-        post_data = bundle.data
-
-        try:
-            ind_id = int(post_data['id'])
-            if ind_id == -1:
-                ind_id = None
-        except KeyError:
-            ind_id = None
-
-        defaults = {
-            'name': post_data['name'],
-            'short_name': post_data['short_name'],
-            'description': post_data['description']
-        }
-
-        ind, created = Indicator.objects.update_or_create(
-            id=ind_id,
-            defaults=defaults
-        )
-
-        bundle.obj = ind
-        bundle.data['id'] = ind.id
-
-        return bundle
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values('id', 'name', 'short_name', 'description')
-        resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
         }

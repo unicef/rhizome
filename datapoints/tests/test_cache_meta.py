@@ -1,8 +1,11 @@
+import json
+
 from pandas import read_csv, notnull, DataFrame
 from numpy import nan,isnan
 from django.test import TestCase
 
-from datapoints.models import LocationType, Location, LocationTree, Office
+from datapoints.models import LocationType, Location, LocationTree, Office,\
+    Indicator, IndicatorBound, IndicatorToTag, IndicatorTag
 from datapoints.cache_meta import LocationTreeCache
 
 class CacheMetaTestCase(TestCase):

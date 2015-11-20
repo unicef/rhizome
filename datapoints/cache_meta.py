@@ -2,55 +2,6 @@ from datapoints.models import *
 from source_data.models import SourceObjectMap
 from pandas import read_csv, notnull, DataFrame, concat
 
-def cache_indicator_abstracted():
-    '''
-    Delete indicator abstracted, then re-insert by joiniding indicator boudns
-    and creatign json for the indicator_bound field.  Also create the
-    necessary JSON for the indicator_tag_json.
-
-    This is the transformation that enables the API to return all indicator
-    data without any transformation on request.
-    '''
-
-    i_raw = Indicator.objects.raw("""
-
-
-        SELECT
-             i.id
-            ,i.short_name
-            ,i.name
-            ,i.slug
-            ,i.description
-            ,i.data_format
-            ,CASE WHEN CAST(x.bound_json as varchar) = '[null]' then '[]' ELSE x.bound_json END AS bound_json
-            ,CASE WHEN CAST(y.tag_json as varchar) = '[null]' then '[]' ELSE y.tag_json END AS tag_json
-        FROM (
-            SELECT
-            	i.id
-            	,json_agg(row_to_json(ib.*)) as bound_json
-            FROM indicator i
-            LEFT JOIN indicator_bound ib
-            ON i.id = ib.indicator_id
-            GROUP BY i.id
-        )x
-		INNER JOIN (
-            SELECT
-            	i.id
-            	,json_agg(itt.indicator_tag_id) as tag_json
-            FROM indicator i
-            LEFT JOIN indicator_to_tag itt
-            ON i.id = itt.indicator_id
-
-            GROUP BY i.id
-		) y
-		ON y.id = x.id
-        INNER JOIN indicator i
-        ON x.id = i.id
-
-    """)
-
-    upsert_meta_data(i_raw, IndicatorAbstracted)
-
 
 def calculate_campaign_percentage_complete():
     '''
@@ -189,22 +140,8 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
-def upsert_meta_data(qset, abstract_model):
-    '''
-    Given a raw queryset, and the model of the table to be upserted into,
-    iterate through each resutl, clean the dictionary and batch delete and
-    insert the data.
-    '''
-
-    batch = []
-
-    for row in qset:
-
-        row_data = dict(row.__dict__)
-        del row_data['_state']
-
-        object_instance = abstract_model(**row_data)
-        batch.append(object_instance)
-
-    abstract_model.objects.all().delete()
-    abstract_model.objects.bulk_create(batch)
+# def minify_geo_json():
+#     afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
+#     coordinates = afg_shape['geometry']['coordinates'][0]
+#
+#     df = DataFrame(coordinates, columns=['lat','lon'])

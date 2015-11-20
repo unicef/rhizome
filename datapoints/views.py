@@ -122,7 +122,6 @@ def refresh_metadata(request):
     This is what happens when you click the "refresh_metadata" button
     '''
 
-    indicator_cache_data = cache_meta.cache_indicator_abstracted()
     campaign_cache_data = cache_meta.calculate_campaign_percentage_complete()
 
     location_tree_cache_data = cache_meta.LocationTreeCache()

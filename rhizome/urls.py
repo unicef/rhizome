@@ -48,7 +48,6 @@ v1_api.register(DocDetailTypeResource())
 v1_api.register(ChartTypeTypeResource())
 v1_api.register(DocTransFormResource())
 v1_api.register(CalculatedIndicatorComponentResource())
-v1_api.register(BaseIndicatorResource())
 v1_api.register(AggRefreshResource())
 
 urlpatterns = patterns('',
