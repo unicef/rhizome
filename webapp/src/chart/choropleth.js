@@ -245,6 +245,10 @@ _.extend(ChoroplethMap.prototype, {
             d3.scale.ordinal().domain(ticks).range(colorScale.range())
           )
         ).attr('transform', function () { return 'translate(' + legendXPosition + ', ' + 0 + ')' })
+
+        
+        let dataYPosition = options.chartInDashboard ? 30 : 0
+        g.attr('transform', 'translate(0' + ', ' + dataYPosition + ')')
       }
     }
 
