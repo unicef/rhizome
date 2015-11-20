@@ -232,7 +232,7 @@ _.extend(ColumnChart.prototype, {
     legend.append('rect')
       .attr({
         'x': w - 12,
-        'y': -0.15 * w,
+        'y': -25,
         'width': 12,
         'height': 12
       })
@@ -243,7 +243,7 @@ _.extend(ColumnChart.prototype, {
     legend.append('text')
       .attr({
         'x': w - 12,
-        'y': -0.15 * w,
+        'y': -25,
         'dx': -5,
         'dy': 9
       })

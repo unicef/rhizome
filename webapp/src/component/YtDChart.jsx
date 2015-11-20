@@ -69,7 +69,8 @@ export default React.createClass({
           range: _.constant([0, maxRange]),
           x: _.property('x'),
           xFormat: d3.time.format('%b'),
-          y: _.property('total')
+          y: _.property('total'),
+          hasCircles: true
         }
       })
 
