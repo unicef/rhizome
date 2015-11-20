@@ -221,7 +221,7 @@ var Performance = React.createClass({
                           emptyText='No transit point data available'
                           options={{
                             domain: _.constant([0, 1]),
-                            size: 24,
+                            size: 30,
                             palette: colors
                           }}/>
           </div>
