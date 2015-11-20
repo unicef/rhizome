@@ -12,7 +12,7 @@ from pandas import DataFrame
 from pandas import notnull
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
-from datapoints.models import Campaign, Location, Indicator, IndicatorAbstracted, IndicatorTag, CampaignType, \
+from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
     ChartTypeToIndicator, Office, LocationPolygon, IndicatorBound, IndicatorToTag

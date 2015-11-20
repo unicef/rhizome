@@ -51,29 +51,6 @@ class Indicator(models.Model):
         ordering = ('name',)
 
 
-class IndicatorAbstracted(models.Model):
-    '''
-    An extended version of the Indicator table which uses the bounds and tags
-    associated to each indicator ID in order to manage one table with all of the
-    information the API needs for each indicator.
-
-    '''
-
-    description = models.CharField(max_length=255)
-    short_name = models.CharField(max_length=255)
-    slug = models.CharField(max_length=255)
-    name = models.CharField(max_length=255)
-    data_format = models.CharField(max_length=10)
-    bound_json = JSONField()
-    tag_json = JSONField()
-
-    def __unicode__(self):
-        return unicode(self.slug)
-
-    class Meta:
-        db_table = 'indicator_abstracted'
-
-
 class CalculatedIndicatorComponent(models.Model):
     '''
     The indicator is for example "pct missed due to refusal," the component
