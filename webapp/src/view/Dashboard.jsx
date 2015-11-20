@@ -355,7 +355,7 @@ var Dashboard = React.createClass({
         <div classNameName='clearfix'></div>
         <form className='inline no-print cd-titlebar'>
           <div className='row'>
-            <div className='medium-4 columns'>
+            <div className='medium-6 columns'>
               {settingFilter}
             </div>
             <div className='medium-2 columns'>
