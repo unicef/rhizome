@@ -70,7 +70,7 @@ export default React.createClass({
           x: _.property('x'),
           xFormat: d3.time.format('%b'),
           y: _.property('total'),
-          hasCircles: true
+          hasDots: true
         }
       })
 

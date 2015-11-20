@@ -14,6 +14,7 @@ function label () {
   var y = function (d) { return d.y }
   var align = true
   var scale = d3.scale.category20b()
+  var dots
 
   /**
    * @private
@@ -209,6 +210,22 @@ function label () {
       })
       .style('opacity', 1)
 
+    if (dots) {
+      labels.enter().append('circle')
+        .attr('class', cls.join(' '))
+        .attr({
+          'r': 2,
+          'cy': y,
+          'cx': x
+        })
+        .style({
+          'fill': scale,
+          'stroke': scale
+        })
+
+      labels.selectAll('circle').remove()
+    }
+
     labels.exit()
       .transition()
       .duration(300)
@@ -323,6 +340,15 @@ function label () {
     }
 
     scale = value
+    return chart
+  }
+
+  chart.dots = function (value) {
+    if (!arguments.length) {
+      return dots
+    }
+
+    dots = value
     return chart
   }
 

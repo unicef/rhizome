@@ -150,7 +150,8 @@ _.extend(LineChart.prototype, {
         .width(width)
         .height(height)
         .align(false)
-        .scale(legendColor))
+        .scale(legendColor)
+        .dots(options.hasDots))
 
     svg.attr('class', 'line')
       .call(hoverLine()
