@@ -7,6 +7,7 @@ import moment from 'moment'
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
 import builtins from 'dashboard/builtin'
+import randomHash from 'util/randomHash'
 
 import TitleMenu from 'component/TitleMenu.jsx'
 import RegionTitleMenu from 'component/RegionTitleMenu'
@@ -165,7 +166,7 @@ var Dashboard = React.createClass({
         resolve(dashboard)
       })
     } else {
-      return api.get_chart({dashboard_id: dashboard.id}, null, {'cache-control': 'no-cache'}).then(res => {
+      return api.get_chart({ dashboard_id: dashboard.id, _: randomHash() }, null, {'cache-control': 'no-cache'}).then(res => {
         dashboard.charts = res.objects.map(chart => {
           let result = chart.chart_json
           result.id = chart.id

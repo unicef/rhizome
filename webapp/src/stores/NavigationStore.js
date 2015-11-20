@@ -6,6 +6,7 @@ import CampaignStore from 'stores/CampaignStore'
 
 import api from 'data/api'
 import builtins from 'dashboard/builtin'
+import randomHash from 'util/randomHash'
 
 var NavigationStore = Reflux.createStore({
   init: function () {
@@ -39,7 +40,7 @@ var NavigationStore = Reflux.createStore({
         resolve(dashboard)
       })
     } else {
-      return api.get_chart({ dashboard_id: dashboard.id }, null, {'cache-control': 'no-cache'}).then(res => {
+      return api.get_chart({ dashboard_id: dashboard.id, _: randomHash() }, null, {'cache-control': 'no-cache'}).then(res => {
         let charts = res.objects.map(chart => {
           var result = chart.chart_json
           result.id = chart.id

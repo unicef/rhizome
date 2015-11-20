@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import Reflux from 'reflux/src'
+
 import api from 'data/api'
+import randomHash from 'util/randomHash'
 
 import DashboardActions from 'actions/DashboardActions'
 import LayoutDefaultSettings from 'dashboard/builtin/layout-options.js'
@@ -34,7 +36,7 @@ var DashboardBuilderStore = Reflux.createStore({
         this.data.dashboardTitle = dashboard.objects[0].title
         this.data.dashboardDescription = dashboard.objects[0].description
 
-        api.get_chart({ dashboard_id: id }, null, { 'cache-control': 'no-cache' }).then(res => {
+        api.get_chart({ dashboard_id: id , _: randomHash() }, null, { 'cache-control': 'no-cache' }).then(res => {
           let charts = res.objects.map(chart => {
             let result = chart.chart_json
             result.id = chart.id
