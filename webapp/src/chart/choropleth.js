@@ -340,7 +340,7 @@ _.extend(ChoroplethMap.prototype, {
         .on('click', function (d) {
           options.onClick(_.get(d, 'properties.location_id'))
         })
-        .on('mousemove', _.partial(this._onMouseMove, _, options))
+        .on('mousemove', _.partial(this._onMouseMove, _, options, data))
         .on('mouseout', this._onMouseOut)
 
       stripeData.exit().remove()
