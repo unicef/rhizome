@@ -56,8 +56,8 @@ function _calculateCenter (bounds) {
 }
 
 function _valueForLocation (data, options, locationObject) {
-  let locationIndex = (_.select(data, function(d) {
-    return d.location_id == locationObject.location_id
+  let locationIndex = (_.select(data, function (d) {
+    return d.location_id === locationObject.location_id
   }))[0]
 
   return options.value(locationIndex)
