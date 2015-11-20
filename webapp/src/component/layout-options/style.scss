@@ -47,4 +47,7 @@
 
 .layout-option--label {
   margin-bottom: 1em;
+  img{
+    pointer-events: none;
+  }
 }
