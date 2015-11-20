@@ -63,14 +63,14 @@ class IndicatorResult(object):
 
 
 class IndicatorResource(BaseNonModelResource):
-    id = fields.IntegerField(attribute='id')
+    id = fields.IntegerField(attribute='id',null=True)
     name = fields.CharField(attribute='name')
     short_name = fields.CharField(attribute='short_name')
-    slug = fields.CharField(attribute='slug')
+    slug = fields.CharField(attribute='slug',null=True)
     description = fields.CharField(attribute='description')
-    data_format = fields.CharField(attribute='data_format')
-    bound_json = fields.ListField(attribute='bound_json')
-    tag_json = fields.ListField(attribute='tag_json')
+    data_format = fields.CharField(attribute='data_format',null=True)
+    bound_json = fields.ListField(attribute='bound_json',null=True)
+    tag_json = fields.ListField(attribute='tag_json',null=True)
 
     class Meta(BaseNonModelResource.Meta):
         object_class = IndicatorResult

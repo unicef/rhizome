@@ -24,6 +24,7 @@ var SimpleFormStore = Reflux.createStore({
   onBaseFormSave: function (object_id, content_type, data_to_post) {
     var self = this
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
+    var form_data = {'indicator': {'name':'','short_name':'','description':''}, 'indicator_tag': {'tag_name':''}}
     var api_fn = fnLookup[content_type]
 
     var id_to_post = object_id || -1
@@ -34,7 +35,7 @@ var SimpleFormStore = Reflux.createStore({
       api_fn(data_to_post)
     ])
       .then(_.spread(function (apiResponse) {
-        self.data.formData = apiResponse.meta.form_data
+        self.data.formData = form_data[content_type]
         self.data.objectId = apiResponse.objects.id
         self.data.dataObject = apiResponse
         self.data.loading = false
@@ -52,13 +53,14 @@ var SimpleFormStore = Reflux.createStore({
     self.data.objectId = object_id
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
+    var form_data = {'indicator': {'name':'','short_name':'','description':''}, 'indicator_tag': {'tag_name':''}}
     var api_fn = fnLookup[content_type]
 
     Promise.all([
       api_fn({ id: self.data.objectId }, null, { 'cache-control': 'no-cache' })
     ])
       .then(_.spread(function (apiResponse) {
-        self.data.formData = apiResponse.meta.form_data
+        self.data.formData = form_data[content_type]
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
         self.trigger(self.data)

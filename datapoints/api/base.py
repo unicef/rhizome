@@ -200,7 +200,6 @@ class BaseModelResource(ModelResource):
             'limit': None,  # paginator.get_limit(),
             'offset': None,  # paginator.get_offset(),
             'total_count': len(objects),
-            'form_data': self.get_form_data()
         }
 
         response_data = {
@@ -210,20 +209,6 @@ class BaseModelResource(ModelResource):
         }
 
         return self.create_response(request, response_data)
-
-    def get_form_data(self):
-
-        all_form_data = {
-            "indicator": {"short_name": "", "name": ""},
-            "indicator_tag": {"tag_name": ""}
-        }
-
-        try:
-            form_data = all_form_data[self.Meta.resource_name]
-        except KeyError:
-            form_data = []
-
-        return form_data
 
 
 class BaseNonModelResource(Resource):
@@ -244,6 +229,7 @@ class BaseNonModelResource(Resource):
         authorization = Authorization()
         always_return_data = True
         cache = CustomCache()
+        serializer = CustomSerializer()
 
     def parse_url_strings(self, query_dict):
         '''
