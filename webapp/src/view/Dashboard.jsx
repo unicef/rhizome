@@ -182,13 +182,7 @@ var Dashboard = React.createClass({
 
   _navigate (params) {
     let slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
-    let location = _.get(params, 'location', this.state.location.name)
-    let campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-    if (_.isNumber(location)) {
-      location = _.find(this.state.locations, r => r.id === location).name
-    }
-
-    page('/datapoints/' + [slug, location, campaign].join('/'))
+    window.location.pathname = '/datapoints/' + slug
   },
 
   _showDefault (ctx) {
