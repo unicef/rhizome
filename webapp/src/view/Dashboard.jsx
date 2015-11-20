@@ -361,7 +361,9 @@ var Dashboard = React.createClass({
             <div className='medium-2 columns'>
               <div>
                 {edit}
-                <TitleMenu text={dashboardName} icon='fa-chevron-down' className='cd-titlebar-margin'>
+                <TitleMenu text={dashboardName}
+                           icon='fa-chevron-down'
+                           className='cd-titlebar-margin'>
                   {dashboardItems}
                 </TitleMenu>
               </div>

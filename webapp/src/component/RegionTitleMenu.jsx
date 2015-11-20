@@ -70,7 +70,7 @@ var RegionTitleMenu = React.createClass({
 
     return (
       <TitleMenu
-        className='title-font'
+        className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={location}
         searchable

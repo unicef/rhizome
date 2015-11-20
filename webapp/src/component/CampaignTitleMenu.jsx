@@ -18,6 +18,7 @@ var CampaignTitleMenu = React.createClass({
 
     return (
       <TitleMenu
+        className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={startDate}>
         {campaigns}
