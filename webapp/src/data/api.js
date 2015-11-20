@@ -183,7 +183,7 @@ datapoint.toString = function (query, version) {
 
 function indicatorsTree (q) {
   var fetch1 = endPoint('/indicator/', 'get', 1)
-  var fetch2 = endPoint('/indicator_tag', 'get', 1)
+  var fetch2 = endPoint('/indicator_tag/', 'get', 1)
   var makeTagId = function (tId) {
     return 'tag-' + tId
   }
@@ -244,7 +244,7 @@ function indicatorsTree (q) {
 }
 
 function tagTree (q) {
-  var fetch = endPoint('/indicator_tag', 'get', 1)
+  var fetch = endPoint('/indicator_tag/', 'get', 1)
   return new Promise(function (fulfill, reject) {
     fetch().then(function (tags) {
       var tags_map = {}
