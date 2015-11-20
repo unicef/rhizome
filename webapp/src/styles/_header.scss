@@ -12,6 +12,9 @@ header {
     .dashboards-nav, .dashboards-bar, nav > ul > li{
       padding: 0 !important;
     }
+    ul.dashboards-nav > li > a {
+      padding: 27px 0px;
+    }
   }
 
   a {
@@ -64,7 +67,7 @@ header {
 ul.dashboards-nav {
   display: block;
   position: relative;
-  padding-left: 70px;
+
   @include clearfix();
 
   .log-out {
