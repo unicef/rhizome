@@ -57,8 +57,6 @@ class IndicatorAbstracted(models.Model):
     associated to each indicator ID in order to manage one table with all of the
     information the API needs for each indicator.
 
-    The transformation between Indicator and IndicatorAbstracted is handled in
-    datapoints/agg_tasks.py -> cache_indicator_abstracted()
     '''
 
     description = models.CharField(max_length=255)

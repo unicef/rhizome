@@ -2,48 +2,6 @@ from datapoints.models import *
 from source_data.models import SourceObjectMap
 from pandas import read_csv, notnull, DataFrame, concat
 
-def cache_indicator_abstracted():
-    '''
-    Delete indicator abstracted, then re-insert by joiniding indicator boudns
-    and creatign json for the indicator_bound field.  Also create the
-    necessary JSON for the indicator_tag_json.
-
-    This is the transformation that enables the API to return all indicator
-    data without any transformation on request.
-    '''
-
-    ## get tags ##
-    tag_cols = ['indicator_id','indicator_tag_id']
-    tag_df = DataFrame(list(IndicatorToTag.objects.all()\
-        .values_list(*tag_cols)),columns = tag_cols)
-
-    ## get bounds ##
-    bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
-    bound_df = DataFrame(list(IndicatorBound.objects.all()\
-        .values_list(*bound_cols)),columns = bound_cols)
-
-    ind_abstract_batch = []
-    for ind in Indicator.objects.all():
-
-        ## filter the tag_df to this indicator and add to object
-        filtered_tag_df = tag_df[tag_df['indicator_id'] == \
-            ind.id]
-        ind.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
-
-        ## filter the bounds, then create a list of dicts
-        ## where each row has it's own dictionary ##
-        filtered_bound_df = bound_df[bound_df['indicator_id'] == \
-            ind.id]
-        ind.bound_json = bound_list_of_dicts = [row.to_dict() for ix, row in\
-            filtered_bound_df.iterrows()]
-
-        ind_abstract_batch.append(ind)
-
-    IndicatorAbstracted.objects.all().delete()
-    IndicatorAbstracted.objects.bulk_create(ind_abstract_batch)
-
-
-
 
 def calculate_campaign_percentage_complete():
     '''

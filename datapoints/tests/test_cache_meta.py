@@ -7,7 +7,6 @@ from django.test import TestCase
 from datapoints.models import LocationType, Location, LocationTree, Office,\
     Indicator, IndicatorBound, IndicatorToTag, IndicatorAbstracted, IndicatorTag
 from datapoints.cache_meta import LocationTreeCache
-from datapoints.cache_meta import cache_indicator_abstracted
 
 class CacheMetaTestCase(TestCase):
     '''

@@ -5,7 +5,6 @@ import time
 from tastypie.resources import ALL
 from tastypie import fields
 
-
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
 
@@ -49,27 +48,65 @@ class LocationResource(BaseModelResource):
         queryset = Location.objects.all().values()
         resource_name = 'location'
 
+class IndicatorResult(object):
+    id = int()
+    description = unicode()
+    short_name = unicode()
+    slug = unicode()
+    name = unicode()
+    data_format = unicode()
+    bound_json = list()
+    tag_json = list()
 
-class IndicatorResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorAbstracted.objects.all().values()
+
+class IndicatorResource(BaseNonModelResource):
+    id = fields.IntegerField(attribute='id')
+    name = fields.CharField(attribute='name')
+    short_name = fields.CharField(attribute='short_name')
+    slug = fields.CharField(attribute='slug')
+    description = fields.CharField(attribute='description')
+    data_format = fields.CharField(attribute='data_format')
+    bound_json = fields.ListField(attribute='bound_json')
+    tag_json = fields.ListField(attribute='tag_json')
+
+    class Meta(BaseNonModelResource.Meta):
+        object_class = IndicatorResult
         resource_name = 'indicator'
         filtering = {
             "id": ALL,
-            "name": ALL,
         }
 
+    def obj_get_list(self, bundle, **kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional build_agg_rc_dfing may be applied
+        '''
+
+        return self.get_object_list(bundle.request)
+
     def get_object_list(self, request):
+        indicator_batch = []
 
         try:
             office_id = request.GET['office_id']
             indicator_id_list = self.get_indicator_id_by_office(office_id)
-
-            qs = IndicatorAbstracted.objects.filter(id__in=indicator_id_list).values()
+            qs = Indicator.objects.filter(id__in=indicator_id_list)
         except KeyError:
-            qs = IndicatorAbstracted.objects.all().values()
+            qs = Indicator.objects.all()
 
-        return qs
+        for row in qs:
+            ir = IndicatorResult()
+            ir.name = row.name
+            ir.description = row.description
+            ir.short_name = row.short_name
+            ir.slug = row.slug
+            ir.data_format = row.data_format
+            ir.bound_json = []
+            ir.tag_json = []
+
+            indicator_batch.append(ir)
+
+        return indicator_batch
 
     def get_indicator_id_by_office(self, office_id):
 
