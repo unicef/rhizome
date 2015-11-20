@@ -220,6 +220,7 @@ _.extend(ColumnChart.prototype, {
       .map(function (d) {
         return options.name(d)
       })
+      .reverse()
       .value()
 
     var legend = svg.select('.legend').selectAll('*')
@@ -229,16 +230,23 @@ _.extend(ColumnChart.prototype, {
       .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
 
     legend.append('rect')
-      .attr('x', w - 15)
-      .attr('y', -25)
-      .attr('width', 10)
-      .attr('height', 10)
-      .style('fill', fill)
+      .attr({
+        'x': w - 12,
+        'y': -0.15 * w,
+        'width': 12,
+        'height': 12
+      })
+      .style({
+        'fill': fill
+      })
 
     legend.append('text')
-      .attr('x', w - 20)
-      .attr('y', -25)
-      .attr('dy', '0.85em')
+      .attr({
+        'x': w - 12,
+        'y': -0.15 * w,
+        'dx': -5,
+        'dy': 9
+      })
       .style({
         'text-anchor': 'end',
         'fill': '#999999'
