@@ -82,6 +82,10 @@
 .cd-footer {
   padding: 20px 10px 0;
   background-color: #F3F3F3;
+  position: absolute;
+  bottom: 50px;
+  width: 100%;
+
   .description-text {
     font-size: 11px;
     text-transform: uppercase;
