@@ -221,12 +221,9 @@ var Performance = React.createClass({
                           emptyText='No transit point data available'
                           options={{
                             domain: _.constant([0, 1]),
-                            size: 30,
+                            size: 24,
                             palette: colors
                           }}/>
-          </div>
-          <div>
-            <h4 className='title--wrap'>Children Vaccinated at Transit Point</h4>
           </div>
         </div>
       </div>

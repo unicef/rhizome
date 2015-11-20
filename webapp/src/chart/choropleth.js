@@ -238,7 +238,7 @@ _.extend(ChoroplethMap.prototype, {
       if (_.every(colorScale.domain(), _.isNaN)) {
         svg.select('.legend').selectAll('*').remove()
       } else {
-        let legendXPosition = options.chartInDashboard ? 0 : w
+        let legendXPosition = options.chartInDashboard ? 0 : 1.01 * w
 
         svg.select('.legend')
           .call(legend().scale(
@@ -274,10 +274,22 @@ _.extend(ChoroplethMap.prototype, {
 
       bubbleData.exit().remove()
 
+      var legendTitleText = ['Children Vaccinated at', 'Transit Point']
+      var legendTitle = svg.select('.bubbles').select('.legend').selectAll('text').data(legendTitleText)
+      legendTitle.enter().append('text')
+         .attr('class', 'title')
+         .attr({
+           'dx': -75,
+           'dy': -65
+         })
+         .style('font-size', 14)
+         .attr('transform', (d, i) => { return 'translate(' + 19 + ', ' + i * 15 + ')' })
+         .text(d => { return d })
+
       var bubbleLegendText = [100, 1000, 5000]
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + (w * 1.16) + ', ' + (0.95 * h) + ')'
+          return 'translate(' + (w * 1.15) + ', ' + (0.95 * h) + ')'
         })
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
@@ -352,7 +364,7 @@ _.extend(ChoroplethMap.prototype, {
       var stripeLegendText = ['No data collected', 'Access challenged area']
       var stripeLegend = svg.select('.stripes').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + w + ', ' + (0.17 * h) + ')'
+          return 'translate(' + (1.01 * w) + ', ' + (0.17 * h) + ')'
         })
         .selectAll('.series').data(stripeLegendText)
         .enter().append('g')
