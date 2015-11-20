@@ -141,7 +141,7 @@ class IndicatorResourceTest(ResourceTestCase):
             'short_name': 'New test short name', \
             'id': -1,'description':'test'}
 
-        resp = self.api_client.post('/api/v1/basic_indicator/', format='json', \
+        resp = self.api_client.post('/api/v1/indicator/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
 
         self.assertEqual(Indicator.objects.count(), 1)

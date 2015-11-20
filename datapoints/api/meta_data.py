@@ -4,6 +4,7 @@ import time
 
 from tastypie.resources import ALL
 from tastypie import fields
+from tastypie.bundle import Bundle
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
@@ -74,6 +75,44 @@ class IndicatorResource(BaseNonModelResource):
     class Meta(BaseNonModelResource.Meta):
         object_class = IndicatorResult
         resource_name = 'indicator'
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        kwargs = {}
+
+        if isinstance(bundle_or_obj, Bundle):
+            kwargs['pk'] = bundle_or_obj.obj.id
+        else:
+            kwargs['pk'] = bundle_or_obj.id
+
+        return kwargs
+
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        try:
+            ind_id = int(post_data['id'])
+            if ind_id == -1:
+                ind_id = None
+        except KeyError:
+            ind_id = None
+
+        defaults = {
+            'name': post_data['name'],
+            'short_name': post_data['short_name'],
+            'description': post_data['description']
+        }
+
+        ind, created = Indicator.objects.update_or_create(
+            id=ind_id,
+            defaults=defaults
+        )
+
+        bundle.obj = ind
+        bundle.data['id'] = ind.id
+
+        return bundle
+
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -245,42 +284,6 @@ class IndicatorTagResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
         resource_name = 'indicator_tag'
-        filtering = {
-            "id": ALL,
-        }
-
-
-class BaseIndicatorResource(BaseModelResource):
-    def obj_create(self, bundle, **kwargs):
-
-        post_data = bundle.data
-
-        try:
-            ind_id = int(post_data['id'])
-            if ind_id == -1:
-                ind_id = None
-        except KeyError:
-            ind_id = None
-
-        defaults = {
-            'name': post_data['name'],
-            'short_name': post_data['short_name'],
-            'description': post_data['description']
-        }
-
-        ind, created = Indicator.objects.update_or_create(
-            id=ind_id,
-            defaults=defaults
-        )
-
-        bundle.obj = ind
-        bundle.data['id'] = ind.id
-
-        return bundle
-
-    class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values('id', 'name', 'short_name', 'description')
-        resource_name = 'basic_indicator'
         filtering = {
             "id": ALL,
         }
