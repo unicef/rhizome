@@ -105,29 +105,47 @@ class IndicatorResource(BaseNonModelResource):
         except KeyError:
             pass
 
-        ## FIXME - shouldn't make this query but it makes the code cleaner ##
-        return Indicator.objects.all().values_list('id',flat=True)
+        return None
 
+    def build_indicator_queryset(self, indicator_id_list):
+        '''
+        Based on the indicator_ids, we make 3 requests, one for the indicators
+        one for the bounds, and another for the tags.
+        '''
+
+        tag_cols = ['indicator_id','indicator_tag_id']
+        bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+
+        if indicator_id_list:
+            ## get tags ##
+            tag_df = DataFrame(list(IndicatorToTag.objects.filter(indicator_id__in=\
+                indicator_id_list).values_list(*tag_cols)),columns = tag_cols)
+
+            bound_df = DataFrame(list(IndicatorBound.objects\
+                .filter(indicator_id__in=indicator_id_list)\
+                .values_list(*bound_cols)),columns = bound_cols)
+
+            qs = Indicator.objects.filter(id__in=indicator_id_list)
+        else:
+            tag_df = DataFrame(list(IndicatorToTag.objects.all()\
+                .values_list(*tag_cols)),columns = tag_cols)
+
+            bound_df = DataFrame(list(IndicatorBound.objects.all()\
+                .values_list(*bound_cols)),columns = bound_cols)
+
+            qs = Indicator.objects.all()
+
+        bound_df = bound_df.where((notnull(bound_df)), None)
+        tag_df = tag_df.where((notnull(tag_df)), None)
+
+        return qs, bound_df, tag_df
 
     def get_object_list(self, request):
         indicator_batch = []
 
         indicator_id_list = self.get_indicator_ids_from_request(request)
+        qs, bound_df, tag_df = self.build_indicator_queryset(indicator_id_list)
 
-        ## get tags ##
-        tag_cols = ['indicator_id','indicator_tag_id']
-        tag_df = DataFrame(list(IndicatorToTag.objects.filter(indicator_id__in=\
-            indicator_id_list).values_list(*tag_cols)),columns = tag_cols)
-
-        ## get bounds ##
-        bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
-        bound_df = DataFrame(list(IndicatorBound.objects.all()\
-            .values_list(*bound_cols)),columns = bound_cols)
-
-        bound_df = bound_df.where((notnull(bound_df)), None)
-        tag_df = tag_df.where((notnull(tag_df)), None)
-
-        qs = Indicator.objects.filter(id__in=indicator_id_list)
         for row in qs:
 
             ## create the ResultObject and assign the basic variables ##
