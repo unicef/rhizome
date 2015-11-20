@@ -224,6 +224,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         .attr('transform', 'translate(0,' + (h + legendPaddingTop) + ')')
         .call(legend(options)
           .interactive(true)
+          .fontSize(100)
           .scale(colorScale)
           .filled(function (d, i) {
             return sortBy ? sortBy === d : i === 0

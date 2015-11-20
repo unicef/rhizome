@@ -145,6 +145,15 @@ function legend (chartOptions) {
     return chart
   }
 
+  chart.fontSize = function (value) {
+    if (!arguments.length) {
+      return _fontSize
+    }
+
+    _fontSize = value
+    return chart
+  }
+
   function translate (d, i) {
     if (chart.chartOptions && chart.chartOptions.chartInDashboard) {
       return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
