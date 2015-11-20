@@ -277,7 +277,7 @@ _.extend(ChoroplethMap.prototype, {
       var bubbleLegendText = [100, 1000, 5000]
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + (w * 1.16) + ', ' + (0.9 * h) + ')'
+          return 'translate(' + (w * 1.16) + ', ' + (0.95 * h) + ')'
         })
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
