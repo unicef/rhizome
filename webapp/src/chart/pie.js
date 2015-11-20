@@ -140,7 +140,8 @@ _.extend(PieChart.prototype, {
 
     slice.attr({
       'd': arc,
-      'fill': fill
+      'fill': fill,
+      'stroke': '#fff'
     }).on('mousemove', d => {
       var evt = d3.event
 
