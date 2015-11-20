@@ -96,9 +96,11 @@ h6 {
     background: $rhz-chart-title-bg-color !important;
     color: $rhz-chart-title-color !important;
     text-transform: uppercase;
-    font-family: serif;
-    padding: 2px 2px;
-    margin: 8px 0;
+    padding: 0;
+    margin: 0;
+  }
+  .transit-point {
+    margin-top: 120%;
   }
 
   p {
@@ -110,7 +112,7 @@ h6 {
   }
 
   .chart {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
   }
 
   .pie-charts,
@@ -130,6 +132,40 @@ h6 {
 .ie #management-dashboard {
   color: #a7aeaf;
   font-size: xx-small;
+
+  #polio-cases-ytd svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
+
+  #immunity-gap svg {
+    width: 6.843cm;
+    height: 3.894cm;
+  }
+
+  #inaccessible-children svg {
+    width: 6.843cm;
+    height: 2.66cm;
+  }
+
+  #missed-children svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
+
+  #conversions svg {
+    width: 6.845cm;
+    height: 3.028cm;
+  }
+
+  #missed-children-map svg {
+    width: 6.845cm;
+    height: 6.81672137cm;
+  }
+
+  #missed-children-legend {
+    height: 2cm;
+  }
 
   h1 {
     display: inline-block;
