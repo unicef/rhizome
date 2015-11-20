@@ -1,9 +1,12 @@
+import json
+
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 
 from datapoints.models import Indicator, IndicatorTag, \
-    CalculatedIndicatorComponent,IndicatorToTag
+    CalculatedIndicatorComponent,IndicatorToTag, IndicatorBound
 
+from datapoints.cache_meta import cache_indicator_abstracted
 
 class IndicatorResourceTest(ResourceTestCase):
     def setUp(self):
@@ -144,3 +147,53 @@ class IndicatorResourceTest(ResourceTestCase):
                                     data=post_data, authentication=self.get_credentials())
 
         self.assertEqual(Indicator.objects.count(), 1)
+
+    def test_bound_and_tag_json(self):
+
+        ind = Indicator.objects.create(**{
+            'name':'test name',
+            'short_name':'test short name',
+            'description':'test description',
+        })
+
+        ## tags ##
+        ind_tag_0 = IndicatorTag.objects.create(tag_name='tag1')
+        ind_tag_1 = IndicatorTag.objects.create(tag_name='tag2')
+
+        indicator_to_tag_0 = IndicatorToTag.objects.create(
+            indicator = ind,indicator_tag = ind_tag_0
+        )
+        indicator_to_tag_1 = IndicatorToTag.objects.create(
+            indicator = ind,indicator_tag = ind_tag_1
+        )
+
+        ## bounds ##
+        bound_dict_0 = {u'indicator_id': ind.id, u'mn_val':10,\
+            u'mx_val':20, u'bound_name':u'Good'}
+        bound_dict_1 = {'indicator_id': ind.id, u'mn_val':20,\
+            u'mx_val':30,u'bound_name':u'Bad'}
+
+        ind_bound_0 = IndicatorBound.objects.create(**bound_dict_0)
+        ind_bound_1 = IndicatorBound.objects.create(**bound_dict_1)
+
+        target_tag_json = [ind_tag_0.id, ind_tag_1.id]
+        target_bound_json = [bound_dict_0, bound_dict_1]
+
+        cache_indicator_abstracted()
+
+        resp = self.api_client.get('/api/v1/indicator/', format='json'\
+            , data={}, authentication=self.get_credentials())
+
+        data = self.deserialize(resp)
+        objects = data['objects']
+
+        ## basic attributes ##
+        self.assertEqual(ind.short_name,objects[0]['short_name'])
+        self.assertEqual(ind.name,objects[0]['name'])
+        self.assertEqual(ind.description,objects[0]['description'])
+
+        ## pivoted attributes ##
+        self.assertEqual(target_tag_json.sort()\
+            ,objects[0]['tag_json'].sort())
+        self.assertEqual(target_bound_json.sort()\
+            ,objects[0]['bound_json'].sort())

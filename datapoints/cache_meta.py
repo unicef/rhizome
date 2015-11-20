@@ -182,22 +182,8 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
-def upsert_meta_data(qset, abstract_model):
-    '''
-    Given a raw queryset, and the model of the table to be upserted into,
-    iterate through each resutl, clean the dictionary and batch delete and
-    insert the data.
-    '''
+def minify_geo_json():
+    afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
+    coordinates = afg_shape['geometry']['coordinates'][0]
 
-    batch = []
-
-    for row in qset:
-
-        row_data = dict(row.__dict__)
-        del row_data['_state']
-
-        object_instance = abstract_model(**row_data)
-        batch.append(object_instance)
-
-    abstract_model.objects.all().delete()
-    abstract_model.objects.bulk_create(batch)
+    df = DataFrame(coordinates, columns=['lat','lon'])
