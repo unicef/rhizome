@@ -190,7 +190,7 @@ class IndicatorResourceTest(ResourceTestCase):
 
         ## pivoted attributes ##
 
-        # self.assertEqual(sorted(target_tag_json)\
-        #     ,sorted(objects[0]['tag_json']))
-        # self.assertEqual(sorted(target_bound_json)\
-        #     ,sorted(objects[0]['bound_json']))
+        self.assertEqual(sorted(target_tag_json)\
+            ,sorted(objects[0]['tag_json']))
+        self.assertEqual(sorted(target_bound_json)\
+            ,sorted(objects[0]['bound_json']))

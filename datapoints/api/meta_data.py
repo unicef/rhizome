@@ -7,12 +7,14 @@ from tastypie import fields
 
 from django.contrib.auth.models import User, Group
 from django.core.files.base import ContentFile
+from pandas import DataFrame
+from pandas import notnull
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import Campaign, Location, Indicator, IndicatorAbstracted, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, LocationPolygon
+    ChartTypeToIndicator, Office, LocationPolygon, IndicatorBound, IndicatorToTag
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -72,9 +74,6 @@ class IndicatorResource(BaseNonModelResource):
     class Meta(BaseNonModelResource.Meta):
         object_class = IndicatorResult
         resource_name = 'indicator'
-        filtering = {
-            "id": ALL,
-        }
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -84,25 +83,67 @@ class IndicatorResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def get_object_list(self, request):
-        indicator_batch = []
+    def get_indicator_ids_from_request(self, request):
+        '''
+        '''
+
+        try:
+            indicator_id_list = [request.GET['id']]
+            return indicator_id_list
+        except KeyError:
+            pass
+
+        try:
+            x = request.GET['id__in'].split(',')
+            return x
+        except KeyError:
+            pass
 
         try:
             office_id = request.GET['office_id']
-            indicator_id_list = self.get_indicator_id_by_office(office_id)
-            qs = Indicator.objects.filter(id__in=indicator_id_list)
+            return self.get_indicator_id_by_office(office_id)
         except KeyError:
-            qs = Indicator.objects.all()
+            pass
 
+        ## FIXME - shouldn't make this query but it makes the code cleaner ##
+        return Indicator.objects.all().values_list('id',flat=True)
+
+
+    def get_object_list(self, request):
+        indicator_batch = []
+
+        indicator_id_list = self.get_indicator_ids_from_request(request)
+
+        ## get tags ##
+        tag_cols = ['indicator_id','indicator_tag_id']
+        tag_df = DataFrame(list(IndicatorToTag.objects.filter(indicator_id__in=\
+            indicator_id_list).values_list(*tag_cols)),columns = tag_cols)
+
+        ## get bounds ##
+        bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+        bound_df = DataFrame(list(IndicatorBound.objects.all()\
+            .values_list(*bound_cols)),columns = bound_cols)
+
+        bound_df = bound_df.where((notnull(bound_df)), None)
+        tag_df = tag_df.where((notnull(tag_df)), None)
+
+        qs = Indicator.objects.filter(id__in=indicator_id_list)
         for row in qs:
+
+            ## create the ResultObject and assign the basic variables ##
             ir = IndicatorResult()
-            ir.name = row.name
-            ir.description = row.description
-            ir.short_name = row.short_name
-            ir.slug = row.slug
-            ir.data_format = row.data_format
-            ir.bound_json = []
-            ir.tag_json = []
+            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format\
+                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format\
+
+            ## look up the bounds / tags from the data two DFs created above ##
+            filtered_tag_df = tag_df[tag_df['indicator_id'] == \
+                row.id]
+            filtered_bound_df = bound_df[bound_df['indicator_id'] == \
+                row.id]
+
+            ir.bound_json= [row.to_dict() for ix, row in\
+                filtered_bound_df.iterrows()]
+            ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
 
             indicator_batch.append(ir)
 

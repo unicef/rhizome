@@ -140,8 +140,8 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
-def minify_geo_json():
-    afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
-    coordinates = afg_shape['geometry']['coordinates'][0]
-
-    df = DataFrame(coordinates, columns=['lat','lon'])
+# def minify_geo_json():
+#     afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
+#     coordinates = afg_shape['geometry']['coordinates'][0]
+#
+#     df = DataFrame(coordinates, columns=['lat','lon'])
