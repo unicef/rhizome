@@ -358,7 +358,7 @@ var Dashboard = React.createClass({
             <div className='medium-6 columns'>
               {settingFilter}
             </div>
-            <div className='medium-2 columns'>
+            <div className='medium-3 columns'>
               <div>
                 {edit}
                 <TitleMenu text={dashboardName}
