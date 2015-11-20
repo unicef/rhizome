@@ -532,16 +532,6 @@ svg {
   font-weight: bold;
 }
 
-#new-polio-cases {
-  color: $down-color;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999;
-  padding: 0 2pt;
-  font-size: 0.875rem
-}
-
 ul {
   &.pie {
     list-style: none;

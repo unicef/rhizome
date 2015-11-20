@@ -56,7 +56,7 @@ export default React.createClass({
     if (_.isFinite(newCases) && newCases > 0) {
       var plural = newCases !== 1 ? 's' : ''
       newCaseLabel = (
-        <div id='new-polio-cases'>{newCases} new case{plural}</div>
+        <h4 style={{'color': '#F15046'}}>{newCases} new case{plural}</h4>
       )
     }
 
