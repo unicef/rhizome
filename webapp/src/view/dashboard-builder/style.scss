@@ -85,6 +85,7 @@
   position: fixed;
   bottom: 50px;
   width: 100%;
+  z-index: 9999;
 
   .description-text {
     font-size: 11px;
