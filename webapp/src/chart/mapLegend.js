@@ -119,16 +119,18 @@ _.extend(MapLegend.prototype, {
         domain[0] = Math.min(domain[0], 0)
       }
 
+      var colorRange = [
+        '#F5C19A',
+        '#FFA681',
+        '#FF8958',
+        '#D95449',
+        '#C0271E',
+        '#000000'
+      ]
+
       var colorScale = d3.scale.quantize()
-        .domain(domain)
-        .range([
-          '#FEE7DC',
-          '#FABAA2',
-          '#F58667',
-          '#D95449',
-          '#AF373E',
-          '#2D2525'
-        ])
+        .domain(domain.reverse())
+        .range(colorRange.reverse())
 
       var ticks = _.map(colorScale.range(), c => _.map(colorScale.invertExtent(c), options.yFormat).join('—'))
       svg.select('.legend')
