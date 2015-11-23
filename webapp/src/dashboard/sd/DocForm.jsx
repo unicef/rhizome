@@ -142,8 +142,6 @@ var DocForm = React.createClass({
     }
 
     var divZoneStyle = {
-      margin: 'auto',
-      width: '50%',
       padding: '10px',
       border: '2px solid #426281'
     }
@@ -157,9 +155,10 @@ var DocForm = React.createClass({
       color: '#FEFEFE',
       textTransform: 'uppercase',
       textAlign: 'center',
-      margin: '2px',
+      margin: '0 38%',
       padding: '15px',
-      cursor: 'pointer'
+      cursor: 'pointer',
+      width: 200
     }
 
     // since JSX is case sensitive, be sure to use 'encType'

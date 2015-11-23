@@ -184,21 +184,25 @@ var SourceDataDashboard = React.createClass({
         doc_id={doc_id} />
     }
 
-    var page_title = doc_obj.doc_title + ' - ' + doc_tab
+    var step = (<div className='medium-12 columns upload__csv--step'>
+      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
+    </div>)
 
     return (
-      <div>
-        {docForm}
+      <div className='row upload__csv'>
+        <div className='medium-12 columns upload__csv--load'>
+          upload data
+        </div>
+          {step}
+        <div className='medium-12 columns upload__csv--form'>
+          {docForm}
+        </div>
         <div className='row'>
           <div id='popUp'></div>
-          <div className='medium-9 columns'>
-            <h2 style={{ textAlign: 'center' }} className='ufadmin-page-heading'>{page_title} </h2>
+          <div className='medium-12 columns'>
             {review_table}
           </div>
-          <div className='medium-3 columns'>
-            {review_nav}
-            {review_breakdown}
-          </div>
+
         </div>
       </div>)
   },

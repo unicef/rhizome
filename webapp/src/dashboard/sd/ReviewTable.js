@@ -152,9 +152,13 @@ var ReviewTable = React.createClass({
   },
 
   renderFilters () {
+    var recent = (<div>
+    </div>)
+
     return (
       <div className='row'>
       <div className='medium-7 columns'>
+        {recent}
       </div>
       <div className='medium-5 columns'>
         <div className='ufadmin-filters-content'>
