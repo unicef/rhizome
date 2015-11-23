@@ -100,7 +100,7 @@ h6 {
     margin: 0;
   }
   .transit-point {
-    margin-top: 120%;
+    margin-top: 70%;
   }
 
   p {
@@ -133,88 +133,13 @@ h6 {
   color: #a7aeaf;
   font-size: xx-small;
 
-  #polio-cases-ytd svg {
-    width: 6.843cm;
-    height: 3.894cm;
+  h4 {
+    padding: 2px;
+    font-size: 0.875rem;
   }
 
-  #immunity-gap svg {
-    width: 6.843cm;
-    height: 3.894cm;
-  }
-
-  #inaccessible-children svg {
-    width: 6.843cm;
-    height: 2.66cm;
-  }
-
-  #missed-children svg {
-    width: 6.845cm;
-    height: 3.028cm;
-  }
-
-  #conversions svg {
-    width: 6.845cm;
-    height: 3.028cm;
-  }
-
-  #missed-children-map svg {
-    width: 6.845cm;
-    height: 6.81672137cm;
-  }
-
-  #missed-children-legend {
-    height: 2cm;
-  }
-
-  h1 {
-    display: inline-block;
-    font-size: 20px;
-    font-weight: bold;
-
-    .location {
-      text-transform: uppercase;
-    }
-
-    .campaign {
-      font-weight: normal;
-    }
-  }
-
-  h2 {
-    display: inline-block;
-    font-size: 12px;
-    color: #759CB8 !important;
-    padding: 0.7em
-  }
-
-  h3 {
-    background: $rhz-chart-title-bg-color !important;
-    color: $rhz-chart-title-color !important;
-    text-transform: uppercase;
-    padding: 0;
-    margin: 0;
-  }
-
-  p {
-    font-size: 8px;
-  }
-
-  h4, h6 {
-    font-size: xx-small;
-  }
-
-  .chart {
-    margin-bottom: 5px;
-  }
-
-  .pie-charts,
-  .pie-chart {
-    margin: 0;
-  }
-
-  table td {
-    font-size: xx-small;
+  .transit-points {
+    right: 2em;
   }
 
   .bullet-chart svg {
