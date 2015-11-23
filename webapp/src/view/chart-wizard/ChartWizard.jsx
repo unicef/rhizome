@@ -181,7 +181,7 @@ let ChartWizard = React.createClass({
     let optionStep = (
       <div>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        {findChartType(this.state.data.chartDef.type).chooseAxis
+        {findChartType(this.state.data.chartDef.type).chooseAxis || !findChartType(this.state.data.chartDef.type).locationLevel
           ? (
             <div>
               <h4>X Axis</h4>
@@ -211,10 +211,11 @@ let ChartWizard = React.createClass({
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         {
-          findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel
-            : <MapAxisChooser bubbleFormatValue={this.state.data.xFormatValue}
+          findChartType(this.state.data.chartDef.type).locationLevel
+            ? locationLevel
+            : (<MapAxisChooser bubbleFormatValue={this.state.data.xFormatValue}
                               onBubbleFormatChange={ChartWizardActions.changeXFormatRadio}
-                              formatValues={builderDefinitions.formats} />
+                              formatValues={builderDefinitions.formats} />)
         }
         {findChartType(this.state.data.chartDef.type).chooseAxis
           ? (
