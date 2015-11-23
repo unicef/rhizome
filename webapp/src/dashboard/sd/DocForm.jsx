@@ -149,8 +149,7 @@ var DocForm = React.createClass({
     }
 
     var dropZoneStyle = {
-      padding: '4rem 15rem',
-      textAlign: 'center'
+      padding: '4rem 15rem'
     }
 
     var uploadButtonStyle = {
@@ -159,13 +158,14 @@ var DocForm = React.createClass({
       textTransform: 'uppercase',
       textAlign: 'center',
       margin: '2px',
-      padding: '15px'
+      padding: '15px',
+      cursor: 'pointer'
     }
 
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div style={divZoneStyle}>
       <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-        <div style={uploadButtonStyle}>Choose to upload</div>
+        <div style={uploadButtonStyle} onMouseOver>Choose to upload</div>
       </Dropzone>
       {fileConfigForm}
       {refreshBtn}
