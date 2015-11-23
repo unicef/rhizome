@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
+from datapoints.api.geo import GeoResource
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints import views
