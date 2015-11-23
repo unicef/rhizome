@@ -211,14 +211,15 @@ let ChartWizard = React.createClass({
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
         {
-          findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : <MapAxisChooser />
+          findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel :
+            <MapAxisChooser xFormatValue={this.state.data.xFormatValue}
+              onXFormatChange={ChartWizardActions.changeXFormatRadio}
+              formatValues={builderDefinitions.formats} />
         }
         {findChartType(this.state.data.chartDef.type).chooseAxis
           ? (
-            <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
-              xFormatValue={this.state.data.xFormatValue}
+            <ScatterAxisChooser xFormatValue={this.state.data.xFormatValue}
               onXFormatChange={ChartWizardActions.changeXFormatRadio}
-              yAxisValue={this.state.data.chartDef.y}
               yFormatValue={this.state.data.yFormatValue}
               onYFormatChange={ChartWizardActions.changeYFormatRadio}
               formatValues={builderDefinitions.formats}
