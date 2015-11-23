@@ -94,6 +94,7 @@ _.extend(MapLegend.prototype, {
       })
 
     pattern.selectAll('line')
+      .style('stroke', '#cccccc')
       .attr({
         'stroke-linecap': 'square',
         'stroke-linejoin': 'miter',
