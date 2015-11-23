@@ -279,6 +279,7 @@ export default {
       if (!data || data.length === 0) {
         return { options: chartOptions, data: border.objects.features }
       }
+
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
         let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
@@ -289,6 +290,7 @@ export default {
           }
         })
       })
+
       console.log(chartData.map(d => d.properties))
       return { options: chartOptions, data: chartData }
     }))
