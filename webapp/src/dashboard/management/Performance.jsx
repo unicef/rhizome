@@ -203,6 +203,7 @@ var Performance = React.createClass({
                    yFormat: pct,
                    radius: _.partial(_chooseRadius, _),
                    maxRadius: maxRadius,
+                   bubblesTitle: ['Children Vaccinated at', 'Transit Point'],
                    onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </div>

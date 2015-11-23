@@ -274,17 +274,18 @@ _.extend(ChoroplethMap.prototype, {
 
       bubbleData.exit().remove()
 
-      var legendTitleText = ['Children Vaccinated at', 'Transit Point']
-      var legendTitle = svg.select('.bubbles').select('.legend').selectAll('text').data(legendTitleText)
-      legendTitle.enter().append('text')
-         .attr('class', 'title')
-         .attr({
-           'dx': -75,
-           'dy': -65
-         })
-         .style('font-size', 14)
-         .attr('transform', (d, i) => { return 'translate(' + 19 + ', ' + i * 15 + ')' })
+      if (options.bubblesTitle) {
+        var legendTitle = svg.select('.bubbles').select('.legend').selectAll('text').data(options.bubblesTitle)
+        legendTitle.enter().append('text')
+          .attr('class', 'title')
+          .attr({
+            'dx': -75,
+            'dy': -65
+          })
+          .style('font-size', 14)
+          .attr('transform', (d, i) => { return 'translate(' + 19 + ', ' + i * 15 + ')' })
          .text(d => { return d })
+      }
 
       var bubbleLegendText = [100, 1000, 5000]
       var bubbleLegend = svg.select('.bubbles').select('.legend')
