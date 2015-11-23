@@ -158,7 +158,7 @@ var Performance = React.createClass({
         <div className='medium-2 columns'>
           <div>
             <h4>Missed Children</h4>
-            <Chart type='StackedAreaChart' data={missed}
+            <Chart type='AreaChart' data={missed}
                    loading={loading}
                    options={{
                      aspect: 2.26,
