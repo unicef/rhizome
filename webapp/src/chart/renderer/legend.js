@@ -162,9 +162,9 @@ function legend (chartOptions) {
       return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
     }
 
-    length = length % 2 ===0 ? length : length + 1
+    length = length % 2 === 0 ? length : length + 1
 
-    return i < length/2
+    return i < length / 2
       ? 'translate(' + 0 + ', ' + (i * (_size + _padding)) + ')'
       : 'translate(' + (_fontSize + _size) + ', ' + ((i - length / 2) * (_size + _padding)) + ')'
   }
