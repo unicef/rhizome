@@ -232,6 +232,21 @@ class LocationPolygon(models.Model):
     class Meta:
         db_table = 'location_polygon'
 
+class MinGeo(models.Model):
+    '''
+    Same as above, but with the geo_json minified.  This is a separate table
+    ( as opposed to just another column ) so that we can keep this table as
+    lightweigght as possible.  This table is populated from the LocationPolygon
+    table from the cache_meta process.  We cache this so that we can save
+    resources on the request, and still keep the full data of the source shape
+    file in LocationPolygon,
+    '''
+
+    location = models.OneToOneField(Location)
+    geo_json = JSONField()
+
+    class Meta:
+        db_table = 'min_polygon'
 
 class CampaignType(models.Model):
     '''

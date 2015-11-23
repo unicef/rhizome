@@ -15,7 +15,7 @@ from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPoi
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, LocationPolygon, IndicatorBound, IndicatorToTag
+    ChartTypeToIndicator, Office, MinGeo, IndicatorBound, IndicatorToTag
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -954,7 +954,7 @@ class GeoResource(BaseNonModelResource):
         features = []
 
         if with_parent is None:
-            polygon_values_list = LocationPolygon.objects.filter(location_id__in=locations_to_return).values()
+            polygon_values_list = MinGeo.objects.filter(location_id__in=locations_to_return).values()
             for p in polygon_values_list:
                 geo_dict = json.loads(p['geo_json'])
                 geo_obj = GeoJsonResult()
@@ -964,7 +964,7 @@ class GeoResource(BaseNonModelResource):
                 geo_obj.properties = {'location_id': p['location_id']}
                 features.append(geo_obj)
         else:
-            polygon_values_list = LocationPolygon.objects.select_related('location')\
+            polygon_values_list = MinGeo.objects.select_related('location')\
                 .filter(location_id__in=locations_to_return).all()
             for p in polygon_values_list:
                 geo_obj = GeoJsonResult()

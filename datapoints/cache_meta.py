@@ -1,6 +1,7 @@
 from datapoints.models import *
 from source_data.models import SourceObjectMap
 from pandas import read_csv, notnull, DataFrame, concat
+# from pandas.core.frame import AssertionError
 
 
 def calculate_campaign_percentage_complete():
@@ -140,8 +141,35 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
-# def minify_geo_json():
-#     afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
-#     coordinates = afg_shape['geometry']['coordinates'][0]
-#
-#     df = DataFrame(coordinates, columns=['lat','lon'])
+def minify_geo_json():
+    '''
+    Make a square a triangle.. an octagon a hexagon.  Shrink the Number of
+    vertices for each polygon.
+
+    from datapoints.cache_meta import minify_geo_json as m
+    '''
+
+    min_geo_batch = []
+
+    for shape in LocationPolygon.objects.all():
+
+        min_json = shape.geo_json
+        # coordinates = shape.geo_json['geometry']['coordinates'][0]
+        #
+        # try:
+        #     shape_df = DataFrame(coordinates, columns=['lat','lon'])
+        # except AssertionError:
+        #     pass
+        #
+        # shape_df['ix_col'] = shape_df.index
+        # fn = lambda x: x % 3
+        # shape_df['to_take'] = shape_df['ix_col'].map(fn)
+        # min_df = shape_df[shape_df['to_take'] == 0]
+
+        shape_obj = \
+            MinGeo(**{'location_id':shape.location_id,'geo_json':min_json})
+
+        min_geo_batch.append(shape_obj)
+
+    MinGeo.objects.all().delete()
+    MinGeo.objects.bulk_create(min_geo_batch)
