@@ -1,4 +1,5 @@
 import d3 from 'd3'
+import _ from 'lodash'
 
 function legend (chartOptions) {
   var _clickHandler = null
@@ -28,8 +29,11 @@ function legend (chartOptions) {
   function chart (selection) {
     selection.each(function () {
       var g = d3.select(this)
+      var data = _scale && _scale.domain ? _scale.domain() : []
       var series = g.selectAll('.series')
-        .data(_scale && _scale.domain ? _scale.domain() : [])
+        .data(data)
+
+      let length = data[0].length
 
       g.classed('interactive', _interactive)
 
@@ -37,7 +41,7 @@ function legend (chartOptions) {
         .append('g')
         .attr({
           'class': 'series',
-          'transform': translate
+          'transform': _.partial(translate, _, _, length)
         })
 
       seriesEnter.append('rect')
@@ -57,7 +61,7 @@ function legend (chartOptions) {
         .on('click', _clickHandler)
         .transition()
         .duration(300)
-        .attr('transform', translate)
+        .attr('transform', _.partial(translate, _, _, length))
 
       series.select('rect')
         .attr({
@@ -153,14 +157,16 @@ function legend (chartOptions) {
     return chart
   }
 
-  function translate (d, i) {
+  function translate (d, i, length) {
     if (chart.chartOptions && chart.chartOptions.chartInDashboard) {
       return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
     }
 
-    return i % 2 === 0
-      ? 'translate(' + 0 + ', ' + (i / 2 * (_size + _padding)) + ')'
-      : 'translate(' + (_fontSize + _size) + ', ' + ((i - 1) / 2 * (_size + _padding)) + ')'
+    length = length % 2 ===0 ? length : length + 1
+
+    return i < length/2
+      ? 'translate(' + 0 + ', ' + (i * (_size + _padding)) + ')'
+      : 'translate(' + (_fontSize + _size) + ', ' + ((i - length / 2) * (_size + _padding)) + ')'
   }
 
   chart.chartOptions = chartOptions
