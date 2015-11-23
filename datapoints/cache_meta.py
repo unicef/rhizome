@@ -1,8 +1,10 @@
+from pandas import read_csv, notnull, DataFrame, concat
+from numpy import sqrt, log
+
 from datapoints.models import *
 from source_data.models import SourceObjectMap
-from pandas import read_csv, notnull, DataFrame, concat
-# from pandas.core.frame import AssertionError
 
+from pprint import pprint
 
 def calculate_campaign_percentage_complete():
     '''
@@ -146,30 +148,83 @@ def minify_geo_json():
     Make a square a triangle.. an octagon a hexagon.  Shrink the Number of
     vertices for each polygon.
 
-    from datapoints.cache_meta import minify_geo_json as m
+    This is a kind of "dumb" algorithm because the adjacent shaps dont line up
+    Like they do with the source, but the reduced size of the data returned
+    to the API makes having the lower fidelity shapes worth the performance
+    boost.
+
+    This ensures that every shape in the system has no more than 100 vertices.
+    If the original shape has 99, we do not shrink.  I do my best here not to
+    blindly shrink the shape, but instead to remove points that are super close
+    together.
+
+from datapoints.cache_meta import minify_geo_json as m
+m()
     '''
 
     min_geo_batch = []
 
-    for shape in LocationPolygon.objects.all():
+    # for shp in LocationPolygon.objects.filter(location_id__in=[3108,3109]):
+    for shp in LocationPolygon.objects.all():
 
-        min_json = shape.geo_json
-        # coordinates = shape.geo_json['geometry']['coordinates'][0]
-        #
-        # try:
-        #     shape_df = DataFrame(coordinates, columns=['lat','lon'])
-        # except AssertionError:
-        #     pass
-        #
-        # shape_df['ix_col'] = shape_df.index
-        # fn = lambda x: x % 3
-        # shape_df['to_take'] = shape_df['ix_col'].map(fn)
-        # min_df = shape_df[shape_df['to_take'] == 0]
+        new_polygon_list = []
+        raw_polygon_list = shp.geo_json['geometry']['coordinates']
 
-        shape_obj = \
-            MinGeo(**{'location_id':shape.location_id,'geo_json':min_json})
+        if shp.geo_json['geometry']['type'] == 'Polygon': # MultiPolygons trip me up ##
 
-        min_geo_batch.append(shape_obj)
+            for polygon in raw_polygon_list:
+
+                min_polygon = minify_polygon(polygon)
+                new_polygon_list.append(min_polygon)
+
+            shp.geo_json['geometry']['coordinates'] = new_polygon_list
+
+        shp_obj = \
+            MinGeo(**{'location_id':shp.location_id,'geo_json':shp.geo_json})
+        min_geo_batch.append(shp_obj)
 
     MinGeo.objects.all().delete()
     MinGeo.objects.bulk_create(min_geo_batch)
+
+def minify_polygon(polygon):
+    '''
+    Determine based on the number of coordinates, how many vertices we want to
+    take, then remove points that are closest to one another, and return a list
+    of lists in coorespondance to the optimal vertex count
+
+    a--b-------------------c-d-------e---------------------f-g-h-i-------j
+
+    becomes
+
+    a----------------------c---------e---------------------f-----i-------j
+
+    first we find, based on the size of the dataframe how many rows we want to
+    keep.  This is a logarithmic function so that for instance if there are 1000
+    rows we take 300, but if there are 500 we take 180.
+    '''
+
+    try:
+        shape_df = DataFrame(polygon, columns=['lat','lon'])
+    except AssertionError:
+        ## see Sindj and Punjab in pakistan.. these are MultiPolygons ##
+        shape_df = DataFrame(polygon[0], columns=['lat','lon'])
+
+    ## determine how many vertices the new shape will be ( needs better fn! ) ##
+    # rows_to_take = round(len(shape_df)/log(len(shape_df)))
+    rows_to_take = len(shape_df) / 2 if len(shape_df) > 100 else len(shape_df)
+
+    ## Find the adjacent vertex, and the distance between the two points ##
+    ## use pythagorean, not haverstime theroem because our map is 2d ( unlike
+    ## planet earth with is 3D! )
+    shape_df['ix_plus_one'] = shape_df.index + 1
+    merged_df = shape_df.merge(shape_df,left_index=True, right_on = 'ix_plus_one')
+    merged_df['lat_lon_dist'] = ((merged_df['lat_x'] - merged_df['lat_y']) + \
+        (merged_df['lon_x'] - merged_df['lon_y']))
+    merged_df['dist'] = merged_df['lat_lon_dist'].apply(lambda x: sqrt(abs(x)))
+
+    ## remove the rows that are closest to one another  ##
+    merged_df['distance_rank'] = merged_df['dist'].rank(ascending=False)
+    merged_df.sort('distance_rank')
+    filtered_df = merged_df[merged_df['distance_rank'] <= rows_to_take]
+
+    return filtered_df[['lat_x','lon_x']].values.tolist()
