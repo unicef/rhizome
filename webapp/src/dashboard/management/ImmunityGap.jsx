@@ -24,8 +24,8 @@ var ImmunityGap = React.createClass({
     var sumData = []
 
     if (immunityGapData.data.length > 1) {
-      immunityGapData.data[0].values.forEach((d, i) => {
-        sumData[i] = d.value + immunityGapData.data[1].values[i].value
+      sumData = immunityGapData.data[0].values.map((d, i) => {
+        return d.value + immunityGapData.data[1].values[i].value
       })
     }
 

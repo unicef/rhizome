@@ -129,12 +129,10 @@ var Performance = React.createClass({
     var sumData = []
     var maxRange
     if (missed.length >= 1) {
-      missed[0].values.forEach((d, i) => {
-        sumData.push(missed.reduce((sum, n) => {
-          var sumValue = typeof (sum) === 'object' ? sum.values[i].value : sum
-          var nValue = n.values[i].value
-          return sumValue + nValue
-        }))
+      sumData = missed[0].values.map((d, i) => {
+        return missed.reduce((sum, cur) => {
+          return sum + cur.values[i].value
+        }, 0)
       })
       maxRange = _.ceil(_.max(sumData), 2)
     }
