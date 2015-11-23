@@ -273,7 +273,7 @@ _.extend(ChoroplethMap.prototype, {
         })
 
       bubbleData.exit().remove()
-    }
+
       if (options.chartInDashboard) {
         var bubbleLegendText = [100, 1000, 5000]
         var bubbleLegend = svg.select('.bubbles').select('.legend')
@@ -290,39 +290,22 @@ _.extend(ChoroplethMap.prototype, {
             'fill': 'transparent',
             'stroke': '#AAAAAA'
           })
-	  
-      var bubbleLegendText = options.legend
-      var bubbleLegend = svg.select('.bubbles').select('.legend')
-        .attr('transform', function () {
-          return 'translate(' + (w * 1.15) + ', ' + (0.95 * h) + ')'
-        })
-        .selectAll('.series').data(bubbleLegendText)
-        .enter().append('g')
-        .attr('class', 'series')
 
-      bubbleLegend.append('circle')
-        .attr('r', function (d) { return options.radius(d) })
-        .attr('cy', function (d) { return (options.maxRadius - options.radius(d)) })
-        .style({
-          'opacity': 0.5,
-          'fill': 'transparent',
-          'stroke': '#AAAAAA'
-        })
-
-      bubbleLegend.append('line')
-        .attr({
-          x1: -(2.5 * options.maxRadius),
-          y1: function (d) { return (options.maxRadius - 2 * options.radius(d)) },
-          x2: 0,
-          y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
-        })
-        .style('stroke', '#AAAAAA')
+        bubbleLegend.append('line')
+          .attr({
+            x1: -(2.5 * options.maxRadius),
+            y1: function (d) { return (options.maxRadius - 2 * options.radius(d)) },
+            x2: 0,
+            y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
+          })
+          .style('stroke', '#AAAAAA')
 
         bubbleLegend.append('text')
           .attr('dx', -(2.5 * options.maxRadius))
           .attr('dy', function (d) { return (options.maxRadius - 2 * options.radius(d)) })
           .text(function (d) { return d })
           .style('fill', '#AAAAAA')
+      }
     }
 
     if (!_.isUndefined(options.stripesValue)) {
