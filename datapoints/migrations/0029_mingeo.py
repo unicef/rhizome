@@ -4,6 +4,11 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import jsonfield.fields
 
+from datapoints.cache_meta import minify_geo_json
+
+def forwards_func(apps, schema_editor):
+
+    minify_geo_json()
 
 class Migration(migrations.Migration):
 
@@ -22,5 +27,8 @@ class Migration(migrations.Migration):
             options={
                 'db_table': 'min_polygon',
             },
+        ),
+        migrations.RunPython(
+            forwards_func,
         ),
     ]
