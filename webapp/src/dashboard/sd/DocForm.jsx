@@ -145,19 +145,27 @@ var DocForm = React.createClass({
       margin: 'auto',
       width: '50%',
       padding: '10px',
-      border: '2px dashed #0087F7'
+      border: '2px solid #426281'
     }
 
     var dropZoneStyle = {
-      minHeight: '100px',
-      padding: '54px 54px',
-      marginRight: '150px'
+      padding: '4rem 15rem',
+      textAlign: 'center'
+    }
+
+    var uploadButtonStyle = {
+      backgroundColor: '#344B61',
+      color: '#FEFEFE',
+      textTransform: 'uppercase',
+      textAlign: 'center',
+      margin: '2px',
+      padding: '15px'
     }
 
     // since JSX is case sensitive, be sure to use 'encType'
     return (<div style={divZoneStyle}>
       <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-        <div style={{textAlign: 'center'}}>Click here, or Drag a File to Upload New Data!</div>
+        <div style={uploadButtonStyle}>Choose to upload</div>
       </Dropzone>
       {fileConfigForm}
       {refreshBtn}
