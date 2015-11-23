@@ -12,7 +12,6 @@ function legend (chartOptions) {
   var _scale = d3.scale.category20b()
   var _size = 8
   var _fontSize = 65
-  var _margin = 20
 
   function fill (d, i) {
     if (!_interactive || _filled(d, i)) {
@@ -160,8 +159,8 @@ function legend (chartOptions) {
     }
 
     return i % 2 === 0
-      ? 'translate(' + _margin + ', ' + (i / 2 * (_size + _padding)) + ')'
-      : 'translate(' + (_fontSize + _size + _margin) + ', ' + ((i - 1) / 2 * (_size + _padding)) + ')'
+      ? 'translate(' + 0 + ', ' + (i / 2 * (_size + _padding)) + ')'
+      : 'translate(' + (_fontSize + _size) + ', ' + ((i - 1) / 2 * (_size + _padding)) + ')'
   }
 
   chart.chartOptions = chartOptions
