@@ -205,7 +205,7 @@ var Performance = React.createClass({
                  }}/>
         </div>
 
-        <div className='medium-1 column'>
+        <div className='medium-1 column missed__children--position'>
           <div>
             <h4 className='font-bold'>Missed Children</h4>
           </div>
