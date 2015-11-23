@@ -15,7 +15,6 @@ var DEFAULTS = {
     left: 0
   },
   onClick: _.noop,
-  value: _.property('properties.value'),
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name')
 }
@@ -109,7 +108,7 @@ _.extend(MapLegend.prototype, {
 
     var svg = this._svg
 
-    if (options.mapLegend) {
+    if (options.value) {
       var features = _.reject(data, 'properties.isBorder')
 
       var domain = options.domain(features)
