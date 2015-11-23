@@ -159,10 +159,10 @@ var ReviewTable = React.createClass({
 
     return (
       <div className='row'>
-      <div className='medium-7 columns'>
+      <div className='large-7 medium-9 small-12 columns'>
         {recent}
       </div>
-      <div className='medium-5 columns upload__csv--search'>
+      <div className='large-5 medium-3 small-12 columns columns upload__csv--search'>
         <div className='ufadmin-filters-content'>
           {this.props.datascopeFilters}
         </div>
