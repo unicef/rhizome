@@ -8,6 +8,7 @@ import processChartData from 'stores/chartBuilder/processChartData'
 import api from 'data/api'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
+import palettes from 'util/palettes'
 
 export default {
   prepareData (chartDef, layout) {
@@ -106,6 +107,7 @@ export default {
       if (chart.options && !chart.options.xFormat) {
         newOptions.xFormat = d3.format(chartDef.xFormat)
       }
+      newOptions.color = palettes[chartDef.palette]
       newOptions.chartInDashboard = true
       return { data: chart.data, options: newOptions }
     })
