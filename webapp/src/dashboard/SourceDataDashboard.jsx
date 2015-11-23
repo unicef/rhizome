@@ -145,7 +145,7 @@ var SourceDataDashboard = React.createClass({
       <div>
         <SearchBar
           fieldNames={search_fields}
-          placeholder='search ...'
+          placeholder='Search for uploaded data'
           />
       </div>
 
