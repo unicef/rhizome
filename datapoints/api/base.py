@@ -12,6 +12,7 @@ from tastypie.authentication import SessionAuthentication, ApiKeyAuthentication,
 from tastypie.resources import ModelResource, Resource
 from tastypie.cache import SimpleCache
 from tastypie import http
+from django.core.exceptions import ValidationError
 
 try:
     from django.views.decorators.csrf import csrf_exempt
@@ -138,6 +139,18 @@ class BaseModelResource(ModelResource):
 
         try:
             response = method(request, **kwargs)
+
+        except ValidationError as error:
+            error_code = error.code
+            error_message = error.message
+
+            return HttpResponse(json.dumps({
+                                    'error': error_message,
+                                    'code': error_code
+                                }),
+                                status=413,
+                                content_type='application/json')
+
         except Exception as error:
 
             error_code = DataPointsException.defaultCode

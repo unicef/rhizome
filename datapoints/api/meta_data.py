@@ -21,6 +21,7 @@ from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.agg_tasks import AggRefresh
+from django.core.exceptions import ValidationError
 
 
 class CampaignResource(BaseModelResource):
@@ -102,6 +103,10 @@ class IndicatorResource(BaseNonModelResource):
             'short_name': post_data['short_name'],
             'description': post_data['description']
         }
+
+        for value in defaults:
+            if len(defaults[value]) > 255:
+                raise ValidationError('-1', value + ' is too long')
 
         ind, created = Indicator.objects.update_or_create(
             id=ind_id,
