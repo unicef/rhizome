@@ -14,7 +14,9 @@ var CHARTS = {
   LineChart: require('./line'),
   AreaChart: require('./area'),
   PieChart: require('./pie'),
-  ScatterChart: require('./scatter')
+  ScatterChart: require('./scatter'),
+  MapLegend: require('./mapLegend'),
+  StackedAreaChart: require('./stackedArea')
 }
 
 var DEFAULTS = {

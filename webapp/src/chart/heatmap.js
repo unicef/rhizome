@@ -178,7 +178,7 @@ _.extend(Heatmap.prototype, {
       .style({
         'text-anchor': 'start',
         'font-size': options.fontSize,
-        'font-weight': function (d) {
+        'fontWeight': function (d) {
           return (d === sortCol)
             ? 'bold'
             : 'normal'

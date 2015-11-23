@@ -152,11 +152,17 @@ var ReviewTable = React.createClass({
   },
 
   renderFilters () {
+    var recent = (<div>
+      <div className='upload__csv--load'>recent uploaded data</div>
+      <div className='upload__csv--step'>You may review the recent uploaded data.</div>
+    </div>)
+
     return (
       <div className='row'>
       <div className='medium-7 columns'>
+        {recent}
       </div>
-      <div className='medium-5 columns'>
+      <div className='medium-5 columns upload__csv--search'>
         <div className='ufadmin-filters-content'>
           {this.props.datascopeFilters}
         </div>

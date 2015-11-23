@@ -158,7 +158,7 @@ var Performance = React.createClass({
         <div className='medium-2 columns'>
           <div>
             <h4>Missed Children</h4>
-            <Chart type='AreaChart' data={missed}
+            <Chart type='StackedAreaChart' data={missed}
                    loading={loading}
                    options={{
                      aspect: 2.26,
@@ -202,16 +202,40 @@ var Performance = React.createClass({
                    radius: _.partial(_chooseRadius, _),
                    legend: [100, 1000, 5000],
                    maxRadius: maxRadius,
-                   bubblesTitle: ['Children Vaccinated at', 'Transit Point'],
                    onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </div>
 
-        <div className='transit-points medium-1 column'>
+        <div className='medium-1 column'>
           <div>
             <h4 className='font-bold'>Missed Children</h4>
           </div>
-          <div className='transit-point'>
+          <Chart type='MapLegend'
+               data={missedChildrenMap}
+               loading={loading}
+               options={{
+                 aspect: 0.3,
+                 domain: _.constant([0, 0.1]),
+                 value: _.property('properties[475]'),
+                 yFormat: pct,
+                 margin: {
+                   top: 10,
+                   right: 0,
+                   bottom: 0,
+                   left: 0
+                 }
+               }}/>
+          <Chart type='MapLegend'
+               data={missedChildrenMap}
+               loading={loading}
+               options={{
+                 aspect: 0.2,
+                 domain: _.constant([0, 0.1]),
+                 stripesValue: _.property('properties[203]'),
+                 yFormat: pct,
+                 stripeLegendText: ['No data collected', 'Access challenged area']
+               }}/>
+          <div className='transit-points'>
             <h4 className='font-bold'>Transit Points</h4>
             {vaccinated}
             <PieChartList loading={loading}
@@ -225,6 +249,21 @@ var Performance = React.createClass({
                             palette: colors
                           }}/>
           </div>
+          <div>
+            <h4 className='title--wrap'>Children Vaccinated at Transit Point</h4>
+          </div>
+          <Chart type='MapLegend'
+               data={missedChildrenMap}
+               loading={loading}
+               options={{
+                 aspect: 0.4,
+                 domain: _.constant([0, 0.1]),
+                 bubblesValue: _.property('properties[177]'),
+                 yFormat: pct,
+                 radius: _.partial(_chooseRadius, _),
+                 maxRadius: maxRadius,
+                 bubbleLegendText: [100, 1000, 5000]
+               }}/>
         </div>
       </div>
     )
