@@ -202,7 +202,10 @@ var SourceDataDashboard = React.createClass({
           <div className='medium-12 columns'>
             {review_table}
           </div>
-
+          <div className='medium-12 columns display-the-nav'>
+            {review_nav}
+            {review_breakdown}
+          </div>
         </div>
       </div>)
   },
