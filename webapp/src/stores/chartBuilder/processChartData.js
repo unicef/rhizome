@@ -223,7 +223,7 @@ export default {
         aspect: aspects[layout].lineChart,
         values: _.property('values'),
         x: _.property('campaign.start_date'),
-        xFormat: function (d) { return moment(d).format('MMM YYYY') },
+        xFormat: (d) => { return moment(d).format('MMM YYYY') },
         y: _.property('value')
       }
       var chartData = _groupBySeries(data, groups, groupBy)
@@ -263,7 +263,7 @@ export default {
       let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
       let maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
       const maxRadius = 30
-      let radius = (v) =>{
+      let radius = (v) => {
         return d3.scale.sqrt().domain([0, maxValue]).range([0, maxRadius])(v)
       }
       let legend = [0.05, 0.2, 1].map(ratio => ratio * maxValue)
@@ -273,7 +273,7 @@ export default {
         bubblesValue: _.property('properties.bubbleValue'),
         radius: _.partial(radius, _),
         maxRadius: maxRadius,
-        legend, legend,
+        legend: legend,
         border: border.objects.features
       }
       if (!data || data.length === 0) {
@@ -289,7 +289,7 @@ export default {
           }
         })
       })
-      console.log(chartData.map(d => d.properties));
+      console.log(chartData.map(d => d.properties))
       return { options: chartOptions, data: chartData }
     }))
   },
