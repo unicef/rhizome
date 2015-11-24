@@ -254,31 +254,40 @@ export default {
   },
   processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
-
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
-      let indicatorIndex = _(data).groupBy('indicator').value()
+      const maxRadius = 20
 
-      var index = _.indexBy(indicatorIndex[xAxis], 'location')
-      let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
-      let maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
-      const maxRadius = 30
       let radius = (v) => {
-        return d3.scale.sqrt().domain([0, maxValue]).range([0, maxRadius])(v)
+        if (v > 5000) {
+          return 20
+        }
+        return d3.scale.sqrt().domain([0, 5000]).range([0, 20])(v)
       }
-      let legend = [0.05, 0.2, 1].map(ratio => ratio * maxValue)
+
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
+        domain: _.constant([0, 0.1]),
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         bubblesValue: _.property('properties.bubbleValue'),
         radius: _.partial(radius, _),
         maxRadius: maxRadius,
-        legend: legend,
+        legend: [100, 1000, 5000],
+        maxRadius: 20,
+        yFormat: d3.format('%'),
         border: border.objects.features
       }
+
       if (!data || data.length === 0) {
         return { options: chartOptions, data: border.objects.features }
       }
+
+      let indicatorIndex = _(data).groupBy('indicator').value()
+      var index = _.indexBy(indicatorIndex[xAxis], 'location')
+      let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
+
+      let maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
+      let legend = [0.05, 0.2, 1].map(ratio => ratio * maxValue)
 
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
@@ -292,6 +301,7 @@ export default {
       })
 
       console.log(chartData.map(d => d.properties))
+
       return { options: chartOptions, data: chartData }
     }))
   },
