@@ -270,6 +270,11 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangePalette (key) {
+    this.data.chartDef.palette = key
+    this.previewChart()
+  },
+
   onSaveChart (callback) {
     callback(
       _.merge(

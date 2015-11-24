@@ -59,7 +59,7 @@ var Access = React.createClass({
 
     var labelText
     if (totalNumber) {
-      labelText = (<h4><span style={{'font-weight': 'bold'}}>{totalNumber}</span> Children were inaccessible</h4>)
+      labelText = (<h4><span style={{ fontWeight: 'bold' }}>{totalNumber}</span> Children were inaccessible</h4>)
     } else {
       labelText = (<h4>No data for current campaign</h4>)
     }

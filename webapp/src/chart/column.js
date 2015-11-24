@@ -4,6 +4,7 @@ import d3 from 'd3'
 import browser from 'util/browser'
 import label from 'chart/renderer/label'
 import color from 'util/color'
+import palettes from 'util/palettes'
 
 var defaults = {
   margin: {
@@ -15,6 +16,7 @@ var defaults = {
   name: _.partial(_.get, _, 'name', ''),
   padding: 0.1,
   values: _.property('values'),
+  color: palettes.blue,
   x: _.property('x'),
   xFormat: String,
   y: _.property('y'),
@@ -148,7 +150,7 @@ _.extend(ColumnChart.prototype, {
     series.enter().append('g')
       .attr('class', 'bar')
 
-    let fill = color.scale(data.map(options.name), options.color)
+    let fill = color.map(data.map(options.name), options.color)
 
     series.style('fill', _.flow(options.name, fill))
     series.exit().remove()

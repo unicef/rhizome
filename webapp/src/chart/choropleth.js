@@ -6,6 +6,7 @@ import Layer from 'react-layer'
 import Tooltip from 'component/Tooltip.jsx'
 
 import browser from 'util/browser'
+import palettes from 'util/palettes'
 
 import legend from 'chart/renderer/legend'
 
@@ -20,6 +21,7 @@ var DEFAULTS = {
   },
   onClick: _.noop,
   value: _.property('properties.value'),
+  color: palettes.orange,
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name')
 }
@@ -197,7 +199,7 @@ _.extend(ChoroplethMap.prototype, {
 
     var colorScale = d3.scale.quantize()
       .domain(domain.reverse())
-      .range(colorRange.reverse())
+      .range(options.color.reverse())
 
     var location = g.selectAll('.location')
       .data(features, function (d, i) {

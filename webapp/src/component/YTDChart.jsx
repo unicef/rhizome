@@ -67,6 +67,7 @@ export default React.createClass({
           aspect: 2.26,
           domain: _.constant([moment({ M: 0 }).toDate(), moment({ M: 11 }).toDate()]),
           range: _.constant([0, maxRange]),
+          color: ['#377EA3', '#D95348', '#82888e', '#98a0a8', '#b6c0cc'],
           x: _.property('x'),
           xFormat: d3.time.format('%b'),
           y: _.property('total'),
