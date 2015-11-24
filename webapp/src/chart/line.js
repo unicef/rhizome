@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import color from 'util/color'
 import palettes from 'util/palettes'
 import format from 'util/format'
 import hoverLine from 'chart/behavior/hover-line'
