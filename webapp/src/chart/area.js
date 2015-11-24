@@ -24,35 +24,42 @@ var DEFAULTS = {
 
 function AreaChart () {}
 
+AreaChart.prototype.generateChartData = function(originalData){
+    var series = function (values, name) {
+    return {
+      name: name,
+      values: _.sortBy(values, _.result('campaign.start_date.getTime'))
+    }
+  }
+
+  var stack = d3.layout.stack()
+    .order('default')
+    .offset('zero')
+    .values(_.property('values'))
+    .x(_.property('campaign.start_date'))
+    .y(_.property('value'))
+
+  try {
+    var data = _(originalData)
+      .groupBy('indicator.short_name')
+      .map(series)
+      .thru(stack)
+      .value()
+  } catch (err) {
+    console.error(err)
+    console.log(`Data error in ${originalData}`)
+    data = []
+  }
+  return data
+}
+
 _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (originalData, options) {
-    var series = function (values, name) {
-      return {
-        name: name,
-        values: _.sortBy(values, _.result('campaign.start_date.getTime'))
-      }
-    }
 
-    var stack = d3.layout.stack()
-      .order('default')
-      .offset('zero')
-      .values(_.property('values'))
-      .x(_.property('campaign.start_date'))
-      .y(_.property('value'))
 
-    try {
-      var data = _(originalData)
-        .groupBy('indicator.short_name')
-        .map(series)
-        .thru(stack)
-        .value()
-    } catch (err) {
-      console.error(err)
-      console.log(`Data error in ${originalData}`)
-      data = []
-    }
+    var data = this.generateChartData(originalData)
 
     data = _(data).filter(serie => {
       serie.values = _(serie.values).reject(item => {
