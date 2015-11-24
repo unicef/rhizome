@@ -349,12 +349,12 @@ _.extend(ColumnChart.prototype, {
           }
         })
         .tap(list => {
-          if (_(list).some(item => (item.y >= h || item.y < 0))) {
-            list.forEach(item => { item.y = 0 })
+          if (_(list).some(item => (item.y >= h || item.y < 50))) {
+            list.forEach(item => { item.y = 50 })
           }
         })
         .each(item => {
-          item.y = 0
+          item.y = 50
         })
         .value()
 
