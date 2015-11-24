@@ -135,7 +135,7 @@ export default React.createClass({
             <div className='medium-4 columns'>
               <h2>Enter Data</h2>
               {data_entry_button}
-              &emsp
+              &emsp;
               {csv_upload_button}
             </div>
             <div className='medium-8 columns'>

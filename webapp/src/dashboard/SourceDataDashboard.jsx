@@ -5,15 +5,13 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
-import NavigationStore from 'stores/NavigationStore'
 import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
 import SourceDataDashboardAction from 'actions/SourceDataDashboardActions'
 
-import TitleMenu from 'component/TitleMenu.jsx'
-import MenuItem from 'component/MenuItem.jsx'
+import CSVMenuItem from 'component/CSVMenuItem.jsx'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,
@@ -70,16 +68,7 @@ var SourceDataDashboard = React.createClass({
       doc_tab = 'doc_index'
     }
 
-    var docItems = MenuItem.fromArray(
-      _.map(NavigationStore.documents, d => {
-        return {
-          title: d.doc_title,
-          value: d.id
-        }
-      }),
-      this._setDocId)
-
-    var doc_tabs = MenuItem.fromArray(
+    var doc_tabs = CSVMenuItem.fromArray(
       _.map(['viewraw', 'mapping', 'validate', 'results', 'doc_index'], d => {
         return {
           title: d,
@@ -87,24 +76,6 @@ var SourceDataDashboard = React.createClass({
         }
       }),
       this._setDocTab)
-
-    // navigation to set doc-id and doc-processor //
-    var review_nav =
-      <div className='admin-container'>
-        <h1 className='admin-header'></h1>
-
-        <div className='row'>
-          <TitleMenu text={doc_obj.doc_title}>
-            {docItems}
-          </TitleMenu>
-        </div>
-        <div className='row'>
-          <TitleMenu text={doc_tab}>
-            {doc_tabs}
-          </TitleMenu>
-        </div>
-
-      </div>
 
     const table_definition = {
       'viewraw': {
@@ -146,16 +117,16 @@ var SourceDataDashboard = React.createClass({
 
     var search_fields = table_definition[doc_tab]['search_fields']
     var datascopeFilters =
-      <div>
+      (<div>
         <SearchBar
           fieldNames={search_fields}
           placeholder='Search for uploaded data'
           />
-      </div>
+      </div>)
 
     var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
     // data table //
-    var review_table = <ReviewTable
+    var review_table = (<ReviewTable
       title='sample title'
       getData={table_definition[doc_tab]['data_fn']}
       fields={table_definition[doc_tab]['fields']}
@@ -173,7 +144,7 @@ var SourceDataDashboard = React.createClass({
           return <SimpleDataTableColumn name={fieldName}/>
         })}
       </SimpleDataTable>
-    </ReviewTable>
+    </ReviewTable>)
 
     var docForm
     if (doc_tab === 'doc_index') {
@@ -194,12 +165,15 @@ var SourceDataDashboard = React.createClass({
         <div className='medium-12 columns upload__csv--step'>
           You can review raw data, map indicators, validate data and view results.
         </div>
-        <div>
+        <div className>
           <DocOverview
             key={table_key + 'breakdown'}
             loading={loading}
             doc_id={doc_id}
             doc_title={doc_obj.doc_title}/>
+        </div>
+        <div className='large-6 medium-12 small-12 columns csv-upload__title'>
+          {doc_tabs}
         </div>
       </div>
     }
@@ -211,9 +185,6 @@ var SourceDataDashboard = React.createClass({
           <div id='popUp'></div>
           <div className='medium-12 columns'>
             {review_table}
-          </div>
-          <div className='medium-12 columns'>
-            {review_nav}
           </div>
         </div>
       </div>)
