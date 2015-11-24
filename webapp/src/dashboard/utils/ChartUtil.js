@@ -3,16 +3,6 @@ import d3 from 'd3'
 import moment from 'moment'
 import React from 'react'
 
-var percentage = function (dataset) {
-  var total = _(dataset).pluck('value').sum()
-
-  _.forEach(dataset, function (d) {
-    d.value /= total
-  })
-
-  return dataset
-}
-
 function preparePolioCasesData (original) {
   var campaign = original.campaign
   var year = ''
@@ -93,44 +83,6 @@ function prepareMissedChildrenData (original) {
 }
 
 function prepareUnderImmunizedData (original) {
-  var stack = d3.layout.stack()
-    .offset('zero')
-    .values(function (d) { return d.values })
-    .x(function (d) { return d.campaign.start_date })
-    .y(function (d) { return d.value })
-
-  var data = _(original.data)
-    .each(function (d) {
-      // Add a property to each datapoint indicating the fiscal quarter
-      d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY')
-    })
-    .groupBy(function (d) {
-      return d.indicator.id + '-' + d.quarter
-    })
-    .map(function (datapoints) {
-      // Calculate the total number of children with X doses of OPV for
-      // each quarter
-      return _.assign({}, datapoints[0], {
-        'value': _(datapoints).pluck('value').sum()
-      })
-    })
-    .groupBy('quarter')
-    .map(percentage)
-    .flatten()
-    .reject(function (d) {
-      // Exclude 4+ doses, because that is implied as 1 - <0 doses> - <1–3 doses>
-      return d.indicator.id === 433
-    })
-    .groupBy('indicator.short_name')
-    .map(function (values, name) {
-      return {
-        name: name,
-        values: values
-      }
-    })
-    .sortBy('name')
-    .value()
-
   var start = moment(original.campaign.start_date)
   var lower = start.clone().startOf('quarter').subtract(3, 'years')
   var upper = start.clone().endOf('quarter')
@@ -143,28 +95,11 @@ function prepareUnderImmunizedData (original) {
 
   var color = ['#D95449', '#B6D0D4']
 
-  var sumData = []
-
-  if (data.length > 1) {
-    data[0].values.forEach((d, i) => {
-      sumData[i] = d.value + data[1].values[i].value
-    })
-  }
-
-  var maxRange = 1
-  if (!_.isEmpty(sumData)) {
-    maxRange = _.ceil(_.max(sumData), 1)
-    if (Math.round(maxRange * 100) % 4 !== 0) {
-      maxRange = _.ceil(maxRange + 0.1, 1)
-    }
-  }
-
   return {
-    data: stack(data),
+    data: original.data,
     immunityScale: immunityScale,
     color: color,
-    date: moment(original.campaign.start_date).format('MMMM YYYY'),
-    range: _.constant([0, maxRange])
+    date: moment(original.campaign.start_date).format('MMMM YYYY')
   }
 }
 
