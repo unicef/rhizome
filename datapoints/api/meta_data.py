@@ -21,7 +21,8 @@ from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.agg_tasks import AggRefresh
-from django.core.exceptions import ValidationError
+from tastypie.exceptions import ImmediateHttpResponse
+from django.http import HttpResponse
 
 
 class CampaignResource(BaseModelResource):
@@ -104,14 +105,20 @@ class IndicatorResource(BaseNonModelResource):
             'description': post_data['description']
         }
 
-        for value in defaults:
-            if len(defaults[value]) > 255:
-                raise ValidationError('-1', value + ' is too long')
+        try:
+            ind, created = Indicator.objects.update_or_create(
+                id=ind_id,
+                defaults=defaults
+            )
+        except Exception as error:
+            data = {
+                'error': error.message,
+                'code': -1
+            }
+            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
+                                status=422,
+                                content_type='application/json'))
 
-        ind, created = Indicator.objects.update_or_create(
-            id=ind_id,
-            defaults=defaults
-        )
 
         bundle.obj = ind
         bundle.data['id'] = ind.id
