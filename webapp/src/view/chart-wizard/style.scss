@@ -146,3 +146,28 @@
     }
   }
 }
+
+.palette-picker__palette-group {
+  margin: 15px 0;
+  padding: 10px 5px;
+  border: 2px solid transparent;
+  &.active {
+    border-color: #344B61;
+  }
+
+  input[type=radio] {
+    display: none;
+  }
+}
+
+.palette-picker__palette {
+  display: block;
+  margin: 0;
+  text-align: center;
+}
+
+.palette-picker__color {
+  display: inline-block;
+  width: 30px;
+  height: 15px;
+}

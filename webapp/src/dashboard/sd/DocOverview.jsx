@@ -13,7 +13,8 @@ var DocOverview = React.createClass({
   propTypes: {
     doc_id: React.PropTypes.number.isRequired,
     doc_tab: React.PropTypes.string.isRequired,
-    loading: React.PropTypes.bool
+    loading: React.PropTypes.bool,
+    doc_title: React.PropTypes.string
   },
 
   getDefaultProps () {
@@ -69,29 +70,39 @@ var DocOverview = React.createClass({
 
     var refresh_master_btn = <div>
       <p>
-        <button disabled={this.state.isProcessing} className='tiny' onClick={this.queueReprocess}> { this.state.isProcessing ? 'To Reprocess...' : 'To Reprocess!'}
+        <button disabled={this.state.isProcessing} className='tiny' className='large-3 medium-3 small-12 columns'
+                onClick={this.queueReprocess}> { this.state.isProcessing ? 'To Reprocess...' : 'To Reprocess!'}
         </button>
       </p>
       <p>
-        <button disabled={this.state.isRefreshing} className='tiny'
+        <button disabled={this.state.isRefreshing} className='tiny' className='large-3 medium-3 small-12 columns'
                 onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refresh Master...' : 'Refresh Master!'}
         </button>
       </p>
     </div>
 
     var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id')
+    var [doc_name, doc_revision] = this.props.doc_title.split('-')
 
-    var rows = []
+    var rows = [
+      <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
+        <span className='csv-upload__tags--span'>File_name: </span>{doc_name}
+      </div>,
+      <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
+        <span className='csv-upload__tags--span'>Revision: </span>{doc_revision}
+      </div>
+    ]
+
     for (var i = 0; i < doc_deets.length; i++) {
       var doc_detail = doc_deets[i]
-      rows.push(<li>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name}
-        : {doc_detail.doc_detail_value} </li>)
+      rows.push(<div
+        className='large-6 medium-6 small-12 columns csv-upload__tags'>
+        <span className='csv-upload__tags--span'>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name}: </span>
+        {doc_detail.doc_detail_value}</div>)
     }
 
-    return <div>
-
-      <h3> Document Overview </h3>
-      <ul>{rows}</ul>
+    return <div className='row'>
+      {rows}
       {refresh_master_btn}
     </div>
   }

@@ -1,3 +1,4 @@
+@import "fonts";
 @import "variables";
 @import "mixins";
 @import "settings";
@@ -561,15 +562,6 @@ ul {
     svg {
       height: 14pt;
       width: 14pt;
-    }
-  }
-}
-
-.accessibility {
-  .chart {
-    svg {
-      height: 12pt;
-      width: 12pt;
     }
   }
 }

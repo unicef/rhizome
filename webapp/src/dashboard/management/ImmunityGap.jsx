@@ -21,22 +21,6 @@ var ImmunityGap = React.createClass({
       campaign: this.props.campaign
     })
 
-    var sumData = []
-
-    if (immunityGapData.data.length > 1) {
-      sumData = immunityGapData.data[0].values.map((d, i) => {
-        return d.value + immunityGapData.data[1].values[i].value
-      })
-    }
-
-    var maxRange = 1
-    if (!_.isEmpty(sumData)) {
-      maxRange = _.ceil(_.max(sumData), 1)
-      if (Math.round(maxRange * 100) % 4 !== 0) {
-        maxRange = _.ceil(maxRange + 0.1, 1)
-      }
-    }
-
     return (
       <div>
         <h4>Under immunized children</h4>
@@ -52,7 +36,8 @@ var ImmunityGap = React.createClass({
             xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
             y0: _.property('y0'),
             yFormat: d3.format('%'),
-            range: _.constant([0, maxRange])
+            rejectId: 433,
+            processData: true
           }} />
       </div>
     )

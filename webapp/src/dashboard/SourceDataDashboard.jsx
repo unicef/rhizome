@@ -18,7 +18,7 @@ import MenuItem from 'component/MenuItem.jsx'
 var {
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
-} = require('react-datascope')
+  } = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
   mixins: [
@@ -140,6 +140,10 @@ var SourceDataDashboard = React.createClass({
       }
     }
 
+    var step = (<div className='medium-12 columns upload__csv--step'>
+      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
+    </div>)
+
     var search_fields = table_definition[doc_tab]['search_fields']
     var datascopeFilters =
       <div>
@@ -172,39 +176,44 @@ var SourceDataDashboard = React.createClass({
     </ReviewTable>
 
     var docForm
-    var review_breakdown
     if (doc_tab === 'doc_index') {
-      docForm = <div><DocForm /></div>
-      review_breakdown = ''
-    } else {
-      docForm = ''
-      review_breakdown = <DocOverview
-        key={table_key + 'breakdown'}
-        loading={loading}
-        doc_id={doc_id} />
-    }
-
-    var step = (<div className='medium-12 columns upload__csv--step'>
-      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
-    </div>)
-
-    return (
-      <div className='row upload__csv'>
+      docForm = <div>
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
-          {step}
+        {step}
         <div className='medium-12 columns upload__csv--form'>
-          {docForm}
+          <DocForm />
         </div>
+      </div>
+    } else {
+      docForm = <div>
+        <div className='medium-12 columns upload__csv--load'>
+          Review Data
+        </div>
+        <div className='medium-12 columns upload__csv--step'>
+          You can review raw data, map indicators, validate data and view results.
+        </div>
+        <div>
+          <DocOverview
+            key={table_key + 'breakdown'}
+            loading={loading}
+            doc_id={doc_id}
+            doc_title={doc_obj.doc_title}/>
+        </div>
+      </div>
+    }
+
+    return (
+      <div className='row upload__csv'>
+        {docForm}
         <div className='row'>
           <div id='popUp'></div>
           <div className='medium-12 columns'>
             {review_table}
           </div>
-          <div className='medium-12 columns display-the-nav'>
+          <div className='medium-12 columns'>
             {review_nav}
-            {review_breakdown}
           </div>
         </div>
       </div>)

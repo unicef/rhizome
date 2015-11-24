@@ -17,6 +17,7 @@ import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from './ScatterAxisChooser.jsx'
 import MapAxisChooser from './MapAxisChooser.jsx'
+import PalettePicker from './PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -232,6 +233,7 @@ let ChartWizard = React.createClass({
               values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
           )
         }
+        <PalettePicker value={this.state.data.chartDef.palette} onChange={ChartWizardActions.changePalette} />
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'preview')}>Next</span>
       </div>
     )

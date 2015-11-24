@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import d3 from 'd3'
-
-import colors from 'util/color'
-
 import React from 'react'
 import Layer from 'react-layer'
+
+import color from 'util/color'
+import palettes from 'util/palettes'
 import Tooltip from 'component/Tooltip.jsx'
 
 function _domain (data, options) {
@@ -22,6 +22,7 @@ var DEFAULTS = {
     left: 0
   },
   value: _.property('value'),
+  color: palettes.blue,
   name: _.property('indicator.short_name'),
   yFormat: function (d) {
     return d3.format((Math.abs(d) < 1) ? '%' : 'n')(d)
@@ -132,8 +133,7 @@ _.extend(PieChart.prototype, {
         d.endAngle = scale(y0 + y)
       })
 
-    var colorScale = colors.scale(_.map(data, options.value), options.palette)
-    var fill = _.flow(options.value, colorScale)
+    let fill = color.map(data.map(options.name), options.color)
 
     var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)))
 
@@ -143,7 +143,7 @@ _.extend(PieChart.prototype, {
 
     slice.attr({
       'd': arc,
-      'fill': fill,
+      'fill': _.flow(options.name, fill),
       'stroke': '#fff'
     }).on('mousemove', d => {
       var evt = d3.event

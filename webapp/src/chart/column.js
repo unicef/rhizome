@@ -1,9 +1,11 @@
 import _ from 'lodash'
 import d3 from 'd3'
+import moment from 'moment'
 
 import browser from 'util/browser'
 import label from 'chart/renderer/label'
 import color from 'util/color'
+import palettes from 'util/palettes'
 
 var defaults = {
   margin: {
@@ -15,6 +17,7 @@ var defaults = {
   name: _.partial(_.get, _, 'name', ''),
   padding: 0.1,
   values: _.property('values'),
+  color: palettes.blue,
   x: _.property('x'),
   xFormat: String,
   y: _.property('y'),
@@ -80,7 +83,47 @@ _.extend(ColumnChart.prototype, {
     this.update(data, options)
   },
 
-  update: function (data, options) {
+  update: function (originalData, options) {
+    var data = originalData
+
+    if (options.processData) {
+      var percentage = function (dataset) {
+        var total = _(dataset).pluck('value').sum()
+        _.forEach(dataset, d => { d.value /= total })
+        return dataset
+      }
+
+      var stack = d3.layout.stack()
+        .offset('zero')
+        .values(d => { return d.values })
+        .x(d => { return d.campaign.start_date })
+        .y(d => { return d.value })
+
+      data = _(originalData)
+        .each(d => { d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY') })
+        .groupBy(d => { return d.indicator.id + '-' + d.quarter })
+        .map(d => {
+          return _.assign({}, d[0], {
+            'value': _(d).pluck('value').sum()
+          })
+        })
+        .groupBy('quarter')
+        .map(percentage)
+        .flatten()
+        .reject(d => { return d.indicator.id === options.rejectId })
+        .groupBy('indicator.short_name')
+        .map((values, name) => {
+          return {
+            name: name,
+            values: values
+          }
+        })
+        .sortBy('name')
+        .value()
+
+      data = stack(data)
+    }
+
     options = _.assign(this._options, options)
     var margin = options.margin
 
@@ -111,7 +154,7 @@ _.extend(ColumnChart.prototype, {
     if (_.isFunction(options.range)) {
       range = options.range(data)
     } else {
-      range = d3.extent(_(data).map(options.values).flatten().value(), function (d) {
+      range = d3.extent(_(data).map(options.values).flatten().value(), d => {
         return options.y0(d) + options.y(d)
       })
 
@@ -123,11 +166,11 @@ _.extend(ColumnChart.prototype, {
       .domain(range)
       .range([h, 0])
 
-    var y = function (d) {
+    var y = d => {
       return yScale(options.y0(d) + options.y(d))
     }
 
-    var height = function (d) {
+    var height = d => {
       var y0 = options.y0(d)
       var y = options.y(d)
 
@@ -148,9 +191,13 @@ _.extend(ColumnChart.prototype, {
     series.enter().append('g')
       .attr('class', 'bar')
 
-    let fill = color.scale(data.map(options.name), options.color)
+    let fill = color.map(data.map(options.name), options.color)
 
-    series.style('fill', _.flow(options.name, fill))
+    series.style({
+      'fill': _.flow(options.name, fill),
+      'stroke': '#fff'
+    })
+
     series.exit().remove()
 
     var hover = d3.dispatch('over', 'out')
@@ -217,7 +264,7 @@ _.extend(ColumnChart.prototype, {
       .align(false)
 
     var legendText = _(data)
-      .map(function (d) {
+      .map(d => {
         return options.name(d)
       })
       .reverse()
@@ -251,7 +298,7 @@ _.extend(ColumnChart.prototype, {
         'text-anchor': 'end',
         'fill': '#999999'
       })
-      .text(function (d) { return d })
+      .text(d => { return d })
 
     var timeout = null
 
@@ -270,7 +317,7 @@ _.extend(ColumnChart.prototype, {
       }, 200)
     })
 
-    hover.on('over', function (d) {
+    hover.on('over', d => {
       if (_.isNumber(timeout)) {
         window.clearTimeout(timeout)
         timeout = null
@@ -293,7 +340,7 @@ _.extend(ColumnChart.prototype, {
             { name: options.name(s) }
           )
         })
-        .map(function (d) {
+        .map(d => {
           return {
             text: d.name + ' ' + fmt(d),
             x: x(d),
@@ -302,12 +349,12 @@ _.extend(ColumnChart.prototype, {
           }
         })
         .tap(list => {
-          if (_(list).some(item => (item.y >= h || item.y < 0))) {
-            list.forEach(item => { item.y = 0 })
+          if (_(list).some(item => (item.y >= h || item.y < 50))) {
+            list.forEach(item => { item.y = 50 })
           }
         })
         .each(item => {
-          item.y = 0
+          item.y = 50
         })
         .value()
 

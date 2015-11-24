@@ -5,8 +5,6 @@ import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from 'component/Tooltip.jsx'
 
-import palette from 'colors'
-
 var defaults = {
   hoverRadius: 5,
   radius: 3,
@@ -103,7 +101,7 @@ _.extend(ScatterPlot.prototype, {
 
     point.transition()
       .duration(300)
-      .style('fill', palette[0])
+      .style('fill', '#525b5e')
       .attr(attrs)
 
     point.exit()

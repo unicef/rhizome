@@ -24,8 +24,8 @@ var DEFAULTS = {
 
 function AreaChart () {}
 
-AreaChart.prototype.generateChartData = function(originalData){
-    var series = function (values, name) {
+AreaChart.prototype.generateChartData = function (originalData) {
+  var series = function (values, name) {
     return {
       name: name,
       values: _.sortBy(values, _.result('campaign.start_date.getTime'))
@@ -57,8 +57,6 @@ _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
   update: function (originalData, options) {
-
-
     var data = this.generateChartData(originalData)
 
     data = _(data).filter(serie => {

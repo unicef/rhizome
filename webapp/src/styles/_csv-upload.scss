@@ -28,3 +28,14 @@
 .display-the-nav {
   display: none;
 }
+
+.csv-upload__tags {
+  text-align: left;
+  font-size: 1rem;
+  padding: 0.5rem 0;
+
+  .csv-upload__tags--span {
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+}

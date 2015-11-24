@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
+import palettes from 'util/palettes'
 import format from 'util/format'
 import hoverLine from 'chart/behavior/hover-line'
 import label from 'chart/renderer/label'
@@ -15,6 +16,7 @@ var DEFAULTS = {
   scale: d3.scale.linear,
   seriesName: _.property('name'),
   values: _.property('values'),
+  color: palettes.blue,
   x: _.property('campaign.start_date'),
   xFormat: format.timeAxis,
   y: _.property('value'),
@@ -41,20 +43,15 @@ _.extend(LineChart.prototype, {
     var width = this._width - margin.left - margin.right
     var height = this._height - margin.top - margin.bottom
 
-    var dataColor = options.color
-    var colorRange = ['#377EA3', '#D95348', '#82888e', '#98a0a8', '#b6c0cc']
-
-    if (!_.isFunction(dataColor)) {
-      var dataColorScale = d3.scale.ordinal()
-        .domain(_(series)
-          .map(options.seriesName)
-          .uniq()
-          .sortBy()
-          .value())
-        .range(colorRange)
-
-      dataColor = _.flow(options.seriesName, dataColorScale)
-    }
+    let dataColorScale = d3.scale.ordinal()
+      .domain(_(series)
+        .map(options.seriesName)
+        .uniq()
+        .sortBy()
+        .value())
+      .range(options.color)
+    // let fill = color.map(series.map(options.seriesName), options.color)
+    let dataColor = _.flow(options.seriesName, dataColorScale)
 
     var domain = _.isFunction(options.domain)
       ? options.domain(series)
@@ -137,7 +134,7 @@ _.extend(LineChart.prototype, {
         .uniq()
         .sortBy()
         .value())
-      .range(colorRange)
+      .range(options.color)
 
     var legendColor = _.flow(function (d) {
       return d.text
@@ -166,7 +163,7 @@ _.extend(LineChart.prototype, {
         .value(options.y)
         .seriesName(_.property('seriesName'))
         .sort(true)
-        .colorRange(colorRange)
+        .colorRange(options.color)
         .datapoints(_(series).map(function (s) {
           return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
         })

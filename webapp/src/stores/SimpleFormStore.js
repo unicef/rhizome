@@ -34,14 +34,16 @@ var SimpleFormStore = Reflux.createStore({
     Promise.all([
       api_fn(data_to_post)
     ])
-      .then(_.spread(function (apiResponse) {
-        self.data.formData = form_data[content_type]
-        self.data.objectId = apiResponse.objects.id
-        self.data.dataObject = apiResponse
-        self.data.loading = false
-        self.data.saveSuccess = true
-        self.trigger(self.data)
-      }))
+    .then(_.spread(function (apiResponse) {
+      self.data.formData = form_data[content_type]
+      self.data.objectId = apiResponse.objects.id
+      self.data.dataObject = apiResponse
+      self.data.loading = false
+      self.data.saveSuccess = true
+      self.trigger(self.data)
+    }), function (error) {
+      window.alert(error.msg)
+    })
   },
 
   onInitialize: function (object_id, content_type) {

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 
 import browser from 'util/browser'
+import palettes from 'util/palettes'
 
 import legend from 'chart/renderer/legend'
 
@@ -14,6 +15,7 @@ var DEFAULTS = {
     bottom: 0,
     left: 0
   },
+  color: palettes.orange,
   onClick: _.noop,
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name')
@@ -119,18 +121,9 @@ _.extend(MapLegend.prototype, {
         domain[0] = Math.min(domain[0], 0)
       }
 
-      var colorRange = [
-        '#F5C19A',
-        '#FFA681',
-        '#FF8958',
-        '#D95449',
-        '#C0271E',
-        '#000000'
-      ]
-
       var colorScale = d3.scale.quantize()
-        .domain(domain.reverse())
-        .range(colorRange.reverse())
+        .domain(domain.concat().reverse())
+        .range(options.color.concat().reverse())
 
       var ticks = _.map(colorScale.range(), c => _.map(colorScale.invertExtent(c), options.yFormat).join('—'))
       svg.select('.legend')
