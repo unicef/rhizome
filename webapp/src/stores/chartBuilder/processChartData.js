@@ -256,13 +256,15 @@ export default {
     var locationsIndex = _.indexBy(locations, 'id')
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
+      let maxValue = 0
+      let maxRadius = 20
+
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
-        domain: _.constant([0, 0.1]),
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         bubblesValue: _.property('properties.bubbleValue'),
-        legend: [100, 1000, 5000],
-        maxRadius: 20,
+        maxValue: maxValue,
+        maxRadius: maxRadius,
         border: border.objects.features
       }
 
@@ -274,6 +276,9 @@ export default {
       var index = _.indexBy(indicatorIndex[xAxis], 'location')
       let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
 
+      maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
+      chartOptions.maxValue = maxValue
+
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
         let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
@@ -284,8 +289,6 @@ export default {
           }
         })
       })
-
-      console.log(chartData.map(d => d.properties))
 
       return { options: chartOptions, data: chartData }
     }))
