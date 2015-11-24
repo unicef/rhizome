@@ -274,7 +274,6 @@ export default {
         maxRadius: maxRadius,
         legend: [100, 1000, 5000],
         maxRadius: 20,
-        yFormat: d3.format('%'),
         border: border.objects.features
       }
 
