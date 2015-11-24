@@ -206,7 +206,8 @@ var Performance = React.createClass({
                           options={{
                             domain: _.constant([0, 1]),
                             size: 24,
-                            palette: colors
+                            name: (d, i) => { return i },
+                            color: colors
                           }}/>
           </div>
           <div>
