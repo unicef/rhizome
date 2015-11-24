@@ -73,7 +73,7 @@ var Access = React.createClass({
         </div>
 
         <div className='medium-2 columns'>
-          <h4>Inaccessibiity<br />Breakdown</h4>
+          <h4>Inaccessibility<br />Breakdown</h4>
           <Chart type='ColumnChart'
                         loading={loading}
                         data={reasons}
@@ -83,7 +83,8 @@ var Access = React.createClass({
                           values: _.property('values'),
                           y0: _.property('y0'),
                           yFormat: d3.format('%'),
-                          processData: true
+                          processData: true,
+                          inaccessibility: true
                         }} />
         </div>
 
