@@ -189,7 +189,11 @@ _.extend(ColumnChart.prototype, {
 
     let fill = color.map(data.map(options.name), options.color)
 
-    series.style('fill', _.flow(options.name, fill))
+    series.style({
+      'fill': _.flow(options.name, fill),
+      'stroke': '#fff'
+    })
+
     series.exit().remove()
 
     var hover = d3.dispatch('over', 'out')

@@ -4,7 +4,6 @@ import React from 'react'
 import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
-import PieChartList from 'component/PieChartList.jsx'
 
 var Access = React.createClass({
   propTypes: {
@@ -21,19 +20,8 @@ var Access = React.createClass({
 
     var reasons = _(data.inaccessibilityBreakdown)
       .filter(d => {
-        return d.campaign.id === campaign.id &&
-          _.isFinite(d.value) &&
-          d.value >= 0.01
+        return d.campaign.id === campaign.id && _.isFinite(d.value) && d.value >= 0.01
       })
-      .sortBy(_.property('value'))
-      .reverse()
-      .map(d => [d])
-      .value()
-
-    var pieChartName = function (d) {
-      return d3.format('%')(d[0].value) + ' ' +
-        _.trimLeft(d[0].indicator.short_name, '% ')
-    }
 
     var plans = _.filter(data.districtsWithAccessPlans,
         d => d.campaign.id === campaign.id && _.isFinite(d.value))
@@ -84,15 +72,17 @@ var Access = React.createClass({
                  options={chartOptions}/>
         </div>
 
-        <div className='accessibility medium-2 columns'>
+        <div className='medium-2 columns'>
           <h4>Inaccessibiity<br />Breakdown</h4>
-          <PieChartList keyPrefix='inaccessibility-breakdown'
+          <Chart type='ColumnChart'
                         loading={loading}
                         data={reasons}
-                        name={pieChartName}
                         options={{
+                          aspect: 1,
                           domain: _.constant([0, 1]),
-                          size: 24
+                          values: _.property('values'),
+                          y0: _.property('y0'),
+                          yFormat: d3.format('%')
                         }} />
         </div>
 
