@@ -36,7 +36,8 @@ var ImmunityGap = React.createClass({
             xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
             y0: _.property('y0'),
             yFormat: d3.format('%'),
-            rejectId: 433
+            rejectId: 433,
+            processData: true
           }} />
       </div>
     )

@@ -82,7 +82,8 @@ var Access = React.createClass({
                           domain: _.constant([0, 1]),
                           values: _.property('values'),
                           y0: _.property('y0'),
-                          yFormat: d3.format('%')
+                          yFormat: d3.format('%'),
+                          processData: true
                         }} />
         </div>
 

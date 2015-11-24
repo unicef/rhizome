@@ -84,41 +84,45 @@ _.extend(ColumnChart.prototype, {
   },
 
   update: function (originalData, options) {
-    var percentage = function (dataset) {
-      var total = _(dataset).pluck('value').sum()
-      _.forEach(dataset, d => { d.value /= total })
-      return dataset
-    }
+    var data = originalData
 
-    var stack = d3.layout.stack()
-    .offset('zero')
-    .values(d => { return d.values })
-    .x(d => { return d.campaign.start_date })
-    .y(d => { return d.value })
+    if (options.processData) {
+      var percentage = function (dataset) {
+        var total = _(dataset).pluck('value').sum()
+        _.forEach(dataset, d => { d.value /= total })
+        return dataset
+      }
 
-    var data = _(originalData)
-      .each(d => { d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY') })
-      .groupBy(d => { return d.indicator.id + '-' + d.quarter })
-      .map(d => {
-        return _.assign({}, d[0], {
-          'value': _(d).pluck('value').sum()
+      var stack = d3.layout.stack()
+        .offset('zero')
+        .values(d => { return d.values })
+        .x(d => { return d.campaign.start_date })
+        .y(d => { return d.value })
+
+      data = _(originalData)
+        .each(d => { d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY') })
+        .groupBy(d => { return d.indicator.id + '-' + d.quarter })
+        .map(d => {
+          return _.assign({}, d[0], {
+            'value': _(d).pluck('value').sum()
+          })
         })
-      })
-      .groupBy('quarter')
-      .map(percentage)
-      .flatten()
-      .reject(d => { return d.indicator.id === options.rejectId })
-      .groupBy('indicator.short_name')
-      .map((values, name) => {
-        return {
-          name: name,
-          values: values
-        }
-      })
-      .sortBy('name')
-      .value()
+        .groupBy('quarter')
+        .map(percentage)
+        .flatten()
+        .reject(d => { return d.indicator.id === options.rejectId })
+        .groupBy('indicator.short_name')
+        .map((values, name) => {
+          return {
+            name: name,
+            values: values
+          }
+        })
+        .sortBy('name')
+        .value()
 
-    data = stack(data)
+      data = stack(data)
+    }
 
     options = _.assign(this._options, options)
     var margin = options.margin

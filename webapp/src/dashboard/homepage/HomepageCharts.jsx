@@ -137,6 +137,7 @@ var HomepageCharts = React.createClass({
                      yFormat: d3.format('%'),
                      range: underImmunizedData.range,
                      rejectId: 433,
+                     processData: true,
                      width: 390,
                      height: 390
                    }}/>
