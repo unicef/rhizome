@@ -176,7 +176,6 @@ var SourceDataDashboard = React.createClass({
     </ReviewTable>
 
     var docForm
-    var review_breakdown
     if (doc_tab === 'doc_index') {
       docForm = <div>
         <div className='medium-12 columns upload__csv--load'>
@@ -187,7 +186,6 @@ var SourceDataDashboard = React.createClass({
           <DocForm />
         </div>
       </div>
-      review_breakdown = ''
     } else {
       docForm = <div>
         <div className='medium-12 columns upload__csv--load'>
@@ -196,12 +194,14 @@ var SourceDataDashboard = React.createClass({
         <div className='medium-12 columns upload__csv--step'>
           You can review raw data, map indicators, validate data and view results.
         </div>
+        <div>
+          <DocOverview
+            key={table_key + 'breakdown'}
+            loading={loading}
+            doc_id={doc_id}
+            doc_title={doc_obj.doc_title}/>
+        </div>
       </div>
-
-      review_breakdown = <DocOverview
-        key={table_key + 'breakdown'}
-        loading={loading}
-        doc_id={doc_id}/>
     }
 
     return (
@@ -214,7 +214,6 @@ var SourceDataDashboard = React.createClass({
           </div>
           <div className='medium-12 columns'>
             {review_nav}
-            {review_breakdown}
           </div>
         </div>
       </div>)
