@@ -26,6 +26,79 @@ var defaults = {
   yScale: d3.scale.linear
 }
 
+function processData (originalData, options) {
+  var percentage = function (dataset) {
+    var total = _(dataset).pluck('value').sum()
+    _.forEach(dataset, d => { d.value /= total })
+    return dataset
+  }
+
+  var stack = d3.layout.stack()
+    .offset('zero')
+    .values(d => { return d.values })
+    .x(d => { return d.campaign.start_date })
+    .y(d => { return d.value })
+
+  var data = _(originalData)
+    .each(d => { d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY') })
+    .groupBy(d => { return d.indicator.id + '-' + d.quarter })
+    .map(d => {
+      return _.assign({}, d[0], {
+        'value': _(d).pluck('value').sum()
+      })
+    })
+    .groupBy('quarter')
+    .map(percentage)
+    .flatten()
+    .reject(d => { return d.indicator.id === options.rejectId })
+    .groupBy('indicator.short_name')
+    .map((values, name) => {
+      return {
+        name: name,
+        values: values
+      }
+    })
+    .sortBy('name')
+    .value()
+
+  return stack(data)
+}
+
+function axis (svg, options, dataXScale, yScale, w, h, topLegendHeight) {
+  svg.select('.x.axis')
+    .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
+    .call(d3.svg.axis()
+      .orient('bottom')
+      .tickSize(0)
+      .tickPadding(4)
+      .tickValues(_.filter(dataXScale.domain(), function (d, i, domain) {
+        return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length
+      }))
+      .tickFormat(options.xFormat)
+      .scale(dataXScale))
+
+  svg.select('.x.axis').selectAll('text').attr('y', 9)
+  svg.select('.x.axis').selectAll('.domain').data([0])
+    .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
+
+  svg.select('.y.axis')
+    .attr('transform', 'translate(0,' + topLegendHeight + ')')
+    .call(d3.svg.axis()
+      .orient('right')
+      .tickFormat(options.yFormat)
+      .tickSize(w)
+      .ticks(2)
+      .scale(yScale))
+
+  svg.selectAll('.y.axis text')
+    .attr({
+      'dx': -w,
+      'dy': 10
+    })
+
+  d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
+}
+
 function ColumnChart () {}
 
 _.extend(ColumnChart.prototype, {
@@ -87,41 +160,7 @@ _.extend(ColumnChart.prototype, {
     var data = originalData
 
     if (options.processData) {
-      var percentage = function (dataset) {
-        var total = _(dataset).pluck('value').sum()
-        _.forEach(dataset, d => { d.value /= total })
-        return dataset
-      }
-
-      var stack = d3.layout.stack()
-        .offset('zero')
-        .values(d => { return d.values })
-        .x(d => { return d.campaign.start_date })
-        .y(d => { return d.value })
-
-      data = _(originalData)
-        .each(d => { d.quarter = moment(d.campaign.start_date).format('[Q]Q YYYY') })
-        .groupBy(d => { return d.indicator.id + '-' + d.quarter })
-        .map(d => {
-          return _.assign({}, d[0], {
-            'value': _(d).pluck('value').sum()
-          })
-        })
-        .groupBy('quarter')
-        .map(percentage)
-        .flatten()
-        .reject(d => { return d.indicator.id === options.rejectId })
-        .groupBy('indicator.short_name')
-        .map((values, name) => {
-          return {
-            name: name,
-            values: values
-          }
-        })
-        .sortBy('name')
-        .value()
-
-      data = stack(data)
+      data = processData(originalData, options)
     }
 
     options = _.assign(this._options, options)
@@ -218,42 +257,10 @@ _.extend(ColumnChart.prototype, {
       .on('mouseout', hover.out)
 
     column.exit().remove()
-    svg.select('.x.axis')
-      .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
-      .call(d3.svg.axis()
-        .orient('bottom')
-        .tickSize(0)
-        .tickPadding(4)
-        .tickValues(_.filter(dataXScale.domain(), function (d, i, domain) {
-          // Include every fourth tick value unless that tick is within three
-          // ticks of the last value. Always include the last tick. We have to
-          // do this manually because D3 ignores the ticks() value for
-          // ordinal scales
-          return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length
-        }))
-        .tickFormat(options.xFormat)
-        .scale(dataXScale))
 
-    svg.select('.x.axis').selectAll('text').attr('y', 9)
-    svg.select('.x.axis').selectAll('.domain').data([0])
-      .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
-
-    svg.select('.y.axis')
-      .attr('transform', 'translate(0,' + topLegendHeight + ')')
-      .call(d3.svg.axis()
-        .orient('right')
-        .tickFormat(options.yFormat)
-        .tickSize(w)
-        .ticks(2)
-        .scale(yScale))
-
-    svg.selectAll('.y.axis text')
-      .attr({
-        'dx': -w,
-        'dy': 10
-      })
-
-    d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
+    if (!options.inaccessibility) {
+      axis(svg, options, dataXScale, yScale, w, h, topLegendHeight)
+    }
 
     var fmt = _.flow(options.y, options.yFormat)
 

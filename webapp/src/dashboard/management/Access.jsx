@@ -73,7 +73,7 @@ var Access = React.createClass({
         </div>
 
         <div className='medium-2 columns'>
-          <h4>Inaccessibiity<br />Breakdown</h4>
+          <h4>Inaccessibility<br />Breakdown</h4>
           <Chart type='ColumnChart'
                         loading={loading}
                         data={reasons}
@@ -83,7 +83,8 @@ var Access = React.createClass({
                           values: _.property('values'),
                           y0: _.property('y0'),
                           yFormat: d3.format('%'),
-                          processData: true
+                          processData: true,
+                          inaccessibility: true
                         }} />
         </div>
 
@@ -96,7 +97,9 @@ var Access = React.createClass({
                         innerRadius: 0.3,
                         outerRadius: 0.5,
                         domain: _.constant([0, 1]),
-                        percentage: planLabel(plans)
+                        percentage: planLabel(plans),
+                        name: (d, i) => { return i },
+                        color: ['#377EA4', '#B6D0D4']
                       }} />
         </div>
 

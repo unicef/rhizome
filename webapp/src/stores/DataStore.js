@@ -108,16 +108,15 @@ var DataStore = Reflux.createStore({
     })
   },
 
-  onFetchForChart: function (dashboard) {
-    var promises = dashboard.charts.map(function (def) {
-      return ChartDataInit.prepareData(def, dashboard.layout || 0)
+  onFetchForChart: async function (dashboard) {
+    let responses = await ChartDataInit.getPromises()
+    let promises = dashboard.charts.map(async chart => {
+      return await ChartDataInit.prepareData(chart, dashboard.layout || 0, responses)
     })
-
-    Promise.all(promises).then(responses => {
-      let data = _(dashboard.charts).map(chart => chart.id).zipObject(responses).value()
+    Promise.all(promises).then(values => {
+      let data = _(dashboard.charts).map(chart => chart.id).zipObject(values).value()
 
       this.data = data
-
       this.trigger({
         loading: false,
         data: this.data
@@ -125,7 +124,6 @@ var DataStore = Reflux.createStore({
     })
 
     this.data = []
-
     this.trigger({
       loading: true,
       data: []
