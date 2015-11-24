@@ -5,6 +5,6 @@ export default {
     '#6493A6', '#436380', '#717B8B', '#222222', '#387EA3', '#334B61', '#4A5D70', '#000000'
   ],
   rainbow: [
-    'red', 'orange', 'yellow', 'green', 'cyan', 'blue', 'purple', 'indianred', 'yellowgreen'
+    'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue', 'darkviolet', 'crimson', 'tomato'
   ]
 }

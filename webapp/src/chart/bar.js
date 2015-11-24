@@ -8,6 +8,7 @@ import Tooltip from 'component/Tooltip.jsx'
 
 import browser from 'util/browser'
 import color from 'util/color'
+import palettes from 'util/palettes'
 import legend from 'chart/renderer/legend'
 
 var defaults = {
@@ -16,6 +17,7 @@ var defaults = {
   offset: 'zero',
   padding: 0.1,
   values: _.property('values'),
+  color: palettes.blue,
   x: _.property('value'),
   xFormat: String,
   xScale: d3.scale.linear,
@@ -136,9 +138,6 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     var y = _.flow(options.y, yScale)
 
-    var colorScale = color.scale(_.map(stacked, options.name))
-    var fill = _.flow(options.name, colorScale)
-
     var svg = this._svg
 
     var canvasH = h + margin.top + margin.bottom + topLegendHeight
@@ -167,7 +166,8 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
     series.enter().append('g')
       .attr('class', 'bar')
 
-    series.style('fill', fill)
+    let fill = color.map(data.map(options.name), options.color)
+    series.style('fill', _.flow(options.name, fill))
 
     series.exit()
       .transition()
@@ -225,7 +225,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         .call(legend(options)
           .interactive(true)
           .fontSize(100)
-          .scale(colorScale)
+          .scale(fill)
           .filled(function (d, i) {
             return sortBy ? sortBy === d : i === 0
           })
