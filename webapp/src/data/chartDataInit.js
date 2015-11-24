@@ -11,63 +11,65 @@ import ancestryString from 'data/transform/ancestryString'
 import palettes from 'util/palettes'
 
 export default {
-  prepareData (chartDef, layout) {
+  getPromises () {
+    return [api.locations(), api.campaign(), api.office(), api.indicatorsTree()]
+  },
+
+  prepareData (chartDef, layout, responses) {
     let data = {}
 
-    return Promise.all([api.locations(), api.campaign(), api.office(), api.indicatorsTree()])
-      .then(([locations, campaigns, offices, indicators]) => {
-        let locationIndex = _.indexBy(locations.objects, 'id')
-        data.locationList = _(locations.objects)
-          .map(location => {
-            return {
-              'title': location.name,
-              'value': location.id,
-              'parent': location.parent_location_id
-            }
-          })
-          .sortBy('title')
-          .reverse()
-          .thru(_.curryRight(treeify)('value'))
-          .map(ancestryString)
-          .value()
-
-        data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
-          ? locationIndex[chartDef.locationValue]
-          : locationIndex[data.locationList[0].value]
-
-        let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
-        data.locationSelected = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
-
-        let indicatorIndex = _.indexBy(indicators.flat, 'id')
-        data.indicatorSelected = chartDef.indicators.map(id => {
-          return indicatorIndex[id]
-        })
-
-        let officeIndex = _.indexBy(offices.objects, 'id')
-        let campaignList = _(campaigns.objects)
-          .map(campaign => {
-            return _.assign({}, campaign, {
-              'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-              'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-              'office': officeIndex[campaign.office_id]
-            })
-          })
-          .sortBy(_.method('start_date.getTime'))
-          .reverse()
-          .value()
-
-        let campaignIndex = _.indexBy(campaignList, 'id')
-
-        data.campaign = chartDef.campaignValue && campaignIndex[chartDef.campaignValue]
-          ? campaignIndex[chartDef.campaignValue]
-          : campaignList[0]
-
-        if (!data.indicatorSelected.length) {
-          return
+    let [locations, campaigns, offices, indicators] = responses
+    let locationIndex = _.indexBy(locations.objects, 'id')
+    data.locationList = _(locations.objects)
+      .map(location => {
+        return {
+          'title': location.name,
+          'value': location.id,
+          'parent': location.parent_location_id
         }
-
-        return this.fetchChart(chartDef, data, indicatorIndex, layout)
       })
+      .sortBy('title')
+      .reverse()
+      .thru(_.curryRight(treeify)('value'))
+      .map(ancestryString)
+      .value()
+
+    data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
+      ? locationIndex[chartDef.locationValue]
+      : locationIndex[data.locationList[0].value]
+
+    let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
+    data.locationSelected = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
+
+    let indicatorIndex = _.indexBy(indicators.flat, 'id')
+    data.indicatorSelected = chartDef.indicators.map(id => {
+      return indicatorIndex[id]
+    })
+
+    let officeIndex = _.indexBy(offices.objects, 'id')
+    let campaignList = _(campaigns.objects)
+      .map(campaign => {
+        return _.assign({}, campaign, {
+          'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+          'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+          'office': officeIndex[campaign.office_id]
+        })
+      })
+      .sortBy(_.method('start_date.getTime'))
+      .reverse()
+      .value()
+
+    let campaignIndex = _.indexBy(campaignList, 'id')
+
+    data.campaign = chartDef.campaignValue && campaignIndex[chartDef.campaignValue]
+      ? campaignIndex[chartDef.campaignValue]
+      : campaignList[0]
+
+    if (!data.indicatorSelected.length) {
+      return
+    }
+
+    return this.fetchChart(chartDef, data, indicatorIndex, layout)
   },
 
   fetchChart (chartDef, data, indicatorIndex, layout) {
