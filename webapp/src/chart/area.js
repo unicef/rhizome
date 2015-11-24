@@ -18,6 +18,7 @@ var DEFAULTS = {
   x: _.property('campaign.start_date'),
   xFormat: format.timeAxis,
   y: _.property('value'),
+  y0: _.property('y0'),
   yFormat: d3.format(',d')
 }
 
@@ -26,8 +27,34 @@ function AreaChart () {}
 _.extend(AreaChart.prototype, {
   defaults: DEFAULTS,
 
-  update: function (series, options) {
-    series = _(series).filter(serie => {
+  update: function (originalData, options) {
+    var series = function (values, name) {
+      return {
+        name: name,
+        values: _.sortBy(values, _.result('campaign.start_date.getTime'))
+      }
+    }
+
+    var stack = d3.layout.stack()
+      .order('default')
+      .offset('zero')
+      .values(_.property('values'))
+      .x(_.property('campaign.start_date'))
+      .y(_.property('value'))
+
+    try {
+      var data = _(originalData)
+        .groupBy('indicator.short_name')
+        .map(series)
+        .thru(stack)
+        .value()
+    } catch (err) {
+      console.error(err)
+      console.log(`Data error in ${originalData}`)
+      data = []
+    }
+
+    data = _(data).filter(serie => {
       serie.values = _(serie.values).reject(item => {
         return item.value === null
       }).value()
@@ -37,6 +64,7 @@ _.extend(AreaChart.prototype, {
     options = _.assign(this._options, options)
 
     var margin = options.margin
+    var dataMarginLeft = 25
 
     var svg = this._svg
     var width = this._width - margin.left - margin.right
@@ -47,21 +75,21 @@ _.extend(AreaChart.prototype, {
 
     if (!_.isFunction(fillColor)) {
       var fillColorScale = d3.scale.ordinal()
-        .domain(_.map(series, options.seriesName))
-        .range(['#C4D9DC', '#A2AAB3', '#E5E9EC', '#D8D9E1'])
+        .domain(_.map(data, options.seriesName))
+        .range(['#D8D9E1', '#E5E9EC', '#A2AAB3', '#C4D9DC'])
       fillColor = _.flow(options.seriesName, fillColorScale)
     }
 
     if (!_.isFunction(strokeColor)) {
       var strokeColorScale = d3.scale.ordinal()
-        .domain(_.map(series, options.seriesName))
-        .range(['#707070', '#87939F', '#B9C3CB', '#B0B3C3'])
+        .domain(_.map(data, options.seriesName))
+        .range(['#B0B3C3', '#B9C3CB', '#87939F', '#707070'])
       strokeColor = _.flow(options.seriesName, strokeColorScale)
     }
 
     var domain = _.isFunction(options.domain)
-      ? options.domain(series)
-      : d3.extent(_(series)
+      ? options.domain(data)
+      : d3.extent(_(data)
       .map(options.values)
       .flatten()
       .map(options.x)
@@ -69,15 +97,11 @@ _.extend(AreaChart.prototype, {
 
     var xScale = d3.time.scale()
       .domain(domain)
-      .range([0, width])
+      .range([dataMarginLeft, width])
 
     var range = _.isFunction(options.range)
-      ? options.range(series)
-      : d3.extent(_(series)
-      .map(options.values)
-      .flatten()
-      .map(options.y)
-      .value())
+      ? options.range(data)
+      : d3.extent(_(data).map(options.values).flatten().value(), d => { return options.y0(d) + options.y(d) })
 
     range[0] = 0
 
@@ -85,12 +109,16 @@ _.extend(AreaChart.prototype, {
       .domain(range)
       .range([height, 0])
 
-    var x = _.flow(options.x, xScale)
-    var y = _.flow(options.y, yScale)
+    var x = d => { return xScale(options.x(d)) }
+    var y = d => { return yScale(options.y(d)) }
+    var y0 = d => { return yScale(options.y(d)) }
+    if (options.y0) {
+      y = d => { return yScale(options.y0(d) + options.y(d)) }
+      y0 = d => { return yScale(options.y0(d)) }
+    }
 
-    var points = _(series).map(function (s) {
-      return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
-    })
+    var points = _(data)
+      .map(d => { return _.map(options.values(d), _.partial(_.set, _, 'seriesName', options.seriesName(d))) })
       .flatten()
       .value()
 
@@ -101,11 +129,11 @@ _.extend(AreaChart.prototype, {
         .xFormat(options.xFormat)
         .yFormat(options.yFormat)
         .x(options.x)
-        .y(options.y)
+        .y(d => { return d.y0 ? (options.y(d) + options.y0(d)) : options.y(d) })
         .xScale(xScale)
         .yScale(yScale)
         .value(options.y)
-        .seriesName(_.property('seriesName'))
+        .seriesName(options.withoutSeriesName ? null : _.property('seriesName'))
         .sort(true)
         .total(options.total)
         .datapoints(points)
@@ -113,7 +141,7 @@ _.extend(AreaChart.prototype, {
 
     var g = svg.select('.data')
       .selectAll('.series')
-      .data(series, options.seriesName)
+      .data(data, options.seriesName)
 
     g.enter()
       .append('g')
@@ -122,7 +150,8 @@ _.extend(AreaChart.prototype, {
     g.style({
       'fill': fillColor,
       'stroke': strokeColor,
-      'opacity': 0.5
+      'stroke-width': 2,
+      'opacity': 0.6
     })
 
     g.exit().remove()
@@ -136,20 +165,22 @@ _.extend(AreaChart.prototype, {
 
     var area = d3.svg.area()
       .x(x)
-      .y0(height)
+      .y0(y0)
       .y1(y)
 
     path.transition()
       .duration(500)
       .attr('d', area)
 
-    var labels = _(series)
+    var labels = _(data)
       .map(function (d) {
         var last = _.max(options.values(d), options.x)
         var v = options.y(last)
 
+        var text = options.withoutSeriesName ? options.yFormat(v) : (options.seriesName(d) + ' ' + options.yFormat(v))
+
         return {
-          text: options.seriesName(d) + ' ' + options.yFormat(v),
+          text: text,
           x: x(last),
           y: y(last),
           defined: _.isFinite(v),

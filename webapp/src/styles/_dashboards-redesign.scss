@@ -80,9 +80,11 @@ $total-columns: 8;
 
 .font-bold {
   font-weight: bold;
+  font-size: 11px;
 }
 
 .title--wrap {
+  font-size: 12px;
   margin-top: 10%;
   white-space: normal;
 }
@@ -90,4 +92,8 @@ $total-columns: 8;
 .percentage {
   font-size: 15px;
   font-weight: bold;
+}
+
+.missed__children--position {
+  padding-top: 2%;
 }

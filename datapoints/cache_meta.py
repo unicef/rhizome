@@ -1,7 +1,10 @@
+from pandas import read_csv, notnull, DataFrame, concat
+from numpy import sqrt, log
+
 from datapoints.models import *
 from source_data.models import SourceObjectMap
-from pandas import read_csv, notnull, DataFrame, concat
 
+from pprint import pprint
 
 def calculate_campaign_percentage_complete():
     '''
@@ -140,8 +143,58 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
-# def minify_geo_json():
-#     afg_shape = LocationPolygon.objects.get(location_id=2).geo_json
-#     coordinates = afg_shape['geometry']['coordinates'][0]
-#
-#     df = DataFrame(coordinates, columns=['lat','lon'])
+def minify_geo_json():
+    '''
+    Make a square a triangle.. an octagon a hexagon.  Shrink the Number of
+    vertices for each polygon.
+
+    This is a kind of "dumb" algorithm because the adjacent shaps dont line up
+    Like they do with the source, but the reduced size of the data returned
+    to the API makes having the lower fidelity shapes worth the performance
+    boost.
+
+    This ensures that every shape in the system has no more than 100 vertices.
+    If the original shape has 99, we do not shrink.  I do my best here not to
+    blindly shrink the shape, but instead to remove points that are super close
+    together.
+
+    from datapoints.cache_meta import minify_geo_json as m
+    m()
+    '''
+
+    min_geo_batch = []
+
+    for shp in LocationPolygon.objects.all():
+
+        new_polygon_list = []
+        polygon = shp.geo_json['geometry']['coordinates']
+
+        if shp.geo_json['geometry']['type'] == 'Polygon': # MultiPolygons trip me up ##
+
+            min_polygon = minify_polygon(polygon)
+            new_polygon_list.append(min_polygon)
+
+            shp.geo_json['geometry']['coordinates'] = new_polygon_list
+
+        shp_obj = \
+            MinGeo(**{'location_id':shp.location_id,'geo_json':shp.geo_json})
+        min_geo_batch.append(shp_obj)
+
+    MinGeo.objects.all().delete()
+    MinGeo.objects.bulk_create(min_geo_batch)
+
+def minify_polygon(polygon):
+    '''
+    This should be a more sophisticated algorithm that ensures adjacent shapes
+    line up.  However for now, we just take one out of ever 5 points... meaning
+    That the geo_json we return to the browser ( while there may be a little
+    overlap for adjacent shapes ) is theoretically 1/5th the size.
+    '''
+
+    shape_df = DataFrame(polygon[0], columns=['lat','lon'])
+
+    shape_df['index_col'] = shape_df.index
+    shape_df['to_take'] = shape_df['index_col'].map(lambda x: x % 5)
+    filtered_df = shape_df[shape_df['to_take'] == 0][['lat','lon']]
+
+    return filtered_df.values.tolist()

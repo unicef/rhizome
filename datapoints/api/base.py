@@ -138,6 +138,7 @@ class BaseModelResource(ModelResource):
 
         try:
             response = method(request, **kwargs)
+
         except Exception as error:
 
             error_code = DataPointsException.defaultCode
