@@ -101,7 +101,7 @@ var DocOverview = React.createClass({
         {doc_detail.doc_detail_value}</div>)
     }
 
-    return <div className='row'>
+    return <div className='row csv-upload__message'>
       {rows}
       {refresh_master_btn}
     </div>
