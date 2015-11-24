@@ -53,6 +53,12 @@ var Performance = React.createClass({
       .map(series)
       .value()
 
+    var missed = _(data.missedChildren)
+      .forEach(d => {
+        if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
+        if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
+      })
+
     var vaccinated = _.get(_.find(data.transitPoints, indicatorForCampaign(campaign.id, 177)), 'value')
 
     if (!_.isUndefined(vaccinated) && !_.isNull(vaccinated)) {
@@ -113,7 +119,7 @@ var Performance = React.createClass({
         <div className='medium-2 columns'>
           <div>
             <h4>Missed Children</h4>
-            <Chart type='AreaChart' data={data.missedChildren}
+            <Chart type='AreaChart' data={missed}
                    loading={loading}
                    options={{
                      aspect: 2.26,

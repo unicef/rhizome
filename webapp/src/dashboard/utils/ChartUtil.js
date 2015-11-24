@@ -77,9 +77,15 @@ function prepareMissedChildrenData (original) {
 
   var missedChildrenMap = data.missedChildrenByProvince
 
+  var missed = _(data.missedChildren)
+    .forEach(d => {
+      if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
+      if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
+    })
+
   return {
     missedChildrenMap: missedChildrenMap,
-    missed: data.missedChildren,
+    missed: missed,
     missedScale: missedScale,
     location: location,
     date: moment(original.campaign.start_date).format('MMMM YYYY')

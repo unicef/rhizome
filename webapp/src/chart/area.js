@@ -133,7 +133,7 @@ _.extend(AreaChart.prototype, {
         .xScale(xScale)
         .yScale(yScale)
         .value(options.y)
-        .seriesName(_.property('seriesName'))
+        .seriesName(options.withoutSeriesName ? null : _.property('seriesName'))
         .sort(true)
         .total(options.total)
         .datapoints(points)
@@ -177,8 +177,10 @@ _.extend(AreaChart.prototype, {
         var last = _.max(options.values(d), options.x)
         var v = options.y(last)
 
+        var text = options.withoutSeriesName ? options.yFormat(v) : (options.seriesName(d) + ' ' + options.yFormat(v))
+
         return {
-          text: options.seriesName(d) + ' ' + options.yFormat(v),
+          text: text,
           x: x(last),
           y: y(last),
           defined: _.isFinite(v),

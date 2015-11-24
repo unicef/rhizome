@@ -72,7 +72,7 @@ var Access = React.createClass({
       xFormat: d => moment(d).format('MMM YYYY'),
       y: _.property('value'),
       yFormat: d3.format(',.0f'),
-      total: false
+      withoutSeriesName: true
     }
 
     return (
