@@ -14,7 +14,7 @@ from pandas import notnull
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
-    LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
+    LocationResponsibility, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
     ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
@@ -590,11 +590,22 @@ class UserGroupResource(BaseModelResource):
         resource_name = 'user_group'
 
 
-class LocationPermissionResource(BaseModelResource):
+class LocationResponsibilityResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
-        queryset = LocationPermission.objects.all().values()
-        resource_name = 'location_permission'
+        queryset = LocationResponsibility.objects.all().values()
+        resource_name = 'location_responsibility'
 
+
+    def obj_create(self, bundle, **kwargs):
+        '''
+        If post, create file and return the JSON of that object.
+        If get, just query the source_doc table with request parameters
+        '''
+
+        new_obj = LocationResponsibility.objects.create(**bundle.data)
+        bundle.obj = new_obj
+        bundle.data['id'] = new_obj.id
+        return bundle
 
 class GroupPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

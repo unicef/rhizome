@@ -152,7 +152,7 @@ Edit
 Content Type Behavior
 ~~~~~~~~~~~~~~~~~~~~~
   - user:
-      -> subcomponents: location_permissions
+      -> subcomponents: location_responsibilty
   - location
         -> subcomponents: associated_mappings
   - campaign

@@ -381,26 +381,27 @@ class AggDataPoint(models.Model):
         unique_together = ('location', 'campaign', 'indicator')
 
 
-class LocationPermission(models.Model):
+class LocationResponsibility(models.Model):
     '''
-    Individual Users must be assigned locational permissions.  If i am assigned
-    a location, I will be able to view all of its children recursively.  The
-    default for a user
-
-    locational permissions must also specify the read/write flag.  So for instance
-    as a Cluster Supervisor in Sokoto, I should be able to see all of Nigeria's
-    data, but i only should be able to insert / edit data for Sokoto. Thus i
-    would have two records, one that says "i can read all of NG", and one that
-    says, "i can write data in Sokoto."
     '''
 
     user = models.ForeignKey('auth.User')
     location = models.ForeignKey(Location)
-    read_write = models.CharField(max_length=1)
 
     class Meta:
-        db_table = 'location_permission'
-        unique_together = ('user', 'location', 'read_write')
+        db_table = 'location_responsibility'
+        unique_together = ('user', 'location')
+
+
+class AdminLevelPermission(models.Model):
+    '''
+    '''
+
+    user = models.OneToOneField('auth.User')
+    location_type = models.ForeignKey(LocationType)
+
+    class Meta:
+        db_table = 'admin_level_permission'
 
 
 class IndicatorPermission(models.Model):

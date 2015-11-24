@@ -67,34 +67,32 @@ export default {
     addlocationalAccess: function (data) {
       var self = this
       self.$set('locationalAccessLoading', true)
-      api.set_location_permission({ user_id: this.$parent.$data.user_id, location_id: data, read_write: 'r' }).then(function () {
+      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data}).then(function () {
         self.loadlocationalAccess()
       })
     },
     deletelocationalAccess: function (data) {
       var self = this
-      var readWrite = _.find(self.$get('location_permissions'), { location_id: data }).read_write
-      api.set_location_permission({ user_id: this.$parent.$data.user_id, location_id: data, read_write: readWrite, id: '' }).then(function () {
+      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data}).then(function () {
         self.loadlocationalAccess()
       })
     },
     updatelocationalAccessCanRead: function (e) {
       var locationId = e.target.getAttribute('data-location-id')
       var internalId = e.target.getAttribute('data-internal-id')
-      var readWrite = (e.target.checked ? 'w' : 'r')
-      api.set_location_permission({ user_id: this.$parent.$data.user_id, location_id: locationId, read_write: readWrite, id: internalId })
+      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: locationId, id: internalId })
     },
 
     loadlocationalAccess: function () {
       var self = this
 
-      api.location_permission({ user: this.$parent.$data.user_id }).then(function (data) {
+      api.location_responsibility({ user: this.$parent.$data.user_id }).then(function (data) {
         var locations = data.objects
         _.forEach(locations, function (location) {
           location.name = self.location_map[location.location_id].name
-          location.canEnter = location.read_write === 'w'
         })
-        self.$set('location_permissions', locations)
+        console.log('locations',locations);
+        self.$set('location_responsibilities', locations)
         self.$set('locationalAccessLoading', false)
       })
     }

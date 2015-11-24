@@ -35,6 +35,15 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="columns small-4 left-box">
+                <h4> Email</h4>
+            </div>
+            <div class="columns small-8 right-box">
+                {{ form.email }}
+            </div>
+        </div>
+
         <div v-component="uf-user-account" v-with="user_id:user_id"></div>
 
         <div class="row">
