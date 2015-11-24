@@ -151,11 +151,12 @@ var ReviewTable = React.createClass({
     this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible }))
   },
 
+
   renderFilters () {
-    var recent = (<div>
+    var recent = this.props.doc_tab === 'doc_index' ?(<div>
       <div className='upload__csv--load'>recent uploaded data</div>
       <div className='upload__csv--step'>You may review the recent uploaded data.</div>
-    </div>)
+    </div>) : null
 
     return (
       <div className='row'>
