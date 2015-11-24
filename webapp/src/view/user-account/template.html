@@ -52,9 +52,6 @@
 	               {{permission.name}}
 	              </td>
 	              <td>
-	                <input type="checkbox" data-internal-id="{{permission.id}}" data-location-id="{{permission.location_id}}" v-on="change:updatelocationalAccessCanRead" v-model="permission.canEnter" />
-	              </td>
-	              <td>
 	                <span v-on="click:deletelocationalAccess(permission.location_id)" class="fa fa-times"></span>
 	              </td>
 	            </tr>

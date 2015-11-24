@@ -294,7 +294,10 @@ export default {
   group_permissions: endPoint('/group_permission/', 'get', 1),
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/', 'get', 1),
-  user_permissions: endPoint('/user_group/', 'get', 1), // FIXME
+  user_permissions: endPoint('/user_group/', 'get', 1),
+  post_user_permission: endPoint('/user_group/', 'post', 1),
+
+
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
   queue_reprocess: endPoint('/queue_process/', 'get', 1, false),
   chartType: endPoint('/chart_type/', 'get', 1),

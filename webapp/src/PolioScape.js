@@ -6,7 +6,6 @@ import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
 import CampaignsPage from './ufadmin/CampaignsPage.js'
-import GroupForm from 'view/group-form/GroupForm.jsx'
 import HomepageChartsView from 'view/HomepageChartsView.jsx'
 
 Vue.config.debug = true
@@ -74,7 +73,4 @@ export default {
   CampaignsPage: function (id_start_date, id_end_date) {
     CampaignsPage.render(id_start_date, id_end_date)
   },
-  GroupForm: function (el, group_id) {
-    React.render(React.createElement(GroupForm, { group_id: group_id }), el)
-  }
 }

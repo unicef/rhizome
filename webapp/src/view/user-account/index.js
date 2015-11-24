@@ -59,9 +59,9 @@ export default {
     addRemoveUserGroup: function (e) {
       var groupId = e.target.getAttribute('data-group-id')
       if (e.target.checked) {
-        api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
+        api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
       } else {
-        api.map_user_group({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})
+        api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})
       }
     },
     addlocationalAccess: function (data) {
@@ -77,12 +77,6 @@ export default {
         self.loadlocationalAccess()
       })
     },
-    updatelocationalAccessCanRead: function (e) {
-      var locationId = e.target.getAttribute('data-location-id')
-      var internalId = e.target.getAttribute('data-internal-id')
-      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: locationId, id: internalId })
-    },
-
     loadlocationalAccess: function () {
       var self = this
 
@@ -91,7 +85,6 @@ export default {
         _.forEach(locations, function (location) {
           location.name = self.location_map[location.location_id].name
         })
-        console.log('locations',locations);
         self.$set('location_responsibilities', locations)
         self.$set('locationalAccessLoading', false)
       })

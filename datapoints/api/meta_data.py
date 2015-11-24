@@ -589,6 +589,13 @@ class UserGroupResource(BaseModelResource):
         queryset = UserGroup.objects.all().values()
         resource_name = 'user_group'
 
+    def obj_create(self, bundle, **kwargs):
+
+        new_obj = UserGroup.objects.create(**bundle.data)
+        bundle.obj = new_obj
+        bundle.data['id'] = new_obj.id
+
+        return bundle
 
 class LocationResponsibilityResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
