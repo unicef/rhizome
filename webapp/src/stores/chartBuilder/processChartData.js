@@ -256,15 +256,9 @@ export default {
     var locationsIndex = _.indexBy(locations, 'id')
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
-      let maxValue = 0
-      let maxRadius = 20
-
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
-        bubblesValue: _.property('properties.bubbleValue'),
-        maxValue: maxValue,
-        maxRadius: maxRadius,
         border: border.objects.features
       }
 
@@ -273,21 +267,28 @@ export default {
       }
 
       let indicatorIndex = _(data).groupBy('indicator').value()
-      var index = _.indexBy(indicatorIndex[xAxis], 'location')
-      let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
-
-      maxValue = Math.max(...indicatorIndex[yAxis].map(d => d.value))
-      chartOptions.maxValue = maxValue
+      let index = _.indexBy(indicatorIndex[xAxis], 'location')
+      let bubbleIndex = null
+      if(yAxis){
+        let maxRadius = 30
+        let maxValue = 5000
+        bubbleIndex  = _.indexBy(indicatorIndex[yAxis], 'location')
+        let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
+        chartOptions.maxValue = Math.min(Math.max(...bubbleValues), maxValue)
+        chartOptions.maxRadius = maxRadius
+        chartOptions.bubblesValue = _.property('properties.bubbleValue')
+        chartOptions.radius = function(v) { if (v > this.maxValue) return this.maxRadius
+          return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v) }
+      }
 
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
-        let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
-        return _.merge({}, feature, {
-          properties: {
-            value: _.get(location, 'value'),
-            bubbleValue: _.get(bubbleLocation, 'value')
-          }
-        })
+        let properties = {value: _.get(location, 'value')}
+        if(yAxis){
+          let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
+          properties.bubbleValue = _.get(bubbleLocation, 'value')
+        }
+        return _.merge({}, feature, {properties: properties})
       })
 
       return { options: chartOptions, data: chartData }

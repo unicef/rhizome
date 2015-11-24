@@ -268,9 +268,9 @@ _.extend(ChoroplethMap.prototype, {
       bubbleData.exit().remove()
 
       if (options.chartInDashboard) {
-        var bubbleLegendText = [100, 1000, 5000]
+        var bubbleLegendText = [1, Math.round(options.maxValue/2), options.maxValue]
         var bubbleLegend = svg.select('.bubbles').select('.legend')
-          .attr('transform', function () { return 'translate(' + (w * 1.15) + ', ' + (0.95 * h) + ')' })
+          .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxRadius + 10) + ')' })
           .selectAll('.series').data(bubbleLegendText)
           .enter().append('g')
           .attr('class', 'series')
