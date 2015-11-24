@@ -3,13 +3,6 @@ import d3 from 'd3'
 import moment from 'moment'
 import React from 'react'
 
-var series = function (values, name) {
-  return {
-    name: name,
-    values: _.sortBy(values, _.result('campaign.start_date.getTime'))
-  }
-}
-
 var percentage = function (dataset) {
   var total = _(dataset).pluck('value').sum()
 
@@ -18,34 +11,6 @@ var percentage = function (dataset) {
   })
 
   return dataset
-}
-
-function generateMissedChildrenChartData (original) {
-  var stack = d3.layout.stack()
-    .order('default')
-    .offset('zero')
-    .values(_.property('values'))
-    .x(_.property('campaign.start_date'))
-    .y(_.property('value'))
-
-  var missed
-  try {
-    missed = _(original)
-      .forEach(d => {
-        if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
-        if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
-      })
-      .groupBy('indicator.short_name')
-      .map(series)
-      .thru(stack)
-      .value()
-  } catch (err) {
-    console.error(err)
-    console.log(`Data error in ${original}`)
-    missed = []
-  }
-
-  return missed
 }
 
 function preparePolioCasesData (original) {
@@ -108,36 +73,16 @@ function prepareMissedChildrenData (original) {
   var upper = moment(campaign.start_date, 'YYYY-MM-DD')
   var lower = upper.clone().startOf('month').subtract(1, 'year')
 
-  var missed = generateMissedChildrenChartData(data.missedChildren)
-
   var missedScale = [lower.valueOf(), upper.valueOf()]
 
   var missedChildrenMap = data.missedChildrenByProvince
 
-  var sumData = []
-  var maxRange
-  if (missed.length >= 1) {
-    missed[0].values.forEach((d, i) => {
-      sumData.push(missed.reduce((sum, n) => {
-        var sumValue = typeof (sum) === 'object' ? sum.values[i].value : sum
-        var nValue = n.values[i].value
-        return sumValue + nValue
-      }))
-    })
-    maxRange = _.ceil(_.max(sumData), 2)
-  }
-
-  if (!maxRange) {
-    maxRange = 1
-  }
-
   return {
     missedChildrenMap: missedChildrenMap,
-    missed: missed,
+    missed: data.missedChildren,
     missedScale: missedScale,
     location: location,
-    date: moment(original.campaign.start_date).format('MMMM YYYY'),
-    range: _.constant([0, maxRange])
+    date: moment(original.campaign.start_date).format('MMMM YYYY')
   }
 }
 

@@ -34,34 +34,6 @@ var Performance = React.createClass({
     }
   },
 
-  generateMissedChildrenChartData: function (originalData) {
-    var stack = d3.layout.stack()
-      .order('default')
-      .offset('zero')
-      .values(_.property('values'))
-      .x(_.property('campaign.start_date'))
-      .y(_.property('value'))
-
-    var missed
-    try {
-      missed = _(originalData)
-        .forEach(d => {
-          if (_.isEqual(d.indicator.id, 164)) { d.indicator.short_name = 'Absent' }
-          if (_.isEqual(d.indicator.id, 165)) { d.indicator.short_name = 'Other' }
-        })
-        .groupBy('indicator.short_name')
-        .map(series)
-        .thru(stack)
-        .value()
-    } catch (err) {
-      console.error(err)
-      console.log(`Data error in ${originalData}`)
-      missed = []
-    }
-
-    return missed
-  },
-
   render: function () {
     var data = this.props.data
     var campaign = this.props.campaign
@@ -70,8 +42,6 @@ var Performance = React.createClass({
     var loading = this.props.loading
     var location = this.props.location
     var colors = ['#377EA4', '#B6D0D4']
-
-    var missed = this.generateMissedChildrenChartData(data.missedChildren)
 
     var sortedConversions = _.sortBy(data.conversions, 'campaign.start_date')
     var conversions = _(sortedConversions)
@@ -126,21 +96,6 @@ var Performance = React.createClass({
       .domain([0, maxVaccinatedChildren])
       .range([0, maxRadius])
 
-    var sumData = []
-    var maxRange
-    if (missed.length >= 1) {
-      sumData = missed[0].values.map((d, i) => {
-        return missed.reduce((sum, cur) => {
-          return sum + cur.values[i].value
-        }, 0)
-      })
-      maxRange = _.ceil(_.max(sumData), 2)
-    }
-
-    if (!maxRange) {
-      maxRange = 1
-    }
-
     function _chooseRadius (v) {
       if (v > maxVaccinatedChildren) {
         return maxRadius
@@ -158,7 +113,7 @@ var Performance = React.createClass({
         <div className='medium-2 columns'>
           <div>
             <h4>Missed Children</h4>
-            <Chart type='AreaChart' data={missed}
+            <Chart type='AreaChart' data={data.missedChildren}
                    loading={loading}
                    options={{
                      aspect: 2.26,
@@ -166,7 +121,6 @@ var Performance = React.createClass({
                      x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
                      xFormat: d => moment(d).format('MMM YYYY'),
                      yFormat: d3.format(',.1%'),
-                     range: _.constant([0, maxRange]),
                      total: true
                    }}/>
           </div>

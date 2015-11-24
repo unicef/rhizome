@@ -19,14 +19,6 @@ var Access = React.createClass({
     var campaign = this.props.campaign
     var loading = this.props.loading
 
-    var inaccessible = _(data.numberOfInaccessibleChildren)
-      .sortBy(_.method('campaign.start_date.getTime'))
-      .groupBy('indicator.short_name')
-      .map(function (values) {
-        return {name: '', values: values}
-      })
-      .value()
-
     var reasons = _(data.inaccessibilityBreakdown)
       .filter(d => {
         return d.campaign.id === campaign.id &&
@@ -87,7 +79,7 @@ var Access = React.createClass({
       <div className='row'>
         <div className='medium-4 columns'>
           {labelText}
-          <Chart type='AreaChart' data={inaccessible}
+          <Chart type='AreaChart' data={data.numberOfInaccessibleChildren}
                  loading={loading}
                  options={chartOptions}/>
         </div>
