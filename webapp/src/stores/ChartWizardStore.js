@@ -80,73 +80,74 @@ let ChartWizardStore = Reflux.createStore({
     return this.data
   },
 
-  onInitialize (chartDef) {
+  async onInitialize (chartDef) {
     this.data.chartDef = _.clone(chartDef)
 
-    Promise.all([api.locations(), api.campaign(), api.office()])
-      .then(([locations, campaigns, offices]) => {
-        this.locationIndex = _.indexBy(locations.objects, 'id')
-        this.data.locationList = _(locations.objects)
-          .map(location => {
-            return {
-              'title': location.name,
-              'value': location.id,
-              'parent': location.parent_location_id
-            }
-          })
-          .sortBy('title')
-          .reverse()
-          .thru(_.curryRight(treeify)('value'))
-          .map(ancestryString)
-          .value()
+    let locations = await api.locations()
+    let campaigns = await api.campaign()
+    let offices = await api.office()
 
-        this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
-          ? this.locationIndex[this.data.chartDef.locationValue]
-          : this.locationIndex[this.data.locationList[0].value]
+    this.locationIndex = _.indexBy(locations.objects, 'id')
+    this.data.locationList = _(locations.objects)
+      .map(location => {
+        return {
+          'title': location.name,
+          'value': location.id,
+          'parent': location.parent_location_id
+        }
+      })
+      .sortBy('title')
+      .reverse()
+      .thru(_.curryRight(treeify)('value'))
+      .map(ancestryString)
+      .value()
 
-        let officeId = this.data.location.office_id
+    this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
+      ? this.locationIndex[this.data.chartDef.locationValue]
+      : this.locationIndex[this.data.locationList[0].value]
 
-        api.indicatorsTree({ office_id: officeId }).then(indicators => {
-          this.indicatorIndex = _.indexBy(indicators.flat, 'id')
-          this.data.indicatorList = _.sortBy(indicators.objects, 'title')
-          this.data.indicatorSelected = chartDef.indicators.map(id => {
-            return this.indicatorIndex[id]
-          })
+    let officeId = this.data.location.office_id
 
-          let officeIndex = _.indexBy(offices.objects, 'id')
-          this.campaignList = _(campaigns.objects)
-            .map(campaign => {
-              return _.assign({}, campaign, {
-                'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
-                'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-                'office': officeIndex[campaign.office_id]
-              })
-            })
-            .sortBy(_.method('start_date.getTime'))
-            .reverse()
-            .value()
+    let indicators = await api.indicatorsTree({ office_id: officeId })
 
-          this.campaignIndex = _.indexBy(this.campaignList, 'id')
-          this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-          this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
-          this.data.chartTypeFilteredList = builderDefinitions.charts
+    this.indicatorIndex = _.indexBy(indicators.flat, 'id')
+    this.data.indicatorList = _.sortBy(indicators.objects, 'title')
+    this.data.indicatorSelected = chartDef.indicators.map(id => {
+      return this.indicatorIndex[id]
+    })
 
-          if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
-            this.data.campaign = this.campaignIndex[chartDef.campaignValue]
-          } else {
-            this.data.campaign = this.data.campaignFilteredList.length > 0
-              ? this.data.campaignFilteredList[0]
-              : null
-          }
-
-          if (this.data.indicatorSelected.length > 0) {
-            this.filterChartTypeByIndicator()
-          }
-
-          this.applyChartDef(this.data.chartDef)
-          this.previewChart()
+    let officeIndex = _.indexBy(offices.objects, 'id')
+    this.campaignList = _(campaigns.objects)
+      .map(campaign => {
+        return _.assign({}, campaign, {
+          'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
+          'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
+          'office': officeIndex[campaign.office_id]
         })
       })
+      .sortBy(_.method('start_date.getTime'))
+      .reverse()
+      .value()
+
+    this.campaignIndex = _.indexBy(this.campaignList, 'id')
+    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+    this.data.chartTypeFilteredList = builderDefinitions.charts
+
+    if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
+      this.data.campaign = this.campaignIndex[chartDef.campaignValue]
+    } else {
+      this.data.campaign = this.data.campaignFilteredList.length > 0
+        ? this.data.campaignFilteredList[0]
+        : null
+    }
+
+    if (this.data.indicatorSelected.length > 0) {
+      this.filterChartTypeByIndicator()
+    }
+
+    this.applyChartDef(this.data.chartDef)
+    this.previewChart()
   },
 
   onClear () {

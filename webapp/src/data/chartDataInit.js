@@ -11,8 +11,8 @@ import ancestryString from 'data/transform/ancestryString'
 import palettes from 'util/palettes'
 
 export default {
-  getPromises () {
-    return [api.locations(), api.campaign(), api.office(), api.indicatorsTree()]
+  async getPromises () {
+    return [await api.locations(), await api.campaign(), await api.office(), await api.indicatorsTree()]
   },
 
   prepareData (chartDef, layout, responses) {
