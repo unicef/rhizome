@@ -153,7 +153,9 @@ var SourceDataDashboard = React.createClass({
         </div>
         {step}
         <div className='medium-12 columns upload__csv--form'>
-          <DocForm />
+          <DocForm
+            campaign={this.props.campaign}
+            location={this.props.location}/>
         </div>
       </div>
     )
