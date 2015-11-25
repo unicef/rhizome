@@ -20,7 +20,14 @@ var DEFAULTS = {
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 20
+  maxBubbleRadius: 20,
+  bubbleLegendRatio: [0.1, 0.5, 1]
+}
+
+function _generateBubbleLegendText (maxBubbleValue, bubbleLegendRatio) {
+  var bubbleLegendText = []
+  bubbleLegendRatio.forEach(d => { bubbleLegendText.push(_.ceil(d * maxBubbleValue, -1)) })
+  return bubbleLegendText
 }
 
 function MapLegend () {
@@ -174,11 +181,13 @@ _.extend(MapLegend.prototype, {
         .domain([0, options.maxBubbleValue])
         .range([0, options.maxBubbleRadius])
 
+      var bubbleLegendText = _generateBubbleLegendText(options.maxBubbleValue, options.bubbleLegendRatio)
+
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
           return 'translate(' + 0 + ', ' + 0 + ')'
         })
-        .selectAll('.series').data(options.bubbleLegendText)
+        .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
         .attr('class', 'series')
 

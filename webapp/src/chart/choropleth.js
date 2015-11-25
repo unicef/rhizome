@@ -25,7 +25,8 @@ var DEFAULTS = {
   xFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 20
+  maxBubbleRadius: 20,
+  bubbleLegendRatio: [0.1, 0.5, 1]
 }
 
 function _calculateBounds (features) {
@@ -73,6 +74,12 @@ function _chooseRadius (v, radius) {
   } else {
     return radius(v)
   }
+}
+
+function _generateBubbleLegendText (maxBubbleValue, bubbleLegendRatio) {
+  var bubbleLegendText = []
+  bubbleLegendRatio.forEach(d => { bubbleLegendText.push(_.ceil(d * maxBubbleValue, -1)) })
+  return bubbleLegendText
 }
 
 function ChoroplethMap () {
@@ -282,7 +289,7 @@ _.extend(ChoroplethMap.prototype, {
       bubbleData.exit().remove()
 
       if (options.chartInDashboard) {
-        var bubbleLegendText = [1, Math.round(options.maxBubbleValue / 2), options.maxBubbleValue]
+        var bubbleLegendText = _generateBubbleLegendText(options.maxBubbleValue, options.bubbleLegendRatio)
         var bubbleLegend = svg.select('.bubbles').select('.legend')
           .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxBubbleRadius + 10) + ')' })
           .selectAll('.series').data(bubbleLegendText)

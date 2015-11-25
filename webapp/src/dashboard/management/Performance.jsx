@@ -202,8 +202,7 @@ var Performance = React.createClass({
                  aspect: 0.4,
                  domain: _.constant([0, 0.1]),
                  bubbleValue: _.property('properties[177]'),
-                 yFormat: pct,
-                 bubbleLegendText: [100, 1000, 5000]
+                 yFormat: pct
                }}/>
         </div>
       </div>
