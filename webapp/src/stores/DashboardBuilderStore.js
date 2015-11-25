@@ -158,8 +158,7 @@ var DashboardBuilderStore = Reflux.createStore({
       layout: this.data.layout,
       dashboard_json: JSON.stringify(this.data.dashboard.charts)
     }
-    api.save_dashboard(data).then(res => {
-      console.log(res)
+    api.save_dashboard(data).then(() => {
     }, err => {
       console.log(err)
     })

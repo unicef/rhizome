@@ -62,7 +62,6 @@ var RegionTitleMenu = React.createClass({
   },
 
   render: function () {
-    // console.log('RegionTitleMenu RENDER:', this.props.selected)
     var location = this.props.selected.name
     var filter = this.state.filter
     var locations = this._buildlocations(this.props.locations, filter)

@@ -58,9 +58,6 @@ var DocForm = React.createClass({
     var doc_detail_type = doc_detail_meta[config_type]
     var doc_detail_type_id = doc_detail_type['id']
 
-    // console.log('doc_detail_type',doc_detail_type['id'])
-    // console.log('doc_detail_type_id',doc_detail_type_id)
-
     DocFormActions.setDocConfig({
       document_id: self.state.created_doc_id,
       doc_detail_type_id: doc_detail_type_id,
