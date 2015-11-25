@@ -182,7 +182,7 @@ let ChartWizard = React.createClass({
     let optionStep = (
       <div>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        {findChartType(this.state.data.chartDef.type).chooseAxis || !findChartType(this.state.data.chartDef.type).locationLevel
+        {findChartType(this.state.data.chartDef.type).chooseAxis
           ? (
             <div>
               <h4>X Axis</h4>
@@ -197,16 +197,28 @@ let ChartWizard = React.createClass({
                 sendValue={ChartWizardActions.changeYAxis} />
             </div>
           )
-          : (
-            <div>
-              <IndicatorDropdownMenu
-                text='Add Indicators'
-                icon='fa-plus'
-                indicators={this.state.data.indicatorList}
-                sendValue={ChartWizardActions.addIndicator} />
-              <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
-            </div>
-          )
+          : (!findChartType(this.state.data.chartDef.type).locationLevel
+            ? (<div>
+                <h4>Color Axis</h4>
+                <ul className='list'>
+                  <li>{this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name}</li>
+                </ul>
+                <h4>Bubble Axis</h4>
+                <IndicatorDropdownMenu
+                  text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
+                  icon='fa-plus'
+                  indicators={this.state.data.indicatorList}
+                  sendValue={ChartWizardActions.changeYAxis} />
+              </div>)
+            : (<div>
+                <IndicatorDropdownMenu
+                  text='Add Indicators'
+                  icon='fa-plus'
+                  indicators={this.state.data.indicatorList}
+                  sendValue={ChartWizardActions.addIndicator} />
+                <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
+              </div>
+            ))
         }
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
@@ -214,8 +226,10 @@ let ChartWizard = React.createClass({
         {
           findChartType(this.state.data.chartDef.type).locationLevel
             ? locationLevel
-            : (<MapAxisChooser bubbleFormatValue={this.state.data.xFormatValue}
-                              onBubbleFormatChange={ChartWizardActions.changeXFormatRadio}
+            : (<MapAxisChooser colorFormatValue={this.state.data.xFormatValue}
+                               onColorFormatChange={ChartWizardActions.changeXFormatRadio}
+                               bubbleFormatValue={this.state.data.yFormatValue}
+                              onBubbleFormatChange={ChartWizardActions.changeYFormatRadio}
                               formatValues={builderDefinitions.formats} />)
         }
         {findChartType(this.state.data.chartDef.type).chooseAxis
@@ -227,10 +241,11 @@ let ChartWizard = React.createClass({
               formatValues={builderDefinitions.formats}
             />
           )
-          : (
-            <RadioGroup name='format' title='Format: '
+          : (findChartType(this.state.data.chartDef.type).locationLevel
+            ? (<RadioGroup name='format' title='Format: '
               value={this.state.data.yFormatValue}
-              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
+              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />)
+            : null
           )
         }
         <PalettePicker value={this.state.data.chartDef.palette} onChange={ChartWizardActions.changePalette} />

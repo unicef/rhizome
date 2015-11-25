@@ -226,7 +226,7 @@ _.extend(ChoroplethMap.prototype, {
 
     var ticks = _.map(
       colorScale.range(),
-        c => _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+        c => _.map(colorScale.invertExtent(c), options.xFormat).join('—')
     )
 
     if (!options.homepage && options.chartInDashboard) {
