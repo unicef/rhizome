@@ -66,11 +66,11 @@ function findChartType (type) {
   return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
 }
 
-function filterIndicatorByType(indicatorList, indicatorType){
+function filterIndicatorByType (indicatorList, indicatorType) {
   return indicatorList
 }
 
-function removeIndicatorEmptyNode(indicatorList) {
+function removeIndicatorEmptyNode (indicatorList) {
  return indicatorList
 }
 
@@ -115,7 +115,6 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    debugger
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
     this.state.data.indicatorList = removeIndicatorEmptyNode(this.state.data.indicatorList)
 
