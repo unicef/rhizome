@@ -76,12 +76,6 @@ function _chooseRadius (v, radius) {
   }
 }
 
-function _generateBubbleLegendText (maxBubbleValue, bubbleLegendRatio) {
-  var bubbleLegendText = []
-  bubbleLegendRatio.forEach(d => { bubbleLegendText.push(_.ceil(d * maxBubbleValue, -1)) })
-  return bubbleLegendText
-}
-
 function ChoroplethMap () {
 }
 
@@ -289,7 +283,10 @@ _.extend(ChoroplethMap.prototype, {
       bubbleData.exit().remove()
 
       if (options.chartInDashboard) {
-        var bubbleLegendText = _generateBubbleLegendText(options.maxBubbleValue, options.bubbleLegendRatio)
+        var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
+          return Math.ceil(d * options.maxBubbleValue, -1)
+        })
+
         var bubbleLegend = svg.select('.bubbles').select('.legend')
           .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxBubbleRadius + 10) + ')' })
           .selectAll('.series').data(bubbleLegendText)

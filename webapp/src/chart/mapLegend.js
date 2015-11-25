@@ -24,12 +24,6 @@ var DEFAULTS = {
   bubbleLegendRatio: [0.1, 0.5, 1]
 }
 
-function _generateBubbleLegendText (maxBubbleValue, bubbleLegendRatio) {
-  var bubbleLegendText = []
-  bubbleLegendRatio.forEach(d => { bubbleLegendText.push(_.ceil(d * maxBubbleValue, -1)) })
-  return bubbleLegendText
-}
-
 function MapLegend () {
 }
 
@@ -181,7 +175,9 @@ _.extend(MapLegend.prototype, {
         .domain([0, options.maxBubbleValue])
         .range([0, options.maxBubbleRadius])
 
-      var bubbleLegendText = _generateBubbleLegendText(options.maxBubbleValue, options.bubbleLegendRatio)
+      var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
+        return Math.ceil(d * options.maxBubbleValue, -1)
+      })
 
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
