@@ -53,9 +53,6 @@ export default React.createClass({
       .sortBy('name')
       .value()
 
-    // Convert a 2-digit month number to a 3-character month name
-    // var fmtMonth = function (d) { return moment(d, 'MM').format('MMM') }
-
     var maxCases = _(series).pluck('values').flatten().pluck('total').max()
     var length = maxCases.toString().length
     var maxRange = _.ceil(maxCases, -(length - 1))
