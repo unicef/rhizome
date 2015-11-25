@@ -64,7 +64,7 @@ function processData (originalData, options) {
   return stack(data)
 }
 
-function axis (svg, options, dataXScale, yScale, w, h, topLegendHeight) {
+function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yScale, w, h, topLegendHeight, fill, hover) {
   svg.select('.x.axis')
     .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
     .call(d3.svg.axis()
@@ -97,6 +97,128 @@ function axis (svg, options, dataXScale, yScale, w, h, topLegendHeight) {
     })
 
   d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
+
+  var legendText = _(data)
+    .map(d => {
+      return options.name(d)
+    })
+    .reverse()
+    .value()
+
+  var legend = svg.select('.legend').selectAll('*')
+    .data(legendText)
+    .enter().append('g')
+    .attr('class', 'series')
+    .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
+
+  legend.append('rect')
+    .attr({
+      'x': w - 12,
+      'y': -25,
+      'width': 12,
+      'height': 12
+    })
+    .style({
+      'fill': fill
+    })
+
+  legend.append('text')
+    .attr({
+      'x': w - 12,
+      'y': -25,
+      'dx': -5,
+      'dy': 9
+    })
+    .style({
+      'text-anchor': 'end',
+      'fill': '#999999'
+    })
+    .text(d => { return d })
+
+  var timeout = null
+
+  hover.on('out', function () {
+    timeout = window.setTimeout(function () {
+      timeout = null
+
+      g.selectAll('rect')
+        .transition()
+        .duration(300)
+        .style('opacity', 1)
+
+      svg.selectAll('.x.axis text').style('opacity', 1)
+
+      svg.select('.annotation').selectAll('*').remove()
+    }, 200)
+  })
+
+  hover.on('over', d => {
+    if (_.isNumber(timeout)) {
+      window.clearTimeout(timeout)
+      timeout = null
+    }
+
+    g.selectAll('rect')
+      .transition()
+      .duration(500)
+      .style('opacity', function (e) { return options.x(d) === options.x(e) ? 1 : 0.5 })
+
+    var fmt = _.flow(options.y, options.yFormat)
+
+    var seriesLabel = label()
+      .addClass('series')
+      .width(w)
+      .height(h)
+      .align(false)
+
+    svg.selectAll('.x.axis text').style('opacity', 0)
+    var annotations = _(data)
+      .map(function (s) {
+        return _.assign({},
+          _.find(options.values(s), function (e) {
+            return options.x(d) === options.x(e)
+          }),
+          { name: options.name(s) }
+        )
+      })
+      .map(d => {
+        return {
+          text: d.name + ' ' + fmt(d),
+          x: x(d),
+          y: y(d),
+          defined: _.isFinite(d.value)
+        }
+      })
+      .tap(list => {
+        if (_(list).some(item => (item.y >= h || item.y < 0))) {
+          list.forEach(item => { item.y = (2 * legend.size() - 1) * 20 })
+        }
+      })
+      .each(item => {
+        item.y = (2 * legend.size() - 1) * 20
+      })
+      .value()
+
+    svg.select('.annotation').selectAll('.series.label')
+      .data(annotations)
+      .call(seriesLabel.align(true))
+
+    var axisLabel = svg.select('.annotation')
+      .selectAll('.axis.label')
+      .data([options.x(d)])
+
+    axisLabel.enter()
+      .append('text')
+      .attr('class', 'axis label')
+      .style('text-anchor', 'middle')
+
+    axisLabel
+      .attr({
+        'transform': 'translate(' + x(d) + ', ' + (h + options.margin.bottom) + ')',
+        'dx': xScale.rangeBand() / 2
+      })
+      .text(options.xFormat)
+  })
 }
 
 function ColumnChart () {}
@@ -259,134 +381,9 @@ _.extend(ColumnChart.prototype, {
     column.exit().remove()
 
     if (!options.inaccessibility) {
-      axis(svg, options, dataXScale, yScale, w, h, topLegendHeight)
+      defaultColumnChart(svg, g, data, options, x, y, xScale, dataXScale, yScale, w, h, topLegendHeight, fill, hover)
     }
-
-    var fmt = _.flow(options.y, options.yFormat)
-
-    var seriesLabel = label()
-      .addClass('series')
-      .width(w)
-      .height(h)
-      .align(false)
-
-    var legendText = _(data)
-      .map(d => {
-        return options.name(d)
-      })
-      .reverse()
-      .value()
-
-    var legend = svg.select('.legend').selectAll('*')
-      .data(legendText)
-      .enter().append('g')
-      .attr('class', 'series')
-      .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
-
-    legend.append('rect')
-      .attr({
-        'x': w - 12,
-        'y': -25,
-        'width': 12,
-        'height': 12
-      })
-      .style({
-        'fill': fill
-      })
-
-    legend.append('text')
-      .attr({
-        'x': w - 12,
-        'y': -25,
-        'dx': -5,
-        'dy': 9
-      })
-      .style({
-        'text-anchor': 'end',
-        'fill': '#999999'
-      })
-      .text(d => { return d })
-
-    var timeout = null
-
-    hover.on('out', function () {
-      timeout = window.setTimeout(function () {
-        timeout = null
-
-        g.selectAll('rect')
-          .transition()
-          .duration(300)
-          .style('opacity', 1)
-
-        svg.selectAll('.x.axis text').style('opacity', 1)
-
-        svg.select('.annotation').selectAll('*').remove()
-      }, 200)
-    })
-
-    hover.on('over', d => {
-      if (_.isNumber(timeout)) {
-        window.clearTimeout(timeout)
-        timeout = null
-      }
-
-      g.selectAll('rect')
-        .transition()
-        .duration(500)
-        .style('opacity', function (e) {
-          return options.x(d) === options.x(e) ? 1 : 0.5
-        })
-
-      svg.selectAll('.x.axis text').style('opacity', 0)
-      var annotations = _(data)
-        .map(function (s) {
-          return _.assign({},
-            _.find(options.values(s), function (e) {
-              return options.x(d) === options.x(e)
-            }),
-            { name: options.name(s) }
-          )
-        })
-        .map(d => {
-          return {
-            text: d.name + ' ' + fmt(d),
-            x: x(d),
-            y: y(d),
-            defined: _.isFinite(d.value)
-          }
-        })
-        .tap(list => {
-          if (_(list).some(item => (item.y >= h || item.y < 0))) {
-            list.forEach(item => { item.y = (2 * legend.size() - 1) * 20 })
-          }
-        })
-        .each(item => {
-          item.y = (2 * legend.size() - 1) * 20
-        })
-        .value()
-
-      svg.select('.annotation').selectAll('.series.label')
-        .data(annotations)
-        .call(seriesLabel.align(true))
-
-      var axisLabel = svg.select('.annotation')
-        .selectAll('.axis.label')
-        .data([options.x(d)])
-
-      axisLabel.enter()
-        .append('text')
-        .attr('class', 'axis label')
-        .style('text-anchor', 'middle')
-
-      axisLabel
-        .attr({
-          'transform': 'translate(' + x(d) + ', ' + (h + margin.bottom) + ')',
-          'dx': xScale.rangeBand() / 2
-        })
-        .text(options.xFormat)
-    })
   }
-
 })
 
 export default ColumnChart
