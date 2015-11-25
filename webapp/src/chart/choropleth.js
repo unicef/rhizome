@@ -22,7 +22,7 @@ var DEFAULTS = {
   onClick: _.noop,
   value: _.property('properties.value'),
   color: palettes.orange,
-  yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
+  xFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name')
 }
 
@@ -384,7 +384,7 @@ _.extend(ChoroplethMap.prototype, {
   _onMouseMove: function (d, options, data) {
     var evt = d3.event
 
-    var locationValue = options.name(d) + ': ' + options.yFormat(_valueForLocation(data, options, d) || 0)
+    var locationValue = options.name(d) + ': ' + options.xFormat(_valueForLocation(data, options, d) || 0)
 
     var render = function () {
       return React.createElement(
