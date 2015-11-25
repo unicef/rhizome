@@ -94,22 +94,6 @@ var Performance = React.createClass({
 
     var missedChildrenMap = data.missedChildrenByProvince
 
-    var maxVaccinatedChildren = 5000
-
-    var maxRadius = 20
-
-    var radius = d3.scale.sqrt()
-      .domain([0, maxVaccinatedChildren])
-      .range([0, maxRadius])
-
-    function _chooseRadius (v) {
-      if (v > maxVaccinatedChildren) {
-        return maxRadius
-      } else {
-        return radius(v)
-      }
-    }
-
     return (
       <div>
         <div className='medium-6 columns'>
@@ -157,12 +141,9 @@ var Performance = React.createClass({
                    aspect: 0.6,
                    domain: _.constant([0, 0.1]),
                    value: _.property('properties[475]'),
-                   bubblesValue: _.property('properties[177]'),
-                   stripesValue: _.property('properties[203]'),
+                   bubbleValue: _.property('properties[177]'),
+                   stripeValue: _.property('properties[203]'),
                    xFormat: pct,
-                   radius: _.partial(_chooseRadius, _),
-                   legend: [100, 1000, 5000],
-                   maxRadius: maxRadius,
                    onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </div>
@@ -192,7 +173,7 @@ var Performance = React.createClass({
                options={{
                  aspect: 0.2,
                  domain: _.constant([0, 0.1]),
-                 stripesValue: _.property('properties[203]'),
+                 stripeValue: _.property('properties[203]'),
                  yFormat: pct,
                  stripeLegendText: ['No data collected', 'Access challenged area']
                }}/>
@@ -220,10 +201,8 @@ var Performance = React.createClass({
                options={{
                  aspect: 0.4,
                  domain: _.constant([0, 0.1]),
-                 bubblesValue: _.property('properties[177]'),
+                 bubbleValue: _.property('properties[177]'),
                  yFormat: pct,
-                 radius: _.partial(_chooseRadius, _),
-                 maxRadius: maxRadius,
                  bubbleLegendText: [100, 1000, 5000]
                }}/>
         </div>

@@ -23,7 +23,9 @@ var DEFAULTS = {
   value: _.property('properties.value'),
   color: palettes.orange,
   xFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
-  name: _.property('properties.name')
+  name: _.property('properties.name'),
+  maxBubbleValue: 5000,
+  maxBubbleRadius: 20
 }
 
 function _calculateBounds (features) {
@@ -63,6 +65,14 @@ function _valueForLocation (data, options, locationObject) {
   }))[0]
 
   return options.value(locationIndex)
+}
+
+function _chooseRadius (v, radius) {
+  if (v > radius.domain()[1]) {
+    return radius.range()[1]
+  } else {
+    return radius(v)
+  }
 }
 
 function ChoroplethMap () {
@@ -244,7 +254,11 @@ _.extend(ChoroplethMap.prototype, {
       }
     }
 
-    if (!_.isUndefined(options.bubblesValue)) {
+    if (options.bubbleValue) {
+      var radius = d3.scale.sqrt()
+        .domain([0, options.maxBubbleValue])
+        .range([0, options.maxBubbleRadius])
+
       var bubbles = svg.selectAll('.bubbles').select('.data')
       var bubbleData = bubbles.selectAll('circle')
         .data(features, function (d, i) {
@@ -256,8 +270,8 @@ _.extend(ChoroplethMap.prototype, {
         return 'translate(' + path.centroid(d) + ')'
       })
         .attr('r', function (d) {
-          var v = options.bubblesValue(d)
-          return v ? options.radius(v) : 0
+          var v = options.bubbleValue(d)
+          return v ? _chooseRadius(v, radius) : 0
         })
         .style({
           'opacity': 0.5,
@@ -268,16 +282,16 @@ _.extend(ChoroplethMap.prototype, {
       bubbleData.exit().remove()
 
       if (options.chartInDashboard) {
-        var bubbleLegendText = [1, Math.round(options.maxValue / 2), options.maxValue]
+        var bubbleLegendText = [1, Math.round(options.maxBubbleValue / 2), options.maxBubbleValue]
         var bubbleLegend = svg.select('.bubbles').select('.legend')
-          .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxRadius + 10) + ')' })
+          .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxBubbleRadius + 10) + ')' })
           .selectAll('.series').data(bubbleLegendText)
           .enter().append('g')
           .attr('class', 'series')
 
         bubbleLegend.append('circle')
-          .attr('r', function (d) { return options.radius(d) })
-          .attr('cy', function (d) { return (options.maxRadius - options.radius(d)) })
+          .attr('r', d => { return radius(d) })
+          .attr('cy', d => { return (options.maxBubbleRadius - radius(d)) })
           .style({
             'opacity': 0.5,
             'fill': 'transparent',
@@ -286,22 +300,22 @@ _.extend(ChoroplethMap.prototype, {
 
         bubbleLegend.append('line')
           .attr({
-            x1: -(2.5 * options.maxRadius),
-            y1: function (d) { return (options.maxRadius - 2 * options.radius(d)) },
+            x1: -(2.5 * options.maxBubbleRadius),
+            y1: d => { return (options.maxBubbleRadius - 2 * radius(d)) },
             x2: 0,
-            y2: function (d) { return (options.maxRadius - 2 * options.radius(d)) }
+            y2: d => { return (options.maxBubbleRadius - 2 * radius(d)) }
           })
           .style('stroke', '#AAAAAA')
 
         bubbleLegend.append('text')
-          .attr('dx', -(2.5 * options.maxRadius))
-          .attr('dy', function (d) { return (options.maxRadius - 2 * options.radius(d)) })
-          .text(function (d) { return d })
+          .attr('dx', -(2.5 * options.maxBubbleRadius))
+          .attr('dy', d => { return (options.maxBubbleRadius - 2 * radius(d)) })
+          .text(d => { return d })
           .style('fill', '#AAAAAA')
       }
     }
 
-    if (!_.isUndefined(options.stripesValue)) {
+    if (options.stripeValue) {
       var stripes = svg.select('.stripes').select('.data')
       var stripeData = stripes.selectAll('.location')
         .data(features, function (d, i) {
@@ -312,7 +326,7 @@ _.extend(ChoroplethMap.prototype, {
 
       stripeData.attr({
         'd': path,
-        'class': function (d) {
+        'class': d => {
           var v = options.value(d)
           var classNames = ['location']
 
@@ -323,19 +337,17 @@ _.extend(ChoroplethMap.prototype, {
           return classNames.join(' ')
         }
       })
-        .style('fill', function (d) {
-          var v = options.stripesValue(d)
+        .style('fill', d => {
+          var v = options.stripeValue(d)
           var lineColor = _.isFinite(options.value(d)) ? '#ffffff' : '#cccccc'
           svg.selectAll('line').style('stroke', lineColor)
           return _.isFinite(v) ? 'url(#stripe)' : '#fff'
         })
-        .style('opacity', function (d) {
-          var v = options.stripesValue(d)
+        .style('opacity', d => {
+          var v = options.stripeValue(d)
           return _.isFinite(v) ? 1 : 0
         })
-        .on('click', function (d) {
-          options.onClick(_.get(d, 'properties.location_id'))
-        })
+        .on('click', d => { options.onClick(_.get(d, 'properties.location_id')) })
         .on('mousemove', _.partial(this._onMouseMove, _, options, data))
         .on('mouseout', this._onMouseOut)
 
@@ -374,9 +386,7 @@ _.extend(ChoroplethMap.prototype, {
             'text-anchor': 'start',
             'font-size': 10
           })
-          .text(function (d) {
-            return d
-          })
+          .text(d => { return d })
       }
     }
   },
