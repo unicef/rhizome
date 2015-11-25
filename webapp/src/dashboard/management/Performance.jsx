@@ -159,7 +159,7 @@ var Performance = React.createClass({
                    value: _.property('properties[475]'),
                    bubblesValue: _.property('properties[177]'),
                    stripesValue: _.property('properties[203]'),
-                   yFormat: pct,
+                   xFormat: pct,
                    radius: _.partial(_chooseRadius, _),
                    legend: [100, 1000, 5000],
                    maxRadius: maxRadius,
