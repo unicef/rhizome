@@ -73,14 +73,14 @@ export default {
     },
     deletelocationalAccess: function (data) {
       var self = this
-      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data }).then(function () {
+      api.delete_location_responsibility({ id: data }).then(function () {
         self.loadlocationalAccess()
       })
     },
     loadlocationalAccess: function () {
       var self = this
 
-      api.location_responsibility({ user: this.$parent.$data.user_id }).then(function (data) {
+      api.location_responsibility({ user_id: this.$parent.$data.user_id },null,{'cache-control': 'no-cache'}).then(function (data) {
         var locations = data.objects
         _.forEach(locations, function (location) {
           location.name = self.location_map[location.location_id].name
