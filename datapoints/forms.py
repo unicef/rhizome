@@ -1,5 +1,5 @@
 from django import forms
-from datapoints.models import Location,   Indicator, Campaign, LocationPermission
+from datapoints.models import Location,   Indicator, Campaign
 
 
 from django.contrib.auth.models import User, Group
@@ -9,12 +9,6 @@ class CampaignForm(forms.ModelForm):
 
     class Meta:
         model = Campaign
-        exclude = ['created_at']
-
-class LocationPermissionForm(forms.ModelForm):
-
-    class Meta:
-        model = LocationPermission
         exclude = ['created_at']
 
 class GroupForm(forms.ModelForm):
@@ -34,4 +28,4 @@ class UserEditForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username','first_name','last_name')
+        fields = ('username','first_name','last_name','email')

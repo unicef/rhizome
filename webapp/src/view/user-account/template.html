@@ -12,10 +12,10 @@
        </ul>
      </div>
   </div>
-  
+
   <div class="row">
      <div class="columns small-4 left-box">
-       <h4>locational Access</h4>
+       <h4>Responsible For Location:</h4>
      </div>
      <div class="columns small-8 right-box">
        <div
@@ -34,9 +34,8 @@
   <div class="row">
      <div class="columns small-4 left-box">
        <div class="label-box">
-         This user can view data for these locations and all their children.<br /><br />
-         <b>Can Enter Data:</b>
-          User can enter or edit data for this location and its children.
+         This user is responsible for the below locations:<br /><br />
+         Data assigned to the location is their responsibility, even if it is aggregated from lower adminstrative levels.
          </div>
        </div>
        <div class="columns small-8 right-box">
@@ -44,17 +43,13 @@
              <thead>
                  <tr>
                      <th></th>
-                     <th  style="width: 126px;">Can Enter Data</th>
                      <th style="width: 70px;">Remove</th>
                  </tr>
              </thead>
             <tbody>
-	            <tr v-repeat="permission:location_permissions">
+	            <tr v-repeat="permission:location_responsibilities">
 	              <td>
 	               {{permission.name}}
-	              </td>
-	              <td>
-	                <input type="checkbox" data-internal-id="{{permission.id}}" data-location-id="{{permission.location_id}}" v-on="change:updatelocationalAccessCanRead" v-model="permission.canEnter" />
 	              </td>
 	              <td>
 	                <span v-on="click:deletelocationalAccess(permission.location_id)" class="fa fa-times"></span>
@@ -64,9 +59,8 @@
 	            <tr v-if="location_permissions && location_permissions.length==0"><td colspan="3">No locations added</td></tr>
             </tbody>
          </table>
-       
+
        </div>
     </div>
 
   </div>
-

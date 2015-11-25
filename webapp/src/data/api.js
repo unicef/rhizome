@@ -290,11 +290,14 @@ export default {
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
   user_groups: endPoint('/user_group/', 'get', 1),
-  location_permission: endPoint('/location_permission/', 'get', 1),
+  location_responsibility: endPoint('/location_responsibility/', 'get', 1),
   group_permissions: endPoint('/group_permission/', 'get', 1),
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/', 'get', 1),
-  user_permissions: endPoint('/user_group/', 'get', 1),    // FIXME
+  user_permissions: endPoint('/user_group/', 'get', 1),
+  post_user_permission: endPoint('/user_group/', 'post', 1),
+
+
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
   queue_reprocess: endPoint('/queue_process/', 'get', 1, false),
   chartType: endPoint('/chart_type/', 'get', 1),
@@ -315,7 +318,7 @@ export default {
   datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
   remove_dashboard: emptyResponsePoint('/custom_dashboard', 'delete', 1, false),
-  set_location_permission: endPoint('/location_permission/', 'post', 1),
+  set_location_responsibility: endPoint('/location_responsibility/', 'post', 1),
   remove_indicator_from_tag: emptyResponsePoint('/indicator_to_tag', 'delete', 1, false),
   set_indicator_to_tag: endPoint('/indicator_to_tag/', 'post', 1),
   post_source_object_map: endPoint('/source_object_map/', 'post', 1, false)

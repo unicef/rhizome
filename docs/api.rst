@@ -41,7 +41,7 @@ Step 1. Contact dingeej@gmail.com to get an API key
        objects: [],
        errors: {}
    }
-  
+
 
 
 
@@ -559,13 +559,10 @@ here to all of the fields included in the response.
   }
 
 
-``/api/v1/location_permission/``
+``/api/v1/location_responsiblity/``
 ++++++++++++++++++++++++++++++
 
-This endpoint tells which locations a user has access to read or write to.
-If you want only the locations that a user can WRITE to pass the read_write=w
-parameter.  By default, this endpoint retreives the locations that a user can
-read.
+This endpoint tells which locations a user is responsible for. 
 
 .. code-block:: json
 
