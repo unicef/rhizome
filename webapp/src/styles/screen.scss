@@ -93,6 +93,7 @@ h4 {
   margin: 0;
   overflow: hidden;
   white-space: nowrap;
+  font-size: 1rem;
 }
 
 select {
@@ -187,7 +188,7 @@ table {
   border: 1px solid #DDDDDD;
   border-collapse: collapse;
   margin-top: 10pt;
-  min-width: 100%;
+  width: 100%;
 
   thead {
     tr {

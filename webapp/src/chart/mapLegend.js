@@ -18,7 +18,16 @@ var DEFAULTS = {
   color: palettes.orange,
   onClick: _.noop,
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
-  name: _.property('properties.name')
+  name: _.property('properties.name'),
+  maxBubbleValue: 5000,
+  maxBubbleRadius: 20,
+  bubbleLegendRatio: [0.1, 0.5, 1]
+}
+
+function _generateBubbleLegendText (maxBubbleValue, bubbleLegendRatio) {
+  var bubbleLegendText = []
+  bubbleLegendRatio.forEach(d => { bubbleLegendText.push(_.ceil(d * maxBubbleValue, -1)) })
+  return bubbleLegendText
 }
 
 function MapLegend () {
@@ -131,7 +140,7 @@ _.extend(MapLegend.prototype, {
       .attr('transform', function () { return 'translate(' + 1 + ', ' + 0 + ')' })
     }
 
-    if (options.stripesValue) {
+    if (options.stripeValue) {
       var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
       var stripeLegendText = options.stripeLegendText
       var stripeLegend = svg.select('.stripes').select('.legend')
@@ -167,21 +176,27 @@ _.extend(MapLegend.prototype, {
         .text(function (d) { return d })
     }
 
-    if (options.bubblesValue) {
+    if (options.bubbleValue) {
+      var radius = d3.scale.sqrt()
+        .domain([0, options.maxBubbleValue])
+        .range([0, options.maxBubbleRadius])
+
+      var bubbleLegendText = _generateBubbleLegendText(options.maxBubbleValue, options.bubbleLegendRatio)
+
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
           return 'translate(' + 0 + ', ' + 0 + ')'
         })
-        .selectAll('.series').data(options.bubbleLegendText)
+        .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
         .attr('class', 'series')
 
-      let cx = 2.5 * options.maxRadius
-      let cy = d => { return 3 * options.maxRadius - options.radius(d) }
-      var lineY = d => { return (cy(d) - options.radius(d)) }
+      let cx = 2.5 * options.maxBubbleRadius
+      let cy = d => { return 3 * options.maxBubbleRadius - radius(d) }
+      var lineY = d => { return (cy(d) - radius(d)) }
 
       bubbleLegend.append('circle')
-        .attr('r', d => { return options.radius(d) })
+        .attr('r', d => { return radius(d) })
         .attr({
           'cx': cx,
           'cy': cy

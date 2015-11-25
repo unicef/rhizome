@@ -51,14 +51,11 @@ export default React.createClass({
         {totalCases} Polio cases this year
       </h4>)
 
-    var newCaseLabel = ''
-
-    if (_.isFinite(newCases) && newCases > 0) {
-      var plural = newCases !== 1 ? 's' : ''
-      newCaseLabel = (
-        <h4 style={{'color': '#F15046'}}>{newCases} new case{plural}</h4>
-      )
+    if (!_.isFinite(newCases) || newCases < 0) {
+      newCases = 0
     }
+    var plural = newCases !== 1 ? 's' : ''
+    var newCaseLabel = (<h4 style={{'color': '#F15046'}}>{newCases} new case{plural}</h4>)
 
     return (
       <div id='polio-cases-ytd'>

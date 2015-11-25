@@ -206,6 +206,7 @@ let ChartWizardStore = Reflux.createStore({
   onAddIndicator (index) {
     if (this.data.indicatorSelected.map(indicator => indicator.id).indexOf(index) >= 0) return
     this.data.indicatorSelected.push(this.indicatorIndex[index])
+    this.data.chartDef.y = index
     this.previewChart()
   },
 
@@ -268,6 +269,12 @@ let ChartWizardStore = Reflux.createStore({
   onChangeYAxis (value) {
     this.data.indicatorSelected[1] = this.indicatorIndex[value]
     this.data.chartDef.y = value
+    this.previewChart()
+  },
+
+  onChangeZAxis (value) {
+    this.data.indicatorSelected[2] = this.indicatorIndex[value]
+    this.data.chartDef.z = value
     this.previewChart()
   },
 

@@ -53,7 +53,7 @@ $total-columns: 8;
     background: $rhz-chart-title-bg-color;
     color: $rhz-chart-title-color;
     text-transform: uppercase;
-    font-family: ADELLE REGULAR;
+    font-family: adelle, Arial, Helvetica, sans-serif;
     font-size: 0.75rem;
     padding: 0px 4px;
     margin: 10px 0;
@@ -79,8 +79,8 @@ $total-columns: 8;
 }
 
 .font-bold {
-  font-weight: bold;
   font-size: 11px;
+  font-family: proxima-bold;
 }
 
 .title--wrap {

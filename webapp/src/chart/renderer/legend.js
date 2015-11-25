@@ -161,7 +161,6 @@ function legend (chartOptions) {
     if (chart.chartOptions && chart.chartOptions.chartInDashboard) {
       return 'translate(0, ' + (i / 2 * (_size + _padding * 4)) + ')'
     }
-
     length = length % 2 === 0 ? length : length + 1
 
     return i < length / 2

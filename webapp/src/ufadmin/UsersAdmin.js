@@ -25,7 +25,7 @@ const fields = {
   username: { title: 'User Name', name: 'username' },
   first_name: { title: 'First Name', name: 'first_name' },
   last_name: { title: 'Last Name', name: 'last_name' },
-  email: { title: 'Email', name: 'email' },
+  email: { title: 'Email', name: 'email' }
 }
 
 const schema = {

@@ -16,6 +16,7 @@ import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from './ScatterAxisChooser.jsx'
+import MapAxisChooser from './MapAxisChooser.jsx'
 import PalettePicker from './PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -31,7 +32,8 @@ const defaultChartDef = {
   x: 0,
   xFormat: ',.0f',
   y: 0,
-  yFormat: ',.0f'
+  yFormat: ',.0f',
+  z: 0
 }
 
 function filterMenu (items, pattern) {
@@ -62,6 +64,14 @@ function findMatches (item, re) {
 
 function findChartType (type) {
   return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
+}
+
+function filterIndicatorByType (indicatorList, indicatorType) {
+  return indicatorList
+}
+
+function removeIndicatorEmptyNode (indicatorList) {
+ return indicatorList
 }
 
 let ChartWizard = React.createClass({
@@ -106,6 +116,7 @@ let ChartWizard = React.createClass({
 
   render () {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+    this.state.data.indicatorList = removeIndicatorEmptyNode(this.state.data.indicatorList)
 
     let locationStep = (
       <div>
@@ -196,36 +207,63 @@ let ChartWizard = React.createClass({
                 sendValue={ChartWizardActions.changeYAxis} />
             </div>
           )
-          : (
-            <div>
-              <IndicatorDropdownMenu
-                text='Add Indicators'
-                icon='fa-plus'
-                indicators={this.state.data.indicatorList}
-                sendValue={ChartWizardActions.addIndicator} />
-              <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
-            </div>
-          )
+          : (!findChartType(this.state.data.chartDef.type).locationLevel
+            ? (<div>
+                <h4>Color Axis</h4>
+                <ul className='list'>
+                  <li>{this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name}</li>
+                </ul>
+                <h4>Bubble Axis</h4>
+                <ul className='list'>
+                  <IndicatorDropdownMenu
+                    text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
+                    icon='fa-plus'
+                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'int')}
+                    sendValue={ChartWizardActions.changeYAxis} />
+                </ul>
+                <h4>Gradient Axis</h4>
+                <ul className='list'>
+                  <IndicatorDropdownMenu
+                    text={this.state.data.indicatorSelected[2] ? this.state.data.indicatorSelected[2].name : 'Add Indicators'}
+                    icon='fa-plus'
+                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'bool')}
+                    sendValue={ChartWizardActions.changeZAxis} />
+                  </ul>
+              </div>)
+            : (<div>
+                <IndicatorDropdownMenu
+                  text='Add Indicators'
+                  icon='fa-plus'
+                  indicators={this.state.data.indicatorList}
+                  sendValue={ChartWizardActions.addIndicator} />
+                <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
+              </div>
+            ))
         }
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         {findChartType(this.state.data.chartDef.type).groupBy ? groupBy : null}
-        {findChartType(this.state.data.chartDef.type).locationLevel ? locationLevel : null}
+        {
+          findChartType(this.state.data.chartDef.type).locationLevel
+            ? locationLevel
+            : (<MapAxisChooser colorFormatValue={this.state.data.xFormatValue}
+                               onColorFormatChange={ChartWizardActions.changeXFormatRadio}
+                              formatValues={builderDefinitions.formats} />)
+        }
         {findChartType(this.state.data.chartDef.type).chooseAxis
           ? (
-            <ScatterAxisChooser xAxisValue = {this.state.data.chartDef.x}
-              xFormatValue={this.state.data.xFormatValue}
+            <ScatterAxisChooser xFormatValue={this.state.data.xFormatValue}
               onXFormatChange={ChartWizardActions.changeXFormatRadio}
-              yAxisValue={this.state.data.chartDef.y}
               yFormatValue={this.state.data.yFormatValue}
               onYFormatChange={ChartWizardActions.changeYFormatRadio}
               formatValues={builderDefinitions.formats}
             />
           )
-          : (
-            <RadioGroup name='format' title='Format: '
+          : (findChartType(this.state.data.chartDef.type).locationLevel
+            ? (<RadioGroup name='format' title='Format: '
               value={this.state.data.yFormatValue}
-              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />
+              values={builderDefinitions.formats} onChange={ChartWizardActions.changeYFormatRadio} />)
+            : null
           )
         }
         <PalettePicker value={this.state.data.chartDef.palette} onChange={ChartWizardActions.changePalette} />

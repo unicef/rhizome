@@ -146,19 +146,22 @@ var SourceDataDashboard = React.createClass({
       </SimpleDataTable>
     </ReviewTable>)
 
-    var docForm
-    if (doc_tab === 'doc_index') {
-      docForm = <div>
+    var uploadData = (
+      <div>
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
         {step}
         <div className='medium-12 columns upload__csv--form'>
-          <DocForm />
+          <DocForm
+            campaign={this.props.campaign}
+            location={this.props.location}/>
         </div>
       </div>
-    } else {
-      docForm = <div>
+    )
+
+    var reviewData = (
+      <div>
         <div className='medium-12 columns upload__csv--load'>
           Review Data
         </div>
@@ -175,19 +178,20 @@ var SourceDataDashboard = React.createClass({
         <div className='large-6 medium-12 small-12 columns csv-upload__title'>
           {doc_tabs}
         </div>
+        <hr />
       </div>
-    }
+    )
+
+    var docForm = (doc_tab === 'doc_index') ? (uploadData) : (reviewData)
 
     return (
       <div className='row upload__csv'>
         {docForm}
-        <div className='row'>
-          <div id='popUp'></div>
-          <div className='medium-12 columns'>
-            {review_table}
-          </div>
+        <div className='medium-12 columns'>
+          {review_table}
         </div>
-      </div>)
+      </div>
+    )
   },
 
   _setDocId: function (doc_id) {

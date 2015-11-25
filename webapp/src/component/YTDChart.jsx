@@ -53,9 +53,6 @@ export default React.createClass({
       .sortBy('name')
       .value()
 
-    // Convert a 2-digit month number to a 3-character month name
-    // var fmtMonth = function (d) { return moment(d, 'MM').format('MMM') }
-
     var maxCases = _(series).pluck('values').flatten().pluck('total').max()
     var length = maxCases.toString().length
     var maxRange = _.ceil(maxCases, -(length - 1))
@@ -64,7 +61,7 @@ export default React.createClass({
       _.omit(this.props, 'id', 'data'), {
         data: series,
         options: {
-          aspect: 2.26,
+          aspect: 2.61,
           domain: _.constant([moment({ M: 0 }).toDate(), moment({ M: 11 }).toDate()]),
           range: _.constant([0, maxRange]),
           color: ['#377EA3', '#D95348', '#82888e', '#98a0a8', '#b6c0cc'],

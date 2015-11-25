@@ -17,9 +17,13 @@ header {
     }
   }
 
+  nav {
+    padding: 0 !important;
+  }
+
   a {
     color: $rhz-font-color;
-    font-size: 1rem;
+    font-size: 1.25rem;
 
     &:hover {
       color: $rhz-font-color !important;
@@ -28,7 +32,8 @@ header {
 
   .navigation-bar {
     height: $header-height;
-    font-family: proxima-bold;
+    font-family: proxima, Arial, Helvetica, sans-serif;
+    font-weight: bold;
   }
 
   .channels {
@@ -43,10 +48,10 @@ header {
       }
 
       > a {
-        padding: 2.1em 0.7em;
         display: block;
         height: $header-height;
         opacity: 1;
+        line-height: $header-height;
       }
 
       .fa {

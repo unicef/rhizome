@@ -110,9 +110,6 @@ export default {
         campaign_end: moment(this.campaign.end_date).format('YYYY-MM-DD')
       })
 
-      console.log(datapoints)
-      console.log('DATAPOINTS APOVE')
-
       var columns = api.indicators({ id__in: indicators }, null, {'cache-control': 'no-cache'})
         .then(_.partialRight(_heatmapColumns, indicators))
 

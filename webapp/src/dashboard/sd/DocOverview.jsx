@@ -68,18 +68,19 @@ var DocOverview = React.createClass({
 
     if (!doc_deets) return this.renderLoading()
 
-    var refresh_master_btn = <div>
+    var refresh_master_btn = (<div>
       <p>
         <button disabled={this.state.isProcessing} className='tiny' className='large-3 medium-3 small-12 columns'
-                onClick={this.queueReprocess}> { this.state.isProcessing ? 'To Reprocess...' : 'To Reprocess!'}
+                onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refresh Reprocess' : 'Refresh Reprocess'}
         </button>
       </p>
       <p>
         <button disabled={this.state.isRefreshing} className='tiny' className='large-3 medium-3 small-12 columns'
-                onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refresh Master...' : 'Refresh Master!'}
+                onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refresh Master' : 'Refresh Master'}
         </button>
       </p>
-    </div>
+    </div>)
+    refresh_master_btn = ''
 
     var doc_detail_type_lookup = _.indexBy(this.state.doc_detail_types, 'id')
     var [doc_name, doc_revision] = this.props.doc_title.split('-')
@@ -95,10 +96,11 @@ var DocOverview = React.createClass({
 
     for (var i = 0; i < doc_deets.length; i++) {
       var doc_detail = doc_deets[i]
-      rows.push(<div
-        className='large-6 medium-6 small-12 columns csv-upload__tags'>
-        <span className='csv-upload__tags--span'>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name}: </span>
-        {doc_detail.doc_detail_value}</div>)
+      rows.push(
+        <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
+          <span className='csv-upload__tags--span'>{doc_detail_type_lookup[doc_detail.doc_detail_type_id].name}: </span>
+        {doc_detail.doc_detail_value}
+        </div>)
     }
 
     return <div className='row csv-upload__message'>

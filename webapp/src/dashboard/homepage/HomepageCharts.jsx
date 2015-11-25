@@ -62,7 +62,7 @@ var HomepageCharts = React.createClass({
                  options={{
                    domain: _.constant([0, 0.1]),
                    value: _.property('properties[475]'),
-                   yFormat: d3.format('%'),
+                   xFormat: d3.format('%'),
                    width: 390,
                    height: 390,
                    homepage: true

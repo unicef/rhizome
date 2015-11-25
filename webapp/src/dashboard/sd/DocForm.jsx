@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import moment from 'moment'
 
 import TitleMenu from 'component/TitleMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
@@ -15,6 +16,11 @@ var DocForm = React.createClass({
   mixins: [
     Reflux.connect(DocFormStore)
   ],
+
+  propTypes: {
+    location: React.PropTypes.object.isRequired,
+    campaign: React.PropTypes.object
+  },
 
   // since we are starting off without any data, there is no initial value
   getInitialState: function () {
@@ -58,9 +64,6 @@ var DocForm = React.createClass({
     var doc_detail_type = doc_detail_meta[config_type]
     var doc_detail_type_id = doc_detail_type['id']
 
-    // console.log('doc_detail_type',doc_detail_type['id'])
-    // console.log('doc_detail_type_id',doc_detail_type_id)
-
     DocFormActions.setDocConfig({
       document_id: self.state.created_doc_id,
       doc_detail_type_id: doc_detail_type_id,
@@ -91,11 +94,12 @@ var DocForm = React.createClass({
     var uqHeaderList = this.buildHeaderList('uq_id_column')
     var rgHeaderList = this.buildHeaderList('location_column')
     var cpHeaderList = this.buildHeaderList('campaign_column')
+    var location = _.get(this.props.location, 'location', this.props.location.name)
+    var campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
 
-    var fileConfigForm
+    var fileConfigForm = ''
     if (this.state.created_doc_id) {
       var uq_col = this.state.uq_id_column
-      // var uq_col = this.state.data['']
       var rg_col = this.state.location_column
       var cp_col = this.state.campaign_column
 
@@ -121,24 +125,17 @@ var DocForm = React.createClass({
           </li>
         </ul>
       </div>
-    } else {
-      fileConfigForm = ''
     }
 
-    var refreshBtn
+    var refreshBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-      refreshBtn = <button onClick={this.syncDocData}> Sync Data</button>
-    } else {
-      refreshBtn = ''
+      refreshBtn = <button onClick={this.syncDocData}>Sync Data</button>
     }
 
-    var reviewBtn
+    var reviewBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
-      var next_link = '/datapoints/source-data/Nigeria/2015/06/viewraw/' + this.state.created_doc_id
-      // FIXME ^^
+      var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
       reviewBtn = <a href={next_link} className='button'> Review Upload</a>
-    } else {
-      reviewBtn = ''
     }
 
     var divZoneStyle = {

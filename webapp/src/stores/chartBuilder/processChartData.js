@@ -178,7 +178,7 @@ const aspects = {
 }
 
 export default {
-  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, layout) {
+  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, zAxis, layout) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
     let chartProcessors = {
@@ -192,7 +192,7 @@ export default {
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations, layout]
+        para: [meltPromise, locations, xAxis, yAxis, zAxis, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
@@ -223,7 +223,7 @@ export default {
         aspect: aspects[layout].lineChart,
         values: _.property('values'),
         x: _.property('campaign.start_date'),
-        xFormat: function (d) { return moment(d).format('MMM YYYY') },
+        xFormat: (d) => { return moment(d).format('MMM YYYY') },
         y: _.property('value')
       }
       var chartData = _groupBySeries(data, groups, groupBy)
@@ -252,26 +252,49 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations, layout) {
+  processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, zAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
-
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
-      var index = _.indexBy(data, 'location')
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         border: border.objects.features
       }
+
       if (!data || data.length === 0) {
         return { options: chartOptions, data: border.objects.features }
       }
+
+      let indicatorIndex = _(data).groupBy('indicator').value()
+      let index = _.indexBy(indicatorIndex[xAxis], 'location')
+      if (yAxis) {
+        let maxRadius = 30
+        let maxValue = 5000
+        let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
+        chartOptions.maxValue = Math.min(Math.max(...bubbleValues), maxValue)
+        chartOptions.maxRadius = maxRadius
+        chartOptions.bubblesValue = _.property('properties.bubbleValue')
+        chartOptions.radius = function (v) {
+          if (v > this.maxValue) {
+            return this.maxRadius
+          }
+          return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v)
+        }
+      }
+
+
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
-        return _.merge({}, feature, {
-          properties: { value: _.get(location, 'value') }
-        })
+        let properties = {value: _.get(location, 'value')}
+        if (yAxis) {
+          let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
+          let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
+          properties.bubbleValue = _.get(bubbleLocation, 'value')
+        }
+        return _.merge({}, feature, {properties: properties})
       })
+
       return { options: chartOptions, data: chartData }
     }))
   },
@@ -315,7 +338,7 @@ export default {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-          return parseInt(d.indicator, 10) === xAxis
+          return +d.indicator === xAxis
         })
         .pluck('value')
         .value()
@@ -324,7 +347,7 @@ export default {
         .pluck('indicators')
         .flatten()
         .filter(function (d) {
-          return parseInt(d.indicator, 10) === yAxis
+          return +d.indicator === yAxis
         })
         .pluck('value')
         .value()
