@@ -356,12 +356,12 @@ _.extend(ColumnChart.prototype, {
           }
         })
         .tap(list => {
-          if (_(list).some(item => (item.y >= h || item.y < 50))) {
-            list.forEach(item => { item.y = 50 })
+          if (_(list).some(item => (item.y >= h || item.y < (2 * legend.size() - 1) * 15))) {
+            list.forEach(item => { item.y = (2 * legend.size() - 1) * 15 })
           }
         })
         .each(item => {
-          item.y = 50
+          item.y = (2 * legend.size() - 1) * 15
         })
         .value()
 
