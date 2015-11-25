@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import page from 'page'
 import moment from 'moment'
 
 import TitleMenu from 'component/TitleMenu.jsx'
@@ -168,7 +167,6 @@ var DocForm = React.createClass({
       {refreshBtn}
       {reviewBtn}
     </div>)
-
   }
 })
 
