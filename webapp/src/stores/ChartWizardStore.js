@@ -272,6 +272,12 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onChangeZAxis (value) {
+    this.data.indicatorSelected[2] = this.indicatorIndex[value]
+    this.data.chartDef.z = value
+    this.previewChart()
+  },
+
   onChangePalette (key) {
     this.data.chartDef.palette = key
     this.previewChart()

@@ -6,8 +6,6 @@ let MapAxisChooser = React.createClass({
   propTypes: {
     colorFormatValue: React.PropTypes.number,
     onColorFormatChange: React.PropTypes.func,
-    bubbleFormatValue: React.PropTypes.number,
-    onBubbleFormatChange: React.PropTypes.func,
     formatValues: React.PropTypes.array
   },
 
@@ -15,8 +13,6 @@ let MapAxisChooser = React.createClass({
     return {
       colorFormatValue: 0,
       onColorFormatChange: _.noop,
-      bubbleFormatValue: 0,
-      onBubbleFormatChange: _.noop,
       formatValues: []
     }
   },
@@ -28,10 +24,6 @@ let MapAxisChooser = React.createClass({
           prefix='color-'
           value={this.props.colorFormatValue}
           values={this.props.formatValues} onChange={this.props.onColorFormatChange}/>
-        <RadioGroup name='bubbleFormat' title='Bubble Format: '
-          prefix='bubble-'
-          value={this.props.bubbleFormatValue}
-          values={this.props.formatValues} onChange={this.props.onBubbleFormatChange}/>
       </div>
     )
   }

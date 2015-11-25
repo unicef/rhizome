@@ -97,6 +97,7 @@ export default {
       chartDef.groupBy,
       chartDef.x,
       chartDef.y,
+      chartDef.z,
       layout
     ).then(chart => {
       if (!chart.data) {

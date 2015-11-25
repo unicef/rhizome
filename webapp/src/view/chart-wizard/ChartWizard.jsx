@@ -32,7 +32,8 @@ const defaultChartDef = {
   x: 0,
   xFormat: ',.0f',
   y: 0,
-  yFormat: ',.0f'
+  yFormat: ',.0f',
+  z: 0
 }
 
 function filterMenu (items, pattern) {
@@ -63,6 +64,14 @@ function findMatches (item, re) {
 
 function findChartType (type) {
   return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
+}
+
+function filterIndicatorByType(indicatorList, indicatorType){
+  return indicatorList
+}
+
+function removeIndicatorEmptyNode(indicatorList) {
+ return indicatorList
 }
 
 let ChartWizard = React.createClass({
@@ -106,7 +115,9 @@ let ChartWizard = React.createClass({
   },
 
   render () {
+    debugger
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+    this.state.data.indicatorList = removeIndicatorEmptyNode(this.state.data.indicatorList)
 
     let locationStep = (
       <div>
@@ -204,11 +215,21 @@ let ChartWizard = React.createClass({
                   <li>{this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name}</li>
                 </ul>
                 <h4>Bubble Axis</h4>
-                <IndicatorDropdownMenu
-                  text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
-                  icon='fa-plus'
-                  indicators={this.state.data.indicatorList}
-                  sendValue={ChartWizardActions.changeYAxis} />
+                <ul className='list'>
+                  <IndicatorDropdownMenu
+                    text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
+                    icon='fa-plus'
+                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'int')}
+                    sendValue={ChartWizardActions.changeYAxis} />
+                </ul>
+                <h4>Gradient Axis</h4>
+                <ul className='list'>
+                  <IndicatorDropdownMenu
+                    text={this.state.data.indicatorSelected[2] ? this.state.data.indicatorSelected[2].name : 'Add Indicators'}
+                    icon='fa-plus'
+                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'bool')}
+                    sendValue={ChartWizardActions.changeZAxis} />
+                  </ul>
               </div>)
             : (<div>
                 <IndicatorDropdownMenu
@@ -228,8 +249,6 @@ let ChartWizard = React.createClass({
             ? locationLevel
             : (<MapAxisChooser colorFormatValue={this.state.data.xFormatValue}
                                onColorFormatChange={ChartWizardActions.changeXFormatRadio}
-                               bubbleFormatValue={this.state.data.yFormatValue}
-                              onBubbleFormatChange={ChartWizardActions.changeYFormatRadio}
                               formatValues={builderDefinitions.formats} />)
         }
         {findChartType(this.state.data.chartDef.type).chooseAxis

@@ -178,7 +178,7 @@ const aspects = {
 }
 
 export default {
-  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, layout) {
+  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, zAxis, layout) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
     let chartProcessors = {
@@ -192,7 +192,7 @@ export default {
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations, xAxis, yAxis, layout]
+        para: [meltPromise, locations, xAxis, yAxis, zAxis, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
@@ -252,7 +252,7 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, layout) {
+  processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, zAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
@@ -282,6 +282,7 @@ export default {
           return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v)
         }
       }
+
 
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
