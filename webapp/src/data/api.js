@@ -289,14 +289,12 @@ export default {
   delete_chart: emptyResponsePoint('/custom_chart', 'delete', 1, false),
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),
-  user_groups: endPoint('/user_group/', 'get', 1),
   location_responsibility: endPoint('/location_responsibility/', 'get', 1),
-  group_permissions: endPoint('/group_permission/', 'get', 1),
   geo: endPoint('/geo/', 'get', 1),
   get_source_object_map: endPoint('/source_object_map/', 'get', 1),
   user_permissions: endPoint('/user_group/', 'get', 1),
   post_user_permission: endPoint('/user_group/', 'post', 1),
-
+  delete_user_permission: emptyResponsePoint('/user_group', 'delete', 1, false),
 
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
   queue_reprocess: endPoint('/queue_process/', 'get', 1, false),

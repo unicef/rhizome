@@ -443,8 +443,7 @@ class CustomDashboard(models.Model):
     A table containing all of the custom dashboards in the system.  The data
     in teh dashboard_json field is how the FE is able to draw and render the
     specific vizulaizations.  If inserted via POST the application will
-    validate the json, but if you insert directly in the table it will not
-    so be careful when testing!
+    validate the json, but if you insert directly in the table it will not.
     '''
 
     title = models.CharField(max_length=255, unique=True)

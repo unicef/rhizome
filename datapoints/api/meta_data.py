@@ -597,6 +597,26 @@ class UserGroupResource(BaseModelResource):
 
         return bundle
 
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        """
+
+        user_id = int(bundle.request.GET[u'user_id'])
+        group_id = int(bundle.request.GET[u'group_id'])
+        UserGroup.objects.filter(user_id=user_id, group_id=group_id)\
+            .delete()
+
+    def get_object_list(self, request):
+
+        try:
+            user_id = request.GET['user_id']
+            return UserGroup.objects \
+                .filter(user_id=user_id).values()
+        except KeyError:
+            return UserGroup.objects.all().values()
+
+
 class LocationResponsibilityResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = LocationResponsibility.objects.all().values()

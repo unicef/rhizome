@@ -11,12 +11,6 @@ class CampaignForm(forms.ModelForm):
         model = Campaign
         exclude = ['created_at']
 
-class GroupForm(forms.ModelForm):
-
-    class Meta:
-        model = Group
-        fields = ['name']
-
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(required=True)
 

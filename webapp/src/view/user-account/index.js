@@ -21,7 +21,7 @@ export default {
 
     api.groups().then(function (response) {
       var groups = response.objects
-      api.user_groups({'user': self.$parent.$data.user_id}).then(function (data) {
+      api.user_permissions({'user_id': self.$parent.$data.user_id}, null, {'cache-control': 'no-cache'}).then(function (data) {
         _.forEach(groups, function (group) {
           group.active = _.some(data.objects, {'group_id': group.id})
         })
@@ -61,7 +61,7 @@ export default {
       if (e.target.checked) {
         api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
       } else {
-        api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})
+        api.delete_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
       }
     },
     addlocationalAccess: function (data) {
