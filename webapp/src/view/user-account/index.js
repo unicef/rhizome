@@ -67,13 +67,13 @@ export default {
     addlocationalAccess: function (data) {
       var self = this
       self.$set('locationalAccessLoading', true)
-      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data}).then(function () {
+      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data }).then(function () {
         self.loadlocationalAccess()
       })
     },
     deletelocationalAccess: function (data) {
       var self = this
-      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data}).then(function () {
+      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data }).then(function () {
         self.loadlocationalAccess()
       })
     },

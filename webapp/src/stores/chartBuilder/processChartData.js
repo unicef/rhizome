@@ -268,23 +268,26 @@ export default {
 
       let indicatorIndex = _(data).groupBy('indicator').value()
       let index = _.indexBy(indicatorIndex[xAxis], 'location')
-      let bubbleIndex = null
-      if(yAxis){
+      if (yAxis) {
         let maxRadius = 30
         let maxValue = 5000
-        bubbleIndex  = _.indexBy(indicatorIndex[yAxis], 'location')
         let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
         chartOptions.maxValue = Math.min(Math.max(...bubbleValues), maxValue)
         chartOptions.maxRadius = maxRadius
         chartOptions.bubblesValue = _.property('properties.bubbleValue')
-        chartOptions.radius = function(v) { if (v > this.maxValue) return this.maxRadius
-          return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v) }
+        chartOptions.radius = function (v) {
+          if (v > this.maxValue) {
+            return this.maxRadius
+          }
+          return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v)
+        }
       }
 
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
         let properties = {value: _.get(location, 'value')}
-        if(yAxis){
+        if (yAxis) {
+          let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
           let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
           properties.bubbleValue = _.get(bubbleLocation, 'value')
         }
