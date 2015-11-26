@@ -58,13 +58,13 @@ function findMatches (item, re) {
   return matches
 }
 
-function removeIndicatorEmptyNode (indicatorList) {
-  if (!indicatorList || !indicatorList.length) {
-    return indicatorList
+function removeIndicatorEmptyNode (sourceList) {
+  if (!sourceList || !sourceList.length) {
+    return sourceList
   }
 
-  let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: indicatorList}
-  indicatorList.forEach(item => item.parentNode = virtualRoot)
+  let virtualRoot = _.cloneDeep({noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: sourceList})
+  virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
 
   let process = function (parent) {
     let children = parent.children

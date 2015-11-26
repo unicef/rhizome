@@ -1,5 +1,5 @@
 import React from 'react'
-
+import _ from 'lodash'
 import List from 'component/list/List.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
@@ -24,12 +24,12 @@ export default class GeneralOptions extends React.Component {
   }
 
 
-  filterIndicatorByType = (indicatorList, indicatorType) => {
-    debugger
-    if (!indicatorList || !indicatorList.length) {
-      return indicatorList
+  filterIndicatorByType = (sourceList, indicatorType) => {
+    if (!sourceList || !sourceList.length) {
+      return sourceList
     }
 
+    let indicatorList = _.cloneDeep(sourceList)
     let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: indicatorList}
     indicatorList.forEach(item => item.parentNode = virtualRoot)
 
@@ -48,7 +48,6 @@ export default class GeneralOptions extends React.Component {
         }
         else{
           if (parent.data_format !== indicatorType) {
-            console.log(parent.data_format)
             if(parent.parentNode) {
               parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
             }
@@ -64,7 +63,7 @@ export default class GeneralOptions extends React.Component {
     process(virtualRoot)
     return virtualRoot.children
   }
-debugger;
+  
   render() {
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
