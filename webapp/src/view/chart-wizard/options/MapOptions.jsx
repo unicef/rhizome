@@ -63,7 +63,7 @@ export default class GeneralOptions extends React.Component {
     process(virtualRoot)
     return virtualRoot.children
   }
-  
+
   render() {
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
