@@ -185,44 +185,51 @@ function makeTagId (tId) {
   return 'tag-' + tId
 }
 
+function pickAllNodesInTrees (parent, nodes) {
+  let children = parent.children
+
+  if (children && children.length) {
+    children.forEach(item => pickAllNodesInTrees(item, nodes))
+  } else {
+    if (parent.noValue) nodes.push(parent)
+  }
+}
+
 function removeIndicatorEmptyNode (sourceList) {
   if (!sourceList || !sourceList.length) {
     return sourceList
   }
 
-  let virtualRoot = {noValue: true, parentNode: null, title: 'Virtual Root', children: sourceList}
+  let nodes = []
+
+  let virtualRoot = {noValue: false, parentNode: null, title: 'No Available Indicator', children: sourceList}
   virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
+  pickAllNodesInTrees(virtualRoot, nodes)
 
-  let process = function (parent) {
-    let children = parent.children
+  while (nodes.length > 0) {
+    nodes.forEach(function (item) {
+      item.parentNode.children.splice(item.parentNode.children.indexOf(item), 1)
+    })
 
-    if (children && children.length) {
-      children.forEach(process)
-
-      if (!children.some(item => !item.empty)) {
-        parent.empty = true
-      }
-    } else {
-      if (parent.noValue) {
-        parent.empty = true
-      }
-    }
-
-    if (parent.empty && parent.parentNode) {
-      parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
-    }
+    nodes = []
+    pickAllNodesInTrees(virtualRoot, nodes)
   }
 
-  process(virtualRoot)
-  return virtualRoot.children
+  if (sourceList.length > 0) {
+    return sourceList
+  } else {
+    virtualRoot.noValue = true
+    virtualRoot.children = []
+    return [virtualRoot]
+  }
 }
 
 function buildIndicatorsTree (indicators, tags, isClone, isRemoveEmpty, indicatorFilterType) {
   if (isClone) {
     tags = _.cloneDeep(tags)
+    indicators = _.cloneDeep(indicators)
   }
 
-  indicators.forEach(item => console.log(item))
   let sortTags = _.sortBy(tags, 'tag_name').reverse()
 
   var tags_map = {}
@@ -253,6 +260,7 @@ function buildIndicatorsTree (indicators, tags, isClone, isRemoveEmpty, indicato
       if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
         if (indicatorFilterType && i.data_format === indicatorFilterType) {
           otherTag.children.push(i)
+          i.parentNode = otherTag
         }
       } else if (_.isArray(i.tag_json)) {
         _.each(i.tag_json, function (tId) {
@@ -265,8 +273,8 @@ function buildIndicatorsTree (indicators, tags, isClone, isRemoveEmpty, indicato
       }
     } else {
       if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
-        console.log(i)
         otherTag.children.push(i)
+        i.parentNode = otherTag
       } else if (_.isArray(i.tag_json)) {
         _.each(i.tag_json, function (tId) {
           let tagParent = tags_map[tId]
