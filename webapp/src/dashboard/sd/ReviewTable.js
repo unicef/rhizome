@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import moment from 'moment'
 import DashboardStore from 'stores/DashboardStore'
 
 import DashboardActions from 'actions/DashboardActions'
@@ -95,6 +96,9 @@ var ReviewTable = React.createClass({
   },
 
   render () {
+    let location = _.get(this.props.location, 'location', this.props.location.name)
+    let campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+
     const fields = {
       edit_link: {
         title: 'Edit',
@@ -108,7 +112,7 @@ var ReviewTable = React.createClass({
               key={id}
               />
           } else if (this.props.doc_tab === 'doc_index') {
-            return <a href={`/datapoints/source-data/Nigeria/2015/06/viewraw/${id}`}>View Raw Data</a>
+            return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
               indicators={this.state.indicators}
