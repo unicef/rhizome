@@ -78,7 +78,12 @@
     "node": ">=0.10.0"
   },
   "standard": {
-    "globals": ["describe", "context", "it"],
+    "globals": [
+      "describe",
+      "context",
+      "it"
+    ],
+    "parser": "babel-eslint",
     "ignore": []
   }
 }
