@@ -181,65 +181,75 @@ datapoint.toString = function (query, version) {
   return endPoint('/datapoint/').toString(query, version)
 }
 
+function makeTagId (tId) {
+  return 'tag-' + tId
+}
+
+function buildIndicatorsTree (indicators, tags, isClone, indicatorFilterType, isRemoveEmpty) {
+  if (isClone) {
+    tags.objects = _.cloneDeep(tags.objects)
+  }
+
+  tags.objects = _.sortBy(tags.objects, 'tag_name').reverse()
+
+  var tags_map = {}
+  _.each(tags.objects, function (t) {
+    tags_map[t.id] = t
+    t.id = makeTagId(t.id)
+    t.noValue = true
+    t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null
+    t.children = []
+    t.title = t.tag_name
+    t.value = t.id
+  })
+
+  // add 'Other Indicators' tag to collect any indicators without tags
+  var otherTag = {
+    'id': 0,
+    'value': makeTagId(0),
+    'noValue': true,
+    'title': 'Other Indicators',
+    'children': []
+  }
+
+  _.each(indicators.objects, function (i) {
+    i.title = i.name
+    i.value = i.id
+    i.displayTitle = i.name + ' (' + i.id + ')'
+    if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
+      otherTag.children.push(i)
+    } else if (_.isArray(i.tag_json)) {
+      _.each(i.tag_json, function (tId) {
+        let tagParent = tags_map[tId]
+        tagParent.children.push(i)
+        i.parentNode = tagParent
+      })
+    }
+  })
+
+  // add other tag?
+  if (otherTag.children.length > 0) {
+    tags.objects.push(otherTag)
+  }
+  // tags.objects.reverse()
+  // sort indicators with each tag
+  _.each(tags.objects, function (t) {
+    t.children = _.sortBy(t.children, 'title')
+  })
+
+  tags.objects = treeify(tags.objects, 'id')
+  tags.objects.reverse()
+  tags.flat = indicators.objects
+  return tags
+}
+
 function indicatorsTree (q) {
   var fetch1 = endPoint('/indicator/', 'get', 1)
   var fetch2 = endPoint('/indicator_tag/', 'get', 1)
-  var makeTagId = function (tId) {
-    return 'tag-' + tId
-  }
   return new Promise(function (fulfill, reject) {
     fetch1(q, null, {'cache-control': 'no-cache'}).then(function (indicators) {
       fetch2(null, null, {'cache-control': 'no-cache'}).then(function (tags) {
-        tags.objects = _.sortBy(tags.objects, 'tag_name').reverse()
-        var tags_map = {}
-        _.each(tags.objects, function (t) {
-          tags_map[t.id] = t
-          t.id = makeTagId(t.id)
-          t.noValue = true
-          t.parent = t.parent_tag_id && t.parent_tag_id !== 'None' ? makeTagId(t.parent_tag_id) : null
-          t.children = []
-          t.title = t.tag_name
-          t.value = t.id
-        })
-
-        // add 'Other Indicators' tag to collect any indicators without tags
-        var otherTag = {
-          'id': 0,
-          'value': makeTagId(0),
-          'noValue': true,
-          'title': 'Other Indicators',
-          'children': []
-        }
-
-        _.each(indicators.objects, function (i) {
-          i.title = i.name
-          i.value = i.id
-          i.displayTitle = i.name + ' (' + i.id + ')'
-          if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
-            otherTag.children.push(i)
-          } else if (_.isArray(i.tag_json)) {
-            _.each(i.tag_json, function (tId) {
-              let tagParent = tags_map[tId]
-              tagParent.children.push(i)
-              i.parentNode = tagParent
-            })
-          }
-        })
-
-        // add other tag?
-        if (otherTag.children.length > 0) {
-          tags.objects.push(otherTag)
-        }
-        // tags.objects.reverse()
-        // sort indicators with each tag
-        _.each(tags.objects, function (t) {
-          t.children = _.sortBy(t.children, 'title')
-        })
-
-        tags.objects = treeify(tags.objects, 'id')
-        tags.objects.reverse()
-        tags.flat = indicators.objects
-        fulfill(tags)
+        fulfill(buildIndicatorsTree(indicators, tags))
       })
     }, reject)
   })
@@ -269,6 +279,7 @@ export default {
   datapoints: datapoint,
   indicatorsTree: indicatorsTree,
   tagTree: tagTree,
+  buildIndicatorsTree: buildIndicatorsTree,
 
   // BASIC GET REQUESTS //
   campaign: endPoint('/campaign/', 'get', 1),

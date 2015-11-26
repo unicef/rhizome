@@ -29,9 +29,9 @@ export default class GeneralOptions extends React.Component {
       return sourceList
     }
 
-    let indicatorList = _.cloneDeep(sourceList)
-    let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: indicatorList}
-    indicatorList.forEach(item => item.parentNode = virtualRoot)
+    let clonedSourceList = _.cloneDeep(sourceList)
+    let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: clonedSourceList}
+    virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
 
     let process = function (parent) {
       let children = parent.children

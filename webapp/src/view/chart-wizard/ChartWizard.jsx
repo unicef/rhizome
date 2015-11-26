@@ -63,7 +63,7 @@ function removeIndicatorEmptyNode (sourceList) {
     return sourceList
   }
 
-  let virtualRoot = _.cloneDeep({noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: sourceList})
+  let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: sourceList}
   virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
 
   let process = function (parent) {
