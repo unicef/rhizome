@@ -4,6 +4,7 @@ import _ from 'lodash'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import PalettePicker from '../PalettePicker.jsx'
+import api from 'data/api'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
@@ -20,7 +21,9 @@ export default class GeneralOptions extends React.Component {
     locationLevelValue: React.PropTypes.number,
     xFormatValue: React.PropTypes.number,
     yFormatValue: React.PropTypes.number,
-    palette: React.PropTypes.string
+    palette: React.PropTypes.string,
+    rawIndicators: React.PropTypes.object,
+    rawTags: React.PropTypes.object
   }
 
   static defaultProps = {
@@ -30,49 +33,14 @@ export default class GeneralOptions extends React.Component {
     locationLevelValue: 0,
     xFormatValue: 0,
     yFormatValue: 0,
-    palette: ''
-  }
-
-  filterIndicatorByType = (sourceList, indicatorType) => {
-    if (!sourceList || !sourceList.length) {
-      return sourceList
-    }
-
-    let clonedSourceList = _.cloneDeep(sourceList)
-    let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: clonedSourceList}
-    virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
-
-    let process = function (parent) {
-      let children = parent.children
-
-      if (children && children.length) {
-        children.forEach(process)
-
-        if (!children.some(item => !item.empty)) {
-          parent.empty = true
-        }
-      } else {
-        if (parent.noValue) {
-          parent.empty = true
-        } else {
-          if (parent.data_format !== indicatorType) {
-            if (parent.parentNode) {
-              parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
-            }
-          }
-        }
-      }
-
-      if (parent.empty && parent.parentNode) {
-        parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
-      }
-    }
-
-    process(virtualRoot)
-    return virtualRoot.children
+    palette: '',
+    rawIndicators: null,
+    rawTags: null
   }
 
   render () {
+    let intIndicators = _.sortBy(api.buildIndicatorsTree(this.props.rawIndicators.objects, this.props.rawTags.objects, true, true, 'int'), 'title')
+    let boolIndicators = _.sortBy(api.buildIndicatorsTree(this.props.rawIndicators.objects, this.props.rawTags.objects, true, true, 'bool'), 'title')
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
@@ -84,13 +52,13 @@ export default class GeneralOptions extends React.Component {
         <IndicatorDropdownMenu
           text={this.props.indicatorSelected[1] ? this.props.indicatorSelected[1].name : 'Add Indicators'}
           icon='fa-plus'
-          indicators={this.filterIndicatorByType(this.props.indicatorList, 'int')}
+          indicators={intIndicators}
           sendValue={ChartWizardActions.changeYAxis}/>
         <h4>Gradient Axis</h4>
         <IndicatorDropdownMenu
           text={this.props.indicatorSelected[2] ? this.props.indicatorSelected[2].name : 'Add Indicators'}
           icon='fa-plus'
-          indicators={this.filterIndicatorByType(this.props.indicatorList, 'bool')}
+          indicators={boolIndicators}
           sendValue={ChartWizardActions.changeZAxis}/>
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>

@@ -58,38 +58,6 @@ function findMatches (item, re) {
   return matches
 }
 
-function removeIndicatorEmptyNode (sourceList) {
-  if (!sourceList || !sourceList.length) {
-    return sourceList
-  }
-
-  let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: sourceList}
-  virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
-
-  let process = function (parent) {
-    let children = parent.children
-
-    if (children && children.length) {
-      children.forEach(process)
-
-      if (!children.some(item => !item.empty)) {
-        parent.empty = true
-      }
-    } else {
-      if (parent.noValue) {
-        parent.empty = true
-      }
-    }
-
-    if (parent.empty && parent.parentNode) {
-      parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
-    }
-  }
-
-  process(virtualRoot)
-  return virtualRoot.children
-}
-
 let ChartWizard = React.createClass({
   propTypes: {
     chartDef: React.PropTypes.object,
@@ -134,7 +102,6 @@ let ChartWizard = React.createClass({
 
   render () {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
-    let filteredIndicatorTree = removeIndicatorEmptyNode(this.state.data.indicatorList)
 
     let locationStep = (
       <div>
@@ -158,7 +125,7 @@ let ChartWizard = React.createClass({
         <IndicatorDropdownMenu
           text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || 'Add Indicators'}
           icon='fa-plus'
-          indicators={filteredIndicatorTree}
+          indicators= {this.state.data.indicatorList}
           sendValue={ChartWizardActions.addFirstIndicator} />
         <span className='chart-wizard__next' onClick={this.toggleStep('chart-type')}>Next</span>
       </div>
@@ -200,7 +167,9 @@ let ChartWizard = React.createClass({
     }
 
     let option = React.createElement(options[this.state.data.chartDef.type], {
-      indicatorList: removeIndicatorEmptyNode(this.state.data.indicatorList),
+      indicatorList: this.state.data.indicatorList,
+      rawIndicators: this.state.data.rawIndicators,
+      rawTags: this.state.data.rawTags,
       indicatorSelected: this.state.data.indicatorSelected,
       groupByValue: this.state.data.groupByValue,
       locationLevelValue: this.state.data.locationLevelValue,

@@ -185,15 +185,48 @@ function makeTagId (tId) {
   return 'tag-' + tId
 }
 
-function buildIndicatorsTree (indicators, tags, isClone, indicatorFilterType, isRemoveEmpty) {
-  if (isClone) {
-    tags.objects = _.cloneDeep(tags.objects)
+function removeIndicatorEmptyNode (sourceList) {
+  if (!sourceList || !sourceList.length) {
+    return sourceList
   }
 
-  tags.objects = _.sortBy(tags.objects, 'tag_name').reverse()
+  let virtualRoot = {noValue: true, parentNode: null, title: 'Virtual Root', children: sourceList}
+  virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
+
+  let process = function (parent) {
+    let children = parent.children
+
+    if (children && children.length) {
+      children.forEach(process)
+
+      if (!children.some(item => !item.empty)) {
+        parent.empty = true
+      }
+    } else {
+      if (parent.noValue) {
+        parent.empty = true
+      }
+    }
+
+    if (parent.empty && parent.parentNode) {
+      parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
+    }
+  }
+
+  process(virtualRoot)
+  return virtualRoot.children
+}
+
+function buildIndicatorsTree (indicators, tags, isClone, isRemoveEmpty, indicatorFilterType) {
+  if (isClone) {
+    tags = _.cloneDeep(tags)
+  }
+
+  indicators.forEach(item => console.log(item))
+  let sortTags = _.sortBy(tags, 'tag_name').reverse()
 
   var tags_map = {}
-  _.each(tags.objects, function (t) {
+  _.each(sortTags, function (t) {
     tags_map[t.id] = t
     t.id = makeTagId(t.id)
     t.noValue = true
@@ -212,35 +245,56 @@ function buildIndicatorsTree (indicators, tags, isClone, indicatorFilterType, is
     'children': []
   }
 
-  _.each(indicators.objects, function (i) {
+  _.each(indicators, function (i) {
     i.title = i.name
     i.value = i.id
     i.displayTitle = i.name + ' (' + i.id + ')'
-    if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
-      otherTag.children.push(i)
-    } else if (_.isArray(i.tag_json)) {
-      _.each(i.tag_json, function (tId) {
-        let tagParent = tags_map[tId]
-        tagParent.children.push(i)
-        i.parentNode = tagParent
-      })
+    if (indicatorFilterType) {
+      if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
+        if (indicatorFilterType && i.data_format === indicatorFilterType) {
+          otherTag.children.push(i)
+        }
+      } else if (_.isArray(i.tag_json)) {
+        _.each(i.tag_json, function (tId) {
+          if (indicatorFilterType && i.data_format === indicatorFilterType) {
+            let tagParent = tags_map[tId]
+            tagParent.children.push(i)
+            i.parentNode = tagParent
+          }
+        })
+      }
+    } else {
+      if (!_.isArray(i.tag_json) || i.tag_json.length === 0) {
+        console.log(i)
+        otherTag.children.push(i)
+      } else if (_.isArray(i.tag_json)) {
+        _.each(i.tag_json, function (tId) {
+          let tagParent = tags_map[tId]
+          tagParent.children.push(i)
+          i.parentNode = tagParent
+        })
+      }
     }
   })
 
   // add other tag?
   if (otherTag.children.length > 0) {
-    tags.objects.push(otherTag)
+    sortTags.push(otherTag)
   }
   // tags.objects.reverse()
   // sort indicators with each tag
-  _.each(tags.objects, function (t) {
+  _.each(sortTags, function (t) {
     t.children = _.sortBy(t.children, 'title')
   })
 
-  tags.objects = treeify(tags.objects, 'id')
-  tags.objects.reverse()
-  tags.flat = indicators.objects
-  return tags
+  sortTags = treeify(sortTags, 'id')
+  sortTags.reverse()
+
+  if (isRemoveEmpty) {
+    sortTags = removeIndicatorEmptyNode(sortTags)
+  }
+
+  return sortTags
 }
 
 function indicatorsTree (q) {
@@ -249,7 +303,11 @@ function indicatorsTree (q) {
   return new Promise(function (fulfill, reject) {
     fetch1(q, null, {'cache-control': 'no-cache'}).then(function (indicators) {
       fetch2(null, null, {'cache-control': 'no-cache'}).then(function (tags) {
-        fulfill(buildIndicatorsTree(indicators, tags))
+        let tree = buildIndicatorsTree(indicators.objects, tags.objects)
+        tags.rawTags = tags.objects
+        tags.objects = tree
+        tags.flat = indicators.objects
+        fulfill(tags)
       })
     }, reject)
   })

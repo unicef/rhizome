@@ -29,7 +29,9 @@ let ChartWizardStore = Reflux.createStore({
     isLoading: true,
     chartOptions: {},
     chartData: [],
-    chartDef: {}
+    chartDef: {},
+    rawIndicators: null,
+    rawTags: null
   },
   LAYOUT_PREVIEW: 0,
 
@@ -108,10 +110,14 @@ let ChartWizardStore = Reflux.createStore({
 
     let officeId = this.data.location.office_id
 
-    let indicators = await api.indicatorsTree({ office_id: officeId })
+    this.data.rawIndicators = await api.indicators({ office_id: officeId })
+    this.data.rawTags = await api.get_indicator_tag()
 
-    this.indicatorIndex = _.indexBy(indicators.flat, 'id')
-    this.data.indicatorList = _.sortBy(indicators.objects, 'title')
+    let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+
+    this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
       return this.indicatorIndex[id]
     })
@@ -169,7 +175,9 @@ let ChartWizardStore = Reflux.createStore({
       isLoading: true,
       chartOptions: {},
       chartData: [],
-      chartDef: {}
+      chartDef: {},
+      rawIndicators: null,
+      rawTags: null
     }
   },
 
@@ -181,9 +189,15 @@ let ChartWizardStore = Reflux.createStore({
     this.data.location = this.locationIndex[index]
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
 
-    api.indicatorsTree({ office_id: this.data.location.office_id }).then(indicators => {
-      this.indicatorIndex = _.indexBy(indicators.flat, 'id')
-      this.data.indicatorList = _.sortBy(indicators.objects, 'title')
+    Promise.all([api.indicators({ office_id: this.data.location.office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
+      this.data.rawIndicators = indicators
+      this.data.rawTags = tags
+
+      let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+
+      this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+      this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+
       this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
         return this.indicatorIndex[id]
       })
@@ -194,7 +208,7 @@ let ChartWizardStore = Reflux.createStore({
       })
       this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
       this.previewChart()
-    })
+    }))
   },
 
   onAddFirstIndicator (index) {
