@@ -23,7 +23,8 @@ var defaults = {
   y: _.property('y'),
   y0: _.partial(_.get, _, 'y0', 0),
   yFormat: String,
-  yScale: d3.scale.linear
+  yScale: d3.scale.linear,
+  widthRatio: 0.15
 }
 
 function processData (originalData, options) {
@@ -64,7 +65,96 @@ function processData (originalData, options) {
   return stack(data)
 }
 
-function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yScale, w, h, topLegendHeight, fill, hover) {
+function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
+  var margin = options.margin
+  var dataMarginLeft = 25
+
+  var domain
+
+  if (_.isFunction(options.domain)) {
+    domain = options.domain(data)
+  } else {
+    domain = _(data).map(options.values).flatten().map(options.x).value()
+  }
+
+  var xScale = d3.scale.ordinal()
+    .domain(domain)
+    .rangeBands([0, w], options.padding)
+
+  var dataXScale = d3.scale.ordinal()
+    .domain(domain)
+    .rangeBands([dataMarginLeft, w], options.padding)
+
+  var x = _.flow(options.x, dataXScale)
+
+  var range
+  if (_.isFunction(options.range)) {
+    range = options.range(data)
+  } else {
+    range = d3.extent(_(data).map(options.values).flatten().value(), d => {
+      return options.y0(d) + options.y(d)
+    })
+
+    // Make sure we always have at least a 0 baseline
+    range[0] = Math.min(0, range[0])
+  }
+
+  var yScale = options.yScale()
+    .domain(range)
+    .range([h, 0])
+
+  var y = d => {
+    return yScale(options.y0(d) + options.y(d))
+  }
+
+  var height = d => {
+    var y0 = options.y0(d)
+    var y = options.y(d)
+
+    return yScale(y0) - yScale(y0 + y)
+  }
+
+  var g = svg.select('.data').attr('transform', 'translate(0,' + topLegendHeight + ')')
+  var series = g.selectAll('.bar').data(data)
+
+  svg.select('.bg')
+    .attr({
+      'height': h + margin.top + topLegendHeight,
+      'width': w,
+      'x': margin.left
+    })
+
+  series.enter().append('g')
+    .attr('class', 'bar')
+
+  let fill = color.map(data.map(options.name), options.color)
+
+  series.style({
+    'fill': _.flow(options.name, fill),
+    'stroke': '#fff'
+  })
+
+  series.exit().remove()
+
+  var hover = d3.dispatch('over', 'out')
+
+  var column = series.selectAll('rect').data(options.values)
+
+  column.enter()
+    .append('rect')
+    .style('fill', 'inherit')
+
+  column.attr({
+    'height': height,
+    'width': xScale.rangeBand(),
+    'x': x,
+    'y': y
+  })
+    .on('mouseover', hover.over)
+    .on('mouseout', hover.out)
+
+  column.exit().remove()
+
   svg.select('.x.axis')
     .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
     .call(d3.svg.axis()
@@ -72,6 +162,10 @@ function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yS
       .tickSize(0)
       .tickPadding(4)
       .tickValues(_.filter(dataXScale.domain(), function (d, i, domain) {
+        // Include every fourth tick value unless that tick is within three
+        // ticks of the last value. Always include the last tick. We have to
+        // do this manually because D3 ignores the ticks() value for
+        // ordinal scales
         return (i % 4 === 0 && i + 3 < domain.length) || (i + 1) === domain.length
       }))
       .tickFormat(options.xFormat)
@@ -97,6 +191,14 @@ function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yS
     })
 
   d3.select(svg.selectAll('.y.axis text')[0][0]).attr('visibility', 'hidden')
+
+  var fmt = _.flow(options.y, options.yFormat)
+
+  var seriesLabel = label()
+    .addClass('series')
+    .width(w)
+    .height(h)
+    .align(false)
 
   var legendText = _(data)
     .map(d => {
@@ -161,15 +263,9 @@ function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yS
     g.selectAll('rect')
       .transition()
       .duration(500)
-      .style('opacity', function (e) { return options.x(d) === options.x(e) ? 1 : 0.5 })
-
-    var fmt = _.flow(options.y, options.yFormat)
-
-    var seriesLabel = label()
-      .addClass('series')
-      .width(w)
-      .height(h)
-      .align(false)
+      .style('opacity', function (e) {
+        return options.x(d) === options.x(e) ? 1 : 0.5
+      })
 
     svg.selectAll('.x.axis text').style('opacity', 0)
     var annotations = _(data)
@@ -190,12 +286,12 @@ function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yS
         }
       })
       .tap(list => {
-        if (_(list).some(item => (item.y >= h || item.y < 0))) {
-          list.forEach(item => { item.y = (2 * legend.size() - 1) * 20 })
+        if (_(list).some(item => (item.y >= h || item.y < 50))) {
+          list.forEach(item => { item.y = 50 })
         }
       })
       .each(item => {
-        item.y = (2 * legend.size() - 1) * 20
+        item.y = 50
       })
       .value()
 
@@ -214,7 +310,7 @@ function defaultColumnChart (svg, g, data, options, x, y, xScale, dataXScale, yS
 
     axisLabel
       .attr({
-        'transform': 'translate(' + x(d) + ', ' + (h + options.margin.bottom) + ')',
+        'transform': 'translate(' + x(d) + ', ' + (h + margin.bottom) + ')',
         'dx': xScale.rangeBand() / 2
       })
       .text(options.xFormat)
@@ -279,37 +375,13 @@ _.extend(ColumnChart.prototype, {
   },
 
   update: function (originalData, options) {
-    var data = originalData
-
-    if (options.processData) {
-      data = processData(originalData, options)
-    }
-
+    var data = options.processData ? processData(originalData, options) : originalData
     options = _.assign(this._options, options)
-    var margin = options.margin
 
-    var h = this._height - margin.top - margin.bottom
-    var w = this._width - margin.left - margin.right
-    let topLegendHeight = this._topLegendHeight
-    var dataMarginLeft = 25
-
-    var domain
-
-    if (_.isFunction(options.domain)) {
-      domain = options.domain(data)
-    } else {
-      domain = _(data).map(options.values).flatten().map(options.x).value()
-    }
-
-    var xScale = d3.scale.ordinal()
-      .domain(domain)
-      .rangeBands([0, w], options.padding)
-
-    var dataXScale = d3.scale.ordinal()
-      .domain(domain)
-      .rangeBands([dataMarginLeft, w], options.padding)
-
-    var x = _.flow(options.x, dataXScale)
+    var h = this._height - options.margin.top - options.margin.bottom
+    var w = this._width - options.margin.left - options.margin.right
+    var topLegendHeight = this._topLegendHeight
+    var svg = this._svg
 
     var range
     if (_.isFunction(options.range)) {
@@ -319,7 +391,6 @@ _.extend(ColumnChart.prototype, {
         return options.y0(d) + options.y(d)
       })
 
-      // Make sure we always have at least a 0 baseline
       range[0] = Math.min(0, range[0])
     }
 
@@ -338,52 +409,68 @@ _.extend(ColumnChart.prototype, {
       return yScale(y0) - yScale(y0 + y)
     }
 
-    var svg = this._svg
-    var g = svg.select('.data').attr('transform', 'translate(0,' + topLegendHeight + ')')
-    var series = g.selectAll('.bar').data(data)
+    if (!options.inaccessibility) {
+      defaultColumnChart(data, options, svg, h, w, topLegendHeight)
+    } else {
+      var g = svg.select('.data').attr('transform', 'translate(0,' + 0 + ')')
+      var series = g.selectAll('.bar').data(data)
 
-    svg.select('.bg')
-      .attr({
-        'height': h + margin.top + topLegendHeight,
-        'width': w,
-        'x': margin.left
+      var rectWidth = options.widthRatio * w
+      var x = options.margin.left
+
+      svg.select('.bg')
+        .attr({
+          'height': h + options.margin.top,
+          'width': w,
+          'x': x
+        })
+
+      series.enter().append('g')
+        .attr('class', 'bar')
+
+      let fill = color.map(data.map(options.name), palettes.brown)
+
+      series.style({
+        'fill': _.flow(options.name, fill),
+        'stroke': '#fff'
       })
 
-    series.enter().append('g')
-      .attr('class', 'bar')
+      series.exit().remove()
 
-    let fill = color.map(data.map(options.name), options.color)
+      var column = series.selectAll('rect').data(options.values)
 
-    series.style({
-      'fill': _.flow(options.name, fill),
-      'stroke': '#fff'
-    })
+      column.enter()
+        .append('rect')
+        .style('fill', 'inherit')
 
-    series.exit().remove()
+      column.attr({
+        'height': height,
+        'width': rectWidth,
+        'x': x,
+        'y': y
+      })
 
-    var hover = d3.dispatch('over', 'out')
+      column.exit().remove()
 
-    var column = series.selectAll('rect').data(options.values)
-
-    column.enter()
-      .append('rect')
-      .style('fill', 'inherit')
-
-    column.attr({
-      'height': height,
-      'width': xScale.rangeBand(),
-      'x': x,
-      'y': y
-    })
-      .on('mouseover', hover.over)
-      .on('mouseout', hover.out)
-
-    column.exit().remove()
-
-    if (!options.inaccessibility) {
-      defaultColumnChart(svg, g, data, options, x, y, xScale, dataXScale, yScale, w, h, topLegendHeight, fill, hover)
+      var fmt = _.flow(options.y, options.yFormat)
+      let annotationData = _(data)
+        .map(function (s) {
+          return _.assign({}, ...options.values(s),
+            { name: options.name(s) }
+          )
+        })
+        .map(d => {
+          return {
+            text: d.name + ' ' + fmt(d),
+            x: x,
+            y: y(d),
+            defined: _.isFinite(d.value)
+          }
+        })
+        .value()
     }
   }
+
 })
 
 export default ColumnChart

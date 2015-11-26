@@ -78,7 +78,8 @@ var Access = React.createClass({
                         loading={loading}
                         data={reasons}
                         options={{
-                          aspect: 1,
+                          aspect: 1.1,
+                          margin: {top: 10, right: 0, bottom: 0, left: 0},
                           domain: _.constant([0, 1]),
                           values: _.property('values'),
                           y0: _.property('y0'),
