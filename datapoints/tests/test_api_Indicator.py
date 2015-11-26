@@ -32,10 +32,12 @@ class IndicatorResourceTest(ResourceTestCase):
     def test_create_calculation(self):
         Indicator.objects.create(short_name='Test Indicator 1', \
                                  name='Test Indicator for the Tag 1', \
+                                 data_format='int', \
                                  description='Test Indicator for the Tag 1 Description', )
 
         Indicator.objects.create(short_name='Test Indicator 2', \
                                  name='Test Indicator for the Tag 2', \
+                                 data_format='int', \
                                  description='Test Indicator for the Tag 2 Description', )
 
         list = Indicator.objects.all().order_by('-id')
@@ -91,6 +93,7 @@ class IndicatorResourceTest(ResourceTestCase):
     def test_create_tag(self):
         Indicator.objects.create(short_name='Test Indicator', \
                                  name='Test Indicator for the Tag', \
+                                 data_format='int', \
                                  description='Test Indicator for the Tag Description', )
         indicatior = Indicator.objects.all().order_by('-id')[0]
 
@@ -115,6 +118,7 @@ class IndicatorResourceTest(ResourceTestCase):
     def test_remove_tag(self):
         indicatior = Indicator.objects.create(short_name='Test Indicator', \
                                               name='Test Indicator for the Tag', \
+                                              data_format='int', \
                                               description='Test Indicator for the Tag Description', )
 
         tag = IndicatorTag.objects.create(tag_name='Test tag')
@@ -139,6 +143,7 @@ class IndicatorResourceTest(ResourceTestCase):
 
         post_data = {'name': 'New test indicator name', \
             'short_name': 'New test short name', \
+            'data_format':'int', \
             'id': -1,'description':'test'}
 
         resp = self.api_client.post('/api/v1/indicator/', format='json', \
@@ -151,6 +156,7 @@ class IndicatorResourceTest(ResourceTestCase):
         ind = Indicator.objects.create(**{
             'name':'test name',
             'short_name':'test short name',
+            'data_format':'int', 
             'description':'test description',
         })
 
