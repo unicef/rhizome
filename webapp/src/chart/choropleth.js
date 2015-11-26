@@ -360,7 +360,7 @@ _.extend(ChoroplethMap.prototype, {
 
       stripeData.exit().remove()
 
-      dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+      let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
       stripes.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
       if (options.chartInDashboard) {
