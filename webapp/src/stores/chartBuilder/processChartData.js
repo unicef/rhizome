@@ -204,7 +204,7 @@ export default {
       },
       BarChart: {
         fn: this.processBarChart,
-        para: [dataPromise, locations, indicators, xAxis, yAxis, layout]
+        para: [dataPromise, locations, indicators, layout]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
@@ -381,7 +381,7 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processBarChart: function (dataPromise, locations, indicators, xAxis, yAxis, layout) {
+  processBarChart: function (dataPromise, locations, indicators, layout) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
