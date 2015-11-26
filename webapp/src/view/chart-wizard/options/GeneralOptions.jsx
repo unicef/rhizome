@@ -13,6 +13,15 @@ export default class GeneralOptions extends React.Component {
     super(props)
   }
 
+  static propTypes = {
+    indicatorList: React.PropTypes.array,
+    indicatorSelected: React.PropTypes.array,
+    groupByValue: React.PropTypes.number,
+    locationLevelValue: React.PropTypes.number,
+    yFormatValue: React.PropTypes.number,
+    palette: React.PropTypes.string
+  }
+
   static defaultProps = {
     indicatorList: [],
     indicatorSelected: [],

@@ -1,8 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
-import List from 'component/list/List.jsx'
+
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
-import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import PalettePicker from '../PalettePicker.jsx'
 
@@ -10,8 +9,18 @@ import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 
 export default class GeneralOptions extends React.Component {
-  constructor(props) {
+  constructor (props) {
     super(props)
+  }
+
+  static propTypes = {
+    indicatorList: React.PropTypes.array,
+    indicatorSelected: React.PropTypes.array,
+    groupByValue: React.PropTypes.number,
+    locationLevelValue: React.PropTypes.number,
+    xFormatValue: React.PropTypes.number,
+    yFormatValue: React.PropTypes.number,
+    palette: React.PropTypes.string
   }
 
   static defaultProps = {
@@ -19,10 +28,10 @@ export default class GeneralOptions extends React.Component {
     indicatorSelected: [],
     groupByValue: 0,
     locationLevelValue: 0,
+    xFormatValue: 0,
     yFormatValue: 0,
     palette: ''
   }
-
 
   filterIndicatorByType = (sourceList, indicatorType) => {
     if (!sourceList || !sourceList.length) {
@@ -45,10 +54,9 @@ export default class GeneralOptions extends React.Component {
       } else {
         if (parent.noValue) {
           parent.empty = true
-        }
-        else{
+        } else {
           if (parent.data_format !== indicatorType) {
-            if(parent.parentNode) {
+            if (parent.parentNode) {
               parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
             }
           }
@@ -64,7 +72,7 @@ export default class GeneralOptions extends React.Component {
     return virtualRoot.children
   }
 
-  render() {
+  render () {
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>

@@ -1,6 +1,5 @@
 import React from 'react'
 
-import List from 'component/list/List.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
@@ -14,11 +13,22 @@ export default class ScatterOptions extends React.Component {
     super(props)
   }
 
+  static propTypes = {
+    indicatorList: React.PropTypes.array,
+    indicatorSelected: React.PropTypes.array,
+    groupByValue: React.PropTypes.number,
+    locationLevelValue: React.PropTypes.number,
+    xFormatValue: React.PropTypes.number,
+    yFormatValue: React.PropTypes.number,
+    palette: React.PropTypes.string
+  }
+
   static defaultProps = {
     indicatorList: [],
     indicatorSelected: [],
     groupByValue: 0,
     locationLevelValue: 0,
+    xFormatValue: 0,
     yFormatValue: 0,
     palette: ''
   }
