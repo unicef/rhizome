@@ -3,7 +3,6 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import TitleMenu from 'component/TitleMenu.jsx'
 import ButtonMenu from 'component/ButtonMenu.jsx'
 
 import MenuItem from 'component/MenuItem.jsx'
@@ -102,7 +101,6 @@ var DocForm = React.createClass({
 
     var fileConfigForm = ''
     if (this.state.created_doc_id) {
-
       fileConfigForm = (
         <ul>
           <li>
