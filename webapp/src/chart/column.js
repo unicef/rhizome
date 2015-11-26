@@ -209,7 +209,8 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
 
   var legend = svg.select('.legend').selectAll('*')
     .data(legendText)
-    .enter().append('g')
+
+  legend.enter().append('g')
     .attr('class', 'series')
     .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
 
@@ -236,6 +237,8 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
       'fill': '#999999'
     })
     .text(d => { return d })
+
+  legend.exit().remove()
 
   var timeout = null
 
@@ -314,6 +317,30 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
         'dx': xScale.rangeBand() / 2
       })
       .text(options.xFormat)
+  })
+}
+
+function wrap (text, width, x) {
+  text.each(function () {
+    let text = d3.select(this)
+    let words = text.text().split(/\s+/).reverse()
+    let word
+    let line = []
+    let lineNumber = 1
+    let lineHeight = 1.1
+    let y = text.attr('y')
+    let tspan = text.text(null).append('tspan').attr('x', x).attr('y', y)
+    while (words.length > 0) {
+      word = words.pop()
+      line.push(word)
+      tspan.text(line.join(' '))
+      if (tspan.node().getComputedTextLength() > (width - x)) {
+        line.pop()
+        tspan.text(line.join(' '))
+        line = [word]
+        tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', (lineNumber * lineHeight) + 'em').text(word)
+      }
+    }
   })
 }
 
@@ -461,13 +488,50 @@ _.extend(ColumnChart.prototype, {
         })
         .map(d => {
           return {
-            text: d.name + ' ' + fmt(d),
-            x: x,
-            y: y(d),
+            name: d.name,
+            text: d.name.slice(2) + ' ' + fmt(d),
+            x: rectWidth,
+            y: y(d) + (height(d) * 0.2),
             defined: _.isFinite(d.value)
           }
         })
         .value()
+
+      var annotation = svg.select('.annotation').selectAll('*')
+        .data(annotationData)
+
+      annotation.enter().append('g')
+        .attr('class', 'series')
+        .style({
+          'fill': _.flow(options.name, fill),
+          'stroke': _.flow(options.name, fill)
+        })
+
+      var xLine = rectWidth * 1.5
+      var xText = rectWidth * 1.7
+
+      annotation.append('text')
+        .attr({
+          'x': xText,
+          'y': d => { return d.y }
+        })
+        .text(d => { return d.text })
+        .call(wrap, w, xText)
+        .style({
+          'fill': 'inherit',
+          'stroke': 'transparent'
+        })
+
+      annotation.append('line')
+        .attr({
+          'x1': rectWidth,
+          'x2': xLine,
+          'y1': d => { return d.y },
+          'y2': d => { return d.y }
+        })
+        .style('stroke', 'inherit')
+
+      annotation.exit().remove()
     }
   }
 
