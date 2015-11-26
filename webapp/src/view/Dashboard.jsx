@@ -167,11 +167,12 @@ var Dashboard = React.createClass({
       })
     } else {
       return api.get_chart({ dashboard_id: dashboard.id, _: randomHash() }, null, {'cache-control': 'no-cache'}).then(res => {
-        dashboard.charts = res.objects.map(chart => {
+        let charts = res.objects.map(chart => {
           let result = chart.chart_json
           result.id = chart.id
           return result
         })
+        dashboard.charts = _.sortBy(charts, _.property('id'))
         return dashboard
       }, err => {
         console.log(err)
