@@ -282,6 +282,9 @@ _.extend(ChoroplethMap.prototype, {
 
       bubbleData.exit().remove()
 
+      let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+      bubbles.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
+
       if (options.chartInDashboard) {
         var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
           return Math.ceil(d * options.maxBubbleValue, -1)
@@ -356,6 +359,9 @@ _.extend(ChoroplethMap.prototype, {
         .on('mouseout', this._onMouseOut)
 
       stripeData.exit().remove()
+
+      dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+      stripes.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
       if (options.chartInDashboard) {
         var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
