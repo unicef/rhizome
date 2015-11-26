@@ -162,7 +162,7 @@ var SourceDataDashboard = React.createClass({
         <div className='medium-12 columns upload__csv--step'>
           You can review raw data, map indicators, validate data and view results.
         </div>
-        <div className>
+        <div>
           <DocOverview
             key={table_key + 'breakdown'}
             loading={loading}

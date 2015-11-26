@@ -133,13 +133,13 @@ var DocForm = React.createClass({
 
     var refreshBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-      refreshBtn = <span className='cd-button' onClick={this.syncDocData}>Sync Data</span>
+      refreshBtn = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Sync Data</span>
     }
 
     var reviewBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
       var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-      reviewBtn = <a href={next_link} className='cd-button'> Review Upload</a>
+      reviewBtn = <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
     }
 
     var stepMessage = this.state.created_doc_id
