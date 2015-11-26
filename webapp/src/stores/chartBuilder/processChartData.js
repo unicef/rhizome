@@ -271,7 +271,7 @@ export default {
         let maxRadius = 30
         let maxValue = 5000
         let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
-        chartOptions.maxBubbbleValue = Math.min(Math.max(...bubbleValues), maxValue)
+        chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
         chartOptions.maxBubbleRadius = maxRadius
         chartOptions.bubbleValue = _.property('properties.bubbleValue')
       }
