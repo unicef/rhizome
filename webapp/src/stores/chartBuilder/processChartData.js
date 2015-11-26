@@ -275,6 +275,14 @@ export default {
         chartOptions.maxBubbleRadius = maxRadius
         chartOptions.bubbleValue = _.property('properties.bubbleValue')
       }
+      if (zAxis) {
+        //let maxRadius = 30
+        //let maxValue = 5000
+        let gradientValues = indicatorIndex[zAxis].map(v => v.value)
+        //chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
+        //chartOptions.maxBubbleRadius = maxRadius
+        chartOptions.stripeValue = _.property('properties.stripeValue')
+      }
 
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
@@ -283,6 +291,11 @@ export default {
           let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
           let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
           properties.bubbleValue = _.get(bubbleLocation, 'value')
+        }
+        if (zAxis) {
+          let gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
+          let gradientLocation = _.get(gradientIndex, feature.properties.location_id)
+          properties.stripeValue = _.get(gradientLocation, 'value')
         }
         return _.merge({}, feature, {properties: properties})
       })
