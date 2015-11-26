@@ -4,6 +4,8 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import TitleMenu from 'component/TitleMenu.jsx'
+import ButtonMenu from 'component/ButtonMenu.jsx'
+
 import MenuItem from 'component/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
 
@@ -19,7 +21,8 @@ var DocForm = React.createClass({
 
   propTypes: {
     location: React.PropTypes.object.isRequired,
-    campaign: React.PropTypes.object
+    campaign: React.PropTypes.object,
+    reviewTable: React.PropTypes.element
   },
 
   // since we are starting off without any data, there is no initial value
@@ -99,52 +102,55 @@ var DocForm = React.createClass({
 
     var fileConfigForm = ''
     if (this.state.created_doc_id) {
-      var uq_col = this.state.uq_id_column
-      var rg_col = this.state.location_column
-      var cp_col = this.state.campaign_column
 
-      fileConfigForm = <div>
+      fileConfigForm = (
         <ul>
           <li>
-            Unique ID: (To be selected)
-            <TitleMenu icon='fa-chevron-down' text={uq_col}>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>Unique ID: (To be
+              selected) {this.state.uq_id_column}</div>
+            <ButtonMenu text={this.state.uq_id_column}
+                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {uqHeaderList}
-            </TitleMenu>
+            </ButtonMenu>
           </li>
           <li>
-            location: (To be selected)
-            <TitleMenu text={rg_col}>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>location: (To be
+              selected) {this.state.location_column}</div>
+            <ButtonMenu text={this.state.location_column}
+                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {rgHeaderList}
-            </TitleMenu>
+            </ButtonMenu>
           </li>
           <li>
-            Campaign: (To be selected)
-            <TitleMenu text={cp_col}>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>Campaign: (To be
+              selected) {this.state.campaign_column}</div>
+            <ButtonMenu text={this.state.campaign_column}
+                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {cpHeaderList}
-            </TitleMenu>
+            </ButtonMenu>
           </li>
         </ul>
-      </div>
+      )
     }
 
     var refreshBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-      refreshBtn = <button onClick={this.syncDocData}>Sync Data</button>
+      refreshBtn = <span className='cd-button' onClick={this.syncDocData}>Sync Data</span>
     }
 
     var reviewBtn = ''
     if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
       var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-      reviewBtn = <a href={next_link} className='button'> Review Upload</a>
+      reviewBtn = <a href={next_link} className='cd-button'> Review Upload</a>
     }
 
     var stepMessage = this.state.created_doc_id
       ? (<div>
-          <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
-        </div>)
+      <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
+    </div>)
       : (<div>
-          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
-        </div>)
+      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
+    </div>)
 
     var divZoneStyle = {
       padding: '10px',
@@ -167,18 +173,26 @@ var DocForm = React.createClass({
     }
 
     let dropZone = (
-      <div style={divZoneStyle} className='medium-12 columns'>
-        <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-          <div style={uploadButtonStyle}>Choose to upload</div>
-        </Dropzone>
+      <div>
+        <div style={divZoneStyle} className='medium-12 columns'>
+          <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
+            <div style={uploadButtonStyle}>Choose to upload</div>
+          </Dropzone>
+        </div>
+        <div className='medium-12 columns'>
+          {this.props.reviewTable}
+        </div>
       </div>
     )
 
     let fileChoose = (
-      <div>
+      <div className='large-6 medium-8 small-12 columns upload__csv--file-choose'>
         {fileConfigForm}
-        {refreshBtn}
-        {reviewBtn}
+        <div className='large-12 medium-12 small-12 columns refresh__button'>
+          {refreshBtn}
+          {reviewBtn}
+        </div>
+
       </div>
     )
 

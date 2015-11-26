@@ -59,3 +59,24 @@
   margin: 1px;
   padding: 15px;
 }
+
+.upload__csv--file-choose {
+  float: left !important;
+  li {
+    padding: 1.8rem 0;
+    font-size: 15px;
+  }
+}
+
+.csv-upload__file--message {
+  padding: 10px 0px;
+  text-align: left;
+}
+
+.csv-upload__button-style {
+  font-size: 15px;
+}
+
+.refresh__button {
+  padding: 40px;
+}
