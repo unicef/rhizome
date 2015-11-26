@@ -80,7 +80,7 @@ export default {
     loadlocationalAccess: function () {
       var self = this
 
-      api.location_responsibility({ user_id: this.$parent.$data.user_id },null,{'cache-control': 'no-cache'}).then(function (data) {
+      api.location_responsibility({ user_id: this.$parent.$data.user_id }, null, {'cache-control': 'no-cache'}).then(function (data) {
         var locations = data.objects
         _.forEach(locations, function (location) {
           location.name = self.location_map[location.location_id].name

@@ -283,7 +283,6 @@ export default {
         }
       }
 
-
       var chartData = _.map(border.objects.features, function (feature) {
         var location = _.get(index, feature.properties.location_id)
         let properties = {value: _.get(location, 'value')}
