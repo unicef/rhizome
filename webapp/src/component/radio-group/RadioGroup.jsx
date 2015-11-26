@@ -12,6 +12,7 @@ export default React.createClass({
   },
   getDefaultProps: function () {
     return {
+      prefix: '',
       horizontal: false
     }
   },

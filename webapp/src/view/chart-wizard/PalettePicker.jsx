@@ -13,6 +13,11 @@ class PalettePicker extends React.Component {
     onChange: () => {}
   }
 
+  static propTypes = {
+    value: React.PropTypes.number,
+    onChange: React.PropTypes.func
+  }
+
   render () {
     let paletteList = _.map(palettes, (value, key) => {
       let colourList = value.slice(0, 8).map(colour => {
