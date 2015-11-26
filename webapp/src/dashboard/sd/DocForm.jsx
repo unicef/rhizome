@@ -170,12 +170,18 @@ var DocForm = React.createClass({
       width: 200
     }
 
+    let uploadStyle = {
+      padding: '0 30px'
+    }
+
     let dropZone = (
       <div>
-        <div style={divZoneStyle} className='medium-12 columns'>
-          <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-            <div style={uploadButtonStyle}>Choose to upload</div>
-          </Dropzone>
+        <div style={uploadStyle}>
+          <div style={divZoneStyle} className='medium-12 columns'>
+            <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
+              <div style={uploadButtonStyle}>Choose to upload</div>
+            </Dropzone>
+          </div>
         </div>
         <div className='medium-12 columns'>
           {this.props.reviewTable}
