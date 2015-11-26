@@ -9,5 +9,8 @@ export default {
   ],
   rainbow: [
     'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue', 'darkviolet', 'crimson', 'tomato'
+  ],
+  brown: [
+    '#717B8B', '#A6A6A6', '#8FB6BD', '#A4B7D4', '#5D5D5D', '#202020'
   ]
 }
