@@ -111,10 +111,6 @@ var SourceDataDashboard = React.createClass({
       }
     }
 
-    var step = (<div className='medium-12 columns upload__csv--step'>
-      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
-    </div>)
-
     var search_fields = table_definition[doc_tab]['search_fields']
     var datascopeFilters =
       (<div>
@@ -151,11 +147,11 @@ var SourceDataDashboard = React.createClass({
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
-        {step}
-        <div className='medium-12 columns upload__csv--form'>
-          <DocForm
-            campaign={this.props.campaign}
-            location={this.props.location}/>
+        <DocForm
+          campaign={this.props.campaign}
+          location={this.props.location}/>
+        <div className='medium-12 columns'>
+          {review_table}
         </div>
       </div>
     )
@@ -179,17 +175,17 @@ var SourceDataDashboard = React.createClass({
           {doc_tabs}
         </div>
         <hr />
+        <div className='medium-12 columns'>
+          {review_table}
+        </div>
       </div>
     )
 
-    var docForm = (doc_tab === 'doc_index') ? (uploadData) : (reviewData)
+    var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
 
     return (
       <div className='row upload__csv'>
         {docForm}
-        <div className='medium-12 columns'>
-          {review_table}
-        </div>
       </div>
     )
   },

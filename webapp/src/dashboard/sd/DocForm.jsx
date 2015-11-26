@@ -106,19 +106,19 @@ var DocForm = React.createClass({
       fileConfigForm = <div>
         <ul>
           <li>
-            Unique ID Column:
-            <TitleMenu text={uq_col}>
+            Unique ID: (To be selected)
+            <TitleMenu icon='fa-chevron-down' text={uq_col}>
               {uqHeaderList}
             </TitleMenu>
           </li>
           <li>
-            location Column:
+            location: (To be selected)
             <TitleMenu text={rg_col}>
               {rgHeaderList}
             </TitleMenu>
           </li>
           <li>
-            Campaign Column:
+            Campaign: (To be selected)
             <TitleMenu text={cp_col}>
               {cpHeaderList}
             </TitleMenu>
@@ -137,6 +137,14 @@ var DocForm = React.createClass({
       var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
       reviewBtn = <a href={next_link} className='button'> Review Upload</a>
     }
+
+    var stepMessage = this.state.created_doc_id
+      ? (<div>
+          <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
+        </div>)
+      : (<div>
+          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
+        </div>)
 
     var divZoneStyle = {
       padding: '10px',
@@ -158,15 +166,33 @@ var DocForm = React.createClass({
       width: 200
     }
 
+    let dropZone = (
+      <div style={divZoneStyle} className='medium-12 columns'>
+        <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
+          <div style={uploadButtonStyle}>Choose to upload</div>
+        </Dropzone>
+      </div>
+    )
+
+    let fileChoose = (
+      <div>
+        {fileConfigForm}
+        {refreshBtn}
+        {reviewBtn}
+      </div>
+    )
+
+    let uploadFile = this.state.created_doc_id ? fileChoose : dropZone
+
     // since JSX is case sensitive, be sure to use 'encType'
-    return (<div style={divZoneStyle}>
-      <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-        <div style={uploadButtonStyle}>Choose to upload</div>
-      </Dropzone>
-      {fileConfigForm}
-      {refreshBtn}
-      {reviewBtn}
-    </div>)
+    return (
+      <div>
+        <div className='medium-12 columns upload__csv--step'>
+          {stepMessage}
+        </div>
+        {uploadFile}
+      </div>
+    )
   }
 })
 
