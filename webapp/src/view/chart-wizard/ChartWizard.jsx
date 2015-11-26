@@ -11,17 +11,12 @@ import MenuItem from 'component/MenuItem.jsx'
 import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
-import List from 'component/list/List.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
-import ScatterAxisChooser from './ScatterAxisChooser.jsx'
-import MapAxisChooser from './MapAxisChooser.jsx'
-import PalettePicker from './PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import options from './options/options'
 
 const defaultChartDef = {
@@ -63,38 +58,35 @@ function findMatches (item, re) {
   return matches
 }
 
-function findChartType (type) {
-  return builderDefinitions.charts[_.findIndex(builderDefinitions.charts, {name: type})] || {}
-}
-
 function removeIndicatorEmptyNode (indicatorList) {
-  if(!indicatorList || !indicatorList.length)
+  if (!indicatorList || !indicatorList.length) {
     return indicatorList
+  }
 
-  let virtualRoot = { noValue: true, parentNode: null, title: "Virtual Root", children: indicatorList }
+  let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: indicatorList}
   indicatorList.forEach(item => item.parentNode = virtualRoot)
 
-  let process = function(parent) {
+  let process = function (parent) {
     let children = parent.children
 
-    if(children && children.length) {
-      if(children.some(item => item.noValue !== true))
-        return
-      children.forEach(item => process(item))
-      if(!children.some(item => item.empty !== true)) {
+    if (children && children.length) {
+      children.forEach(process)
+
+      if (!children.some(item => !item.empty)) {
         parent.empty = true
       }
     } else {
-      parent.empty = true
-      return
+      if (parent.noValue) {
+        parent.empty = true
+      }
     }
 
-    if(parent.empty && parent.parentNode)
+    if (parent.empty && parent.parentNode) {
       parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
+    }
   }
 
   process(virtualRoot)
-
   return virtualRoot.children
 }
 

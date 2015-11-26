@@ -219,7 +219,9 @@ function indicatorsTree (q) {
             otherTag.children.push(i)
           } else if (_.isArray(i.tag_json)) {
             _.each(i.tag_json, function (tId) {
-              tags_map[tId].children.push(i)
+              let tagParent = tags_map[tId]
+              tagParent.children.push(i)
+              i.parentNode = tagParent
             })
           }
         })

@@ -10,7 +10,7 @@ import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 
 export default class GeneralOptions extends React.Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
   }
 
@@ -25,10 +25,47 @@ export default class GeneralOptions extends React.Component {
 
 
   filterIndicatorByType = (indicatorList, indicatorType) => {
-    return indicatorList
-  }
+    debugger
+    if (!indicatorList || !indicatorList.length) {
+      return indicatorList
+    }
 
-  render () {
+    let virtualRoot = {noValue: true, parentNode: null, empty: false, title: 'Virtual Root', children: indicatorList}
+    indicatorList.forEach(item => item.parentNode = virtualRoot)
+
+    let process = function (parent) {
+      let children = parent.children
+
+      if (children && children.length) {
+        children.forEach(process)
+
+        if (!children.some(item => !item.empty)) {
+          parent.empty = true
+        }
+      } else {
+        if (parent.noValue) {
+          parent.empty = true
+        }
+        else{
+          if (parent.data_format !== indicatorType) {
+            console.log(parent.data_format)
+            if(parent.parentNode) {
+              parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
+            }
+          }
+        }
+      }
+
+      if (parent.empty && parent.parentNode) {
+        parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
+      }
+    }
+
+    process(virtualRoot)
+    return virtualRoot.children
+  }
+debugger;
+  render() {
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
@@ -41,19 +78,19 @@ export default class GeneralOptions extends React.Component {
           text={this.props.indicatorSelected[1] ? this.props.indicatorSelected[1].name : 'Add Indicators'}
           icon='fa-plus'
           indicators={this.filterIndicatorByType(this.props.indicatorList, 'int')}
-          sendValue={ChartWizardActions.changeYAxis} />
+          sendValue={ChartWizardActions.changeYAxis}/>
         <h4>Gradient Axis</h4>
         <IndicatorDropdownMenu
           text={this.props.indicatorSelected[2] ? this.props.indicatorSelected[2].name : 'Add Indicators'}
           icon='fa-plus'
           indicators={this.filterIndicatorByType(this.props.indicatorList, 'bool')}
-          sendValue={ChartWizardActions.changeZAxis} />
+          sendValue={ChartWizardActions.changeZAxis}/>
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         <MapAxisChooser colorFormatValue={this.props.xFormatValue}
-          onColorFormatChange={ChartWizardActions.changeXFormatRadio}
-          formatValues={builderDefinitions.formats} />
-        <PalettePicker value={this.props.palette} onChange={ChartWizardActions.changePalette} />
+                        onColorFormatChange={ChartWizardActions.changeXFormatRadio}
+                        formatValues={builderDefinitions.formats}/>
+        <PalettePicker value={this.props.palette} onChange={ChartWizardActions.changePalette}/>
       </div>
     )
   }
