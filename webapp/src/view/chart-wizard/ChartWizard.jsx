@@ -71,7 +71,34 @@ function filterIndicatorByType (indicatorList, indicatorType) {
 }
 
 function removeIndicatorEmptyNode (indicatorList) {
- return indicatorList
+  if(!indicatorList || !indicatorList.length)
+    return indicatorList
+
+  let virtualRoot = { noValue: true, parentNode: null, title: "Virtual Root", children: indicatorList }
+  indicatorList.forEach(item => item.parentNode = virtualRoot)
+
+  let process = function(parent) {
+    let children = parent.children
+
+    if(children && children.length) {
+      if(children.some(item => item.noValue !== true))
+        return
+      children.forEach(item => process(item))
+      if(!children.some(item => item.empty !== true)) {
+        parent.empty = true
+      }
+    } else {
+      parent.empty = true
+      return
+    }
+
+    if(parent.empty && parent.parentNode)
+      parent.parentNode.children.splice(parent.parentNode.children.indexOf(parent), 1)
+  }
+
+  process(virtualRoot)
+
+  return virtualRoot.children
 }
 
 let ChartWizard = React.createClass({
@@ -116,7 +143,7 @@ let ChartWizard = React.createClass({
 
   render () {
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
-    this.state.data.indicatorList = removeIndicatorEmptyNode(this.state.data.indicatorList)
+    let filteredIndicatorTree = removeIndicatorEmptyNode(this.state.data.indicatorList)
 
     let locationStep = (
       <div>
@@ -140,7 +167,7 @@ let ChartWizard = React.createClass({
         <IndicatorDropdownMenu
           text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || 'Add Indicators'}
           icon='fa-plus'
-          indicators={this.state.data.indicatorList}
+          indicators={filteredIndicatorTree}
           sendValue={ChartWizardActions.addFirstIndicator} />
         <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'chart-type')}>Next</span>
       </div>
@@ -203,7 +230,7 @@ let ChartWizard = React.createClass({
               <IndicatorDropdownMenu
                 text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
                 icon='fa-plus'
-                indicators={this.state.data.indicatorList}
+                indicators={filteredIndicatorTree}
                 sendValue={ChartWizardActions.changeYAxis} />
             </div>
           )
@@ -218,7 +245,7 @@ let ChartWizard = React.createClass({
                   <IndicatorDropdownMenu
                     text={this.state.data.indicatorSelected[1] ? this.state.data.indicatorSelected[1].name : 'Add Indicators'}
                     icon='fa-plus'
-                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'int')}
+                    indicators={filterIndicatorByType(filteredIndicatorTree, 'int')}
                     sendValue={ChartWizardActions.changeYAxis} />
                 </ul>
                 <h4>Gradient Axis</h4>
@@ -226,7 +253,7 @@ let ChartWizard = React.createClass({
                   <IndicatorDropdownMenu
                     text={this.state.data.indicatorSelected[2] ? this.state.data.indicatorSelected[2].name : 'Add Indicators'}
                     icon='fa-plus'
-                    indicators={filterIndicatorByType(this.state.data.indicatorList, 'bool')}
+                    indicators={filterIndicatorByType(filteredIndicatorTree, 'bool')}
                     sendValue={ChartWizardActions.changeZAxis} />
                   </ul>
               </div>)
@@ -234,7 +261,7 @@ let ChartWizard = React.createClass({
                 <IndicatorDropdownMenu
                   text='Add Indicators'
                   icon='fa-plus'
-                  indicators={this.state.data.indicatorList}
+                  indicators={filteredIndicatorTree}
                   sendValue={ChartWizardActions.addIndicator} />
                 <List items={this.state.data.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator}/>
               </div>

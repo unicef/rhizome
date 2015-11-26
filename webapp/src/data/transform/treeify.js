@@ -14,8 +14,10 @@ export default function treeify (data, idKey) {
         p.children = []
       }
 
+      d.parentNode = p
       p.children.push(d)
     } else {
+      d.parentNode = null
       roots.push(d)
     }
   }
