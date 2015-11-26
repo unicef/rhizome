@@ -10,6 +10,7 @@ from decorator_include import decorator_include
 from datapoints.api.geo import GeoResource
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
+from datapoints.api.base import api_debug
 from datapoints import views
 
 from tastypie.api import Api
@@ -87,6 +88,8 @@ from django.conf.urls import include, patterns, url
 
 if settings.DEBUG:
     import debug_toolbar
+    # urlpatterns += patterns('',
+    #     url(r'^debug/', include(debug_toolbar.urls)),
     urlpatterns += patterns('',
-        url(r'^debug/', include(debug_toolbar.urls)),
+            url(r'^api_debug/', api_debug),
     )
