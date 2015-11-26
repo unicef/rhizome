@@ -267,20 +267,19 @@ export default {
 
       let indicatorIndex = _(data).groupBy('indicator').value()
       let index = _.indexBy(indicatorIndex[xAxis], 'location')
+      let bubbleIndex = null
+      let gradientIndex = null
       if (yAxis) {
         let maxRadius = 30
         let maxValue = 5000
         let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
+        bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
         chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
         chartOptions.maxBubbleRadius = maxRadius
         chartOptions.bubbleValue = _.property('properties.bubbleValue')
       }
       if (zAxis) {
-        //let maxRadius = 30
-        //let maxValue = 5000
-        let gradientValues = indicatorIndex[zAxis].map(v => v.value)
-        //chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
-        //chartOptions.maxBubbleRadius = maxRadius
+        gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
         chartOptions.stripeValue = _.property('properties.stripeValue')
       }
 
@@ -288,12 +287,10 @@ export default {
         var location = _.get(index, feature.properties.location_id)
         let properties = {value: _.get(location, 'value')}
         if (yAxis) {
-          let bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
           let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
           properties.bubbleValue = _.get(bubbleLocation, 'value')
         }
         if (zAxis) {
-          let gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
           let gradientLocation = _.get(gradientIndex, feature.properties.location_id)
           properties.stripeValue = _.get(gradientLocation, 'value')
         }
