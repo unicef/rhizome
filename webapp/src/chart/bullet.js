@@ -102,7 +102,8 @@ _.extend(BulletChart.prototype, {
       rect
         .attr({
           'height': h + margin.top + margin.bottom,
-          'width': w
+          'width': w,
+          'ry': 5
         })
     } else {
       svg.select('.x.axis')
@@ -152,13 +153,17 @@ _.extend(BulletChart.prototype, {
 
     var valueAttr = {
       'class': 'value',
-      'height': yScale.rangeBand()
+      'height': yScale.rangeBand(),
+      'ry': 5
     }
 
     value.enter()
       .append('rect')
       .attr(valueAttr)
-      .style('fill', 'inherit')
+      .style({
+        'fill': 'inherit',
+        'stroke': '#fff'
+      })
 
     value.attr(valueAttr)
       .transition()
