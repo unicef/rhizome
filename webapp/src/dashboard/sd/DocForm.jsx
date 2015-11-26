@@ -174,6 +174,10 @@ var DocForm = React.createClass({
       padding: '0 30px'
     }
 
+    let tableMarginStyle = {
+      marginTop: '50px'
+    }
+
     let dropZone = (
       <div>
         <div style={uploadStyle}>
@@ -183,7 +187,7 @@ var DocForm = React.createClass({
             </Dropzone>
           </div>
         </div>
-        <div className='medium-12 columns'>
+        <div className='medium-12 columns' style={tableMarginStyle}>
           {this.props.reviewTable}
         </div>
       </div>

@@ -154,6 +154,10 @@ var SourceDataDashboard = React.createClass({
       </div>
     )
 
+    let tableMarginStyle = {
+      marginTop: '50px'
+    }
+
     var reviewData = (
       <div>
         <div className='medium-12 columns upload__csv--load'>
@@ -169,7 +173,7 @@ var SourceDataDashboard = React.createClass({
             doc_id={doc_id}
             doc_title={doc_obj.doc_title}/>
         </div>
-        <div className='large-6 medium-12 small-12 columns csv-upload__title'>
+        <div className='large-6 medium-12 small-12 columns csv-upload__title' style={tableMarginStyle}>
           {doc_tabs}
         </div>
         <hr />
