@@ -55,7 +55,16 @@ var SimpleFormStore = Reflux.createStore({
     self.data.objectId = object_id
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
-    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': ''}, 'indicator_tag': {'tag_name': ''}}
+    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': '','data_format':''},
+      'indicator_tag': {'tag_name': ''}}
+    var form_settings = {'indicator_tag': {'form': true, fields: {'tag_name': {type: 'string'}}},
+      'indicator': {'form': true,
+        fields: {'name': {type: 'string'},
+          'short_name': {type: 'string'},
+          'description': {type: 'string'},
+          'data_format': {type: 'string'} // {type: 'select', options: ['pct','bool','int']}
+          }}}
+
     var api_fn = fnLookup[content_type]
 
     Promise.all([
@@ -63,6 +72,7 @@ var SimpleFormStore = Reflux.createStore({
     ])
       .then(_.spread(function (apiResponse) {
         self.data.formData = form_data[content_type]
+        self.data.formSettings = form_settings[content_type]
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
         self.trigger(self.data)

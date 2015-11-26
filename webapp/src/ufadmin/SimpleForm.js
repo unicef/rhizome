@@ -105,6 +105,7 @@ var SimpleForm = React.createClass({
     var objectId = this.state.objectId
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject
+    var formSettings = this.state.store.formSettings
     var formData = this.state.store.formData
     if (formData && formData.hasOwnProperty('description')) {
       let description = formData.description
@@ -113,7 +114,6 @@ var SimpleForm = React.createClass({
     }
 
     // TODO -> pull this from the DB
-    var formSettings = {'form': true, fields: {'tag_name': {type: 'string', editing: false}}}
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {

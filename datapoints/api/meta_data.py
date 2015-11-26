@@ -102,7 +102,8 @@ class IndicatorResource(BaseNonModelResource):
         defaults = {
             'name': post_data['name'],
             'short_name': post_data['short_name'],
-            'description': post_data['description']
+            'description': post_data['description'],
+            'data_format': post_data['data_format']
         }
 
         try:
