@@ -261,7 +261,6 @@ export default {
         name: d => _.get(locationsIndex, '[' + d.properties.location_id + '].name', ''),
         border: border.objects.features
       }
-
       if (!data || data.length === 0) {
         return { options: chartOptions, data: border.objects.features }
       }
@@ -272,15 +271,9 @@ export default {
         let maxRadius = 30
         let maxValue = 5000
         let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
-        chartOptions.maxValue = Math.min(Math.max(...bubbleValues), maxValue)
-        chartOptions.maxRadius = maxRadius
-        chartOptions.bubblesValue = _.property('properties.bubbleValue')
-        chartOptions.radius = function (v) {
-          if (v > this.maxValue) {
-            return this.maxRadius
-          }
-          return d3.scale.sqrt().domain([0, this.maxValue]).range([0, this.maxRadius])(v)
-        }
+        chartOptions.maxBubbbleValue = Math.min(Math.max(...bubbleValues), maxValue)
+        chartOptions.maxBubbleRadius = maxRadius
+        chartOptions.bubbleValue = _.property('properties.bubbleValue')
       }
 
       var chartData = _.map(border.objects.features, function (feature) {
