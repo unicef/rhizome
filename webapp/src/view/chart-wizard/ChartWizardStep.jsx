@@ -9,15 +9,11 @@ let ChartWizardStep = React.createClass({
     children: React.PropTypes.element
   },
 
-  activeStep () {
-    this.props.onToggle(this.props.refer)
-  },
-
   render () {
     let isActive = this.props.active === this.props.refer
     return (
       <li className={'chart-wizard__step ' + (isActive ? 'active' : '')}>
-        <h2 onClick={this.activeStep}>
+        <h2 onClick={this.props.onToggle(this.props.refer)}>
           {this.props.title}
           <i className={'fa ' + (isActive ? 'fa-minus' : 'fa-plus')}></i>
         </h2>

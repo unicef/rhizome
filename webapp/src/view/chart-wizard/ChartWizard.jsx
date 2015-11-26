@@ -119,9 +119,11 @@ let ChartWizard = React.createClass({
   },
 
   toggleStep (refer) {
-    this.setState({
-      refer: refer
-    })
+    return () => {
+      this.setState({
+        refer: refer
+      })
+    }
   },
 
   setLocationSearch (pattern) {
@@ -144,7 +146,7 @@ let ChartWizard = React.createClass({
           onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'first-indicator')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep('first-indicator')}>Next</span>
       </div>
     )
 
@@ -158,7 +160,7 @@ let ChartWizard = React.createClass({
           icon='fa-plus'
           indicators={filteredIndicatorTree}
           sendValue={ChartWizardActions.addFirstIndicator} />
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'chart-type')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep('chart-type')}>Next</span>
       </div>
     )
 
@@ -167,7 +169,7 @@ let ChartWizard = React.createClass({
         <p className='chart-wizard__para'>What would the new chart look like?</p>
         <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'time-range')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep('time-range')}>Next</span>
       </div>
     )
 
@@ -189,7 +191,7 @@ let ChartWizard = React.createClass({
         <RadioGroup name='time' title='Time Range'
           value={this.state.data.timeValue}
           values={this.state.data.timeRangeFilteredList} onChange={ChartWizardActions.changeTimeRadio} />
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'option')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep('option')}>Next</span>
       </div>
     )
 
@@ -210,7 +212,7 @@ let ChartWizard = React.createClass({
     let optionStep = (
       <div>
         {option}
-        <span className='chart-wizard__next' onClick={this.toggleStep.bind(null, 'preview')}>Next</span>
+        <span className='chart-wizard__next' onClick={this.toggleStep('preview')}>Next</span>
       </div>
     )
 
