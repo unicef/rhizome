@@ -5,7 +5,7 @@ var PermissionStore = Reflux.createStore({
   init () {
     this.permissions = []
 
-    this.permissionsPromise = api.user_permissions()
+    this.permissionsPromise = api.user_permissions({'for_logged_in_user': true}, null, { 'cache-control': 'max-age=604800, private' })
       .then(data => {
         this.permissions = data.objects.map(p => {
           return p.auth_code

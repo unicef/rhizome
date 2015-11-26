@@ -21,7 +21,7 @@ export default {
 
     api.groups().then(function (response) {
       var groups = response.objects
-      api.user_groups({'user': self.$parent.$data.user_id}).then(function (data) {
+      api.user_permissions({'user_id': self.$parent.$data.user_id}, null, {'cache-control': 'no-cache'}).then(function (data) {
         _.forEach(groups, function (group) {
           group.active = _.some(data.objects, {'group_id': group.id})
         })
@@ -61,7 +61,7 @@ export default {
       if (e.target.checked) {
         api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
       } else {
-        api.post_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId, id: ''})
+        api.delete_user_permission({'user_id': this.$parent.$data.user_id, 'group_id': groupId})
       }
     },
     addlocationalAccess: function (data) {
@@ -73,14 +73,14 @@ export default {
     },
     deletelocationalAccess: function (data) {
       var self = this
-      api.set_location_responsibility({ user_id: this.$parent.$data.user_id, location_id: data }).then(function () {
+      api.delete_location_responsibility({ id: data }).then(function () {
         self.loadlocationalAccess()
       })
     },
     loadlocationalAccess: function () {
       var self = this
 
-      api.location_responsibility({ user: this.$parent.$data.user_id }).then(function (data) {
+      api.location_responsibility({ user_id: this.$parent.$data.user_id },null,{'cache-control': 'no-cache'}).then(function (data) {
         var locations = data.objects
         _.forEach(locations, function (location) {
           location.name = self.location_map[location.location_id].name

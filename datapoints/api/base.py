@@ -80,7 +80,8 @@ class CustomCache(SimpleCache):
         Instatiate the cache_control instance, and add the headers needed.
         '''
         control = super(CustomCache, self).cache_control()
-        control.update({'must_revalidate': True, 'max_age': 3600})
+        # control.update({'must_revalidate': True, 'max_age': 3600})
+        control.update({'max_age': 3600,'s-maxage':3600})
         return control
 
 
