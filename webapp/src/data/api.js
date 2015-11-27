@@ -311,7 +311,7 @@ function indicatorsTree (q) {
   return new Promise(function (fulfill, reject) {
     fetch1(q, null, {'cache-control': 'no-cache'}).then(function (indicators) {
       fetch2(null, null, {'cache-control': 'no-cache'}).then(function (tags) {
-        let tree = buildIndicatorsTree(indicators.objects, tags.objects)
+        let tree = buildIndicatorsTree(indicators.objects, tags.objects, false, true)
         tags.rawTags = tags.objects
         tags.objects = tree
         tags.flat = indicators.objects
