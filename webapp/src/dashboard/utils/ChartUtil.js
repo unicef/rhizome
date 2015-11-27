@@ -36,16 +36,16 @@ function preparePolioCasesData (original) {
         }}>{totalCases} Polio cases this year</span>
   </h4>
 
-  var newCaseLabel = ''
+  newCases = (_.isFinite(newCases) && newCases > 0) ? newCases : 0
 
-  if (_.isFinite(newCases) && newCases > 0) {
-    var plural = newCases !== 1 ? 's' : ''
-    newCaseLabel = (
-      <div id='new-polio-cases'style={{position: 'absolute', color: '#D84E43'}}>
-        {newCases} new case{plural}
-      </div>
-    )
-  }
+  var plural = newCases !== 1 ? 's' : ''
+  var newCaseLabel = (
+    <h4 className='chart-title'>
+        <span style={{
+          'color': '#F15046'
+        }}>{newCases} new case{plural}</span>
+    </h4>
+  )
 
   return {
     title: title,

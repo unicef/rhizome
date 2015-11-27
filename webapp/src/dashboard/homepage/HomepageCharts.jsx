@@ -78,8 +78,8 @@ var HomepageCharts = React.createClass({
         isMap: false,
         value: (<div id='polio-cases-ytd'>
           {polioCasesData.title}
+          {polioCasesData.newCaseLabel}
           <div style={{ position: 'relative' }}>
-            {polioCasesData.newCaseLabel}
             <YTDChart
               data={polioCasesData.data}
               loading={loading}
