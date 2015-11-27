@@ -192,7 +192,7 @@ export default {
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations, xAxis, yAxis, zAxis, layout]
+        para: [meltPromise, locations, indicators, xAxis, yAxis, zAxis, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
@@ -252,7 +252,7 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations, xAxis, yAxis, zAxis, layout) {
+  processChoroplethMap: function (dataPromise, locations, indicators, xAxis, yAxis, zAxis, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
@@ -280,8 +280,8 @@ export default {
       }
       if (zAxis) {
         gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
+        chartOptions.indicatorName = _.result(_.find(indicators, d => { return d.id === zAxis }), 'short_name')
         chartOptions.stripeValue = _.property('properties.stripeValue')
-        chartOptions.stripeLegendText = ['No data', zAxis]
       }
 
       var chartData = _.map(border.objects.features, function (feature) {

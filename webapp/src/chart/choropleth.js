@@ -26,7 +26,33 @@ var DEFAULTS = {
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
   maxBubbleRadius: 20,
-  bubbleLegendRatio: [0.1, 0.5, 1]
+  bubbleLegendRatio: [0.1, 0.5, 1],
+  indicatorName: 'Has data'
+}
+
+function wrap (text, width, x) {
+  text.each(function () {
+    let text = d3.select(this)
+    let words = text.text().split(/\s+/).reverse()
+    let word
+    let line = []
+    let lineNumber = 1
+    let lineHeight = 1.1
+    let y = text.attr('y')
+    let tspan = text.text(null).append('tspan').attr('x', x).attr('y', y)
+    while (words.length > 0) {
+      word = words.pop()
+      line.push(word)
+      tspan.text(line.join(' '))
+      if (tspan.node().getComputedTextLength() > (width - x)) {
+        line.pop()
+        tspan.text(line.join(' '))
+        line = [word]
+        tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', (lineNumber * lineHeight) + 'rem').text(word)
+        lineNumber += 1
+      }
+    }
+  })
 }
 
 function _calculateBounds (features) {
@@ -255,6 +281,7 @@ _.extend(ChoroplethMap.prototype, {
       }
     }
 
+    var legendGap = 40
     var mapLegendLength = 2
     var fontLength = 73
     var stripeLegendStartPosition
@@ -301,10 +328,11 @@ _.extend(ChoroplethMap.prototype, {
       stripes.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
       if (options.chartInDashboard) {
-        stripeLegendStartPosition = mapLegendLength * fontLength + 40
-        var legendGap = 14
+        var stripeLegendLength = 150
+        stripeLegendStartPosition = mapLegendLength * fontLength + legendGap
+        var stripeLegendGap = 14
         var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
-        var stripeLegendText = options.stripeLegendText
+        var stripeLegendText = ['No data', options.indicatorName]
         var stripeLegend = svg.select('.stripes').select('.legend')
           .attr('transform', function () {
             return 'translate(' + stripeLegendStartPosition + ', ' + 0 + ')'
@@ -313,7 +341,7 @@ _.extend(ChoroplethMap.prototype, {
           .enter().append('g')
           .attr('class', 'series')
           .attr('transform', function (d, i) {
-            return 'translate(' + 0 + ', ' + i * legendGap + ')'
+            return 'translate(' + 0 + ', ' + i * stripeLegendGap + ')'
           })
 
         stripeLegend.append('rect')
@@ -336,6 +364,7 @@ _.extend(ChoroplethMap.prototype, {
             'font-size': 10
           })
           .text(d => { return d })
+          .call(wrap, stripeLegendLength, 16)
       }
     }
 
@@ -375,8 +404,8 @@ _.extend(ChoroplethMap.prototype, {
         })
 
         var bubbleLegendStartPosition = options.stripeValue
-          ? stripeLegendStartPosition + fontLength + 20 + 2.5 * options.maxBubbleRadius
-          : mapLegendLength * fontLength + 20 + 2.5 * options.maxBubbleRadius
+          ? stripeLegendStartPosition + stripeLegendLength + legendGap + 2.5 * options.maxBubbleRadius
+          : mapLegendLength * fontLength + legendGap + 2.5 * options.maxBubbleRadius
 
         var bubbleLegend = svg.select('.bubbles').select('.legend')
           .attr('transform', function () {

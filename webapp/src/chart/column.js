@@ -339,6 +339,7 @@ function wrap (text, width, x) {
         tspan.text(line.join(' '))
         line = [word]
         tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', (lineNumber * lineHeight) + 'em').text(word)
+        lineNumber += 1
       }
     }
   })
@@ -519,7 +520,8 @@ _.extend(ColumnChart.prototype, {
         .call(wrap, w, xText)
         .style({
           'fill': 'inherit',
-          'stroke': 'transparent'
+          'stroke': 'transparent',
+          'font-size': 10
         })
 
       annotation.append('line')
