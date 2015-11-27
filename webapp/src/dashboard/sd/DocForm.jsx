@@ -178,7 +178,9 @@ var DocForm = React.createClass({
       margin: '0 38%',
       padding: '15px',
       cursor: 'pointer',
-      width: 200
+      width: 200,
+      fontFamily: 'adelle',
+      fontSize: '1rem'
     }
 
     let uploadStyle = {
