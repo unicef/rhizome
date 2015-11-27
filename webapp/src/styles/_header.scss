@@ -122,6 +122,10 @@ ul.dashboards-nav {
       padding: 27px 20px;
       display: block;
       line-height: 1.2;
+
+      &:hover{
+        border: 1px solid #fff;
+      }
     }
   }
 }
