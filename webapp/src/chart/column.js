@@ -455,7 +455,7 @@ _.extend(ColumnChart.prototype, {
       series.enter().append('g')
         .attr('class', 'bar')
 
-      let fill = color.map(data.map(options.name), palettes.brown)
+      let fill = color.map(data.map(options.name), options.color)
 
       series.style({
         'fill': _.flow(options.name, fill),

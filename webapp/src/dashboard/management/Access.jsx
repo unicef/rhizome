@@ -84,6 +84,7 @@ var Access = React.createClass({
                           values: _.property('values'),
                           y0: _.property('y0'),
                           yFormat: d3.format('%'),
+                          color: ['#717B8B', '#A6A6A6', '#8FB6BD', '#A4B7D4', '#5D5D5D', '#202020'],
                           processData: true,
                           inaccessibility: true
                         }} />
