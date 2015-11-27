@@ -35,7 +35,10 @@
       text-transform: uppercase;
       text-align: center;
       margin: 2px;
-      padding: 10px 16px;
+      padding: 10px 0;
+      font-size: 0.6rem;
+      font-family: adelle;
+      line-height: 1.4;
 
       &:hover {
         background-color: #426281;
@@ -90,4 +93,5 @@
   color: #A8A8A8;
   padding: 10px;
   text-align: right;
+  font-family: adelle;
 }
