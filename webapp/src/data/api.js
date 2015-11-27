@@ -200,20 +200,17 @@ function removeIndicatorEmptyNode (sourceList) {
     return sourceList
   }
 
-  let nodes = []
-
   let virtualRoot = {noValue: false, parentNode: null, title: 'No Available Indicator', children: sourceList}
   virtualRoot.children.forEach(item => item.parentNode = virtualRoot)
-  pickAllNodesInTrees(virtualRoot, nodes)
 
-  while (nodes.length > 0) {
+  let nodes
+  do {
+    nodes = []
+    pickAllNodesInTrees(virtualRoot, nodes)
     nodes.forEach(function (item) {
       item.parentNode.children.splice(item.parentNode.children.indexOf(item), 1)
     })
-
-    nodes = []
-    pickAllNodesInTrees(virtualRoot, nodes)
-  }
+  } while (nodes.length > 0)
 
   if (sourceList.length > 0) {
     return sourceList
