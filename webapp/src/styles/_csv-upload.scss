@@ -22,10 +22,8 @@
   font-size: 15px;
   padding: 10px;
 
-  span {
-    &:first-child {
-      font-family: proxima-bold;
-    }
+  span:first-child {
+    font-family: proxima-bold;
   }
 }
 
@@ -42,6 +40,11 @@
   font-size: 1rem;
   padding: 0.5rem 0;
 
+  span:first-child {
+    font-weight: bold;
+    font-family: adelle;
+  }
+
   .csv-upload__tags--span {
     font-weight: 600;
     text-transform: capitalize;
@@ -49,10 +52,8 @@
 }
 
 .csv-upload__title {
-  .columns {
-    &:last-child {
-      float: left;
-    }
+  .columns:last-child {
+    float: left;
   }
 }
 
@@ -79,13 +80,14 @@
 }
 
 .refresh__button {
-  padding: 40px;
+  padding: 20px 0 0px 0px;
 }
 
 .refresh__button--margin {
-  margin: 15px;
   font-size: 15px;
-  padding: 12px 50px
+  padding: 12px 50px;
+  width: auto;
+  float: left;
 }
 
 

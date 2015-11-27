@@ -150,6 +150,7 @@ var SourceDataDashboard = React.createClass({
         <DocForm
           campaign={this.props.campaign}
           location={this.props.location}
+          doc_title = {doc_obj.doc_title}
           reviewTable={review_table}/>
       </div>
     )

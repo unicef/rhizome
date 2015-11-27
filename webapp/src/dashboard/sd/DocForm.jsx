@@ -21,7 +21,8 @@ var DocForm = React.createClass({
   propTypes: {
     location: React.PropTypes.object.isRequired,
     campaign: React.PropTypes.object,
-    reviewTable: React.PropTypes.element
+    reviewTable: React.PropTypes.element,
+    doc_title: React.PropTypes.string
   },
 
   // since we are starting off without any data, there is no initial value
@@ -100,6 +101,7 @@ var DocForm = React.createClass({
     var campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
 
     var fileConfigForm = ''
+    var uploadButton = ''
     if (this.state.created_doc_id) {
       fileConfigForm = (
         <ul>
@@ -129,18 +131,36 @@ var DocForm = React.createClass({
           </li>
         </ul>
       )
+
+      if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
+        let next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+        let [doc_name, doc_revision] = this.props.doc_title.split('-')
+
+
+        uploadButton = this.state.doc_is_refreshed
+          ? <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
+          : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Sync Data</span>
+
+        fileConfigForm = this.state.doc_is_refreshed
+          ? (<div>
+          <div className='csv-upload__tags'>
+            <span>File Name: </span>{doc_name}
+          </div>
+          <div className='csv-upload__tags'>
+            <span>Revision: </span>{doc_revision}
+          </div >
+
+        </div>)
+          : fileConfigForm
+      }
     }
 
-    var refreshBtn = ''
-    if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-      refreshBtn = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Sync Data</span>
-    }
 
-    var reviewBtn = ''
-    if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
-      var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-      reviewBtn = <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
-    }
+    //var reviewBtn = ''
+    //if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
+    //  var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+    //  reviewBtn = <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
+    //}
 
     var stepMessage = this.state.created_doc_id
       ? (<div>
@@ -197,10 +217,8 @@ var DocForm = React.createClass({
       <div className='large-6 medium-8 small-12 columns upload__csv--file-choose'>
         {fileConfigForm}
         <div className='large-12 medium-12 small-12 columns refresh__button'>
-          {refreshBtn}
-          {reviewBtn}
+          {uploadButton}
         </div>
-
       </div>
     )
 
