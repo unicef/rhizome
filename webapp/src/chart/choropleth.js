@@ -248,79 +248,16 @@ _.extend(ChoroplethMap.prototype, {
           .call(legend().scale(
             d3.scale.ordinal().domain(ticks).range(colorScale.range())
           )
-        ).attr('transform', function () { return 'translate(' + 0 + ', ' + 0 + ')' })
+        ).attr('transform', function () { return 'translate(' + 20 + ', ' + 0 + ')' })
 
         let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
         g.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
       }
     }
 
-    if (options.bubbleValue) {
-      var radius = d3.scale.sqrt()
-        .domain([0, options.maxBubbleValue])
-        .range([0, options.maxBubbleRadius])
-
-      var bubbles = svg.selectAll('.bubbles').select('.data')
-      var bubbleData = bubbles.selectAll('circle')
-        .data(features, function (d, i) {
-          return _.get(d, 'properties.location_id', i)
-        })
-
-      bubbleData.enter().append('circle')
-      bubbleData.attr('transform', function (d) {
-        return 'translate(' + path.centroid(d) + ')'
-      })
-        .attr('r', function (d) {
-          var v = options.bubbleValue(d)
-          return v ? _chooseRadius(v, radius) : 0
-        })
-        .style({
-          'opacity': 0.5,
-          'fill': '#D5EBF7',
-          'stroke': '#FFFFFF'
-        })
-
-      bubbleData.exit().remove()
-
-      let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-      bubbles.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
-
-      if (options.chartInDashboard) {
-        var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
-          return Math.ceil(d * options.maxBubbleValue, -1)
-        })
-
-        var bubbleLegend = svg.select('.bubbles').select('.legend')
-          .attr('transform', function () { return 'translate(' + (w - bubbleLegendText.length * 10) + ', ' + (options.maxBubbleRadius + 10) + ')' })
-          .selectAll('.series').data(bubbleLegendText)
-          .enter().append('g')
-          .attr('class', 'series')
-
-        bubbleLegend.append('circle')
-          .attr('r', d => { return radius(d) })
-          .attr('cy', d => { return (options.maxBubbleRadius - radius(d)) })
-          .style({
-            'opacity': 0.5,
-            'fill': 'transparent',
-            'stroke': '#AAAAAA'
-          })
-
-        bubbleLegend.append('line')
-          .attr({
-            x1: -(2.5 * options.maxBubbleRadius),
-            y1: d => { return (options.maxBubbleRadius - 2 * radius(d)) },
-            x2: 0,
-            y2: d => { return (options.maxBubbleRadius - 2 * radius(d)) }
-          })
-          .style('stroke', '#AAAAAA')
-
-        bubbleLegend.append('text')
-          .attr('dx', -(2.5 * options.maxBubbleRadius))
-          .attr('dy', d => { return (options.maxBubbleRadius - 2 * radius(d)) })
-          .text(d => { return d })
-          .style('fill', '#AAAAAA')
-      }
-    }
+    var mapLegendLength = 2
+    var fontLength = 73
+    var stripeLegendStartPosition
 
     if (options.stripeValue) {
       var stripes = svg.select('.stripes').select('.data')
@@ -364,17 +301,19 @@ _.extend(ChoroplethMap.prototype, {
       stripes.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
       if (options.chartInDashboard) {
+        stripeLegendStartPosition = mapLegendLength * fontLength + 40
+        var legendGap = 14
         var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
         var stripeLegendText = options.stripeLegendText
         var stripeLegend = svg.select('.stripes').select('.legend')
           .attr('transform', function () {
-            return 'translate(' + (1.01 * w) + ', ' + (0.17 * h) + ')'
+            return 'translate(' + stripeLegendStartPosition + ', ' + 0 + ')'
           })
           .selectAll('.series').data(stripeLegendText)
           .enter().append('g')
           .attr('class', 'series')
           .attr('transform', function (d, i) {
-            return 'translate(' + 19 + ', ' + i * 15 + ')'
+            return 'translate(' + 0 + ', ' + i * legendGap + ')'
           })
 
         stripeLegend.append('rect')
@@ -397,6 +336,77 @@ _.extend(ChoroplethMap.prototype, {
             'font-size': 10
           })
           .text(d => { return d })
+      }
+
+      if (options.bubbleValue) {
+        var radius = d3.scale.sqrt()
+          .domain([0, options.maxBubbleValue])
+          .range([0, options.maxBubbleRadius])
+
+        var bubbles = svg.selectAll('.bubbles').select('.data')
+        var bubbleData = bubbles.selectAll('circle')
+          .data(features, function (d, i) {
+            return _.get(d, 'properties.location_id', i)
+          })
+
+        bubbleData.enter().append('circle')
+        bubbleData.attr('transform', function (d) {
+          return 'translate(' + path.centroid(d) + ')'
+        })
+          .attr('r', function (d) {
+            var v = options.bubbleValue(d)
+            return v ? _chooseRadius(v, radius) : 0
+          })
+          .style({
+            'opacity': 0.5,
+            'fill': '#D5EBF7',
+            'stroke': '#FFFFFF'
+          })
+
+        bubbleData.exit().remove()
+
+        let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+        bubbles.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
+
+        if (options.chartInDashboard) {
+          var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
+            return Math.ceil(d * options.maxBubbleValue, -1)
+          })
+
+          var bubbleLegendStartPosition = options.stripeValue
+            ? stripeLegendStartPosition + fontLength + 20 + 2.5 * options.maxBubbleRadius
+            : mapLegendLength * fontLength + 20 + 2.5 * options.maxBubbleRadius
+
+          var bubbleLegend = svg.select('.bubbles').select('.legend')
+            .attr('transform', function () { return 'translate(' + bubbleLegendStartPosition + ', ' + (options.maxBubbleRadius + 10) + ')' })
+            .selectAll('.series').data(bubbleLegendText)
+            .enter().append('g')
+            .attr('class', 'series')
+
+          bubbleLegend.append('circle')
+            .attr('r', d => { return radius(d) })
+            .attr('cy', d => { return (options.maxBubbleRadius - radius(d)) })
+            .style({
+              'opacity': 0.5,
+              'fill': 'transparent',
+              'stroke': '#AAAAAA'
+            })
+
+          bubbleLegend.append('line')
+            .attr({
+              x1: -(2.5 * options.maxBubbleRadius),
+              y1: d => { return (options.maxBubbleRadius - 2 * radius(d)) },
+              x2: 0,
+              y2: d => { return (options.maxBubbleRadius - 2 * radius(d)) }
+            })
+            .style('stroke', '#AAAAAA')
+
+          bubbleLegend.append('text')
+            .attr('dx', -(2.5 * options.maxBubbleRadius))
+            .attr('dy', d => { return (options.maxBubbleRadius - 2 * radius(d)) })
+            .text(d => { return d })
+            .style('fill', '#AAAAAA')
+        }
       }
     }
   },

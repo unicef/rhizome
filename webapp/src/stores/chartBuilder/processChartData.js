@@ -281,6 +281,7 @@ export default {
       if (zAxis) {
         gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
         chartOptions.stripeValue = _.property('properties.stripeValue')
+        chartOptions.stripeLegendText = ['No data', zAxis]
       }
 
       var chartData = _.map(border.objects.features, function (feature) {
