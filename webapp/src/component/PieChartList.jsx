@@ -32,15 +32,12 @@ var PieChartList = React.createClass({
       )
     )
 
-    if (_.isEmpty(pies)) {
-      pies = (<tr><td>{this.props.emptyText}</td></tr>)
-    }
+    var charts = _.isEmpty(pies)
+      ? this.props.emptyText
+      : (<table className='pie-charts'>{pies}</table>)
 
-    return (
-      <table className='pie-charts'>{pies}</table>
-    )
+    return (<div>{charts}</div>)
   }
-
 })
 
 export default PieChartList

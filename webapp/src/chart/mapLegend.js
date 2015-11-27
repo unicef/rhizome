@@ -131,7 +131,7 @@ _.extend(MapLegend.prototype, {
       var ticks = _.map(colorScale.range(), c => _.map(colorScale.invertExtent(c), options.yFormat).join('—'))
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal().domain(ticks).range(colorScale.range())))
-      .attr('transform', function () { return 'translate(' + 1 + ', ' + 0 + ')' })
+      .attr('transform', function () { return 'translate(' + 2 + ', ' + 0 + ')' })
     }
 
     if (options.stripeValue) {
@@ -139,7 +139,7 @@ _.extend(MapLegend.prototype, {
       var stripeLegendText = options.stripeLegendText
       var stripeLegend = svg.select('.stripes').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + 0 + ', ' + 0 + ')'
+          return 'translate(' + 2 + ', ' + 0 + ')'
         })
         .selectAll('.series').data(stripeLegendText)
         .enter().append('g')
@@ -181,7 +181,7 @@ _.extend(MapLegend.prototype, {
 
       var bubbleLegend = svg.select('.bubbles').select('.legend')
         .attr('transform', function () {
-          return 'translate(' + 0 + ', ' + 0 + ')'
+          return 'translate(' + 2 + ', ' + 0 + ')'
         })
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
