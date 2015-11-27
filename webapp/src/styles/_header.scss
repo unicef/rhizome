@@ -43,8 +43,25 @@ header {
       display: inline-block;
       text-align: center;
 
+      &:hover {
+        &:first-child {
+          background-color: $rhz-navigation-hover-sop-color;
+        }
+
+        &:nth-child(2) {
+          background-color: $rhz-navigation-hover-c4d-color;
+        }
+
+        &:last-child {
+          background-color: $rhz-navigation-hover-bg-color;
+        }
+      }
+
       &.active {
         background-color: $rhz-background-color;
+        i {
+          transform: rotate(45deg);
+        }
       }
 
       > a {
