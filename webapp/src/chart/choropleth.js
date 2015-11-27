@@ -312,7 +312,7 @@ _.extend(ChoroplethMap.prototype, {
           var v = options.stripeValue(d)
           var lineColor = _.isFinite(options.value(d)) ? '#ffffff' : '#cccccc'
           svg.selectAll('line').style('stroke', lineColor)
-          return _.isFinite(v) ? 'url(#stripe)' : '#fff'
+          return (_.isFinite(v) && v > 0) ? 'url(#stripe)' : '#fff'
         })
         .style('opacity', d => {
           var v = options.stripeValue(d)
