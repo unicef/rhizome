@@ -337,76 +337,90 @@ _.extend(ChoroplethMap.prototype, {
           })
           .text(d => { return d })
       }
+    }
 
-      if (options.bubbleValue) {
-        var radius = d3.scale.sqrt()
-          .domain([0, options.maxBubbleValue])
-          .range([0, options.maxBubbleRadius])
+    if (options.bubbleValue) {
+      var radius = d3.scale.sqrt()
+        .domain([0, options.maxBubbleValue])
+        .range([0, options.maxBubbleRadius])
 
-        var bubbles = svg.selectAll('.bubbles').select('.data')
-        var bubbleData = bubbles.selectAll('circle')
-          .data(features, function (d, i) {
-            return _.get(d, 'properties.location_id', i)
-          })
-
-        bubbleData.enter().append('circle')
-        bubbleData.attr('transform', function (d) {
-          return 'translate(' + path.centroid(d) + ')'
+      var bubbles = svg.selectAll('.bubbles').select('.data')
+      var bubbleData = bubbles.selectAll('circle')
+        .data(features, function (d, i) {
+          return _.get(d, 'properties.location_id', i)
         })
-          .attr('r', function (d) {
-            var v = options.bubbleValue(d)
-            return v ? _chooseRadius(v, radius) : 0
+
+      bubbleData.enter().append('circle')
+      bubbleData.attr('transform', function (d) {
+        return 'translate(' + path.centroid(d) + ')'
+      })
+        .attr('r', function (d) {
+          var v = options.bubbleValue(d)
+          return v ? _chooseRadius(v, radius) : 0
+        })
+        .style({
+          'opacity': 0.5,
+          'fill': '#D5EBF7',
+          'stroke': '#FFFFFF'
+        })
+
+      bubbleData.exit().remove()
+
+      let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+      bubbles.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
+
+      if (options.chartInDashboard) {
+        var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
+          return Math.ceil(d * options.maxBubbleValue, -1)
+        })
+
+        var bubbleLegendStartPosition = options.stripeValue
+          ? stripeLegendStartPosition + fontLength + 20 + 2.5 * options.maxBubbleRadius
+          : mapLegendLength * fontLength + 20 + 2.5 * options.maxBubbleRadius
+
+        var bubbleLegend = svg.select('.bubbles').select('.legend')
+          .attr('transform', function () {
+            return 'translate(' + bubbleLegendStartPosition + ', ' + (options.maxBubbleRadius + 10) + ')'
+          })
+          .selectAll('.series').data(bubbleLegendText)
+          .enter().append('g')
+          .attr('class', 'series')
+
+        bubbleLegend.append('circle')
+          .attr('r', d => {
+            return radius(d)
+          })
+          .attr('cy', d => {
+            return (options.maxBubbleRadius - radius(d))
           })
           .style({
             'opacity': 0.5,
-            'fill': '#D5EBF7',
-            'stroke': '#FFFFFF'
+            'fill': 'transparent',
+            'stroke': '#AAAAAA'
           })
 
-        bubbleData.exit().remove()
-
-        let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-        bubbles.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
-
-        if (options.chartInDashboard) {
-          var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
-            return Math.ceil(d * options.maxBubbleValue, -1)
+        bubbleLegend.append('line')
+          .attr({
+            x1: -(2.5 * options.maxBubbleRadius),
+            y1: d => {
+              return (options.maxBubbleRadius - 2 * radius(d))
+            },
+            x2: 0,
+            y2: d => {
+              return (options.maxBubbleRadius - 2 * radius(d))
+            }
           })
+          .style('stroke', '#AAAAAA')
 
-          var bubbleLegendStartPosition = options.stripeValue
-            ? stripeLegendStartPosition + fontLength + 20 + 2.5 * options.maxBubbleRadius
-            : mapLegendLength * fontLength + 20 + 2.5 * options.maxBubbleRadius
-
-          var bubbleLegend = svg.select('.bubbles').select('.legend')
-            .attr('transform', function () { return 'translate(' + bubbleLegendStartPosition + ', ' + (options.maxBubbleRadius + 10) + ')' })
-            .selectAll('.series').data(bubbleLegendText)
-            .enter().append('g')
-            .attr('class', 'series')
-
-          bubbleLegend.append('circle')
-            .attr('r', d => { return radius(d) })
-            .attr('cy', d => { return (options.maxBubbleRadius - radius(d)) })
-            .style({
-              'opacity': 0.5,
-              'fill': 'transparent',
-              'stroke': '#AAAAAA'
-            })
-
-          bubbleLegend.append('line')
-            .attr({
-              x1: -(2.5 * options.maxBubbleRadius),
-              y1: d => { return (options.maxBubbleRadius - 2 * radius(d)) },
-              x2: 0,
-              y2: d => { return (options.maxBubbleRadius - 2 * radius(d)) }
-            })
-            .style('stroke', '#AAAAAA')
-
-          bubbleLegend.append('text')
-            .attr('dx', -(2.5 * options.maxBubbleRadius))
-            .attr('dy', d => { return (options.maxBubbleRadius - 2 * radius(d)) })
-            .text(d => { return d })
-            .style('fill', '#AAAAAA')
-        }
+        bubbleLegend.append('text')
+          .attr('dx', -(2.5 * options.maxBubbleRadius))
+          .attr('dy', d => {
+            return (options.maxBubbleRadius - 2 * radius(d))
+          })
+          .text(d => {
+            return d
+          })
+          .style('fill', '#AAAAAA')
       }
     }
   },
