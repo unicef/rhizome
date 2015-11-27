@@ -135,8 +135,6 @@ var DocForm = React.createClass({
       if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
         let next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
         let [doc_name, doc_revision] = this.props.doc_title.split('-')
-
-
         uploadButton = this.state.doc_is_refreshed
           ? <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
           : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Sync Data</span>
@@ -154,13 +152,6 @@ var DocForm = React.createClass({
           : fileConfigForm
       }
     }
-
-
-    //var reviewBtn = ''
-    //if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column && this.state.doc_is_refreshed) {
-    //  var next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-    //  reviewBtn = <a href={next_link} className='cd-button refresh__button--margin'> Review Upload</a>
-    //}
 
     var stepMessage = this.state.created_doc_id
       ? (<div>
