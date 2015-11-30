@@ -14,6 +14,7 @@ import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import PalettePicker from './PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -174,8 +175,7 @@ let ChartWizard = React.createClass({
       groupByValue: this.state.data.groupByValue,
       locationLevelValue: this.state.data.locationLevelValue,
       xFormatValue: this.state.data.xFormatValue,
-      yFormatValue: this.state.data.yFormatValue,
-      palette: this.state.data.chartDef.palette
+      yFormatValue: this.state.data.yFormatValue
     })
 
     let optionStep = (
@@ -189,6 +189,8 @@ let ChartWizard = React.createClass({
       <div>
         <label>Title</label>
         <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
+        <PalettePicker value={this.state.data.chartDef.palette} onChange={ChartWizardActions.changePalette}/>
+
         <span className='chart-wizard__save' onClick={this.saveChart}>
           {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
         </span>
