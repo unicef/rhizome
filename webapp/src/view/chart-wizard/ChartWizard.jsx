@@ -101,6 +101,10 @@ let ChartWizard = React.createClass({
   },
 
   render () {
+    if (!this.state.data.chartDef.type) {
+      return null
+    }
+
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
 
     let locationStep = (
@@ -161,10 +165,6 @@ let ChartWizard = React.createClass({
         <span className='chart-wizard__next' onClick={this.toggleStep('option')}>Next</span>
       </div>
     )
-
-    if (!this.state.data.chartDef.type) {
-      return null
-    }
 
     let option = React.createElement(options[this.state.data.chartDef.type], {
       indicatorList: this.state.data.indicatorList,
