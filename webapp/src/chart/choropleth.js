@@ -281,8 +281,8 @@ _.extend(ChoroplethMap.prototype, {
       }
     }
 
-    var legendGap = 0.03 * w
-    var fontLength = 73
+    var legendGap = 0.02 * w
+    var fontLength = 100
     var stripeLegendStartPosition
 
     if (options.stripeValue) {
