@@ -136,12 +136,14 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User
     template_name = 'user_create.html'
     form_class = UserCreateForm
-    success_url = '/ufadmin/users'
+
+    def get_success_url(self,new_user_id):
+        return reverse_lazy('datapoints:user_update',\
+            kwargs={'pk':new_user_id})
 
     def form_valid(self, form):
         new_user = form.save()
-        return HttpResponseRedirect(self.success_url)
-
+        return HttpResponseRedirect(self.get_success_url(new_user.id))
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
@@ -150,9 +152,8 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def get_success_url(self):
         requested_user_id = self.get_object().id
-
-        return reverse_lazy('datapoints:user_update', kwargs={'pk':
-                                                                  requested_user_id})
+        return reverse_lazy('datapoints:user_update',\
+            kwargs={'pk':requested_user_id})
 
     def get_context_data(self, **kwargs):
         context = super(UserEditView, self).get_context_data(**kwargs)
@@ -163,7 +164,7 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def form_valid(self, form):
         form.save()
-        return HttpResponseRedirect('/ufadmin/users')
+        return HttpResponseRedirect(self.get_success_url())
 
 
 def html_decorator(func):
