@@ -270,12 +270,10 @@ export default {
       let bubbleIndex = null
       let gradientIndex = null
       if (yAxis) {
-        let maxRadius = 30
         let maxValue = 5000
         let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
         bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
         chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
-        chartOptions.maxBubbleRadius = maxRadius
         chartOptions.bubbleValue = _.property('properties.bubbleValue')
       }
       if (zAxis) {
