@@ -174,7 +174,7 @@ class LocationType(models.Model):
     admin_level = models.IntegerField(unique=True)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.name + ' (Admin Level %s)' % self.admin_level)
 
     class Meta:
         db_table = 'location_type'

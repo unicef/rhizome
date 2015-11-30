@@ -12,7 +12,7 @@ class UserCheckMixin(object):
         return True
 
     def user_check_failed(self, request, *args, **kwargs):
-        return HttpResponseRedirect(self.user_check_failure_path,'sorry you dont have permissions bro!')
+        return HttpResponseRedirect(self.user_check_failure_path,'sorry you dont have permissions')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.check_user(request.user):
