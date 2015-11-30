@@ -7,6 +7,7 @@ import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
+import List from 'component/list/List.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
@@ -69,7 +70,7 @@ let ChartWizard = React.createClass({
 
   getInitialState () {
     return {
-      refer: 'location'
+      refer: 'country'
     }
   },
 
@@ -105,18 +106,8 @@ let ChartWizard = React.createClass({
       return null
     }
 
-    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
-
-    let locationStep = (
+    let countryStep = (
       <div>
-        <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
-        <DropdownMenu
-          icon='fa-globe'
-          text={this.state.data.location && this.state.data.location.name || 'Select Location'}
-          searchable
-          onSearch={this.setLocationSearch}>
-          {locations}
-        </DropdownMenu>
         <span className='chart-wizard__next' onClick={this.toggleStep('first-indicator')}>Next</span>
       </div>
     )
@@ -131,6 +122,22 @@ let ChartWizard = React.createClass({
           icon='fa-plus'
           indicators= {this.state.data.indicatorList}
           sendValue={ChartWizardActions.addFirstIndicator} />
+        <span className='chart-wizard__next' onClick={this.toggleStep('location')}>Next</span>
+      </div>
+    )
+
+    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+    let locationStep = (
+      <div>
+        <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
+        <DropdownMenu
+          icon='fa-globe'
+          text='Select Location'
+          searchable
+          onSearch={this.setLocationSearch}>
+          {locations}
+        </DropdownMenu>
+        <List items={[this.state.data.location]} removeItem={() => {}} />
         <span className='chart-wizard__next' onClick={this.toggleStep('chart-type')}>Next</span>
       </div>
     )
@@ -203,23 +210,28 @@ let ChartWizard = React.createClass({
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title={`1. Select Location - ${this.state.data.location && this.state.data.location.name}`}
+          <ChartWizardStep title={`1. Select Country`}
+            refer='country'>
+            {countryStep}
+          </ChartWizardStep>
+          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`}
+            refer='first-indicator'>
+            {firstIndicatorStep}
+          </ChartWizardStep>
+          <ChartWizardStep title={`3. Select Location - ${this.state.data.location && this.state.data.location.name}`}
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
-            {firstIndicatorStep}
-          </ChartWizardStep>
-          <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
+          <ChartWizardStep title='4. Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='4. Select Time Range' refer='time-range'>
+          <ChartWizardStep title='5. Select Time Range' refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='5. Customise Options' refer='option'>
+          <ChartWizardStep title='6. Customise Options' refer='option'>
             {optionStep}
           </ChartWizardStep>
-          <ChartWizardStep title='6. Preview' refer='preview'>
+          <ChartWizardStep title='7. Preview' refer='preview'>
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>

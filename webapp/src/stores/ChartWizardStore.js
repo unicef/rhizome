@@ -3,6 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
+
 import api from 'data/api'
 import ChartDataInit from 'data/chartDataInit'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
@@ -200,7 +201,7 @@ let ChartWizardStore = Reflux.createStore({
 
       this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
         return this.indicatorIndex[id]
-      })
+      }).filter(indicator => !!indicator)
 
       this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
       let newCampaign = this.data.campaignFilteredList.filter(campaign => {
