@@ -57,7 +57,7 @@ export default {
     {
       value: 'selected',
       title: 'Selected location only',
-      getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
+      getAggregated: (locationSelected, locationIndex) => { return locationSelected }
     },
     {
       value: 'type',
@@ -74,7 +74,9 @@ export default {
       value: 'sublocations',
       title: 'Sublocations 1 level below selected',
       getAggregated: (locationSelected, locationIndex) => {
-        return _.filter(locationIndex, { parent_location_id: locationSelected.id })
+        return _(locationSelected).map(location => {
+          return _.filter(locationIndex, { parent_location_id: location.id })
+        }).flatten().value()
       }
     }
   ]

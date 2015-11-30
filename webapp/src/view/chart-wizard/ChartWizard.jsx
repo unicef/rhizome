@@ -108,6 +108,7 @@ let ChartWizard = React.createClass({
 
     let countryStep = (
       <div>
+        <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
         <span className='chart-wizard__next' onClick={this.toggleStep('first-indicator')}>Next</span>
       </div>
     )
@@ -129,7 +130,6 @@ let ChartWizard = React.createClass({
     let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
     let locationStep = (
       <div>
-        <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
         <DropdownMenu
           icon='fa-globe'
           text='Select Location'
@@ -137,7 +137,7 @@ let ChartWizard = React.createClass({
           onSearch={this.setLocationSearch}>
           {locations}
         </DropdownMenu>
-        <List items={[this.state.data.location]} removeItem={() => {}} />
+        <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <span className='chart-wizard__next' onClick={this.toggleStep('chart-type')}>Next</span>
       </div>
     )
@@ -207,6 +207,8 @@ let ChartWizard = React.createClass({
         options={this.state.data.chartOptions}/>
     )
 
+    let locationName = this.state.data.location.map(location => location.name).join(', ')
+
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
@@ -218,7 +220,7 @@ let ChartWizard = React.createClass({
             refer='first-indicator'>
             {firstIndicatorStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`3. Select Location - ${this.state.data.location && this.state.data.location.name}`}
+          <ChartWizardStep title={`3. Select Location - ${locationName}`}
             refer='location'>
             {locationStep}
           </ChartWizardStep>

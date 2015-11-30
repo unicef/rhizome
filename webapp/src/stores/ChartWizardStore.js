@@ -16,6 +16,7 @@ let ChartWizardStore = Reflux.createStore({
     indicatorList: [],
     indicatorSelected: [],
     indicatorFilteredList: [],
+    location: [],
     locationList: [],
     locationSelected: null,
     campaignFilteredList: [],
@@ -38,7 +39,7 @@ let ChartWizardStore = Reflux.createStore({
 
   filterCampaignByLocation (campaigns, location) {
     return campaigns.filter(campaign => {
-      return campaign.office_id === location.office_id
+      return campaign.office_id === location[0].office_id
     })
   },
 
@@ -105,11 +106,12 @@ let ChartWizardStore = Reflux.createStore({
       .map(ancestryString)
       .value()
 
-    this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
+    this.data.loation = []
+    this.data.location.push(this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
       ? this.locationIndex[this.data.chartDef.locationValue]
-      : this.locationIndex[this.data.locationList[0].value]
+      : this.locationIndex[this.data.locationList[0].value])
 
-    let officeId = this.data.location.office_id
+    let officeId = this.data.location[0].office_id
 
     this.data.rawIndicators = await api.indicators({ office_id: officeId })
     this.data.rawTags = await api.get_indicator_tag()
@@ -187,10 +189,36 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onAddLocation (index) {
-    this.data.location = this.locationIndex[index]
+    this.data.location.push(this.locationIndex[index])
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
 
-    Promise.all([api.indicators({ office_id: this.data.location.office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
+    Promise.all([api.indicators({ office_id: this.data.location[0].office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
+      this.data.rawIndicators = indicators
+      this.data.rawTags = tags
+
+      let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+
+      this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+      this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+
+      this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
+        return this.indicatorIndex[id]
+      }).filter(indicator => !!indicator)
+
+      this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+      let newCampaign = this.data.campaignFilteredList.filter(campaign => {
+        return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
+      })
+      this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
+      this.previewChart()
+    }))
+  },
+
+  onRemoveLocation (index) {
+    _.remove(this.data.location, { id: index })
+    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+
+    Promise.all([api.indicators({ office_id: this.data.location[0].office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
       this.data.rawIndicators = indicators
       this.data.rawTags = tags
 
