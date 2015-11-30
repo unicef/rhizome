@@ -398,7 +398,7 @@ class AggRefreshTestCase(TestCase):
 
     def test_part_of_difference(self):
         '''
-        see here: rhizome.work/ufadmin/manage/indicator/187
+        see here: rhizome.work/manage_system/manage/indicator/187
 
         We use this calculation to perform the following calculation:
 
@@ -488,8 +488,8 @@ class AggRefreshTestCase(TestCase):
 
         Now consider that "missed children due to refusal" is also generated
         from the sum of "refusal due to religious reasons", "refusal due to
-        too many rounds", "refusla due to - unhappy with team " (see more here:
-        http://rhizome.work/ufadmin/manage/indicator/264).
+        too many rounds", "refusal due to - unhappy with team " (see more here:
+        http://rhizome.work/manage_system/manage/indicator/264).
 
         There are two levels here and this test aims to cover this use case.
         '''

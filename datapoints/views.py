@@ -9,115 +9,59 @@ from django.contrib.auth.decorators import user_passes_test
 from django.template import RequestContext
 
 from pandas import DataFrame
-
-from rhizome.views import group_check
 from datapoints.models import *
 from datapoints.forms import *
 from datapoints import agg_tasks
 from datapoints import cache_meta
 from datapoints.mixins import PermissionRequiredMixin
 
-class IndexView(generic.ListView):
-    paginate_by = 20
 
-    def get_queryset(self):
-        return self.model.objects.order_by('-created_at')
-
-        ###################
-        ###################
-        ### DATA POINTS ###
-        ###################
-        ###################
-
-
-class DataPointIndexView(IndexView):
-    model = DataPoint
-    template_name = 'datapoints/index.html'
-    context_object_name = 'top_datapoints'
-
-@user_passes_test(group_check,login_url='/datapoints/permissions_needed/',\
-    redirect_field_name=None)
-def data_entry(request):
-    return render_to_response('data-entry/index.html',
-                              context_instance=RequestContext(request))
-
+## OPEN VIEWS ( needs authentication, but no specific permissions )##
+def data_browser(request):
+    return render_to_response('datapoints/index.html',\
+        context_instance=RequestContext(request))
 
 def dashboard_list(request):
     return render_to_response('dashboard-builder/list.html',
                               context_instance=RequestContext(request))
 
+### PERMISSION RESTRICTED VIEWS ###
 
+@user_passes_test(lambda u: u.groups.filter(name='data_entry')\
+    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
+def data_entry(request):
+    return render_to_response('data-entry/index.html',
+                              context_instance=RequestContext(request))
+
+@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder')\
+    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
 def dashboard_builder(request, dashboard_id=None):
     return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 
-
+@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder')\
+    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
 def chart_builder(request, dashboard_id):
     return render_to_response('dashboard-builder/chart_builder.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 
-
-class DashBoardView(IndexView):
-    paginate_by = 50
-
-    template_name = 'dashboard/index.html'
-    context_object_name = 'user_dashboard'
-
-    def get_queryset(self):
-        return DataPoint.objects.all()[:1]
-
-
-        #################
-        ### CAMPAIGNS ###
-        #################
+def manage_system(request):
+    return render_to_response('manage_system.html',\
+        context_instance=RequestContext(request))
 
 
 class CampaignCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Campaign
-    success_url = '/ufadmin/campaigns'
+    success_url = '/manage_system/campaigns'
     template_name = 'campaigns/create.html'
     fields = ['office', 'campaign_type', 'start_date', 'end_date']
 
 
 class CampaignUpdateView(PermissionRequiredMixin, generic.UpdateView):
     model = Campaign
-    success_url = '/ufadmin/campaigns'
+    success_url = '/manage_system/campaigns'
     template_name = 'campaigns/update.html'
     form_class = CampaignForm
-
-    ##############################
-    ##############################
-    #### FUNCTION BASED VIEWS ####
-    ##############################
-    ##############################
-
-
-def manage_data_refresh(request):
-    cache_jobs = CacheJob.objects.all(). \
-        exclude(response_msg='NOTHING_TO_PROCESS').order_by('-id')
-
-    return render_to_response('manage_data_refresh.html', {'cache_jobs': cache_jobs},
-                              context_instance=RequestContext(request))
-
-
-def refresh_cache(request):
-    cr = agg_tasks.AggRefresh()
-    return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
-
-
-def refresh_metadata(request):
-    '''
-    This is what happens when you click the "refresh_metadata" button
-    '''
-
-    campaign_cache_data = cache_meta.calculate_campaign_percentage_complete()
-
-    location_tree_cache_data = cache_meta.LocationTreeCache()
-    location_tree_cache_data.main()
-
-    source_object_cache = cache_meta.update_source_object_names()
-
-    return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
