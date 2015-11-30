@@ -52,7 +52,7 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorSelected = this.data.indicatorSelected.filter(indicator => !!indicator)
 
-    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     let newCampaign = this.data.campaignFilteredList.filter(campaign => {
       return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
     })
@@ -60,9 +60,17 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  filterCampaignByLocation (campaigns, location) {
+  filterLocationByCountry (locations, countries) {
+    let countryId = countries.map(c => c.id)
+    return locations.filter(location => {
+      return countryId.indexOf(location.value) >= 0
+    })
+  },
+
+  filterCampaignByCountry (campaigns, countries) {
+    let countryId = countries.map(c => c.id)
     return campaigns.filter(campaign => {
-      return campaign.office_id === location[0].office_id
+      return countryId.indexOf(campaign.office_id) >= 0
     })
   },
 
@@ -136,10 +144,11 @@ let ChartWizardStore = Reflux.createStore({
       .map(ancestryString)
       .value()
 
-    this.data.loation = []
-    this.data.location.push(this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
-      ? this.locationIndex[this.data.chartDef.locationValue]
-      : this.locationIndex[this.data.locationList[0].value])
+    this.data.location = this.data.chartDef.locationValue
+      ? Array.isArray(this.data.chartDef.locationValue)
+        ? this.data.chartDef.locationValue.map(location => this.locationIndex[location])
+        : [this.locationIndex[this.data.chartDef.locationValue]]
+      : []
 
     this.data.rawIndicators = await api.indicators()
     this.data.rawTags = await api.get_indicator_tag()
@@ -167,7 +176,8 @@ let ChartWizardStore = Reflux.createStore({
       .value()
 
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
-    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+    this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.chartTypeFilteredList = builderDefinitions.charts
 
@@ -220,6 +230,8 @@ let ChartWizardStore = Reflux.createStore({
     _.includes(this.data.countrySelected, this.data.countries[index])
       ? _.remove(this.data.countrySelected, this.data.countries[index])
       : this.data.countrySelected.push(this.data.countries[index])
+    this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     this.trigger(this.data)
   },
 
@@ -346,7 +358,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   previewChart () {
-    if (!this.data.indicatorSelected.length) {
+    if (!this.data.indicatorSelected.length || !this.data.campaign) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
       this.trigger(this.data)

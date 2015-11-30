@@ -134,7 +134,7 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationFilteredList, this.state.locationSearch), ChartWizardActions.addLocation)
     let locationStep = (
       <div>
         <DropdownMenu
@@ -158,18 +158,18 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let campaignListAsDate = this.state.data.campaignFilteredList.map(campaign => {
+    let campaignListAsDate = _(this.state.data.campaignFilteredList).map(campaign => {
       return _.assign({}, campaign, {
         slug: moment(campaign.start_date).format('MMMM YYYY')
       })
-    })
+    }).uniq(_.property('slug')).value()
 
     let timeRangeStep = (
       <div>
         <p className='chart-wizard__para'>Which time period would you like to display the data for?</p>
         <h4>Ending Time: </h4>
         <CampaignDropdownMenu
-          text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Campaign'}
+          text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Ending Time'}
           campaigns={campaignListAsDate}
           sendValue={ChartWizardActions.addCampaign} />
 
@@ -214,27 +214,32 @@ let ChartWizard = React.createClass({
         options={this.state.data.chartOptions}/>
     )
 
+    let countryName = this.state.data.countrySelected.map(country => country.name).join(', ')
     let locationName = this.state.data.location.map(location => location.name).join(', ')
 
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title={`1. Select Country`}
+          <ChartWizardStep
+            title={`1. Select Country${countryName.length > 0 ? ' - ' + countryName : ''}`}
             refer='country'>
             {countryStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`}
+          <ChartWizardStep
+            title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`}
             refer='first-indicator'>
             {firstIndicatorStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`3. Select Location - ${locationName}`}
+          <ChartWizardStep title={`3. Select Location${locationName.length > 0 ? ' - ' + locationName : ''}`}
             refer='location'>
             {locationStep}
           </ChartWizardStep>
           <ChartWizardStep title='4. Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='5. Select Time Range' refer='time-range'>
+          <ChartWizardStep
+            title={`5. Select Time Range${this.state.data.campaign ? ' - ' + moment(this.state.data.campaign.start_date).format('MMMM YYYY') : ''}`}
+            refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
           <ChartWizardStep title='6. Customise Options' refer='option'>

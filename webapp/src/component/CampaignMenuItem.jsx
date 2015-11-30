@@ -19,12 +19,10 @@ var CampaignMenuItem = React.createClass({
   },
 
   render: function () {
-    var percentageComplete = ' (' + Math.round(this.props.campaign.management_dash_pct_complete * 100) + '% complete)'
-
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-          {this.props.campaign.slug} {percentageComplete}
+          {this.props.campaign.slug}
         </a>
       </li>
     )
