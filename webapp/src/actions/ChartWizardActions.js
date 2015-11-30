@@ -4,6 +4,7 @@ let ChartWizardActions = Reflux.createActions([
   'initialize',
   'clear',
   'editTitle',
+  'changeCountry',
   'addLocation',
   'removeLocation',
   'addFirstIndicator',

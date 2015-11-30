@@ -15,6 +15,7 @@ import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import CheckBoxGroup from 'component/CheckBoxGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -109,6 +110,12 @@ let ChartWizard = React.createClass({
     let countryStep = (
       <div>
         <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
+        <div>
+          <CheckBoxGroup name='country' title='Select Country'
+            value={this.state.data.countrySelected.map(c => c.index)}
+            values={this.state.data.countries}
+            onChange={ChartWizardActions.changeCountry} />
+        </div>
         <span className='chart-wizard__next' onClick={this.toggleStep('first-indicator')}>Next</span>
       </div>
     )

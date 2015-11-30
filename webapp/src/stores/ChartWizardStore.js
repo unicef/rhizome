@@ -16,9 +16,11 @@ let ChartWizardStore = Reflux.createStore({
     indicatorList: [],
     indicatorSelected: [],
     indicatorFilteredList: [],
+    countries: [],
+    countrySelected: [],
     location: [],
     locationList: [],
-    locationSelected: null,
+    locationSelected: [],
     campaignFilteredList: [],
     timeRangeFilteredList: [],
     chartTypeFilteredList: [],
@@ -113,6 +115,13 @@ let ChartWizardStore = Reflux.createStore({
     let offices = await api.office()
 
     this.locationIndex = _.indexBy(locations.objects, 'id')
+    this.data.countries = offices.objects.map(office => {
+      return this.locationIndex[office.id]
+    })
+    this.data.countries.forEach((country, index) => {
+      country.value = country.title = country.name
+      country.index = index
+    })
     this.data.locationList = _(locations.objects)
       .map(location => {
         return {
@@ -207,6 +216,13 @@ let ChartWizardStore = Reflux.createStore({
 
   onEditTitle (value) {
     this.data.chartDef.title = value
+  },
+
+  onChangeCountry (index) {
+    _.includes(this.data.countrySelected, this.data.countries[index])
+      ? _.remove(this.data.countrySelected, this.data.countries[index])
+      : this.data.countrySelected.push(this.data.countries[index])
+    this.trigger(this.data)
   },
 
   onAddLocation (index) {

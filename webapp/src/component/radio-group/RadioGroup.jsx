@@ -16,9 +16,6 @@ export default React.createClass({
       horizontal: false
     }
   },
-  _handleChange: function (event) {
-    this.props.onChange(event.target.value)
-  },
   render: function () {
     var radios = this.props.values.map((radio, index) => {
       return (
@@ -35,6 +32,7 @@ export default React.createClass({
       <div className='radio-group-container'>
         <h4>{this.props.title}</h4>
         {radios}
-      </div>)
+      </div>
+    )
   }
 })
