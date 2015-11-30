@@ -141,9 +141,7 @@ let ChartWizardStore = Reflux.createStore({
       ? this.locationIndex[this.data.chartDef.locationValue]
       : this.locationIndex[this.data.locationList[0].value])
 
-    let officeId = this.data.location[0].office_id
-
-    this.data.rawIndicators = await api.indicators({ office_id: officeId })
+    this.data.rawIndicators = await api.indicators()
     this.data.rawTags = await api.get_indicator_tag()
 
     let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
@@ -228,13 +226,13 @@ let ChartWizardStore = Reflux.createStore({
   onAddLocation (index) {
     this.data.location.push(this.locationIndex[index])
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.filterIndicatorByCountry(this.data.location[0])
+    this.previewChart()
   },
 
   onRemoveLocation (index) {
     _.remove(this.data.location, { id: index })
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.filterIndicatorByCountry(this.data.location[0])
+    this.previewChart()
   },
 
   onAddFirstIndicator (index) {
