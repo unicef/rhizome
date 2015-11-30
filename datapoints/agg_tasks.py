@@ -1,6 +1,6 @@
 from datetime import datetime
 
-import pandas as pd
+from pandas import concat
 from pandas import DataFrame
 from pandas import notnull
 
@@ -215,9 +215,33 @@ class AggRefresh(object):
     def build_recursive_sum_calc_df(self, initial_calc_df):
         '''
         TO DO -- handle test_recursive_sum test case
+        This only handles one level of recursion.. i.e. the following calc will
+        roll up properly.
+
+        "odk missed due to refusal" >> "odk missed total"
+
+        but this one below.. will not:
+
+        "odk missed due to refusal -- male" >> "odk missed due to refusal" >>
+        "odk missed total"
+
         '''
 
-        return initial_calc_df
+        lvl_1_calc_df =  initial_calc_df.merge(initial_calc_df,\
+            left_on='calc_indicator_id',right_on='indicator_component_id')
+
+        lvl_1_df =  lvl_1_calc_df[['calc_indicator_id_y',\
+            'indicator_component_id_x']]
+
+        lvl_1_df.columns = ['calc_indicator_id', 'indicator_component_id']
+
+        lvl_1_df['calc'] = 'PART_TO_BE_SUMMED'
+        lvl_1_df['lvl'] = 1
+        initial_calc_df['lvl'] = 0
+
+        final_df = concat([initial_calc_df,lvl_1_df])
+
+        return final_df
 
     def raw_data(self):
         '''
@@ -278,7 +302,7 @@ class AggRefresh(object):
             self.dwc_tuple_dict.iteritems()]
         dependent_calculation_dp_df = DataFrame(dwc_list_of_list,columns=\
             self.dp_columns)
-        unioned_dp_df = pd.concat([dp_df,dependent_calculation_dp_df])
+        unioned_dp_df = concat([dp_df,dependent_calculation_dp_df])
 
         ## add the calculation metadata to the df
         dp_df_with_calc = self.join_dp_to_calc(calc_df, unioned_dp_df)
