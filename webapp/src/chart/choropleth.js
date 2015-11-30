@@ -281,7 +281,7 @@ _.extend(ChoroplethMap.prototype, {
       }
     }
 
-    var legendGap = 0.02 * w
+    var legendGap = 0.03 * w
     var fontLength = 100
     var stripeLegendStartPosition
 
@@ -327,7 +327,7 @@ _.extend(ChoroplethMap.prototype, {
       stripes.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
       if (options.chartInDashboard) {
-        var stripeLegendLength = 150
+        var stripeLegendLength = 140
         stripeLegendStartPosition = fontLength + legendGap
         var stripeLegendGap = 14
         var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
