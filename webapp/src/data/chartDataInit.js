@@ -34,9 +34,11 @@ export default {
       .map(ancestryString)
       .value()
 
-    data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
-      ? locationIndex[chartDef.locationValue]
-      : locationIndex[data.locationList[0].value]
+    data.location = chartDef.locationValue
+      ? Array.isArray(chartDef.locationValue)
+        ? chartDef.locationValue.map(location => locationIndex[location])
+        : [locationIndex[chartDef.locationValue]]
+      : []
 
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
     data.locationSelected = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)

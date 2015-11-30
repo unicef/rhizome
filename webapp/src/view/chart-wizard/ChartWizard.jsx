@@ -25,6 +25,7 @@ const defaultChartDef = {
   title: '',
   type: 'LineChart',
   indicators: [],
+  countries: [],
   groupBy: 'indicator',
   timeRange: null,
   x: 0,

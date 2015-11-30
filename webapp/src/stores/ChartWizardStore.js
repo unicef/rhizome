@@ -130,6 +130,10 @@ let ChartWizardStore = Reflux.createStore({
       country.value = country.title = country.name
       country.index = index
     })
+    let countryIndex = _.indexBy(this.data.countries, _.property('id'))
+    this.data.countrySelected = this.data.chartDef.countries.map(country => {
+      return countryIndex[country]
+    })
     this.data.locationList = _(locations.objects)
       .map(location => {
         return {
@@ -345,7 +349,8 @@ let ChartWizardStore = Reflux.createStore({
           }),
           groupBy: builderDefinitions.groups[this.data.groupByValue].value,
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
-          locationValue: this.data.location.id,
+          countries: this.data.countrySelected.map(country => country.id),
+          locationValue: this.data.location.map(location => location.id),
           campaignValue: this.data.campaign.id,
           timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
