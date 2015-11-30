@@ -51,6 +51,15 @@ def manage_system(request):
     return render_to_response('manage_system.html',\
         context_instance=RequestContext(request))
 
+class DashBoardView(generic.ListView):
+    paginate_by = 50
+
+    template_name = 'dashboard/index.html'
+    context_object_name = 'user_dashboard'
+
+    def get_queryset(self): ## not sure why this works. ##
+        return DataPoint.objects.all()[:1]
+
 
 class CampaignCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Campaign
@@ -88,6 +97,9 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
     template_name = 'user_edit.html'
     form_class = UserEditForm
+
+    def dispatch(self, *args, **kwargs):
+        return super(UserEditView, self).dispatch(*args, **kwargs)
 
     def get_success_url(self):
         requested_user_id = self.get_object().id

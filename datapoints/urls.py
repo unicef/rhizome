@@ -1,11 +1,17 @@
-from django.conf.urls import url
-from datapoints import views
 from django.views.generic import TemplateView
+from django.contrib.auth.decorators import login_required
+from django.conf.urls import url
+from decorator_include import decorator_include
+
+from datapoints import views
+
 
 urlpatterns = [
 
-    ## DASHBOARD ##
-    url(r'^$', views.dashboard_list,name='dashboard_list_default'),
+    ## STATIC DASHBOARDS ( mgmnt, district, NGA campaign monitoring)
+    url(r'^$', views.DashBoardView.as_view(),name='dashboard'),
+
+    ## CUSTOM DASHBOARDS ##
     url(r'^dashboards/$', views.dashboard_list,name='dashboard_list'),
     url(r'^dashboards/edit$', views.dashboard_builder,name='dashboard_builder_no_params'),
     url(r'^dashboards/edit/(?P<dashboard_id>[0-9]+)/$', views.dashboard_builder,name='dashboard_builder'),
