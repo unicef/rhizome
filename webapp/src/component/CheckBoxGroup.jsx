@@ -7,6 +7,14 @@ export default class CheckBoxGroup extends React.Component {
   static defaultProps = {
     prefix: ''
   }
+  static propTypes = {
+    values: React.PropTypes.array.isRequired,
+    value: React.PropTypes.number.isRequired,
+    name: React.PropTypes.string.isRequired,
+    prefix: React.PropTypes.string,
+    title: React.PropTypes.string,
+    onChange: React.PropTypes.func.isRequired
+  }
   render () {
     let checkboxes = this.props.values.map((check, index) => {
       return (
