@@ -37,6 +37,27 @@ let ChartWizardStore = Reflux.createStore({
   },
   LAYOUT_PREVIEW: 0,
 
+  async filterIndicatorByCountry (country) {
+    let indicators = await api.indicators({ office_id: country.office_id })
+    let tags = await api.get_indicator_tag()
+    this.data.rawIndicators = indicators
+    this.data.rawTags = tags
+
+    let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+
+    this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+
+    this.data.indicatorSelected = this.data.indicatorSelected.filter(indicator => !!indicator)
+
+    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+    let newCampaign = this.data.campaignFilteredList.filter(campaign => {
+      return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
+    })
+    this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
+    this.previewChart()
+  },
+
   filterCampaignByLocation (campaigns, location) {
     return campaigns.filter(campaign => {
       return campaign.office_id === location[0].office_id
@@ -191,53 +212,13 @@ let ChartWizardStore = Reflux.createStore({
   onAddLocation (index) {
     this.data.location.push(this.locationIndex[index])
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-
-    Promise.all([api.indicators({ office_id: this.data.location[0].office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
-      this.data.rawIndicators = indicators
-      this.data.rawTags = tags
-
-      let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
-
-      this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
-      this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-
-      this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
-        return this.indicatorIndex[id]
-      }).filter(indicator => !!indicator)
-
-      this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-      let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-        return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
-      })
-      this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
-      this.previewChart()
-    }))
+    this.filterIndicatorByCountry(this.data.location[0])
   },
 
   onRemoveLocation (index) {
     _.remove(this.data.location, { id: index })
     this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-
-    Promise.all([api.indicators({ office_id: this.data.location[0].office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
-      this.data.rawIndicators = indicators
-      this.data.rawTags = tags
-
-      let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
-
-      this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
-      this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-
-      this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
-        return this.indicatorIndex[id]
-      }).filter(indicator => !!indicator)
-
-      this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-      let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-        return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
-      })
-      this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
-      this.previewChart()
-    }))
+    this.filterIndicatorByCountry(this.data.location[0])
   },
 
   onAddFirstIndicator (index) {
