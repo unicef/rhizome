@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
-from datapoints.models import UserAdminLevelPermission
+from datapoints.models import UserAdminLevelPermission,UserGroup
 
 def pop_user_location_type_permission(apps, schema_editor):
 
@@ -14,6 +14,16 @@ def pop_user_location_type_permission(apps, schema_editor):
             user = u, location_type_id = 1
         )
 
+    ## add all permissions for demo_user so i dont block developer work ##
+    demo_user_obj = User.objects.get(username='demo_user')
+    UserGroup.objects.all().delete()
+    for g in Group.objects.all():
+        UserGroup.objects.create(user=demo_user_obj, group=g)
+
+    ## change the ufadmin group to manage_system ##
+    g = Group.objects.get(name='ufadmin')
+    g.name = 'manage_system'
+    g.save()
 
 class Migration(migrations.Migration):
 

@@ -45,6 +45,8 @@ def chart_builder(request, dashboard_id):
     return render_to_response('dashboard-builder/chart_builder.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 
+@user_passes_test(lambda u: u.groups.filter(name='manage_system')\
+    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
 def manage_system(request):
     return render_to_response('manage_system.html',\
         context_instance=RequestContext(request))
