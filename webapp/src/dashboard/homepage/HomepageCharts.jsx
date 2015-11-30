@@ -115,7 +115,8 @@ var HomepageCharts = React.createClass({
                    yFormat: d3.format(',.1%'),
                    range: missedChildrenData.range,
                    width: width,
-                   height: height
+                   height: height,
+                   total: true
                  }}/>
           <h4 className='chart__title--date'>Latest date: {missedChildrenData.date}</h4>
                </div>)
