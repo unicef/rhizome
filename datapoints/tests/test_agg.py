@@ -508,6 +508,7 @@ class AggRefreshTestCase(TestCase):
             short_name = 'Number of Deaths due to Conflict',
             data_format = 'int'
         )
+
         sub_sub_indicator_1 = Indicator.objects.create(
             name = 'Number Conflict Deaths - Children',
             short_name = 'Conflict Deaths - Children',
@@ -529,6 +530,17 @@ class AggRefreshTestCase(TestCase):
         sub_indicator_2 = Indicator.objects.create(
             name = 'Number of Deaths due to Malaria',
             short_name = 'Number of Deaths due to Malaria',
+            data_format = 'int'
+        )
+
+        sub_indicator_2_sub_1 = Indicator.objects.create(
+            name = 'Number of Deaths due to Malaria -- Child had No Net',
+            short_name = 'Number of Deaths due to Malaria -- no net',
+            data_format = 'int'
+        )
+        sub_indicator_2_sub_2 = Indicator.objects.create(
+            name = 'Number of Deaths due to Malaria -- Child had No Medicine',
+            short_name = 'Number of Deaths due to Malaria -- no Medicie',
             data_format = 'int'
         )
 
@@ -572,6 +584,19 @@ class AggRefreshTestCase(TestCase):
             calculation = 'PART_TO_BE_SUMMED'
         )
 
+        ## 2nd layer of indicator calculation ##
+        sub_indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = sub_indicator_2.id,
+            indicator_component_id = sub_indicator_2_sub_1.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        sub_indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = sub_indicator_2.id,
+            indicator_component_id = sub_indicator_2_sub_2.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+
+
         ## create all the datapoints ##
 
         values_to_insert = {
@@ -580,6 +605,8 @@ class AggRefreshTestCase(TestCase):
             sub_sub_indicator_1.id: 33,
             sub_sub_indicator_2.id: 44,
             sub_sub_indicator_3.id: 55,
+            sub_indicator_2_sub_1.id: 66,
+            sub_indicator_2_sub_2.id: 77,
         }
 
         for k,v in values_to_insert.iteritems():
@@ -596,3 +623,14 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(parent_indicator_1_actual_value,\
             parent_indicator_target_value)
+
+        ## test that a parent overrides the sum of its children when there
+        ## are multiple levels of indicator calcuations ##
+        sub_2_target_val = values_to_insert[sub_indicator_2.id]
+        sub_2_actual_val = DataPointComputed.objects.get(
+            location_id = location_id,
+            campaign_id = campaign_id,
+            indicator_id = sub_indicator_2.id,
+        ).value
+
+        self.assertEqual(sub_2_target_val,sub_2_actual_val)
