@@ -419,6 +419,15 @@ class IndicatorPermission(models.Model):
         db_table = 'indicator_permission'
         unique_together = ('group', 'indicator')
 
+class UserAdminLevelPermission(models.Model):
+    '''
+    '''
+
+    user = models.OneToOneField('auth.User')
+    location_type = models.ForeignKey(LocationType)
+
+    class Meta:
+        db_table = 'user_admin_level_permission'
 
 class UserGroup(models.Model):
     '''

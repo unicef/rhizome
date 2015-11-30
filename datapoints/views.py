@@ -104,19 +104,6 @@ def refresh_cache(request):
     return HttpResponseRedirect(reverse('datapoints:manage_data_refresh'))
 
 
-def parse_url_args(request, keys):
-    request_meta = {}
-
-    for k in keys:
-
-        try:
-            request_meta[k] = request.GET[k]
-        except KeyError:
-            request_meta[k] = None
-
-    return request_meta
-
-
 def refresh_metadata(request):
     '''
     This is what happens when you click the "refresh_metadata" button
@@ -143,6 +130,11 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
+        location_type = form.cleaned_data.get('location_type')
+        UserAdminLevelPermission.objects.create(
+            user=new_user,location_type=location_type
+        )
+
         return HttpResponseRedirect(self.get_success_url(new_user.id))
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
@@ -162,8 +154,20 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
         return context
 
+    def get_initial(self):
+        user_obj = self.get_object()
+        lt = UserAdminLevelPermission.objects.get(user = user_obj).location_type
+        return { 'location_type': lt }
+
     def form_valid(self, form):
-        form.save()
+
+        new_user = form.save()
+        permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
+        form_location_type = form.cleaned_data.get('location_type')
+        permission_obj.location_type = form_location_type
+        permission_obj.save()
+
+
         return HttpResponseRedirect(self.get_success_url())
 
 
