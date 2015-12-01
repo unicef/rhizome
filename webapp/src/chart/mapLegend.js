@@ -20,7 +20,7 @@ var DEFAULTS = {
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 30,
+  maxBubbleRadius: 25,
   bubbleLegendRatio: [0.1, 0.5, 1]
 }
 
@@ -188,7 +188,7 @@ _.extend(MapLegend.prototype, {
         .attr('class', 'series')
 
       let cx = 2.5 * options.maxBubbleRadius
-      let cy = d => { return 2.5 * options.maxBubbleRadius - radius(d) }
+      let cy = d => { return 3 * options.maxBubbleRadius - radius(d) }
       var lineY = d => { return (cy(d) - radius(d)) }
 
       bubbleLegend.append('circle')

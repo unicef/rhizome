@@ -174,7 +174,7 @@ class LocationType(models.Model):
     admin_level = models.IntegerField(unique=True)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return unicode(self.name + ' (Admin Level %s)' % self.admin_level)
 
     class Meta:
         db_table = 'location_type'
@@ -419,6 +419,15 @@ class IndicatorPermission(models.Model):
         db_table = 'indicator_permission'
         unique_together = ('group', 'indicator')
 
+class UserAdminLevelPermission(models.Model):
+    '''
+    '''
+
+    user = models.OneToOneField('auth.User')
+    location_type = models.ForeignKey(LocationType)
+
+    class Meta:
+        db_table = 'user_admin_level_permission'
 
 class UserGroup(models.Model):
     '''

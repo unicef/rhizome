@@ -25,7 +25,7 @@ var DEFAULTS = {
   xFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 30,
+  maxBubbleRadius: 25,
   bubbleLegendRatio: [0.1, 0.5, 1],
   indicatorName: 'Has data'
 }
@@ -281,8 +281,8 @@ _.extend(ChoroplethMap.prototype, {
       }
     }
 
-    var legendGap = 0.03 * w
-    var fontLength = 73
+    var legendGap = 0.02 * w
+    var fontLength = 100
     var stripeLegendStartPosition
 
     if (options.stripeValue) {
@@ -315,7 +315,7 @@ _.extend(ChoroplethMap.prototype, {
         })
         .style('opacity', d => {
           var v = options.stripeValue(d)
-          return _.isFinite(v) ? 1 : 0
+          return _.isFinite(v) && v > 0 ? 1 : 0
         })
         .on('click', d => { options.onClick(_.get(d, 'properties.location_id')) })
         .on('mousemove', _.partial(this._onMouseMove, _, options, data))
