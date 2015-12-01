@@ -40,25 +40,16 @@ let ChartWizardStore = Reflux.createStore({
   },
   LAYOUT_PREVIEW: 0,
 
-  async filterIndicatorByCountry (country) {
-    let indicators = await api.indicators({ office_id: country.office_id })
-    let tags = await api.get_indicator_tag()
-    this.data.rawIndicators = indicators
-    this.data.rawTags = tags
-
-    let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
-
-    this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
-    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-
-    this.data.indicatorSelected = this.data.indicatorSelected.filter(indicator => !!indicator)
-
-    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
-    let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-      return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
-    })
-    this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
-    this.previewChart()
+  filterIndicatorByCountry (indicators, countries) {
+    let countryId = countries.map(c => c.id)
+    return countryId.length
+      ? indicators.filter(indicator => {
+          let officeId = indicator.office_id.filter(id => !!id)
+          return countryId.map(id => {
+            return officeId.indexOf(id) >= 0
+          })
+        }).reduce((a, b) => a && b, true)
+      : []
   },
 
   filterLocationByCountry (locations, countries) {
@@ -157,10 +148,12 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.rawIndicators = await api.indicators()
     this.data.rawTags = await api.get_indicator_tag()
+    this.indicators = this.data.rawIndicators.objects
 
-    let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+    this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
+    let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
 
-    this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+    this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
@@ -239,6 +232,12 @@ let ChartWizardStore = Reflux.createStore({
     _.includes(this.data.countrySelected, this.data.countries[index])
       ? _.remove(this.data.countrySelected, this.data.countries[index])
       : this.data.countrySelected.push(this.data.countries[index])
+
+    this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
+    let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+    this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
+
     this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
     this.data.location = this.filterLocationByCountry(this.data.location, this.data.countrySelected)
     this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
@@ -370,7 +369,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   previewChart () {
-    if (!this.data.indicatorSelected.length || !this.data.campaign) {
+    if (!(this.data.indicatorSelected.length && this.data.campaign && this.data.location.length)) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
       this.trigger(this.data)
