@@ -208,7 +208,7 @@ _.extend(BulletChart.prototype, {
     label
       .attr({
         'x': w,
-        'y': -(yScale.rangeBand() + measureHeight) / 2,
+        'y': -0.1 * w,
         'text-anchor': 'end',
         'dy': -(options.lineHeight / 4) + 'em',
         'transform': 'translate(0, ' + (h / 2) + ')',

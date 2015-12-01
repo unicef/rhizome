@@ -39,13 +39,13 @@ export default React.createClass({
     var overlay
 
     if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
-      var position = _.get(this.props, 'options.margin', {
+      var position = {
         top: 0,
         right: 0,
         bottom: 0,
         left: 0,
         zIndex: 9997
-      })
+      }
 
       var message = (this.props.loading)
         ? (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>)
