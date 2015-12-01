@@ -346,6 +346,25 @@ function wrap (text, width, x) {
   })
 }
 
+function roundedRect(xCoordinate, yCoordinate, width, height, radius, topLeft, topRight, bottomLeft, bottomRight) {
+    var path;
+    path  = "M" + (xCoordinate + radius) + "," + yCoordinate;
+    path += "h" + (width - 2*radius);
+    if (topRight) { path += "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius; }
+    else { path += "h" + radius; path += "v" + radius; }
+    path += "v" + (height - 2*radius);
+    if (bottomRight) { path += "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius; }
+    else { path += "v" + radius; path += "h" + -radius; }
+    path += "h" + (2*radius - width);
+    if (bottomLeft) { path += "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + -radius; }
+    else { path += "h" + -radius; path += "v" + -radius; }
+    path += "v" + (2*radius - height);
+    if (topLeft) { path += "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius; }
+    else { path += "v" + -radius; path += "h" + radius; }
+    path += "z";
+    return path;
+}
+
 function ColumnChart () {}
 
 _.extend(ColumnChart.prototype, {
@@ -469,15 +488,13 @@ _.extend(ColumnChart.prototype, {
       var column = series.selectAll('rect').data(options.values)
 
       column.enter()
-        .append('rect')
+        .append('path')
+        .attr('d', d => {
+          var topRounded = y(d) === 0
+          var bottomRounded = (y(d) + height(d)) === h
+          return roundedRect(x, y(d), rectWidth, height(d), 5, topRounded, topRounded, bottomRounded, bottomRounded)
+        })
         .style('fill', 'inherit')
-
-      column.attr({
-        'height': height,
-        'width': rectWidth,
-        'x': x,
-        'y': y
-      })
 
       column.exit().remove()
 
