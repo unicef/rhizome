@@ -53,9 +53,9 @@ export default React.createClass({
 
       overlay = (this.props.isBulletChart)
         ? (
-            <div style={position} className='overlay'>
+            <div style={position} className='overlay chart__bullet--overlay'>
               <div>
-                <div className='bullet__chart--noDate'>{message}</div>
+                <div className='chart__bullet--noData'>{message}</div>
               </div>
             </div>
           )
