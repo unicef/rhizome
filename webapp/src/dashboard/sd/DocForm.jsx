@@ -194,10 +194,15 @@ var DocForm = React.createClass({
     let dropZone = (
       <div>
         <div style={uploadStyle}>
-          <div style={divZoneStyle} className='medium-12 columns'>
+          <div style={divZoneStyle} className='medium-6 columns'>
             <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
               <div style={uploadButtonStyle}>Choose to upload</div>
             </Dropzone>
+          </div>
+          <div style={divZoneStyle} className='medium-6 columns'>
+            <div style={dropZoneStyle}>
+              <div style={uploadButtonStyle}>Configure ODK Form</div>
+            </div>
           </div>
         </div>
         <div className='medium-12 columns' style={tableMarginStyle}>
