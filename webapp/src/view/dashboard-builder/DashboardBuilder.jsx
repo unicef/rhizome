@@ -12,7 +12,6 @@ import DashboardBuilderStore from 'stores/DashboardBuilderStore'
 import DashboardActions from 'actions/DashboardActions'
 import DashboardStore from 'stores/DashboardStore'
 
-import IndicatorStore from 'stores/IndicatorStore'
 import GeoActions from 'actions/GeoActions'
 import TitleInput from 'component/TitleInput.jsx'
 import LayoutOptions from 'component/layout-options/LayoutOptions.jsx'
@@ -46,7 +45,6 @@ export default React.createClass({
     DashboardBuilderActions.initialize(this.props.dashboardId)
     this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
-    this.indicatorUnsubscribe = this.listenTo(IndicatorStore, this._onIndicatorsChange)
   },
 
   editChart (index) {
@@ -102,10 +100,6 @@ export default React.createClass({
       DataActions.fetchForChart(this.state.store.dashboard)
     }
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
-  },
-
-  _onIndicatorsChange () {
-    this.forceUpdate()
   },
 
   _onDataLoaded () {
