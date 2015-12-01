@@ -23,7 +23,8 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function LineChart () {}
+function LineChart() {
+}
 
 _.extend(LineChart.prototype, {
   defaults: DEFAULTS,
@@ -196,6 +197,27 @@ _.extend(LineChart.prototype, {
         'x': 4,
         'dy': 10
       })
+
+    if (options.chartInDashboard) {
+      if (options.xLabel) {
+        svg.append("text")
+        .attr("class", "y label")
+        .attr("text-anchor", "end")
+        .attr("y", 6)
+        .attr("dy", ".75em")
+        .attr("transform", "rotate(-90)")
+        .text(options.xLabel)
+      }
+
+      if (options.yLabel) {
+        svg.append("text")
+        .attr("class", "x label")
+        .attr("text-anchor", "end")
+        .attr("x", width)
+        .attr("y", height - 6)
+        .text(options.yLabel)
+      }
+    }
 
     d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
 

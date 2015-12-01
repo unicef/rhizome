@@ -225,7 +225,9 @@ export default {
         values: _.property('values'),
         x: _.property('campaign.start_date'),
         xFormat: (d) => { return moment(d).format('MMM YYYY') },
-        y: _.property('value')
+        y: _.property('value'),
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       var chartData = _groupBySeries(data, groups, groupBy)
       return { options: chartOptions, data: chartData }
@@ -329,7 +331,9 @@ export default {
           var start = d.campaign.start_date
           return moment(start).startOf('month').toDate().getTime()
         },
-        xFormat: function (d) { return moment(d).format('MMM YYYY') }
+        xFormat: function (d) { return moment(d).format('MMM YYYY') },
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       return { options: chartOptions, data: chartData }
     })
@@ -416,7 +420,9 @@ export default {
       var chartOptions = {
         aspect: aspects[layout].barChart,
         offset: 'zero',
-        yFormat: String
+        yFormat: String,
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
       return { options: chartOptions, data: chartData }
