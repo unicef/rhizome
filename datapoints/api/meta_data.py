@@ -15,7 +15,7 @@ from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPoi
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationResponsibility, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag
+    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag, IndicatorToOffice
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -170,6 +170,7 @@ class IndicatorResource(BaseNonModelResource):
 
         tag_cols = ['indicator_id','indicator_tag_id']
         bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+        ind_to_office_cols = ['indicator_id','office_id']
 
         if indicator_id_list:
             ## get tags ##
@@ -180,7 +181,12 @@ class IndicatorResource(BaseNonModelResource):
                 .filter(indicator_id__in=indicator_id_list)\
                 .values_list(*bound_cols)),columns = bound_cols)
 
+            office_df = DataFrame(list(IndicatorToOffice.objects\
+                .filter(indicator_id__in=indicator_id_list)\
+                .values_list(*ind_to_office_cols)),columns = ind_to_office_cols)
+
             qs = Indicator.objects.filter(id__in=indicator_id_list)
+
         else:
             tag_df = DataFrame(list(IndicatorToTag.objects.all()\
                 .values_list(*tag_cols)),columns = tag_cols)
@@ -188,16 +194,24 @@ class IndicatorResource(BaseNonModelResource):
             bound_df = DataFrame(list(IndicatorBound.objects.all()\
                 .values_list(*bound_cols)),columns = bound_cols)
 
+            office_df = DataFrame(list(IndicatorToOffice.objects\
+                .all().values_list(*ind_to_office_cols))\
+                ,columns = ind_to_office_cols)
+
+            qs = Indicator.objects.all()
+
         bound_df = bound_df.where((notnull(bound_df)), None)
         tag_df = tag_df.where((notnull(tag_df)), None)
+        # office_df = office_df.where((notnull(office_df)), None)
 
-        return qs, bound_df, tag_df
+        return qs, bound_df, tag_df, office_df
 
     def get_object_list(self, request):
         indicator_batch = []
 
         indicator_id_list = self.get_indicator_ids_from_request(request)
-        qs, bound_df, tag_df = self.build_indicator_queryset(indicator_id_list)
+        qs, bound_df, tag_df, office_df = \
+            self.build_indicator_queryset(indicator_id_list)
 
         for row in qs:
 
@@ -211,10 +225,13 @@ class IndicatorResource(BaseNonModelResource):
                 row.id]
             filtered_bound_df = bound_df[bound_df['indicator_id'] == \
                 row.id]
+            filtered_office_df = office_df[office_df['indicator_id'] == \
+                row.id]
 
             ir.bound_json= [row.to_dict() for ix, row in\
                 filtered_bound_df.iterrows()]
             ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
+            ir.office_id = list(filtered_office_df['office_id'].unique())
 
             indicator_batch.append(ir)
 
@@ -222,20 +239,8 @@ class IndicatorResource(BaseNonModelResource):
 
     def get_indicator_id_by_office(self, office_id):
 
-        indicator_ids = []
-
-        i_raw = Indicator.objects.raw('''
-            SELECT DISTINCT dwc.indicator_id as id
-            FROM datapoint_with_computed dwc
-            WHERE EXISTS (
-                SELECT 1 FROM location l
-                WHERE dwc.location_id = l.id
-                AND l.office_id = %s
-            )
-        ''', [office_id])
-
-        for ind in i_raw:
-            indicator_ids.append(ind.id)
+        indicator_ids = IndicatorToOffice.objects.filter(office_id=office_id)\
+            .values_list('indicator_id',flat=True)
 
         return indicator_ids
 
