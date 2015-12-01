@@ -20,7 +20,8 @@ let ChartWizardStore = Reflux.createStore({
     countrySelected: [],
     location: [],
     locationList: [],
-    locationSelected: [],
+    locationFilteredList: [],
+    locationAggregated: [],
     campaignFilteredList: [],
     timeRangeFilteredList: [],
     chartTypeFilteredList: [],
@@ -63,7 +64,7 @@ let ChartWizardStore = Reflux.createStore({
   filterLocationByCountry (locations, countries) {
     let countryId = countries.map(c => c.id)
     return locations.filter(location => {
-      return countryId.indexOf(location.value) >= 0
+      return countryId.indexOf(location.value) >= 0 || countryId.indexOf(location.office_id) >= 0
     })
   },
 
@@ -98,7 +99,7 @@ let ChartWizardStore = Reflux.createStore({
 
   applyChartDef (chartDef) {
     this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
@@ -206,8 +207,12 @@ let ChartWizardStore = Reflux.createStore({
       indicatorList: [],
       indicatorSelected: [],
       indicatorFilteredList: [],
+      countries: [],
+      countrySelected: [],
+      location: [],
       locationList: [],
-      locationSelected: null,
+      locationFilteredList: [],
+      locationAggregated: [],
       campaignFilteredList: [],
       timeRangeFilteredList: [],
       chartTypeFilteredList: [],
@@ -235,19 +240,21 @@ let ChartWizardStore = Reflux.createStore({
       ? _.remove(this.data.countrySelected, this.data.countries[index])
       : this.data.countrySelected.push(this.data.countries[index])
     this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.location = this.filterLocationByCountry(this.data.location, this.data.countrySelected)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
-    this.trigger(this.data)
+    this.previewChart()
   },
 
   onAddLocation (index) {
     this.data.location.push(this.locationIndex[index])
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
   onRemoveLocation (index) {
     _.remove(this.data.location, { id: index })
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
@@ -287,7 +294,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef.y = this.data.indicatorSelected[1] ? this.data.indicatorSelected[1].id : 0
     this.data.chartDef.z = this.data.indicatorSelected[2] ? this.data.indicatorSelected[2].id : 0
 
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
     this.previewChart()
   },
@@ -300,7 +307,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeLocationLevelRadio (value) {
     this.data.locationLevelValue = value
-    this.data.locationSelected = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
