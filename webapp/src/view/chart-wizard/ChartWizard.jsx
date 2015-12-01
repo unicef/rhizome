@@ -190,7 +190,7 @@ let ChartWizard = React.createClass({
         <label>Title</label>
         <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
         <PalettePicker value={this.state.data.chartDef.palette} onChange={ChartWizardActions.changePalette}/>
-
+        <XYAxisLabelSetter xLabel={this.state.data.chartDef.xLabel} yLabel={this.state.data.chartDef.yLabel} onChange={ChartWizardActions.setXYAxisLabel} />
         <span className='chart-wizard__save' onClick={this.saveChart}>
           {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
         </span>
