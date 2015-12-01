@@ -20,7 +20,7 @@ var DEFAULTS = {
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 20,
+  maxBubbleRadius: 25,
   bubbleLegendRatio: [0.1, 0.5, 1]
 }
 

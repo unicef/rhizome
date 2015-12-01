@@ -30,7 +30,7 @@ function preparePolioCasesData (original) {
   }
 
   // Set the title based on whether there is data
-  var title = <h4 className='chart-title'>
+  var title = <h4>
         <span style={{
           'color': '#F18448'
         }}>{totalCases} Polio cases this year</span>
@@ -40,7 +40,7 @@ function preparePolioCasesData (original) {
 
   var plural = newCases !== 1 ? 's' : ''
   var newCaseLabel = (
-    <h4 className='chart-title'>
+    <h4>
         <span style={{
           'color': '#F15046'
         }}>{newCases} new case{plural}</span>

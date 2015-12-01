@@ -53,6 +53,9 @@ var HomepageCharts = React.createClass({
       campaign: this.props.campaign
     })
 
+    var width = 390
+    var height = 0.87 * width
+
     var buildMapChart = function (loading) {
       return <div>
           <h4 className='chart-title'>Missed children, {missedChildrenData.location}</h4>
@@ -63,8 +66,8 @@ var HomepageCharts = React.createClass({
                    domain: _.constant([0, 0.1]),
                    value: _.property('properties[475]'),
                    xFormat: d3.format('%'),
-                   width: 390,
-                   height: 390,
+                   width: width,
+                   height: height,
                    homepage: true
                  }}/>
           <h4 className='chart__title--date'>Latest date: {missedChildrenData.date}</h4>
@@ -85,8 +88,8 @@ var HomepageCharts = React.createClass({
               loading={loading}
               options={{
                 aspect: 1,
-                width: 390,
-                height: 390
+                width: width,
+                height: height
               }}/>
           </div>
           <h4 className='chart__title--date'>Latest date: {polioCasesData.date}</h4>
@@ -111,8 +114,9 @@ var HomepageCharts = React.createClass({
                    xFormat: d => moment(d).format('MMM YYYY'),
                    yFormat: d3.format(',.1%'),
                    range: missedChildrenData.range,
-                   width: 390,
-                   height: 390
+                   width: width,
+                   height: height,
+                   total: true
                  }}/>
           <h4 className='chart__title--date'>Latest date: {missedChildrenData.date}</h4>
                </div>)
@@ -138,8 +142,8 @@ var HomepageCharts = React.createClass({
                      range: underImmunizedData.range,
                      rejectId: 433,
                      processData: true,
-                     width: 390,
-                     height: 390
+                     width: width,
+                     height: height
                    }}/>
             <h4 className='chart__title--date'>Latest date: {underImmunizedData.date}</h4>
           </div>)

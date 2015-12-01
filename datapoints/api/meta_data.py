@@ -62,6 +62,7 @@ class IndicatorResult(object):
     data_format = unicode()
     bound_json = list()
     tag_json = list()
+    office_id = list()
 
 
 class IndicatorResource(BaseNonModelResource):
@@ -73,6 +74,7 @@ class IndicatorResource(BaseNonModelResource):
     data_format = fields.CharField(attribute='data_format',null=True)
     bound_json = fields.ListField(attribute='bound_json',null=True)
     tag_json = fields.ListField(attribute='tag_json',null=True)
+    office_id = fields.ListField(attribute='office_id',null=True)
 
     class Meta(BaseNonModelResource.Meta):
         object_class = IndicatorResult
@@ -185,7 +187,13 @@ class IndicatorResource(BaseNonModelResource):
             bound_df = DataFrame(list(IndicatorBound.objects.all()\
                 .values_list(*bound_cols)),columns = bound_cols)
 
-            qs = Indicator.objects.all()
+            qs = Indicator.objects.raw('''
+            select *,(select array(SELECT DISTINCT l.office_id FROM indicator as i
+            LEFT JOIN datapoint_with_computed dwc ON i.id = dwc.indicator_id
+            LEFT JOIN location l ON dwc.location_id = l.id
+            where i.id = indicator.id)) as office_id
+            from indicator
+            ''')
 
         bound_df = bound_df.where((notnull(bound_df)), None)
         tag_df = tag_df.where((notnull(tag_df)), None)
@@ -202,8 +210,8 @@ class IndicatorResource(BaseNonModelResource):
 
             ## create the ResultObject and assign the basic variables ##
             ir = IndicatorResult()
-            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format\
-                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format\
+            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format, ir.office_id\
+                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format, row.office_id\
 
             ## look up the bounds / tags from the data two DFs created above ##
             filtered_tag_df = tag_df[tag_df['indicator_id'] == \

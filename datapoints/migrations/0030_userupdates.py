@@ -8,7 +8,7 @@ from django.conf import settings
 
 def upsert_user_roles(apps, schema_editor):
 
-    new_groups = ['data_entry','ufadmin','dashboard_builder','source_data']
+    new_groups = ['data_entry','manage_system','dashboard_builder','source_data']
 
     Group.objects.all().delete()
     for g in new_groups:

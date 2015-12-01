@@ -25,7 +25,7 @@ var DEFAULTS = {
   xFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
   name: _.property('properties.name'),
   maxBubbleValue: 5000,
-  maxBubbleRadius: 20,
+  maxBubbleRadius: 25,
   bubbleLegendRatio: [0.1, 0.5, 1],
   indicatorName: 'Has data'
 }
@@ -271,19 +271,18 @@ _.extend(ChoroplethMap.prototype, {
         svg.select('.legend').selectAll('*').remove()
       } else {
         svg.select('.legend')
-          .call(legend().scale(
+          .call(legend(options).scale(
             d3.scale.ordinal().domain(ticks).range(colorScale.range())
           )
-        ).attr('transform', function () { return 'translate(' + 20 + ', ' + 0 + ')' })
+        ).attr('transform', 'translate(2, 0)')
 
         let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-        g.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
+        g.attr('transform', 'translate(0, ' + dataYPosition * 12 + ')')
       }
     }
 
-    var legendGap = 40
-    var mapLegendLength = 2
-    var fontLength = 73
+    var legendGap = 0.02 * w
+    var fontLength = 100
     var stripeLegendStartPosition
 
     if (options.stripeValue) {
@@ -316,7 +315,7 @@ _.extend(ChoroplethMap.prototype, {
         })
         .style('opacity', d => {
           var v = options.stripeValue(d)
-          return _.isFinite(v) ? 1 : 0
+          return _.isFinite(v) && v > 0 ? 1 : 0
         })
         .on('click', d => { options.onClick(_.get(d, 'properties.location_id')) })
         .on('mousemove', _.partial(this._onMouseMove, _, options, data))
@@ -329,14 +328,12 @@ _.extend(ChoroplethMap.prototype, {
 
       if (options.chartInDashboard) {
         var stripeLegendLength = 150
-        stripeLegendStartPosition = mapLegendLength * fontLength + legendGap
+        stripeLegendStartPosition = fontLength + legendGap
         var stripeLegendGap = 14
         var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
         var stripeLegendText = ['No data', options.indicatorName]
         var stripeLegend = svg.select('.stripes').select('.legend')
-          .attr('transform', function () {
-            return 'translate(' + stripeLegendStartPosition + ', ' + 0 + ')'
-          })
+          .attr('transform', 'translate(' + stripeLegendStartPosition + ', ' + 0 + ')')
           .selectAll('.series').data(stripeLegendText)
           .enter().append('g')
           .attr('class', 'series')
@@ -369,6 +366,10 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     if (options.bubbleValue) {
+      if (options.maxBubbleValue === 0) {
+        options.maxBubbleValue = 5000
+      }
+
       var radius = d3.scale.sqrt()
         .domain([0, options.maxBubbleValue])
         .range([0, options.maxBubbleRadius])
@@ -403,17 +404,19 @@ _.extend(ChoroplethMap.prototype, {
           return Math.ceil(d * options.maxBubbleValue, -1)
         })
 
+        var bubbleLegendLineLength = w > 400 ? 60 : 0.15 * w
+
         var bubbleLegendStartPosition = options.stripeValue
-          ? stripeLegendStartPosition + stripeLegendLength + legendGap + 2.5 * options.maxBubbleRadius
-          : mapLegendLength * fontLength + legendGap + 2.5 * options.maxBubbleRadius
+          ? stripeLegendStartPosition + stripeLegendLength + legendGap + bubbleLegendLineLength
+          : fontLength + legendGap + bubbleLegendLineLength
 
         var bubbleLegend = svg.select('.bubbles').select('.legend')
-          .attr('transform', function () {
-            return 'translate(' + bubbleLegendStartPosition + ', ' + (options.maxBubbleRadius + 10) + ')'
-          })
+          .attr('transform', 'translate(' + bubbleLegendStartPosition + ', ' + (options.maxBubbleRadius + 10) + ')')
           .selectAll('.series').data(bubbleLegendText)
           .enter().append('g')
           .attr('class', 'series')
+
+        console.log(options.maxBubbleRadius)
 
         bubbleLegend.append('circle')
           .attr('r', d => {
@@ -430,7 +433,7 @@ _.extend(ChoroplethMap.prototype, {
 
         bubbleLegend.append('line')
           .attr({
-            x1: -(2.5 * options.maxBubbleRadius),
+            x1: -bubbleLegendLineLength,
             y1: d => {
               return (options.maxBubbleRadius - 2 * radius(d))
             },
@@ -442,7 +445,7 @@ _.extend(ChoroplethMap.prototype, {
           .style('stroke', '#AAAAAA')
 
         bubbleLegend.append('text')
-          .attr('dx', -(2.5 * options.maxBubbleRadius))
+          .attr('dx', -bubbleLegendLineLength)
           .attr('dy', d => {
             return (options.maxBubbleRadius - 2 * radius(d))
           })

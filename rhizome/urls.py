@@ -11,7 +11,7 @@ from datapoints.api.geo import GeoResource
 from datapoints.api.meta_data import *
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
-from datapoints import views
+from datapoints.views import manage_system
 
 from tastypie.api import Api
 
@@ -68,18 +68,17 @@ urlpatterns = patterns('',
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
     url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
 
+
     ## ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required,admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
 
-    ## UFADMIN ##
-    url(r'^ufadmin/', login_required(TemplateView.as_view(template_name='ufadmin.html')), name='ufadmin'),
+    ## MANAGE SYSTEM ##
+    url(r'^manage_system/', manage_system, name='manage_system'),
 
-    url(r'^about/', TemplateView.as_view(template_name="about.html"), name='about'),
-
-    ## DOCUMENT_REVIEW ##
-    url(r'^doc_review/', TemplateView.as_view(template_name="doc_review.html"), name='doc_review'),
+    ## ABOUT PAGE ##
+    url(r'^about$', TemplateView.as_view(template_name="about.html"), name='about'),
 
     ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
