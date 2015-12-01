@@ -188,7 +188,7 @@ _.extend(MapLegend.prototype, {
         .attr('class', 'series')
 
       let cx = 2.5 * options.maxBubbleRadius
-      let cy = d => { return 3 * options.maxBubbleRadius - radius(d) }
+      let cy = d => { return 2.5 * options.maxBubbleRadius - radius(d) }
       var lineY = d => { return (cy(d) - radius(d)) }
 
       bubbleLegend.append('circle')
