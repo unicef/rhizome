@@ -314,7 +314,8 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     axisLabel
       .attr({
         'transform': 'translate(' + x(d) + ', ' + (h + margin.bottom) + ')',
-        'dx': xScale.rangeBand() / 2
+        'dx': xScale.rangeBand() / 2,
+        'dy': '0.45em'
       })
       .text(options.xFormat)
   })

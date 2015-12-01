@@ -210,8 +210,11 @@ class IndicatorResource(BaseNonModelResource):
 
             ## create the ResultObject and assign the basic variables ##
             ir = IndicatorResult()
-            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format, ir.office_id\
-                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format, row.office_id\
+            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format \
+                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format \
+
+            if indicator_id_list is None:
+                ir.office_id = row.office_id
 
             ## look up the bounds / tags from the data two DFs created above ##
             filtered_tag_df = tag_df[tag_df['indicator_id'] == \
