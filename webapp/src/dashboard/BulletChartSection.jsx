@@ -128,6 +128,7 @@ export default React.createClass({
     var loading = this.props.loading
     var dataColorRange = ['#DB5344', '#79909F', '#2FB0D3']
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
+    var noDataColor = '#B9C3CB'
     let isBulletChart = true
 
     var charts = _(this.props.indicators)
@@ -157,7 +158,7 @@ export default React.createClass({
 
         var title = _.get(indicator, 'short_name')
         var threshold = d3.scale.threshold().domain(options.thresholds).range(dataColorRange)
-        var titleColor = threshold(options.value(chartData[0]))
+        var titleColor = options.value(chartData[0]) ? threshold(options.value(chartData[0])) : noDataColor
 
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
