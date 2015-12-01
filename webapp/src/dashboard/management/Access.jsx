@@ -18,10 +18,11 @@ var Access = React.createClass({
     var campaign = this.props.campaign
     var loading = this.props.loading
 
-    var reasons = _(data.inaccessibilityBreakdown)
-      .filter(d => {
+    var reasons = data.inaccessibilityBreakdown.length
+      ? _(data.inaccessibilityBreakdown).filter(d => {
         return d.campaign.id === campaign.id && _.isFinite(d.value) && d.value >= 0.01
       })
+      : data.inaccessibilityBreakdown
 
     var plans = _.filter(data.districtsWithAccessPlans,
         d => d.campaign.id === campaign.id && _.isFinite(d.value))

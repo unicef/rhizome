@@ -346,23 +346,31 @@ function wrap (text, width, x) {
   })
 }
 
-function roundedRect(xCoordinate, yCoordinate, width, height, radius, topLeft, topRight, bottomLeft, bottomRight) {
-    var path;
-    path  = "M" + (xCoordinate + radius) + "," + yCoordinate;
-    path += "h" + (width - 2*radius);
-    if (topRight) { path += "a" + radius + "," + radius + " 0 0 1 " + radius + "," + radius; }
-    else { path += "h" + radius; path += "v" + radius; }
-    path += "v" + (height - 2*radius);
-    if (bottomRight) { path += "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + radius; }
-    else { path += "v" + radius; path += "h" + -radius; }
-    path += "h" + (2*radius - width);
-    if (bottomLeft) { path += "a" + radius + "," + radius + " 0 0 1 " + -radius + "," + -radius; }
-    else { path += "h" + -radius; path += "v" + -radius; }
-    path += "v" + (2*radius - height);
-    if (topLeft) { path += "a" + radius + "," + radius + " 0 0 1 " + radius + "," + -radius; }
-    else { path += "v" + -radius; path += "h" + radius; }
-    path += "z";
-    return path;
+function roundedRect (xCoordinate, yCoordinate, width, height, radius, topLeft, topRight, bottomLeft, bottomRight) {
+  var path
+  path = 'M' + (xCoordinate + radius) + ',' + yCoordinate
+  path += 'h' + (width - 2 * radius)
+
+  path += topRight
+    ? 'a' + radius + ',' + radius + ' 0 0 1 ' + radius + ',' + radius
+    : 'h' + radius + 'v' + radius
+  path += 'v' + (height - 2 * radius)
+
+  path += bottomRight
+    ? 'a' + radius + ',' + radius + ' 0 0 1 ' + -radius + ',' + radius
+    : 'v' + radius + 'h' + -radius
+  path += 'h' + (2 * radius - width)
+
+  path += bottomLeft
+    ? 'a' + radius + ',' + radius + ' 0 0 1 ' + -radius + ',' + -radius
+    : 'h' + -radius + 'v' + -radius
+  path += 'v' + (2 * radius - height)
+
+  path += topLeft
+    ? 'a' + radius + ',' + radius + ' 0 0 1 ' + radius + ',' + -radius
+    : 'v' + -radius + 'h' + radius
+  path += 'z'
+  return path
 }
 
 function ColumnChart () {}
