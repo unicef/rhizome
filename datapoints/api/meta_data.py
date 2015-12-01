@@ -21,6 +21,7 @@ from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.agg_tasks import AggRefresh
+from datapoints.cache_meta import cache_all_meta
 from tastypie.exceptions import ImmediateHttpResponse
 from django.http import HttpResponse
 
@@ -187,14 +188,6 @@ class IndicatorResource(BaseNonModelResource):
             bound_df = DataFrame(list(IndicatorBound.objects.all()\
                 .values_list(*bound_cols)),columns = bound_cols)
 
-            qs = Indicator.objects.raw('''
-            select *,(select array(SELECT DISTINCT l.office_id FROM indicator as i
-            LEFT JOIN datapoint_with_computed dwc ON i.id = dwc.indicator_id
-            LEFT JOIN location l ON dwc.location_id = l.id
-            where i.id = indicator.id)) as office_id
-            from indicator
-            ''')
-
         bound_df = bound_df.where((notnull(bound_df)), None)
         tag_df = tag_df.where((notnull(tag_df)), None)
 
@@ -212,9 +205,6 @@ class IndicatorResource(BaseNonModelResource):
             ir = IndicatorResult()
             ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format \
                 = row.id, row.name, row.description, row.short_name,row.slug, row.data_format \
-
-            if indicator_id_list is None:
-                ir.office_id = row.office_id
 
             ## look up the bounds / tags from the data two DFs created above ##
             filtered_tag_df = tag_df[tag_df['indicator_id'] == \
@@ -890,6 +880,15 @@ class RefreshMasterResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
 
+
+class CacheMetaResource(BaseModelResource):
+    def get_object_list(self, request):
+        cache_all_meta()
+
+        return Office.objects.all().values()
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'cache_meta'
 
 class QueueProcessResource(BaseModelResource):
     def get_object_list(self, request):

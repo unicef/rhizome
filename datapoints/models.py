@@ -158,6 +158,20 @@ class Office(models.Model):
         )
 
 
+class IndicatorToOffice(models.Model):
+    '''
+    Way to filter indicators in the API without querying the entire DB.  used
+    to filter indicators in the chart wizard API so user does not see Indicators
+    for which there is no data.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    office = models.ForeignKey(Office)
+
+    class Meta:
+        db_table = 'indicator_to_office'
+
+
 class LocationType(models.Model):
     '''
     Country, Province, District, Sub-District, Settlement.

@@ -31,16 +31,11 @@ class MasterRefreshJob(CronJobBase):
         mr.main()
 
 class MetaRefreshJob(CronJobBase):
-    RUN_EVERY_MINS = 1400 # one day
+    RUN_EVERY_MINS = 1 ## 1400 # one day
 
     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
     code = 'rhizome.meta_refresh_job'    # a unique code
 
     def do(self):
 
-        campaign_cache_data = cache_meta.calculate_campaign_percentage_complete()
-
-        location_tree_cache_data = cache_meta.LocationTreeCache()
-        location_tree_cache_data.main()
-
-        source_object_cache = cache_meta.update_source_object_names()
+        cache_all_meta()
