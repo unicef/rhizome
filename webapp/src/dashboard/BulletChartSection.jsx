@@ -149,17 +149,21 @@ export default React.createClass({
           valueText: _.partial(_valueText, _, targets)
         }
 
-        var title = _.get(indicator, 'short_name')
-
         var chartData = _(data)
           .filter(d => d.indicator.id === indicator.id)
           .groupBy(options.y) // There could coneivably be multiple bars in the chart
           .values()
           .value()
 
+        var title = _.get(indicator, 'short_name')
+        var threshold = d3.scale.threshold().domain(options.thresholds).range(dataColorRange)
+        var titleColor = threshold(options.value(chartData[0]))
+
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
-            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp}>{title}</h6>
+            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp} style={{color: titleColor}}>
+              {title}
+            </h6>
             <Chart type='BulletChart' loading={loading} data={chartData} options={options} isBulletChart={isBulletChart}/>
           </li>
         )
