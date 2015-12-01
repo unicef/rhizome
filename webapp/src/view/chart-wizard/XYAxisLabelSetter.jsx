@@ -33,6 +33,7 @@ export default React.createClass({
     this.setState({xLabel: xAxisLabel, yLabel: yAxisLabel})
     this.props.onChange(xAxisLabel, yAxisLabel)
   },
+
   render: function () {
     return (
       <div>
