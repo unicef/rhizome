@@ -34,12 +34,14 @@ export default {
       .map(ancestryString)
       .value()
 
-    data.location = chartDef.locationValue && locationIndex[chartDef.locationValue]
-      ? locationIndex[chartDef.locationValue]
-      : locationIndex[data.locationList[0].value]
+    data.location = chartDef.locationValue
+      ? Array.isArray(chartDef.locationValue)
+        ? chartDef.locationValue.map(location => locationIndex[location])
+        : [locationIndex[chartDef.locationValue]]
+      : []
 
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
-    data.locationSelected = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
+    data.locationAggregated = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
 
     let indicatorIndex = _.indexBy(indicators.flat, 'id')
     data.indicatorSelected = chartDef.indicators.map(id => {
@@ -73,7 +75,7 @@ export default {
   },
 
   fetchChart (chartDef, data, indicatorIndex, layout) {
-    let locationIndex = _.indexBy(data.locationSelected, 'id')
+    let locationIndex = _.indexBy(data.locationAggregated, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
     let start = moment(data.campaign.start_date)
@@ -82,7 +84,7 @@ export default {
 
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
-      location__in: _.map(data.locationSelected, _.property('id')),
+      location__in: _.map(data.locationAggregated, _.property('id')),
       campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
       campaign_end: upper.format('YYYY-MM-DD')
     }
@@ -90,7 +92,7 @@ export default {
     return processChartData.init(api.datapoints(query, null, { 'cache-control': 'no-cache' }),
       chartDef.type,
       data.indicatorSelected,
-      data.locationSelected,
+      data.locationAggregated,
       lower,
       upper,
       groups,

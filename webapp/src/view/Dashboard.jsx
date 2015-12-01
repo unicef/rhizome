@@ -22,7 +22,6 @@ import GeoStore from 'stores/GeoStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import NavigationStore from 'stores/NavigationStore'
 
-import AppActions from 'actions/AppActions'
 import DashboardActions from 'actions/DashboardActions'
 import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
@@ -65,7 +64,6 @@ var Dashboard = React.createClass({
     page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/:dashboard', this._showDefault)
-    AppActions.init()
   },
 
   componentWillUpdate (nextProps, nextState) {

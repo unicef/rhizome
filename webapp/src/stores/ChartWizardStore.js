@@ -3,6 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
+
 import api from 'data/api'
 import ChartDataInit from 'data/chartDataInit'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
@@ -15,8 +16,12 @@ let ChartWizardStore = Reflux.createStore({
     indicatorList: [],
     indicatorSelected: [],
     indicatorFilteredList: [],
+    countries: [],
+    countrySelected: [],
+    location: [],
     locationList: [],
-    locationSelected: null,
+    locationFilteredList: [],
+    locationAggregated: [],
     campaignFilteredList: [],
     timeRangeFilteredList: [],
     chartTypeFilteredList: [],
@@ -35,9 +40,31 @@ let ChartWizardStore = Reflux.createStore({
   },
   LAYOUT_PREVIEW: 0,
 
-  filterCampaignByLocation (campaigns, location) {
+  filterIndicatorByCountry (indicators, countries) {
+    let countryId = countries.map(c => c.id)
+    if (countryId.length) {
+      return indicators.filter(indicator => {
+        let officeId = indicator.office_id.filter(id => !!id)
+        return countryId.map(id => {
+          return officeId.indexOf(id) >= 0
+        }).reduce((a, b) => a && b, true)
+      })
+    } else {
+      return []
+    }
+  },
+
+  filterLocationByCountry (locations, countries) {
+    let countryId = countries.map(c => c.id)
+    return locations.filter(location => {
+      return countryId.indexOf(location.value) >= 0 || countryId.indexOf(location.office_id) >= 0
+    })
+  },
+
+  filterCampaignByCountry (campaigns, countries) {
+    let countryId = countries.map(c => c.id)
     return campaigns.filter(campaign => {
-      return campaign.office_id === location.office_id
+      return countryId.indexOf(campaign.office_id) >= 0
     })
   },
 
@@ -65,7 +92,7 @@ let ChartWizardStore = Reflux.createStore({
 
   applyChartDef (chartDef) {
     this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
@@ -90,6 +117,17 @@ let ChartWizardStore = Reflux.createStore({
     let offices = await api.office()
 
     this.locationIndex = _.indexBy(locations.objects, 'id')
+    this.data.countries = offices.objects.map(office => {
+      return this.locationIndex[office.id]
+    })
+    this.data.countries.forEach((country, index) => {
+      country.value = country.title = country.name
+      country.index = index
+    })
+    let countryIndex = _.indexBy(this.data.countries, _.property('id'))
+    this.data.countrySelected = this.data.chartDef.countries.map(country => {
+      return countryIndex[country]
+    })
     this.data.locationList = _(locations.objects)
       .map(location => {
         return {
@@ -104,18 +142,20 @@ let ChartWizardStore = Reflux.createStore({
       .map(ancestryString)
       .value()
 
-    this.data.location = this.data.chartDef.locationValue && this.locationIndex[this.data.chartDef.locationValue]
-      ? this.locationIndex[this.data.chartDef.locationValue]
-      : this.locationIndex[this.data.locationList[0].value]
+    this.data.location = this.data.chartDef.locationValue
+      ? Array.isArray(this.data.chartDef.locationValue)
+        ? this.data.chartDef.locationValue.map(location => this.locationIndex[location])
+        : [this.locationIndex[this.data.chartDef.locationValue]]
+      : []
 
-    let officeId = this.data.location.office_id
-
-    this.data.rawIndicators = await api.indicators({ office_id: officeId })
+    this.data.rawIndicators = await api.indicators()
     this.data.rawTags = await api.get_indicator_tag()
+    this.indicators = this.data.rawIndicators.objects
 
-    let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
+    this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
+    let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
 
-    this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
+    this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
@@ -136,7 +176,8 @@ let ChartWizardStore = Reflux.createStore({
       .value()
 
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
-    this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
+    this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.chartTypeFilteredList = builderDefinitions.charts
 
@@ -161,8 +202,12 @@ let ChartWizardStore = Reflux.createStore({
       indicatorList: [],
       indicatorSelected: [],
       indicatorFilteredList: [],
+      countries: [],
+      countrySelected: [],
+      location: [],
       locationList: [],
-      locationSelected: null,
+      locationFilteredList: [],
+      locationAggregated: [],
       campaignFilteredList: [],
       timeRangeFilteredList: [],
       chartTypeFilteredList: [],
@@ -185,30 +230,33 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef.title = value
   },
 
+  onChangeCountry (index) {
+    _.includes(this.data.countrySelected, this.data.countries[index])
+      ? _.remove(this.data.countrySelected, this.data.countries[index])
+      : this.data.countrySelected.push(this.data.countries[index])
+
+    this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
+    let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+    this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
+
+    this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.location = this.filterLocationByCountry(this.data.location, this.data.countrySelected)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
+    this.previewChart()
+  },
+
   onAddLocation (index) {
-    this.data.location = this.locationIndex[index]
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.location.push(this.locationIndex[index])
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.previewChart()
+  },
 
-    Promise.all([api.indicators({ office_id: this.data.location.office_id }), api.get_indicator_tag()]).then(_.spread((indicators, tags) => {
-      this.data.rawIndicators = indicators
-      this.data.rawTags = tags
-
-      let indicatorTree = api.buildIndicatorsTree(this.data.rawIndicators.objects, this.data.rawTags.objects, true, true)
-
-      this.indicatorIndex = _.indexBy(this.data.rawIndicators.objects, 'id')
-      this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-
-      this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
-        return this.indicatorIndex[id]
-      })
-
-      this.data.campaignFilteredList = this.filterCampaignByLocation(this.campaignList, this.data.location)
-      let newCampaign = this.data.campaignFilteredList.filter(campaign => {
-        return moment(campaign.start_date).format() === moment(this.data.campaign.start_date).format()
-      })
-      this.data.campaign = newCampaign.length > 0 ? newCampaign[0] : this.data.campaignFilteredList[0]
-      this.previewChart()
-    }))
+  onRemoveLocation (index) {
+    _.remove(this.data.location, { id: index })
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.previewChart()
   },
 
   onAddFirstIndicator (index) {
@@ -247,7 +295,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chartDef.y = this.data.indicatorSelected[1] ? this.data.indicatorSelected[1].id : 0
     this.data.chartDef.z = this.data.indicatorSelected[2] ? this.data.indicatorSelected[2].id : 0
 
-    this.data.locationSelected = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
     this.previewChart()
   },
@@ -260,7 +308,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeLocationLevelRadio (value) {
     this.data.locationLevelValue = value
-    this.data.locationSelected = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
+    this.data.locationAggregated = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
     this.previewChart()
   },
 
@@ -309,7 +357,8 @@ let ChartWizardStore = Reflux.createStore({
           }),
           groupBy: builderDefinitions.groups[this.data.groupByValue].value,
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
-          locationValue: this.data.location.id,
+          countries: this.data.countrySelected.map(country => country.id),
+          locationValue: this.data.location.map(location => location.id),
           campaignValue: this.data.campaign.id,
           timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
@@ -322,7 +371,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   previewChart () {
-    if (!this.data.indicatorSelected.length) {
+    if (!(this.data.indicatorSelected.length && this.data.campaign && this.data.location.length)) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
       this.trigger(this.data)

@@ -7,6 +7,7 @@ import ChartWizardStep from './ChartWizardStep.jsx'
 import ChartWizardStepList from './ChartWizardStepList.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
+import List from 'component/list/List.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
@@ -14,6 +15,7 @@ import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import CheckBoxGroup from 'component/CheckBoxGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -23,6 +25,7 @@ const defaultChartDef = {
   title: '',
   type: 'LineChart',
   indicators: [],
+  countries: [],
   groupBy: 'indicator',
   timeRange: null,
   x: 0,
@@ -69,7 +72,7 @@ let ChartWizard = React.createClass({
 
   getInitialState () {
     return {
-      refer: 'location'
+      refer: 'country'
     }
   },
 
@@ -101,18 +104,19 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationList, this.state.locationSearch), ChartWizardActions.addLocation)
+    if (!this.state.data.chartDef.type) {
+      return null
+    }
 
-    let locationStep = (
+    let countryStep = (
       <div>
         <p className='chart-wizard__para'>Which country's data will the new chart visualise?</p>
-        <DropdownMenu
-          icon='fa-globe'
-          text={this.state.data.location && this.state.data.location.name || 'Select Location'}
-          searchable
-          onSearch={this.setLocationSearch}>
-          {locations}
-        </DropdownMenu>
+        <div>
+          <CheckBoxGroup name='country' title='Select Country'
+            value={this.state.data.countrySelected.map(c => c.index)}
+            values={this.state.data.countries}
+            onChange={ChartWizardActions.changeCountry} />
+        </div>
         <span className='chart-wizard__next' onClick={this.toggleStep('first-indicator')}>Next</span>
       </div>
     )
@@ -127,6 +131,21 @@ let ChartWizard = React.createClass({
           icon='fa-plus'
           indicators= {this.state.data.indicatorList}
           sendValue={ChartWizardActions.addFirstIndicator} />
+        <span className='chart-wizard__next' onClick={this.toggleStep('location')}>Next</span>
+      </div>
+    )
+
+    let locations = MenuItem.fromArray(filterMenu(this.state.data.locationFilteredList, this.state.locationSearch), ChartWizardActions.addLocation)
+    let locationStep = (
+      <div>
+        <DropdownMenu
+          icon='fa-globe'
+          text='Select Location'
+          searchable
+          onSearch={this.setLocationSearch}>
+          {locations}
+        </DropdownMenu>
+        <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <span className='chart-wizard__next' onClick={this.toggleStep('chart-type')}>Next</span>
       </div>
     )
@@ -140,18 +159,18 @@ let ChartWizard = React.createClass({
       </div>
     )
 
-    let campaignListAsDate = this.state.data.campaignFilteredList.map(campaign => {
+    let campaignListAsDate = _(this.state.data.campaignFilteredList).map(campaign => {
       return _.assign({}, campaign, {
         slug: moment(campaign.start_date).format('MMMM YYYY')
       })
-    })
+    }).uniq(_.property('slug')).value()
 
     let timeRangeStep = (
       <div>
         <p className='chart-wizard__para'>Which time period would you like to display the data for?</p>
         <h4>Ending Time: </h4>
         <CampaignDropdownMenu
-          text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Campaign'}
+          text={this.state.data.campaign && moment(this.state.data.campaign.start_date).format('MMMM YYYY') || 'Select Ending Time'}
           campaigns={campaignListAsDate}
           sendValue={ChartWizardActions.addCampaign} />
 
@@ -161,10 +180,6 @@ let ChartWizard = React.createClass({
         <span className='chart-wizard__next' onClick={this.toggleStep('option')}>Next</span>
       </div>
     )
-
-    if (!this.state.data.chartDef.type) {
-      return null
-    }
 
     let option = React.createElement(options[this.state.data.chartDef.type], {
       indicatorList: this.state.data.indicatorList,
@@ -200,26 +215,38 @@ let ChartWizard = React.createClass({
         options={this.state.data.chartOptions}/>
     )
 
+    let countryName = this.state.data.countrySelected.map(country => country.name).join(', ')
+    let locationName = this.state.data.location.map(location => location.name).join(', ')
+
     return (
       <div className='chart-wizard'>
         <ChartWizardStepList onToggle={this.toggleStep} active={this.state.refer}>
-          <ChartWizardStep title={`1. Select Location - ${this.state.data.location && this.state.data.location.name}`}
+          <ChartWizardStep
+            title={`1. Select Country${countryName.length > 0 ? ' - ' + countryName : ''}`}
+            refer='country'>
+            {countryStep}
+          </ChartWizardStep>
+          <ChartWizardStep
+            title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`}
+            refer='first-indicator'>
+            {firstIndicatorStep}
+          </ChartWizardStep>
+          <ChartWizardStep title={`3. Select Location${locationName.length > 0 ? ' - ' + locationName : ''}`}
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title={`2. Select First Indicator${this.state.data.indicatorSelected[0] ? ' - ' + this.state.data.indicatorSelected[0].name : ''}`} refer='first-indicator'>
-            {firstIndicatorStep}
-          </ChartWizardStep>
-          <ChartWizardStep title='3. Select Chart Type' refer='chart-type'>
+          <ChartWizardStep title='4. Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='4. Select Time Range' refer='time-range'>
+          <ChartWizardStep
+            title={`5. Select Time Range${this.state.data.campaign ? ' - ' + moment(this.state.data.campaign.start_date).format('MMMM YYYY') : ''}`}
+            refer='time-range'>
             {timeRangeStep}
           </ChartWizardStep>
-          <ChartWizardStep title='5. Customise Options' refer='option'>
+          <ChartWizardStep title='6. Customise Options' refer='option'>
             {optionStep}
           </ChartWizardStep>
-          <ChartWizardStep title='6. Preview' refer='preview'>
+          <ChartWizardStep title='7. Preview' refer='preview'>
             {previewStep}
           </ChartWizardStep>
         </ChartWizardStepList>
