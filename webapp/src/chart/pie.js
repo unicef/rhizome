@@ -87,8 +87,8 @@ _.extend(PieChart.prototype, {
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
-    var xPosition = options.notInCenter ? w/4 : w/2
-    var yPosition = options.notInCenter ? h/3 : h/2
+    var xPosition = options.notInCenter ? w / 4 : w / 2
+    var yPosition = options.notInCenter ? h / 3 : h / 2
 
     let g = svg.select('.data')
       .attr('transform', 'translate(' + xPosition + ', ' + yPosition + ')')

@@ -128,6 +128,7 @@ _.extend(BulletChart.prototype, {
     svg.select('.data')
       .call(qualitativeAxis()
       .height(h + margin.top + margin.bottom)
+      .width(w)
       .scale(xScale)
       .threshold(d3.scale.threshold().domain(options.thresholds).range(options.targets))
     )
