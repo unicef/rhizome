@@ -15,6 +15,7 @@ import TitleInput from 'component/TitleInput.jsx'
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import PalettePicker from './PalettePicker.jsx'
+import XYAxisLabelSetter from './XYAxisLabelSetter.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
