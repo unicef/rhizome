@@ -42,14 +42,16 @@ let ChartWizardStore = Reflux.createStore({
 
   filterIndicatorByCountry (indicators, countries) {
     let countryId = countries.map(c => c.id)
-    return countryId.length
-      ? indicators.filter(indicator => {
-          let officeId = indicator.office_id.filter(id => !!id)
-          return countryId.map(id => {
-            return officeId.indexOf(id) >= 0
-          })
-        }).reduce((a, b) => a && b, true)
-      : []
+    if (countryId.length) {
+      indicators.filter(indicator => {
+        let officeId = indicator.office_id.filter(id => !!id)
+        return countryId.map(id => {
+          return officeId.indexOf(id) >= 0
+        })
+      }).reduce((a, b) => a && b, true)
+    } else {
+      return []
+    }
   },
 
   filterLocationByCountry (locations, countries) {
