@@ -14,7 +14,6 @@ import DashboardStore from 'stores/DashboardStore'
 
 import IndicatorStore from 'stores/IndicatorStore'
 import GeoActions from 'actions/GeoActions'
-import AppActions from 'actions/AppActions'
 import TitleInput from 'component/TitleInput.jsx'
 import LayoutOptions from 'component/layout-options/LayoutOptions.jsx'
 import LayoutDefaultSettings from 'dashboard/builtin/layout-options'
@@ -41,10 +40,6 @@ export default React.createClass({
       title: '',
       description: ''
     }
-  },
-
-  componentWillMount () {
-    AppActions.init()
   },
 
   componentDidMount () {
