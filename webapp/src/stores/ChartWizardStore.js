@@ -299,7 +299,7 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onSetXYAxisLabel(xAxisLabel, yAxisLabel){
+  onSetXYAxisLabel (xAxisLabel, yAxisLabel) {
     this.data.chartDef.xLabel = xAxisLabel
     this.data.chartDef.yLabel = yAxisLabel
     this.previewChart()
