@@ -253,6 +253,31 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       label.exit().remove()
     }
 
+
+    if (options.chartInDashboard) {
+      if (options.xLabel) {
+        svg.append('text')
+          .attr({
+            'x': canvasW / 2,
+            'y': canvasH,
+            'style': 'font-size:12px'
+          })
+          .text(options.xLabel)
+      }
+
+      if (options.yLabel) {
+        let textX = canvasH/2
+        svg.append('text')
+          .attr({
+            'x': -textX,
+            'y': 15,
+            'transform': 'rotate(-90)',
+            'style': 'font-size:12px'
+          })
+          .text(options.yLabel)
+      }
+    }
+
     hover.on('out', function (d, i) {
       if (this.layer) {
         this.layer.destroy()
