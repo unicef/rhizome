@@ -15,7 +15,6 @@ from django.contrib.sessions.models import Session
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
 from datapoints.models import DataPointComputed, Campaign, Location, Indicator, DataPointEntry
-# from datapoints.api.meta_data import foo
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 

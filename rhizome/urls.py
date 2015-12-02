@@ -8,7 +8,13 @@ from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.geo import GeoResource
-from datapoints.api.meta_data import *
+from datapoints.api.meta_data import CampaignResource, LocationResource, IndicatorResource, OfficeResource, \
+    CampaignTypeResource, LocationTypeResource, IndicatorTagResource, IndicatorToTagResource, CustomDashboardResource, \
+    CustomChartResource, DocumentResource, GroupResource, UserGroupResource, LocationResponsibilityResource, \
+    GroupPermissionResource, DocumentReviewResource, SourceObjectMapResource, UserResource, SourceSubmissionResource, \
+    DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
+    QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
+    CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system
@@ -17,7 +23,7 @@ from tastypie.api import Api
 
 admin.autodiscover()
 
-## tastypie endpoints - ##
+# tastypie endpoints
 v1_api = Api(api_name='v1')
 v1_api.register(DataPointResource())
 v1_api.register(DataPointEntryResource())
@@ -53,43 +59,47 @@ v1_api.register(DocTransFormResource())
 v1_api.register(CalculatedIndicatorComponentResource())
 v1_api.register(AggRefreshResource())
 
-urlpatterns = patterns('',
+urlpatterns = patterns(
+    '',
 
-    ## TASTYPIE API ##
+    # TASTYPIE API
     (r'^api/', include(v1_api.urls)),
 
-    ## HOME PAGE
-    url(r'^$', login_required(TemplateView.as_view(template_name="homepage.html")), name='homepage'),
+    # HOME PAGE
+    url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
 
-    ## BASE DATPOINT FUNCTINOALITY ( see datapoints/urls )
-    url(r'^datapoints/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+    # BASE DATPOINT FUNCTIONALITY ( see datapoints/urls )
+    url(r'^datapoints/', decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
 
-    ## DASHBOARD WITH URL PARAMS ##
-    url(r'^datapoints/[-a-zA-Z0-9]+/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
-    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
-    url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', decorator_include(login_required,'datapoints.urls', namespace="datapoints")),
+    # DASHBOARD WITH URL PARAMS
+    url(r'^datapoints/[-a-zA-Z0-9]+/$',
+        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
+    url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$',
+        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
+    url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/',
+        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
 
-
-    ## ADMIN, LOG IN AND LOGOUT
-    url(r'^admin/', decorator_include(login_required,admin.site.urls)),
+    # ADMIN, LOG IN AND LOGOUT
+    url(r'^admin/', decorator_include(login_required, admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
 
-    ## MANAGE SYSTEM ##
+    # MANAGE SYSTEM
     url(r'^manage_system/', manage_system, name='manage_system'),
 
-    ## ABOUT PAGE ##
+    # ABOUT PAGE
     url(r'^about$', TemplateView.as_view(template_name="about.html"), name='about'),
 
-    ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 from django.conf import settings
-from django.conf.urls import include, patterns, url
+from django.conf.urls import patterns, url
 
 if settings.DEBUG:
     import debug_toolbar
     # urlpatterns += patterns('',
     #     url(r'^debug/', include(debug_toolbar.urls)),
-    urlpatterns += patterns('',
-            url(r'^api_debug/', api_debug),
+    urlpatterns += patterns(
+        '',
+        url(r'^api_debug/', api_debug),
     )
