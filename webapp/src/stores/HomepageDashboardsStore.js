@@ -23,9 +23,8 @@ var HomepageDashboardsStore = Reflux.createStore({
     obj.location = dashboardDef.location
     obj.latest_campaign_id = officesIndex[dashboardDef.id].latest_campaign_id
 
-    obj.indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
+    obj.indicators = IndicatorStore.getById(
+      _(_.get(obj, 'charts', []))
         .pluck('indicators')
         .flatten()
         .uniq()

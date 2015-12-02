@@ -24,13 +24,8 @@ var IndicatorStore = Reflux.createStore({
     }
   },
 
-  getById: function (/* ids */) {
-    return _(arguments)
-      .map(function (id) {
-        return this.indicators[id]
-      }.bind(this))
-      .filter()
-      .value()
+  getById: function (indicators) {
+    return indicators.map(id => this.indicators[id])
   },
 
   getIndicatorsPromise: function () {

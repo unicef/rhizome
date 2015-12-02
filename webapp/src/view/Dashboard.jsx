@@ -87,7 +87,6 @@ var Dashboard = React.createClass({
 
     this.listenTo(DashboardActions.navigate, this._navigate)
 
-    this.listenTo(IndicatorStore, () => this.forceUpdate())
     this.listenTo(GeoStore, () => this.forceUpdate())
   },
 
@@ -254,8 +253,7 @@ var Dashboard = React.createClass({
     let dashboardDef = this.state.dashboard
     let dashboardName = _.get(dashboardDef, 'title', '')
 
-    let indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
+    let indicators = IndicatorStore.getById(
       _(_.get(dashboardDef, 'charts', []))
         .pluck('indicators')
         .flatten()
