@@ -253,11 +253,11 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       label.exit().remove()
     }
 
-
     if (options.chartInDashboard) {
       if (options.xLabel) {
         svg.append('text')
-          .attr({
+          .attr(
+          {
             'x': canvasW / 2,
             'y': canvasH,
             'style': 'font-size:12px'
@@ -266,9 +266,10 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       }
 
       if (options.yLabel) {
-        let textX = canvasH/2
+        let textX = canvasH / 2
         svg.append('text')
-          .attr({
+          .attr(
+          {
             'x': -textX,
             'y': 15,
             'transform': 'rotate(-90)',

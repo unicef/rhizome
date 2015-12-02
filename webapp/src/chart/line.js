@@ -201,24 +201,20 @@ _.extend(LineChart.prototype, {
     if (options.chartInDashboard) {
       if (options.xLabel) {
         svg.append('text')
-          .attr({
-            x: width / 2,
-            y: height,
-            style: 'font-size:12px'
-          })
-          .text(options.xLabel)
+        .attr('text-anchor', 'end')
+        .attr('x', width / 2)
+        .attr('y', this._height)
+        .text(options.xLabel)
       }
 
       if (options.yLabel) {
         let textX = h / 2
         svg.append('text')
-          .attr({
-            'x': -textX,
-            'y': 15,
-            'transform': 'rotate(-90)',
-            'style': 'font-size:12px'
-          })
-          .text(options.yLabel)
+        .attr('text-anchor', 'end')
+        .attr('y', 6)
+        .attr('dy', '.75em')
+        .attr('transform', 'rotate(-90)')
+        .text(options.yLabel)
       }
     }
 
