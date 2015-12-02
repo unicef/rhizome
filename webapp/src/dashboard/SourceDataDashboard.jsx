@@ -5,6 +5,9 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
+import ButtonMenu from 'component/ButtonMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+
 import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
@@ -37,6 +40,7 @@ var SourceDataDashboard = React.createClass({
   getInitialState: function () {
     return {
       doc_obj: null
+      // is_odk_config_form: false
     }
   },
 
@@ -55,6 +59,34 @@ var SourceDataDashboard = React.createClass({
     this.setState({is_odk_config_form: true})
   },
 
+  setDocConfig: function (config_type, config_val) {
+    var self = this
+
+    // var doc_detail_meta = self.state.doc_detail_meta
+    // var doc_detail_type = doc_detail_meta[config_type]
+    // var doc_detail_type_id = doc_detail_type['id']
+
+    // DocFormActions.setDocConfig({
+    //   document_id: self.state.created_doc_id,
+    //   doc_detail_type_id: doc_detail_type_id,
+    //   doc_detail_value: config_val
+    // }, config_type)
+  },
+
+  buildHeaderList: function (list_data) {
+    console.log('buildHeaderList,',list_data);
+    return MenuItem.fromArray(
+      _.map(list_data, d => {
+        return {
+          title: d.replace('"', ''),
+          value: d.replace('"', '')
+        }
+      }),
+      this.setDocConfig.bind('config_type', 'a'))
+  },
+
+
+
   render: function () {
     var loading = this.props.loading
     var campaign = this.props.campaign
@@ -65,7 +97,7 @@ var SourceDataDashboard = React.createClass({
     var doc_obj = this.state.doc_obj
 
     if (!doc_obj) {
-      return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
+      return <div className='admin-loading'> Source Dashboard Loading...</div>
     }
 
     if (!doc_tab) {
@@ -146,24 +178,6 @@ var SourceDataDashboard = React.createClass({
       </SimpleDataTable>
     </ReviewTable>)
 
-
-    // else if (this.state.is_odk_config_form) {
-    //   var odkFormOptions = ['a','b','c ']
-    // fileConfigForm = <div className='large-6 medium-8 small-12 columns upload__csv--file-choose'>
-    //   <ButtonMenu text={'something'}
-    //               style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-    //     {odkFormOptions}
-    //   </ButtonMenu>
-    //   </div>
-
-    // return (
-    //   <div>
-    //     {fileConfigForm}
-    //   </div>
-    // )
-    // }
-
-
     var uploadData = (
       <div>
         <div className='medium-12 columns upload__csv--load'>
@@ -210,6 +224,26 @@ var SourceDataDashboard = React.createClass({
     )
 
     var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
+
+    if (this.state.is_odk_config_form) {
+      var odkServerList = this.buildHeaderList(['some','values','for','dropdown'])
+      var selectedOdkServer = 'THIS IS A SERVERsss'
+      var docForm = (
+        <div className='row'>
+          <ul>
+          <li>asfasf</li><li>asasfs</li>
+          <li>this is an LI </li>          <li>
+            <ButtonMenu
+                style='large-4 medium-4 small-12 columns csv-upload__button-style'>
+                {odkServerList}
+              </ButtonMenu>
+          </li>
+          </ul>
+
+        </div>
+
+      )
+    }
 
     return (
       <div className='row upload__csv'>
