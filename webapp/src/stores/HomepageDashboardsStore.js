@@ -7,8 +7,8 @@ import builtins from 'dashboard/builtin'
 import DashboardInit from 'data/dashboardInit'
 
 import Indicator from 'requests/Indicator'
+import Location from 'requests/Location'
 
-import RegionStore from 'stores/RegionStore'
 import CampaignStore from 'stores/CampaignStore'
 
 var HomepageDashboardsStore = Reflux.createStore({
@@ -167,8 +167,8 @@ var HomepageDashboardsStore = Reflux.createStore({
     ]
 
     Promise.all([
-      RegionStore.getlocationsPromise(),
-      RegionStore.getLocationTypesPromise(),
+      Location.getLocations(),
+      Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
       Indicator.getIndicators(),
       api.office()
