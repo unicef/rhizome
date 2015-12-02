@@ -389,8 +389,8 @@ export default {
         onMouseOut: hideTooltip,
         onMouseOver: showTooltip,
         range: _.constant(range),
-        xLabel: 'Caregiver Awareness',
-        yLabel: 'Missed Children'
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       return { options: chartOptions, data: chartData }
     })
