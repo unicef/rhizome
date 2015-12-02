@@ -202,18 +202,18 @@ _.extend(LineChart.prototype, {
       if (options.xLabel) {
         svg.append('text')
         .attr('text-anchor', 'end')
-        .attr('y', 6)
-        .attr('dy', '.75em')
-        .attr('transform', 'rotate(-90)')
-        .text(options.xLabel)
+        .attr('x', width)
+        .attr('y', height - 6)
+        .text(options.yLabel)
       }
 
       if (options.yLabel) {
         svg.append('text')
         .attr('text-anchor', 'end')
-        .attr('x', width)
-        .attr('y', height - 6)
-        .text(options.yLabel)
+        .attr('y', 6)
+        .attr('dy', '.75em')
+        .attr('transform', 'rotate(-90)')
+        .text(options.xLabel)
       }
     }
 
