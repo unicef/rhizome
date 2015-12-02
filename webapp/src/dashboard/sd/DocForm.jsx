@@ -36,7 +36,7 @@ var DocForm = React.createClass({
       created_doc_id: null,
       doc_detail_meta: null,
       doc_is_refreshed: false,
-      new_doc_title: null,
+      new_doc_title: null
     }
   },
 
@@ -80,10 +80,9 @@ var DocForm = React.createClass({
   },
 
   setOdkConfig: function (config_val) {
-    console.log('LOG SOMETHING');
+    // console.log('LOG SOMETHING');
     // this.setState({odk_config_form: true})
   },
-
 
   buildHeaderList: function (config_type) {
     var state_header = this.state.config_options
@@ -166,9 +165,7 @@ var DocForm = React.createClass({
     </div>)
       : (<div>
       <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box, or
-      <a href="#" onClick={this.setOdkConfig}> <b>click here to configure an ODK form.</b> </a>
-
-
+      <a href='#' onClick={this.setOdkConfig}><b>click here to configure an ODK form.</b></a>
     </div>)
 
     var divZoneStyle = {
