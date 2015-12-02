@@ -50,6 +50,10 @@ var SourceDataDashboard = React.createClass({
       return
     }
   },
+  setOdkConfig: function () {
+    console.log('LOGGING');
+    this.setState({is_odk_config_form: true})
+  },
 
   render: function () {
     var loading = this.props.loading
@@ -142,10 +146,31 @@ var SourceDataDashboard = React.createClass({
       </SimpleDataTable>
     </ReviewTable>)
 
+
+    // else if (this.state.is_odk_config_form) {
+    //   var odkFormOptions = ['a','b','c ']
+    // fileConfigForm = <div className='large-6 medium-8 small-12 columns upload__csv--file-choose'>
+    //   <ButtonMenu text={'something'}
+    //               style='large-4 medium-4 small-12 columns csv-upload__button-style'>
+    //     {odkFormOptions}
+    //   </ButtonMenu>
+    //   </div>
+
+    // return (
+    //   <div>
+    //     {fileConfigForm}
+    //   </div>
+    // )
+    // }
+
+
     var uploadData = (
       <div>
         <div className='medium-12 columns upload__csv--load'>
           upload data
+        </div>
+        <div className='medium-12 columns upload__csv--step'>
+        or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
         </div>
         <DocForm
           campaign={this.props.campaign}
