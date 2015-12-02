@@ -85,10 +85,12 @@ var Dashboard = React.createClass({
   componentDidMount () {
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
-
     this.listenTo(DashboardActions.navigate, this._navigate)
-
     this.listenTo(GeoStore, () => this.forceUpdate())
+
+    Indicator.getIndicators().then(indicators => {
+      this.indicators = indicators
+    })
   },
 
   _onDashboardChange (state) {
@@ -254,13 +256,15 @@ var Dashboard = React.createClass({
     let dashboardDef = this.state.dashboard
     let dashboardName = _.get(dashboardDef, 'title', '')
 
-    let indicators = Indicator.getById(
-      _(_.get(dashboardDef, 'charts', []))
+    let indicators
+    if (this.indicators) {
+      indicators = _(_.get(dashboardDef, 'charts', []))
         .pluck('indicators')
         .flatten()
         .uniq()
+        .map(id => this.indicators[id])
         .value()
-    )
+    }
 
     let dashboard
     if (Object.keys(LAYOUT).indexOf(dashboardName) >= 0) {
@@ -290,7 +294,6 @@ var Dashboard = React.createClass({
         campaigns: this.state.allCampaigns,
         dashboard: dashboardDef,
         data: Array.isArray(this.state.data) ? {} : this.state.data,
-        indicators: indicators,
         loading: loading
       }
       dashboard = React.createElement(CustomDashboard, customDashboardProps)
