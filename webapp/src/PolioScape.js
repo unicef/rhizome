@@ -1,7 +1,6 @@
 import React from 'react'
 import Vue from 'vue'
 
-import LandingPage from 'view/LandingPage.jsx'
 import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
@@ -53,9 +52,6 @@ export default {
       data: {'user_id': user_id}
     })
     return vue
-  },
-  LandingPage: function (el) {
-    React.render(React.createElement(LandingPage), el)
   },
   DashboardList: function (el) {
     React.render(React.createElement(DashboardList), el)
