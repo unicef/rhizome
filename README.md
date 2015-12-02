@@ -12,6 +12,16 @@
 3. make html
 4. Docs files now available here: docs/_build/html
 
+## Coding Standards
+
+##### Python
+[PEP8](https://www.python.org/dev/peps/pep-0008/)
+
+##### JavaScript
+[Standard](http://standardjs.com/rules.html)
+
+run `$ standard` from `webapp` folder to lint once, or `$ npm run standard` from the same folder to watch for changes.
+
 ## Setting up the development environment
 
 ### Docker
@@ -84,20 +94,25 @@ $ ./bin/sync_prod_data.sh
 ```
 
 
+## Frontend development
 
-## running test ##
+The default `dev` task runs `clean`, `copy`, `sass` and `browserify`, so that if you simply execute:
+```
+$ gulp dev```
+from the command line within the `webapp` folder it will build the entire frontend for development and watch for any changes.
 
- - backend:
-   $ python manage.py test --settings=rhizome.settings_test
 
-- frontend:
-   coming soon...
+## Running Tests ##
 
-## Building the Front End
+##### backend:
+```
+$ python manage.py test --settings=rhizome.settings_test
+```
 
-Go to `webapp/` folder
-
-    $ gulp dev
+##### frontend:
+```
+$ cd webapp && gulp mocha
+```
 
 ## Deploying ##
 
@@ -151,19 +166,6 @@ the `STATIC_URL` setting in the backend's `settings.py` is set to wherever you
 deploy the static files. ([Read more about static files in Django.][static-files])
 
 [static-files]: https://docs.djangoproject.com/en/1.7/howto/static-files/)
-
-# Gulp tasks
-
-The default task runs `clean`, `copy`, `sass` and `browserify`, so that if
-you simply execute
-
-## dev
-
-```
-$ gulp dev
-```
-
-from the command line it will build the entire frontend for development.
 
 ## package
 
