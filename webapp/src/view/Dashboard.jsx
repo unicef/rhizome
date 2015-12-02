@@ -16,10 +16,11 @@ import MenuItem from 'component/MenuItem.jsx'
 
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
+import Indicator from 'requests/Indicator'
+
 import DashboardStore from 'stores/DashboardStore'
 import DataStore from 'stores/DataStore'
 import GeoStore from 'stores/GeoStore'
-import IndicatorStore from 'stores/IndicatorStore'
 import NavigationStore from 'stores/NavigationStore'
 
 import DashboardActions from 'actions/DashboardActions'
@@ -253,7 +254,7 @@ var Dashboard = React.createClass({
     let dashboardDef = this.state.dashboard
     let dashboardName = _.get(dashboardDef, 'title', '')
 
-    let indicators = IndicatorStore.getById(
+    let indicators = Indicator.getById(
       _(_.get(dashboardDef, 'charts', []))
         .pluck('indicators')
         .flatten()

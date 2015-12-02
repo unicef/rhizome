@@ -6,9 +6,10 @@ import api from 'data/api'
 import builtins from 'dashboard/builtin'
 import DashboardInit from 'data/dashboardInit'
 
+import Indicator from 'requests/Indicator'
+
 import RegionStore from 'stores/RegionStore'
 import CampaignStore from 'stores/CampaignStore'
-import IndicatorStore from 'stores/IndicatorStore'
 
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],
@@ -169,7 +170,7 @@ var HomepageDashboardsStore = Reflux.createStore({
       RegionStore.getlocationsPromise(),
       RegionStore.getLocationTypesPromise(),
       CampaignStore.getCampaignsPromise(),
-      IndicatorStore.getIndicators(),
+      Indicator.getIndicators(),
       api.office()
     ])
     .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
