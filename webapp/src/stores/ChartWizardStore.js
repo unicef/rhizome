@@ -36,7 +36,9 @@ let ChartWizardStore = Reflux.createStore({
     chartData: [],
     chartDef: {},
     rawIndicators: null,
-    rawTags: null
+    rawTags: null,
+    xLabel: null,
+    yLabel: null
   },
   LAYOUT_PREVIEW: 0,
 
@@ -222,7 +224,9 @@ let ChartWizardStore = Reflux.createStore({
       chartData: [],
       chartDef: {},
       rawIndicators: null,
-      rawTags: null
+      rawTags: null,
+      xLabel: null,
+      yLabel: null
     }
   },
 
