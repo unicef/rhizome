@@ -3,8 +3,6 @@ import _ from 'lodash'
 
 import TitleInput from 'component/TitleInput.jsx'
 import PalettePicker from './PalettePicker.jsx'
-import XYAxisLabelSetter from './XYAxisLabelSetter.jsx'
-
 
 export default class PieOptions extends React.Component {
   constructor (props) {

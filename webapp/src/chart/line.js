@@ -23,8 +23,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function LineChart() {
-}
+function LineChart () {}
 
 _.extend(LineChart.prototype, {
   defaults: DEFAULTS,
@@ -208,7 +207,6 @@ _.extend(LineChart.prototype, {
       }
 
       if (options.yLabel) {
-        let textX = h / 2
         svg.append('text')
         .attr('text-anchor', 'end')
         .attr('y', 6)

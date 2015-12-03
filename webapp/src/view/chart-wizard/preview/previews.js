@@ -1,7 +1,6 @@
 import SimplePreview from './SimplePreview.jsx'
 import MixPreview from './MixPreview.jsx'
 
-
 export default {
   'LineChart': MixPreview,
   'PieChart': SimplePreview,

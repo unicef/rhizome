@@ -5,7 +5,6 @@ import TitleInput from 'component/TitleInput.jsx'
 import PalettePicker from './PalettePicker.jsx'
 import XYAxisLabelSetter from './XYAxisLabelSetter.jsx'
 
-
 export default class PieOptions extends React.Component {
   constructor (props) {
     super(props)
@@ -18,7 +17,7 @@ export default class PieOptions extends React.Component {
     onChangePalette: React.PropTypes.func,
     xLabel: React.PropTypes.string,
     yLabel: React.PropTypes.string,
-    onSetXYAxisLabel:React.PropTypes.func
+    onSetXYAxisLabel: React.PropTypes.func
   }
 
   static defaultProps = {
@@ -42,5 +41,3 @@ export default class PieOptions extends React.Component {
     )
   }
 }
-
-

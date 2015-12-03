@@ -109,7 +109,7 @@ export default {
       if (chart.options && !chart.options.xFormat) {
         newOptions.xFormat = d3.format(chartDef.xFormat)
       }
-      if (chartDef.palette) {  
+      if (chartDef.palette) {
         newOptions.color = palettes[chartDef.palette]
       }
       newOptions.chartInDashboard = true
