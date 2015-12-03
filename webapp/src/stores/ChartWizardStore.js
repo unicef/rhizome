@@ -125,7 +125,7 @@ let ChartWizardStore = Reflux.createStore({
       country.index = index
     })
     let countryIndex = _.indexBy(this.data.countries, _.property('id'))
-    this.data.countrySelected = this.data.chartDef.countries.map(country => {
+    this.data.countrySelected = (this.data.chartDef.countries || []).map(country => {
       return countryIndex[country]
     })
     this.data.locationList = _(locations.objects)
