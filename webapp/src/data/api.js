@@ -372,6 +372,7 @@ export default {
   post_user_permission: endPoint('/user_group/', 'post', 1),
   delete_user_permission: emptyResponsePoint('/user_group', 'delete', 1, false),
 
+  sync_odk: endPoint('/sync_odk/', 'get', 1, false),
   refresh_master: endPoint('/refresh_master/', 'get', 1, false),
   queue_reprocess: endPoint('/queue_process/', 'get', 1, false),
   chartType: endPoint('/chart_type/', 'get', 1),

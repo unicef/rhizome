@@ -4,6 +4,7 @@ import api from 'data/api.js'
 import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
+import ReactJson from 'react-json'
 
 import ButtonMenu from 'component/ButtonMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
@@ -12,7 +13,7 @@ import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
-import SourceDataDashboardAction from 'actions/SourceDataDashboardActions'
+import SourceDataDashboardActions from 'actions/SourceDataDashboardActions'
 
 import CSVMenuItem from 'component/CSVMenuItem.jsx'
 
@@ -45,7 +46,7 @@ var SourceDataDashboard = React.createClass({
   },
 
   componentWillMount: function (nextProps, nextState) {
-    var data = SourceDataDashboardAction.getDocObj(this.props.doc_id)
+    var data = SourceDataDashboardActions.getDocObj(this.props.doc_id)
     this.setState({doc_obj: data.doc_obj})
   },
 
@@ -55,36 +56,17 @@ var SourceDataDashboard = React.createClass({
     }
   },
   setOdkConfig: function () {
-    console.log('LOGGING');
     this.setState({is_odk_config_form: true})
   },
 
-  setDocConfig: function (config_type, config_val) {
+  processOdkForm: function (e) {
     var self = this
 
-    // var doc_detail_meta = self.state.doc_detail_meta
-    // var doc_detail_type = doc_detail_meta[config_type]
-    // var doc_detail_type_id = doc_detail_type['id']
+    e.preventDefault()
+    var data = this.refs.form_data.getValue()
+    SourceDataDashboardActions.setOdkFormName(data)
 
-    // DocFormActions.setDocConfig({
-    //   document_id: self.state.created_doc_id,
-    //   doc_detail_type_id: doc_detail_type_id,
-    //   doc_detail_value: config_val
-    // }, config_type)
   },
-
-  buildHeaderList: function (list_data) {
-    console.log('buildHeaderList,',list_data);
-    return MenuItem.fromArray(
-      _.map(list_data, d => {
-        return {
-          title: d.replace('"', ''),
-          value: d.replace('"', '')
-        }
-      }),
-      this.setDocConfig.bind('config_type', 'a'))
-  },
-
 
 
   render: function () {
@@ -225,23 +207,17 @@ var SourceDataDashboard = React.createClass({
 
     var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
 
+    // THIS HANDLES THE ODK COFIGURATION STEP
     if (this.state.is_odk_config_form) {
-      var odkServerList = this.buildHeaderList(['some','values','for','dropdown'])
-      var selectedOdkServer = 'THIS IS A SERVERsss'
+      var formData = {'odk_form_id': ''}
+      var formSettings = {'form': true, fields: {'odk_form_id': {type: 'string'}}}
+      var additionalFormComponents = ''
       var docForm = (
         <div className='row'>
-          <ul>
-          <li>asfasf</li><li>asasfs</li>
-          <li>this is an LI </li>          <li>
-            <ButtonMenu
-                style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-                {odkServerList}
-              </ButtonMenu>
-          </li>
-          </ul>
-
+          <ReactJson value={formData} settings={formSettings} ref='form_data'/>
+          <br/>
+          <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.processOdkForm}>Process ODK Form</button>
         </div>
-
       )
     }
 

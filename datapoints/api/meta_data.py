@@ -887,7 +887,7 @@ class CacheMetaResource(BaseModelResource):
 class SyncOdkResource(BaseModelResource):
     def get_object_list(self, request):
 
-        required_param = 'odk_form_name'
+        required_param = 'odk_form_id'
 
         try:
             odk_form_name = request.GET[required_param]
