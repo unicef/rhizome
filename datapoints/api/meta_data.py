@@ -891,15 +891,15 @@ class SyncOdkResource(BaseModelResource):
 
         try:
             odk_form_name = request.GET[required_param]
+            # odk_form_name = "'%s'" % request.GET[required_param]
         except KeyError:
             raise DataPointsException('"{0}" is a required parameter for this request'.format(required_param))
 
         try:
-            odk_sync_object = OdkSync(odk_form_name)
+            odk_sync_object = OdkSync(odk_form_name, **{'user_id':request.user.id})
             odk_sync_object.main()
         except OdkJarFileException as e:
             raise DataPointsException(e.errorMessage)
-
 
         return Office.objects.all().values()
 
