@@ -247,7 +247,7 @@ let ChartWizard = React.createClass({
           <ChartWizardStep title='4. Select Chart Type' refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
-          <ChartWizardStep>
+          <ChartWizardStep
             title={`5. Select Time Range${this.state.data.campaign ? ' - ' + moment(this.state.data.campaign.start_date).format('MMMM YYYY') : ''}`}
             refer='time-range'>
             {timeRangeStep}
