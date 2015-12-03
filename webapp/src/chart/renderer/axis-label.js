@@ -57,7 +57,7 @@ function axisLabel (chartOptions) {
         .enter().append('g')
         .attr({
           'class': 'label',
-          'transform': 'translate(' + (-0.01 * _width) + ', ' + (_height / 2) + ')'
+          'transform': 'translate(' + (-0.02 * _width) + ', ' + (_height / 2) + ')'
         })
         .style({
           'font-size': _fontSize

@@ -10,6 +10,7 @@ import browser from 'util/browser'
 import color from 'util/color'
 import palettes from 'util/palettes'
 import legend from 'chart/renderer/legend'
+import axisLabel from 'chart/renderer/axis-label'
 
 var defaults = {
   barHeight: 14,
@@ -218,6 +219,13 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           .ticks(3)
           .scale(yScale))
 
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(w)
+      .height(h))
+    }
+
     if (data.length > 1) {
       // Show the legend if we have at least two series
       svg.select('.legend')
@@ -251,32 +259,6 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
         .text(d => options.xFormat(options.x(d)))
 
       label.exit().remove()
-    }
-
-    if (options.chartInDashboard) {
-      if (options.xLabel) {
-        svg.append('text')
-          .attr(
-          {
-            'x': canvasW / 2,
-            'y': canvasH,
-            'style': 'font-size:12px'
-          })
-          .text(options.xLabel)
-      }
-
-      if (options.yLabel) {
-        let textX = canvasH / 2
-        svg.append('text')
-          .attr(
-          {
-            'x': -textX,
-            'y': 15,
-            'transform': 'rotate(-90)',
-            'style': 'font-size:12px'
-          })
-          .text(options.yLabel)
-      }
     }
 
     hover.on('out', function (d, i) {
