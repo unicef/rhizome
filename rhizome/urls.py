@@ -14,7 +14,7 @@ from datapoints.api.meta_data import CampaignResource, LocationResource, Indicat
     GroupPermissionResource, DocumentReviewResource, SourceObjectMapResource, UserResource, SourceSubmissionResource, \
     DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
     QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
-    CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource
+    CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system
@@ -53,6 +53,7 @@ v1_api.register(ComputedDataPointResource())
 v1_api.register(RefreshMasterResource())
 v1_api.register(QueueProcessResource())
 v1_api.register(CacheMetaResource())
+v1_api.register(SyncOdkResource())
 v1_api.register(DocDetailTypeResource())
 v1_api.register(ChartTypeTypeResource())
 v1_api.register(DocTransFormResource())

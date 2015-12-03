@@ -646,11 +646,6 @@ class LocationResponsibilityResource(BaseModelResource):
         """
 
         obj_id = int(bundle.request.GET[u'id'])
-
-        print 'DELETEING \n' * 10
-        print obj_id
-        print 'DELETEING \n' * 10
-
         LocationResponsibility.objects.get(id=obj_id).delete()
 
 
@@ -888,6 +883,22 @@ class CacheMetaResource(BaseModelResource):
         resource_name = 'cache_meta'
 
 
+class SyncOdkResource(BaseModelResource):
+    def get_object_list(self, request):
+
+        required_param = 'odk_form_name'
+
+        try:
+            request.GET[required_param]
+        except KeyError:
+            raise DataPointsException('"{0}" is a required parameter for this request'.format(required_param))
+
+        return Office.objects.all().values()
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'sync_odk'
+
+
 class QueueProcessResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'queue_process'
@@ -956,7 +967,7 @@ class OfficeResource(BaseNonModelResource):
     def get_object_list(self, request):
 
         # temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1: 43, 2: 41, 3: 45}
+        latest_campaign_lookup = {1: 43, 2: 299, 3: 45}
         location_lookup = {1: 1, 2: 2, 3: 3}
 
         qs = []
