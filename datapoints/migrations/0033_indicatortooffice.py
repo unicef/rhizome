@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0031_adminlevelpermission'),
+        ('datapoints', '0032_useradminlevelpermissions'),
     ]
 
     operations = [
