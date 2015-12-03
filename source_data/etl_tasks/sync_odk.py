@@ -3,7 +3,7 @@ import csv
 import json
 import urllib2, urllib
 import httplib
-import subprocess
+from subprocess import Popen, PIPE
 import base64
 
 from datetime import datetime
@@ -14,13 +14,21 @@ from urllib import urlencode
 from django.conf import settings
 
 
+
+class OdkJarFileException(Exception):
+    # defaultMessage = "Sorry, this request could not be processed."
+    # defaultCode = -1
+
+    def __init__(self, message):
+        self.errorMessage = message
+        print '=== OdkJarFileException ==='
+
 class OdkSync(object):
 
     def __init__(self,odk_form_name=None, *args, **kwargs):
 
         self.odk_form_name = odk_form_name
         self.odk_settings = settings.ODK_SETTINGS
-
 
     def main(self):
         '''
@@ -29,23 +37,30 @@ class OdkSync(object):
         forms_to_process = self.get_forms_to_process()
         for form_name,document_id in forms_to_process.iteritems():
 
-            subprocess.call(['java','-jar',self.odk_settings['JAR_FILE'],\
-                '--form_id', form_name, \
-                '--export_filename',form_name +'.csv', \
-                '--aggregate_url',self.odk_settings['AGGREGATE_URL'], \
-                '--storage_directory',self.odk_settings['STORAGE_DIRECTORY'], \
-                '--export_directory',self.odk_settings['EXPORT_DIRECTORY'], \
-                '--odk_username',self.odk_settings['ODK_USER'], \
-                '--odk_password',self.odk_settings['ODK_PASS'], \
-                '--overwrite_csv_export' ,\
-                '--exclude_media_export' \
-              ])
+            procedure = Popen(['java','-jar',self.odk_settings['JAR_FILE'],\
+                    '--form_id', form_name, \
+                    '--export_filename',form_name +'.csv', \
+                    '--aggregate_url',self.odk_settings['AGGREGATE_URL'], \
+                    '--storage_directory',self.odk_settings['STORAGE_DIRECTORY'], \
+                    '--export_directory',self.odk_settings['EXPORT_DIRECTORY'], \
+                    '--odk_username',self.odk_settings['ODK_USER'], \
+                    '--odk_password',self.odk_settings['ODK_PASS'], \
+                    '--overwrite_csv_export' ,\
+                    '--exclude_media_export' \
+                  ], stdout=PIPE, stderr=PIPE)
+
+            out, err = procedure.communicate()
+            exitcode = procedure.returncode
+
+            if exitcode == 0:
+                raise OdkJarFileException(err)
 
             csv_file = self.odk_settings['EXPORT_DIRECTORY'] + str(form_name) + '.csv'
             with open(csv_file, 'rb') as full_file:
                  csv_base_64 = base64.b64encode(full_file.read())
                 #  post_file_data(document_id, csv_base_64, str(form_name))
                  output_data = refresh_file_data(document_id)
+
 
     # def post_file_data(document_id, base_64_data, doc_title):
     #

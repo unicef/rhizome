@@ -21,6 +21,7 @@ from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.sync_odk import OdkSync
+from source_data.etl_tasks.sync_odk import OdkJarFileException
 from datapoints.agg_tasks import AggRefresh
 from datapoints.cache_meta import cache_all_meta
 from tastypie.exceptions import ImmediateHttpResponse
@@ -34,7 +35,6 @@ class CampaignResource(BaseModelResource):
         filtering = {
             "id": ALL,
         }
-
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -894,9 +894,11 @@ class SyncOdkResource(BaseModelResource):
         except KeyError:
             raise DataPointsException('"{0}" is a required parameter for this request'.format(required_param))
 
-        odk_sync_object = OdkSync(odk_form_name)
-        # odk_sync_object = OdkSync()
-        odk_sync_object.main()
+        try:
+            odk_sync_object = OdkSync(odk_form_name)
+            odk_sync_object.main()
+        except OdkJarFileException as e:
+            raise DataPointsException(e.errorMessage)
 
 
         return Office.objects.all().values()
