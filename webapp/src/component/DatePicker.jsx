@@ -19,14 +19,15 @@ var DatePicker = React.createClass({
   },
 
   render () {
-    var self = this
-    return (<DateTimePicker
-      value={self.state.date}
-      time={false}
-      format={'yyyy-MM-dd'}
-      onChange={self.handleDateChange.bind(self)}/>)
+    return (
+      <DateTimePicker
+        value={this.state.date}
+        time={false}
+        format={'yyyy-MM-dd'}
+        onChange={this.handleDateChange.bind(this)}
+      />
+    )
   }
 })
 
 export default DatePicker
-
