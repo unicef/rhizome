@@ -561,6 +561,36 @@ _.extend(ColumnChart.prototype, {
 
       annotation.exit().remove()
     }
+
+    if (options.chartInDashboard) {
+      if (options.xLabel) {
+        svg.append('text')
+          .attr(
+          {
+            'x': this._width / 2,
+            'y': this._height,
+            'dy': '.71em',
+            'style': 'font-size:12px'
+          })
+        .text(options.xLabel)
+      }
+
+      if (options.yLabel) {
+        let textX = this._height / 2
+        svg.append('text')
+          .attr(
+          {
+          //  'x': -textX,
+          //  'y': -10,
+          //  'dy': '.75em',
+          //  'style': 'font-size:12px',
+            'transform': 'rotate(-90)'
+            }
+          )
+        .attr('text-anchor', 'end')
+        .text(options.yLabel)
+      }
+    }
   }
 
 })
