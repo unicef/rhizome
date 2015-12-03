@@ -23,7 +23,7 @@ var DEFAULTS = {
   yFormat: d3.format(',d')
 }
 
-function LineChart () {
+function LineChart() {
 }
 
 _.extend(LineChart.prototype, {
@@ -51,7 +51,7 @@ _.extend(LineChart.prototype, {
         .sortBy()
         .value())
       .range(options.color)
-    // let fill = color.map(series.map(options.seriesName), options.color)
+
     let dataColor = _.flow(options.seriesName, dataColorScale)
 
     var domain = _.isFunction(options.domain)
@@ -201,19 +201,24 @@ _.extend(LineChart.prototype, {
     if (options.chartInDashboard) {
       if (options.xLabel) {
         svg.append('text')
-        .attr('text-anchor', 'end')
-        .attr('x', width)
-        .attr('y', height - 6)
-        .text(options.yLabel)
+          .attr({
+            x: width / 2,
+            y: height,
+            style: 'font-size:12px'
+          })
+          .text(options.xLabel)
       }
 
       if (options.yLabel) {
+        let textX = h / 2
         svg.append('text')
-        .attr('text-anchor', 'end')
-        .attr('y', 6)
-        .attr('dy', '.75em')
-        .attr('transform', 'rotate(-90)')
-        .text(options.xLabel)
+          .attr({
+            'x': -textX,
+            'y': 15,
+            'transform': 'rotate(-90)',
+            'style': 'font-size:12px'
+          })
+          .text(options.yLabel)
       }
     }
 
