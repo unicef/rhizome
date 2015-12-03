@@ -10,6 +10,7 @@ from urllib2 import Request, urlopen
 from urllib import urlencode
 
 from django.core.files.base import ContentFile
+from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
 from source_data.models import Document
