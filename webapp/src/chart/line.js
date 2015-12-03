@@ -5,6 +5,7 @@ import palettes from 'util/palettes'
 import format from 'util/format'
 import hoverLine from 'chart/behavior/hover-line'
 import label from 'chart/renderer/label'
+import axisLabel from 'chart/renderer/axis-label'
 
 var DEFAULTS = {
   margin: {
@@ -197,37 +198,14 @@ _.extend(LineChart.prototype, {
         'dy': 10
       })
 
-    if (options.chartInDashboard) {
-      if (options.xLabel) {
-        svg.append('text')
-          .attr(
-          {
-            'x': width / 2,
-            'y': this._height,
-            'dy': '.71em',
-            'style': 'font-size:12px'
-          })
-        .text(options.xLabel)
-      }
-
-      if (options.yLabel) {
-        let textX = this._height / 2
-        svg.append('text')
-          .attr(
-          {
-            'x': -textX,
-            'y': -10,
-            'dy': '.75em',
-            'style': 'font-size:12px',
-            'transform': 'rotate(-90)'
-            }
-          )
-        .attr('text-anchor', 'end')
-        .text(options.yLabel)
-      }
-    }
-
     d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
+
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(width)
+      .height(height))
+    }
 
     gy.selectAll('g').classed('minor', function (d) {
       return d !== range[0]
