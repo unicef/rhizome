@@ -79,6 +79,11 @@ var DocForm = React.createClass({
     DocFormActions.transformUpload({document_id: self.state.created_doc_id})
   },
 
+  setOdkConfig: function (config_val) {
+    // console.log('LOG SOMETHING');
+    // this.setState({odk_config_form: true})
+  },
+
   buildHeaderList: function (config_type) {
     var state_header = this.state.config_options
 
@@ -102,6 +107,7 @@ var DocForm = React.createClass({
 
     var fileConfigForm = ''
     var uploadButton = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
+
     if (this.state.created_doc_id) {
       fileConfigForm = (
         <ul>
@@ -158,7 +164,8 @@ var DocForm = React.createClass({
       <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
     </div>)
       : (<div>
-      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box.
+      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box, or
+      <a href='#' onClick={this.setOdkConfig}><b>click here to configure an ODK form.</b></a>
     </div>)
 
     var divZoneStyle = {
@@ -211,7 +218,6 @@ var DocForm = React.createClass({
         {fileConfigForm}
         <div className='large-12 medium-12 small-12 columns refresh__button'>
           {uploadButton}
-          <Dropzone onDrop={this.onDrop} className='csv-upload__select'>Or select another file to upload</Dropzone>
         </div>
       </div>
     )

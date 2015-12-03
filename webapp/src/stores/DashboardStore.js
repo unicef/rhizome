@@ -2,7 +2,8 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import RegionStore from 'stores/RegionStore'
+import Location from 'requests/Location'
+
 import CampaignStore from 'stores/CampaignStore'
 
 var DashboardStore = Reflux.createStore({
@@ -15,8 +16,8 @@ var DashboardStore = Reflux.createStore({
 
   onInitialize () {
     return Promise.all([
-      RegionStore.getlocationsPromise(),
-      RegionStore.getLocationTypesPromise(),
+      Location.getLocations(),
+      Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise()
     ])
     .then(([locations, locationsTypes, campaigns]) => {

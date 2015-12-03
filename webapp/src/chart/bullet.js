@@ -128,6 +128,7 @@ _.extend(BulletChart.prototype, {
     svg.select('.data')
       .call(qualitativeAxis()
       .height(h + margin.top + margin.bottom)
+      .width(w)
       .scale(xScale)
       .threshold(d3.scale.threshold().domain(options.thresholds).range(options.targets))
     )
@@ -221,7 +222,7 @@ _.extend(BulletChart.prototype, {
     var compareValue = bar.selectAll('.comparative-text')
       .data(function (d) {
         var v = options.value(d)
-        return [options.valueText(v)]
+        return width(d) > options.fontSize * 2 ? [options.valueText(v)] : [options.valueText(v).slice(0, 1)]
       })
 
     compareValue.enter().append('text')
@@ -229,7 +230,7 @@ _.extend(BulletChart.prototype, {
 
     compareValue
       .attr({
-        'x': 2,
+        'x': 4,
         'y': 0,
         'text-anchor': 'start',
         'dy': (options.lineHeight / 4) + 'em',
@@ -237,9 +238,7 @@ _.extend(BulletChart.prototype, {
         'fill': '#FFFFFF'
       })
       .style('font-size', options.fontSize - 2)
-      .text(function (d) {
-        return d
-      })
+      .text(d => { return d })
     compareValue.exit().remove()
   },
 

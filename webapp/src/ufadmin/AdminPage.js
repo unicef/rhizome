@@ -57,8 +57,8 @@ var AdminPage = React.createClass({
     var createUrl = '/datapoints/users/create/'
     if (this.props.title === 'Campaigns') createUrl = '/datapoints/campaigns/create/'
     if (this.props.title === 'locations') createUrl = '/datapoints/locations/create/'
-    else if (this.props.title === 'Indicators') createUrl = '/ufadmin/manage/indicator/'
-    else if (this.props.title === 'Tags') createUrl = '/ufadmin/manage/indicator_tag/'
+    else if (this.props.title === 'Indicators') createUrl = '/manage_system/manage/indicator/'
+    else if (this.props.title === 'Tags') createUrl = '/manage_system/manage/indicator_tag/'
 
     // strip the 's' from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title

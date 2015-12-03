@@ -6,9 +6,10 @@ import api from 'data/api'
 import builtins from 'dashboard/builtin'
 import DashboardInit from 'data/dashboardInit'
 
-import RegionStore from 'stores/RegionStore'
+import Indicator from 'requests/Indicator'
+import Location from 'requests/Location'
+
 import CampaignStore from 'stores/CampaignStore'
-import IndicatorStore from 'stores/IndicatorStore'
 
 var HomepageDashboardsStore = Reflux.createStore({
   listenables: [require('actions/HomepageDashboardsActions')],
@@ -22,15 +23,12 @@ var HomepageDashboardsStore = Reflux.createStore({
 
     obj.location = dashboardDef.location
     obj.latest_campaign_id = officesIndex[dashboardDef.id].latest_campaign_id
-
-    obj.indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
-        .pluck('indicators')
-        .flatten()
-        .uniq()
-        .value()
-    )
+    obj.indicators = _(_.get(obj, 'charts', []))
+      .pluck('indicators')
+      .flatten()
+      .uniq()
+      .map(id => this.indicators[id])
+      .value()
 
     return obj
   },
@@ -169,10 +167,10 @@ var HomepageDashboardsStore = Reflux.createStore({
     ]
 
     Promise.all([
-      RegionStore.getlocationsPromise(),
-      RegionStore.getLocationTypesPromise(),
+      Location.getLocations(),
+      Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
-      IndicatorStore.getIndicatorsPromise(),
+      Indicator.getIndicators(),
       api.office()
     ])
     .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
@@ -182,6 +180,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
       let officesIndex = _.indexBy(offices.objects, 'top_level_location_id')
 
+      this.indicators = indicators
       var enhanced = dashboardDefs
         .map(item => this.getDashboardByName(item, officesIndex))
         .map(partialPrepare)

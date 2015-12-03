@@ -4,7 +4,6 @@ from numpy import sqrt, log
 from datapoints.models import *
 from source_data.models import SourceObjectMap
 
-from pprint import pprint
 
 def calculate_campaign_percentage_complete():
     '''
@@ -32,6 +31,50 @@ def calculate_campaign_percentage_complete():
 
         c.management_dash_pct_complete = ind_count / float(len(all_indicators))
         c.save()
+
+class IndicatorCache(object):
+    '''
+    from datapoints.cache_meta import IndicatorCache as ic
+    ic_obj = ic()
+    # ic_obj = ic(indicator_id_list=[164])
+    ic_obj.main()
+    '''
+    def __init__(self, indicator_id_list = None):
+
+        if indicator_id_list:
+            self.indicator_id_list = indicator_id_list
+        else:
+            self.indicator_id_list = Indicator.objects.all().values_list('id',\
+                flat =True)
+
+    def main(self):
+        '''
+        Find the office id for each indicator.
+        '''
+
+        ## find the data for the indicators requested ##
+        df = DataFrame(list(DataPointComputed.objects.filter(indicator_id__in=\
+            self.indicator_id_list).values_list('indicator_id','campaign_id')\
+            .distinct()),columns=['indicator_id','campaign_id'])
+
+        ## find all campaigns + office combinations
+        office_lookup_df = DataFrame(list(Campaign.objects.all()\
+            .values_list('id','office_id')),columns=['campaign_id','office_id'])
+
+        ## Join the two dataframes and take the distinct office, indicator ##
+        joined_df = df.merge(office_lookup_df)
+        unique_df = joined_df[['indicator_id','office_id']].drop_duplicates()
+
+        ## iterrate throught the DF, create objects and prep for bulk_create
+        ind_to_office_batch = []
+        for ix, data in unique_df.iterrows():
+            ind_to_office_batch.append(IndicatorToOffice(**data.to_dict()))
+
+        ## delete then re-insert  ##
+        IndicatorToOffice.objects.filter(indicator_id__in = \
+            self.indicator_id_list).delete()
+        IndicatorToOffice.objects.bulk_create(ind_to_office_batch)
+
 
 class LocationTreeCache(object):
 
@@ -198,3 +241,16 @@ def minify_polygon(polygon):
     filtered_df = shape_df[shape_df['to_take'] == 0][['lat','lon']]
 
     return filtered_df.values.tolist()
+
+
+def cache_all_meta():
+
+    campaign_cache_data = calculate_campaign_percentage_complete()
+
+    location_tree_cache_data = LocationTreeCache()
+    location_tree_cache_data.main()
+
+    indicator_cache_data = IndicatorCache()
+    indicator_cache_data.main()
+
+    source_object_cache = update_source_object_names()

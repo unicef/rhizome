@@ -87,23 +87,23 @@ _.extend(PieChart.prototype, {
       .select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
+    var xPosition = options.notInCenter ? w / 4 : w / 2
+    var yPosition = options.notInCenter ? h / 3 : h / 2
+
     let g = svg.select('.data')
-      .attr('transform', 'translate(' + (w / 2) + ', ' + (h / 2) + ')')
+      .attr('transform', 'translate(' + xPosition + ', ' + yPosition + ')')
 
     if (options.percentage) {
       var annotation = svg.select('.annotation').selectAll('.percentage').data([options.percentage])
       annotation.enter().append('text')
       annotation.attr('class', 'percentage')
-        .attr({
-          'x': w / 2,
-          'y': h / 2,
-          'dy': 5
-        })
+        .attr({'x': xPosition, 'y': yPosition, 'dy': 5})
         .style({
           'text-anchor': 'middle',
           'opacity': d => { return d === '0%' ? 0 : 1 }
         })
         .text(d => { return d })
+
       annotation.exit().remove()
     }
 

@@ -57,24 +57,15 @@ export default {
     {
       value: 'selected',
       title: 'Selected location only',
-      getAggregated: (locationSelected, locationIndex) => { return [locationSelected] }
-    },
-    {
-      value: 'type',
-      title: 'Locations with the same level',
-      getAggregated: (locationSelected, locationIndex) => {
-        return _.filter(locationIndex,
-          (locationSelected.parent_location_id && locationSelected.parent_location_id !== 'None')
-            ? { location_type_id: locationSelected.location_type_id, office_id: locationSelected.office_id }
-            : { location_type_id: locationSelected.location_type_id }
-        )
-      }
+      getAggregated: (locationSelected, locationIndex) => { return locationSelected }
     },
     {
       value: 'sublocations',
       title: 'Sublocations 1 level below selected',
       getAggregated: (locationSelected, locationIndex) => {
-        return _.filter(locationIndex, { parent_location_id: locationSelected.id })
+        return _(locationSelected).map(location => {
+          return _.filter(locationIndex, { parent_location_id: location.id })
+        }).flatten().value()
       }
     }
   ]

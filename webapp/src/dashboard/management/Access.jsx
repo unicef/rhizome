@@ -97,12 +97,13 @@ var Access = React.createClass({
           <Chart type='PieChart' data={plans}
                       loading={loading}
                       options={{
-                        innerRadius: 0.3,
+                        innerRadius: 0.28,
                         outerRadius: 0.5,
                         domain: _.constant([0, 1]),
                         percentage: planLabel(plans),
                         name: (d, i) => { return i },
-                        color: ['#377EA4', '#B6D0D4']
+                        color: ['#377EA4', '#B6D0D4'],
+                        notInCenter: true
                       }} />
         </div>
 

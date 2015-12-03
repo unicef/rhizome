@@ -16,13 +16,13 @@ import MenuItem from 'component/MenuItem.jsx'
 
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
+import Indicator from 'requests/Indicator'
+
 import DashboardStore from 'stores/DashboardStore'
 import DataStore from 'stores/DataStore'
 import GeoStore from 'stores/GeoStore'
-import IndicatorStore from 'stores/IndicatorStore'
 import NavigationStore from 'stores/NavigationStore'
 
-import AppActions from 'actions/AppActions'
 import DashboardActions from 'actions/DashboardActions'
 import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
@@ -65,7 +65,6 @@ var Dashboard = React.createClass({
     page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/:dashboard', this._showDefault)
-    AppActions.init()
   },
 
   componentWillUpdate (nextProps, nextState) {
@@ -86,11 +85,12 @@ var Dashboard = React.createClass({
   componentDidMount () {
     this.listenTo(DashboardStore, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
-
     this.listenTo(DashboardActions.navigate, this._navigate)
-
-    this.listenTo(IndicatorStore, () => this.forceUpdate())
     this.listenTo(GeoStore, () => this.forceUpdate())
+
+    Indicator.getIndicators().then(indicators => {
+      this.indicators = indicators
+    })
   },
 
   _onDashboardChange (state) {
@@ -256,14 +256,15 @@ var Dashboard = React.createClass({
     let dashboardDef = this.state.dashboard
     let dashboardName = _.get(dashboardDef, 'title', '')
 
-    let indicators = IndicatorStore.getById.apply(
-      IndicatorStore,
-      _(_.get(dashboardDef, 'charts', []))
+    let indicators
+    if (this.indicators) {
+      indicators = _(_.get(dashboardDef, 'charts', []))
         .pluck('indicators')
         .flatten()
         .uniq()
+        .map(id => this.indicators[id])
         .value()
-    )
+    }
 
     let dashboard
     if (Object.keys(LAYOUT).indexOf(dashboardName) >= 0) {
@@ -293,7 +294,6 @@ var Dashboard = React.createClass({
         campaigns: this.state.allCampaigns,
         dashboard: dashboardDef,
         data: Array.isArray(this.state.data) ? {} : this.state.data,
-        indicators: indicators,
         loading: loading
       }
       dashboard = React.createElement(CustomDashboard, customDashboardProps)

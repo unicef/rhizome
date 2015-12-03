@@ -13,7 +13,7 @@ const fields = {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/ufadmin/manage/indicator/${id}`}>Edit Indicator</a>
+      return <a href={`/manage_system/manage/indicator/${id}`}>Edit Indicator</a>
     }
   },
   id: { title: 'ID', name: 'id' },

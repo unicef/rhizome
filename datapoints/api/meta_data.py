@@ -13,14 +13,15 @@ from pandas import notnull
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
-    LocationType, IndicatorToTag, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
+    LocationType, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationResponsibility, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag
+    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag, IndicatorToOffice
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from datapoints.agg_tasks import AggRefresh
+from datapoints.cache_meta import cache_all_meta
 from tastypie.exceptions import ImmediateHttpResponse
 from django.http import HttpResponse
 
@@ -35,6 +36,10 @@ class CampaignResource(BaseModelResource):
 
 
 class LocationResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        queryset = Location.objects.all().values()
+        resource_name = 'location'
+
     def get_object_list(self, request):
 
         try:
@@ -49,9 +54,6 @@ class LocationResource(BaseModelResource):
 
         return qs
 
-    class Meta(BaseModelResource.Meta):
-        queryset = Location.objects.all().values()
-        resource_name = 'location'
 
 class IndicatorResult(object):
     id = int()
@@ -66,15 +68,15 @@ class IndicatorResult(object):
 
 
 class IndicatorResource(BaseNonModelResource):
-    id = fields.IntegerField(attribute='id',null=True)
+    id = fields.IntegerField(attribute='id', null=True)
     name = fields.CharField(attribute='name')
     short_name = fields.CharField(attribute='short_name')
-    slug = fields.CharField(attribute='slug',null=True)
+    slug = fields.CharField(attribute='slug', null=True)
     description = fields.CharField(attribute='description')
-    data_format = fields.CharField(attribute='data_format',null=True)
-    bound_json = fields.ListField(attribute='bound_json',null=True)
-    tag_json = fields.ListField(attribute='tag_json',null=True)
-    office_id = fields.ListField(attribute='office_id',null=True)
+    data_format = fields.CharField(attribute='data_format', null=True)
+    bound_json = fields.ListField(attribute='bound_json', null=True)
+    tag_json = fields.ListField(attribute='tag_json', null=True)
+    office_id = fields.ListField(attribute='office_id', null=True)
 
     class Meta(BaseNonModelResource.Meta):
         object_class = IndicatorResult
@@ -119,15 +121,13 @@ class IndicatorResource(BaseNonModelResource):
                 'code': -1
             }
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
-                                status=422,
-                                content_type='application/json'))
-
+                                        status=422,
+                                        content_type='application/json'))
 
         bundle.obj = ind
         bundle.data['id'] = ind.id
 
         return bundle
-
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -167,64 +167,64 @@ class IndicatorResource(BaseNonModelResource):
         one for the bounds, and another for the tags.
         '''
 
-        tag_cols = ['indicator_id','indicator_tag_id']
-        bound_cols = ['indicator_id','bound_name','mn_val','mx_val']
+        tag_cols = ['indicator_id', 'indicator_tag_id']
+        bound_cols = ['indicator_id', 'bound_name', 'mn_val', 'mx_val']
+        ind_to_office_cols = ['indicator_id', 'office_id']
 
         if indicator_id_list:
-            ## get tags ##
-            tag_df = DataFrame(list(IndicatorToTag.objects.filter(indicator_id__in=\
-                indicator_id_list).values_list(*tag_cols)),columns = tag_cols)
+            # get tags
+            tag_df = DataFrame(list(IndicatorToTag.objects.filter(
+                indicator_id__in=indicator_id_list).values_list(*tag_cols)), columns=tag_cols)
 
-            bound_df = DataFrame(list(IndicatorBound.objects\
-                .filter(indicator_id__in=indicator_id_list)\
-                .values_list(*bound_cols)),columns = bound_cols)
+            bound_df = DataFrame(list(
+                IndicatorBound.objects.filter(indicator_id__in=indicator_id_list).values_list(*bound_cols)
+            ), columns=bound_cols)
+
+            office_df = DataFrame(list(IndicatorToOffice.objects
+                                       .filter(indicator_id__in=indicator_id_list)
+                                       .values_list(*ind_to_office_cols)), columns=ind_to_office_cols)
 
             qs = Indicator.objects.filter(id__in=indicator_id_list)
+
         else:
-            tag_df = DataFrame(list(IndicatorToTag.objects.all()\
-                .values_list(*tag_cols)),columns = tag_cols)
+            tag_df = DataFrame(list(IndicatorToTag.objects.all().values_list(*tag_cols)), columns=tag_cols)
 
-            bound_df = DataFrame(list(IndicatorBound.objects.all()\
-                .values_list(*bound_cols)),columns = bound_cols)
+            bound_df = DataFrame(list(IndicatorBound.objects.all().values_list(*bound_cols)), columns=bound_cols)
 
-            qs = Indicator.objects.raw('''
-            select *,(select array(SELECT DISTINCT l.office_id FROM indicator as i
-            LEFT JOIN datapoint_with_computed dwc ON i.id = dwc.indicator_id
-            LEFT JOIN location l ON dwc.location_id = l.id
-            where i.id = indicator.id)) as office_id
-            from indicator
-            ''')
+            office_df = DataFrame(list(IndicatorToOffice.objects
+                                       .all().values_list(*ind_to_office_cols)),
+                                  columns=ind_to_office_cols)
+
+            qs = Indicator.objects.all()
 
         bound_df = bound_df.where((notnull(bound_df)), None)
         tag_df = tag_df.where((notnull(tag_df)), None)
+        # office_df = office_df.where((notnull(office_df)), None)
 
-        return qs, bound_df, tag_df
+        return qs, bound_df, tag_df, office_df
 
     def get_object_list(self, request):
         indicator_batch = []
 
         indicator_id_list = self.get_indicator_ids_from_request(request)
-        qs, bound_df, tag_df = self.build_indicator_queryset(indicator_id_list)
+        qs, bound_df, tag_df, office_df = \
+            self.build_indicator_queryset(indicator_id_list)
 
         for row in qs:
 
-            ## create the ResultObject and assign the basic variables ##
+            # create the ResultObject and assign the basic variables
             ir = IndicatorResult()
             ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format \
-                = row.id, row.name, row.description, row.short_name,row.slug, row.data_format \
+                = row.id, row.name, row.description, row.short_name, row.slug, row.data_format \
 
-            if indicator_id_list is None:
-                ir.office_id = row.office_id
+            # look up the bounds / tags from the data two DFs created above
+            filtered_tag_df = tag_df[tag_df['indicator_id'] == row.id]
+            filtered_bound_df = bound_df[bound_df['indicator_id'] == row.id]
+            filtered_office_df = office_df[office_df['indicator_id'] == row.id]
 
-            ## look up the bounds / tags from the data two DFs created above ##
-            filtered_tag_df = tag_df[tag_df['indicator_id'] == \
-                row.id]
-            filtered_bound_df = bound_df[bound_df['indicator_id'] == \
-                row.id]
-
-            ir.bound_json= [row.to_dict() for ix, row in\
-                filtered_bound_df.iterrows()]
+            ir.bound_json = [row.to_dict() for ix, row in filtered_bound_df.iterrows()]
             ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
+            ir.office_id = list(filtered_office_df['office_id'].unique())
 
             indicator_batch.append(ir)
 
@@ -232,20 +232,8 @@ class IndicatorResource(BaseNonModelResource):
 
     def get_indicator_id_by_office(self, office_id):
 
-        indicator_ids = []
-
-        i_raw = Indicator.objects.raw('''
-            SELECT DISTINCT dwc.indicator_id as id
-            FROM datapoint_with_computed dwc
-            WHERE EXISTS (
-                SELECT 1 FROM location l
-                WHERE dwc.location_id = l.id
-                AND l.office_id = %s
-            )
-        ''', [office_id])
-
-        for ind in i_raw:
-            indicator_ids.append(ind.id)
+        indicator_ids = IndicatorToOffice.objects.filter(office_id=office_id)\
+            .values_list('indicator_id', flat=True)
 
         return indicator_ids
 
@@ -263,6 +251,13 @@ class LocationTypeResource(BaseModelResource):
 
 
 class IndicatorTagResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
+        resource_name = 'indicator_tag'
+        filtering = {
+            "id": ALL,
+        }
+
     def get_object_list(self, request):
         try:
             tag_id = request.GET['id']
@@ -305,15 +300,12 @@ class IndicatorTagResource(BaseModelResource):
 
         return bundle
 
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
-        resource_name = 'indicator_tag'
-        filtering = {
-            "id": ALL,
-        }
-
 
 class IndicatorToTagResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        # queryset = IndicatorToTag.objects.all().values()
+        resource_name = 'indicator_to_tag'
+
     def obj_create(self, bundle, **kwargs):
 
         indicator_id = bundle.data['indicator_id']
@@ -348,10 +340,6 @@ class IndicatorToTagResource(BaseModelResource):
 
         obj_id = int(bundle.request.GET[u'id'])
         IndicatorToTag.objects.filter(id=obj_id).delete()
-
-    class Meta(BaseModelResource.Meta):
-        # queryset = IndicatorToTag.objects.all().values()
-        resource_name = 'indicator_to_tag'
 
 
 class CalculatedIndicatorComponentResource(BaseModelResource):
@@ -609,7 +597,6 @@ class UserGroupResource(BaseModelResource):
 
         return bundle
 
-
     def obj_delete_list(self, bundle, **kwargs):
         """
         """
@@ -643,7 +630,6 @@ class LocationResponsibilityResource(BaseModelResource):
         except KeyError:
             return LocationResponsibility.objects.all().values()
 
-
     def obj_create(self, bundle, **kwargs):
         '''
         If post, create file and return the JSON of that object.
@@ -667,6 +653,7 @@ class LocationResponsibilityResource(BaseModelResource):
 
         LocationResponsibility.objects.get(id=obj_id).delete()
 
+
 class GroupPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorPermission.objects.all().values()
@@ -680,6 +667,13 @@ class DocumentReviewResource(BaseModelResource):
 
 
 class DocumentDetailResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'doc_detail'
+        filtering = {
+            "id": ALL,
+            "document": ALL,
+        }
+
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
@@ -708,15 +702,11 @@ class DocumentDetailResource(BaseModelResource):
         except KeyError:
             return DocumentDetail.objects.all().values()
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'doc_detail'
-        filtering = {
-            "id": ALL,
-            "document": ALL,
-        }
-
 
 class DocDataPointResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'doc_datapoint'
+
     def get_object_list(self, request):
 
         queryset = DocDataPoint.objects.filter(
@@ -727,11 +717,11 @@ class DocDataPointResource(BaseModelResource):
 
         return queryset
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'doc_datapoint'
-
 
 class ComputedDataPointResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'computed_datapoint'
+
     def get_object_list(self, request):
 
         try:
@@ -767,11 +757,11 @@ class ComputedDataPointResource(BaseModelResource):
 
         return queryset
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'computed_datapoint'
-
 
 class SourceObjectMapResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'source_object_map'
+
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
@@ -803,11 +793,11 @@ class SourceObjectMapResource(BaseModelResource):
 
         return qs
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'source_object_map'
-
 
 class SourceSubmissionResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'source_submission'
+
     def get_object_list(self, request):
 
         try:
@@ -818,11 +808,11 @@ class SourceSubmissionResource(BaseModelResource):
 
         return qs
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'source_submission'
-
 
 class DocTransFormResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'transform_upload'
+
     def get_object_list(self, request):
         doc_id = request.GET['document_id']
         dt = DocTransform(request.user.id, doc_id)
@@ -830,11 +820,11 @@ class DocTransFormResource(BaseModelResource):
 
         return Document.objects.filter(id=doc_id).values()
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'transform_upload'
-
 
 class AggRefreshResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'refresh_cache'
+
     def get_object_list(self, request):
         AggRefresh()
 
@@ -843,11 +833,11 @@ class AggRefreshResource(BaseModelResource):
 
         return queryset
 
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'refresh_cache'
-
 
 class RefreshMasterResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'refresh_master'
+
     def get_object_list(self, request):
         document_id = request.GET['document_id']
 
@@ -887,11 +877,21 @@ class RefreshMasterResource(BaseModelResource):
 
         return queryset
 
+
+class CacheMetaResource(BaseModelResource):
+    def get_object_list(self, request):
+        cache_all_meta()
+
+        return Office.objects.all().values()
+
     class Meta(BaseModelResource.Meta):
-        resource_name = 'refresh_master'
+        resource_name = 'cache_meta'
 
 
 class QueueProcessResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'queue_process'
+
     def get_object_list(self, request):
         document_id = request.GET['document_id']
 
@@ -901,9 +901,6 @@ class QueueProcessResource(BaseModelResource):
             .filter(document_id=document_id).values()
 
         return queryset
-
-    class Meta(BaseModelResource.Meta):
-        resource_name = 'queue_process'
 
 
 class DocDetailTypeResource(BaseModelResource):
@@ -918,7 +915,6 @@ class ChartTypeTypeResource(BaseModelResource):
         resource_name = 'chart_type'
 
     def get_object_list(self, request):
-
         try:
             primary_indicator_id = request.GET['primary_indicator_id']
             chart_type_ids = ChartTypeToIndicator.objects.filter(
@@ -977,12 +973,10 @@ class OfficeResource(BaseNonModelResource):
         return qs
 
     def dehydrate(self, bundle):
-
         bundle.data.pop("resource_uri", None)
         return bundle
 
 
-##
 def clean_post_data(post_data_dict):
     cleaned = {}
     for k, v in post_data_dict.iteritems():
