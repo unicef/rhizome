@@ -416,8 +416,6 @@ _.extend(ChoroplethMap.prototype, {
           .enter().append('g')
           .attr('class', 'series')
 
-        console.log(options.maxBubbleRadius)
-
         bubbleLegend.append('circle')
           .attr('r', d => {
             return radius(d)

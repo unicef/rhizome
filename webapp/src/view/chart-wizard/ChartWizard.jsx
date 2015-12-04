@@ -12,7 +12,7 @@ import MenuItem from 'component/MenuItem.jsx'
 import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
-import TitleInput from 'component/TitleInput.jsx'
+
 import Chart from 'component/Chart.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import CheckBoxGroup from 'component/CheckBoxGroup.jsx'
@@ -20,6 +20,7 @@ import CheckBoxGroup from 'component/CheckBoxGroup.jsx'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
 import options from './options/options'
+import previews from './preview/previews'
 
 const defaultChartDef = {
   title: '',
@@ -189,8 +190,7 @@ let ChartWizard = React.createClass({
       groupByValue: this.state.data.groupByValue,
       locationLevelValue: this.state.data.locationLevelValue,
       xFormatValue: this.state.data.xFormatValue,
-      yFormatValue: this.state.data.yFormatValue,
-      palette: this.state.data.chartDef.palette
+      yFormatValue: this.state.data.yFormatValue
     })
 
     let optionStep = (
@@ -200,11 +200,20 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let preview = React.createElement(previews[this.state.data.chartDef.type], {
+      chartTitle: this.state.data.chartDef.title,
+      onEditTitle: ChartWizardActions.editTitle,
+      palette: this.state.data.chartDef.palette,
+      onChangePalette: ChartWizardActions.changePalette,
+      xLabel: this.state.data.chartDef.xLabel,
+      yLabel: this.state.data.chartDef.yLabel,
+      onSetXYAxisLabel: ChartWizardActions.setXYAxisLabel
+    })
+
     let previewStep = (
       <div>
-        <label>Title</label>
-        <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
-        <span className='chart-wizard__save' onClick={this.saveChart}>
+        {preview}
+         <span className='chart-wizard__save' onClick={this.saveChart}>
           {this.props.chartDef ? 'Update Chart' : 'Create Chart'}
         </span>
       </div>

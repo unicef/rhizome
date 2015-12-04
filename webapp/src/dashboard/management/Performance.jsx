@@ -143,7 +143,7 @@ var Performance = React.createClass({
                    value: _.property('properties[475]'),
                    bubbleValue: _.property('properties[177]'),
                    stripeValue: _.property('properties[203]'),
-                   xFormat: pct,
+                   xFormat: d3.format(',.1%'),
                    onClick: d => { DashboardActions.navigate({ location: d }) }
                  }}/>
         </div>

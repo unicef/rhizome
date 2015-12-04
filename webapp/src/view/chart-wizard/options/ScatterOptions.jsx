@@ -3,7 +3,6 @@ import React from 'react'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
-import PalettePicker from '../PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
@@ -19,8 +18,7 @@ export default class ScatterOptions extends React.Component {
     groupByValue: React.PropTypes.number,
     locationLevelValue: React.PropTypes.number,
     xFormatValue: React.PropTypes.number,
-    yFormatValue: React.PropTypes.number,
-    palette: React.PropTypes.string
+    yFormatValue: React.PropTypes.number
   }
 
   static defaultProps = {
@@ -29,8 +27,7 @@ export default class ScatterOptions extends React.Component {
     groupByValue: 0,
     locationLevelValue: 0,
     xFormatValue: 0,
-    yFormatValue: 0,
-    palette: ''
+    yFormatValue: 0
   }
 
   render () {
@@ -59,7 +56,6 @@ export default class ScatterOptions extends React.Component {
           onYFormatChange={ChartWizardActions.changeYFormatRadio}
           formatValues={builderDefinitions.formats}
         />
-        <PalettePicker value={this.props.palette} onChange={ChartWizardActions.changePalette} />
       </div>
     )
   }

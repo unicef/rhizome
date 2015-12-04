@@ -4,7 +4,6 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import ButtonMenu from 'component/ButtonMenu.jsx'
-
 import MenuItem from 'component/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
 
@@ -12,8 +11,6 @@ import DocFormActions from 'actions/DocFormActions'
 import DocFormStore from 'stores/DocFormStore'
 
 var DocForm = React.createClass({
-  // see here: https:// fitacular.com/blog/react/2014/06/23/react-file-upload-base64/
-
   mixins: [
     Reflux.connect(DocFormStore)
   ],
@@ -25,7 +22,6 @@ var DocForm = React.createClass({
     doc_title: React.PropTypes.string
   },
 
-  // since we are starting off without any data, there is no initial value
   getInitialState: function () {
     return {
       data_uri: null,
@@ -36,7 +32,7 @@ var DocForm = React.createClass({
       created_doc_id: null,
       doc_detail_meta: null,
       doc_is_refreshed: false,
-      new_doc_title: null,
+      new_doc_title: null
     }
   },
 
@@ -60,36 +56,36 @@ var DocForm = React.createClass({
     reader.readAsDataURL(file)
   },
 
-  setDocConfig: function (config_type, config_val) {
-    var self = this
-
-    var doc_detail_meta = self.state.doc_detail_meta
-    var doc_detail_type = doc_detail_meta[config_type]
+  setDocConfig: function (configType, configValue) {
+    var doc_detail_meta = this.state.doc_detail_meta
+    var doc_detail_type = doc_detail_meta[configType]
     var doc_detail_type_id = doc_detail_type['id']
 
     DocFormActions.setDocConfig({
-      document_id: self.state.created_doc_id,
+      document_id: this.state.created_doc_id,
       doc_detail_type_id: doc_detail_type_id,
-      doc_detail_value: config_val
-    }, config_type)
+      doc_detail_value: configValue
+    }, configType)
   },
 
-  syncDocData: function (config_val) {
-    var self = this
-    DocFormActions.transformUpload({document_id: self.state.created_doc_id})
+  syncDocData: function () {
+    DocFormActions.transformUpload({document_id: this.state.created_doc_id})
   },
 
-  buildHeaderList: function (config_type) {
-    var state_header = this.state.config_options
+  setOdkConfig: function () {
+  },
+
+  buildHeaderList: function (configType) {
+    var stateHeader = this.state.config_options
 
     return MenuItem.fromArray(
-      _.map(state_header, d => {
+      _.map(stateHeader, d => {
         return {
           title: d.replace('"', ''),
           value: d.replace('"', '')
         }
       }),
-      this.setDocConfig.bind('config_type', config_type))
+      this.setDocConfig.bind('config_type', configType))
   },
 
   // return the structure to display and bind the onChange, onSubmit handlers
@@ -134,32 +130,39 @@ var DocForm = React.createClass({
       )
 
       if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
-        let next_link = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-        let [doc_name, doc_revision] = this.props.doc_title.split('-')
+        let nextLink = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+        let [docName, docRevision] = this.props.doc_title.split('-')
         uploadButton = this.state.doc_is_refreshed
-          ? <a href={next_link} className='cd-button refresh__button--margin'>Review</a>
+          ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
           : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
 
         fileConfigForm = this.state.doc_is_refreshed
-          ? (<div>
-          <div className='csv-upload__tags'>
-            <span>File Name: </span>{doc_name}
-          </div>
-          <div className='csv-upload__tags'>
-            <span>Revision: </span>{doc_revision}
-          </div>
-
-        </div>)
+          ? (
+            <div>
+              <div className='csv-upload__tags'>
+                <span>File Name: </span>{docName}
+              </div>
+              <div className='csv-upload__tags'>
+                <span>Revision: </span>{docRevision}
+              </div>
+            </div>
+          )
           : fileConfigForm
       }
     }
+
     var stepMessage = this.state.created_doc_id
-      ? (<div>
-      <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
-    </div>)
-      : (<div>
-      <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box
-    </div>)
+      ? (
+        <div>
+          <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
+        </div>
+      )
+      : (
+        <div>
+          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box, or
+            <a href='#' onClick={this.setOdkConfig}><b>click here to configure an ODK form.</b></a>
+        </div>
+      )
 
     var divZoneStyle = {
       padding: '10px',
@@ -217,7 +220,6 @@ var DocForm = React.createClass({
 
     let uploadFile = this.state.created_doc_id ? fileChoose : dropZone
 
-    // since JSX is case sensitive, be sure to use 'encType'
     return (
       <div>
         <div className='medium-12 columns upload__csv--step'>

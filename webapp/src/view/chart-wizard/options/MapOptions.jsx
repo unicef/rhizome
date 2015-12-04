@@ -3,7 +3,6 @@ import _ from 'lodash'
 
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
-import PalettePicker from '../PalettePicker.jsx'
 import api from 'data/api'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -21,7 +20,6 @@ export default class GeneralOptions extends React.Component {
     locationLevelValue: React.PropTypes.number,
     xFormatValue: React.PropTypes.number,
     yFormatValue: React.PropTypes.number,
-    palette: React.PropTypes.string,
     rawIndicators: React.PropTypes.object,
     rawTags: React.PropTypes.object
   }
@@ -33,7 +31,6 @@ export default class GeneralOptions extends React.Component {
     locationLevelValue: 0,
     xFormatValue: 0,
     yFormatValue: 0,
-    palette: '',
     rawIndicators: null,
     rawTags: null
   }
@@ -65,7 +62,6 @@ export default class GeneralOptions extends React.Component {
         <MapAxisChooser colorFormatValue={this.props.xFormatValue}
                         onColorFormatChange={ChartWizardActions.changeXFormatRadio}
                         formatValues={builderDefinitions.formats}/>
-        <PalettePicker value={this.props.palette} onChange={ChartWizardActions.changePalette}/>
       </div>
     )
   }

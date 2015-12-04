@@ -178,13 +178,13 @@ const aspects = {
 }
 
 export default {
-  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, groupBy, xAxis, yAxis, zAxis, layout) {
+  init: function (dataPromise, chartType, indicators, locations, lower, upper, groups, chartDef, layout) {
     let indicatorArray = _.map(indicators, _.property('id'))
     let meltPromise = dataPromise.then(data => { return melt(data, indicatorArray) })
     let chartProcessors = {
       LineChart: {
         fn: this.processLineChart,
-        para: [meltPromise, lower, upper, groups, groupBy, layout]
+        para: [meltPromise, lower, upper, groups, chartDef, layout]
       },
       PieChart: {
         fn: this.processPieChart,
@@ -192,24 +192,25 @@ export default {
       },
       ChoroplethMap: {
         fn: this.processChoroplethMap,
-        para: [meltPromise, locations, indicators, xAxis, yAxis, zAxis, layout]
+        para: [meltPromise, locations, indicators, chartDef, layout]
       },
       ColumnChart: {
         fn: this.processColumnChart,
-        para: [meltPromise, lower, upper, groups, groupBy, layout]
+        para: [meltPromise, lower, upper, groups, chartDef, layout]
       },
       ScatterChart: {
         fn: this.processScatterChart,
-        para: [dataPromise, locations, indicators, xAxis, yAxis, layout]
+        para: [dataPromise, locations, indicators, chartDef, layout]
       },
       BarChart: {
         fn: this.processBarChart,
-        para: [dataPromise, locations, indicators, layout]
+        para: [dataPromise, locations, indicators, chartDef, layout]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
   },
-  processLineChart: function (dataPromise, lower, upper, groups, groupBy, layout) {
+  processLineChart: function (dataPromise, lower, upper, groups, chartDef, layout) {
+    let groupBy = chartDef.groupBy
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -224,7 +225,9 @@ export default {
         values: _.property('values'),
         x: _.property('campaign.start_date'),
         xFormat: (d) => { return moment(d).format('MMM YYYY') },
-        y: _.property('value')
+        y: _.property('value'),
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       var chartData = _groupBySeries(data, groups, groupBy)
       return { options: chartOptions, data: chartData }
@@ -252,7 +255,11 @@ export default {
       return { options: chartOptions, data: data }
     })
   },
-  processChoroplethMap: function (dataPromise, locations, indicators, xAxis, yAxis, zAxis, layout) {
+  processChoroplethMap: function (dataPromise, locations, indicators, chartDef, layout) {
+    let xAxis = chartDef.x
+    let yAxis = chartDef.y
+    let zAxis = chartDef.z
+
     var locationsIndex = _.indexBy(locations, 'id')
     return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
@@ -299,7 +306,8 @@ export default {
       return { options: chartOptions, data: chartData }
     }))
   },
-  processColumnChart: function (dataPromise, lower, upper, groups, groupBy, layout) {
+  processColumnChart: function (dataPromise, lower, upper, groups, chartDef, layout) {
+    let groupBy = chartDef.groupBy
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -323,13 +331,17 @@ export default {
           var start = d.campaign.start_date
           return moment(start).startOf('month').toDate().getTime()
         },
-        xFormat: function (d) { return moment(d).format('MMM YYYY') }
+        xFormat: function (d) { return moment(d).format('MMM YYYY') },
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       return { options: chartOptions, data: chartData }
     })
   },
-  processScatterChart: function (dataPromise, locations, indicators, xAxis, yAxis, layout) {
+  processScatterChart: function (dataPromise, locations, indicators, chartDef, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
+    let xAxis = chartDef.xAxis
+    let yAxis = chartDef.yAxis
 
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
@@ -377,13 +389,13 @@ export default {
         onMouseOut: hideTooltip,
         onMouseOver: showTooltip,
         range: _.constant(range),
-        xLabel: 'Caregiver Awareness',
-        yLabel: 'Missed Children'
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       return { options: chartOptions, data: chartData }
     })
   },
-  processBarChart: function (dataPromise, locations, indicators, layout) {
+  processBarChart: function (dataPromise, locations, indicators, chartDef, layout) {
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -408,7 +420,9 @@ export default {
       var chartOptions = {
         aspect: aspects[layout].barChart,
         offset: 'zero',
-        yFormat: String
+        yFormat: String,
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
       }
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
       return { options: chartOptions, data: chartData }

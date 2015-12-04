@@ -20,6 +20,7 @@ let ChartWizardActions = Reflux.createActions([
   'changeYAxis',
   'changeZAxis',
   'changePalette',
+  'setXYAxisLabel',
   'saveChart'
 ])
 
