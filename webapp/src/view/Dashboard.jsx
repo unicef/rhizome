@@ -90,6 +90,7 @@ var Dashboard = React.createClass({
 
     Indicator.getIndicators().then(indicators => {
       this.indicators = indicators
+      this.forceUpdate()
     })
   },
 
