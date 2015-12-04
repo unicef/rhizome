@@ -244,7 +244,9 @@ let ChartWizard = React.createClass({
             refer='location'>
             {locationStep}
           </ChartWizardStep>
-          <ChartWizardStep title='4. Select Chart Type' refer='chart-type'>
+          <ChartWizardStep
+            title={`4. Select Chart Type${this.state.data.chartDef.type ? ' - ' + this.state.data.chartDef.type.match(/[A-Z][a-z]*/g).join(' ') : ''}`}
+            refer='chart-type'>
             {chartTypeStep}
           </ChartWizardStep>
           <ChartWizardStep
