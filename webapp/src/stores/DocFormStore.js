@@ -6,6 +6,7 @@ var DocFormStore = Reflux.createStore({
   listenables: [require('actions/DocFormActions')],
 
   init: function () {
+    var self = this
     this.data = {
       data_uri: null,
       config_options: [],
@@ -17,6 +18,11 @@ var DocFormStore = Reflux.createStore({
       doc_is_refreshed: false,
       new_doc_title: null
     }
+    api.docDetailType().then(function (response) {
+      var doc_detail_types = _.indexBy(response.objects, 'name')
+      self.data.doc_detail_meta = doc_detail_types
+      self.trigger(self.data)
+    })
   },
 
   onGetData: function (file, upload) {
@@ -31,12 +37,6 @@ var DocFormStore = Reflux.createStore({
       self.data.config_options = new_doc_obj.file_header.replace('"', '').split(',')
       self.data.created_doc_id = new_doc_obj.id
       self.data.new_doc_title = new_doc_obj.doc_title
-      self.trigger(self.data)
-    })
-
-    api.docDetailType().then(function (response) {
-      var doc_detail_types = _.indexBy(response.objects, 'name')
-      self.data.doc_detail_meta = doc_detail_types
       self.trigger(self.data)
     })
   },
@@ -64,6 +64,9 @@ var DocFormStore = Reflux.createStore({
       if (res.objects) {
         self.data.doc_obj = res.objects[0]
         self.data.created_doc_id = res.objects[0].id
+        self.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
+        self.data.new_doc_title = res.objects[0].doc_title
+
         self.trigger(self.data)
         }
       }, res => {

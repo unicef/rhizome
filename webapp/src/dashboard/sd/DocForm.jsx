@@ -60,6 +60,10 @@ var DocForm = React.createClass({
 
   setDocConfig: function (configType, configValue) {
     var doc_detail_meta = this.state.doc_detail_meta
+
+    console.log('configType',configType);
+    console.log('configValue',configValue);
+
     var doc_detail_type = doc_detail_meta[configType]
     var doc_detail_type_id = doc_detail_type['id']
 
