@@ -153,6 +153,10 @@ var CustomDashboard = React.createClass({
       let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
       let options = data[id] && data[id].options || getOptions(chart, campaign)
 
+      if (chart.type === 'LineChart' || chart.type === 'ColumnChart' || chart.type === 'ScatterChart' || chart.type === 'BarChart') {
+        options['margin'] = {top: 0, right: 0, bottom: 30, left: 20}
+      }
+
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
           <h4 className='custom-dashboard__chart-title'>&nbsp;{title} {controls}</h4>

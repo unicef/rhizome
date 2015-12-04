@@ -197,7 +197,8 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     svg.call(axisLabel()
     .data(options.xLabel, options.yLabel)
     .width(w)
-    .height(h))
+    .height(h)
+    .margin(options.margin))
   }
 
   var fmt = _.flow(options.y, options.yFormat)

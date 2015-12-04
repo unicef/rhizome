@@ -204,7 +204,8 @@ _.extend(LineChart.prototype, {
       svg.call(axisLabel()
       .data(options.xLabel, options.yLabel)
       .width(width)
-      .height(height))
+      .height(height)
+      .margin(options.margin))
     }
 
     gy.selectAll('g').classed('minor', function (d) {

@@ -6,7 +6,7 @@ function wrap (text, width) {
     let words = text.text().split('').reverse()
     let word
     let line = []
-    let sumLineNumber = (words && words.length) ? words.length : 0
+    let sumLineNumber = words.length
     let lineNumber = 1
     let lineHeight = 1.1
     let tspan = text.text(null).append('tspan')
@@ -30,12 +30,13 @@ function wrap (text, width) {
   })
 }
 
-function axisLabel (chartOptions) {
+function axisLabel () {
   var _width = 1
   var _height = 1
   var _fontSize = 14
   var _xLabel, _yLabel
   var _textLength = 5
+  var _margin = {top: 0, right: 0, bottom: 30, left: 20}
 
   function chart (selection) {
     if (_xLabel) {
@@ -43,7 +44,7 @@ function axisLabel (chartOptions) {
         .enter().append('g')
         .attr({
           'class': 'label',
-          'transform': 'translate(' + (_width / 2) + ', ' + (0.1 * _height) + ')'
+          'transform': 'translate(' + (_width / 2) + ', ' + _margin.bottom + ')'
         })
         .style({
           'font-size': _fontSize
@@ -57,7 +58,7 @@ function axisLabel (chartOptions) {
         .enter().append('g')
         .attr({
           'class': 'label',
-          'transform': 'translate(' + (-0.02 * _width) + ', ' + (_height / 2) + ')'
+          'transform': 'translate(' + (-_margin.left) + ', ' + (_height / 2) + ')'
         })
         .style({
           'font-size': _fontSize
@@ -111,6 +112,15 @@ function axisLabel (chartOptions) {
 
     _xLabel = xValue ? [xValue] : null
     _yLabel = yValue ? [yValue] : null
+    return chart
+  }
+
+  chart.margin = function (value) {
+    if (!arguments.length) {
+      return _margin
+    }
+
+    _margin = value
     return chart
   }
 

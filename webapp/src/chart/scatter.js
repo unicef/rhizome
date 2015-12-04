@@ -140,7 +140,8 @@ _.extend(ScatterPlot.prototype, {
       svg.call(axisLabel()
       .data(options.xLabel, options.yLabel)
       .width(w)
-      .height(h))
+      .height(h)
+      .margin(options.margin))
     }
   },
 
