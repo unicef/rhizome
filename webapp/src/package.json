@@ -12,7 +12,8 @@
     "fixed-data-table": "fixed-data-table",
     "page": "page",
     "react-dnd": "react-dnd",
-    "react-layer": "react-layer"
+    "react-layer": "react-layer",
+    "jquery": "jquery"
   },
   "browserify": {
     "transform": [
