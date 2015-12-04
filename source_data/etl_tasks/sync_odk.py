@@ -21,16 +21,12 @@ class OdkJarFileException(Exception):
 
     def __init__(self, message, *args, **kwargs):
 
+        java_message = message[message.index('SEVERE:') + 8:]
 
-        print '===\n' * 3
-        print message
-        print '===\n' * 3
+        if "form ID doesn't exist on server" in java_message:
 
-        java_message = message[message.index("SEVERE:"):]
-        self.errorMessage = java_message + '...... ' + kwargs['odk_form_name']
+            self.errorMessage = 'form id "{0}" does not exists on this server.\n\n Please check: \n\n {1}/Aggregate.html#management/forms/ \n\n and ensure that the FORM_ID you entered is correct. '.format(kwargs['odk_form_name'],kwargs['odk_aggregate_url'])
 
-        ## for more infomration see here:
-        # <my aggregate url > Aggregate.html#management/forms///
 
 class OdkSync(object):
 
@@ -65,7 +61,7 @@ class OdkSync(object):
 
             # if exitcode == 0:
             if 'SEVERE:' in err:
-                error_details = {'odk_form_name':form_name}
+                error_details = {'odk_form_name':form_name, 'odk_aggregate_url':self.odk_settings['AGGREGATE_URL']}
                 raise OdkJarFileException(err, **error_details)
 
             csv_file = self.odk_settings['EXPORT_DIRECTORY'] + form_name.replace('-','_') + '.csv'
