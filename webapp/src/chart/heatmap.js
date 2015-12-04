@@ -209,13 +209,7 @@ _.extend(Heatmap.prototype, {
     if (options.legend) {
       svg.select('.legend')
         .call(options.legend)
-        .attr('transform', function () {
-          var bbox = this.getBoundingClientRect()
-          var dx = w + margin.right - bbox.width
-          var dy = 0
-
-          return 'translate(' + dx + ', ' + dy + ')'
-        })
+        .attr('transform', `translate(${w + 6}, 5)`)
     } else {
       svg.select('.legend').selectAll('*').remove()
     }

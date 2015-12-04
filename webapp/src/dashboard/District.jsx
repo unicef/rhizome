@@ -61,7 +61,7 @@ var District = React.createClass({
       .range(['#DB5344', '#79909F', '#2FB0D3'])
 
     var lgnd = legend()
-      .size(14)
+      .size(12)
       .scale(d3.scale.ordinal()
         .domain(['bad', 'ok', 'good'])
         .range(['#DB5344', '#79909F', '#2FB0D3'])
