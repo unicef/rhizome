@@ -38,22 +38,23 @@ export default class GeneralOptions extends React.Component {
   render () {
     let intIndicators = _.sortBy(api.buildIndicatorsTree(this.props.rawIndicators.objects, this.props.rawTags.objects, true, true, 'int'), 'title')
     let boolIndicators = _.sortBy(api.buildIndicatorsTree(this.props.rawIndicators.objects, this.props.rawTags.objects, true, true, 'bool'), 'title')
+    let [colorIndicator, bubbleIndicator, gradientIndicator] = this.props.indicatorSelected
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
         <h4>Color Axis</h4>
         <ul className='list'>
-          <li>{this.props.indicatorSelected[0] && this.props.indicatorSelected[0].name}</li>
+          <li>{colorIndicator && colorIndicator.name}</li>
         </ul>
         <h4>Bubble Axis</h4>
         <IndicatorDropdownMenu
-          text={this.props.indicatorSelected[1] ? this.props.indicatorSelected[1].name : 'Add Indicators'}
+          text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
           icon='fa-plus'
           indicators={intIndicators}
           sendValue={ChartWizardActions.changeYAxis}/>
         <h4>Gradient Axis</h4>
         <IndicatorDropdownMenu
-          text={this.props.indicatorSelected[2] ? this.props.indicatorSelected[2].name : 'Add Indicators'}
+          text={gradientIndicator ? gradientIndicator.name : 'Add Indicators'}
           icon='fa-plus'
           indicators={boolIndicators}
           sendValue={ChartWizardActions.changeZAxis}/>

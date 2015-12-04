@@ -31,16 +31,17 @@ export default class ScatterOptions extends React.Component {
   }
 
   render () {
+    let [xIndicator, yIndicator] = this.props.indicatorSelected
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
         <h4>X Axis</h4>
         <ul className='list'>
-          <li>{this.props.indicatorSelected[0] && this.props.indicatorSelected[0].name}</li>
+          <li>{xIndicator && xIndicator.name}</li>
         </ul>
         <h4>Y Axis</h4>
         <IndicatorDropdownMenu
-          text={this.props.indicatorSelected[1] ? this.props.indicatorSelected[1].name : 'Add Indicators'}
+          text={yIndicator ? yIndicator.name : 'Add Indicators'}
           icon='fa-plus'
           indicators={this.props.indicatorList}
           sendValue={ChartWizardActions.changeYAxis} />

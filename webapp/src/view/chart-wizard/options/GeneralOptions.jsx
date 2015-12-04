@@ -29,15 +29,20 @@ export default class GeneralOptions extends React.Component {
   }
 
   render () {
+    let [firstIndicator, ...otherIndicator] = this.props.indicatorSelected
     return (
       <div className='chart-wizard__options chart-wizard__options--general'>
+        <h4>First Indicator</h4>
+        <ul className='list'>
+          <li>{firstIndicator && firstIndicator.name}</li>
+        </ul>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
         <IndicatorDropdownMenu
           text='Add Indicators'
           icon='fa-plus'
           indicators={this.props.indicatorList}
           sendValue={ChartWizardActions.addIndicator} />
-        <List items={this.props.indicatorSelected.slice(1)} removeItem={ChartWizardActions.removeIndicator} />
+        <List items={otherIndicator} removeItem={ChartWizardActions.removeIndicator} />
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         <RadioGroup name='groupby' title='Group By: '
