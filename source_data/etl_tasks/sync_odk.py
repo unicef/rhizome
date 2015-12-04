@@ -39,6 +39,7 @@ class OdkSync(object):
         self.odk_form_name = odk_form_name
         self.odk_settings = settings.ODK_SETTINGS
         self.user_id = kwargs['user_id']
+        self.sync_result_data = {}
 
     def main(self):
         '''
@@ -72,6 +73,8 @@ class OdkSync(object):
                  csv_base_64 = base64.b64encode(full_file.read())
                  self.post_file_data(document_id, csv_base_64, str(form_name))
                  # output_data = self.refresh_file_data(document_id)
+
+        return document_id, self.sync_result_data
 
     def post_file_data(self, document_id, base_64_data, doc_title):
 

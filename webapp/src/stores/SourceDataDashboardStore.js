@@ -11,14 +11,11 @@ var SourceDataDashboardStore = Reflux.createStore({
   },
 
   onSetOdkFormName: function (data) {
-
-      api.sync_odk(data).then(res => {
-        if (res.objects.id) {
-          window.location = '/datapoints/dashboards/edit/' + res.objects.id
-        } else {
-          window.alert('There was an error saving your chart')
+      api.sync_odk(data, null, {'cache-control':'no-cache'}).then(res => {
+        if (res.objects) {
+          self.data.doc_obj = response.objects[0]
         }
-      }, res => {
+        }, res => {
         window.alert(res.msg)
       })
   },
