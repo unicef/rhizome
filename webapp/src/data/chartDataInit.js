@@ -96,10 +96,7 @@ export default {
       lower,
       upper,
       groups,
-      chartDef.groupBy,
-      chartDef.x,
-      chartDef.y,
-      chartDef.z,
+      chartDef,
       layout
     ).then(chart => {
       if (!chart.data) {
@@ -112,7 +109,9 @@ export default {
       if (chart.options && !chart.options.xFormat) {
         newOptions.xFormat = d3.format(chartDef.xFormat)
       }
-      newOptions.color = palettes[chartDef.palette]
+      if (chartDef.palette) {
+        newOptions.color = palettes[chartDef.palette]
+      }
       newOptions.chartInDashboard = true
       return { data: chart.data, options: newOptions }
     })

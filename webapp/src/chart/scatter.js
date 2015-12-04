@@ -4,6 +4,7 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from 'component/Tooltip.jsx'
+import axisLabel from 'chart/renderer/axis-label'
 
 var defaults = {
   hoverRadius: 5,
@@ -134,6 +135,13 @@ _.extend(ScatterPlot.prototype, {
       .transition()
       .duration(300)
       .call(yAxis)
+
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(w)
+      .height(h))
+    }
   },
 
   _onMouseMove: function (d) {

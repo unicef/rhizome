@@ -36,7 +36,9 @@ let ChartWizardStore = Reflux.createStore({
     chartData: [],
     chartDef: {},
     rawIndicators: null,
-    rawTags: null
+    rawTags: null,
+    xLabel: null,
+    yLabel: null
   },
   LAYOUT_PREVIEW: 0,
 
@@ -125,7 +127,7 @@ let ChartWizardStore = Reflux.createStore({
       country.index = index
     })
     let countryIndex = _.indexBy(this.data.countries, _.property('id'))
-    this.data.countrySelected = this.data.chartDef.countries.map(country => {
+    this.data.countrySelected = (this.data.chartDef.countries || []).map(country => {
       return countryIndex[country]
     })
     this.data.locationList = _(locations.objects)
@@ -222,7 +224,9 @@ let ChartWizardStore = Reflux.createStore({
       chartData: [],
       chartDef: {},
       rawIndicators: null,
-      rawTags: null
+      rawTags: null,
+      xLabel: null,
+      yLabel: null
     }
   },
 
@@ -344,6 +348,12 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangePalette (key) {
     this.data.chartDef.palette = key
+    this.previewChart()
+  },
+
+  onSetXYAxisLabel (xAxisLabel, yAxisLabel) {
+    this.data.chartDef.xLabel = xAxisLabel
+    this.data.chartDef.yLabel = yAxisLabel
     this.previewChart()
   },
 

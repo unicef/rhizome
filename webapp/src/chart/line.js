@@ -5,6 +5,7 @@ import palettes from 'util/palettes'
 import format from 'util/format'
 import hoverLine from 'chart/behavior/hover-line'
 import label from 'chart/renderer/label'
+import axisLabel from 'chart/renderer/axis-label'
 
 var DEFAULTS = {
   margin: {
@@ -50,7 +51,7 @@ _.extend(LineChart.prototype, {
         .sortBy()
         .value())
       .range(options.color)
-    // let fill = color.map(series.map(options.seriesName), options.color)
+
     let dataColor = _.flow(options.seriesName, dataColorScale)
 
     var domain = _.isFunction(options.domain)
@@ -198,6 +199,13 @@ _.extend(LineChart.prototype, {
       })
 
     d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
+
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(width)
+      .height(height))
+    }
 
     gy.selectAll('g').classed('minor', function (d) {
       return d !== range[0]

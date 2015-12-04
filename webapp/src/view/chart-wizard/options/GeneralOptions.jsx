@@ -3,7 +3,6 @@ import React from 'react'
 import List from 'component/list/List.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
-import PalettePicker from '../PalettePicker.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
@@ -18,8 +17,7 @@ export default class GeneralOptions extends React.Component {
     indicatorSelected: React.PropTypes.array,
     groupByValue: React.PropTypes.number,
     locationLevelValue: React.PropTypes.number,
-    yFormatValue: React.PropTypes.number,
-    palette: React.PropTypes.string
+    yFormatValue: React.PropTypes.number
   }
 
   static defaultProps = {
@@ -27,8 +25,7 @@ export default class GeneralOptions extends React.Component {
     indicatorSelected: [],
     groupByValue: 0,
     locationLevelValue: 0,
-    yFormatValue: 0,
-    palette: ''
+    yFormatValue: 0
   }
 
   render () {
@@ -55,7 +52,6 @@ export default class GeneralOptions extends React.Component {
           value={this.props.yFormatValue}
           values={builderDefinitions.formats}
           onChange={ChartWizardActions.changeYFormatRadio} />
-        <PalettePicker value={this.props.palette} onChange={ChartWizardActions.changePalette} />
       </div>
     )
   }

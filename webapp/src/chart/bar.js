@@ -10,6 +10,7 @@ import browser from 'util/browser'
 import color from 'util/color'
 import palettes from 'util/palettes'
 import legend from 'chart/renderer/legend'
+import axisLabel from 'chart/renderer/axis-label'
 
 var defaults = {
   barHeight: 14,
@@ -217,6 +218,13 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           .tickFormat(options.yFormat)
           .ticks(3)
           .scale(yScale))
+
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(w)
+      .height(h))
+    }
 
     if (data.length > 1) {
       // Show the legend if we have at least two series
