@@ -4,7 +4,6 @@ import api from 'data/api.js'
 import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
-import ReactJson from 'react-json'
 
 import ButtonMenu from 'component/ButtonMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
@@ -41,7 +40,6 @@ var SourceDataDashboard = React.createClass({
   getInitialState: function () {
     return {
       doc_obj: null
-      // is_odk_config_form: false
     }
   },
 
@@ -55,19 +53,6 @@ var SourceDataDashboard = React.createClass({
       return
     }
   },
-  setOdkConfig: function () {
-    this.setState({is_odk_config_form: true})
-  },
-
-  processOdkForm: function (e) {
-    var self = this
-
-    e.preventDefault()
-    var data = this.refs.form_data.getValue()
-    SourceDataDashboardActions.setOdkFormName(data)
-
-  },
-
 
   render: function () {
     var loading = this.props.loading
@@ -165,9 +150,6 @@ var SourceDataDashboard = React.createClass({
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
-        <div className='medium-12 columns upload__csv--step'>
-        or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
-        </div>
         <DocForm
           campaign={this.props.campaign}
           location={this.props.location}
@@ -206,20 +188,6 @@ var SourceDataDashboard = React.createClass({
     )
 
     var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
-
-    // THIS HANDLES THE ODK COFIGURATION STEP
-    if (this.state.is_odk_config_form) {
-      var formData = {'odk_form_id': ''}
-      var formSettings = {'form': true, fields: {'odk_form_id': {type: 'string'}}}
-      var additionalFormComponents = ''
-      var docForm = (
-        <div className='row'>
-          <ReactJson value={formData} settings={formSettings} ref='form_data'/>
-          <br/>
-          <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.processOdkForm}>Process ODK Form</button>
-        </div>
-      )
-    }
 
     return (
       <div className='row upload__csv'>

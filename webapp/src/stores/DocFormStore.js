@@ -56,7 +56,20 @@ var DocFormStore = Reflux.createStore({
         self.data.doc_is_refreshed = true
         self.trigger(self.data)
       })
-  }
+  },
+
+  onSetOdkFormName: function (data) {
+    var self = this
+    api.sync_odk(data, null, {'cache-control':'no-cache'}).then(res => {
+      if (res.objects) {
+        self.data.doc_obj = res.objects[0]
+        self.data.created_doc_id = res.objects[0].id
+        self.trigger(self.data)
+        }
+      }, res => {
+      window.alert(res.msg)
+    })
+  },
 })
 
 export default DocFormStore

@@ -10,16 +10,6 @@ var SourceDataDashboardStore = Reflux.createStore({
     }
   },
 
-  onSetOdkFormName: function (data) {
-      api.sync_odk(data, null, {'cache-control':'no-cache'}).then(res => {
-        if (res.objects) {
-          self.data.doc_obj = response.objects[0]
-        }
-        }, res => {
-        window.alert(res.msg)
-      })
-  },
-
   onGetDocObj: function (doc_id) {
     var self = this
     api.source_doc({ id: doc_id }).then(function (response) {
