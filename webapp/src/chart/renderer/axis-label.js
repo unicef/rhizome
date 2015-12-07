@@ -38,7 +38,7 @@ function axisLabel () {
   var _fontSize = 14
   var _xLabel, _yLabel
   // var _textLength = 5
-  var _margin = {top: 0, right: 0, bottom: 30, left: 20}
+  var _margin = {top: 0, right: 0, bottom: 30, left: 10}
 
   function chart (selection) {
     if (_xLabel) {

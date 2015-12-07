@@ -219,9 +219,16 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let chartOptions = this.state.data.chartOptions
+    if (chartOptions.xLabel || chartOptions.yLabel) {
+      let marginLeft = chartOptions.xLabel ? 10 : 0
+      let marginBottom = chartOptions.yLabel ? 30 : 0
+      chartOptions['margin'] = {top: 0, right: 0, bottom: marginBottom, left: marginLeft}
+    }
+
     let chart = (
       <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
-        options={this.state.data.chartOptions}/>
+        options={chartOptions}/>
     )
 
     let countryName = this.state.data.countrySelected.map(country => country.name).join(', ')
