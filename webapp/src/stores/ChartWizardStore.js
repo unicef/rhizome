@@ -254,6 +254,7 @@ let ChartWizardStore = Reflux.createStore({
   onAddLocation (index) {
     this.data.location.push(this.locationIndex[index])
     this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
+    this.data.campaign = this.data.campaignFilteredList[0]
     this.previewChart()
   },
 
