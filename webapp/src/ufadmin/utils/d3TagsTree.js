@@ -1,3 +1,4 @@
+import api from '../../data/api'
 import d3 from 'd3';
 import $ from 'jquery';
 
@@ -91,14 +92,12 @@ tt.create = function(el, props, state) {
   );
 
   tt._update(tt.root);
+  tt._initialPan();
+//  tt._centerNode(tt.root);
 };
 
 tt.update = function(el, props, state) {
-//  var scales = this._scales(el, state.domain);
-//  this._drawPoints(el, scales, state.data);
-
   tt._update(tt.root);
-
 };
 
 tt.destroy = function(el) {
@@ -442,6 +441,11 @@ tt._initiateDrag = function(d, domNode) {
 };
 
 tt._endDrag = function() {
+  if (tt.selectedNode !== null && tt.draggingNode !== null) {
+    var fetch = api.post_indicator_tag;
+    fetch({id: tt.draggingNode.id, tag_name: tt.draggingNode.tag_name, parent_tag_id: tt.selectedNode.id });
+  }
+
   tt.selectedNode = null;
   d3.selectAll('.ghostCircle').attr('class', 'ghostCircle');
   d3.select(tt.domNode).attr('class', 'node');
@@ -503,6 +507,20 @@ tt._sortTree = function() {
   tt.tree.sort(function(a, b) {
     return b.title.toLowerCase() < a.title.toLowerCase() ? 1 : -1;
   });
+}
+
+tt._initialPan = function() {
+  var source = tt.root;
+  var scale = tt.zoomListener.scale();
+  var x = -source.y0;
+  var y = -source.x0;
+  x = x * scale + tt.viewerWidth / 10;
+  y = y * scale + tt.viewerHeight / 2;
+  d3.select('g').transition()
+    .duration(duration)
+    .attr("transform", "translate(" + x + "," + y + ")scale(" + scale + ")");
+  tt.zoomListener.scale(scale);
+  tt.zoomListener.translate([x, y]);
 }
 
 export default tt;
