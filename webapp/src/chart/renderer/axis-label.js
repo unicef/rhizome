@@ -65,7 +65,8 @@ function axisLabel () {
         })
 
       yAxisLabel.append('text').text(d => { return d })
-        .call(wrap, _textLength, 0, 0)
+        .style('transform', 'rotate(-90deg)')
+        //.call(wrap, _textLength, 0, 0)
     }
   }
 
