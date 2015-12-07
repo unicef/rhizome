@@ -8,6 +8,7 @@ import DashboardInit from 'data/dashboardInit'
 
 import Indicator from 'requests/Indicator'
 import Location from 'requests/Location'
+import Office from 'requests/Office'
 
 import CampaignStore from 'stores/CampaignStore'
 
@@ -171,14 +172,14 @@ var HomepageDashboardsStore = Reflux.createStore({
       Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
       Indicator.getIndicators(),
-      api.office()
+      Office.getOffices()
     ])
     .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
       var partialPrepare = _.partial((dashboard) => {
         return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
       })
 
-      let officesIndex = _.indexBy(offices.objects, 'top_level_location_id')
+      let officesIndex = _.indexBy(offices, 'top_level_location_id')
 
       this.indicators = indicators
       var enhanced = dashboardDefs

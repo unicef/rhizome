@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import CampaignStore from 'stores/CampaignStore'
+import Office from 'requests/Office'
 
 import api from 'data/api'
 import builtins from 'dashboard/builtin'
@@ -18,7 +19,7 @@ var NavigationStore = Reflux.createStore({
     Promise.all([
       CampaignStore.getCampaignsPromise(),
       api.get_dashboard(),
-      api.office().then(response => response.objects)
+      Office.getOffices()
     ]).then(_.spread(this._loadDashboards))
   },
 
