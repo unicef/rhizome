@@ -153,8 +153,10 @@ var CustomDashboard = React.createClass({
       let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
       let options = data[id] && data[id].options || getOptions(chart, campaign)
 
-      if (chart.type === 'LineChart' || chart.type === 'ColumnChart' || chart.type === 'ScatterChart' || chart.type === 'BarChart') {
-        options['margin'] = {top: 0, right: 0, bottom: 30, left: 20}
+      if (options.xLabel || options.yLabel) {
+        let marginLeft = options.xLabel ? 20 : 0
+        let marginBottom = options.yLabel ? 30 : 0
+        options['margin'] = {top: 0, right: 0, bottom: marginBottom, left: marginLeft}
       }
 
       return (
