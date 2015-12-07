@@ -20,6 +20,8 @@ from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap
     SourceSubmission
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
+from source_data.etl_tasks.sync_odk import OdkSync
+from source_data.etl_tasks.sync_odk import OdkJarFileException
 from datapoints.agg_tasks import AggRefresh
 from datapoints.cache_meta import cache_all_meta
 from tastypie.exceptions import ImmediateHttpResponse
@@ -33,7 +35,6 @@ class CampaignResource(BaseModelResource):
         filtering = {
             "id": ALL,
         }
-
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -646,11 +647,6 @@ class LocationResponsibilityResource(BaseModelResource):
         """
 
         obj_id = int(bundle.request.GET[u'id'])
-
-        print 'DELETEING \n' * 10
-        print obj_id
-        print 'DELETEING \n' * 10
-
         LocationResponsibility.objects.get(id=obj_id).delete()
 
 
@@ -888,6 +884,28 @@ class CacheMetaResource(BaseModelResource):
         resource_name = 'cache_meta'
 
 
+class SyncOdkResource(BaseModelResource):
+    def get_object_list(self, request):
+
+        required_param = 'odk_form_id'
+
+        try:
+            odk_form_name = request.GET[required_param]
+        except KeyError:
+            raise DataPointsException('"{0}" is a required parameter for this request'.format(required_param))
+
+        try:
+            odk_sync_object = OdkSync(odk_form_name, **{'user_id':request.user.id})
+            document_id, sync_result_data = odk_sync_object.main()
+        except OdkJarFileException as e:
+            raise DataPointsException(e.errorMessage)
+
+        return Document.objects.filter(id=document_id).values()
+
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'sync_odk'
+
+
 class QueueProcessResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'queue_process'
@@ -956,7 +974,7 @@ class OfficeResource(BaseNonModelResource):
     def get_object_list(self, request):
 
         # temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1: 43, 2: 41, 3: 45}
+        latest_campaign_lookup = {1: 43, 2: 299, 3: 45}
         location_lookup = {1: 1, 2: 2, 3: 3}
 
         qs = []

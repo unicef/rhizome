@@ -6,6 +6,7 @@ import moment from 'moment'
 import ButtonMenu from 'component/ButtonMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
+import ReactJson from 'react-json'
 
 import DocFormActions from 'actions/DocFormActions'
 import DocFormStore from 'stores/DocFormStore'
@@ -32,7 +33,8 @@ var DocForm = React.createClass({
       created_doc_id: null,
       doc_detail_meta: null,
       doc_is_refreshed: false,
-      new_doc_title: null
+      new_doc_title: null,
+      is_odk_config_form: false
     }
   },
 
@@ -58,6 +60,10 @@ var DocForm = React.createClass({
 
   setDocConfig: function (configType, configValue) {
     var doc_detail_meta = this.state.doc_detail_meta
+
+    console.log('configType',configType);
+    console.log('configValue',configValue);
+
     var doc_detail_type = doc_detail_meta[configType]
     var doc_detail_type_id = doc_detail_type['id']
 
@@ -73,6 +79,12 @@ var DocForm = React.createClass({
   },
 
   setOdkConfig: function () {
+    this.setState({is_odk_config_form: true})
+  },
+
+  processOdkForm: function (e) {
+    var data = this.refs.form_data.getValue()
+    DocFormActions.setOdkFormName(data)
   },
 
   buildHeaderList: function (configType) {
@@ -159,10 +171,17 @@ var DocForm = React.createClass({
       )
       : (
         <div>
-          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the box, or
-            <a href='#' onClick={this.setOdkConfig}><b>click here to configure an ODK form.</b></a>
-        </div>
+          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the
+            <br></br>
+            <div className='medium-12 columns upload__csv--step'>
+            or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
+            </div>
+          </div>
       )
+
+    if (this.state.is_odk_config_form){
+        var stepMessage = <div><span> Please Enter the form_id of the ODK form you would like to configure..</span> </div>
+    }
 
     var divZoneStyle = {
       padding: '10px',
@@ -218,15 +237,24 @@ var DocForm = React.createClass({
       </div>
     )
 
-    let uploadFile = this.state.created_doc_id ? fileChoose : dropZone
+    let odkForm = (
+        <div className='row'>
+          <ReactJson value={{'odk_form_id': ''}} settings={{'form': true, fields: {'odk_form_id': {type: 'string'}}}} ref='form_data'/>
+          <br/>
+          <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.processOdkForm}>Process ODK Form</button>
+        </div>
+    )
+
+    // if this is an odk_config form, render ODK form, else, render dropZone
+    let baseFileForm = this.state.is_odk_config_form ? odkForm : dropZone;
+    let formComponent = this.state.created_doc_id ? fileChoose : baseFileForm;
 
     return (
       <div>
         <div className='medium-12 columns upload__csv--step'>
           {stepMessage}
         </div>
-        {uploadFile}
-
+        {formComponent}
       </div>
     )
   }

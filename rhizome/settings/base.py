@@ -106,6 +106,20 @@ DATABASES = {
     }
 }
 
+ODK_SETTINGS = {
+    'JAR_FILE': '', ## download here: https://opendatakit.org/downloads/download-info/odk-briefcase/
+    'RHIZOME_USERNAME':'', ##
+    'RHIZOME_KEY':'', ##'get an API key.. http://stackoverflow.com/questions/10940983/
+    'STORAGE_DIRECTORY':'', ## /my/storage/dir',
+    'EXPORT_DIRECTORY':'', ##' /my/output/dir,
+    'ODK_USER':'', ## my_odk_username
+    'ODK_PASS':'', ## my_odk_password
+    'AGGREGATE_URL':'', ##:'https://my-odk-server.appspot.com/',
+    'API_ROOT':'http://localhost:8000/api/v1/',
+}
+
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/

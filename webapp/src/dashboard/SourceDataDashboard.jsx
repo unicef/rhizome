@@ -5,11 +5,14 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
+import ButtonMenu from 'component/ButtonMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+
 import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
-import SourceDataDashboardAction from 'actions/SourceDataDashboardActions'
+import SourceDataDashboardActions from 'actions/SourceDataDashboardActions'
 
 import CSVMenuItem from 'component/CSVMenuItem.jsx'
 
@@ -41,7 +44,7 @@ var SourceDataDashboard = React.createClass({
   },
 
   componentWillMount: function (nextProps, nextState) {
-    var data = SourceDataDashboardAction.getDocObj(this.props.doc_id)
+    var data = SourceDataDashboardActions.getDocObj(this.props.doc_id)
     this.setState({doc_obj: data.doc_obj})
   },
 
@@ -61,7 +64,7 @@ var SourceDataDashboard = React.createClass({
     var doc_obj = this.state.doc_obj
 
     if (!doc_obj) {
-      return <div className='admin-loading'> Source Dashboard Loading Loading...</div>
+      return <div className='admin-loading'> Source Dashboard Loading...</div>
     }
 
     if (!doc_tab) {
