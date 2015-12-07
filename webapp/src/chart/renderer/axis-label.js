@@ -1,5 +1,6 @@
-import d3 from 'd3'
+// import d3 from 'd3'
 
+/*
 function wrap (text, width) {
   text.each(function () {
     let text = d3.select(this)
@@ -29,13 +30,14 @@ function wrap (text, width) {
     }
   })
 }
+*/
 
 function axisLabel () {
   var _width = 1
   var _height = 1
   var _fontSize = 14
   var _xLabel, _yLabel
-  var _textLength = 5
+  // var _textLength = 5
   var _margin = {top: 0, right: 0, bottom: 30, left: 20}
 
   function chart (selection) {
@@ -66,7 +68,7 @@ function axisLabel () {
 
       yAxisLabel.append('text').text(d => { return d })
         .style('transform', 'rotate(-90deg)')
-        //.call(wrap, _textLength, 0, 0)
+        // .call(wrap, _textLength, 0, 0)
     }
   }
 
