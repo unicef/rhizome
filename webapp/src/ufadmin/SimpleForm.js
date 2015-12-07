@@ -119,7 +119,7 @@ var SimpleForm = React.createClass({
       if (this.state.store.loading) {
         return <div>Loading MetaData Manager</div>
       } else {
-        page('/ufadmin/manage/' + contentType + '/')
+        page('/manage_system/' + contentType + '/')
         return (
           <div>Error. There is no data received.</div>
         )
@@ -172,9 +172,9 @@ var SimpleForm = React.createClass({
       this.state.store.saveSuccess = false
 
       if (this.props.params && this.props.params.id) {
-        page('/ufadmin/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
+        page('/manage_system/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
       } else {
-        page('/ufadmin/manage/' + contentType + '/' + newId)
+        page('/manage_system/manage/' + contentType + '/' + newId)
       }
 
       SimpleFormActions.initialize(newId, contentType)
@@ -201,7 +201,7 @@ var SimpleForm = React.createClass({
             smallItemCouldClick
             onSmallItemClick={this.removeCalculationFromIndicator}
             smallIDCouldClick
-            smallIDBaseUrl='/ufadmin/manage/indicator/' />
+            smallIDBaseUrl='/manage_system/manage/indicator/' />
         </div>
       )
     }
