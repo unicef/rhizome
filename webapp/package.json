@@ -33,8 +33,7 @@
     "reflux": "^0.2.12",
     "superagent": "^1.3.0",
     "superagent-prefix": "0.0.2",
-    "vue": "^0.11.10",
-    "jquery": "^2.1.4"
+    "vue": "^0.11.10"
   },
   "devDependencies": {
     "babel": "^5.8.21",

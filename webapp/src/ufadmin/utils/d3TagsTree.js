@@ -1,6 +1,5 @@
 import api from '../../data/api'
 import d3 from 'd3';
-import $ from 'jquery';
 
 var duration = 750;
 var panSpeed = 200;
@@ -157,12 +156,16 @@ tt._update = function(source) {
       }
 
       // get coords of mouseEvent relative to svg container to allow for panning
-      var relCoords = d3.mouse($('svg').get(0));
+      var s = d3.select('svg');
+      var relCoords = d3.mouse(s[0][0]);
+      var w = +s.style('width').replace('px', '');
+      var h = +s.style('height').replace('px', '');
+
       if (relCoords[0] < panBoundary) {
         tt.panTimer = true;
         tt._pan(this, 'left');
       }
-      else if (relCoords[0] > ($('svg').width() - panBoundary)) {
+      else if (relCoords[0] > (w - panBoundary)) {
         tt.panTimer = true;
         tt._pan(this, 'right');
       }
@@ -170,7 +173,7 @@ tt._update = function(source) {
         tt.panTimer = true;
         tt._pan(this, 'up');
       }
-      else if (relCoords[1] > ($('svg').height() - panBoundary)) {
+      else if (relCoords[1] > (h - panBoundary)) {
         tt.panTimer = true;
         tt._pan(this, 'down');
       }
