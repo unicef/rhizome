@@ -156,14 +156,14 @@ function datapoint (q) {
     // Fetch datapoints first, then look up the campaigns. Once campaign data
     // has been filled in, fulfill the promise.
 
-    fetch(q, null, {'cache-control': 'no-cache'}).then(function (data) {
+    fetch(q, null, {'cache-control': 'max-age=3600, public'}).then(function (data) {
       var campaigns = data.objects.map(function (d) {
         return d.campaign
       })
 
       endPoint('/campaign/', 'get', 1)({
         id__in: _.uniq(campaigns)
-      }, null, {'cache-control': 'no-cache'}).then(function (campaignData) {
+      }, null, {'cache-control': 'max-age=86400, public'}).then(function (campaignData) {
         var campaigns = _.indexBy(campaignData.objects, 'id')
 
         // Replace the campaign IDs with campaign objects
