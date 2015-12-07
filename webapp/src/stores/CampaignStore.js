@@ -5,7 +5,7 @@ var CampaignStore = Reflux.createStore({
   init () {
     this.campaigns = []
 
-    this.campaignsPromise = api.campaign()
+    this.campaignsPromise = api.campaign(null, null, { 'cache-control': 'max-age=86400, public' })
       .then(data => {
         this.campaigns = data.objects
         this.trigger({
