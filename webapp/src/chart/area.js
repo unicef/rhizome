@@ -46,7 +46,6 @@ AreaChart.prototype.generateChartData = function (originalData) {
       .thru(stack)
       .value()
   } catch (err) {
-    console.error(err)
     console.log(`Data error in ${originalData}`)
     data = []
   }

@@ -226,7 +226,7 @@ class BaseNonModelResource(Resource):
     See Here: http://django-tastypie.readthedocs.org/en/latest/resources.html?highlight=modelresource
     '''
 
-    class Meta():
+    class Meta:
         authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
         allowed_methods = ['get', 'post']
         authorization = Authorization()
