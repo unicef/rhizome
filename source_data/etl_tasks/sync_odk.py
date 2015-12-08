@@ -83,12 +83,12 @@ class OdkSync(object):
             try:
                 with open(csv_file, 'rb') as full_file:
                      csv_base_64 = base64.b64encode(full_file.read())
-                     self.post_file_data(document_id, csv_base_64, str(form_name))
+                     doc_id = self.post_file_data(document_id, csv_base_64, str(form_name))
                      # output_data = self.refresh_file_data(document_id)
-                     document_ids_to_return.append(document_id)
+                     document_ids_to_return.append(doc_id)
             except IOError:
                 raise OdkJarFileException(err, **{'fatal_error': err})
-                    
+
         return document_ids_to_return, {}
 
     def post_file_data(self, document_id, base_64_data, doc_title):
@@ -101,6 +101,7 @@ class OdkSync(object):
 
         sd.docfile.save(sd.guid, file_content)
 
+        return sd.id
 
     def refresh_file_data(document_id):
 
