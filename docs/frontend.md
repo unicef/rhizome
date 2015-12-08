@@ -81,7 +81,6 @@ component
  |- __tests__
  |   |_ MenuItem.spec.jsx
  |_ MenuItem.jsx
-
 ```
 
 Use existing spec file as example to create new spec when needed.
@@ -104,7 +103,7 @@ Use
 
 `mixins: [Reflux.connect(ChartWizardStore, 'data')]`
 
-instead of 
+instead of
 
 `mixins: [Reflux.connect(DataStore)]`
 
