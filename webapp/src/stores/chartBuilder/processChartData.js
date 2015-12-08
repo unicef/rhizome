@@ -141,6 +141,14 @@ function _makeSeries (getSeries) {
 function _getIndicator (d) {
   return d.indicator.short_name
 }
+function _generateMarginForAxisLabel (options) {
+  if (options.xLabel || options.yLabel) {
+    let marginLeft = options.xLabel ? 10 : 0
+    let marginBottom = options.yLabel ? 30 : 0
+    options['margin'] = {top: 0, right: 0, bottom: marginBottom, left: marginLeft}
+  }
+  return options
+}
 
 const aspects = {
   0: {
@@ -229,6 +237,7 @@ export default {
         xLabel: chartDef.xLabel,
         yLabel: chartDef.yLabel
       }
+      chartOptions = _generateMarginForAxisLabel(chartOptions)
       var chartData = _groupBySeries(data, groups, groupBy)
       return { options: chartOptions, data: chartData }
     })
@@ -335,6 +344,7 @@ export default {
         xLabel: chartDef.xLabel,
         yLabel: chartDef.yLabel
       }
+      chartOptions = _generateMarginForAxisLabel(chartOptions)
       return { options: chartOptions, data: chartData }
     })
   },
@@ -392,6 +402,7 @@ export default {
         xLabel: chartDef.xLabel,
         yLabel: chartDef.yLabel
       }
+      chartOptions = _generateMarginForAxisLabel(chartOptions)
       return { options: chartOptions, data: chartData }
     })
   },
@@ -424,6 +435,7 @@ export default {
         xLabel: chartDef.xLabel,
         yLabel: chartDef.yLabel
       }
+      chartOptions = _generateMarginForAxisLabel(chartOptions)
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
       return { options: chartOptions, data: chartData }
     })
