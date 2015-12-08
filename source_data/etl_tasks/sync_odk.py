@@ -13,19 +13,29 @@ from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from source_data.models import Document
+from source_data.models import Document, DocDetailType, DocumentDetail
+from source_data.etl_tasks.transform_upload import DocTransform
 
 class OdkJarFileException(Exception):
     # defaultMessage = "Sorry, this request could not be processed."
     # defaultCode = -1
 
     def __init__(self, message, *args, **kwargs):
+        '''
+        Needs to be cleaned up.
+        '''
 
-        java_message = message[message.index('SEVERE:') + 8:]
+        try:
+            java_message = message[message.index('SEVERE:') + 8:]
+        except ValueError:
+            java_message = ''
 
         if "form ID doesn't exist on server" in java_message:
 
             self.errorMessage = 'form id "{0}" does not exists on this server.\n\n Please check: \n\n {1}/Aggregate.html#management/forms/ \n\n and ensure that the FORM_ID you entered is correct. '.format(kwargs['odk_form_name'],kwargs['odk_aggregate_url'])
+
+        else:
+            self.errorMessage = message
 
 
 class OdkSync(object):
@@ -41,8 +51,10 @@ class OdkSync(object):
         '''
         '''
 
+        document_ids_to_return = []
         forms_to_process = self.get_forms_to_process()
-        for form_name,document_id in forms_to_process.iteritems():
+
+        for form_name, document_id in forms_to_process.iteritems():
 
             procedure = Popen(['java','-jar',self.odk_settings['JAR_FILE'],\
                     '--form_id', form_name, \
@@ -63,14 +75,18 @@ class OdkSync(object):
             if 'SEVERE:' in err:
                 error_details = {'odk_form_name':form_name, 'odk_aggregate_url':self.odk_settings['AGGREGATE_URL']}
                 raise OdkJarFileException(err, **error_details)
+            if 'Error:' in err:
+                raise OdkJarFileException(err, **{'fatal_error': err})
 
             csv_file = self.odk_settings['EXPORT_DIRECTORY'] + form_name.replace('-','_') + '.csv'
+
             with open(csv_file, 'rb') as full_file:
                  csv_base_64 = base64.b64encode(full_file.read())
                  self.post_file_data(document_id, csv_base_64, str(form_name))
                  # output_data = self.refresh_file_data(document_id)
+                 document_ids_to_return.append(document_id)
 
-        return document_id, self.sync_result_data
+        return document_ids_to_return, {}
 
     def post_file_data(self, document_id, base_64_data, doc_title):
 
@@ -91,8 +107,8 @@ class OdkSync(object):
             'api_key': self.odk_settings['RHIZOME_KEY'],
         }
 
-        query_string = odk_settings.API_ROOT + 'transform_upload/?' + urlencode(filters)
-        data = self.query_api(query_string)
+        dt = DocTransform(self.user_id, document_id)
+        data = dt.main()
 
         return data
 
@@ -107,28 +123,15 @@ class OdkSync(object):
             except ObjectDoesNotExist:
                 doc_id = None
 
-            return {self.odk_form_name : doc_id}
+            return { self.odk_form_name : doc_id}
             # {u'vcm_birth_tracking': 66, u'vcm_register': 10}
 
         forms_to_process = {}
 
-        filters = {
-            'doc_detail_type': 'odk_form_name',
-            'username': self.odk_settings['RHIZOME_USERNAME'],
-            'api_key': self.odk_settings['RHIZOME_KEY'],
-        }
+        ddt_obj = DocDetailType.objects.get(name='odk_form_name')
+        doc_deets = DocumentDetail.objects.filter(doc_detail_type=ddt_obj)
 
-        query_string = self.odk_settings['API_ROOT'] + 'doc_detail/?' + urlencode(filters)
-        data = self.query_api(query_string)
-
-        for result in data:
-            forms_to_process[result[u'doc_detail_value']] = result[u'document_id']
+        for result in doc_deets:
+            forms_to_process[result.doc_detail_value] = result.document_id
 
         return forms_to_process
-
-    def query_api(self, query_string):
-
-        response = urlopen(query_string)
-        objects = json.loads(response.read())['objects']
-
-        return objects

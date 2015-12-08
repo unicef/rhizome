@@ -896,11 +896,15 @@ class SyncOdkResource(BaseModelResource):
 
         try:
             odk_sync_object = OdkSync(odk_form_name, **{'user_id':request.user.id})
-            document_id, sync_result_data = odk_sync_object.main()
+            # document_id, sync_result_data = odk_sync_object.main()
+            document_id_list, sync_result_data = odk_sync_object.main()
+
+            print document_id_list
+
         except OdkJarFileException as e:
             raise DataPointsException(e.errorMessage)
 
-        return Document.objects.filter(id=document_id).values()
+        return Document.objects.filter(id__in=document_id_list).values()
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'sync_odk'
