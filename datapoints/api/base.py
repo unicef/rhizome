@@ -109,7 +109,7 @@ class BaseModelResource(ModelResource):
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get', 'post', 'delete']
-        cache = CustomCache()
+        #cache = CustomCache()
         serializer = CustomSerializer()
 
     def dispatch(self, request_type, request, **kwargs):
@@ -164,6 +164,17 @@ class BaseModelResource(ModelResource):
 
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
+
+        '''
+        For each specific request set the cache policy.
+        '''
+        
+        cache_control = request.META.get('HTTP_CACHE_CONTROL')
+
+        if cache_control is None:
+            cache_control = 'max-age=86400, public'
+
+        response['Cache-Control'] = cache_control
 
         return response
 
