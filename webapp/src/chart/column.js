@@ -115,7 +115,7 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     return yScale(y0) - yScale(y0 + y)
   }
 
-  var g = svg.select('.data').attr('transform', 'translate(0,' + topLegendHeight + ')')
+  var g = svg.select('.data').attr('transform', 'translate(0, 0)')
   var series = g.selectAll('.bar').data(data)
 
   svg.select('.bg')
@@ -157,7 +157,7 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
   column.exit().remove()
 
   svg.select('.x.axis')
-    .attr('transform', 'translate(0,' + (h + topLegendHeight) + ')')
+    .attr('transform', 'translate(0,' + h + ')')
     .call(d3.svg.axis()
       .orient('bottom')
       .tickSize(0)
@@ -177,7 +177,7 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + w + 'V' + 0)
 
   svg.select('.y.axis')
-    .attr('transform', 'translate(0,' + topLegendHeight + ')')
+    .attr('transform', 'translate(0, 0)')
     .call(d3.svg.axis()
       .orient('right')
       .tickFormat(options.yFormat)
@@ -477,7 +477,7 @@ _.extend(ColumnChart.prototype, {
     if (!options.inaccessibility) {
       defaultColumnChart(data, options, svg, h, w, topLegendHeight)
     } else {
-      var g = svg.select('.data').attr('transform', 'translate(0,' + 0 + ')')
+      var g = svg.select('.data').attr('transform', 'translate(0, 0)')
       var series = g.selectAll('.bar').data(data)
 
       var rectWidth = options.widthRatio * w
