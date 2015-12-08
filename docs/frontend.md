@@ -37,7 +37,7 @@ Use ES6 recommended principle as much as you can. For example:
 * Use `let` and `const` instead of `var`. [http://eslint.org/docs/rules/no-var.html](http://eslint.org/docs/rules/no-var.html)
 * Use arrow function to avoid using `let self = this`. See example below. More details about how `this` in arrow function is different from ES5 function. [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#Lexical_this](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions#Lexical_this)
 
-```
+```javascript
 // Good
 let items = arr.map(item => {
 	return this.createItem(item)
@@ -53,7 +53,7 @@ let items = arr.map(function (item) {
 * Use rest parameters instead of `arguments`. No `Array.prototype.slice.call(arguments)` is needed. [https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Functions/rest_parameters](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Functions/rest_parameters)
 * Use method properties. [https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Method_definitions). For example:
 
-```
+```javascript
 // Good
 export default {
 	create () {},
