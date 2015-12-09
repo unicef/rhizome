@@ -89,7 +89,7 @@ export default {
       campaign_end: upper.format('YYYY-MM-DD')
     }
 
-    return processChartData.init(api.datapoints(query, null, { 'cache-control': 'no-cache' }),
+    return processChartData.init(api.datapoints(query),
       chartDef.type,
       data.indicatorSelected,
       data.locationAggregated,
