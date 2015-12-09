@@ -59,17 +59,13 @@ var DocForm = React.createClass({
   },
 
   setDocConfig: function (configType, configValue) {
-    var doc_detail_meta = this.state.doc_detail_meta
-
-    console.log('configType',configType);
-    console.log('configValue',configValue);
-
-    var doc_detail_type = doc_detail_meta[configType]
-    var doc_detail_type_id = doc_detail_type['id']
+    var docDetailMeta = this.state.doc_detail_meta
+    var docDetailType = docDetailMeta[configType]
+    var docDetailTypeId = docDetailType['id']
 
     DocFormActions.setDocConfig({
       document_id: this.state.created_doc_id,
-      doc_detail_type_id: doc_detail_type_id,
+      doc_detail_type_id: docDetailTypeId,
       doc_detail_value: configValue
     }, configType)
   },
@@ -115,26 +111,29 @@ var DocForm = React.createClass({
       fileConfigForm = (
         <ul>
           <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>Unique ID: (To be
-              selected) {this.state.uq_id_column}</div>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
+              Unique ID: (To be selected) {this.state.uq_id_column}
+            </div>
             <ButtonMenu text={this.state.uq_id_column}
-                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
+              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {uqHeaderList}
             </ButtonMenu>
           </li>
           <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>location: (To be
-              selected) {this.state.location_column}</div>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
+              location: (To be selected) {this.state.location_column}
+            </div>
             <ButtonMenu text={this.state.location_column}
-                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
+              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {rgHeaderList}
             </ButtonMenu>
           </li>
           <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>Campaign: (To be
-              selected) {this.state.campaign_column}</div>
+            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
+              Campaign: (To be selected) {this.state.campaign_column}
+            </div>
             <ButtonMenu text={this.state.campaign_column}
-                        style='large-4 medium-4 small-12 columns csv-upload__button-style'>
+              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {cpHeaderList}
             </ButtonMenu>
           </li>
@@ -179,28 +178,31 @@ var DocForm = React.createClass({
           </div>
       )
 
-    if (this.state.is_odk_config_form){
-        var stepMessage = <div><span> Please Enter the form_id of the ODK form you would like to configure..</span> </div>
+    if (this.state.is_odk_config_form) {
+      stepMessage = (
+        <div>
+          <span>Please Enter the form_id of the ODK form you would like to configure..</span>
+        </div>
+      )
     }
 
     var divZoneStyle = {
-      padding: '10px',
-      border: '2px solid #426281'
+      border: '3px solid #426281'
     }
 
     var dropZoneStyle = {
-      padding: '4rem 15rem'
+      padding: '4rem 0',
+      display: 'flex',
+      justifyContent: 'center'
     }
 
     var uploadButtonStyle = {
       backgroundColor: '#344B61',
       color: '#FEFEFE',
       textTransform: 'uppercase',
-      textAlign: 'center',
-      margin: '0 38%',
       padding: '15px',
       cursor: 'pointer',
-      width: 200,
+      minWidth: 200,
       fontFamily: 'adelle',
       fontSize: '1rem'
     }
@@ -246,8 +248,8 @@ var DocForm = React.createClass({
     )
 
     // if this is an odk_config form, render ODK form, else, render dropZone
-    let baseFileForm = this.state.is_odk_config_form ? odkForm : dropZone;
-    let formComponent = this.state.created_doc_id ? fileChoose : baseFileForm;
+    let baseFileForm = this.state.is_odk_config_form ? odkForm : dropZone
+    let formComponent = this.state.created_doc_id ? fileChoose : baseFileForm
 
     return (
       <div>

@@ -5,8 +5,7 @@ import Reflux from 'reflux'
 var DocFormStore = Reflux.createStore({
   listenables: [require('actions/DocFormActions')],
 
-  init: function () {
-    var self = this
+  init () {
     this.data = {
       data_uri: null,
       config_options: [],
@@ -18,61 +17,56 @@ var DocFormStore = Reflux.createStore({
       doc_is_refreshed: false,
       new_doc_title: null
     }
-    api.docDetailType().then(function (response) {
+    api.docDetailType().then(response => {
       var doc_detail_types = _.indexBy(response.objects, 'name')
-      self.data.doc_detail_meta = doc_detail_types
-      self.trigger(self.data)
+      this.data.doc_detail_meta = doc_detail_types
+      this.trigger(this.data)
     })
   },
 
-  onGetData: function (file, upload) {
-    var self = this
-    self.data.data_uri = upload.target.result
+  onGetData (file, upload) {
+    this.data.data_uri = upload.target.result
 
     api.uploadPost({
       docfile: upload.target.result,
       doc_title: file.name
-    }).then(function (response) {
-      var new_doc_obj = response.objects
-      self.data.config_options = new_doc_obj.file_header.replace('"', '').split(',')
-      self.data.created_doc_id = new_doc_obj.id
-      self.data.new_doc_title = new_doc_obj.doc_title
-      self.trigger(self.data)
+    }).then(response => {
+      this.data.config_options = response.objects.file_header.replace('"', '').split(',')
+      this.data.created_doc_id = response.objects.id
+      this.data.new_doc_title = response.objects.doc_title
+      this.trigger(this.data)
     })
   },
 
-  onSetDocConfig: function (config, config_type) {
-    var self = this
-    api.docDetailPost(config).then(function (response) {
-      self.data[config_type] = response.objects.doc_detail_value
-      self.trigger(self.data)
+  onSetDocConfig (config, config_type) {
+    api.docDetailPost(config).then(response => {
+      this.data[config_type] = response.objects.doc_detail_value
+      this.trigger(this.data)
     })
   },
 
-  onTransformUpload: function (document) {
-    var self = this
+  onTransformUpload (document) {
     api.transformUpload(document, null, {'cache-control': 'no-cache'})
-      .then(function (response) {
-        self.data.doc_is_refreshed = true
-        self.trigger(self.data)
+      .then(response => {
+        this.data.doc_is_refreshed = true
+        this.trigger(this.data)
       })
   },
 
-  onSetOdkFormName: function (data) {
-    var self = this
-    api.sync_odk(data, null, {'cache-control':'no-cache'}).then(res => {
+  onSetOdkFormName (data) {
+    api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
       if (res.objects) {
-        self.data.doc_obj = res.objects[0]
-        self.data.created_doc_id = res.objects[0].id
-        self.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
-        self.data.new_doc_title = res.objects[0].doc_title
+        this.data.doc_obj = res.objects[0]
+        this.data.created_doc_id = res.objects[0].id
+        this.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
+        this.data.new_doc_title = res.objects[0].doc_title
 
-        self.trigger(self.data)
-        }
-      }, res => {
+        this.trigger(this.data)
+      }
+    }, res => {
       window.alert(res.msg)
     })
-  },
+  }
 })
 
 export default DocFormStore
