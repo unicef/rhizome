@@ -13,7 +13,7 @@ var MapFormStore = Reflux.createStore({
 
   updateMetaMap: function (info) {
     return api.post_source_object_map(info).then(function (response) {
-      return response.objects.master_object_id
+      return response.objects
     })
   }
 })

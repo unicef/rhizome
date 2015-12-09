@@ -520,7 +520,8 @@ class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
     class Meta(BaseModelResource.Meta):
-        queryset = Document.objects.all().values()
+        queryset = Document.objects.all().order_by('-created_at').values()
+        max_limit = 10
         resource_name = 'source_doc'
         filtering = {
             "id": ALL,
@@ -765,14 +766,34 @@ class SourceObjectMapResource(BaseModelResource):
         som_id = int(post_data['id'])
 
         som_obj = SourceObjectMap.objects.get(id=som_id)
-        som_obj.master_object_id = post_data['master_object_id']
+        master_object_id = post_data['master_object_id']
+        som_obj.master_object_id = master_object_id
+        som_obj.master_object_name = self.get_master_object_name(som_obj)
         som_obj.mapped_by_id = post_data['mapped_by_id']
         som_obj.save()
 
         bundle.obj = som_obj
         bundle.data['id'] = som_obj.id
+        bundle.data['master_object_name'] = som_obj.master_object_name
 
         return bundle
+
+    def get_master_object_name(self, som_obj):
+
+        # som_obj = SourceObjectMap.objects.get(id=3078)
+        qs_map = {
+            'campaign': ['slug',Campaign.objects.get],
+            'indicator': ['short_name',Indicator.objects.get],
+            'location': ['name',Location.objects.get],
+        }
+
+        obj_display_field = qs_map[som_obj.content_type][0]
+        qs = qs_map[som_obj.content_type][1]
+
+        master_obj = qs(id=som_obj.master_object_id).__dict__
+        master_object_name = master_obj[obj_display_field]
+
+        return master_object_name
 
     def get_object_list(self, request):
 

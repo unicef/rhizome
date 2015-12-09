@@ -25,7 +25,7 @@ var MapForm = React.createClass({
   },
 
   getInitialState: function () {
-    return {modalIsOpen: false, master_object_id: null}
+    return {modalIsOpen: false, master_object_id: null, master_object_name: null}
   },
 
   openModal: function () {
@@ -53,7 +53,8 @@ var MapForm = React.createClass({
       master_object_id: masterObjectId,
       mapped_by_id: 1 // FIXME
     }).then(function (data) {
-      self.setState({master_object_id: data})
+      // console.log('DATA', data);
+      self.setState({master_object_id: data.master_object_id, master_object_name: data.master_object_name })
     })
   },
 
