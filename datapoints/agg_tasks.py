@@ -5,6 +5,7 @@ from pandas import DataFrame
 from pandas import notnull
 
 from datapoints.models import *
+from datapoints.cache_meta import IndicatorCache
 
 class AggRefresh(object):
     '''
@@ -79,6 +80,9 @@ class AggRefresh(object):
 
         self.agg_datapoints()
         self.calc_datapoints()
+
+        ic = IndicatorCache()
+        ic.main()
 
         return 'SUCCESS'
 
