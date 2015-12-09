@@ -76,14 +76,35 @@ class CustomCache(SimpleCache):
     behavior of the cache control headers.
     '''
 
+    def __init__(self, *args, **kwargs):
+        super(CustomCache, self).__init__(*args, **kwargs)
+        self.request = None
+        self.response = None
+
+    def cacheable(self, request, response):
+        """
+        Returns True or False if the request -> response is capable of being
+        cached.
+        """
+        self.request = request
+        self.response = response
+
+        return bool(request.method == "GET" and response.status_code == 200)
+
     def cache_control(self):
         '''
         Instatiate the cache_control instance, and add the headers needed.
         '''
-        control = super(CustomCache, self).cache_control()
-        # control.update({'must_revalidate': True, 'max_age': 3600})
-        control.update({'max_age': 3600,'s-maxage':3600})
-        return control
+
+        cache_control = self.request.META.get('HTTP_CACHE_CONTROL')
+
+        if cache_control is None:
+            control = super(CustomCache, self).cache_control()
+            control.update({'max_age': self.cache.default_timeout,'s-maxage': self.cache.default_timeout})
+            return control
+        else:
+            self.response['Cache-Control'] = cache_control
+            return {}
 
 
 class BaseModelResource(ModelResource):
@@ -109,7 +130,7 @@ class BaseModelResource(ModelResource):
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get', 'post', 'delete']
-        #cache = CustomCache()
+        cache = CustomCache()
         serializer = CustomSerializer()
 
     def dispatch(self, request_type, request, **kwargs):
@@ -164,17 +185,6 @@ class BaseModelResource(ModelResource):
 
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
-
-        '''
-        For each specific request set the cache policy.
-        '''
-        
-        cache_control = request.META.get('HTTP_CACHE_CONTROL')
-
-        if cache_control is None:
-            cache_control = 'max-age=86400, public'
-
-        response['Cache-Control'] = cache_control
 
         return response
 
