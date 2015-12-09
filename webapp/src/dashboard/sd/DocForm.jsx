@@ -187,23 +187,22 @@ var DocForm = React.createClass({
     }
 
     var divZoneStyle = {
-      padding: '10px',
-      border: '2px solid #426281'
+      border: '3px solid #426281'
     }
 
     var dropZoneStyle = {
-      padding: '4rem 15rem'
+      padding: '4rem 0',
+      display: 'flex',
+      justifyContent: 'center'
     }
 
     var uploadButtonStyle = {
       backgroundColor: '#344B61',
       color: '#FEFEFE',
       textTransform: 'uppercase',
-      textAlign: 'center',
-      margin: '0 38%',
       padding: '15px',
       cursor: 'pointer',
-      width: 200,
+      minWidth: 200,
       fontFamily: 'adelle',
       fontSize: '1rem'
     }
