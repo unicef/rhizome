@@ -9,12 +9,12 @@ var TagsTreeAdmin = React.createClass({
     var el = this.getDOMNode()
 
     api.tagTree({}, null, {'cache-control': 'no-cache'})
-      .then(function (a) {
-        var data = { data: a.flat[0] }
+      .then(response => {
+        let state = { data: response.flat[0] }
 
         // request an animation frame. this makes sure the DOM node is rendered
-        window.requestAnimationFrame(function () {
-          d3TagsTree.create(el, { width: '100%', height: '500px' }, data)
+        window.requestAnimationFrame(() => {
+          d3TagsTree.create(el, { width: '100%', height: '500px' }, state)
         })
       })
   },

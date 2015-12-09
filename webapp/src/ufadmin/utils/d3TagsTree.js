@@ -29,15 +29,13 @@ function expand (d) {
 // A recursive helper function for performing some setup by walking through all nodes
 function visit (parent, visitFn, childrenFn) {
   if (!parent) return
-
   visitFn(parent)
 
   var children = childrenFn(parent)
   if (children) {
-    var count = children.length
-    for (var i = 0; i < count; i++) {
-      visit(children[i], visitFn, childrenFn)
-    }
+    children.forEach(child => {
+      visit(child, visitFn, childrenFn)
+    })
   }
 }
 
@@ -81,14 +79,13 @@ tt.create = function (el, props, state) {
 
   tt._update(tt.root)
   tt._initialPan()
-//  tt._centerNode(tt.root)
 }
 
-tt.update = function (el, props, state) {
+tt.update = function () {
   tt._update(tt.root)
 }
 
-tt.destroy = function (el) {
+tt.destroy = function () {
 }
 
 tt._update = function (source) {
@@ -98,7 +95,9 @@ tt._update = function (source) {
   var levelWidth = [1]
   var childCount = function (level, n) {
     if (n.children && n.children.length > 0) {
-      if (levelWidth.length <= level + 1) levelWidth.push(0)
+      if (levelWidth.length <= level + 1) {
+        levelWidth.push(0)
+      }
       levelWidth[level + 1] += n.children.length
       n.children.forEach(function (d) {
         childCount(level + 1, d)
@@ -115,7 +114,7 @@ tt._update = function (source) {
 
   // Set widths between levels based on maxLabelLength.
   nodes.forEach(function (d) {
-    d.y = (d.depth * (tt.maxLabelLength * 10)) // maxLabelLength * 10px
+    d.y = d.depth * tt.maxLabelLength * 10 // maxLabelLength * 10px
 
     // alternatively to keep a fixed scale one can set a fixed depth per level
     // Normalize for fixed-depth by commenting out below line
@@ -183,12 +182,10 @@ tt._update = function (source) {
           tt.draggingNode.parent.children.splice(index, 1)
         }
 
-        if (typeof tt.selectedNode.children !== 'undefined' || typeof tt.selectedNode._children !== 'undefined') {
-          if (typeof tt.selectedNode.children !== 'undefined') {
-            tt.selectedNode.children.push(tt.draggingNode)
-          } else {
-            tt.selectedNode._children.push(tt.draggingNode)
-          }
+        if (tt.selectedNode.children) {
+          tt.selectedNode.children.push(tt.draggingNode)
+        } else if (tt.selectedNode._children) {
+          tt.selectedNode._children.push(tt.draggingNode)
         } else {
           tt.selectedNode.children = []
           tt.selectedNode.children.push(tt.draggingNode)
@@ -196,10 +193,8 @@ tt._update = function (source) {
         // Make sure that the node being added to is expanded so user can see added node is correctly moved
         expand(tt.selectedNode)
         tt._sortTree()
-        tt._endDrag()
-      } else {
-        tt._endDrag()
       }
+      tt._endDrag()
     })
 
   // Enter any new nodes at the parent's previous position.
@@ -227,9 +222,7 @@ tt._update = function (source) {
     .attr('text-anchor', function (d) {
       return d.children || d._children ? 'end' : 'start'
     })
-    .text(function (d) {
-      return d.title
-    })
+    .text(d => d.title)
     .style('fill-opacity', 0)
 
   // phantom node to give us mouseover in a radius around it
@@ -254,9 +247,7 @@ tt._update = function (source) {
     .attr('text-anchor', function (d) {
       return d.children || d._children ? 'end' : 'start'
     })
-    .text(function (d) {
-      return d.title
-    })
+    .text(d => d.title)
 
   // Change the circle fill depending on whether it has children and is collapsed
   node.select('circle.nodeCircle')
@@ -292,9 +283,7 @@ tt._update = function (source) {
 
   // Update the links…
   var link = tt.svgGroup.selectAll('path.link')
-    .data(links, function (d) {
-      return d.target.id
-    })
+    .data(links, d => d.target.id)
 
   // Enter any new links at the parent's previous position.
   link.enter().insert('path', 'g')
@@ -387,35 +376,26 @@ tt._initiateDrag = function (d, domNode) {
   d3.selectAll('.ghostCircle').attr('class', 'ghostCircle show')
   d3.select(tt.domNode).attr('class', 'node activeDrag')
 
-  tt.svgGroup.selectAll('g.node').sort(function (a, b) { // select the parent and sort the path's
-    if (a.id !== tt.draggingNode.id) return 1 // a is not the hovered element, send 'a' to the back
-    else return -1 // a is the hovered element, bring 'a' to the front
+  tt.svgGroup.selectAll('g.node').sort(a => {
+    return a.id === tt.draggingNode.id ? -1 : 1
   })
   // if nodes has children, remove the links and nodes
   var nodes = tt.tree.nodes(d)
   if (nodes.length > 1) {
     // remove link paths
     var links = tt.tree.links(nodes)
-      .data(links, function (d) {
-        return d.target.id
-      }).remove()
+      .data(links, d => d.target.id)
+      .remove()
     // remove child nodes
     tt.svgGroup.selectAll('g.node')
-      .data(nodes, function (d) {
-        return d.id
-      }).filter(function (d, i) {
-        if (d.id === tt.draggingNode.id) {
-          return false
-        }
-        return true
+      .data(nodes, d => d.id)
+      .filter(d => {
+        return d.id !== tt.draggingNode.id
       }).remove()
   }
 
   tt.svgGroup.selectAll('path.link').filter(function (d, i) {
-    if (d.target.id === tt.draggingNode.id) {
-      return true
-    }
-    return false
+    return d.target.id === tt.draggingNode.id
   }).remove()
 
   tt.dragStarted = null
@@ -423,8 +403,7 @@ tt._initiateDrag = function (d, domNode) {
 
 tt._endDrag = function () {
   if (tt.selectedNode !== null && tt.draggingNode !== null) {
-    var fetch = api.post_indicator_tag
-    fetch({ id: tt.draggingNode.id, tag_name: tt.draggingNode.tag_name, parent_tag_id: tt.selectedNode.id })
+    api.post_indicator_tag({ id: tt.draggingNode.id, tag_name: tt.draggingNode.tag_name, parent_tag_id: tt.selectedNode.id })
   }
 
   tt.selectedNode = null
