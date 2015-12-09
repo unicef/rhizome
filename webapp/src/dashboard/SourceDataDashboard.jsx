@@ -5,9 +5,6 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
-import ButtonMenu from 'component/ButtonMenu.jsx'
-import MenuItem from 'component/MenuItem.jsx'
-
 import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
@@ -19,7 +16,7 @@ import CSVMenuItem from 'component/CSVMenuItem.jsx'
 var {
   SimpleDataTable, SimpleDataTableColumn,
   Paginator, SearchBar
-  } = require('react-datascope')
+} = require('react-datascope')
 
 var SourceDataDashboard = React.createClass({
   mixins: [

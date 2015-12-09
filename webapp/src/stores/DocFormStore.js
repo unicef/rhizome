@@ -42,10 +42,9 @@ var DocFormStore = Reflux.createStore({
   },
 
   onSetDocConfig: function (config, config_type) {
-    var self = this
-    api.docDetailPost(config).then(function (response) {
-      self.data[config_type] = response.objects.doc_detail_value
-      self.trigger(self.data)
+    api.docDetailPost(config).then(response => {
+      this.data[config_type] = response.objects.doc_detail_value
+      this.trigger(this.data)
     })
   },
 
@@ -59,20 +58,19 @@ var DocFormStore = Reflux.createStore({
   },
 
   onSetOdkFormName: function (data) {
-    var self = this
-    api.sync_odk(data, null, {'cache-control':'no-cache'}).then(res => {
+    api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
       if (res.objects) {
-        self.data.doc_obj = res.objects[0]
-        self.data.created_doc_id = res.objects[0].id
-        self.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
-        self.data.new_doc_title = res.objects[0].doc_title
+        this.data.doc_obj = res.objects[0]
+        this.data.created_doc_id = res.objects[0].id
+        this.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
+        this.data.new_doc_title = res.objects[0].doc_title
 
-        self.trigger(self.data)
-        }
-      }, res => {
+        this.trigger(this.data)
+      }
+    }, res => {
       window.alert(res.msg)
     })
-  },
+  }
 })
 
 export default DocFormStore

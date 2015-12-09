@@ -4,5 +4,5 @@ export default Reflux.createActions([
   'getData',
   'setDocConfig',
   'transformUpload',
-  'setOdkFormName',
+  'setOdkFormName'
 ])

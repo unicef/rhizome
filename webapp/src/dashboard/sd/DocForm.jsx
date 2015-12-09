@@ -60,10 +60,6 @@ var DocForm = React.createClass({
 
   setDocConfig: function (configType, configValue) {
     var doc_detail_meta = this.state.doc_detail_meta
-
-    console.log('configType',configType);
-    console.log('configValue',configValue);
-
     var doc_detail_type = doc_detail_meta[configType]
     var doc_detail_type_id = doc_detail_type['id']
 
@@ -179,8 +175,8 @@ var DocForm = React.createClass({
           </div>
       )
 
-    if (this.state.is_odk_config_form){
-        var stepMessage = <div><span> Please Enter the form_id of the ODK form you would like to configure..</span> </div>
+    if (this.state.is_odk_config_form) {
+      stepMessage = <div><span>Please Enter the form_id of the ODK form you would like to configure..</span></div>
     }
 
     var divZoneStyle = {
@@ -246,8 +242,8 @@ var DocForm = React.createClass({
     )
 
     // if this is an odk_config form, render ODK form, else, render dropZone
-    let baseFileForm = this.state.is_odk_config_form ? odkForm : dropZone;
-    let formComponent = this.state.created_doc_id ? fileChoose : baseFileForm;
+    let baseFileForm = this.state.is_odk_config_form ? odkForm : dropZone
+    let formComponent = this.state.created_doc_id ? fileChoose : baseFileForm
 
     return (
       <div>
