@@ -116,9 +116,8 @@ var SimpleFormComponent = React.createClass({
             <option value='PART_TO_BE_SUMMED'>PART_TO_BE_SUMMED</option>
             <option value='PART_OF_DIFFERENCE'>PART_OF_DIFFERENCE</option>
             <option value='WHOLE_OF_DIFFERENCE'>WHOLE_OF_DIFFERENCE</option>
-            <option value='PART'>PART</option>
-            <option value='WHOLE'>WHOLE</option>
-            <option value='WHOLE_OF_DIFFERENCE_DENOMINATOR'>WHOLE_OF_DIFFERENCE_DENOMINATOR</option>
+            <option value='NUMERATOR'>NUMERATOR</option>
+            <option value='DENOMINATOR'>DENOMINATOR</option>
           </select>
           <IndicatorDropdownMenu
             text='Add Component'

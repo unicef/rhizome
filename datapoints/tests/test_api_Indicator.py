@@ -48,7 +48,7 @@ class IndicatorResourceTest(ResourceTestCase):
         CalculatedIndicatorComponent.objects.filter(indicator_id=indicator_1.id,
                                                     indicator_component_id=indicator_2.id).delete()
 
-        post_data = {'indicator_id': indicator_1.id, 'component_id': indicator_2.id, 'typeInfo': 'WHOLE'}
+        post_data = {'indicator_id': indicator_1.id, 'component_id': indicator_2.id, 'typeInfo': 'DENOMINATOR'}
 
         resp = self.api_client.post('/api/v1/indicator_calculation/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
@@ -156,7 +156,7 @@ class IndicatorResourceTest(ResourceTestCase):
         ind = Indicator.objects.create(**{
             'name':'test name',
             'short_name':'test short name',
-            'data_format':'int', 
+            'data_format':'int',
             'description':'test description',
         })
 

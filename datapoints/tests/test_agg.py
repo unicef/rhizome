@@ -337,12 +337,12 @@ class AggRefreshTestCase(TestCase):
         indicator_calc_numerator = CalculatedIndicatorComponent.objects.create(
             indicator_id = pct_indicator.id,
             indicator_component_id = sub_indicator_3.id,
-            calculation = 'PART'
+            calculation = 'NUMERATOR'
         )
         indicator_calc_denominator = CalculatedIndicatorComponent.objects.create(
             indicator_id = pct_indicator.id,
             indicator_component_id = parent_indicator.id,
-            calculation = 'WHOLE'
+            calculation = 'DENOMINATOR'
         )
 
         ## create the datapoints ##
@@ -404,7 +404,7 @@ class AggRefreshTestCase(TestCase):
 
         WHOLE_OF_DIFFERENCE(x) - PART_OF_DIFFERENCE(y)
         -----------------------------------------
-             WHOLE_OF_DIFFERENCE_DENOMINATOR(x)
+             WHOLE_OF_DIFFERENCE(x)
         '''
 
         self.set_up()
@@ -436,11 +436,6 @@ class AggRefreshTestCase(TestCase):
             indicator_id = parent_indicator.id,
             indicator_component_id = sub_indicator_part.id,
             calculation = 'PART_OF_DIFFERENCE'
-        )
-        indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
-            indicator_id = parent_indicator.id,
-            indicator_component_id = sub_indicator_denom.id,
-            calculation = 'WHOLE_OF_DIFFERENCE_DENOMINATOR'
         )
         indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
             indicator_id = parent_indicator.id,
