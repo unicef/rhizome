@@ -91,12 +91,19 @@ class OdkSync(object):
 
         return document_ids_to_return, {}
 
-    def post_file_data(self, document_id, base_64_data, doc_title):
+    def post_file_data(self, document_id, base_64_data, form_name):
 
         file_content = ContentFile(base64.b64decode(base_64_data))
         sd, created = Document.objects.update_or_create(
             id=document_id,
-            defaults={'doc_title': doc_title, 'created_by_id': self.user_id}
+            defaults={'doc_title': form_name, 'created_by_id': self.user_id}
+        )
+
+        # odk_form_name_doc_detail =
+        doc_detail, created = DocumentDetail.objects.get_or_create(
+            document_id=document_id,
+            doc_detail_type_id = DocDetailType.objects.get(name='odk_form_name').id,
+            doc_detail_value = form_name
         )
 
         sd.docfile.save(sd.guid, file_content)

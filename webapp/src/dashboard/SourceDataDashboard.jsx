@@ -5,7 +5,7 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
-import ReviewTable from 'dashboard/sd/ReviewTable.js'
+// import ReviewTable from 'dashboard/sd/ReviewTable.js'
 import DocOverview from 'dashboard/sd/DocOverview.jsx'
 import DocForm from 'dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
@@ -121,26 +121,28 @@ var SourceDataDashboard = React.createClass({
       </div>)
 
     var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
+
     // data table //
-    var review_table = (<ReviewTable
-      title='sample title'
-      getData={table_definition[doc_tab]['data_fn']}
-      fields={table_definition[doc_tab]['fields']}
-      header={table_definition[doc_tab]['header']}
-      location={location}
-      key={table_key}
-      loading={loading}
-      doc_id={doc_id}
-      doc_tab={doc_tab}
-      campaign={campaign}
-      datascopeFilters={datascopeFilters}>
-      <Paginator />
-      <SimpleDataTable>
-        {table_definition[doc_tab]['fields'].map(fieldName => {
-          return <SimpleDataTableColumn name={fieldName}/>
-        })}
-      </SimpleDataTable>
-    </ReviewTable>)
+    var review_table = '';
+    // var review_table = (<ReviewTable
+    //   title='sample title'
+    //   getData={table_definition[doc_tab]['data_fn']}
+    //   fields={table_definition[doc_tab]['fields']}
+    //   header={table_definition[doc_tab]['header']}
+    //   location={location}
+    //   key={table_key}
+    //   loading={loading}
+    //   doc_id={doc_id}
+    //   doc_tab={doc_tab}
+    //   campaign={campaign}
+    //   datascopeFilters={datascopeFilters}>
+    //   <Paginator />
+    //   <SimpleDataTable>
+    //     {table_definition[doc_tab]['fields'].map(fieldName => {
+    //       return <SimpleDataTableColumn name={fieldName}/>
+    //     })}
+    //   </SimpleDataTable>
+    // </ReviewTable>)
 
     var uploadData = (
       <div>

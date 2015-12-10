@@ -13,21 +13,21 @@ var DocOverviewStore = Reflux.createStore({
     }
   },
 
-  onGetDocDetailTypes: function () {
+  onGetDocDetails: function (document_id) {
     var self = this
-    api.docDetailType()
+    api.docDetail({document_id:document_id})
       .then(response => {
-        self.data.doc_detail_types = response.objects
+        self.data.doc_deets = response.objects
         self.trigger(self.data)
       })
   },
 
-  onRefreshMaster: function (document) {
+  onRefreshMaster: function (document_id) {
     var self = this
     self.data.isRefreshing = true
     self.trigger(self.data)
 
-    api.refresh_master(document, null, {'cache-control': 'no-cache'})
+    api.refresh_master(document_id, null, {'cache-control': 'no-cache'})
       .then(function (response) {
         self.data.doc_deets = response.objects
         self.data.isRefreshing = false
@@ -38,12 +38,12 @@ var DocOverviewStore = Reflux.createStore({
       })
   },
 
-  onQueueReprocess: function (document) {
+  onQueueReprocess: function (document_id) {
     var self = this
     self.data.isProcessing = true
     self.trigger(self.data)
 
-    api.queue_reprocess(document, null, {'cache-control': 'no-cache'})
+    api.queue_reprocess(document_id, null, {'cache-control': 'no-cache'})
       .then(function (response) {
         self.data.doc_deets = response.objects
         self.data.isProcessing = false

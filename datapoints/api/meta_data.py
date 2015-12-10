@@ -694,10 +694,25 @@ class DocumentDetailResource(BaseModelResource):
 
         try:
             doc_detail_type = request.GET['doc_detail_type']
-            return DocumentDetail.objects \
-                .filter(doc_detail_type__name=doc_detail_type).values()
+            return  DocumentDetail.objects\
+                .filter(doc_detail_type__name=doc_detail_type)\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                    'document_id', 'doc_detail_value')
         except KeyError:
-            return DocumentDetail.objects.all().values()
+            pass
+
+        try:
+            doc_id = request.GET['document_id']
+            return  DocumentDetail.objects\
+                .filter(document_id=doc_id)\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                    'document_id', 'doc_detail_value')
+        except KeyError:
+            return DocumentDetail.objects.all()\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                'document_id', 'doc_detail_value')
+
+
 
 
 class DocDataPointResource(BaseModelResource):
@@ -920,7 +935,7 @@ class SyncOdkResource(BaseModelResource):
             # document_id, sync_result_data = odk_sync_object.main()
             document_id_list, sync_result_data = odk_sync_object.main()
 
-            print document_id_list
+
 
         except OdkJarFileException as e:
             raise DataPointsException(e.errorMessage)
@@ -1014,8 +1029,17 @@ class OfficeResource(BaseNonModelResource):
             office_obj = OfficeResult()
             office_obj.id = row.id
             office_obj.name = row.name
-            office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
-            office_obj.top_level_location_id = location_lookup[row.id]
+
+            try:
+                office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
+                office_obj.top_level_location_id = location_lookup[row.id]
+            except KeyError:
+                office_obj.latest_campaign_id = Campaign.objects.all()\
+                    .values_list('id',flat=True)[0]
+                office_obj.top_level_location_id = Location.objects.all()\
+                    .values_list('id',flat=True)[0]
+
+                pass
 
             qs.append(office_obj)
 
