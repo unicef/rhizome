@@ -16,7 +16,7 @@ Vue.component('vue-pagination', require('./component/pagination'))
 Vue.component('vue-tooltip', require('./component/vue-tooltip'))
 Vue.component('vue-menu', require('./component/vue-menu'))
 
-Vue.filter('num', require('./filter/num'))
+Vue.filter('num', require('./util/format').num)
 
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'))
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'))

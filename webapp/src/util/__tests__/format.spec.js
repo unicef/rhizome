@@ -13,6 +13,16 @@ describe(__filename, () => {
       expect(result).to.eq('356')
     })
   })
+  context('format number', () => {
+    it('should format by defining percentage', () => {
+      const result = format.num(0.253, '%')
+      expect(result).to.eq('25%')
+    })
+    it('should format with default format', () => {
+      const result = format.num(1678)
+      expect(result).to.eq('1,678')
+    })
+  })
   context('time axis format', () => {
     it('should format to month if not January', () => {
       const result = format.timeAxis(new Date('2001-10-01'))

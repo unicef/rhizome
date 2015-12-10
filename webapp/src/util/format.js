@@ -6,6 +6,10 @@ function general (value) {
   return d3.format(mantissa > 0 ? '.4f' : 'n')(value)
 }
 
+function num (value, format = 'n') {
+  return d3.format(format)(value)
+}
+
 function timeAxis (value) {
   var m = moment(value)
 
@@ -17,5 +21,6 @@ function timeAxis (value) {
 
 export default {
   general: general,
+  num: num,
   timeAxis: timeAxis
 }
