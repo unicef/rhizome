@@ -26,27 +26,29 @@ const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link
 
 var IndicatorsAdmin = React.createClass({
   render () {
-    var datascopeFilters =
+    var datascopeFilters = (
       <div>
         <SearchBar
           fieldNames={fieldNamesOnTable}
           placeholder='Search indicators ...'
-          />
+        />
       </div>
+    )
 
-    return <AdminPage
-      title='Indicators'
-      getData={api.indicators}
-      datascopeFilters={datascopeFilters}
-      fields={fields}
-      >
-      <Paginator />
-      <SimpleDataTable>
-        {fieldNamesOnTable.map(fieldName => {
-          return <SimpleDataTableColumn name={fieldName}/>
-        })}
-      </SimpleDataTable>
-    </AdminPage>
+    return (
+      <AdminPage
+        title='Indicators'
+        getData={api.indicators}
+        datascopeFilters={datascopeFilters}
+        fields={fields} >
+        <Paginator />
+        <SimpleDataTable>
+          {fieldNamesOnTable.map(fieldName => {
+            return <SimpleDataTableColumn name={fieldName}/>
+          })}
+        </SimpleDataTable>
+      </AdminPage>
+    )
   }
 })
 

@@ -39,7 +39,7 @@ var RegionAdmin = React.createClass({
       </div>
 
     return <AdminPage
-      title='locations'
+      title='Locations'
       getData={api.locations}
       datascopeFilters={datascopeFilters}
       fields={fields}

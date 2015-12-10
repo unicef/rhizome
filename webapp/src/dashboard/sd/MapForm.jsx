@@ -86,6 +86,9 @@ var MapForm = React.createClass({
           slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY') + ' ' + percentageComplete
         })
       })
+
+      campaigns.reverse()
+
       return <div>
         <CampaignDropdownMenu
           text={defaultSelected}

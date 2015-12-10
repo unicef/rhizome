@@ -12,7 +12,7 @@ import palettes from 'util/palettes'
 
 export default {
   async getPromises () {
-    return [ await api.locations(), await api.campaign(), await api.office(), await api.indicators() ]
+    return [ await api.locations(), await api.campaign(), await api.office(), await api.indicators(null, null, { 'cache-control': 'no-cache' }) ]
   },
 
   prepareData (chartDef, layout, responses) {

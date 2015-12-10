@@ -44,10 +44,6 @@ export default Vue.extend({
   },
 
   ready: function () {
-    this.multi = util.parseBool(this.multi)
-    this.searchable = util.parseBool(this.searchable)
-    this.sortDsc = util.parseBool(this.sortDsc)
-
     this.load()
   },
 
@@ -170,7 +166,7 @@ export default Vue.extend({
       var offset = dom.viewportOffset(ul)
       var dims
 
-      if (this.multi) {
+      if (!this.multi) {
         dims = dom.dimensions(menu.getElementsByClassName('selection-controls')[0], true)
         marginBottom += dims.height
       }

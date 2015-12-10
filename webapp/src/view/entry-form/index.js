@@ -100,7 +100,7 @@ export default {
       Promise.all([
 
         // locations data
-        api.locations()
+        api.locations(null, null, {'cache-control': 'no-cache'})
           .then(makeMap)
           .then(function (map) {
             // create array of children in each parent
@@ -111,7 +111,7 @@ export default {
         api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'}).then(makeMap),
 
         // campaigns data
-        api.campaign().then(function (data) {
+        api.campaign(null, null, {'cache-control': 'no-cache'}).then(function (data) {
           if (!data.objects) { return null }
           return data.objects
             .sort(function (a, b) {
@@ -404,7 +404,7 @@ export default {
         self.table.columns = columns
       }
 
-      api.datapointsRaw(options).then(withSuccess, function (err) {
+      api.datapointsRaw(options, null, {'cache-control': 'no-cache'}).then(withSuccess, function (err) {
         self.table.loading = false
         console.error(err)
       })
