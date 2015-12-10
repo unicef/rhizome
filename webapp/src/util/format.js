@@ -3,19 +3,16 @@ import moment from 'moment'
 
 function general (value) {
   var mantissa = Math.abs(value) - Math.floor(Math.abs(value))
-  var fmt = d3.format(mantissa > 0 ? '.4f' : 'n')
-
-  return fmt(value)
+  return d3.format(mantissa > 0 ? '.4f' : 'n')(value)
 }
 
 function timeAxis (value) {
   var m = moment(value)
 
-  if (m.month() === 0) {
-    return m.format('YYYY')
-  }
-
-  return m.format('MMM')
+  return m.format(m.month() === 0
+    ? 'YYYY'
+    : 'MMM'
+  )
 }
 
 export default {
