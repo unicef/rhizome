@@ -404,7 +404,7 @@ export default {
         self.table.columns = columns
       }
 
-      api.datapointsRaw(options).then(withSuccess, function (err) {
+      api.datapointsRaw(options, null, {'cache-control': 'no-cache'}).then(withSuccess, function (err) {
         self.table.loading = false
         console.error(err)
       })
