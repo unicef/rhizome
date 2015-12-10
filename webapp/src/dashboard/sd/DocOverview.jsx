@@ -56,7 +56,7 @@ var DocOverview = React.createClass({
 
   syncOdk () {
     var self = this;
-    DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
+    DocOverviewActions.syncOdk({document_id: self.props.doc_id})
   },
 
   queueReprocess () {
@@ -92,8 +92,8 @@ var DocOverview = React.createClass({
 
       if (doc_detail.doc_detail_type__name == 'odk_form_name'){
         var odkRefreshBtn =  <p>
-                <a disabled={this.state.isProcessing} className='button button-refresh large-3 medium-3 small-12 columns'
-                   onClick={this.syncOdk}> { this.state.isProcessing ? 'Refreshing' : 'Fetch ODK Data'}
+                <a disabled={this.state.isFetchingOdk} className='button button-refresh large-3 medium-3 small-12 columns'
+                   onClick={this.syncOdk}> { this.state.isFetchingOdk ? 'Refreshing' : 'Fetch ODK Data'}
                 </a>
               </p>
       }

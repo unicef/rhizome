@@ -22,6 +22,25 @@ var DocOverviewStore = Reflux.createStore({
       })
   },
 
+  onSyncOdk: function (data) {
+    var self = this
+    self.data.isFetchingOdk = true
+    self.trigger(self.data)
+
+    api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
+      if (res.objects) {
+        self.data.doc_obj = res.objects[0]
+
+        self.trigger(this.data)
+      }
+    }, res => {
+      self.data.isFetchingOdk = false
+      self.trigger(self.data)
+      window.alert(res.msg)
+    })
+  },
+
+
   onRefreshMaster: function (document_id) {
     var self = this
     self.data.isRefreshing = true
