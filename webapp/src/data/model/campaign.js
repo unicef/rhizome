@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import moment from 'moment'
-import api from '../api'
 
 function campaign (obj) {
   return obj
