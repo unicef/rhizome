@@ -68,7 +68,6 @@ var DocOverview = React.createClass({
     return <div className='admin-loading'> Doc Details Loading...</div>
   },
 
-This is a test to see if a failing npm build breaks C.I.
 
   render () {
     var doc_deets = this.state.doc_deets
