@@ -7,6 +7,14 @@ const {
 
 import parseSchema from './utils/parseSchema'
 
+const urlMap = {
+  'Users': '/datapoints/users/create/',
+  'Campaigns': '/datapoints/campaigns/create/',
+  'Locations': '/datapoints/locations/create/',
+  'Indicators': '/manage_system/manage/indicator/',
+  'Tags': '/manage_system/manage/indicator_tag/'
+}
+
 var AdminPage = React.createClass({
   propTypes: {
     title: React.PropTypes.string.isRequired,
@@ -22,6 +30,12 @@ var AdminPage = React.createClass({
       schema: null,
       query: {},
       areFiltersVisible: true
+    }
+  },
+
+  getDefaultProps () {
+    return {
+      title: 'Users'
     }
   },
 
@@ -53,14 +67,8 @@ var AdminPage = React.createClass({
 
     var {data, schema} = this.state
 
-    // make the 'Create X' button if we have a creation URL
-    var createUrl = '/datapoints/users/create/'
-    if (this.props.title === 'Campaigns') createUrl = '/datapoints/campaigns/create/'
-    if (this.props.title === 'locations') createUrl = '/datapoints/locations/create/'
-    else if (this.props.title === 'Indicators') createUrl = '/manage_system/manage/indicator/'
-    else if (this.props.title === 'Tags') createUrl = '/manage_system/manage/indicator_tag/'
+    let createUrl = urlMap[this.props.title]
 
-    // strip the 's' from the end of plural title
     var titleSingular = _.endsWith(this.props.title, 's') ? _.initial(this.props.title).join('') : this.props.title
     var createButton = createUrl
       ? <div className='ufadmin-create-button'>

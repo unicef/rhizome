@@ -30,28 +30,30 @@ const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at',
 
 var CampaignsAdmin = React.createClass({
   render () {
-    var datascopeFilters =
+    var datascopeFilters = (
       <div>
         <SearchBar
           placeholder='Search campaigns ...'
           fieldNames={['id', 'slug', 'edit_link']}
           />
       </div>
+    )
 
-    return <AdminPage
-      title='Campaigns'
-      getData={api.campaign}
-      schema={schema}
-      datascopeFilters={datascopeFilters}
-      fields={fields}
-      >
-      <Paginator />
-      <SimpleDataTable>
-        {fieldNamesOnTable.map(fieldName => {
-          return <SimpleDataTableColumn name={fieldName}/>
-        })}
-      </SimpleDataTable>
-    </AdminPage>
+    return (
+      <AdminPage
+        title='Campaigns'
+        getData={api.campaign}
+        schema={schema}
+        datascopeFilters={datascopeFilters}
+        fields={fields} >
+        <Paginator />
+        <SimpleDataTable>
+          {fieldNamesOnTable.map(fieldName => {
+            return <SimpleDataTableColumn name={fieldName}/>
+          })}
+        </SimpleDataTable>
+      </AdminPage>
+    )
   }
 })
 
