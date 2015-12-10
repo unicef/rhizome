@@ -163,7 +163,7 @@ function datapoint (q) {
 
       endPoint('/campaign/', 'get', 1)({
         id__in: _.uniq(campaigns)
-      }, null, {'cache-control': 'no-cache'}).then(function (campaignData) {
+      }, null, {'cache-control': 'max-age=3600, public'}).then(function (campaignData) {
         var campaigns = _.indexBy(campaignData.objects, 'id')
 
         // Replace the campaign IDs with campaign objects

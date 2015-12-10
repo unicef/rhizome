@@ -110,7 +110,7 @@ export default {
         campaign_end: moment(this.campaign.end_date).format('YYYY-MM-DD')
       })
 
-      var columns = api.indicators({ id__in: indicators })
+      var columns = api.indicators({ id__in: indicators }, null, { 'cache-control': 'no-cache' })
         .then(_.partialRight(_heatmapColumns, indicators))
 
       var self = this
