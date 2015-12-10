@@ -26,16 +26,4 @@ function update (campaign, obj) {
   return campaign
 }
 
-campaign.fetch = function (id) {
-  let campaign = campaign()
-
-  api.campaign({
-    id: id
-  }).then(data => {
-    update(campaign, data)
-  })
-
-  return campaign
-}
-
 export default campaign
