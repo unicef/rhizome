@@ -1,9 +1,9 @@
 import os
 from rhizome.settings.base import *
 
-""" ENV default 'development' """
+""" ENV default 'test' """
 
-env = os.environ.get('ENV', 'development')
+env = os.environ.get('ENV', 'test')
 instance = os.environ.get('INSTANCE', '')
 
 if instance == 'docker':
@@ -14,4 +14,4 @@ if env == 'production':
 elif env == 'test':
     from rhizome.settings.test import *
 else:
-    from rhizome.settings.development import *
+    from rhizome.settings.base import *
