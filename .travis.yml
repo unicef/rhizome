@@ -10,4 +10,4 @@ before_script:
 
 script:
   - python manage.py test --settings=rhizome.settings.test
-  - cd webapp && gulp build && gulp mocha && standard && cd ..
+  - cd webapp && gulp build && gulp mocha && cd ..
