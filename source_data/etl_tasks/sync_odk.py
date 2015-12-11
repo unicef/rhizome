@@ -84,7 +84,7 @@ class OdkSync(object):
                 with open(csv_file, 'rb') as full_file:
                      csv_base_64 = base64.b64encode(full_file.read())
                      doc_id = self.post_file_data(document_id, csv_base_64, str(form_name))
-                     # output_data = self.refresh_file_data(document_id)
+                     output_data = self.refresh_file_data(document_id)
                      document_ids_to_return.append(doc_id)
             except IOError:
                 raise OdkJarFileException(err, **{'fatal_error': err})
@@ -99,27 +99,33 @@ class OdkSync(object):
             defaults={'doc_title': form_name, 'created_by_id': self.user_id}
         )
 
-        # odk_form_name_doc_detail =
+        doc.docfile.save(doc.guid, file_content)
+
+        ## add the odk form name configuration ##
         doc_detail, created = DocumentDetail.objects.get_or_create(
             document_id=doc.id,
             doc_detail_type_id = DocDetailType.objects.get(name='odk_form_name').id,
-            doc_detail_value = form_name
+            defaults = {'doc_detail_value' : 'meta-instanceID' }
         )
 
-        doc.docfile.save(doc.guid, file_content)
+        ## unique id ( which is alwasy the same for odk forms ) ##
+        doc_detail, created = DocumentDetail.objects.get_or_create(
+            document_id=doc.id,
+            doc_detail_type_id = DocDetailType.objects.get(name='uq_id_column').id,
+            defaults = {'doc_detail_value' : '' }
+        )
 
         return doc.id
 
-    def refresh_file_data(document_id):
 
-        filters = {
-            'document_id': document_id,
-            'username': self.odk_settings['RHIZOME_USERNAME'],
-            'api_key': self.odk_settings['RHIZOME_KEY'],
-        }
+    def refresh_file_data(self, document_id):
 
-        dt = DocTransform(self.user_id, document_id)
-        data = dt.main()
+        try:
+            dt = DocTransform(self.user_id, document_id)
+            data = dt.main()
+        except ObjectDoesNotExist as err:
+            ## means required configs arent available ##
+            data = {}
 
         return data
 

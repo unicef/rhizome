@@ -30,11 +30,10 @@ var DocOverviewStore = Reflux.createStore({
     api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
       if (res.objects) {
         self.data.doc_obj = res.objects[0]
-
+        self.data.isFetchingOdk = false
         self.trigger(this.data)
       }
     }, res => {
-      self.data.isFetchingOdk = false
       self.trigger(self.data)
       window.alert(res.msg)
     })
