@@ -70,13 +70,12 @@ def query_api(query_string):
     HOST = 'http://rhizome.work/api/v1/'
 
     auth = {
-        'username': '', ## FILL ME IN 
+        'username': '', ## FILL ME IN
         'api_key': '' ## FILL ME IN !
     }
 
     url = HOST + query_string + '&' + urlencode(auth)
 
-    print '=== HITTING API %s === '% url
     response = urlopen(url)
     objects = json.loads(response.read())['objects']
 
