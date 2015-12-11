@@ -25,11 +25,11 @@ describe(__filename, () => {
   })
   context('time axis format', () => {
     it('should format to month if not January', () => {
-      const result = format.timeAxis(new Date('2001-10-01'))
+      const result = format.timeAxis('2001-10-01')
       expect(result).to.eq('Oct')
     })
     it('should format to year if January', () => {
-      const result = format.timeAxis(new Date('2001-01-01'))
+      const result = format.timeAxis('2001-01-01')
       expect(result).to.eq('2001')
     })
   })
