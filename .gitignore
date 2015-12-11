@@ -42,4 +42,4 @@ rhizome/bin/
 rhizome/lib/
 dev/
 webapp/npm-debug.log
-rhizome/settings/development.py
+rhizome/settings/private.py

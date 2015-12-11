@@ -19,6 +19,6 @@ elif env == 'test':
 ## in development settings ##
 
 try:
-    from rhizome.settings.development import *
+    from rhizome.settings.private import *
 except ImportError:
     pass
