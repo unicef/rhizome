@@ -105,14 +105,7 @@ class OdkSync(object):
         doc_detail, created = DocumentDetail.objects.get_or_create(
             document_id=doc.id,
             doc_detail_type_id = DocDetailType.objects.get(name='odk_form_name').id,
-            defaults = {'doc_detail_value' : 'meta-instanceID' }
-        )
-
-        ## unique id ( which is alwasy the same for odk forms ) ##
-        doc_detail, created = DocumentDetail.objects.get_or_create(
-            document_id=doc.id,
-            doc_detail_type_id = DocDetailType.objects.get(name='uq_id_column').id,
-            defaults = {'doc_detail_value' : '' }
+            defaults = {'doc_detail_value' : form_name }
         )
 
         return doc.id
