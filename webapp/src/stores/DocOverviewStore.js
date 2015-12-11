@@ -15,7 +15,7 @@ var DocOverviewStore = Reflux.createStore({
 
   onGetDocDetails: function (document_id) {
     var self = this
-    api.docDetail({document_id:document_id})
+    api.docDetail({document_id: document_id})
       .then(response => {
         self.data.doc_deets = response.objects
         self.trigger(self.data)
@@ -39,7 +39,6 @@ var DocOverviewStore = Reflux.createStore({
       window.alert(res.msg)
     })
   },
-
 
   onRefreshMaster: function (document_id) {
     var self = this

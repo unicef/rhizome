@@ -53,8 +53,10 @@ var MapForm = React.createClass({
       master_object_id: masterObjectId,
       mapped_by_id: 1 // FIXME
     }).then(function (data) {
-      // console.log('DATA', data);   
-      self.setState({master_object_id: data.master_object_id, master_object_name: data.master_object_name })
+      self.setState({
+        master_object_id: data.master_object_id,
+        master_object_name: data.master_object_name
+      })
     })
   },
 

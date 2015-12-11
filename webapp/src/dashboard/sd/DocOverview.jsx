@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import Reflux from 'reflux'
 import React from 'react'
 
@@ -45,29 +44,28 @@ var DocOverview = React.createClass({
   },
 
   pullDocDetails () {
-    var self = this;
+    var self = this
     DocOverviewActions.getDocDetails(self.props.doc_id)
   },
 
   refreshMaster () {
-    var self = this;
+    var self = this
     DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
   },
 
   syncOdk () {
-    var self = this;
+    var self = this
     DocOverviewActions.syncOdk({document_id: self.props.doc_id})
   },
 
   queueReprocess () {
-    var self = this;
+    var self = this
     DocOverviewActions.queueReprocess({document_id: self.props.doc_id})
   },
 
   renderLoading () {
     return <div className='admin-loading'> Doc Details Loading...</div>
   },
-
 
   render () {
     var doc_deets = this.state.doc_deets
@@ -90,35 +88,36 @@ var DocOverview = React.createClass({
     for (var i = 0; i < doc_deets.length; i++) {
       var doc_detail = doc_deets[i]
 
-      if (doc_detail.doc_detail_type__name == 'odk_form_name'){
-        var odkRefreshBtn =  <p>
-                <a disabled={this.state.isFetchingOdk} className='button button-refresh large-3 medium-3 small-12 columns'
-                   onClick={this.syncOdk}> { this.state.isFetchingOdk ? 'Refreshing' : 'Fetch ODK Data'}
-                </a>
-              </p>
+      if (doc_detail.doc_detail_type__name === 'odk_form_name') {
+        odkRefreshBtn = (
+          <p>
+            <a disabled={this.state.isFetchingOdk} className='button button-refresh large-3 medium-3 small-12 columns'
+               onClick={this.syncOdk}> { this.state.isFetchingOdk ? 'Refreshing' : 'Fetch ODK Data'}
+            </a>
+          </p>)
       }
 
       rows.push(
         <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
           <span className='csv-upload__tags--span'>{doc_detail.doc_detail_type__name}: </span>
-        {doc_detail.doc_detail_value}
+          {doc_detail.doc_detail_value}
         </div>)
     }
 
     var refresh_master_btn = (<div>
       <p>
         <a disabled={this.state.isProcessing} className='button button-refresh large-3 medium-3 small-12 columns'
-                onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
+           onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
         </a>
       </p>
+
       <p>
         <a disabled={this.state.isRefreshing} className='button button-refresh large-3 medium-3 small-12 columns'
-                onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
+           onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
         </a>
       </p>
       {odkRefreshBtn}
     </div>)
-
 
     return <div className='row csv-upload__message'>
       {rows}
