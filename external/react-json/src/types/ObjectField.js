@@ -27,8 +27,11 @@ var ObjectField = React.createClass({
 
 	defaultValue: {},
 
+	componentWillReceiveProps: function(nextProps) {
+		this.state = this.getStateFromProps(nextProps);
+	},
+
 	render: function(){
-		this.state = this.getStateFromProps( this.props );
 		var me = this,
 			settings = this.props.settings,
 			className = this.state.editing || settings.header === false ? 'open jsonObject jsonCompound' : 'jsonObject jsonCompound',
