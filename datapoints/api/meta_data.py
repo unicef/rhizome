@@ -915,7 +915,8 @@ class RefreshMasterResource(BaseModelResource):
         )
 
         queryset = DocumentDetail.objects \
-            .filter(document_id=document_id).values()
+            .filter(document_id=document_id).values('id','doc_detail_type_id'\
+                ,'doc_detail_type__name','document_id', 'doc_detail_value')
 
         return queryset
 
@@ -975,7 +976,8 @@ class QueueProcessResource(BaseModelResource):
         SourceSubmission.objects.filter(document_id=document_id).update(process_status='TO_PROCESS')
 
         queryset = DocumentDetail.objects \
-            .filter(document_id=document_id).values()
+            .filter(document_id=document_id).values('id','doc_detail_type_id'\
+                ,'doc_detail_type__name','document_id', 'doc_detail_value')
 
         return queryset
 
