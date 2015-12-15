@@ -113,7 +113,7 @@ class IndicatorResource(BaseNonModelResource):
             }
         except Exception as error:
             data = {
-                'error': 'Please provide ' + str(error) + ' for the indicator',
+                'error': 'Please provide ' + str(error) + ' for the indicator.',
                 'code': -1
             }
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),

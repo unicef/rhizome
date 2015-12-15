@@ -113,7 +113,13 @@ var SimpleForm = React.createClass({
       formData.description = description
     }
 
-    // TODO -> pull this from the DB
+    let message = this.state.store.displayMsg
+      ? (
+        <div className={`message${this.state.store.saveSuccess ? ' success' : ' error'}`}>
+          {this.state.store.message}
+        </div>
+      )
+      : null
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {
@@ -164,20 +170,19 @@ var SimpleForm = React.createClass({
       )
     }
 
-    var baseFormSuccess = ''
     if (this.state.store.saveSuccess) {
-      baseFormSuccess = <i className='fa fa-check'> Saved successfully </i>
+      setTimeout(() => {
+        var newId = this.state.store.objectId
+        this.state.store.displayMsg = false
+        this.state.store.saveSuccess = false
+        if (this.props.params && this.props.params.id) {
+          page('/manage_system/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
+        } else {
+          page('/manage_system/manage/' + contentType + '/' + newId)
+        }
 
-      var newId = this.state.store.objectId
-      this.state.store.saveSuccess = false
-
-      if (this.props.params && this.props.params.id) {
-        page('/manage_system/' + (contentType === 'indicator_tag' ? 'tags' : 'indicators'))
-      } else {
-        page('/manage_system/manage/' + contentType + '/' + newId)
-      }
-
-      SimpleFormActions.initialize(newId, contentType)
+        SimpleFormActions.initialize(newId, contentType)
+      }, 3000)
     }
 
     let subFormList = ''
@@ -215,12 +220,12 @@ var SimpleForm = React.createClass({
           <div>
             <h2>Manage Admin Page</h2>
             {idInfo}
+            {message}
             <ReactJson value={formData} settings={formSettings} ref='form_data'/>
             {additionalFormComponents}
             <br />
             <button className='tiny' onClick={ this.onSubmit }>Save</button>
           </div>
-          <div>{baseFormSuccess}</div>
         </div>
         <div className='small-4 columns'>
           {subFormList}
