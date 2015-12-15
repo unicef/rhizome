@@ -43,21 +43,18 @@ let ChartWizardStore = Reflux.createStore({
   LAYOUT_PREVIEW: 0,
 
   filterIndicatorByCountry (indicators, countries) {
-    console.warn('CHANGE THIS BACK!!!!');
-    return indicators;
-    /*
-    let countryId = countries.map(c => c.id)
-    if (countryId.length) {
-      return indicators.filter(indicator => {
-        let officeId = indicator.office_id.filter(id => !!id)
-        return countryId.map(id => {
-          return officeId.indexOf(id) >= 0
-        }).reduce((a, b) => a && b, true)
-      })
-    } else {
-      return []
-    }*/
-  },
+      let countryId = countries.map(c => c.id)
+      if (countryId.length) {
+        return indicators.filter(indicator => {
+          let officeId = indicator.office_id.filter(id => !!id)
+          return countryId.map(id => {
+            return officeId.indexOf(id) >= 0
+          }).reduce((a, b) => a && b, true)
+        })
+      } else {
+        return []
+      }
+    },
 
   filterLocationByCountry (locations, countries) {
     let countryId = countries.map(c => c.id)
@@ -81,9 +78,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   filterChartTypeByIndicator () {
-    console.warn('CHANGE THIS!');
-    this.data.chartTypeFilteredList = builderDefinitions.charts;
-    /*
+
     api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
       let availableCharts = res.objects.map(chart => {
         return chart.name
@@ -95,7 +90,7 @@ let ChartWizardStore = Reflux.createStore({
       if (!_.includes(availableCharts, this.data.chartDef.type)) {
         this.onChangeChart(this.data.chartTypeFilteredList[0].name)
       }
-    })*/
+    })
   },
 
   applyChartDef (chartDef) {

@@ -908,22 +908,42 @@ class DocDetailTypeResource(BaseModelResource):
         queryset = DocDetailType.objects.all().values()
         resource_name = 'doc_detail_type'
 
+class ChartTypeResult(object):
+    id = int()
+    name = unicode()
 
-class ChartTypeTypeResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = ChartType.objects.all().values()
+
+class ChartTypeTypeResource(BaseNonModelResource):
+    id = fields.IntegerField(attribute='id')
+    name = fields.CharField(attribute='name')
+
+    class Meta(BaseNonModelResource.Meta):
+        object_class = ChartTypeResult
         resource_name = 'chart_type'
 
-    def get_object_list(self, request):
-        try:
-            primary_indicator_id = request.GET['primary_indicator_id']
-            chart_type_ids = ChartTypeToIndicator.objects.filter(
-                indicator_id=primary_indicator_id)\
-                .values_list('chart_type_id')
 
-            return ChartType.objects.filter(id__in=chart_type_ids).values()
-        except KeyError:
-            return super(ChartTypeTypeResource, self).get_object_list(request)
+    def obj_get_list(self, bundle, **kwargs):
+        '''
+        Outer method for get_object_list... this calls get_object_list and
+        could be a point at which additional build_agg_rc_dfing may be applied
+        '''
+
+        return self.get_object_list(bundle.request)
+
+    def get_object_list(self, request):
+
+        chart_types =["PieChart","LineChart","BarChart","ColumnChart",\
+            "ChoroplethMap","ScatterChart","TableChart"]
+        qs = []
+
+        for i,(ct) in enumerate(chart_types):
+
+            ct_obj = ChartTypeResult()
+            ct_obj.id = i
+            ct_obj.name = ct
+            qs.append(ct_obj)
+
+        return qs
 
 
 class OfficeResult(object):
@@ -971,10 +991,6 @@ class OfficeResource(BaseNonModelResource):
             qs.append(office_obj)
 
         return qs
-
-    def dehydrate(self, bundle):
-        bundle.data.pop("resource_uri", None)
-        return bundle
 
 
 def clean_post_data(post_data_dict):
