@@ -153,13 +153,22 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
+function table (chart, data) {
+  return _(data)
+    .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
+    .map((values, name) => ({ name, values }))
+    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
+    .value()
+}
+
 var process = {
   'BarChart': stackedData,
   'ChoroplethMap': choropleth,
   'ColumnChart': column,
   'HeatMapChart': series,
   'LineChart': series,
-  'ScatterChart': scatter
+  'ScatterChart': scatter,
+  'TableChart': table
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {

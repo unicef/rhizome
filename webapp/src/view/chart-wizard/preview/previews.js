@@ -7,5 +7,6 @@ export default {
   'ChoroplethMap': SimplePreview,
   'ColumnChart': MixPreview,
   'ScatterChart': MixPreview,
-  'BarChart': MixPreview
+  'BarChart': MixPreview,
+  'TableChart': MixPreview
 }
