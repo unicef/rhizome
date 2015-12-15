@@ -127,14 +127,16 @@ var SimpleFormComponent = React.createClass({
       )
     }
 
-    return <div style={formComponentStyle}>
-      <h4> {componentTitle} </h4>
-      <br></br>
-      <ul>
-        {rowLi}
-      </ul>
-      {componentForm}
-    </div>
+    return (
+      <div style={formComponentStyle}>
+        <h4> {componentTitle} </h4>
+        <br></br>
+        <ul>
+          {rowLi}
+        </ul>
+        {componentForm}
+      </div>
+    )
   }
 })
 

@@ -41,11 +41,11 @@
     }
   }
 
-  .ufadmin-create-button {
-    float: right;
+  .ufadmin-header {
+    display: flex;
+    justify-content: space-between;
   }
   .ufadmin-page-heading {
-    float: left;
     line-height: 64px;
   }
   .local-datascope {

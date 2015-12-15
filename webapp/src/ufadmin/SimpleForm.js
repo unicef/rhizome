@@ -185,6 +185,9 @@ var SimpleForm = React.createClass({
     if (contentType === 'indicator') {
       subFormList = (
         <div>
+          <div className='ufadmin-create-button'>
+            <a className='button' href='/manage_system/manage/indicator/'>Create Indicator</a>
+          </div>
           <SimpleFormComponent
             objectId={objectId}
             contentType={'indicator_tag'}

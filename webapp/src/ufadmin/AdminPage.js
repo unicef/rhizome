@@ -76,21 +76,20 @@ var AdminPage = React.createClass({
         </div>
       : null
 
-    return <div>
-      <h2 className='ufadmin-page-heading'>{this.props.title} Admin Page</h2>
-
-      {createButton}
-
-      <LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
-        <Datascope>
-
-          {this.props.datascopeFilters ? this.renderFilters() : null}
-
-          {this.props.children}
-
-        </Datascope>
-      </LocalDatascope>
-    </div>
+    return (
+      <div>
+        <div className='ufadmin-header'>
+          <h2 className='ufadmin-page-heading'>{this.props.title} Admin Page</h2>
+          {createButton}
+        </div>
+        <LocalDatascope data={data} schema={schema} fields={this.props.fields} pageSize={100}>
+          <Datascope>
+            {this.props.datascopeFilters ? this.renderFilters() : null}
+            {this.props.children}
+          </Datascope>
+        </LocalDatascope>
+      </div>
+    )
   },
 
   renderLoading () {
