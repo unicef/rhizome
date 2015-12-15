@@ -9,5 +9,6 @@ export default {
   'ChoroplethMap': MapOptions,
   'ColumnChart': GeneralOptions,
   'ScatterChart': ScatterOptions,
-  'BarChart': GeneralOptions
+  'BarChart': GeneralOptions,
+  'TableChart': GeneralOptions
 }

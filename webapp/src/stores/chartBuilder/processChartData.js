@@ -205,6 +205,10 @@ export default {
       BarChart: {
         fn: this.processBarChart,
         para: [dataPromise, locations, indicators, chartDef, layout]
+      },
+      TableChart: {
+        fn: this.processTableChart,
+        para: [meltPromise, lower, upper, groups, chartDef, layout]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
@@ -425,6 +429,30 @@ export default {
         yLabel: chartDef.yLabel
       }
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
+      return { options: chartOptions, data: chartData }
+    })
+  },
+  processTableChart: function (dataPromise, lower, upper, groups, chartDef, layout) {
+    let groupBy = chartDef.groupBy
+    return dataPromise.then(function (data) {
+      if (!data || data.length === 0) {
+        return { options: null, data: null }
+      }
+      if (!lower) { // set the lower bound from the lowest datapoint value
+        var sortedDates = _.sortBy(data, _.method('campaign.start_date.getTime'))
+        lower = moment(_.first(sortedDates).campaign.start_date)
+      }
+      var chartOptions = {
+        domain: _.constant([lower.toDate(), upper.toDate()]),
+        aspect: aspects[layout].lineChart,
+        values: _.property('values'),
+        x: _.property('campaign.start_date'),
+        xFormat: (d) => { return moment(d).format('MMM YYYY') },
+        y: _.property('value'),
+        xLabel: chartDef.xLabel,
+        yLabel: chartDef.yLabel
+      }
+      var chartData = _groupBySeries(data, groups, groupBy)
       return { options: chartOptions, data: chartData }
     })
   }

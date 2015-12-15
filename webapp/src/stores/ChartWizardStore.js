@@ -43,6 +43,9 @@ let ChartWizardStore = Reflux.createStore({
   LAYOUT_PREVIEW: 0,
 
   filterIndicatorByCountry (indicators, countries) {
+    console.warn('CHANGE THIS BACK!!!!');
+    return indicators;
+    /*
     let countryId = countries.map(c => c.id)
     if (countryId.length) {
       return indicators.filter(indicator => {
@@ -53,7 +56,7 @@ let ChartWizardStore = Reflux.createStore({
       })
     } else {
       return []
-    }
+    }*/
   },
 
   filterLocationByCountry (locations, countries) {
@@ -78,6 +81,9 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   filterChartTypeByIndicator () {
+    console.warn('CHANGE THIS!');
+    this.data.chartTypeFilteredList = builderDefinitions.charts;
+    /*
     api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
       let availableCharts = res.objects.map(chart => {
         return chart.name
@@ -89,7 +95,7 @@ let ChartWizardStore = Reflux.createStore({
       if (!_.includes(availableCharts, this.data.chartDef.type)) {
         this.onChangeChart(this.data.chartTypeFilteredList[0].name)
       }
-    })
+    })*/
   },
 
   applyChartDef (chartDef) {
@@ -156,10 +162,9 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
-
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
-    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title');
     this.data.indicatorSelected = chartDef.indicators.map(id => {
       return this.indicatorIndex[id]
     })
@@ -241,6 +246,7 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
+
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
 
