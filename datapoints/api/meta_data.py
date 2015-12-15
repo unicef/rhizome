@@ -104,12 +104,22 @@ class IndicatorResource(BaseNonModelResource):
         except KeyError:
             ind_id = None
 
-        defaults = {
-            'name': post_data['name'],
-            'short_name': post_data['short_name'],
-            'description': post_data['description'],
-            'data_format': post_data['data_format']
-        }
+        try:
+            defaults = {
+                'name': post_data['name'],
+                'short_name': post_data['short_name'],
+                'description': post_data['description'],
+                'data_format': post_data['data_format']
+            }
+        except Exception as error:
+            data = {
+                'error': 'Please provide ' + str(error) + ' for the indicator',
+                'code': -1
+            }
+            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
+                                        status=500,
+                                        content_type='application/json'))
+
 
         try:
             ind, created = Indicator.objects.update_or_create(

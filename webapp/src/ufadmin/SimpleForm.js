@@ -218,7 +218,7 @@ var SimpleForm = React.createClass({
             <ReactJson value={formData} settings={formSettings} ref='form_data'/>
             {additionalFormComponents}
             <br />
-            <button className='tiny' style={{ textAlign: 'right' }} onClick={ this.onSubmit }>Save</button>
+            <button className='tiny' onClick={ this.onSubmit }>Save</button>
           </div>
           <div>{baseFormSuccess}</div>
         </div>
