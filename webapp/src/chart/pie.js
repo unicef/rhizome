@@ -3,6 +3,7 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 
+import browser from 'util/browser'
 import color from 'util/color'
 import palettes from 'util/palettes'
 import Tooltip from 'component/Tooltip.jsx'
@@ -40,7 +41,18 @@ _.extend(PieChart.prototype, {
 
     this._height = this._width = _.get(opts, 'size', el.clientWidth)
 
-    var svg = this._svg = d3.select(el).append('svg').attr('class', 'pie')
+    var svg = this._svg = d3.select(el).append('svg')
+      .attr('class', 'pie')
+      .attr({
+        'viewBox': '0 0 ' + this._width + ' ' + this._height
+      })
+
+    if (browser.isIE()) {
+      svg.attr({
+        'width': this._width,
+        'height': this._height
+      })
+    }
 
     var g = svg.append('g').attr('class', 'margin')
 
@@ -81,10 +93,7 @@ _.extend(PieChart.prototype, {
 
     var svg = this._svg
 
-    svg.attr({
-      'viewBox': '0 0 ' + this._width + ' ' + this._height
-    })
-      .select('.margin')
+    svg.select('.margin')
       .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
     var xPosition = options.notInCenter ? w / 4 : w / 2
