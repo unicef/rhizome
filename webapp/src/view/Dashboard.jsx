@@ -13,6 +13,7 @@ import TitleMenu from 'component/TitleMenu.jsx'
 import RegionTitleMenu from 'component/RegionTitleMenu'
 import CampaignTitleMenu from 'component/CampaignTitleMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
+import ExportPdf from 'component/ExportPdf.jsx'
 
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'
 
@@ -52,7 +53,7 @@ var Dashboard = React.createClass({
     }
   },
 
-  getallDashboards () {
+  getAllDashboards () {
     api.get_dashboard().then(res => {
       let customDashboards = _(res.objects).sortBy('title').value()
       let allDashboards = builtins.concat(customDashboards)
@@ -61,7 +62,7 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount () {
-    this.getallDashboards()
+    this.getAllDashboards()
     page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/:dashboard', this._showDefault)
@@ -362,6 +363,9 @@ var Dashboard = React.createClass({
           <div className='row'>
             <div className='medium-6 columns'>
               {settingFilter}
+            </div>
+            <div className='medium-3 columns'>
+              <ExportPdf className='cd-titlebar-margin' />
             </div>
             <div className='medium-3 columns'>
               <div>

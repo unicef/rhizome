@@ -3,13 +3,12 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import Location from 'requests/Location'
-
 import CampaignStore from 'stores/CampaignStore'
 
 var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
 
-  init: function () {
+  init () {
     this.loaded = true
     this.indicators = {}
   },
@@ -42,7 +41,7 @@ var DashboardStore = Reflux.createStore({
     })
   },
 
-  getQueries: function () {
+  getQueries () {
     var indicators = this.indicators
     var qs = _.groupBy(indicators, function (definition, key) {
       return [
@@ -60,7 +59,7 @@ var DashboardStore = Reflux.createStore({
     })
   },
 
-  setDashboardInternal: function (dashboard) {
+  setDashboardInternal (dashboard) {
     this.indicators = {}
     dashboard.charts.forEach(this.addChartDefinition)
 
@@ -110,7 +109,7 @@ var DashboardStore = Reflux.createStore({
   },
 
   // action handlers
-  onSetDashboard: function (definition) {
+  onSetDashboard (definition) {
     var dashboard = this.dashboard = definition.dashboard
     this.location = definition.location || this.location
     this.date = definition.date || this.date
@@ -125,7 +124,7 @@ var DashboardStore = Reflux.createStore({
   },
 
   // helpers
-  addChartDefinition: function (chart) {
+  addChartDefinition (chart) {
     var base = _.omit(chart, 'indicators', 'title')
 
     chart.indicators.forEach(id => {

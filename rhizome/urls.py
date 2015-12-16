@@ -69,6 +69,9 @@ urlpatterns = patterns(
     # HOME PAGE
     url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
 
+    #Test Print PDF
+    url(r'^pdf_chart$', login_required(TemplateView.as_view(template_name='pdf_chart.html')), name='pdf_chart'),
+
     # BASE DATPOINT FUNCTIONALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
 

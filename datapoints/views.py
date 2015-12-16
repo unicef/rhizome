@@ -1,5 +1,5 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.views import generic
@@ -14,6 +14,51 @@ from datapoints.forms import *
 from datapoints import agg_tasks
 from datapoints import cache_meta
 from datapoints.mixins import PermissionRequiredMixin
+
+import uuid
+import os
+
+
+def export_pdf(request):
+
+    # url = 'http://localhost:8000/datapoints/management-dashboard/Afghanistan/2015/08/'
+    url = request.GET['path']
+    file_name = 'out.pdf'
+    # file_name = uuid.uuid4().hex + '.pdf'
+    full_path = 'webapp/public/static/tmp/pdf/'
+    static_path = 'static/tmp/pdf/'
+    static_path_to_pdf = static_path + file_name
+    render_to = full_path + file_name
+
+    cookie = {}
+    cookie['name'] = 'sessionid'
+    cookie['value'] = request.COOKIES[cookie['name']]
+
+    options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ''}
+    command = printFromUrl(url=url, output_path=render_to, options=options, cookie=cookie)
+    os.system(command)
+
+    return JsonResponse({'pdfLocation': static_path_to_pdf})
+
+
+def printFromUrl(url, output_path, options=None, cookie=None):
+    command = []
+    command.append('xvfb-run wkhtmltopdf')
+    if options:
+        for key, value in list(options.items()):
+            if not '--' in key:
+                normalized_key = '--%s' % str(key)
+            else:
+                normalized_key = str(key)
+            command += [normalized_key, value]
+    if cookie:
+        command += ['--cookie', cookie['name'], cookie['value']]
+    if url:
+        command += [url]
+    if output_path:
+        command += [output_path]
+    command = ' '.join(command)
+    return command
 
 
 ## OPEN VIEWS ( needs authentication, but no specific permissions )##
