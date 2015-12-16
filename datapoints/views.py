@@ -1,18 +1,13 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect, JsonResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.views import generic
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
-
 from django.template import RequestContext
 
-from pandas import DataFrame
 from datapoints.models import *
 from datapoints.forms import *
-from datapoints import agg_tasks
-from datapoints import cache_meta
 from datapoints.mixins import PermissionRequiredMixin
 
 import uuid
