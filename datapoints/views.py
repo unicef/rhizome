@@ -10,12 +10,11 @@ from datapoints.models import *
 from datapoints.forms import *
 from datapoints.mixins import PermissionRequiredMixin
 
+from datapoints.pdf_utils import print_pdf
 import uuid
-import os
 
 
 def export_pdf(request):
-
     # url = 'http://localhost:8000/datapoints/management-dashboard/Afghanistan/2015/08/'
     url = request.GET['path']
     file_name = 'out.pdf'
@@ -30,30 +29,8 @@ def export_pdf(request):
     cookie['value'] = request.COOKIES[cookie['name']]
 
     options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ''}
-    command = printFromUrl(url=url, output_path=render_to, options=options, cookie=cookie)
-    os.system(command)
-
+    print_pdf(url=url, output_path=render_to, options=options, cookie=cookie)
     return JsonResponse({'pdfLocation': static_path_to_pdf})
-
-
-def printFromUrl(url, output_path, options=None, cookie=None):
-    command = []
-    command.append('xvfb-run wkhtmltopdf')
-    if options:
-        for key, value in list(options.items()):
-            if not '--' in key:
-                normalized_key = '--%s' % str(key)
-            else:
-                normalized_key = str(key)
-            command += [normalized_key, value]
-    if cookie:
-        command += ['--cookie', cookie['name'], cookie['value']]
-    if url:
-        command += [url]
-    if output_path:
-        command += [output_path]
-    command = ' '.join(command)
-    return command
 
 
 ## OPEN VIEWS ( needs authentication, but no specific permissions )##

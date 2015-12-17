@@ -1,7 +1,5 @@
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
 from django.conf.urls import url
-from decorator_include import decorator_include
 
 from datapoints import views
 
