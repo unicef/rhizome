@@ -1,16 +1,14 @@
-
 {% extends "base.html" %}
 
 {% block content %}
+  <div class="permissions__message">
+    <h2>Sorry... but you don't have the permissions to perform that task.
+      <br>
+      please contact your administrator
+    </h2>
+    <br>
+    <a href="{% url 'homepage' %}" class="cd-button"> Home</a>
 
-<h2>Sorry... but you don't have the permissions to perform that task.</h2>
-
-<br>
-
-please contact your administrator
-
-<br><br>
-
-<a href="{% url 'homepage' %}"<button type="submit" class="btn btn-primary"> Home </button></a>
+  </div>
 
 {% endblock %}
