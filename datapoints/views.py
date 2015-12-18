@@ -11,27 +11,21 @@ from datapoints.forms import *
 from datapoints.mixins import PermissionRequiredMixin
 
 from datapoints.pdf_utils import print_pdf
-import uuid
 
 
 def export_pdf(request):
-    # url = 'http://localhost:8000/datapoints/management-dashboard/Afghanistan/2015/08/'
     url = request.GET['path']
-    file_name = 'out.pdf'
-    # file_name = uuid.uuid4().hex + '.pdf'
-    full_path = 'webapp/public/static/tmp/pdf/'
-    static_path = 'static/tmp/pdf/'
-    static_path_to_pdf = static_path + file_name
-    render_to = full_path + file_name
+    file_name = 'dashboards.pdf'
 
     cookie = {}
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
-
     options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ''}
-    print_pdf(url=url, output_path=render_to, options=options, cookie=cookie)
-    return JsonResponse({'pdfLocation': static_path_to_pdf})
 
+    pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie)
+    response = HttpResponse(content=pdf_content, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    return response
 
 ## OPEN VIEWS ( needs authentication, but no specific permissions )##
 def data_browser(request):

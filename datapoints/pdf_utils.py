@@ -54,12 +54,14 @@ def print_pdf(url, output_path, options=None, cookie=None):
         command += [url]
     if output_path:
         command += [output_path]
+    else:
+        command += '-'
     command = ' '.join(command)
-    to_pdf(command, output_path)
+    return to_pdf(command, output_path)
 
 
 def to_pdf(args, path=None):
-    result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
+    result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     stdout, stderr = result.communicate()
 
@@ -71,8 +73,6 @@ def to_pdf(args, path=None):
     if exit_code != 0:
         raise IOError("wkhtmltopdf exited with non-zero code {0}. error:\n{1}".format(exit_code, stderr.decode("utf-8")))
 
-    # Since wkhtmltopdf sends its output to stderr we will capture it
-    # and properly send to stdout
     if '--quiet' not in args:
         sys.stdout.write(stderr.decode('utf-8'))
 
@@ -92,4 +92,3 @@ def to_pdf(args, path=None):
             raise IOError('Command failed: %s\n'
                           'Check whhtmltopdf output without \'quiet\' option' %
                           ' '.join(args))
-

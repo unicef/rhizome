@@ -337,34 +337,12 @@ function tagTree (q) {
   })
 }
 
-function exportPdf (url) {
-  let printUrl = '/datapoints/dashboards/export_pdf/?path=' + url
-  let req = request('GET', printUrl)
-  return new Promise(function (fulfill, reject) {
-    req.end(function (err, res) {
-      if (err) {
-        reject({
-          status: res.status,
-          msg: res.body ? res.body.error : '',
-          code: res.body ? res.body.code : -1
-        })
-      } else {
-        let json = JSON.parse(res.text)
-        fulfill({
-          pdfLocation: json.pdfLocation
-        })
-      }
-    })
-  })
-}
-
 export default {
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
   datapoints: datapoint,
   indicatorsTree: indicatorsTree,
   tagTree: tagTree,
   buildIndicatorsTree: buildIndicatorsTree,
-  exportPdf: exportPdf,
 
   // BASIC GET REQUESTS //
   campaign: endPoint('/campaign/', 'get', 1),
