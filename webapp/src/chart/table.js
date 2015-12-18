@@ -39,17 +39,13 @@ var DEFAULTS = {
   value: _.property('value')
 }
 
-function TableChart () {
-  console.log('TableChart ctor');
-}
+function TableChart () {}
 
 _.extend(TableChart.prototype, {
   defaults: DEFAULTS,
   sortCol: null,
 
   initialize: function (el, data, options) {
-    console.log('TableChart initialize', data);
-    console.log('TableChart initialize', options);
     options = this._options = _.defaults({}, options, DEFAULTS)
 
     var svg = this._svg = d3.select(el)
@@ -67,14 +63,12 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    console.log('TableChart update', data);
-    console.log('TableChart update', options);
     options = _.extend(this._options, options)
     var margin = options.margin
 
     var self = this
 
-    var w = Math.max(options.headers.length * options.cellSize, 0)
+    var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(data.length * options.cellSize, 0)
 
     var svg = this._svg
@@ -104,7 +98,37 @@ _.extend(TableChart.prototype, {
       return 'translate(0, ' + y(d) + ')'
     }
 
-    var fill = options.scale
+
+
+
+    // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
+    var targets = _(options.headers)
+      .indexBy('id')
+      .mapValues(ind => {
+        var bounds = _(ind.bound_json)
+          .reject(b => b.bound_name === 'invalid')
+          .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
+          .sortBy('1')
+
+        var extents = bounds.pluck('1').slice(1).value()
+        var names = bounds.pluck('0').value()
+
+        return d3.scale.threshold()
+          .domain(extents)
+          .range(names)
+      })
+      .value()
+
+    var scale = d3.scale.ordinal()
+      .domain(['bad', 'ok', 'good'])
+      .range(['#DB5344', '#79909F', '#2FB0D3'])
+
+    var fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
+    // END OF COLOR STUFF
+
+
+
+
 
     svg.select('.margin')
         .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')

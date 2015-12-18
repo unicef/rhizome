@@ -148,6 +148,14 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
 }
 
 function datapoint (q) {
+  console.warn('UGH!');
+  if ('indicator__in' in q) {
+    q.indicator__in = q.indicator__in.join(',');
+  }
+  if ('location__in' in q) {
+    q.location__in = q.location__in.join(',');
+  }
+
   var fetch = endPoint('/datapoint/')
 
   // Return a promise so we can chain the requests for datapoints with the

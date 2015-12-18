@@ -43,6 +43,9 @@ let ChartWizardStore = Reflux.createStore({
   LAYOUT_PREVIEW: 0,
 
   filterIndicatorByCountry (indicators, countries) {
+    console.warn('****************** change this back');
+    return indicators;
+/*
       let countryId = countries.map(c => c.id)
       if (countryId.length) {
         return indicators.filter(indicator => {
@@ -54,6 +57,7 @@ let ChartWizardStore = Reflux.createStore({
       } else {
         return []
       }
+*/
     },
 
   filterLocationByCountry (locations, countries) {
