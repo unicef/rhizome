@@ -104,12 +104,22 @@ class IndicatorResource(BaseNonModelResource):
         except KeyError:
             ind_id = None
 
-        defaults = {
-            'name': post_data['name'],
-            'short_name': post_data['short_name'],
-            'description': post_data['description'],
-            'data_format': post_data['data_format']
-        }
+        try:
+            defaults = {
+                'name': post_data['name'],
+                'short_name': post_data['short_name'],
+                'description': post_data['description'],
+                'data_format': post_data['data_format']
+            }
+        except Exception as error:
+            data = {
+                'error': 'Please provide ' + str(error) + ' for the indicator.',
+                'code': -1
+            }
+            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
+                                        status=500,
+                                        content_type='application/json'))
+
 
         try:
             ind, created = Indicator.objects.update_or_create(
@@ -520,7 +530,8 @@ class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
     class Meta(BaseModelResource.Meta):
-        queryset = Document.objects.all().values()
+        queryset = Document.objects.all().order_by('-created_at').values()
+        max_limit = 10
         resource_name = 'source_doc'
         filtering = {
             "id": ALL,
@@ -693,10 +704,25 @@ class DocumentDetailResource(BaseModelResource):
 
         try:
             doc_detail_type = request.GET['doc_detail_type']
-            return DocumentDetail.objects \
-                .filter(doc_detail_type__name=doc_detail_type).values()
+            return  DocumentDetail.objects\
+                .filter(doc_detail_type__name=doc_detail_type)\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                    'document_id', 'doc_detail_value')
         except KeyError:
-            return DocumentDetail.objects.all().values()
+            pass
+
+        try:
+            doc_id = request.GET['document_id']
+            return  DocumentDetail.objects\
+                .filter(document_id=doc_id)\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                    'document_id', 'doc_detail_value')
+        except KeyError:
+            return DocumentDetail.objects.all()\
+                .values('id','doc_detail_type_id','doc_detail_type__name',\
+                'document_id', 'doc_detail_value')
+
+
 
 
 class DocDataPointResource(BaseModelResource):
@@ -765,14 +791,34 @@ class SourceObjectMapResource(BaseModelResource):
         som_id = int(post_data['id'])
 
         som_obj = SourceObjectMap.objects.get(id=som_id)
-        som_obj.master_object_id = post_data['master_object_id']
+        master_object_id = post_data['master_object_id']
+        som_obj.master_object_id = master_object_id
+        som_obj.master_object_name = self.get_master_object_name(som_obj)
         som_obj.mapped_by_id = post_data['mapped_by_id']
         som_obj.save()
 
         bundle.obj = som_obj
         bundle.data['id'] = som_obj.id
+        bundle.data['master_object_name'] = som_obj.master_object_name
 
         return bundle
+
+    def get_master_object_name(self, som_obj):
+
+        # som_obj = SourceObjectMap.objects.get(id=3078)
+        qs_map = {
+            'campaign': ['slug',Campaign.objects.get],
+            'indicator': ['short_name',Indicator.objects.get],
+            'location': ['name',Location.objects.get],
+        }
+
+        obj_display_field = qs_map[som_obj.content_type][0]
+        qs = qs_map[som_obj.content_type][1]
+
+        master_obj = qs(id=som_obj.master_object_id).__dict__
+        master_object_name = master_obj[obj_display_field]
+
+        return master_object_name
 
     def get_object_list(self, request):
 
@@ -869,7 +915,8 @@ class RefreshMasterResource(BaseModelResource):
         )
 
         queryset = DocumentDetail.objects \
-            .filter(document_id=document_id).values()
+            .filter(document_id=document_id).values('id','doc_detail_type_id'\
+                ,'doc_detail_type__name','document_id', 'doc_detail_value')
 
         return queryset
 
@@ -888,19 +935,32 @@ class SyncOdkResource(BaseModelResource):
     def get_object_list(self, request):
 
         required_param = 'odk_form_id'
+        odk_form_id = None
 
         try:
-            odk_form_name = request.GET[required_param]
+            odk_form_id = request.GET[required_param]
         except KeyError:
+            pass
+
+        try:
+            document_id = request.GET['document_id']
+            odk_form_id = DocumentDetail.objects.get(
+                document_id = document_id, doc_detail_type__name = 'odk_form_name'
+            ).doc_detail_value
+        except KeyError:
+            pass
+
+        if not odk_form_id:
             raise DataPointsException('"{0}" is a required parameter for this request'.format(required_param))
 
         try:
-            odk_sync_object = OdkSync(odk_form_name, **{'user_id':request.user.id})
-            document_id, sync_result_data = odk_sync_object.main()
+            odk_sync_object = OdkSync(odk_form_id, **{'user_id':request.user.id})
+            document_id_list, sync_result_data = odk_sync_object.main()
+
         except OdkJarFileException as e:
             raise DataPointsException(e.errorMessage)
 
-        return Document.objects.filter(id=document_id).values()
+        return Document.objects.filter(id__in=document_id_list).values()
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'sync_odk'
@@ -916,7 +976,8 @@ class QueueProcessResource(BaseModelResource):
         SourceSubmission.objects.filter(document_id=document_id).update(process_status='TO_PROCESS')
 
         queryset = DocumentDetail.objects \
-            .filter(document_id=document_id).values()
+            .filter(document_id=document_id).values('id','doc_detail_type_id'\
+                ,'doc_detail_type__name','document_id', 'doc_detail_value')
 
         return queryset
 
@@ -938,7 +999,6 @@ class ChartTypeTypeResource(BaseNonModelResource):
         object_class = ChartTypeResult
         resource_name = 'chart_type'
 
-
     def obj_get_list(self, bundle, **kwargs):
         '''
         Outer method for get_object_list... this calls get_object_list and
@@ -948,6 +1008,11 @@ class ChartTypeTypeResource(BaseNonModelResource):
         return self.get_object_list(bundle.request)
 
     def get_object_list(self, request):
+        ## the chart_Type_to_indicator table needs to be populated by the
+        ## cache_indicator_abstracted method, based on logic defined around
+        ## calculated_indicator_component, and Indicator.data_format.  For now
+        ## we return all chart_types for all indicators so that when i add a new
+        ## indicator i can immediately visualize it in the chart wizard
 
         chart_types =["PieChart","LineChart","BarChart","ColumnChart",\
             "ChoroplethMap","ScatterChart","TableChart"]
@@ -961,7 +1026,6 @@ class ChartTypeTypeResource(BaseNonModelResource):
             qs.append(ct_obj)
 
         return qs
-
 
 class OfficeResult(object):
     id = int()
@@ -1002,8 +1066,17 @@ class OfficeResource(BaseNonModelResource):
             office_obj = OfficeResult()
             office_obj.id = row.id
             office_obj.name = row.name
-            office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
-            office_obj.top_level_location_id = location_lookup[row.id]
+
+            try:
+                office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
+                office_obj.top_level_location_id = location_lookup[row.id]
+            except KeyError:
+                office_obj.latest_campaign_id = Campaign.objects.all()\
+                    .values_list('id',flat=True)[0]
+                office_obj.top_level_location_id = Location.objects.all()\
+                    .values_list('id',flat=True)[0]
+
+                pass
 
             qs.append(office_obj)
 

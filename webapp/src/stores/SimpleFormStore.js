@@ -40,9 +40,13 @@ var SimpleFormStore = Reflux.createStore({
       self.data.dataObject = apiResponse
       self.data.loading = false
       self.data.saveSuccess = true
+      self.data.displayMsg = true
+      self.data.message = 'Indicator is successfully created.'
       self.trigger(self.data)
     }), function (error) {
-      window.alert(error.msg)
+      self.data.displayMsg = true
+      self.data.message = error.msg
+      self.trigger(self.data)
     })
   },
 
@@ -62,7 +66,12 @@ var SimpleFormStore = Reflux.createStore({
         fields: {'name': {type: 'string'},
           'short_name': {type: 'string'},
           'description': {type: 'string'},
-          'data_format': {type: 'string'} // {type: 'select', options: ['pct','bool','int']}
+          'data_format': {type: 'select',
+            settings: {options: [
+              { value: 'pct', label: 'pct' },
+              { value: 'bool', label: 'bool' },
+              { value: 'int', label: 'int' }
+            ]}}
           }}}
 
     var api_fn = fnLookup[content_type]

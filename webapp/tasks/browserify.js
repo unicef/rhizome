@@ -43,6 +43,7 @@ function bundle (config) {
   return config.bundler.bundle()
     .on('error', err => {
       wrapWithPluginError(err)
+      process.exit(1)
     })
     .pipe(source(config.entry))
     .pipe(rename(obj => {

@@ -5,6 +5,7 @@ from pandas import DataFrame
 from pandas import notnull
 
 from datapoints.models import *
+from datapoints.cache_meta import IndicatorCache
 
 class AggRefresh(object):
     '''
@@ -79,6 +80,9 @@ class AggRefresh(object):
 
         self.agg_datapoints()
         self.calc_datapoints()
+
+        ic = IndicatorCache()
+        ic.main()
 
         return 'SUCCESS'
 
@@ -290,7 +294,7 @@ class AggRefresh(object):
         datapoints from the previous calculation ( dependent_calculation_dp_df )
         '''
 
-        calc_df = self.build_calc_df(['PART','WHOLE'])
+        calc_df = self.build_calc_df(['NUMERATOR','DENOMINATOR'])
 
         ## get the datapoints for the above indicator_ids ##
         dp_df = self.build_dp_df(calc_df['indicator_component_id'])
@@ -315,8 +319,8 @@ class AggRefresh(object):
         ## to the dwc_tuple_dict.  ( this could use some clean up )
         for ix, row_data in prepped_for_calc_df.iterrows():
 
-            if row_data.calc_x == 'PART' \
-                and row_data.calc_y == 'WHOLE':
+            if row_data.calc_x == 'NUMERATOR' \
+                and row_data.calc_y == 'DENOMINATOR':
 
                 row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
                     row_data.campaign_id)
@@ -335,7 +339,7 @@ class AggRefresh(object):
         (x - y) / x
         '''
 
-        calc_list = ['WHOLE_OF_DIFFERENCE_DENOMINATOR','PART_OF_DIFFERENCE']
+        calc_list = ['WHOLE_OF_DIFFERENCE','PART_OF_DIFFERENCE']
 
         ## get the indicator_ids we need to make the calculation ##
         calc_df = self.build_calc_df(calc_list)
@@ -352,7 +356,7 @@ class AggRefresh(object):
         ## and finally, create the tuple dict calue for the - calculated data
         for ix, row_data in prepped_for_calc_df.iterrows():
 
-            if row_data.calc_x == 'WHOLE_OF_DIFFERENCE_DENOMINATOR' \
+            if row_data.calc_x == 'WHOLE_OF_DIFFERENCE' \
                 and row_data.calc_y == 'PART_OF_DIFFERENCE':
 
                 row_tuple = (row_data.location_id, row_data.calc_indicator_id, \

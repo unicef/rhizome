@@ -463,25 +463,3 @@ manage
 New Functionality Needed
 */api/campaign/*
    - Requires Location_id and returns only campaigns for which there is data for that location.
-
-
-Suggested Work Time Line
-========================
-
-Week of Oct 5
-    - John: API Enhancements
-    - Rouran / Sichu: refactor Data Access
-    - Ang: Designing / scoping the performance management / source data app
-
-Week of Oct 12
-    - John: Admin Module
-    - Rouran / Sichu: Custom dash
-    - Ang: Designing / scoping the performance management / source data app
-
-Week of Oct 19
-    - John: Admin Module
-    - Rouran / Sichu: Custom dash
-
-Week of Oct 26
-    - John : Implement New Styles From Jim
-    - All hands on deck to make the application stable.

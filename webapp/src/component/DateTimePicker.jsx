@@ -27,12 +27,11 @@ var DateRangePicker = React.createClass({
   render () {
     var self = this
     var dateTimePicker = function (dateValue, type) {
-      var self1 = self
       return (<DateTimePicker
         value={dateValue}
         time={false}
         format={'yyyy-MM-dd'}
-        onChange={self1.handleDateChange.bind(this, type)}/>)
+        onChange={self.handleDateChange.bind(this, type)}/>)
     }
     return (
         <div>

@@ -12,7 +12,7 @@ import palettes from 'util/palettes'
 
 export default {
   async getPromises () {
-    return [ await api.locations(), await api.campaign(), await api.office(), await api.indicatorsTree() ]
+    return [ await api.locations(), await api.campaign(), await api.office(), await api.indicators(null, null, { 'cache-control': 'no-cache' }) ]
   },
 
   prepareData (chartDef, layout, responses) {
@@ -43,7 +43,7 @@ export default {
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
     data.locationAggregated = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
 
-    let indicatorIndex = _.indexBy(indicators.flat, 'id')
+    let indicatorIndex = _.indexBy(indicators.objects, 'id')
     data.indicatorSelected = chartDef.indicators.map(id => {
       return indicatorIndex[id]
     })
@@ -89,7 +89,7 @@ export default {
       campaign_end: upper.format('YYYY-MM-DD')
     }
 
-    return processChartData.init(api.datapoints(query, null, { 'cache-control': 'no-cache' }),
+    return processChartData.init(api.datapoints(query),
       chartDef.type,
       data.indicatorSelected,
       data.locationAggregated,

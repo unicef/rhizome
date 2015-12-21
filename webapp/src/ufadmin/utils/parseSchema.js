@@ -8,7 +8,7 @@ export default function parseSchema (data) {
   })
 
   var schema = {
-    $schema: 'http:// json-schema.org/draft-04/schema#',
+    $schema: 'http://json-schema.org/draft-04/schema#',
     title: 'table_schema',
     type: 'array',
     items: {

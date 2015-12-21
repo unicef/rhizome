@@ -8,7 +8,6 @@ import DashboardActions from 'actions/DashboardActions'
 
 import SubmissionModal from 'dashboard/sd/SubmissionModal.jsx'
 import MapForm from 'dashboard/sd/MapForm.jsx'
-import api from 'data/api.js'
 
 const {
   Datascope, LocalDatascope
@@ -69,13 +68,7 @@ var ReviewTable = React.createClass({
   },
 
   componentWillMount: function () {
-    api.indicatorsTree().then(indicators => {
-      this.setState({
-        indicators: indicators.objects
-      })
-
-      this._callApi()
-    })
+    this._callApi()
   },
 
   componentDidMount () {
@@ -115,7 +108,6 @@ var ReviewTable = React.createClass({
             return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
-              indicators={this.state.indicators}
               campaigns={this.state.dashboardStore.campaigns}
               locations={this.state.dashboardStore.locations}
               source_object_map_id={id}
@@ -163,14 +155,14 @@ var ReviewTable = React.createClass({
 
     return (
       <div className='row'>
-      <div className='large-7 medium-9 small-12 columns'>
-        {recent}
-      </div>
-      <div className='large-5 medium-3 small-12 columns columns upload__csv--search'>
-        <div className='ufadmin-filters-content'>
-          {this.props.datascopeFilters}
+        <div className='large-7 medium-9 small-12 columns'>
+          {recent}
         </div>
-      </div>
+        <div className='large-5 medium-3 small-12 columns columns upload__csv--search'>
+          <div className='ufadmin-filters-content'>
+            {this.props.datascopeFilters}
+          </div>
+        </div>
       </div>
     )
   }

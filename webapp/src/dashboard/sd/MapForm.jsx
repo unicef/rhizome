@@ -20,12 +20,15 @@ var MapForm = React.createClass({
     source_object_code: React.PropTypes.string.isRequired,
     locations: React.PropTypes.object.isRequired,
     campaigns: React.PropTypes.object.isRequired,
-    indicators: React.PropTypes.object.isRequired,
     onModalClose: React.PropTypes.func
   },
 
   getInitialState: function () {
-    return {modalIsOpen: false, master_object_id: null}
+    return {
+      modalIsOpen: false,
+      master_object_id: null,
+      master_object_name: null
+    }
   },
 
   openModal: function () {
@@ -53,7 +56,10 @@ var MapForm = React.createClass({
       master_object_id: masterObjectId,
       mapped_by_id: 1 // FIXME
     }).then(function (data) {
-      self.setState({master_object_id: data})
+      self.setState({
+        master_object_id: data.master_object_id,
+        master_object_name: data.master_object_name
+      })
     })
   },
 
@@ -69,7 +75,7 @@ var MapForm = React.createClass({
       return <div>
         <IndicatorDropdownMenu
           text='Map Indicator'
-          indicators={this.props.indicators}
+          indicators={MapFormStore.getIndicators()}
           sendValue={this.postMetaMap} />
         </div>
     }
@@ -85,6 +91,9 @@ var MapForm = React.createClass({
           slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY') + ' ' + percentageComplete
         })
       })
+
+      campaigns.reverse()
+
       return <div>
         <CampaignDropdownMenu
           text={defaultSelected}

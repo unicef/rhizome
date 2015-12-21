@@ -41,11 +41,11 @@
     }
   }
 
-  .ufadmin-create-button {
-    float: right;
+  .ufadmin-header {
+    display: flex;
+    justify-content: space-between;
   }
   .ufadmin-page-heading {
-    float: left;
     line-height: 64px;
   }
   .local-datascope {
@@ -171,9 +171,23 @@
 }
 
 
-.admin_campaigns_date_picker{
+.admin_campaigns_date_picker {
   font-size: 15px;
   .rw-datetimepicker .rw-btn{
     width:1.9em;
+  }
+}
+
+.message {
+  color: white;
+  font-size: 16px;
+  padding: 10px;
+  &.error {
+    background: #d4143c;
+    color: white;
+    margin-top: 0;
+  }
+  &.success {
+    background: #3eb370;
   }
 }

@@ -38,33 +38,32 @@ const UsersAdmin = React.createClass({
   getInitialState () {
     return { areFiltersVisible: true }
   },
-  onToggleFilterContainer () {
-    this.setState((prevState) => ({ areFiltersVisible: !prevState.areFiltersVisible }))
-  },
 
   render () {
-    var datascopeFilters =
+    var datascopeFilters = (
       <div>
         <SearchBar
           fieldNames={['id', 'username', 'first_name', 'last_name', 'email', 'edit_link']}
           placeholder='Search users ...'
-          />
+        />
       </div>
+    )
 
-    return <AdminPage
-      title='Users'
-      getData={api.users}
-      fields={fields}
-      schema={schema}
-      datascopeFilters={datascopeFilters}
-      >
-      <Paginator />
-      <SimpleDataTable>
-        {fieldNamesOnTable.map(fieldName => {
-          return <SimpleDataTableColumn name={fieldName}/>
-        })}
-      </SimpleDataTable>
-    </AdminPage>
+    return (
+      <AdminPage
+        title='Users'
+        getData={api.users}
+        fields={fields}
+        schema={schema}
+        datascopeFilters={datascopeFilters} >
+        <Paginator />
+        <SimpleDataTable>
+          {fieldNamesOnTable.map(fieldName => {
+            return <SimpleDataTableColumn name={fieldName}/>
+          })}
+        </SimpleDataTable>
+      </AdminPage>
+    )
   }
 })
 

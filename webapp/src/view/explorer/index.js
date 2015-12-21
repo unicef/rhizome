@@ -39,7 +39,7 @@ export default {
 
     this._locations = new Dropdown({
       el: '#locations',
-      source: api.locations,
+      source: (params) => api.locations(params, null, {'cache-control': 'no-cache'}),
       mapping: {
         'parent_location_id': 'parent',
         'name': 'title',

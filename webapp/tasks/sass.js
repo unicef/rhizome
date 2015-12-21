@@ -11,6 +11,9 @@ function sassOnce (fileConf) {
   return gulp.src(fileConf.entry)
     .pipe(gulpSass(fileConf.options))
     .on('error', gulpSass.logError)
+    .on('error', () => {
+      process.exit(1)
+    })
     .pipe(_.isArray(fileConf.entry) ? gulpConcat(fileConf.options.filename) : gutil.noop())
     .pipe(autoprefixer(fileConf.options.autoprefixer))
     .pipe(gulp.dest(fileConf.dest))

@@ -13,19 +13,29 @@ from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from source_data.models import Document
+from source_data.models import Document, DocDetailType, DocumentDetail
+from source_data.etl_tasks.transform_upload import DocTransform
 
 class OdkJarFileException(Exception):
     # defaultMessage = "Sorry, this request could not be processed."
     # defaultCode = -1
 
     def __init__(self, message, *args, **kwargs):
+        '''
+        Needs to be cleaned up.
+        '''
 
-        java_message = message[message.index('SEVERE:') + 8:]
+        try:
+            java_message = message[message.index('SEVERE:') + 8:]
+        except ValueError:
+            java_message = ''
 
         if "form ID doesn't exist on server" in java_message:
 
             self.errorMessage = 'form id "{0}" does not exists on this server.\n\n Please check: \n\n {1}/Aggregate.html#management/forms/ \n\n and ensure that the FORM_ID you entered is correct. '.format(kwargs['odk_form_name'],kwargs['odk_aggregate_url'])
+
+        else:
+            self.errorMessage = message
 
 
 class OdkSync(object):
@@ -41,8 +51,10 @@ class OdkSync(object):
         '''
         '''
 
+        document_ids_to_return = []
         forms_to_process = self.get_forms_to_process()
-        for form_name,document_id in forms_to_process.iteritems():
+
+        for form_name, document_id in forms_to_process.iteritems():
 
             procedure = Popen(['java','-jar',self.odk_settings['JAR_FILE'],\
                     '--form_id', form_name, \
@@ -63,36 +75,50 @@ class OdkSync(object):
             if 'SEVERE:' in err:
                 error_details = {'odk_form_name':form_name, 'odk_aggregate_url':self.odk_settings['AGGREGATE_URL']}
                 raise OdkJarFileException(err, **error_details)
+            if 'Error:' in err:
+                raise OdkJarFileException(err, **{'fatal_error': err})
 
             csv_file = self.odk_settings['EXPORT_DIRECTORY'] + form_name.replace('-','_') + '.csv'
-            with open(csv_file, 'rb') as full_file:
-                 csv_base_64 = base64.b64encode(full_file.read())
-                 self.post_file_data(document_id, csv_base_64, str(form_name))
-                 # output_data = self.refresh_file_data(document_id)
 
-        return document_id, self.sync_result_data
+            try:
+                with open(csv_file, 'rb') as full_file:
+                     csv_base_64 = base64.b64encode(full_file.read())
+                     doc_id = self.post_file_data(document_id, csv_base_64, str(form_name))
+                     output_data = self.refresh_file_data(document_id)
+                     document_ids_to_return.append(doc_id)
+            except IOError:
+                raise OdkJarFileException(err, **{'fatal_error': err})
 
-    def post_file_data(self, document_id, base_64_data, doc_title):
+        return document_ids_to_return, {}
+
+    def post_file_data(self, document_id, base_64_data, form_name):
 
         file_content = ContentFile(base64.b64decode(base_64_data))
-        sd, created = Document.objects.update_or_create(
+        doc, created = Document.objects.update_or_create(
             id=document_id,
-            defaults={'doc_title': doc_title, 'created_by_id': self.user_id}
+            defaults={'doc_title': form_name, 'created_by_id': self.user_id}
         )
 
-        sd.docfile.save(sd.guid, file_content)
+        doc.docfile.save(doc.guid, file_content)
+
+        ## add the odk form name configuration ##
+        doc_detail, created = DocumentDetail.objects.get_or_create(
+            document_id=doc.id,
+            doc_detail_type_id = DocDetailType.objects.get(name='odk_form_name').id,
+            defaults = {'doc_detail_value' : form_name }
+        )
+
+        return doc.id
 
 
-    def refresh_file_data(document_id):
+    def refresh_file_data(self, document_id):
 
-        filters = {
-            'document_id': document_id,
-            'username': self.odk_settings['RHIZOME_USERNAME'],
-            'api_key': self.odk_settings['RHIZOME_KEY'],
-        }
-
-        query_string = odk_settings.API_ROOT + 'transform_upload/?' + urlencode(filters)
-        data = self.query_api(query_string)
+        try:
+            dt = DocTransform(self.user_id, document_id)
+            data = dt.main()
+        except ObjectDoesNotExist as err:
+            ## means required configs arent available ##
+            data = {}
 
         return data
 
@@ -107,28 +133,15 @@ class OdkSync(object):
             except ObjectDoesNotExist:
                 doc_id = None
 
-            return {self.odk_form_name : doc_id}
+            return { self.odk_form_name : doc_id}
             # {u'vcm_birth_tracking': 66, u'vcm_register': 10}
 
         forms_to_process = {}
 
-        filters = {
-            'doc_detail_type': 'odk_form_name',
-            'username': self.odk_settings['RHIZOME_USERNAME'],
-            'api_key': self.odk_settings['RHIZOME_KEY'],
-        }
+        ddt_obj = DocDetailType.objects.get(name='odk_form_name')
+        doc_deets = DocumentDetail.objects.filter(doc_detail_type=ddt_obj)
 
-        query_string = self.odk_settings['API_ROOT'] + 'doc_detail/?' + urlencode(filters)
-        data = self.query_api(query_string)
-
-        for result in data:
-            forms_to_process[result[u'doc_detail_value']] = result[u'document_id']
+        for result in doc_deets:
+            forms_to_process[result.doc_detail_value] = result.document_id
 
         return forms_to_process
-
-    def query_api(self, query_string):
-
-        response = urlopen(query_string)
-        objects = json.loads(response.read())['objects']
-
-        return objects

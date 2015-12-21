@@ -12,6 +12,7 @@ Contents:
    :maxdepth: 2
 
    spec
+   specs/chartWizard
    api
    backend
    project

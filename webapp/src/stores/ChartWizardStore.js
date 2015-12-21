@@ -150,8 +150,8 @@ let ChartWizardStore = Reflux.createStore({
         : [this.locationIndex[this.data.chartDef.locationValue]]
       : []
 
-    this.data.rawIndicators = await api.indicators()
-    this.data.rawTags = await api.get_indicator_tag()
+    this.data.rawIndicators = await api.indicators(null, null, { 'cache-control': 'no-cache' })
+    this.data.rawTags = await api.get_indicator_tag(null, null, { 'cache-control': 'no-cache' })
     this.indicators = this.data.rawIndicators.objects
 
     this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)

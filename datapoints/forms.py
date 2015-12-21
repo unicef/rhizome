@@ -6,6 +6,9 @@ from datapoints.models import LocationType, Campaign
 
 
 class CampaignForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(CampaignForm, self).__init__(*args, **kwargs)
+        self.fields['management_dash_pct_complete'].widget = forms.HiddenInput()
 
     class Meta:
         model = Campaign
@@ -32,5 +35,4 @@ class UserEditForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(UserEditForm, self).__init__(*args, **kwargs)
-
         self.fields['location_type'] = forms.ModelChoiceField(queryset=LocationType.objects.all())
