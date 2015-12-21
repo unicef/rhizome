@@ -15,6 +15,12 @@ var MapFormStore = Reflux.createStore({
     return api.post_source_object_map(info).then(function (response) {
       return response.objects
     })
+  },
+
+  getIndicators: function () {
+    return api.indicatorsTree().then(indicators => {
+      return indicators.objects
+    })
   }
 })
 
