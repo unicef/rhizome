@@ -6,7 +6,7 @@ ENV INSTANCE=docker
 RUN apt-get update
 RUN apt-get upgrade -y
 RUN apt-get install sudo
-RUN apt-get install xvfb
+RUN sudo apt-get install -y xvfb
 RUN sudo apt-get install -y wkhtmltopdf
 
 
