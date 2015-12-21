@@ -43,18 +43,18 @@ let ChartWizardStore = Reflux.createStore({
   LAYOUT_PREVIEW: 0,
 
   filterIndicatorByCountry (indicators, countries) {
-      let countryId = countries.map(c => c.id)
-      if (countryId.length) {
-        return indicators.filter(indicator => {
-          let officeId = indicator.office_id.filter(id => !!id)
-          return countryId.map(id => {
-            return officeId.indexOf(id) >= 0
-          }).reduce((a, b) => a && b, true)
-        })
-      } else {
-        return []
-      }
-    },
+    let countryId = countries.map(c => c.id)
+    if (countryId.length) {
+      return indicators.filter(indicator => {
+        let officeId = indicator.office_id.filter(id => !!id)
+        return countryId.map(id => {
+          return officeId.indexOf(id) >= 0
+        }).reduce((a, b) => a && b, true)
+      })
+    } else {
+      return []
+    }
+  },
 
   filterLocationByCountry (locations, countries) {
     let countryId = countries.map(c => c.id)
@@ -158,7 +158,7 @@ let ChartWizardStore = Reflux.createStore({
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
-    this.data.indicatorList = _.sortBy(indicatorTree, 'title');
+    this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
       return this.indicatorIndex[id]
     })

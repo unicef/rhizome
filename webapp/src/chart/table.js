@@ -98,9 +98,6 @@ _.extend(TableChart.prototype, {
       return 'translate(0, ' + y(d) + ')'
     }
 
-
-
-
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
     var targets = _(options.headers)
       .indexBy('id')
@@ -124,11 +121,6 @@ _.extend(TableChart.prototype, {
       .range(['#DB5344', '#79909F', '#2FB0D3'])
 
     var fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
-    // END OF COLOR STUFF
-
-
-
-
 
     svg.select('.margin')
         .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
@@ -169,9 +161,9 @@ _.extend(TableChart.prototype, {
         'x': x
       })
 
-      var cg = cell.enter().append("g");
+    var cg = cell.enter().append('g')
 
-      cg.append('rect')
+    cg.append('rect')
         .attr({
           'class': 'cell',
           'height': yScale.rangeBand(),
@@ -184,21 +176,21 @@ _.extend(TableChart.prototype, {
         })
         .transition()
         .duration(500)
-        .style('opacity', 1);
+        .style('opacity', 1)
 
-        cg.append("text")
+    cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
-            'x': function(d) { return x(d) + 3 * options.cellSize / 2; },
+            'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
             'dominant-baseline': 'central',
             'text-anchor': 'middle',
             'font-weight': 'bold'
           })
-          .text(function(d) { return parseFloat(d.value).toFixed(4); })
+          .text(function (d) { return parseFloat(d.value).toFixed(4) })
           .transition()
-          .duration(500);
+          .duration(500)
 
     cell.exit()
       .transition()
