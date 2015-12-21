@@ -20,6 +20,7 @@ var MapForm = React.createClass({
     source_object_code: React.PropTypes.string.isRequired,
     locations: React.PropTypes.object.isRequired,
     campaigns: React.PropTypes.object.isRequired,
+    indicators: React.PropTypes.object.isRequired,
     onModalClose: React.PropTypes.func
   },
 
@@ -75,7 +76,7 @@ var MapForm = React.createClass({
       return <div>
         <IndicatorDropdownMenu
           text='Map Indicator'
-          indicators={MapFormStore.getIndicators()}
+          indicators={this.props.indicators}
           sendValue={this.postMetaMap} />
         </div>
     }
