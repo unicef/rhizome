@@ -20,9 +20,10 @@ def export_pdf(request):
     cookie = {}
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
-    options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ''}
 
+    options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ' ', 'quiet': ' '}
     pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie)
+
     response = HttpResponse(content=pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     return response
