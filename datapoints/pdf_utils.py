@@ -6,6 +6,7 @@ import codecs
 class Configuration(object):
     def __init__(self, wkhtmltopdf=''):
         self.wkhtmltopdf = wkhtmltopdf
+        self.xvfb = 'xvfb-run '
 
         if not self.wkhtmltopdf:
             if sys.platform == 'win32':
@@ -19,8 +20,7 @@ class Configuration(object):
             result = subprocess.Popen(self.wkhtmltopdf, stdin=subprocess.PIPE, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
             stdout, stderr = result.communicate()
             if 'cannot connect to X server' in stderr.decode('utf-8'):
-                self .wkhtmltopdf = 'xvfb-run ' + subprocess.Popen(
-                    ['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
+                self .wkhtmltopdf = self.xvfb + self.wkhtmltopdf
         except IOError:
             raise IOError('%s\n'
                       'You will need to run whktmltopdf within a "virutal" X server.\n'
