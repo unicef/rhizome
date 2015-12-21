@@ -12,29 +12,12 @@ class Configuration(object):
             if sys.platform == 'win32':
                 self.wkhtmltopdf = subprocess.Popen(
                     ['where', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
+            elif 'linux' in sys.platform:
+                self.wkhtmltopdf = self.xvfb + subprocess.Popen(
+                    ['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
             else:
                 self.wkhtmltopdf = subprocess.Popen(
                     ['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
-
-        try:
-            result = subprocess.Popen(self.wkhtmltopdf, stdin=subprocess.PIPE, stdout=subprocess.PIPE,stderr=subprocess.PIPE, shell=True)
-            stdout, stderr = result.communicate()
-            if 'cannot connect to X server' in stderr.decode('utf-8'):
-                self .wkhtmltopdf = self.xvfb + self.wkhtmltopdf
-        except IOError:
-            raise IOError('%s\n'
-                      'You will need to run whktmltopdf within a "virutal" X server.\n'
-                      'Go to the link above for more information\n'
-                      'https://github.com/JazzCore/python-pdfkit/wiki/Using-wkhtmltopdf-without-X-server' % stderr.decode('utf-8'))
-
-        try:
-            with open(self.wkhtmltopdf) as f:
-                pass
-        except IOError:
-            raise IOError('No wkhtmltopdf executable found: "%s"\n'
-                          'If this file exists please check that this process can '
-                          'read it. Otherwise please install wkhtmltopdf - '
-                          'https://github.com/JazzCore/python-pdfkit/wiki/Installing-wkhtmltopdf' % self.wkhtmltopdf)
 
 
 def print_pdf(url, output_path, options=None, cookie=None):
