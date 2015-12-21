@@ -169,20 +169,36 @@ _.extend(TableChart.prototype, {
         'x': x
       })
 
-    cell.enter().append('rect')
-      .attr({
-        'class': 'cell',
-        'height': yScale.rangeBand(),
-        'x': x,
-        'width': xScale.rangeBand()
-      })
-      .style({
-        'opacity': 0,
-        'fill': fill
-      })
-      .transition()
-      .duration(500)
-      .style('opacity', 1)
+      var cg = cell.enter().append("g");
+
+      cg.append('rect')
+        .attr({
+          'class': 'cell',
+          'height': yScale.rangeBand(),
+          'x': x,
+          'width': xScale.rangeBand()
+        })
+        .style({
+          'opacity': 0,
+          'fill': fill
+        })
+        .transition()
+        .duration(500)
+        .style('opacity', 1);
+
+        cg.append("text")
+          .attr({
+            'height': yScale.rangeBand(),
+            'x': function(d) { return x(d) + 3 * options.cellSize / 2; },
+            'y': options.cellSize / 2,
+            'width': xScale.rangeBand(),
+            'dominant-baseline': 'central',
+            'text-anchor': 'middle',
+            'font-weight': 'bold'
+          })
+          .text(function(d) { return parseFloat(d.value).toFixed(4); })
+          .transition()
+          .duration(500);
 
     cell.exit()
       .transition()

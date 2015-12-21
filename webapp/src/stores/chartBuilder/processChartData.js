@@ -212,7 +212,7 @@ export default {
       },
       TableChart: {
         fn: this.processTableChart,
-        para: []
+        para: [indicators, locations]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
@@ -436,88 +436,56 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processTableChart: function () {
+  processTableChart: function (indicators, locations) {
+    let indicators_ids = _.map(indicators, 'id');
+    let locations_ids  = _.map(locations, 'id');
+    let indicators_map = _.indexBy(indicators, 'id');
+    let locations_map  = _.indexBy(locations, 'id');
 
-    // Some Afghanistan districts/provinces
-    let location_ids = [3105, 3093, 3100, 3088, 3087, 3085, 3082];
-
-    // taken from dashboards/dsitrict.js
-    let indicator_ids = [
-      475, 166, 164, 167, 165, // Missed Children
-      222, // Microplans
-      187, 189, // Conversions
-      // FIXME: Transit points in place and with SM
-      178, 228, 179, 184, 180, 185, 230, 226, 239, // Capacity to Perform
-      194, 219, 173, 172, // Supply
-      245, 236, 192, 193, 191, // Polio+
-      174, // Access plan
-      442, 443, 444, 445, 446, 447, 448, 449, 450 // Inaccessibility
-    ];
-
-    return Promise.all([
-      api.locations() .then(data => {
-        let lmap = _.indexBy(data.objects, 'id');
-        return _.indexBy(_.map(location_ids, i => lmap[i] ), 'id');
-      }),
-
-      api.indicators() .then(data => {
-        let imap = _.indexBy(data.objects, 'id');
-        return _.indexBy(_.map(indicator_ids, i => imap[i] ), 'id');
-      }),
-
-      api.datapoints({
-        location__in: location_ids,
+    return api.datapoints({
+        location__in: locations_ids,
         admin_level: 2,
-        indicator__in: indicator_ids,
+        indicator__in: indicators_ids,
         campaign_start: '2015-04-01',
         campaign_end: '2015-04-01'
-      })
-
-    ]).then(function(allData) {
-      let locations  = allData[0];
-      let indicators = allData[1];
-      let datapoints = allData[2];
-
-      let chartOptions = {
-        cellSize: 36,
-        fontSize: 14,
-        margin: {
-          top: 120,
-          right: 120,
-          bottom: 0,
-          left: 120
-        },
-        headers: []
-      };
-      let addedHeaders = {};
-
-      let chartData = _.map(datapoints.objects, d => {
-        let values = [];
-
-        _.each(d.indicators, i => {
-          if (i.value != null) {
-            values.push({
-              indicator: indicators[i.indicator],
-              value: i.value,
-              campaign: d.campaign,
-              location: locations[d.location]
-            });
-
-            if (!(i.indicator in addedHeaders)) {
-              chartOptions.headers.push(indicators[i.indicator]);
-              addedHeaders[i.indicator] = true;
-            }
-          }
-        });
-
-        return {
-          name: locations[d.location].name,
-          values: values
+      }).then(function(datapoints) {
+        let chartOptions = {
+          cellSize: 36,
+          fontSize: 14,
+          margin: {
+            top: 120,
+            right: 120,
+            bottom: 0,
+            left: 120
+          },
+          headers: []
         };
-      });
+        let addedHeaders = {};
 
-      console.log('cd', chartData);
-      console.log('co', chartOptions);
+        let chartData = _.map(datapoints.objects, d => {
+          let values = [];
+
+          _.each(d.indicators, i => {
+            if (i.value != null) {
+              values.push({
+                indicator: indicators_map[i.indicator],
+                value: i.value,
+                campaign: d.campaign,
+                location: locations_map[d.location]
+              });
+
+              if (!(i.indicator in addedHeaders)) {
+                chartOptions.headers.push(indicators_map[i.indicator]);
+                addedHeaders[i.indicator] = true;
+              }
+            }
+          });
+
+          return {
+            name: locations_map[d.location].name,
+            values: values
+          };
+      });
 
       return { options: chartOptions, data: chartData }
     });
