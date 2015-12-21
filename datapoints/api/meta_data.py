@@ -930,7 +930,6 @@ class ChartTypeResult(object):
     id = int()
     name = unicode()
 
-
 class ChartTypeTypeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
