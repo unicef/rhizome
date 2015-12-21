@@ -153,14 +153,6 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-function table (chart, data) {
-  return _(data)
-    .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
-    .map((values, name) => ({ name, values }))
-    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
-    .value()
-}
-
 var process = {
   'BarChart': stackedData,
   'ChoroplethMap': choropleth,
@@ -168,7 +160,7 @@ var process = {
   'HeatMapChart': series,
   'LineChart': series,
   'ScatterChart': scatter,
-  'TableChart': table
+  'TableChart': series
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {

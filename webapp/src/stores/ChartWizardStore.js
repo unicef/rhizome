@@ -43,9 +43,6 @@ let ChartWizardStore = Reflux.createStore({
   LAYOUT_PREVIEW: 0,
 
   filterIndicatorByCountry (indicators, countries) {
-    console.warn('****************** change this back');
-    return indicators;
-/*
       let countryId = countries.map(c => c.id)
       if (countryId.length) {
         return indicators.filter(indicator => {
@@ -57,7 +54,6 @@ let ChartWizardStore = Reflux.createStore({
       } else {
         return []
       }
-*/
     },
 
   filterLocationByCountry (locations, countries) {
@@ -82,7 +78,6 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   filterChartTypeByIndicator () {
-
     api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
       let availableCharts = res.objects.map(chart => {
         return chart.name
