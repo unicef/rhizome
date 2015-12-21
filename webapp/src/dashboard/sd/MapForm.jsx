@@ -8,6 +8,7 @@ import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 
 import MapFormStore from 'stores/MapFormStore'
 import Modal from 'react-modal'
+import api from 'data/api.js'
 
 var appElement = document.getElementById('main')
 
@@ -20,8 +21,15 @@ var MapForm = React.createClass({
     source_object_code: React.PropTypes.string.isRequired,
     locations: React.PropTypes.object.isRequired,
     campaigns: React.PropTypes.object.isRequired,
-    indicators: React.PropTypes.object.isRequired,
     onModalClose: React.PropTypes.func
+  },
+
+  componentWillMount: function () {
+    api.indicatorsTree().then(indicators => {
+      this.setState({
+        indicators: indicators.objects
+      })
+    })
   },
 
   getInitialState: function () {
@@ -72,7 +80,7 @@ var MapForm = React.createClass({
       return <div>
         <IndicatorDropdownMenu
           text='Map Indicator'
-          indicators={this.props.indicators}
+          indicators={this.state.indicators}
           sendValue={this.postMetaMap} />
         </div>
     }
