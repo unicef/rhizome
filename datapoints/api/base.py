@@ -255,6 +255,10 @@ class BaseNonModelResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
+    def dehydrate(self, bundle):
+        bundle.data.pop("resource_uri", None)
+        return bundle
+
     def parse_url_strings(self, query_dict):
         '''
         As the geo endpoint is based off of the location/parent_location paremeter

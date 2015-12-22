@@ -157,7 +157,8 @@ const aspects = {
     choroplethMap: 1,
     columnChart: 2.664831804,
     scatterChart: 2.664831804,
-    barChart: 2.664831804
+    barChart: 2.664831804,
+    tableChart: 1
   },
   1: {
     lineChart: 2.664831804,
@@ -165,7 +166,8 @@ const aspects = {
     choroplethMap: 1,
     columnChart: 2.664831804,
     scatterChart: 2.664831804,
-    barChart: 2.664831804
+    barChart: 2.664831804,
+    tableChart: 1
   },
   2: {
     lineChart: 1,
@@ -173,7 +175,8 @@ const aspects = {
     choroplethMap: 1,
     columnChart: 1,
     scatterChart: 1,
-    barChart: 1.5
+    barChart: 1.5,
+    tableChart: 1
   },
   3: {
     lineChart: 1,
@@ -181,7 +184,8 @@ const aspects = {
     choroplethMap: 1,
     columnChart: 1,
     scatterChart: 1,
-    barChart: 1
+    barChart: 1,
+    tableChart: 1
   }
 }
 
@@ -213,6 +217,10 @@ export default {
       BarChart: {
         fn: this.processBarChart,
         para: [dataPromise, locations, indicators, chartDef, layout]
+      },
+      TableChart: {
+        fn: this.processTableChart,
+        para: [indicators, locations]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
@@ -437,6 +445,60 @@ export default {
       }
       chartOptions = _generateMarginForAxisLabel(chartOptions)
       var chartData = _barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
+      return { options: chartOptions, data: chartData }
+    })
+  },
+  processTableChart: function (indicators, locations) {
+    let indicators_ids = _.map(indicators, 'id')
+    let locations_ids = _.map(locations, 'id')
+    let indicators_map = _.indexBy(indicators, 'id')
+    let locations_map = _.indexBy(locations, 'id')
+
+    return api.datapoints({
+      location__in: locations_ids,
+      admin_level: 2,
+      indicator__in: indicators_ids,
+      campaign_start: '2015-04-01',
+      campaign_end: '2015-04-01'
+    }).then(function (datapoints) {
+      let chartOptions = {
+        cellSize: 36,
+        fontSize: 14,
+        margin: {
+          top: 120,
+          right: 120,
+          bottom: 0,
+          left: 120
+        },
+        headers: []
+      }
+      let addedHeaders = {}
+
+      let chartData = _.map(datapoints.objects, d => {
+        let values = []
+
+        _.each(d.indicators, i => {
+          if (i.value != null) {
+            values.push({
+              indicator: indicators_map[i.indicator],
+              value: i.value,
+              campaign: d.campaign,
+              location: locations_map[d.location]
+            })
+
+            if (!(i.indicator in addedHeaders)) {
+              chartOptions.headers.push(indicators_map[i.indicator])
+              addedHeaders[i.indicator] = true
+            }
+          }
+        })
+
+        return {
+          name: locations_map[d.location].name,
+          values: values
+        }
+      })
+
       return { options: chartOptions, data: chartData }
     })
   }
