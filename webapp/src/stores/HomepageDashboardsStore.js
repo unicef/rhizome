@@ -107,10 +107,10 @@ var HomepageDashboardsStore = Reflux.createStore({
     var query = this.getQueriesByIndicators(indicators)
 
     var topLevelLocations = _(locations)
-        .filter(function (r) {
-          return !locationIdx.hasOwnProperty(r.parent_location_id)
-        })
-        .sortBy('name')
+      .filter(function (r) {
+        return !locationIdx.hasOwnProperty(r.parent_location_id)
+      })
+      .sortBy('name')
 
     var location = _.find(locations, function (r) {
       return r.name === dashboard.location
@@ -129,8 +129,8 @@ var HomepageDashboardsStore = Reflux.createStore({
       .last()
 
     var hasMap = _(dashboard.charts)
-    .pluck('type')
-    .any(t => _.endsWith(t, 'Map'))
+      .pluck('type')
+      .any(t => _.endsWith(t, 'Map'))
 
     return {
       campaign: campaign,
@@ -211,22 +211,20 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
       })
 
-      var queries = enhanced
-        .map(this.fetchData)
+      var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        let dataPoints = [d1, d2, d3]
-          .map((item) => {
-            return {
-              data: _(item)
-              .pluck('objects')
-              .flatten()
-              .sortBy(_.method('campaign.start_date.getTime'))
-              .map(this.melt)
-              .flatten()
-              .value()
-            }
-          })
+        let dataPoints = [d1, d2, d3].map((item) => {
+          return {
+            data: _(item)
+            .pluck('objects')
+            .flatten()
+            .sortBy(_.method('campaign.start_date.getTime'))
+            .map(this.melt)
+            .flatten()
+            .value()
+          }
+        })
 
         let dashboards = dataPoints.map(function (item) {
           let country = item.data[0].campaign.slug.split('-')[0]
