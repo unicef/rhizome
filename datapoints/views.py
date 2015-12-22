@@ -17,7 +17,7 @@ import os
 def export_pdf(request):
     url = request.GET['path']
     file_name = 'dashboards.pdf'
-    css_file = 'file://' + os.getcwd() + '/webapp/src/styles/_pdf.scss'
+    css_file = 'file://' + os.getcwd() + '/webapp/public/static/css/pdf.css'
 
     cookie = {}
     cookie['name'] = 'sessionid'

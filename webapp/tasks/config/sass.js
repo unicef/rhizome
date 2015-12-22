@@ -17,10 +17,10 @@ export default {
       filename: 'screen.css'
     }
   }, {
-    entry: `${gulp.config('base.src')}/styles/print.scss`,
+    entry: `${gulp.config('base.src')}/styles/pdf.scss`,
     src: [
       `${gulp.config('base.src')}/styles/_settings.scss`,
-      `${gulp.config('base.src')}/styles/print.scss`
+      `${gulp.config('base.src')}/styles/pdf.scss`
     ],
     dest: cssDir
   }, {
