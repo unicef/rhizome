@@ -24,7 +24,7 @@ var SimpleFormStore = Reflux.createStore({
   onBaseFormSave: function (object_id, content_type, data_to_post) {
     var self = this
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
-    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': ''}, 'indicator_tag': {'tag_name': ''}}
+    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': '', 'data_format': ''}, 'indicator_tag': {'tag_name': ''}}
     var api_fn = fnLookup[content_type]
 
     var id_to_post = object_id || -1
@@ -59,7 +59,7 @@ var SimpleFormStore = Reflux.createStore({
     self.data.objectId = object_id
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
-    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': '', 'data_format': ''},
+    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': '', 'data_format': 'pct'},
       'indicator_tag': {'tag_name': ''}}
     var form_settings = {'indicator_tag': {'form': true, fields: {'tag_name': {type: 'string'}}},
       'indicator': {'form': true,
