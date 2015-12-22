@@ -20,7 +20,7 @@ class Configuration(object):
                     ['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
 
 
-def print_pdf(url, output_path, options=None, cookie=None):
+def print_pdf(url, output_path, options=None, cookie=None, css_file=None):
     configuration = Configuration()
     wkhtmltopdf = configuration.wkhtmltopdf.decode('utf-8')
     command = [wkhtmltopdf]
@@ -33,6 +33,8 @@ def print_pdf(url, output_path, options=None, cookie=None):
             command += [normalized_key, value]
     if cookie:
         command += ['--cookie', cookie['name'], cookie['value']]
+    if css_file:
+        command += ['--user-style-sheet', css_file]
     if url:
         command += [url]
     if output_path:

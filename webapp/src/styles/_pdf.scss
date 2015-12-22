@@ -1,0 +1,40 @@
+#management-dashboard {
+  background-color: red !important;
+
+  .columns {
+    position: relative !important;
+    //padding-left: 0.625rem !important;
+    //padding-right: 0.625rem !important;
+    float: left !important;
+  }
+
+  .row {
+    margin: 0 auto !important;
+    //max-width: 100%;
+    width: 1400px !important;
+  }
+    .medium-1 {
+      width: 12.5% !important;
+    }
+    .medium-2 {
+      width: 25% !important;
+    }
+    .medium-3 {
+      width: 37.5% !important;
+    }
+    .medium-4 {
+      width: 50% !important;
+    }
+    .medium-5 {
+      width: 62.5% !important;
+    }
+    .medium-6 {
+      width: 75% !important;
+    }
+    .medium-7 {
+      width: 87.5% !important;
+    }
+    .medium-8 {
+      width: 100% !important;
+    }
+}

@@ -11,18 +11,20 @@ from datapoints.forms import *
 from datapoints.mixins import PermissionRequiredMixin
 
 from datapoints.pdf_utils import print_pdf
+import os
 
 
 def export_pdf(request):
     url = request.GET['path']
     file_name = 'dashboards.pdf'
+    css_file = 'file://' + os.getcwd() + '/webapp/src/styles/_pdf.scss'
 
     cookie = {}
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
 
-    options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'print-media-type': ' ', 'quiet': ' '}
-    pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie)
+    options = {'orientation': 'Landscape', 'javascript-delay': '1000', 'print-media-type': ' ', 'quiet': ' '}
+    pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
 
     response = HttpResponse(content=pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
