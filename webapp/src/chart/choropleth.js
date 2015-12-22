@@ -276,8 +276,8 @@ _.extend(ChoroplethMap.prototype, {
           )
         ).attr('transform', 'translate(2, 0)')
 
-        let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-        g.attr('transform', 'translate(0, ' + dataYPosition * 12 + ')')
+        // let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+        g.attr('transform', 'translate(0, 0)')
       }
     }
 
