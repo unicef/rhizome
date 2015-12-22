@@ -9,7 +9,7 @@ var ExportPdf = React.createClass({
     label: 'Export PDF',
     isFetching: false,
     url: '/datapoints/dashboards/export_pdf/?path=',
-    interval: 15000
+    interval: 20000
   },
 
   getInitialState () {
@@ -22,15 +22,19 @@ var ExportPdf = React.createClass({
       isFetching: true,
       href: this.state.url + window.location.href
     })
-    window.setTimeout(this._onCompleteExportDashboard, this.state.interval)
+    window.setTimeout(this._isCompleteExportDashboard, this.state.interval)
   },
 
-  _onCompleteExportDashboard () {
-    console.log('finish')
-    this.setState({
-      label: 'Export PDF',
-      isFetching: false
-    })
+  _isCompleteExportDashboard () {
+    if (this.refs.exportFrame.getDOMNode().contentDocument.childElementCount > 0) {
+      this.setState({
+        label: 'Export PDF',
+        isFetching: false,
+        href: 'about:blank'
+      })
+    } else {
+      window.setTimeout(this._isCompleteExportDashboard, this.state.interval)
+    }
   },
 
   render () {
@@ -39,7 +43,12 @@ var ExportPdf = React.createClass({
         <button className={this.props.className} onClick={this._onExportDashboard} disabled={this.state.isFetching}>
           {this.state.label}
         </button>
-        <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>
+        <iframe width='0' height='0' className='hidden' src={this.state.href} ref='exportFrame'>
+          <html>
+            <body onload={this._isCompleteExportDashboard}>
+            </body>
+          </html>
+        </iframe>
       </div>
     )
   }
