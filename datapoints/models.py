@@ -284,16 +284,18 @@ class Campaign(models.Model):
     A period in time in wich a campaign was initaited by the country office.
     '''
 
+    name = models.CharField(max_length=255)
+    top_lvl_location = models.ForeignKey(Location)
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
     slug = AutoSlugField(populate_from='get_full_name', unique=True)
-    management_dash_pct_complete = models.FloatField(default=.001)
+    pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.slug)
+        return unicode(self.name)
 
     def get_full_name(self):
         return unicode(self.office.name + '-' + unicode(self.start_date))
@@ -324,6 +326,7 @@ class DataPoint(models.Model):
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
+    data_date = models.DateField()
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -336,6 +339,16 @@ class DataPoint(models.Model):
     class Meta:
         db_table = 'datapoint'
         unique_together = ('indicator', 'location', 'campaign')
+
+
+class CampaignToIndicator(models.Model):
+
+    indicator = models.ForeignKey(Indicator)
+    campaign = models.ForeignKey(Campaign)
+
+    class Meta:
+        db_table = 'campaign_to_indicator'
+        unique_together = ('indicator', 'campaign')
 
 
 class DocDataPoint(models.Model):

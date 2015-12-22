@@ -11,7 +11,7 @@ Overview
 
 - Same data shows for Nigeria, and Kano but at different levels.
 
-.. image:: img/odk_dash.png
+.. image:: ../img/odk_dash.png
 
 VCM Summary:
 == VCM SUBMISSION REPORT ==
