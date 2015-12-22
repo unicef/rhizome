@@ -107,11 +107,6 @@ var SimpleForm = React.createClass({
     var dataObject = this.state.store.dataObject
     var formSettings = this.state.store.formSettings
     var formData = this.state.store.formData
-    if (formData && formData.hasOwnProperty('description')) {
-      let description = formData.description
-      delete formData.description
-      formData.description = description
-    }
 
     let message = this.state.store.displayMsg
       ? (
@@ -182,7 +177,7 @@ var SimpleForm = React.createClass({
         }
 
         SimpleFormActions.initialize(newId, contentType)
-      }, 3000)
+      }, 500)
     }
 
     let subFormList = ''

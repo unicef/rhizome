@@ -24,7 +24,7 @@ var SimpleFormStore = Reflux.createStore({
   onBaseFormSave: function (object_id, content_type, data_to_post) {
     var self = this
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
-    var form_data = {'indicator': {'name': '', 'short_name': '', 'description': '', 'data_format': ''}, 'indicator_tag': {'tag_name': ''}}
+    var form_data = {'indicator': {'name': '', 'short_name': '', 'data_format': '', 'description': ''}, 'indicator_tag': {'tag_name': ''}}
     var api_fn = fnLookup[content_type]
 
     var id_to_post = object_id || -1
@@ -44,8 +44,12 @@ var SimpleFormStore = Reflux.createStore({
       self.data.message = 'Indicator is successfully created.'
       self.trigger(self.data)
     }), function (error) {
+      self.data.formData = form_data[content_type]
       self.data.displayMsg = true
+      self.data.dataObject = data_to_post
+      self.data.saveSuccess = false
       self.data.message = error.msg
+      self.data.loading = false
       self.trigger(self.data)
     })
   },
@@ -60,7 +64,7 @@ var SimpleFormStore = Reflux.createStore({
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
     var form_data = {
-      'indicator': {'name': '', 'short_name': '', 'description': '', 'data_format': 'pct'},
+      'indicator': {'name': '', 'short_name': '', 'data_format': 'pct', 'description': ''},
       'indicator_tag': {'tag_name': ''}
     }
     var form_settings = {
@@ -73,7 +77,6 @@ var SimpleFormStore = Reflux.createStore({
         fields: {
           'name': {type: 'string'},
           'short_name': {type: 'string'},
-          'description': {type: 'string'},
           'data_format': {
             type: 'select',
             settings: {options: [
@@ -81,7 +84,8 @@ var SimpleFormStore = Reflux.createStore({
               { value: 'bool', label: 'bool' },
               { value: 'int', label: 'int' }
             ]}
-          }
+          },
+          'description': {type: 'string'}
         }
       }
     }
