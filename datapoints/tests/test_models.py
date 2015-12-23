@@ -11,8 +11,31 @@ class MasterModelTestCase(TestCase):
 
     def set_up(self):
 
-        print 'pass'
+        pass
 
+
+class CampaignTest(MasterModelTestCase):
+
+    def test_campaign_create(self):
+
+        self.set_up()
+        o = Office.objects.create(name='NGA')
+        lt = LocationType.objects.create(name='country',admin_level=0)
+        ct = CampaignType.objects.create(name='NID')
+        tpl = Location.objects.create(name='NGA',location_code='NGA',\
+            office_id = o.id,location_type_id = lt.id)
+
+        c = Campaign.objects.create(
+            office_id = o.id,\
+            top_lvl_location_id = tpl.id,
+            campaign_type_id = ct.id,
+            name = 'test',\
+            start_date = '2016-01-01',\
+            end_date = '2016-01-01',\
+        )
+
+        self.assertTrue(isinstance,(c,Campaign))
+        # self.assertEqual(dpi.__unicode__(),dpi.name)
 
 class IndicatorTest(MasterModelTestCase):
 
