@@ -27,7 +27,8 @@ var Overview = React.createClass({
       values: _.identity,
       x: _.property('value'),
       xFormat: d3.format('%'),
-      y: _.property('indicator.short_name')
+      y: _.property('indicator.short_name'),
+      color: ['#377EA4']
     }
 
     var headerStyle = {
