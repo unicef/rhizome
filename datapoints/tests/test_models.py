@@ -1,6 +1,7 @@
 from django.test import TestCase
 from datapoints.models import *
 from datapoints.agg_tasks import AggRefresh
+from datapoints.cache_meta import LocationTreeCache
 from source_data.models import *
 from datetime import datetime
 
@@ -53,17 +54,20 @@ class CampaignTest(MasterModelTestCase):
 
         dp_0 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
             indicator_id=ind_0.id,value=2,data_date = datetime.now(),
-            changed_by_id = u.id,source_submission_id = ss.id)
-        dp_1 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
-            indicator_id=ind_1.id,value=3,data_date = datetime.now(), \
-            changed_by_id = u.id,source_submission_id = ss.id)
+            changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
+        # dp_1 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
+        #     indicator_id=ind_1.id,value=3,data_date = datetime.now(), \
+        #     changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
 
-        # agr = AggRefresh()
+        ltc = LocationTreeCache()
+        ltc.main()
+
+        agr = AggRefresh()
         # agr.main()
 
         dp_ids = c.get_datapoints()
 
-        self.assertEqual(len(dp_ids),2)
+        self.assertEqual(len(dp_ids),1)
         self.assertTrue(isinstance,(c,Campaign))
         # self.assertEqual(dpi.__unicode__(),dpi.name)
 
@@ -103,8 +107,6 @@ class LocationTest(MasterModelTestCase):
         r = self.create_location()
         self.assertTrue(isinstance,(r,Location))
         self.assertEqual(r.__unicode__(),r.name)
-
-        print '...Done Testing location Model...'
 
 class DataPointTest(MasterModelTestCase):
 
