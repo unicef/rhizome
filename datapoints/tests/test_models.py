@@ -4,6 +4,9 @@ from datapoints.agg_tasks import AggRefresh
 from datapoints.cache_meta import LocationTreeCache
 from source_data.models import *
 from datetime import datetime
+from datetime import date, timedelta
+
+
 
 class MasterModelTestCase(TestCase):
 
@@ -23,6 +26,10 @@ class CampaignTest(MasterModelTestCase):
 
     def test_campaign_create(self):
 
+        d = date.today()
+        st = d - timedelta(days=1)
+        ed = d + timedelta(days=1)
+
         u = User.objects.create_user('polio','eradicate@polio.com', 'polio')
         o = Office.objects.create(name='NGA')
         lt = LocationType.objects.create(name='country',admin_level=0)
@@ -36,38 +43,44 @@ class CampaignTest(MasterModelTestCase):
             created_by_id = u.id,
             guid = 'test')
 
-        ss = SourceSubmission.objects.create(
-            document_id = doc.id,
-            submission_json = '',
-            row_number = 0
-        )
+        ### SET UP CAMPAIGN DEFINITION ###
 
-        ##
         c = Campaign.objects.create(
             office_id = o.id,\
             top_lvl_location_id = tpl.id,
             campaign_type_id = ct.id,
             name = 'test',\
-            start_date = '2016-01-01',\
-            end_date = '2016-01-01',\
+            start_date = st,\
+            end_date = ed,\
         )
 
-        dp_0 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
-            indicator_id=ind_0.id,value=2,data_date = datetime.now(),
+        cti_0 = CampaignToIndicator.objects.create(indicator_id=ind_0.id,\
+            campaign_id=c.id)
+        cti_1 = CampaignToIndicator.objects.create(indicator_id=ind_1.id,\
+            campaign_id=c.id)
+
+        ###### ADD DATA TO CAMPAIGN #####
+
+        ss = SourceSubmission.objects.create(
+            document_id = doc.id,
+            submission_json = '',
+            row_number = 0
+        )
+        dp_0 = DataPoint.objects.create(location_id=tpl.id,\
+            indicator_id=ind_0.id,value=2,data_date = d,
             changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
-        # dp_1 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
-        #     indicator_id=ind_1.id,value=3,data_date = datetime.now(), \
-        #     changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
+        dp_1 = DataPoint.objects.create(location_id=tpl.id,\
+            indicator_id=ind_1.id,value=3,data_date = d, \
+            changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
 
         ltc = LocationTreeCache()
         ltc.main()
 
-        agr = AggRefresh()
-        # agr.main()
+        agr = AggRefresh(campaign_id = c.id)
 
         dp_ids = c.get_datapoints()
 
-        self.assertEqual(len(dp_ids),1)
+        self.assertEqual(len(dp_ids),2)
         self.assertTrue(isinstance,(c,Campaign))
         # self.assertEqual(dpi.__unicode__(),dpi.name)
 
