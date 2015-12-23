@@ -1,13 +1,11 @@
-.row {
-  margin: 0 auto;
-  max-width: 100%;
-  width: 100%;
+svg {
+  overflow: visible !important;
 }
 
 #management-dashboard {
   width: 1400px !important;
 
-  .chart{
+  .chart {
     width: 100% !important;
   }
 
