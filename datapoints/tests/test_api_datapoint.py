@@ -12,8 +12,8 @@ class DataPointResourceTest(ResourceTestCase):
         # Create a user.
         self.username = 'john'
         self.password = 'pass'
-        self.user = User.objects.create_user(self.username,
-                                             'john@john.com', self.password)
+        self.user = User.objects.create_user(self.username,\
+                                        'eradicate@polio.com', self.password)
 
         self.get_credentials()
 
@@ -50,7 +50,7 @@ class DataPointResourceTest(ResourceTestCase):
         end_date = '2014-01-01'
         campaign_type = CampaignType.objects.create(name='National Immunization Days (NID)')
         campaign = Campaign.objects.create(office=office, campaign_type=campaign_type, \
-                                           start_date=start_date, end_date=end_date)
+                                           start_date=start_date, end_date=end_date,top_lvl_location_id = location.id)
 
         # 5. Create Test DataPointComputed
         value = 1.57

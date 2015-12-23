@@ -81,9 +81,9 @@ var SourceDataDashboard = React.createClass({
       'viewraw': {
         'meta_fn': api.submissionMeta,
         'data_fn': api.submission,
-        'fields': ['id', 'location_code', 'campaign_code', 'edit_link'],
-        'header': ['id', 'location_code', 'campaign_code', 'edit_link'],
-        'search_fields': ['id', 'location_code', 'campaign_code']
+        'fields': ['id', 'location_code', 'data_date', 'edit_link'],
+        'header': ['id', 'location_code', 'data_date', 'edit_link'],
+        'search_fields': ['id', 'location_code', 'data_date']
       },
       'doc_index': {
         'data_fn': api.source_doc,
@@ -99,9 +99,9 @@ var SourceDataDashboard = React.createClass({
       },
       'validate': {
         'data_fn': api.docDatapoint,
-        'fields': ['location__name', 'indicator__short_name', 'campaign__slug', 'value', 'edit_link'],
-        'header': ['location', 'indicator', 'campaign', 'value', 'is valid'],
-        'search_fields': ['location', 'indicator', 'campaign', 'value']
+        'fields': ['location__name', 'indicator__short_name', 'data_date', 'value', 'edit_link'],
+        'header': ['location', 'indicator', 'data_date', 'value', 'is valid'],
+        'search_fields': ['location', 'indicator', 'data_date', 'value']
       },
       'results': {
         'data_fn': api.docResults,

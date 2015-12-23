@@ -4,6 +4,7 @@ import random
 from datetime import datetime
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 
 from jsonfield import JSONField
 
@@ -136,11 +137,9 @@ class SourceSubmission(models.Model):
     document = models.ForeignKey(Document)
     instance_guid = models.CharField(max_length=255)
     row_number = models.IntegerField()
-    campaign_code = models.CharField(max_length=1000)
+    data_date = models.DateTimeField()
     location_code = models.CharField(max_length=1000)
     location_display = models.CharField(max_length=1000)
-    location = models.ForeignKey('datapoints.Location', null=True)
-    campaign = models.ForeignKey('datapoints.Campaign', null=True)
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)
     process_status = models.CharField(max_length=25)  # should be a FK
@@ -148,3 +147,13 @@ class SourceSubmission(models.Model):
     class Meta:
         db_table = 'source_submission'
         unique_together = (('document', 'instance_guid'))
+
+    def get_location_id(self):
+
+        try:
+            loc_id = SourceObjectMap.objects.get(content_type = 'location',\
+                source_object_code = self.location_code).master_object_id
+        except ObjectDoesNotExist:
+            loc_id = None
+
+        return loc_id

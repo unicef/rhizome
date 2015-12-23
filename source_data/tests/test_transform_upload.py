@@ -121,7 +121,7 @@ class TransformUploadTestCase(TestCase):
             guid = 'test').id
 
         for ddt in ['uq_id_column','username_column','image_col',
-            'campaign_column','location_column','location_display_name']:
+            'date_column','location_column','location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
@@ -153,11 +153,11 @@ class TransformUploadTestCase(TestCase):
             doc_detail_value = 'Wardcode'
         )
 
-        campaign_column_config = DocumentDetail.objects.create(
+        date_column_config = DocumentDetail.objects.create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='campaign_column').id,
-            doc_detail_value = 'Campaign'
+                .objects.get(name='date_column').id,
+            doc_detail_value = 'submission_date'
         )
 
 

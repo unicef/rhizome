@@ -64,7 +64,8 @@ class CampaignTest(MasterModelTestCase):
         ss = SourceSubmission.objects.create(
             document_id = doc.id,
             submission_json = '',
-            row_number = 0
+            row_number = 0,
+            data_date = d
         )
         dp_0 = DataPoint.objects.create(location_id=tpl.id,\
             indicator_id=ind_0.id,value=2,data_date = d,
@@ -138,20 +139,21 @@ class DataPointTest(MasterModelTestCase):
             guid = 'test')
 
     def create_datapoint(self, note="test", indicator_id=99, location_id = 99,
-        campaign_id=99, value=100.01, changed_by_id = 1):
+        value=100.01, changed_by_id = 1):
 
         self.set_up()
 
         source_submission = SourceSubmission.objects.create(
             document_id = self.document.id,
             submission_json = '',
-            row_number = 1
+            row_number = 1,
+            data_date = '2016-01-01'
         )
 
         dp = DataPoint.objects.create(
             indicator_id=indicator_id,
             location_id = location_id,
-            campaign_id=campaign_id,
+            data_date='2016-01-01',
             value = value,
             changed_by_id=changed_by_id,
             source_submission_id = source_submission.id

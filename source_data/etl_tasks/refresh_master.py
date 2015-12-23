@@ -42,10 +42,6 @@ class MasterRefresh(object):
             .values_list('location_code',flat = True).distinct()\
             [:self.ss_location_code_batch_size]
 
-        self.campaign_codes_to_process = SourceSubmission.objects\
-            .filter(document_id = self.document_id)\
-            .values_list('campaign_code',flat = True).distinct()
-
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
         self.ss_ids_to_process, self.all_ss_ids =\
@@ -61,7 +57,7 @@ class MasterRefresh(object):
         When ingesting a file the user must set the following configurtions:
             - unique_id_column
             - location_code_column
-            - campaign_code_column
+            - data_date
         The user can in addition add a number of optional configurations in order to both
         set up ingestion ( ex. odk_form_name, odk_host ) as well as enhance reporting
         of the data ( photo_column, uploaded_by_column, lat_column, lon_column )
@@ -179,16 +175,15 @@ class MasterRefresh(object):
         for submission in submission_qs:
             all_ss_ids.append(submission.id)
 
-            location_id = self.source_map_dict.get(('location'\
-                    ,unicode(submission.location_code)),None)
+            ## need to remove this! shoudl not have a FK between the two
+            ## apps.. source_data and datapoint
 
-            campaign_id = self.source_map_dict.get(('campaign'\
-                    ,unicode(submission.campaign_code)),None)
-
-            if location_id and campaign_id:
-                ss_id_list_to_process.append(submission.id)
-                submission.location_id = location_id
-                submission.campaign_id =  campaign_id
+            # location_id = self.source_map_dict.get(('location'\
+            #         ,unicode(submission.location_code)),None)
+            #
+            # if location_id:
+            #     ss_id_list_to_process.append(submission.id)
+            #     submission.location_id = location_id
 
         if len(submission_qs) > 0:
             bulk_update(submission_qs)
@@ -204,7 +199,9 @@ class MasterRefresh(object):
 
         for row in SourceSubmission.objects.filter(\
                  id__in = ss_ids_in_batch)\
-            .values('location_id','campaign_id','id'):
+            .values('location_code','data_date','id'):
+
+            location_id = row.get_location_id()
 
             doc_dps = self.process_source_submission(row)
 
@@ -221,29 +218,29 @@ class MasterRefresh(object):
                   MAX(id) as id
                 , location_id
                 , indicator_id
-                , campaign_id
                 , MAX(source_submission_id) as source_submission_id
                 , SUM(value) as value
             FROM doc_datapoint dd
             WHERE source_submission_id = ANY(%s)
             AND is_valid = 't'
-            GROUP BY location_id, indicator_id, campaign_id;
+            GROUP BY location_id, indicator_id;
 
             DELETE FROM datapoint d
             USING _tmp_dp t
             WHERE d.location_id = t.location_id
-            AND d.campaign_id = t.campaign_id
             AND d.indicator_id = t.indicator_id;
 
             INSERT INTO datapoint
-            (location_id, campaign_id, indicator_id, value, cache_job_id, source_submission_id, created_at, changed_by_id)
-            SELECT location_id, campaign_id, indicator_id, value, -1, source_submission_id, now(), %s
-            FROM  _tmp_dp;
+            (location_id, data_date, indicator_id, value, cache_job_id, source_submission_id, created_at, changed_by_id)
+            SELECT dd.location_id, dd.data_date, dd.indicator_id, dd.value, -1, dd.source_submission_id, now(), %s
+            FROM  _tmp_dp td
+            INNER JOIN doc_datapoint dd
+            ON td.location_id = dd.location_ids
+            AND td.indicator_id = dd.indicator_id;
 
             SELECT d.id FROM datapoint d
             INNER JOIN _tmp_dp t
             ON d.location_id = t.location_id
-            AND d.campaign_id = t.campaign_id
             AND d.indicator_id = t.indicator_id
             LIMIT 1;
         ''',[ss_id_list,self.user_id])
@@ -253,9 +250,11 @@ class MasterRefresh(object):
 
 
     ## main() helper methods ##
-    def process_source_submission(self,row):
+    def process_source_submission(self,row_qs):
 
-        location_id,campaign_id,ss_id = row['location_id'],row['campaign_id'],\
+        row = row_qs.values()
+
+        location_id,data_date,ss_id = row['location_id'],row['data_date'],\
             row['id']
 
         doc_dp_batch = []

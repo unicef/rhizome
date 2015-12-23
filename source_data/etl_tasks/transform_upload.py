@@ -41,10 +41,10 @@ class DocTransform(object):
                 .objects.get(name='location_column').id,
         ).doc_detail_value)
 
-        self.campaign_column = str(DocumentDetail.objects.get(
+        self.date_column = str(DocumentDetail.objects.get(
             document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='campaign_column').id,
+                .objects.get(name='date_column').id,
         ).doc_detail_value)
 
         self.existing_submission_keys = SourceSubmission.objects.filter(
@@ -119,7 +119,6 @@ class DocTransform(object):
 
         return [x.id for x in ss]
 
-
     def upsert_source_object_map(self):
         '''
         TODO: save the source_strings so i dont have to iterate through
@@ -141,13 +140,9 @@ class DocTransform(object):
             row_dict = json.loads(row[0])
 
             rg_codes.append(row_dict[self.location_column])
-            cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
-
-        for c in list(set(cp_codes)):
-            all_codes.append(('campaign',c))
 
         for content_type, source_object_code in all_codes:
             self.source_submission_meta_upsert(content_type, source_object_code)
@@ -188,7 +183,7 @@ class DocTransform(object):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'campaign_code': submission_data[self.campaign_column],
+            'data_date': submission_data[self.date_column],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }

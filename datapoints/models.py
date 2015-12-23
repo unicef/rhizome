@@ -397,7 +397,7 @@ class DocDataPoint(models.Model):
     document = models.ForeignKey('source_data.Document')  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    data_date = models.DateTimeField()
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
