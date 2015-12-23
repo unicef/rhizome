@@ -156,7 +156,6 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
-
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
@@ -241,6 +240,7 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorFilteredList = this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
+
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
 

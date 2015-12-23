@@ -15,46 +15,24 @@ var ReviewTableStore = Reflux.createStore({
   },
 
   onGetData: function (request, fields, docTab) {
-    var self = this
-    if (docTab === 'viewraw') {
-      api.submission(request, null, {'cache-control': 'no-cache'}).then(response => {
-        self.data.schema = parseSchema(fields)
-        self.data.data = response.objects
-        self.trigger(self.data)
-      })
-    } else if (docTab === 'doc_index') {
-      api.source_doc(request, null, {'cache-control': 'no-cache'}).then(response => {
-        self.data.schema = parseSchema(fields)
-        self.data.data = response.objects
-        self.trigger(self.data)
-      })
-    } else if (docTab === 'mapping') {
-      api.docMap(request, null, {'cache-control': 'no-cache'}).then(response => {
-        self.data.schema = parseSchema(fields)
-        self.data.data = response.objects
-        self.trigger(self.data)
-      })
-    } else if (docTab === 'validate') {
-      api.docDatapoint(request, null, {'cache-control': 'no-cache'}).then(response => {
-        self.data.schema = parseSchema(fields)
-        self.data.data = response.objects
-        self.trigger(self.data)
-      })
-    } else {
-      // results
-      api.docResults(request, null, {'cache-control': 'no-cache'}).then(response => {
-        self.data.schema = parseSchema(fields)
-        self.data.data = response.objects
-        self.trigger(self.data)
-      })
+    const tabMapping = {
+      'viewraw': api.submission,
+      'doc_index': api.source_doc,
+      'mapping': api.docMap,
+      'validate': api.docDatapoint,
+      'results': api.docResults
     }
+    tabMapping[docTab](request, null, {'cache-control': 'no-cache'}).then(response => {
+      this.data.schema = parseSchema(fields)
+      this.data.data = response.objects
+      this.trigger(this.data)
+    })
   },
 
   onGetIndicators: function () {
-    var self = this
     api.indicatorsTree().then(indicators => {
-      self.data.indicators = indicators
-      self.trigger(self.data)
+      this.data.indicators = indicators
+      this.trigger(this.data)
     })
   }
 })

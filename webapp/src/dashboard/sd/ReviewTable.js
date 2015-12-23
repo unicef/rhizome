@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
+import api from 'data/api'
+
 import DashboardStore from 'stores/DashboardStore'
 
 import DashboardActions from 'actions/DashboardActions'
@@ -68,6 +70,11 @@ var ReviewTable = React.createClass({
   },
 
   componentWillMount: function () {
+    api.indicatorsTree().then(indicators => {
+      this.setState({
+        indicators: indicators.objects
+      })
+    })
     this._callApi()
   },
 
@@ -110,6 +117,7 @@ var ReviewTable = React.createClass({
             return <MapForm
               campaigns={this.state.dashboardStore.campaigns}
               locations={this.state.dashboardStore.locations}
+              indicators={this.state.indicators}
               source_object_map_id={id}
               key={id}
               onModalClose={this._callApi}

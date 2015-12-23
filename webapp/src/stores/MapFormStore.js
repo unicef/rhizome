@@ -1,8 +1,7 @@
-import api from 'data/api'
 import Reflux from 'reflux'
+import api from 'data/api'
 
 var MapFormStore = Reflux.createStore({
-  init: function () {},
 
   getSourceMap: function (id) {
     return api.get_source_object_map(id, null, {'cache-control': 'no-cache'})

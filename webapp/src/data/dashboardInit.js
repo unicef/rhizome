@@ -159,7 +159,8 @@ var process = {
   'ColumnChart': column,
   'HeatMapChart': series,
   'LineChart': series,
-  'ScatterChart': scatter
+  'ScatterChart': scatter,
+  'TableChart': series
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {

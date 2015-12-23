@@ -42,7 +42,8 @@ var Monitoring = React.createClass({
       domain: _.constant([0, 1]),
       labelStyle: {
         lineHeight: 1
-      }
+      },
+      color: ['#377EA4', '#B6D0D4']
     }
 
     var inside = _(data.insideMonitoring)
