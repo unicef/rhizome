@@ -143,9 +143,15 @@ function _getIndicator (d) {
 }
 function _generateMarginForAxisLabel (options) {
   if (options.xLabel || options.yLabel) {
-    let marginLeft = options.xLabel ? 10 : 0
-    let marginBottom = options.yLabel ? 30 : 0
-    options['margin'] = {top: 0, right: 0, bottom: marginBottom, left: marginLeft}
+    let marginLeft = options.xLabel
+      ? 10
+      : options.margin.left || 0
+    let marginBottom = options.yLabel
+      ? 30
+      : options.margin.bottom || 0
+    let marginTop = options.margin.top || 0
+    let marginRight = options.margin.right || 0
+    options['margin'] = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
   }
   return options
 }
@@ -350,8 +356,15 @@ export default {
         },
         xFormat: function (d) { return moment(d).format('MMM YYYY') },
         xLabel: chartDef.xLabel,
-        yLabel: chartDef.yLabel
+        yLabel: chartDef.yLabel,
+        margin: {
+          top: 20,
+          right: 0,
+          bottom: 0,
+          left: 0
+        }
       }
+
       chartOptions = _generateMarginForAxisLabel(chartOptions)
       return { options: chartOptions, data: chartData }
     })
