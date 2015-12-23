@@ -1,7 +1,8 @@
 from django.test import TestCase
 from datapoints.models import *
+from datapoints.agg_tasks import AggRefresh
 from source_data.models import *
-
+from datetime import datetime
 
 class MasterModelTestCase(TestCase):
 
@@ -16,15 +17,31 @@ class MasterModelTestCase(TestCase):
 
 class CampaignTest(MasterModelTestCase):
 
+    # python manage.py test datapoints.tests.test_models.CampaignTest\
+    #    .test_campaign_create --settings=rhizome.settings.test
+
     def test_campaign_create(self):
 
-        self.set_up()
+        u = User.objects.create_user('polio','eradicate@polio.com', 'polio')
         o = Office.objects.create(name='NGA')
         lt = LocationType.objects.create(name='country',admin_level=0)
         ct = CampaignType.objects.create(name='NID')
+        ind_0 = Indicator.objects.create(name='number of VDPV cases',short_name='V')
+        ind_1 = Indicator.objects.create(name='number of WPV cases',short_name='W')
         tpl = Location.objects.create(name='NGA',location_code='NGA',\
             office_id = o.id,location_type_id = lt.id)
+        doc = Document.objects.create(
+            doc_title = 'test',
+            created_by_id = u.id,
+            guid = 'test')
 
+        ss = SourceSubmission.objects.create(
+            document_id = doc.id,
+            submission_json = '',
+            row_number = 0
+        )
+
+        ##
         c = Campaign.objects.create(
             office_id = o.id,\
             top_lvl_location_id = tpl.id,
@@ -34,6 +51,19 @@ class CampaignTest(MasterModelTestCase):
             end_date = '2016-01-01',\
         )
 
+        dp_0 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
+            indicator_id=ind_0.id,value=2,data_date = datetime.now(),
+            changed_by_id = u.id,source_submission_id = ss.id)
+        dp_1 = DataPoint.objects.create(campaign_id=c.id,location_id=tpl.id,\
+            indicator_id=ind_1.id,value=3,data_date = datetime.now(), \
+            changed_by_id = u.id,source_submission_id = ss.id)
+
+        # agr = AggRefresh()
+        # agr.main()
+
+        dp_ids = c.get_datapoints()
+
+        self.assertEqual(len(dp_ids),2)
         self.assertTrue(isinstance,(c,Campaign))
         # self.assertEqual(dpi.__unicode__(),dpi.name)
 

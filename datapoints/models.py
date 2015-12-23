@@ -281,7 +281,32 @@ class CampaignType(models.Model):
 
 class Campaign(models.Model):
     '''
-    A period in time in wich a campaign was initaited by the country office.
+    A grouping of datapoints.  For polio, for we have a "campaign type" of
+    "National Immunization Day" or "Mop Up" which means an immeiate response
+    to a case by conncentrated vaccination campaigns in that area.
+
+    The campaign thus allows you to model these two things with the model in
+    these two instances:
+
+    1. NID - Happens monthly for the Endemics.  We have a certain type of
+    Inticators that we want to collect for this.. see "Management Dashboard."
+
+        - indicator_list = Management Dashboard Indicators
+        - top_lvl_location = Afghanistan
+
+    2. Mop Up - Could happen anywhere where low immunity, for instance Ukraine.
+
+        - indicator_list = A few select Indicators related to the "mop up"
+        effort.  These will be different, put potentially overlapping from the
+        NID indicator list.
+        - top_lvl_location = Ukraine
+
+    For other efforts, this model can be useful.. For Routine Immunization
+    one could imagine a similar setup.
+
+    The campaign model has a method called "get_datapoints", which gets the
+    relevant raw and aggregated datapoints for a given campaign.  The data
+    is aggregated from the date, indicator_list and location in the AggRefresh.
     '''
 
     name = models.CharField(max_length=255)
@@ -290,15 +315,17 @@ class Campaign(models.Model):
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name', unique=True)
+    slug = AutoSlugField(populate_from='name', unique=True)
     pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return unicode(self.name)
 
-    def get_full_name(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
+    def get_datapoints(self):
+
+        return DataPointComputed.objects.filter(campaign_id = self.id).values()
+
 
     class Meta:
         db_table = 'campaign'
