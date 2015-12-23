@@ -43,7 +43,7 @@ var Monitoring = React.createClass({
       labelStyle: {
         lineHeight: 1
       },
-      color: ['#377EA4', '#B6D0D4']
+      color: ['#377EA4']
     }
 
     var inside = _(data.insideMonitoring)
