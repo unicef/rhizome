@@ -143,10 +143,10 @@ function _getIndicator (d) {
 }
 function _generateMarginForAxisLabel (options) {
   if (options.xLabel || options.yLabel) {
-    let marginLeft = options.xLabel
-      ? 10
+    let marginLeft = options.yLabel
+      ? 15
       : options.margin.left || 0
-    let marginBottom = options.yLabel
+    let marginBottom = options.xLabel
       ? 30
       : options.margin.bottom || 0
     let marginTop = options.margin.top || 0

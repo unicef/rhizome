@@ -185,7 +185,7 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
       .ticks(2)
       .scale(yScale))
 
-  svg.selectAll('.y.axis text')
+  svg.selectAll('.y.axis .tick text')
     .attr({
       'dx': -w,
       'dy': 10
