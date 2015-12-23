@@ -12,7 +12,7 @@ var defaults = {
   margin: {
     top: 30,
     right: 0,
-    bottom: 12,
+    bottom: 20,
     left: 0
   },
   name: _.partial(_.get, _, 'name', ''),
@@ -425,8 +425,7 @@ _.extend(ColumnChart.prototype, {
     })
 
     var g = svg.append('g')
-      .attr('transform', 'translate(' + options.margin.left + ', ' +
-      options.margin.top + ')')
+      .attr('transform', 'translate(' + options.margin.left + ', ' + options.margin.top + ')')
 
     g.append('g').attr('class', 'data')
 
