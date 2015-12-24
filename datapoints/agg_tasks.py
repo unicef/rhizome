@@ -297,7 +297,8 @@ class AggRefresh(object):
         ## now get a dataframe (dependent_calculation_dp_df) that represents ##
         ## the newly calculated data.  This is necessary because the ##
         ## denominator for the part/whole calculation is often a SUM ##
-        dwc_list_of_list = [[k[0],k[1],k[2],v,self.cache_job.id] for k,v in\
+
+        dwc_list_of_list = [[k[0],k[1],v,self.cache_job.id] for k,v in\
             self.dwc_tuple_dict.iteritems()]
         dependent_calculation_dp_df = DataFrame(dwc_list_of_list,columns=\
             self.dp_columns)
@@ -317,8 +318,7 @@ class AggRefresh(object):
             if row_data.calc_x == 'NUMERATOR' \
                 and row_data.calc_y == 'DENOMINATOR':
 
-                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
-                    row_data.campaign_id)
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id)
 
                 ## this one line is where the calculation happens ##
                 try:
@@ -354,16 +354,14 @@ class AggRefresh(object):
             if row_data.calc_x == 'WHOLE_OF_DIFFERENCE' \
                 and row_data.calc_y == 'PART_OF_DIFFERENCE':
 
-                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
-                    row_data.campaign_id)
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id)
 
                 ## this one line is where the calculation happens ##
                 try:
-                    calculated_value = (row_data.value_x -row_data.value_y) / \
+                    calculated_value = (row_data.value_x - row_data.value_y) / \
                         row_data.value_x
                 except ZeroDivisionError:
                     calculated_value = 0
-
 
                 self.dwc_tuple_dict[row_tuple] = calculated_value
 
@@ -378,7 +376,7 @@ class AggRefresh(object):
 
             dwc_dict = {'location_id': uq_tuple[0],
                 'indicator_id': uq_tuple[1],
-                'campaign_id': uq_tuple[2],
+                'campaign_id': self.campaign.id,
                 'value': val,
                 'cache_job_id': self.cache_job.id
             }
