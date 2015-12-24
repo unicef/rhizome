@@ -6,7 +6,6 @@ import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
 import CampaignsPage from './ufadmin/CampaignsPage.js'
 import HomepageChartsView from 'view/HomepageChartsView.jsx'
-import PdfChartTestView from 'view/pdf-test/PdfChartTestView.jsx'
 
 Vue.config.debug = true
 
@@ -59,9 +58,6 @@ export default {
   },
   HomepageCharts: function (el) {
     React.render(React.createElement(HomepageChartsView), el)
-  },
-  PdfChartTest: function (el) {
-    React.render(React.createElement(PdfChartTestView), el)
   },
   DashboardBuilder: function (el, dashboardId) {
     var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
