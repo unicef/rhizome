@@ -90,8 +90,6 @@ _.extend(PieChart.prototype, {
     var w = this._width - margin.left - margin.right
     var h = this._height - margin.top - margin.bottom
     var s = Math.min(w, h)
-    console.log(w)
-    console.log(h)
 
     var svg = this._svg
 
@@ -143,7 +141,6 @@ _.extend(PieChart.prototype, {
         'fill': '#999999'
       })
       .text(d => { return d })
-
     legend.exit().remove()
 
     if (options.percentage) {
@@ -158,9 +155,6 @@ _.extend(PieChart.prototype, {
         .text(d => { return d })
       annotation.exit().remove()
     }
-
-    let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-    data.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
     var arc = d3.svg.arc()
       .innerRadius(s / 2 * options.innerRadius)
