@@ -351,6 +351,7 @@ svg {
 }
 
 .bullet-chart {
+  margin-bottom: 5px;
   rect {
     shape-rendering: crispEdges;
     stroke: none;
@@ -376,7 +377,7 @@ svg {
     }
   }
 
-  text {
+  .data text {
     text-transform: uppercase;
   }
 }

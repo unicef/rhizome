@@ -1,12 +1,14 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
+import Reflux from 'reflux'
 
 import RegionTitleMenu from 'component/RegionTitleMenu'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
 
 import MapFormStore from 'stores/MapFormStore'
+import MapFormActions from 'actions/MapFormActions'
 import Modal from 'react-modal'
 
 var appElement = document.getElementById('main')
@@ -23,43 +25,22 @@ var MapForm = React.createClass({
     onModalClose: React.PropTypes.func
   },
 
-  getInitialState: function () {
-    return {
-      modalIsOpen: false,
-      master_object_id: null,
-      master_object_name: null
-    }
-  },
+  mixins: [Reflux.connect(MapFormStore, 'data')],
 
   openModal: function () {
-    var self = this
-    MapFormStore.getSourceMap({id: this.props.source_object_map_id}).then(function (data) {
-      self.setState(
-        {
-          source_object_code: data.source_object_code,
-          content_type: data.content_type,
-          master_object_id: data.master_object_id,
-          modalIsOpen: true
-        })
-    })
+    MapFormActions.getSourceMap({id: this.props.source_object_map_id})
   },
 
   closeModal: function () {
     this.props.onModalClose()
-    this.setState({modalIsOpen: false, content_type: null})
+    MapFormActions.clear()
   },
 
   postMetaMap: function (masterObjectId) {
-    var self = this
-    MapFormStore.updateMetaMap({
+    MapFormActions.updateMetaMap({
       id: this.props.source_object_map_id,
       master_object_id: masterObjectId,
       mapped_by_id: 1 // FIXME
-    }).then(function (data) {
-      self.setState({
-        master_object_id: data.master_object_id,
-        master_object_name: data.master_object_name
-      })
     })
   },
 
@@ -110,16 +91,16 @@ var MapForm = React.createClass({
       <button className='tiny' onClick={this.openModal}> map!</button>
       <Modal
         style={modalStyle}
-        isOpen={this.state.modalIsOpen}
+        isOpen={this.state.data.modalIsOpen}
         onRequestClose={this.closeModal}
         >
         <h1> Source Map Id: {sourceObjectMapId} </h1>
 
         <form>
-          <h2> Content Type: {this.state.content_type} </h2>
-          <h2> Source Code: {this.state.source_object_code} </h2>
-          <h2> Master Object ID: {this.state.master_object_id} </h2>
-          {this.renderDropDown(this.state.content_type)}
+          <h2> Content Type: {this.state.data.content_type} </h2>
+          <h2> Source Code: {this.state.data.source_object_code} </h2>
+          <h2> Master Object ID: {this.state.data.master_object_id} </h2>
+          {this.renderDropDown(this.state.data.content_type)}
         </form>
       </Modal></div>
   }

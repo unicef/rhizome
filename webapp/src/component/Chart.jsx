@@ -40,7 +40,7 @@ export default React.createClass({
 
     if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
       var position = {
-        top: 0,
+        top: 19,
         right: 0,
         bottom: 0,
         left: 0,

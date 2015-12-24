@@ -269,10 +269,10 @@ export default {
         domain: _.constant([0, total]),
         name: d => _.get(idx, '[' + d.indicator + '].name', ''),
         margin: {
-          top: 0,
-          right: 200,
-          bottom: 0,
-          left: 0
+          top: 10,
+          right: 30,
+          bottom: 10,
+          left: 10
         }
       }
       return { options: chartOptions, data: data }

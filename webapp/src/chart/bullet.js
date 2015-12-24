@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import d3 from 'd3'
+import React from 'react'
+import Layer from 'react-layer'
+import Tooltip from 'component/Tooltip.jsx'
 
 import qualitativeAxis from './qualitative-axis'
 
@@ -30,19 +33,15 @@ _.extend(BulletChart.prototype, {
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, defaults)
 
-    var n = Math.max(data.length, 1)
-    var height = options.fontSize * n * options.lineHeight +
-      options.fontSize * options.padding * (n - 1) +
-      options.margin.top +
-      options.margin.bottom
-
+    var aspect = _.get(options, 'aspect', 1)
     this._width = el.clientWidth
+    this._height = _.get(options, 'height', this._width / aspect)
 
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
-        'viewBox': '0 0 ' + this._width + ' ' + height,
+        'viewBox': '0 0 ' + this._width + ' ' + this._height,
         'width': this._width,
-        'height': height
+        'height': this._height
       })
 
     // Append the x-axis container and a blank background
@@ -55,6 +54,8 @@ _.extend(BulletChart.prototype, {
         'transform': 'translate(' + options.margin.left + ', ' + options.margin.top + ')'
       })
 
+    svg.append('g').attr('class', 'legend')
+
     this.update(data)
   },
 
@@ -64,13 +65,13 @@ _.extend(BulletChart.prototype, {
     var margin = options.margin
     var svg = this._svg
 
-    var n = Math.max(data.length, 1)
-    var h = options.fontSize * n * options.lineHeight + options.fontSize * options.padding * (n - 1)
+    var h = this._height
     var w = this._width - margin.left - margin.right
+    var dataHeight = h / 3
 
     var yScale = d3.scale.ordinal()
       .domain(_(data).flatten().map(options.y).uniq().value())
-      .rangeRoundBands([h, 0])
+      .rangeRoundBands([dataHeight, 0])
 
     var y = _.flow(options.y, yScale)
 
@@ -80,6 +81,7 @@ _.extend(BulletChart.prototype, {
 
     var x = _.flow(options.marker, xScale)
     var width = _.flow(options.value, xScale)
+    var measureHeight = _.isFinite(yScale.rangeBand()) ? yScale.rangeBand() * 0.5 : 0
 
     var isEmpty = !_(data).map(options.value).all(_.isFinite)
 
@@ -89,7 +91,10 @@ _.extend(BulletChart.prototype, {
 
       tick.enter()
         .append('g')
-        .attr('class', 'tick')
+        .attr({
+          'class': 'tick',
+          'transform': 'translate(0, ' + (this._height - dataHeight - measureHeight) + ')'
+        })
         .style('fill', options.axisFill)
       tick.exit().remove()
 
@@ -101,14 +106,15 @@ _.extend(BulletChart.prototype, {
 
       rect
         .attr({
-          'height': h + margin.top + margin.bottom,
+          'height': dataHeight,
           'width': w,
           'ry': 5
         })
     } else {
       svg.select('.x.axis')
+        .attr('transform', 'translate(0, ' + dataHeight + ')')
         .call(qualitativeAxis()
-          .height(h + margin.top + margin.bottom)
+          .height(dataHeight)
           .width(w)
           .scale(xScale)
           .threshold(d3.scale.threshold()
@@ -119,22 +125,16 @@ _.extend(BulletChart.prototype, {
       )
     }
 
-    svg.attr({
-      'viewBox': '0 0 ' + w + ' ' + (h + margin.top + margin.bottom),
-      'width': w,
-      'height': h + margin.top + margin.bottom
-    })
-
     svg.select('.data')
       .call(qualitativeAxis()
-      .height(h + margin.top + margin.bottom)
+      .height(dataHeight)
       .width(w)
       .scale(xScale)
       .threshold(d3.scale.threshold().domain(options.thresholds).range(options.targets))
     )
 
     var g = svg.select('.data')
-      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+      .attr('transform', 'translate(' + margin.left + ', ' + (this._height - dataHeight - measureHeight + margin.top) + ')')
 
     // Draw value
     var bar = g.selectAll('.bar').data(data)
@@ -180,8 +180,6 @@ _.extend(BulletChart.prototype, {
         return _.isFinite(v) && _.isFinite(m) ? [d] : []
       })
 
-    var measureHeight = yScale.rangeBand() * 0.5
-
     var initAttr = {
       'class': 'comparative-measure',
       'width': 3,
@@ -194,29 +192,65 @@ _.extend(BulletChart.prototype, {
     measure.attr(initAttr).attr('x', x)
     measure.exit().remove()
 
-    var label = bar.selectAll('.label')
-      .data(function (d) {
-        var v = options.value(d)
-        return _.isFinite(v) ? [v] : []
+    var legend = svg.select('.legend').attr('transform', 'translate(0, ' + options.fontSize + ')')
+    let noDataColor = '#B9C3CB'
+
+    var title = legend.selectAll('.title').data(data)
+    title.enter().append('text')
+      .attr({
+        'class': 'title',
+        'text-anchor': 'start'
+      })
+      .style({
+        'font-size': options.fontSize,
+        'fill': d => { return _.isFinite(options.value(d)) ? options.dataFill(d) : noDataColor }
+      })
+      .text(d => { return options.indicatorName(d) })
+      .on('mousemove', d => {
+        var evt = d3.event
+        var render = function () {
+          return (
+            <Tooltip left={evt.pageX} top={evt.pageY}>
+              <div>
+                <h3>{options.indicatorName(d)}</h3>
+                <p>{options.indicatorDescription(d)}</p>
+              </div>
+            </Tooltip>
+          )
+        }
+
+        if (this.layer) {
+          this.layer._render = render
+        } else {
+          this.layer = new Layer(document.body, render)
+        }
+
+        this.layer.render()
+      })
+      .on('mouseout', d => {
+        if (this.layer) {
+          this.layer.destroy()
+          this.layer = null
+        }
       })
 
-    label.enter()
-      .append('text')
-      .attr({
-        'class': 'label'
-      })
+    title.exit().remove()
 
-    label
+    var label = legend.selectAll('.label').data(data)
+
+    label.enter().append('text')
       .attr({
+        'class': 'label',
         'x': w,
-        'y': -0.1 * w,
         'text-anchor': 'end',
-        'dy': -(options.lineHeight / 4) + 'em',
-        'transform': 'translate(0, ' + (h / 2) + ')',
-        'fill': 'inherit'
+        'fill': options.dataFill
       })
       .style('font-size', options.fontSize)
-      .text(options.format)
+      .text(d => {
+        var v = options.value(d)
+        return _.isFinite(v) ? [options.format(v)] : []
+      })
+
     label.exit().remove()
 
     var compareValue = bar.selectAll('.comparative-text')
@@ -233,8 +267,7 @@ _.extend(BulletChart.prototype, {
         'x': 4,
         'y': 0,
         'text-anchor': 'start',
-        'dy': (options.lineHeight / 4) + 'em',
-        'transform': 'translate(0, ' + (h / 2) + ')',
+        'transform': 'translate(0, ' + ((yScale.rangeBand() + measureHeight) / 2) + ')',
         'fill': '#FFFFFF'
       })
       .style('font-size', options.fontSize - 2)
