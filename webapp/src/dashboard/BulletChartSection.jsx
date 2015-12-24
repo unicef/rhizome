@@ -107,6 +107,10 @@ function _valueText (value, targets) {
   return ''
 }
 
+function _indicatorName (data) {
+  return data[0].indicator ? [_.get(data[0].indicator, 'short_name')] : []
+}
+
 export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
@@ -128,7 +132,6 @@ export default React.createClass({
     var loading = this.props.loading
     var dataColorRange = ['#DB5344', '#79909F', '#2FB0D3']
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
-    var noDataColor = '#B9C3CB'
     let isBulletChart = true
 
     var charts = _(this.props.indicators)
@@ -136,18 +139,18 @@ export default React.createClass({
         var targets = _targetRanges(indicator)
 
         var options = {
+          aspect: 4,
           domain: _domain,
           value: _.partial(_value, _, campaign),
           marker: _.partial(_marker, _, campaign),
           y: _.property('location'),
-          width: 154,
-          height: 10,
           dataFill: _.partial(_fill, _, campaign, targets, dataColorRange),
           axisFill: _.partial(_fill, _, campaign, targets, xAxisColorRange),
           format: d3.format('%'),
           thresholds: targets[1],
           targets: targets[0],
-          valueText: _.partial(_valueText, _, targets)
+          valueText: _.partial(_valueText, _, targets),
+          indicatorName: _.partial(_indicatorName, _)
         }
 
         var chartData = _(data)
@@ -156,15 +159,8 @@ export default React.createClass({
           .values()
           .value()
 
-        var title = _.get(indicator, 'short_name')
-        var threshold = d3.scale.threshold().domain(options.thresholds).range(dataColorRange)
-        var titleColor = options.value(chartData[0]) ? threshold(options.value(chartData[0])) : noDataColor
-
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
-            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp} style={{color: titleColor}}>
-              {title}
-            </h6>
             <Chart type='BulletChart' loading={loading} data={chartData} options={options} isBulletChart={isBulletChart}/>
           </li>
         )

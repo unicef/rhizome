@@ -66,7 +66,7 @@ function qualitativeAxis () {
       })
       .text(d => {
         var gap = _width - x(d, true)
-        return gap > _fontSize * 3
+        return gap > _fontSize * 2
           ? d
           : gap > _fontSize / 3 ? d.slice(0, 1) : ''
       })
