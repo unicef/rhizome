@@ -52,13 +52,14 @@ var ToggleableStackedBar = React.createClass({
             </label>
           </div>
         </h4>
-        <Chart type='BarChart' options={options} {...props} />
+        <Chart type='BarChart' options={options} {...props} ref='chart' />
       </div>
     )
   },
 
   onOffsetChange: function (evt) {
     this.setState({ offset: evt.currentTarget.value })
+    this.refs.chart.forceUpdate()
   }
 })
 
