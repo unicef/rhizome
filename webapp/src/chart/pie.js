@@ -59,7 +59,7 @@ _.extend(PieChart.prototype, {
     g
       .append('g').attr('class', 'data')
       .append('path').attr('class', 'bg')
-
+    g.append('g').attr('class', 'legend')
     g.append('g').attr('class', 'annotation')
 
     this.update(data)
@@ -90,6 +90,8 @@ _.extend(PieChart.prototype, {
     var w = this._width - margin.left - margin.right
     var h = this._height - margin.top - margin.bottom
     var s = Math.min(w, h)
+    console.log(w)
+    console.log(h)
 
     var svg = this._svg
 
@@ -102,6 +104,48 @@ _.extend(PieChart.prototype, {
     let g = svg.select('.data')
       .attr('transform', 'translate(' + xPosition + ', ' + yPosition + ')')
 
+    let fill = color.map(data.map(options.name), options.color)
+
+    var legendText = _(data)
+      .map(d => {
+        return options.name(d)
+      })
+      .reverse()
+      .value()
+
+    var legend = svg.select('.legend').selectAll('*')
+      .data(legendText)
+
+    legend.enter().append('g')
+      .attr('class', 'series')
+      .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
+
+    legend.append('rect')
+      .attr({
+        'x': w + 18,
+        'y': 0,
+        'width': 12,
+        'height': 12
+      })
+      .style({
+        'fill': fill
+      })
+
+    legend.append('text')
+      .attr({
+        'x': w + 18,
+        'y': 0,
+        'dx': -5,
+        'dy': 9
+      })
+      .style({
+        'text-anchor': 'end',
+        'fill': '#999999'
+      })
+      .text(d => { return d })
+
+    legend.exit().remove()
+
     if (options.percentage) {
       var annotation = svg.select('.annotation').selectAll('.percentage').data([options.percentage])
       annotation.enter().append('text')
@@ -112,9 +156,11 @@ _.extend(PieChart.prototype, {
           'opacity': d => { return d === '0%' ? 0 : 1 }
         })
         .text(d => { return d })
-
       annotation.exit().remove()
     }
+
+    let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+    data.attr('transform', 'translate(0' + ', ' + dataYPosition * 12 + ')')
 
     var arc = d3.svg.arc()
       .innerRadius(s / 2 * options.innerRadius)
@@ -141,8 +187,6 @@ _.extend(PieChart.prototype, {
         d.startAngle = scale(y0)
         d.endAngle = scale(y0 + y)
       })
-
-    let fill = color.map(data.map(options.name), options.color)
 
     var slice = g.selectAll('.slice').data(pie(_.cloneDeep(data)))
 
