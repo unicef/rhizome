@@ -110,7 +110,6 @@ function _indicatorName (data) {
 }
 
 function _indicatorDescription (data) {
-  console.log(data)
   return data[0].indicator ? [_.get(data[0].indicator, 'description')] : []
 }
 
