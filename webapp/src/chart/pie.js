@@ -105,45 +105,46 @@ _.extend(PieChart.prototype, {
       .attr('transform', 'translate(' + xPosition + ', ' + yPosition + ')')
 
     let fill = color.map(data.map(options.name), options.color)
+    if (options.chartInDashboard) {
+      var legendText = _(data)
+        .map(d => {
+          return options.name(d)
+        })
+        .reverse()
+        .value()
 
-    var legendText = _(data)
-      .map(d => {
-        return options.name(d)
-      })
-      .reverse()
-      .value()
+      var legend = svg.select('.legend').selectAll('*')
+        .data(legendText)
 
-    var legend = svg.select('.legend').selectAll('*')
-      .data(legendText)
+      legend.enter().append('g')
+        .attr('class', 'series')
+        .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
 
-    legend.enter().append('g')
-      .attr('class', 'series')
-      .attr('transform', function (d, i) { return 'translate(0,' + i * 15 + ')' })
+      legend.append('rect')
+        .attr({
+          'x': w + 18,
+          'y': 0,
+          'width': 12,
+          'height': 12
+        })
+        .style({
+          'fill': fill
+        })
 
-    legend.append('rect')
-      .attr({
-        'x': w + 18,
-        'y': 0,
-        'width': 12,
-        'height': 12
-      })
-      .style({
-        'fill': fill
-      })
-
-    legend.append('text')
-      .attr({
-        'x': w + 18,
-        'y': 0,
-        'dx': -5,
-        'dy': 9
-      })
-      .style({
-        'text-anchor': 'end',
-        'fill': '#999999'
-      })
-      .text(d => { return d })
-    legend.exit().remove()
+      legend.append('text')
+        .attr({
+          'x': w + 18,
+          'y': 0,
+          'dx': -5,
+          'dy': 9
+        })
+        .style({
+          'text-anchor': 'end',
+          'fill': '#999999'
+        })
+        .text(d => { return d })
+      legend.exit().remove()
+    }
 
     if (options.percentage) {
       var annotation = svg.select('.annotation').selectAll('.percentage').data([options.percentage])
