@@ -25,7 +25,7 @@ class AggRefresh(object):
     '''
 
 
-    def __init__(self,campaign_id=None):
+    def __init__(self,campaign_id):
         '''
         If there is a job running, return to with a status code of
         "cache_running".
@@ -54,6 +54,7 @@ class AggRefresh(object):
         )
 
         dp_ids_to_process = self.campaign.get_raw_datapoint_ids()
+        top_lvl_location_id = self.campaign.top_lvl_location_id
 
         ## update the datapoint table with this cache_job_id
         DataPoint.objects.filter(id__in = dp_ids_to_process)\

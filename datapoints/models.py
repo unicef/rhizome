@@ -334,12 +334,14 @@ class Campaign(models.Model):
         indicator_id_list = CampaignToIndicator.objects.filter(campaign_id = \
             self.id).values_list('indicator_id',flat=True)
 
-        return DataPoint.objects.filter(
+        qs = DataPoint.objects.filter(
             location_id__in = flat_location_id_list,
             indicator_id__in = indicator_id_list,
             data_date__lt = self.end_date,
             data_date__gte = self.start_date,
         ).values_list('id',flat=True)
+
+        return qs
 
     class Meta:
         db_table = 'campaign'

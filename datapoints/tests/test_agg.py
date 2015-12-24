@@ -62,8 +62,19 @@ class AggRefreshTestCase(TestCase):
         campaign_type1 = CampaignType.objects.create(name='test')
 
         location_ids = self.model_df_to_data(location_df,Location)
-        s = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+
+        self.campaign_id = Campaign.objects.create(
+            start_date = '2016-01-01',
+            end_date = '2016-01-02',
+            campaign_type_id = campaign_type1.id,
+            top_lvl_location_id = 12907,
+            office_id = office_id,
+        ).id
+
+        cti_batch = [CampaignToIndicator(**{'campaign_id':self.campaign_id,\
+            'indicator_id':ind.id}) for ind in indicator_ids]
+        CampaignToIndicator.objects.bulk_create(cti_batch)
 
         document = Document.objects.create(
             doc_title = 'test',
@@ -143,44 +154,46 @@ class AggRefreshTestCase(TestCase):
 
         indicator_id, data_date, raw_location_id,\
             agg_location_id, null_location_id,NaN_location_id = \
-            22,111,12910,12907,12928,12913
+            22,'2016-01-01',12910,12907,12928,12913
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
 
         DataPoint.objects.filter(
             indicator_id = indicator_id,
-            data_date = data_date,
+            # data_date = data_date,
             location_id = null_location_id
         ).update(value=None)
 
         DataPoint.objects.filter(
             indicator_id = indicator_id,
-            data_date = data_date,
+            # data_date = data_date,
             location_id = NaN_location_id
         ).update(value='NaN')
 
         dps = DataPoint.objects.filter(\
             indicator_id = indicator_id,
-            data_date = data_date,
+            # data_date = data_date,
             location_id__in = location_ids,
             value__isnull = False
         ).values_list('id','value')
 
         sum_dp_value = sum([y for x,y in dps if not isnan(y)])
 
-        ag_r = AggRefresh()
+        agg_r = AggRefresh(self.campaign_id)
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
         #################################################
 
-        raw_value = DataPoint.objects.get(data_date = data_date,
+        raw_value = DataPoint.objects.get(
+            # data_date = data_date,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
 
-        raw_value_in_agg = AggDataPoint.objects.get(data_date = data_date,
+        raw_value_in_agg = AggDataPoint.objects.get(
+            # data_date = data_date,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
@@ -193,7 +206,7 @@ class AggRefreshTestCase(TestCase):
 
         agg_value = AggDataPoint.objects.get(
             indicator_id = indicator_id,
-            data_date = data_date,
+            campaign_id = self.campaign_id,
             location_id = agg_location_id
         ).value
 
@@ -207,11 +220,12 @@ class AggRefreshTestCase(TestCase):
         agg_override_dp = self.create_datapoint(agg_location_id,data_date,\
             indicator_id, override_value)
 
-        ar = AggRefresh()
+        ar = AggRefresh(self.campaign_id)
 
-        override_value_in_agg = AggDataPoint.objects.get(data_date =\
-            data_date ,indicator_id = indicator_id, location_id =\
-             agg_location_id).value
+        override_value_in_agg = AggDataPoint.objects.get(\
+            campaign_id = self.campaign_id ,\
+            indicator_id = indicator_id,\
+            location_id = agg_location_id).value
 
         self.assertEqual(override_value, override_value_in_agg)
 
@@ -241,7 +255,7 @@ class AggRefreshTestCase(TestCase):
 
         sum_dp_value = sum(dp_values)
 
-        cr = AggRefresh()
+        ar = AggRefresh()
 
         ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
@@ -282,6 +296,7 @@ class AggRefreshTestCase(TestCase):
         '''
 
         self.set_up()
+
 
         data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         val_1, val_2, val_3 = 303, 808, 909
@@ -375,7 +390,7 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        cr = AggRefresh()
+        cr = AggRefresh(self.campaign_id)
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -464,7 +479,7 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        cr = AggRefresh()
+        cr = AggRefresh(self.campaign_id)
 
         calc_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -608,7 +623,7 @@ class AggRefreshTestCase(TestCase):
         for k,v in values_to_insert.iteritems():
             self.create_datapoint(location_id, data_date, k, v)
 
-        ar = AggRefresh()
+        ar = AggRefresh(self.campaign_id)
 
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
