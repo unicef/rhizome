@@ -1,5 +1,8 @@
 import _ from 'lodash'
 import d3 from 'd3'
+import React from 'react'
+import Layer from 'react-layer'
+import Tooltip from 'component/Tooltip.jsx'
 
 import qualitativeAxis from './qualitative-axis'
 
@@ -203,6 +206,33 @@ _.extend(BulletChart.prototype, {
         'fill': d => { return _.isFinite(options.value(d)) ? options.dataFill(d) : noDataColor }
       })
       .text(d => { return options.indicatorName(d) })
+      .on('mousemove', d => {
+        var evt = d3.event
+        var render = function () {
+          return (
+            <Tooltip left={evt.pageX} top={evt.pageY}>
+              <div>
+                <h3>{options.indicatorName(d)}</h3>
+                <p>{options.indicatorDescription(d)}</p>
+              </div>
+            </Tooltip>
+          )
+        }
+
+        if (this.layer) {
+          this.layer._render = render
+        } else {
+          this.layer = new Layer(document.body, render)
+        }
+
+        this.layer.render()
+      })
+      .on('mouseout', d => {
+        if (this.layer) {
+          this.layer.destroy()
+          this.layer = null
+        }
+      })
 
     title.exit().remove()
 

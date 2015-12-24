@@ -1,11 +1,9 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import Layer from 'react-layer'
 import React from 'react'
 import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
-import Tooltip from 'component/Tooltip.jsx'
 
 function _domain (data) {
   var lower = _(data)
@@ -111,6 +109,11 @@ function _indicatorName (data) {
   return data[0].indicator ? [_.get(data[0].indicator, 'short_name')] : []
 }
 
+function _indicatorDescription (data) {
+  console.log(data)
+  return data[0].indicator ? [_.get(data[0].indicator, 'description')] : []
+}
+
 export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
@@ -150,7 +153,8 @@ export default React.createClass({
           thresholds: targets[1],
           targets: targets[0],
           valueText: _.partial(_valueText, _, targets),
-          indicatorName: _.partial(_indicatorName, _)
+          indicatorName: _.partial(_indicatorName, _),
+          indicatorDescription: _.partial(_indicatorDescription, _)
         }
 
         var chartData = _(data)
@@ -168,32 +172,5 @@ export default React.createClass({
       .value()
 
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>)
-  },
-
-  _showHelp: function (indicator, evt) {
-    var render = function () {
-      return (
-        <Tooltip left={evt.pageX} top={evt.pageY}>
-          <h3>{indicator.name}</h3>
-
-          <p>{indicator.description}</p>
-        </Tooltip>
-      )
-    }
-
-    if (this.layer) {
-      this.layer._render = render
-    } else {
-      this.layer = new Layer(document.body, render)
-    }
-
-    this.layer.render()
-  },
-
-  _hideHelp: function () {
-    if (this.layer) {
-      this.layer.destroy()
-      this.layer = null
-    }
   }
 })
