@@ -178,12 +178,11 @@ class MasterRefresh(object):
             ## need to remove this! shoudl not have a FK between the two
             ## apps.. source_data and datapoint
 
-            # location_id = self.source_map_dict.get(('location'\
-            #         ,unicode(submission.location_code)),None)
-            #
-            # if location_id:
-            #     ss_id_list_to_process.append(submission.id)
-            #     submission.location_id = location_id
+            location_id = submission.get_location_id()
+
+            if location_id > 0:
+                ss_id_list_to_process.append(submission.id)
+                submission.location_id = location_id
 
         if len(submission_qs) > 0:
             bulk_update(submission_qs)
@@ -197,11 +196,8 @@ class MasterRefresh(object):
 
         ss_ids_in_batch = self.submission_data.keys()
 
-        for row in SourceSubmission.objects.filter(\
-                 id__in = ss_ids_in_batch)\
-            .values('location_code','data_date','id'):
-
-            location_id = row.get_location_id()
+        for row in SourceSubmission.objects.filter(id__in = ss_ids_in_batch):
+            row.location_id = row.get_location_id()
 
             doc_dps = self.process_source_submission(row)
 
@@ -235,7 +231,7 @@ class MasterRefresh(object):
             SELECT dd.location_id, dd.data_date, dd.indicator_id, dd.value, -1, dd.source_submission_id, now(), %s
             FROM  _tmp_dp td
             INNER JOIN doc_datapoint dd
-            ON td.location_id = dd.location_ids
+            ON td.location_id = dd.location_id
             AND td.indicator_id = dd.indicator_id;
 
             SELECT d.id FROM datapoint d
@@ -250,27 +246,24 @@ class MasterRefresh(object):
 
 
     ## main() helper methods ##
-    def process_source_submission(self,row_qs):
+    def process_source_submission(self,row):
 
-        row = row_qs.values()
-
-        location_id,data_date,ss_id = row['location_id'],row['data_date'],\
-            row['id']
 
         doc_dp_batch = []
-        submission  = json.loads(self.submission_data[ss_id])
+        submission  = row.submission_json
 
         for k,v in submission.iteritems():
-            doc_dp = self.source_submission_row_to_doc_datapoints(k,v,location_id,\
-                campaign_id,ss_id)
+
+            doc_dp = self.source_submission_row_to_doc_datapoints(k,v,row.location_id,\
+                row.data_date,row.id)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
-        DocDataPoint.objects.filter(source_submission_id=ss_id).delete()
+        DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
     def source_submission_row_to_doc_datapoints(self, ind_str, val, location_id, \
-        campaign_id, ss_id):
+        data_date, ss_id):
         '''
         This method prepares a batch insert into docdatapoint by creating a list of
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
@@ -291,7 +284,7 @@ class MasterRefresh(object):
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
                 'location_id': location_id,
-                'campaign_id': campaign_id,
+                'data_date': data_date,
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
                 'changed_by_id': self.user_id,
