@@ -38,7 +38,8 @@ var Breakdown = React.createClass({
         right: 80,
         bottom: 18,
         left: 80
-      }
+      },
+      color: ['#377EA4', '#87939E', '#A2AAB3', '#C8D4E5']
     }
 
     var groupedOptions = _.assign({

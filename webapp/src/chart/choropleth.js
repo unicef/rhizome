@@ -16,7 +16,7 @@ var DEFAULTS = {
   margin: {
     top: 0,
     right: 0,
-    bottom: 0,
+    bottom: 20,
     left: 0
   },
   onClick: _.noop,
@@ -280,8 +280,8 @@ _.extend(ChoroplethMap.prototype, {
           )
         ).attr('transform', 'translate(2, 0)')
 
-        // let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
-        g.attr('transform', 'translate(0, 0)')
+        let dataYPosition = options.chartInDashboard ? (ticks && ticks.length ? Math.ceil(ticks.length / 2) : 0) : 0
+        g.attr('transform', 'translate(0, ' + dataYPosition * 12 + ')')
       }
     }
 
