@@ -25,6 +25,9 @@ urlpatterns = [
     ## DATA ENTRY ##
     url(r'^entry/$', views.data_entry,name='datapoint_entry'),
 
+    ## DATA SOURCE DATA
+    url(r'^source-data/$', views.source_data, name='source_data'),
+
     ## ADMIN FUNCTINALITY THAT NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
     url(r'^campaigns/create/$',views.CampaignCreateView.as_view(),
         name='create_campaign'),

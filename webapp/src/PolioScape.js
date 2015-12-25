@@ -45,6 +45,10 @@ export default {
     })
     return vue
   },
+  SourceData: function (el) {
+    var SourceData = require('view/SourceData.jsx')
+    React.render(React.createElement(SourceData), el)
+  },
   UserAccount: function (el, user_id) {
     let vue = new Vue({
       el: el,

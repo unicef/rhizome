@@ -25,6 +25,10 @@ def dashboard_list(request):
     return render_to_response('dashboard-builder/list.html',
                               context_instance=RequestContext(request))
 
+def source_data(request):
+    return render_to_response('source-data/index.html',
+        context_instance=RequestContext(request))
+
 ### PERMISSION RESTRICTED VIEWS ###
 
 @user_passes_test(lambda u: u.groups.filter(name='data_entry')\
