@@ -55,7 +55,7 @@ var Dashboard = React.createClass({
 
   getAllDashboards () {
     api.get_dashboard().then(res => {
-      let customDashboards = _(res.objects).sortBy('title').value()
+      let customDashboards = _(res.objects).sortBy('id').reverse().value()
       let allDashboards = builtins.concat(customDashboards)
       this.setState({allDashboards: allDashboards})
     })
@@ -199,7 +199,7 @@ var Dashboard = React.createClass({
 
   _showDefault (ctx) {
     api.get_dashboard().then(res => {
-      let customDashboards = _(res.objects).sortBy('title').value()
+      let customDashboards = _(res.objects).sortBy('id').reverse().value()
       let allDashboards = builtins.concat(customDashboards)
       this.setState({ allDashboards: allDashboards })
       this._getDashboard(ctx.params.dashboard).then(dashboard => {
