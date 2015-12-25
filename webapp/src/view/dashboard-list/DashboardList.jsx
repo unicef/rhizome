@@ -33,7 +33,7 @@ export default React.createClass({
   getCustomDashboards () {
     let self = this
     api.get_dashboard(null, null, {'cache-control': 'no-cache'}).then(response => {
-      let customDashboards = _(response.objects).sortBy('title').value()
+      let customDashboards = _(response.objects).sortBy('id').reverse().value()
       self.setState({customDashboards: customDashboards})
     })
   },
