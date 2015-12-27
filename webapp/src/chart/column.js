@@ -394,7 +394,7 @@ _.extend(ColumnChart.prototype, {
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width / aspect)
-
+    var h = this._height - options.margin.top - options.margin.bottom
     this._topLegendHeight = 0
     if (options && options.chartInDashboard && data && data.length && data.length > 0) {
       this._topLegendHeight = data.length * 10
@@ -415,11 +415,9 @@ _.extend(ColumnChart.prototype, {
       })
     }
 
-    var h = this._height - options.margin.top - options.margin.bottom
-
     svg.append('rect').attr({
       'class': 'bg',
-      'height': h + options.margin.top,
+      'height': this._height - options.margin.bottom,
       'width': this._width - options.margin.left - options.margin.right,
       'x': options.margin.left
     })
@@ -483,13 +481,6 @@ _.extend(ColumnChart.prototype, {
 
       var rectWidth = options.widthRatio * w
       var x = options.margin.left
-
-      svg.select('.bg')
-        .attr({
-          'height': h + options.margin.top,
-          'width': w,
-          'x': x
-        })
 
       series.enter().append('g')
         .attr('class', 'bar')

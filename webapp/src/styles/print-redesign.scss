@@ -107,12 +107,12 @@ h6 {
     font-size: 8px;
   }
 
-  h4, h6 {
-    font-size: xx-small;
-  }
-
   .chart {
     margin-bottom: 5px;
+  }
+
+  .bullet-chart {
+    margin: 0 !important;
   }
 
   .pie-charts,
@@ -140,11 +140,6 @@ h6 {
 
   .transit-points {
     right: 2em;
-  }
-
-  .bullet-chart svg {
-    width: 3.247cm;
-    height: 1.022cm;
   }
 
   .map-legend {
