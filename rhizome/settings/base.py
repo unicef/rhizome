@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'tastypie',
     'debug_toolbar',
     'django_cron',
+    'waffle'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -65,7 +66,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'waffle.middleware.WaffleMiddleware'
 )
 
 DEBUG_TOOLBAR_PANELS = (
