@@ -356,6 +356,8 @@ var Dashboard = React.createClass({
       </div>)
     }
 
+    let exportPdf = waffle.switch_is_active('pdf') ? (<ExportPdf className='cd-titlebar-margin' />) : ''
+
     return (
       <div>
         <div classNameName='clearfix'></div>
@@ -365,7 +367,7 @@ var Dashboard = React.createClass({
               {settingFilter}
             </div>
             <div className='medium-3 columns'>
-              <ExportPdf className='cd-titlebar-margin' />
+              {exportPdf}
             </div>
             <div className='medium-3 columns'>
               <div>
