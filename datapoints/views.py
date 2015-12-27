@@ -12,8 +12,9 @@ from datapoints.mixins import PermissionRequiredMixin
 
 from datapoints.pdf_utils import print_pdf
 import os
+from waffle.decorators import waffle_switch
 
-
+@waffle_switch('pdf')
 def export_pdf(request):
     url = request.GET['path']
     file_name = 'dashboards.pdf'
