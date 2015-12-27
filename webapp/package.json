@@ -82,7 +82,8 @@
     "globals": [
       "describe",
       "context",
-      "it"
+      "it",
+      "waffle"
     ],
     "parser": "babel-eslint",
     "ignore": []
