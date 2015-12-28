@@ -91,6 +91,7 @@ urlpatterns = patterns(
     # ABOUT PAGE
     url(r'^about$', TemplateView.as_view(template_name="about.html"), name='about'),
 
+    # Waffle PATH
     url(r'^', include('waffle.urls')),
 
 ) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
