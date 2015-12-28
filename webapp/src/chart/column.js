@@ -403,8 +403,6 @@ _.extend(ColumnChart.prototype, {
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + (this._height + this._topLegendHeight),
-        'width': this._width,
-        'height': this._height,
         'class': this.classNames
       })
 
