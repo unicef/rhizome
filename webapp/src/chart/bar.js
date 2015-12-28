@@ -146,7 +146,7 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     svg.attr('viewBox', '0 0 ' + canvasW + ' ' + canvasH)
 
-    if (browser.isIE()) {
+    if (browser.isIE() || browser.isWkhtmlToPdf()) {
       svg.attr({
         'width': canvasW,
         'height': canvasH

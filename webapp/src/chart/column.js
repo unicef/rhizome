@@ -406,7 +406,7 @@ _.extend(ColumnChart.prototype, {
         'class': this.classNames
       })
 
-    if (browser.isIE()) {
+    if (browser.isIE() || browser.isWkhtmlToPdf()) {
       svg.attr({
         'width': this._width,
         'height': this._height

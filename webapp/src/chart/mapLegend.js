@@ -45,7 +45,7 @@ _.extend(MapLegend.prototype, {
         'viewBox': '0 0 ' + this._width + ' ' + this._height
       })
 
-    if (browser.isIE()) {
+    if (browser.isIE() || browser.isWkhtmlToPdf()) {
       svg.attr({
         'width': this._width,
         'height': this._height

@@ -84,7 +84,7 @@
       "context",
       "it",
       "waffle",
-      "IsWebkit"
+      "IsWkhtmlToPdf"
     ],
     "parser": "babel-eslint",
     "ignore": []
