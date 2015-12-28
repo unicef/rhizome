@@ -119,7 +119,6 @@ var ReviewTable = React.createClass({
               locations={this.state.dashboardStore.locations}
               indicators={this.state.indicators}
               source_object_map_id={id}
-              key={id}
               onModalClose={this._callApi}
               />
           }
