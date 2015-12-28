@@ -74,10 +74,14 @@ var MapForm = React.createClass({
 
   renderDropDown: function (content_type) {
     var defaultSelected = {'name': 'please map..'}
-    var loading = (<div><i className='fa fa-spinner fa-spin' />&nbsp;Loading...</div>)
+
+    function loadText (message) {
+      return <div className='csv-upload__loading'><i className='fa fa-spinner fa-spin' />&nbsp;Loading {message}...</div>
+    }
+
     if (content_type === 'location') {
       if (!this.state.data.locations) {
-        return loading
+        return loadText('Locations')
       }
       return <div><RegionTitleMenu
         locations={this.state.data.locations}
@@ -86,7 +90,7 @@ var MapForm = React.createClass({
     }
     if (content_type === 'indicator') {
       if (!this.state.data.indicators) {
-        return loading
+        return loadText('Indicators')
       }
       return <div>
         <IndicatorDropdownMenu
@@ -97,7 +101,7 @@ var MapForm = React.createClass({
     }
     if (content_type === 'campaign') {
       if (!this.state.data.campaigns) {
-        return loading
+        return loadText('Campaigns')
       }
       var office = {
         1: 'Nigeria',
