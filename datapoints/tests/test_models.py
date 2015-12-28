@@ -56,11 +56,6 @@ class CampaignTest(MasterModelTestCase):
             end_date = ed,\
         )
 
-        cti_0 = CampaignToIndicator.objects.create(indicator_id=ind_0.id,\
-            campaign_id=c.id)
-        cti_1 = CampaignToIndicator.objects.create(indicator_id=ind_1.id,\
-            campaign_id=c.id)
-
         ###### ADD DATA TO CAMPAIGN #####
 
         ss = SourceSubmission.objects.create(
