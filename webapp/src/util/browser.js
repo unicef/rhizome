@@ -2,6 +2,6 @@
 
 export default {
   isIE: function () {
-    return ('ActiveXObject' in window)
+    return ('ActiveXObject' in window) || IsWebkit
   }
 }

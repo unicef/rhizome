@@ -3,6 +3,7 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from 'component/Tooltip.jsx'
+import browser from 'util/browser'
 
 import qualitativeAxis from './qualitative-axis'
 
@@ -41,6 +42,13 @@ _.extend(BulletChart.prototype, {
       .attr({
         'viewBox': '0 0 ' + this._width + ' ' + this._height
       })
+
+    if (browser.isIE()) {
+      svg.attr({
+        'width': this._width,
+        'height': this._height
+      })
+    }
 
     // Append the x-axis container and a blank background
     svg.append('g').attr('class', 'x axis')
