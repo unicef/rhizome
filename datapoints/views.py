@@ -18,7 +18,7 @@ from waffle.decorators import waffle_switch
 def export_pdf(request):
     url = request.GET['path']
     file_name = 'dashboards.pdf'
-    css_file = 'file://' + os.getcwd() + '/webapp/public/static/css/pdf.css'
+    css_file = 'file://var/www/apps/rhizome/webapp/public/static/css/pdf.css'
 
     cookie = {}
     cookie['name'] = 'sessionid'

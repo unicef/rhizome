@@ -9,7 +9,7 @@ var ExportPdf = React.createClass({
     label: 'Export PDF',
     isFetching: false,
     url: '/datapoints/dashboards/export_pdf/?path=',
-    interval: 11000
+    interval: 15000
   },
 
   getInitialState () {

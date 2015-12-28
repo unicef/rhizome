@@ -14,6 +14,8 @@ import os
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 STATIC_URL = '/static/'
+SITE_ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)),'')
+STATIC_ROOT = os.path.join(SITE_ROOT,'../static')
 
 # todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
 
