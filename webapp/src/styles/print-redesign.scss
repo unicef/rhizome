@@ -49,8 +49,7 @@ header {
   @include block-grid-html-classes($size: large, $include-spacing: false);
 }
 
-h4,
-h6 {
+h4, h6 {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -99,16 +98,15 @@ h6 {
     padding: 0;
     margin: 0;
   }
+  .title--wrap {
+    font-size: x-small;
+  }
   .transit-point {
     margin-top: 70%;
   }
 
-  p {
-    font-size: 8px;
-  }
-
   .chart {
-    margin-bottom: 5px;
+    margin-bottom: 0;
   }
 
   .bullet-chart {
@@ -117,6 +115,7 @@ h6 {
 
   .pie-charts,
   .pie-chart {
+    height: 30px;
     margin: 0;
   }
   .micro__text {

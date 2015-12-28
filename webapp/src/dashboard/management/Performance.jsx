@@ -156,22 +156,22 @@ var Performance = React.createClass({
                data={missedChildrenMap}
                loading={loading}
                options={{
-                 aspect: 0.3,
+                 aspect: 3.5,
                  domain: _.constant([0, 0.1]),
                  value: _.property('properties[475]'),
                  yFormat: pct,
                  margin: {
-                   top: 10,
-                   right: 0,
+                   top: 5,
                    bottom: 0,
-                   left: 0
+                   left: 1,
+                   right: 0
                  }
                }}/>
           <Chart type='MapLegend'
                data={missedChildrenMap}
                loading={loading}
                options={{
-                 aspect: 0.2,
+                 aspect: 5,
                  domain: _.constant([0, 0.1]),
                  stripeValue: _.property('properties[203]'),
                  yFormat: pct,
@@ -199,7 +199,7 @@ var Performance = React.createClass({
                data={missedChildrenMap}
                loading={loading}
                options={{
-                 aspect: 0.4,
+                 aspect: 2.5,
                  domain: _.constant([0, 0.1]),
                  bubbleValue: _.property('properties[177]'),
                  yFormat: pct
