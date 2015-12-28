@@ -18,6 +18,26 @@ class MasterModelTestCase(TestCase):
 
         pass
 
+class IndicatorTagTest(MasterModelTestCase):
+
+    def set_up(self):
+        self.tag_name = 'Ebola'
+        create_tag = IndicatorTag.objects.create(tag_name = self.tag_name)
+
+    def test_tag_create(self):
+
+        self.set_up()
+        ebola_tag = IndicatorTag.objects.get(tag_name = self.tag_name)
+
+        self.assertEqual(ebola_tag.tag_name,self.tag_name)
+
+    def test_get_indicator_ids_for_tag(self):
+
+        self.set_up()
+        test_tag = IndicatorTag.objects.get(tag_name = self.tag_name)
+
+        ind_ds = test_tag.get_indicator_ids_for_tag()
+
 
 class CampaignTest(MasterModelTestCase):
 
