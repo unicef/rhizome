@@ -2,7 +2,6 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
-import api from 'data/api'
 
 import DashboardStore from 'stores/DashboardStore'
 
@@ -70,11 +69,6 @@ var ReviewTable = React.createClass({
   },
 
   componentWillMount: function () {
-    api.indicatorsTree().then(indicators => {
-      this.setState({
-        indicators: indicators.objects
-      })
-    })
     this._callApi()
   },
 
@@ -115,9 +109,6 @@ var ReviewTable = React.createClass({
             return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
-              campaigns={this.state.dashboardStore.campaigns}
-              locations={this.state.dashboardStore.locations}
-              indicators={this.state.indicators}
               source_object_map_id={id}
               onModalClose={this._callApi}
               />

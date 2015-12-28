@@ -1,11 +1,14 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
+import Reflux from 'reflux'
 import api from 'data/api'
 
 import RegionTitleMenu from 'component/RegionTitleMenu'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
+import MapFormStore from 'stores/MapFormStore'
+import MapFormActions from 'actions/MapFormActions'
 
 import Modal from 'react-modal'
 
@@ -17,10 +20,15 @@ Modal.injectCSS()
 var MapForm = React.createClass({
   propTypes: {
     source_object_map_id: React.PropTypes.number.isRequired,
-    locations: React.PropTypes.object.isRequired,
-    campaigns: React.PropTypes.object.isRequired,
-    indicators: React.PropTypes.object.isRequired,
     onModalClose: React.PropTypes.func.isRequired
+  },
+
+  mixins: [Reflux.connect(MapFormStore, 'data')],
+
+  componentWillMount: function () {
+    MapFormActions.getLocations()
+    MapFormActions.getCampaigns()
+    MapFormActions.getIndicators()
   },
 
   getInitialState: function () {
@@ -66,27 +74,37 @@ var MapForm = React.createClass({
 
   renderDropDown: function (content_type) {
     var defaultSelected = {'name': 'please map..'}
+    var loading = (<div><i className='fa fa-spinner fa-spin' />&nbsp;Loading...</div>)
     if (content_type === 'location') {
+      if (!this.state.data.locations) {
+        return loading
+      }
       return <div><RegionTitleMenu
-        locations={this.props.locations}
+        locations={this.state.data.locations}
         selected={defaultSelected}
         sendValue={this.postMetaMap}/></div>
     }
     if (content_type === 'indicator') {
+      if (!this.state.data.indicators) {
+        return loading
+      }
       return <div>
         <IndicatorDropdownMenu
           text='Map Indicator'
-          indicators={this.props.indicators}
+          indicators={this.state.data.indicators}
           sendValue={this.postMetaMap} />
         </div>
     }
     if (content_type === 'campaign') {
+      if (!this.state.data.campaigns) {
+        return loading
+      }
       var office = {
         1: 'Nigeria',
         2: 'Afghanistan',
         3: 'Pakistan'
       }
-      var campaigns = this.props.campaigns.map(campaign => {
+      var campaigns = this.state.data.campaigns.map(campaign => {
         let percentageComplete = ' (' + Math.round(campaign.management_dash_pct_complete * 100) + '% complete)'
         return _.assign({}, campaign, {
           slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY') + ' ' + percentageComplete
@@ -94,7 +112,6 @@ var MapForm = React.createClass({
       })
 
       campaigns.reverse()
-
       return <div>
         <CampaignDropdownMenu
           text={defaultSelected}
@@ -112,10 +129,8 @@ var MapForm = React.createClass({
       <Modal
         style={modalStyle}
         isOpen={this.state.modalIsOpen}
-        onRequestClose={this.closeModal}
-        >
+        onRequestClose={this.closeModal}>
         <h1> Source Map Id: {sourceObjectMapId} </h1>
-
         <form>
           <h2> Content Type: {this.state.content_type} </h2>
           <h2> Source Code: {this.state.source_object_code} </h2>
