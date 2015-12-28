@@ -11,14 +11,14 @@ from datapoints.forms import *
 from datapoints.mixins import PermissionRequiredMixin
 
 from datapoints.pdf_utils import print_pdf
-import os
 from waffle.decorators import waffle_switch
+from rhizome.settings.base import STATICFILES_DIRS
 
 @waffle_switch('pdf')
 def export_pdf(request):
     url = request.GET['path']
     file_name = 'dashboards.pdf'
-    css_file = 'file://var/www/apps/rhizome/webapp/public/static/css/pdf.css'
+    css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
 
     cookie = {}
     cookie['name'] = 'sessionid'
