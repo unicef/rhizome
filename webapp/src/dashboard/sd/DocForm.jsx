@@ -130,7 +130,7 @@ var DocForm = React.createClass({
           </li>
           <li>
             <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Campaign: (To be selected) {this.state.campaign_column}
+              Date Column: (To be selected) {this.state.campaign_column}
             </div>
             <ButtonMenu text={this.state.campaign_column}
               style='large-4 medium-4 small-12 columns csv-upload__button-style'>

@@ -307,10 +307,14 @@ class Campaign(models.Model):
     The campaign model has a method called "get_datapoints", which gets the
     relevant raw and aggregated datapoints for a given campaign.  The data
     is aggregated from the date, indicator_list and location in the AggRefresh.
+
+    The indicator_list, is determined by taking the flatened top lvl indicator
+    tree that is for the campaign.
     '''
 
     name = models.CharField(max_length=255)
     top_lvl_location = models.ForeignKey(Location)
+    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag)
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
@@ -349,6 +353,15 @@ class Campaign(models.Model):
         unique_together = ('office', 'start_date')
 
 
+class CampaignToIndicator(models.Model):
+
+    indicator = models.ForeignKey(Indicator)
+    campaign = models.ForeignKey(Campaign)
+
+    class Meta:
+        db_table = 'campaign_to_indicator'
+        unique_together = ('indicator', 'campaign')
+
 class DataPoint(models.Model):
     '''
     The core table of the application.  This is where the raw data is stored
@@ -380,15 +393,6 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
-
-class CampaignToIndicator(models.Model):
-
-    indicator = models.ForeignKey(Indicator)
-    campaign = models.ForeignKey(Campaign)
-
-    class Meta:
-        db_table = 'campaign_to_indicator'
-        unique_together = ('indicator', 'campaign')
 
 
 class DocDataPoint(models.Model):

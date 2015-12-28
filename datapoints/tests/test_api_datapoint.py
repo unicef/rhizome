@@ -3,7 +3,7 @@ from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from datapoints.models import CacheJob, Office, Indicator, Location, LocationType, \
-    DataPointComputed, CampaignType, Campaign
+    DataPointComputed, CampaignType, Campaign, IndicatorTag
 
 class DataPointResourceTest(ResourceTestCase):
     def setUp(self):
@@ -32,6 +32,8 @@ class DataPointResourceTest(ResourceTestCase):
             response_msg='SUCCESS'
         )
 
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+
         # 2. Create The Indicator value
         indicator = Indicator.objects.create(short_name='Number of vaccine doses used in HRD', \
                                              name='Number of vaccine doses used in HRD', \
@@ -46,26 +48,27 @@ class DataPointResourceTest(ResourceTestCase):
                                            , location_type=location_type)
 
         # 4. Create The Campaign
-        start_date = '2014-01-01'
-        end_date = '2014-01-01'
-        campaign_type = CampaignType.objects.create(name='National Immunization Days (NID)')
-        campaign = Campaign.objects.create(office=office, campaign_type=campaign_type, \
-                                           start_date=start_date, end_date=end_date,top_lvl_location_id = location.id)
+        start_date = '2016-01-01'
+        end_date = '2016-01-01'
+        campaign_type = CampaignType.objects\
+            .create(name='National Immunization Days (NID)')
+        campaign = Campaign.objects.create(office=office,\
+            campaign_type=campaign_type,start_date=start_date,end_date=end_date,\
+            top_lvl_indicator_tag_id = ind_tag.id,\
+            top_lvl_location_id = location.id)
 
         # 5. Create Test DataPointComputed
         value = 1.57
-        datapoint = DataPointComputed.objects.create(value=value, cache_job=cache_job, indicator=indicator, \
-                                                     location=location, campaign=campaign)
+        datapoint = DataPointComputed.objects.create(value=value,\
+            cache_job=cache_job,indicator=indicator, location=location,\
+            campaign=campaign)
 
         # 6 Request To The API
-        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location__in={3}'.format( \
-            indicator.id, start_date, end_date, location.id)
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location__in={3}'\
+            .format(indicator.id, start_date,end_date, location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, format='json', \
-                                   authentication=self.get_credentials())
-
-        # print resp
-        # print '/api/v1/datapoint/?' + get_parameter
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
 
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)

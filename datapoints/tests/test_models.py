@@ -36,6 +36,7 @@ class CampaignTest(MasterModelTestCase):
         ct = CampaignType.objects.create(name='NID')
         ind_0 = Indicator.objects.create(name='number of VDPV cases',short_name='V')
         ind_1 = Indicator.objects.create(name='number of WPV cases',short_name='W')
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
         tpl = Location.objects.create(name='NGA',location_code='NGA',\
             office_id = o.id,location_type_id = lt.id)
         doc = Document.objects.create(
@@ -48,6 +49,7 @@ class CampaignTest(MasterModelTestCase):
         c = Campaign.objects.create(
             office_id = o.id,\
             top_lvl_location_id = tpl.id,
+            top_lvl_indicator_tag_id = ind_tag.id,
             campaign_type_id = ct.id,
             name = 'test',\
             start_date = st,\

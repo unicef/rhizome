@@ -63,12 +63,14 @@ class AggRefreshTestCase(TestCase):
 
         location_ids = self.model_df_to_data(location_df,Location)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
 
         self.campaign_id = Campaign.objects.create(
             start_date = '2016-01-01',
             end_date = '2016-01-02',
             campaign_type_id = campaign_type1.id,
             top_lvl_location_id = 12907,
+            top_lvl_indicator_tag_id = ind_tag.id,
             office_id = office_id,
         ).id
 
