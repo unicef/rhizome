@@ -83,7 +83,8 @@
       "describe",
       "context",
       "it",
-      "waffle"
+      "waffle",
+      "IsWebkit"
     ],
     "parser": "babel-eslint",
     "ignore": []
