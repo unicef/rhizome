@@ -6,6 +6,13 @@ from django.db import models, migrations, transaction
 from datapoints.models import Campaign, Location, DataPointComputed, \
     CampaignToIndicator, DataPoint
 
+
+def change_campaign_column_to_date_column(apps, schema_editor):
+
+    dtt = DocDetailType.objects.get(name='campaign_column')
+    dtt.name = 'date_column'
+    dtt.save()
+
 def migrate_campaign_data(apps, schema_editor):
 
     cti_batch = []
@@ -15,24 +22,15 @@ def migrate_campaign_data(apps, schema_editor):
         ## update top level location_id ##
         parent_loc_id = Location.objects.get(parent_location_id=None,\
             office_id = c.office_id).id
-
         c.top_lvl_location_id = parent_loc_id
+
+        ## create campaign to indicator relationships ##
+        parent_tag_id = IndicatorTag.objects.get(tag_name='Polio').id
+        c.top_lvl_indicator_tag_id = parent_tag_id
 
         ## add display name to campaign ##
         c.name = c.slug
         c.save()
-
-        ## create campaign to indicator relationships ##
-        indicator_id_list = DataPointComputed.objects\
-            .filter(campaign_id = c.id,location_id = parent_loc_id)\
-            .values_list('indicator_id',flat=True)
-
-        for ind_id in indicator_id_list:
-
-            cti_obj = CampaignToIndicator(**{'campaign_id': c.id,
-                'indicator_id': ind_id})
-
-            cti_batch.append(cti_obj)
 
         ## add appropriate data date to campaign table ##
         datapoint_qs = DataPoint.objects.raw('''
@@ -50,11 +48,10 @@ def migrate_campaign_data(apps, schema_editor):
     CampaignToIndicator.objects.bulk_create(cti_batch)
 
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0034_datadate_to_datapoint'),
+        ('datapoints', '0035_campaign_top_lvl_indicator_tag'),
     ]
     operations = [
         migrations.AddField(
@@ -63,5 +60,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(default=1, to='datapoints.IndicatorTag'),
             preserve_default=False,
         ),
-        migrations.RunPython(migrate_campaign_data)
+        migrations.RunPython(migrate_campaign_data),
+        migrations.RunPython(change_campaign_column_to_date_column)
     ]

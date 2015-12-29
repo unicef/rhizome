@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0035_migrate_datadate_data'),
+        ('datapoints', '0036_migrate_datadate_data'),
     ]
 
     operations = [
