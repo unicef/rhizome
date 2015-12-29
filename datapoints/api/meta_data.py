@@ -635,15 +635,15 @@ class LocationPermissionResource(BaseModelResource):
     def get_object_list(self, request):
 
         return LocationPermission.objects\
-            .filter(user_id=user_id).values()
+            .filter(user_id=request.GET['user_id']).values()
 
     def obj_create(self, bundle, **kwargs):
         '''
         '''
 
-        lp_obj = LocationPermission.objects.get_or_create(
-            user_id = bunlde.data['user_id'], defaults = {
-                'location_id' : bunlde.data['location_id']
+        lp_obj, created = LocationPermission.objects.get_or_create(
+            user_id = bundle.data['user_id'], defaults = {
+                'top_lvl_location_id' : bundle.data['location_id']
             })
 
         bundle.obj = lp_obj
