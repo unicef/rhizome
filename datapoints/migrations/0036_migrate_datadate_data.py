@@ -4,7 +4,9 @@ from __future__ import unicode_literals
 from django.db import models, migrations, transaction
 
 from datapoints.models import Campaign, Location, DataPointComputed, \
-    CampaignToIndicator, DataPoint
+    CampaignToIndicator, DataPoint, IndicatorTag
+
+from source_data.models import DocDetailType
 
 
 def change_campaign_column_to_date_column(apps, schema_editor):
@@ -54,12 +56,6 @@ class Migration(migrations.Migration):
         ('datapoints', '0035_campaign_top_lvl_indicator_tag'),
     ]
     operations = [
-        migrations.AddField(
-            model_name='campaign',
-            name='top_lvl_indicator_tag',
-            field=models.ForeignKey(default=1, to='datapoints.IndicatorTag'),
-            preserve_default=False,
-        ),
         migrations.RunPython(migrate_campaign_data),
         migrations.RunPython(change_campaign_column_to_date_column)
     ]

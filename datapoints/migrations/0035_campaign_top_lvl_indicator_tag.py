@@ -10,7 +10,7 @@ from datapoints.models import Campaign, Location, DataPointComputed, \
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0035_campaign_top_lvl_indicator_tag'),
+        ('datapoints', '0034_datadate_to_datapoint'),
     ]
     operations = [
         migrations.AddField(
