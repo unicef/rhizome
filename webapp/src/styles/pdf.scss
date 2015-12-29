@@ -1,3 +1,21 @@
+form,
+nav,
+header {
+  display: none !important;
+}
+
+.navigation-bar {
+  display: none !important;
+}
+
+.cd-titlebar {
+  display: none !important;
+}
+
+.print-only, .show-for-print {
+  display: block !important;
+}
+
 #management-dashboard {
   width: 1400px !important;
 
