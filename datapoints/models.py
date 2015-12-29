@@ -482,6 +482,7 @@ class AggDataPoint(models.Model):
 
 class LocationResponsibility(models.Model):
     '''
+    REMOVE THIS MODEL WHEN feature/abstract BRANCH IS MERGED
     '''
 
     user = models.ForeignKey('auth.User')
@@ -494,14 +495,26 @@ class LocationResponsibility(models.Model):
 
 class AdminLevelPermission(models.Model):
     '''
+    REMOVE THIS MODEL WHEN feature/abstract BRANCH IS MERGED
     '''
 
     user = models.OneToOneField('auth.User')
-    location_type = models.ForeignKey(LocationType)
+    location_type = models.ForeignKey(LocationType,default=1)
 
     class Meta:
         db_table = 'admin_level_permission'
 
+class LocationPermission(models.Model):
+    '''
+    This controls what the user sees.  If you have Nigeria as the top lvl
+    Location for a user
+    '''
+
+    user = models.OneToOneField('auth.User')
+    top_lvl_location = models.ForeignKey(Location)
+
+    class Meta:
+        db_table = 'location_permission'
 
 class IndicatorPermission(models.Model):
     '''

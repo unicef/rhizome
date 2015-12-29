@@ -14,7 +14,7 @@ from pandas import notnull
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
-    LocationResponsibility, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
+    LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
     ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag, IndicatorToOffice
 from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
     SourceSubmission
@@ -628,37 +628,28 @@ class UserGroupResource(BaseModelResource):
             return UserGroup.objects.all().values()
 
 
-class LocationResponsibilityResource(BaseModelResource):
+class LocationPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
-        # queryset = LocationResponsibility.objects.all().values()
         resource_name = 'location_responsibility'
 
     def get_object_list(self, request):
 
-        try:
-            user_id = request.GET['user_id']
-            return LocationResponsibility.objects \
-                .filter(user_id=user_id).values()
-        except KeyError:
-            return LocationResponsibility.objects.all().values()
+        return LocationPermission.objects\
+            .filter(user_id=user_id).values()
 
     def obj_create(self, bundle, **kwargs):
         '''
-        If post, create file and return the JSON of that object.
-        If get, just query the source_doc table with request parameters
         '''
 
-        new_obj = LocationResponsibility.objects.create(**bundle.data)
-        bundle.obj = new_obj
-        bundle.data['id'] = new_obj.id
+        lp_obj = LocationPermission.objects.get_or_create(
+            user_id = bunlde.data['user_id'], defaults = {
+                'location_id' : bunlde.data['location_id']
+            })
+
+        bundle.obj = lp_obj
+        bundle.data['id'] = lp_obj.id
+
         return bundle
-
-    def obj_delete_list(self, bundle, **kwargs):
-        """
-        """
-
-        obj_id = int(bundle.request.GET[u'id'])
-        LocationResponsibility.objects.get(id=obj_id).delete()
 
 
 class GroupPermissionResource(BaseModelResource):

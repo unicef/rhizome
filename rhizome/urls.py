@@ -8,14 +8,8 @@ from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.geo import GeoResource
-from datapoints.api.meta_data import CampaignResource, LocationResource, IndicatorResource, OfficeResource, \
-    CampaignTypeResource, LocationTypeResource, IndicatorTagResource, IndicatorToTagResource, CustomDashboardResource, \
-    CustomChartResource, DocumentResource, GroupResource, UserGroupResource, LocationResponsibilityResource, \
-    GroupPermissionResource, DocumentReviewResource, SourceObjectMapResource, UserResource, SourceSubmissionResource, \
-    DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
-    QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
-    CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
+from datapoints.api.meta_data import *
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system
 
@@ -41,7 +35,7 @@ v1_api.register(CustomChartResource())
 v1_api.register(DocumentResource())
 v1_api.register(GroupResource())
 v1_api.register(UserGroupResource())
-v1_api.register(LocationResponsibilityResource())
+v1_api.register(LocationPermissionResource())
 v1_api.register(GroupPermissionResource())
 v1_api.register(DocumentReviewResource())
 v1_api.register(SourceObjectMapResource())
