@@ -29,11 +29,7 @@ React.render(
 
 export default {
   Explorer: function (el) {
-    let vue = new Vue({
-      el: el,
-      components: { 'uf-explorer': require('./view/explorer') }
-    })
-    return vue
+    React.render(React.createElement(require('view/Explorer.jsx')), el)
   },
   Dashboard: function (el) {
     React.render(React.createElement(require('view/Dashboard.jsx')), el)

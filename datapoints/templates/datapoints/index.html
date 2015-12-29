@@ -3,8 +3,8 @@
 
 {% block section %}dashboard{% endblock %}
 {% block content %}
-<uf-explorer></uf-explorer>
+<div id="uf-explorer"></div>
 {% endblock %}
 {% block scripts %}
-<script>Polio.Explorer('#main');</script>
+<script>Polio.Explorer(document.getElementById('uf-explorer'));</script>
 {% endblock %}
