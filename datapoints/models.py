@@ -128,7 +128,6 @@ class IndicatorTag(models.Model):
         tag_list.append([self.id, None])
 
         ind_df = DataFrame(tag_list,df_cols)
-        
         return Indicator.objects.all().values_list('id',flat=True)
 
 

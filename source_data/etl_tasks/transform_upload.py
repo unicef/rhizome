@@ -1,5 +1,6 @@
 from pandas import read_csv
 from pandas import notnull
+from pandas import to_datetime
 import json
 
 from django.conf import settings
@@ -56,6 +57,14 @@ class DocTransform(object):
         self.process_file()
         self.upsert_source_object_map()
 
+    def process_date_column(self, doc_df):
+
+        dt_col = to_datetime(doc_df[self.date_column])
+        doc_df['data_date'] = dt_col
+
+        return doc_df
+
+
     def apply_doc_config_to_csv_df(self, csv_df):
         '''
         Currenlty this only applies to the 'Location Code Column Length'
@@ -97,6 +106,7 @@ class DocTransform(object):
 
         ## transform the raw data based on the documents configurations ##
         doc_df = self.apply_doc_config_to_csv_df(csv_df)
+        doc_df = self.process_date_column(doc_df)
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)
@@ -183,7 +193,7 @@ class DocTransform(object):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'data_date': submission_data[self.date_column],
+            'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
