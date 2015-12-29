@@ -58,7 +58,7 @@ var NavigationStore = Reflux.createStore({
 
   // Helpers
   _loadDashboards: function (campaigns, dashboards, offices) {
-    var allDashboards = builtins.concat(dashboards.objects)
+    var allDashboards = builtins.concat(_(dashboards.objects).sortBy('id').reverse().value())
 
     campaigns = _(campaigns)
 

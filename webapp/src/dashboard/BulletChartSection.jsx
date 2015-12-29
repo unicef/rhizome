@@ -1,11 +1,9 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import Layer from 'react-layer'
 import React from 'react'
 import moment from 'moment'
 
 import Chart from 'component/Chart.jsx'
-import Tooltip from 'component/Tooltip.jsx'
 
 function _domain (data) {
   var lower = _(data)
@@ -107,6 +105,15 @@ function _valueText (value, targets) {
   return ''
 }
 
+function _indicatorName (data) {
+  return data[0].indicator ? [_.get(data[0].indicator, 'short_name')] : []
+}
+
+function _indicatorDescription (data) {
+  console.log(data)
+  return data[0].indicator ? [_.get(data[0].indicator, 'description')] : []
+}
+
 export default React.createClass({
   propTypes: {
     campaign: React.PropTypes.object.isRequired,
@@ -128,7 +135,6 @@ export default React.createClass({
     var loading = this.props.loading
     var dataColorRange = ['#DB5344', '#79909F', '#2FB0D3']
     var xAxisColorRange = ['#F8DDDB', '#B6D0D4', '#A1C3C6']
-    var noDataColor = '#B9C3CB'
     let isBulletChart = true
 
     var charts = _(this.props.indicators)
@@ -136,18 +142,19 @@ export default React.createClass({
         var targets = _targetRanges(indicator)
 
         var options = {
+          aspect: 4,
           domain: _domain,
           value: _.partial(_value, _, campaign),
           marker: _.partial(_marker, _, campaign),
           y: _.property('location'),
-          width: 154,
-          height: 10,
           dataFill: _.partial(_fill, _, campaign, targets, dataColorRange),
           axisFill: _.partial(_fill, _, campaign, targets, xAxisColorRange),
           format: d3.format('%'),
           thresholds: targets[1],
           targets: targets[0],
-          valueText: _.partial(_valueText, _, targets)
+          valueText: _.partial(_valueText, _, targets),
+          indicatorName: _.partial(_indicatorName, _),
+          indicatorDescription: _.partial(_indicatorDescription, _)
         }
 
         var chartData = _(data)
@@ -156,15 +163,8 @@ export default React.createClass({
           .values()
           .value()
 
-        var title = _.get(indicator, 'short_name')
-        var threshold = d3.scale.threshold().domain(options.thresholds).range(dataColorRange)
-        var titleColor = options.value(chartData[0]) ? threshold(options.value(chartData[0])) : noDataColor
-
         return (
           <li key={'bullet-chart-' + _.get(indicator, 'id', i)}>
-            <h6 onMouseMove={this._showHelp.bind(this, indicator)} onMouseLeave={this._hideHelp} style={{color: titleColor}}>
-              {title}
-            </h6>
             <Chart type='BulletChart' loading={loading} data={chartData} options={options} isBulletChart={isBulletChart}/>
           </li>
         )
@@ -172,32 +172,5 @@ export default React.createClass({
       .value()
 
     return (<ul className={'small-block-grid-' + this.props.cols}>{charts}</ul>)
-  },
-
-  _showHelp: function (indicator, evt) {
-    var render = function () {
-      return (
-        <Tooltip left={evt.pageX} top={evt.pageY}>
-          <h3>{indicator.name}</h3>
-
-          <p>{indicator.description}</p>
-        </Tooltip>
-      )
-    }
-
-    if (this.layer) {
-      this.layer._render = render
-    } else {
-      this.layer = new Layer(document.body, render)
-    }
-
-    this.layer.render()
-  },
-
-  _hideHelp: function () {
-    if (this.layer) {
-      this.layer.destroy()
-      this.layer = null
-    }
   }
 })

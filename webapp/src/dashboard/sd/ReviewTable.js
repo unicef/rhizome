@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
+
 import DashboardStore from 'stores/DashboardStore'
 
 import DashboardActions from 'actions/DashboardActions'
@@ -108,10 +109,7 @@ var ReviewTable = React.createClass({
             return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
-              campaigns={this.state.dashboardStore.campaigns}
-              locations={this.state.dashboardStore.locations}
               source_object_map_id={id}
-              key={id}
               onModalClose={this._callApi}
               />
           }

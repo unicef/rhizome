@@ -31,6 +31,7 @@ function wrap (text, width) {
   })
 }
 */
+// import browser from 'util/browser'
 
 function axisLabel () {
   var _width = 1
@@ -67,7 +68,11 @@ function axisLabel () {
         })
 
       yAxisLabel.append('text').text(d => { return d })
-        .style('transform', 'rotate(-90deg)')
+        .attr({
+          'transform': 'rotate(-90 0 0)',
+          'dx': 0,
+          'dy': 10
+        })
         // .call(wrap, _textLength, 0, 0)
     }
   }
