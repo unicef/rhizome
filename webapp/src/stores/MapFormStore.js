@@ -1,55 +1,65 @@
+import _ from 'lodash'
 import Reflux from 'reflux'
 import api from 'data/api'
+import Location from 'requests/Location'
 
 import MapFormActions from 'actions/MapFormActions'
+import CampaignStore from 'stores/CampaignStore'
 
 var MapFormStore = Reflux.createStore({
   listenables: MapFormActions,
   data: {
-    modalIsOpen: false,
-    content_type: null,
-    master_object_id: null,
-    master_object_name: null,
-    source_object_code: null
+    locations: null,
+    locationsLoaded: false,
+    campaigns: null,
+    campaignsLoaded: false,
+    indicators: null,
+    indicatorsLoaded: false
   },
 
   getInitialState: function () {
     return this.data
   },
 
-  onGetSourceMap: function (id) {
-    api.get_source_object_map(id, null, {'cache-control': 'no-cache'})
-      .then(response => {
-        this.trigger({
-          modalIsOpen: true,
-          content_type: response.objects[0].content_type,
-          master_object_id: response.objects[0].mapped_by_id,
-          source_object_code: response.objects[0].source_object_code
+  onGetLocations: function () {
+    if (!this.data.locationsLoaded) {
+      this.data.locationsLoaded = true
+      Promise.all([
+        Location.getLocations(),
+        Location.getLocationTypes()
+      ])
+      .then(([locations, locationsTypes]) => {
+        var locationIdx = _.indexBy(locations, 'id')
+        var types = _.indexBy(locationsTypes, 'id')
+        locations.forEach(location => {
+          location.location_type = _.get(types[location.location_type_id], 'name')
+          location.parent = locationIdx[location.parent_location_id]
         })
+        this.data.locations = locations
+        this.trigger(this.data)
       })
+    }
   },
 
-  onUpdateMetaMap: function (info) {
-    api.post_source_object_map(info)
-      .then(response => {
-        this.trigger({
-          master_object_id: response.objects.mapped_by_id,
-          master_object_name: response.objects.master_object_name
+  onGetCampaigns: function () {
+    if (!this.data.campaignsLoaded) {
+      this.data.campaignsLoaded = true
+      CampaignStore.getCampaignsPromise()
+        .then(campaigns => {
+          this.data.campaigns = campaigns
+          this.trigger(this.data)
         })
+    }
+  },
+
+  onGetIndicators: function () {
+    if (!this.data.indicatorsLoaded) {
+      this.data.indicatorsLoaded = true
+      api.indicatorsTree().then(indicators => {
+        this.data.indicators = indicators.objects
+        this.trigger(this.data)
       })
-  },
-
-  onClear: function () {
-    this.trigger({
-      modalIsOpen: false,
-      content_type: null
-    })
-  },
-
-  getIndicators: function () {
-    return api.indicatorsTree().then(indicators => {
-      return indicators.objects
-    })
+    }
   }
 })
 
