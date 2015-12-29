@@ -128,12 +128,7 @@ class IndicatorTag(models.Model):
         tag_list.append([self.id, None])
 
         ind_df = DataFrame(tag_list,df_cols)
-
-
-        print '===='
-        print ind_df
-        print '===='
-
+        
         return Indicator.objects.all().values_list('id',flat=True)
 
 

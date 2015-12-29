@@ -64,6 +64,12 @@ class AggRefreshTestCase(TestCase):
         location_ids = self.model_df_to_data(location_df,Location)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+        sub_tag = IndicatorTag.objects.create(tag_name='Polio Management',\
+            parent_tag_id = ind_tag.id)
+
+        ind_to_tag_batch = [IndicatorToTag(**{'indicator_tag_id'\
+            :sub_tag.id,'indicator_id':ind.id}) for ind in indicator_ids]
+        IndicatorToTag.objects.bulk_create(ind_to_tag_batch)
 
         self.campaign_id = Campaign.objects.create(
             start_date = '2016-01-01',
@@ -73,10 +79,6 @@ class AggRefreshTestCase(TestCase):
             top_lvl_indicator_tag_id = ind_tag.id,
             office_id = office_id,
         ).id
-
-        cti_batch = [CampaignToIndicator(**{'campaign_id':self.campaign_id,\
-            'indicator_id':ind.id}) for ind in indicator_ids]
-        CampaignToIndicator.objects.bulk_create(cti_batch)
 
         document = Document.objects.create(
             doc_title = 'test',
