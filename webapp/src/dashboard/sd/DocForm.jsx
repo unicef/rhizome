@@ -29,7 +29,7 @@ var DocForm = React.createClass({
       config_options: [],
       uq_id_column: null,
       location_column: null,
-      campaign_column: null,
+      date_column: null,
       created_doc_id: null,
       doc_detail_meta: null,
       doc_is_refreshed: false,
@@ -100,7 +100,7 @@ var DocForm = React.createClass({
   render: function () {
     var uqHeaderList = this.buildHeaderList('uq_id_column')
     var rgHeaderList = this.buildHeaderList('location_column')
-    var cpHeaderList = this.buildHeaderList('campaign_column')
+    var cpHeaderList = this.buildHeaderList('date_column')
     var location = _.get(this.props.location, 'location', this.props.location.name)
     var campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
 
@@ -130,9 +130,9 @@ var DocForm = React.createClass({
           </li>
           <li>
             <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Date Column: (To be selected) {this.state.campaign_column}
+              Date Column: (To be selected) {this.state.date_column}
             </div>
-            <ButtonMenu text={this.state.campaign_column}
+            <ButtonMenu text={this.state.date_column}
               style='large-4 medium-4 small-12 columns csv-upload__button-style'>
               {cpHeaderList}
             </ButtonMenu>
@@ -140,7 +140,7 @@ var DocForm = React.createClass({
         </ul>
       )
 
-      if (this.state.uq_id_column && this.state.location_column && this.state.campaign_column) {
+      if (this.state.uq_id_column && this.state.location_column && this.state.date_column) {
         let nextLink = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
         let [docName, docRevision] = this.props.doc_title.split('-')
         uploadButton = this.state.doc_is_refreshed

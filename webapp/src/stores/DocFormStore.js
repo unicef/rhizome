@@ -11,7 +11,7 @@ var DocFormStore = Reflux.createStore({
       config_options: [],
       uq_id_column: null,
       location_column: null,
-      campaign_column: null,
+      date_column: null,
       created_doc_id: null,
       doc_detail_meta: null,
       doc_is_refreshed: false,
