@@ -43,11 +43,7 @@ var ExportPdf = React.createClass({
         <a role='button' className={this.props.className} onClick={this._onExportDashboard} disabled={this.state.isFetching}>
           {this.state.label}
         </a>
-        <iframe width='0' height='0' className='hidden' src={this.state.href} ref='exportFrame'>
-          <html>
-            <body onload={this._isCompleteExportDashboard}>
-            </body>
-          </html>
+        <iframe width='0' height='0' className='hidden' src={this.state.href} ref='exportFrame' onload={this._isCompleteExportDashboard}>
         </iframe>
       </div>
     )
