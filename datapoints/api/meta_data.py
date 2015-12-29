@@ -646,6 +646,10 @@ class LocationPermissionResource(BaseModelResource):
                 'top_lvl_location_id' : bundle.data['location_id']
             })
 
+        if not created:
+            lp_obj.top_lvl_location_id = bundle.data['location_id']
+            lp_obj.save()
+
         bundle.obj = lp_obj
         bundle.data['id'] = lp_obj.id
 
