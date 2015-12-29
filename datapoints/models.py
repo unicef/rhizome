@@ -125,9 +125,9 @@ class IndicatorTag(models.Model):
         tag_list = list(IndicatorTag.objects.filter(parent_tag_id = self.id)\
             .values_list(*df_cols))
 
-        tag_list.append([self.id, None])
+        tag_list.append((self.id, None))
 
-        ind_df = DataFrame(tag_list,df_cols)
+        ind_df = DataFrame(tag_list,columns=df_cols)
         return Indicator.objects.all().values_list('id',flat=True)
 
 
