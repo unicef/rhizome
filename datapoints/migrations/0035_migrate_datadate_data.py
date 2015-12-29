@@ -57,5 +57,11 @@ class Migration(migrations.Migration):
         ('datapoints', '0034_datadate_to_datapoint'),
     ]
     operations = [
+        migrations.AddField(
+            model_name='campaign',
+            name='top_lvl_indicator_tag',
+            field=models.ForeignKey(default=1, to='datapoints.IndicatorTag'),
+            preserve_default=False,
+        ),
         migrations.RunPython(migrate_campaign_data)
     ]
