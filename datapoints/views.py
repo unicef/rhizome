@@ -24,7 +24,7 @@ def export_pdf(request):
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
 
-    options = {'orientation': 'Landscape', 'javascript-delay': '1000', 'print-media-type': ' ', 'quiet': ' '}
+    options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
     pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
 
     response = HttpResponse(content=pdf_content, content_type='application/pdf')
