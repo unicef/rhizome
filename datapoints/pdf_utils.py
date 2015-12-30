@@ -4,8 +4,9 @@ import codecs
 
 
 class Configuration(object):
-    def __init__(self, wkhtmltopdf=''):
+    def __init__(self, wkhtmltopdf='', wkhtmltoimage=''):
         self.wkhtmltopdf = wkhtmltopdf
+        self.wkhtmltoimage = wkhtmltoimage
         self.xvfb = 'xvfb-run '
 
         if not self.wkhtmltopdf:
@@ -19,11 +20,28 @@ class Configuration(object):
                 self.wkhtmltopdf = subprocess.Popen(
                     ['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
 
+        if not self.wkhtmltoimage:
+            if sys.platform == 'win32':
+                self.wkhtmltoimage = subprocess.Popen(
+                    ['where', 'wkhtmltoimage'], stdout=subprocess.PIPE).communicate()[0].strip()
+            elif 'linux' in sys.platform:
+                self.wkhtmltoimage = self.xvfb + subprocess.Popen(
+                    ['which', 'wkhtmltoimage'], stdout=subprocess.PIPE).communicate()[0].strip()
+            else:
+                self.wkhtmltoimage = subprocess.Popen(
+                    ['which', 'wkhtmltoimage'], stdout=subprocess.PIPE).communicate()[0].strip()
 
-def print_pdf(url, output_path, options=None, cookie=None, css_file=None):
+
+
+def print_pdf(type, url, output_path, options=None, cookie=None, css_file=None):
     configuration = Configuration()
-    wkhtmltopdf = configuration.wkhtmltopdf.decode('utf-8')
-    command = [wkhtmltopdf]
+
+    if 'pdf' in type:
+        wk_command = configuration.wkhtmltopdf.decode('utf-8')
+    else:
+        wk_command = configuration.wkhtmltoimage.decode('utf-8')
+
+    command = [wk_command]
     if options:
         for key, value in list(options.items()):
             if not '--' in key:
@@ -42,6 +60,7 @@ def print_pdf(url, output_path, options=None, cookie=None, css_file=None):
     else:
         command += '-'
     command = ' '.join(command)
+
     return to_pdf(command, output_path)
 
 

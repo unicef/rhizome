@@ -356,8 +356,17 @@ var Dashboard = React.createClass({
       </div>)
     }
 
+    let exportModule = (<div className="row">
+      <div className="medium-6 columns">
+        <ExportPdf className='dropdown-list font-weight-600 export-file' fileType='pdf' />
+      </div>
+      <div className="medium-6 columns">
+        <ExportPdf className='dropdown-list font-weight-600 export-file' fileType='jpeg' />
+      </div>
+    </div>)
+
     let exportPdf = (waffle.switch_is_active('pdf') && dashboardName === 'Management Dashboard')
-      ? (<ExportPdf className='dropdown-list font-weight-600 export-file' fileType='pdf' />)
+      ? exportModule
       : ''
 
     return (

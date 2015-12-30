@@ -25,10 +25,16 @@ def export_file(request):
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
 
-    options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
-    pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+    if 'pdf' in file_type:
+        options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
+        content_type = 'application/pdf'
+    else:
+        options = {'javascript-delay': '5000', 'width': '1400', 'quality': '100', 'quiet': ' '}
+        content_type = 'image/JPEG'
 
-    response = HttpResponse(content=pdf_content, content_type='application/pdf')
+    pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+
+    response = HttpResponse(content=pdf_content, content_type=content_type)
     response['Content-Disposition'] = 'attachment; filename=' + file_name
     response.set_cookie('fileDownloadToken', 'true')
     return response
