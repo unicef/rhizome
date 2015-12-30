@@ -6,6 +6,9 @@ from rhizome.settings.base import *
 env = os.environ.get('ENV', 'test')
 instance = os.environ.get('INSTANCE', '')
 
+if instance == '':
+    from rhizome.settings.base import *
+
 if instance == 'docker':
     from rhizome.settings.docker import *
 

@@ -3,6 +3,7 @@ from django.db import models
 from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
+from pandas import DataFrame
 
 
 class CacheJob(models.Model):
@@ -116,6 +117,18 @@ class IndicatorTag(models.Model):
 
     class Meta:
         db_table = 'indicator_tag'
+
+    def get_indicator_ids_for_tag(self):
+
+        df_cols = ['id','parent_tag_id']
+
+        tag_list = list(IndicatorTag.objects.filter(parent_tag_id = self.id)\
+            .values_list(*df_cols))
+
+        tag_list.append((self.id, None))
+
+        ind_df = DataFrame(tag_list,columns=df_cols)
+        return Indicator.objects.all().values_list('id',flat=True)
 
 
 class IndicatorToTag(models.Model):
@@ -281,28 +294,101 @@ class CampaignType(models.Model):
 
 class Campaign(models.Model):
     '''
-    A period in time in wich a campaign was initaited by the country office.
+    A grouping of datapoints.  For polio, for we have a "campaign type" of
+    "National Immunization Day" or "Mop Up" which means an immeiate response
+    to a case by conncentrated vaccination campaigns in that area.
+
+    The campaign thus allows you to model these two things with the model in
+    these two instances:
+
+    1. NID - Happens monthly for the Endemics.  We have a certain type of
+    Inticators that we want to collect for this.. see "Management Dashboard."
+
+        - indicator_list = Management Dashboard Indicators
+        - top_lvl_location = Afghanistan
+
+    2. Mop Up - Could happen anywhere where low immunity, for instance Ukraine.
+
+        - indicator_list = A few select Indicators related to the "mop up"
+        effort.  These will be different, put potentially overlapping from the
+        NID indicator list.
+        - top_lvl_location = Ukraine
+
+    For other efforts, this model can be useful.. For Routine Immunization
+    one could imagine a similar setup.
+
+    The campaign model has a method called "get_datapoints", which gets the
+    relevant raw and aggregated datapoints for a given campaign.  The data
+    is aggregated from the date, indicator_list and location in the AggRefresh.
+
+    The indicator_list, is determined by taking the flatened top lvl indicator
+    tree that is for the campaign.
     '''
 
+    name = models.CharField(max_length=255)
+    top_lvl_location = models.ForeignKey(Location)
+    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag)
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name', unique=True)
-    management_dash_pct_complete = models.FloatField(default=.001)
+    slug = AutoSlugField(populate_from='name', unique=True)
+    pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.slug)
+        return unicode(self.name)
 
-    def get_full_name(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
+    def get_datapoints(self):
+
+        return DataPointComputed.objects.filter(campaign_id = self.id).values()
+
+    def get_raw_datapoint_ids(self):
+
+        flat_location_id_list = LocationTree.objects.filter(parent_location_id=\
+            self.top_lvl_location_id).values_list('location_id',flat=True)
+
+        indicator_id_list = CampaignToIndicator.objects.filter(campaign_id = \
+            self.id).values_list('indicator_id',flat=True)
+
+        qs = DataPoint.objects.filter(
+            location_id__in = flat_location_id_list,
+            indicator_id__in = indicator_id_list,
+            data_date__lt = self.end_date,
+            data_date__gte = self.start_date,
+        ).values_list('id',flat=True)
+
+        return qs
+
+    def save(self, **kwargs):
+
+        super(Campaign, self).save(**kwargs)
+
+        top_lvl_tag_obj = IndicatorTag.objects\
+            .get(id = self.top_lvl_indicator_tag_id)
+        indicator_id_list = top_lvl_tag_obj.get_indicator_ids_for_tag()
+
+        cti_batch = [CampaignToIndicator(**{'campaign_id':self.id,\
+            'indicator_id':ind_id}) for ind_id in indicator_id_list ]
+
+        CampaignToIndicator.objects.filter(campaign_id=self.id).delete()
+        CampaignToIndicator.objects.bulk_create(cti_batch)
+
 
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
         unique_together = ('office', 'start_date')
 
+
+class CampaignToIndicator(models.Model):
+
+    indicator = models.ForeignKey(Indicator)
+    campaign = models.ForeignKey(Campaign)
+
+    class Meta:
+        db_table = 'campaign_to_indicator'
+        unique_together = ('indicator', 'campaign')
 
 class DataPoint(models.Model):
     '''
@@ -323,7 +409,7 @@ class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    data_date = models.DateTimeField()
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
@@ -335,7 +421,6 @@ class DataPoint(models.Model):
 
     class Meta:
         db_table = 'datapoint'
-        unique_together = ('indicator', 'location', 'campaign')
 
 
 class DocDataPoint(models.Model):
@@ -346,7 +431,7 @@ class DocDataPoint(models.Model):
     document = models.ForeignKey('source_data.Document')  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    data_date = models.DateTimeField()
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')

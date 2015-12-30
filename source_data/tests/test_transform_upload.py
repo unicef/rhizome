@@ -98,13 +98,18 @@ class TransformUploadTestCase(TestCase):
         Creating the Indicator, location, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
+
+        top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
+
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
+
         location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('datapoints/tests/_data/calculated_indicator_component.csv')
 
-        user_id = User.objects.create_user('test','john@john.com', 'test').id
+        user_id = User.objects.create_user('test','test@test.com', 'test').id
         office_id = Office.objects.create(id=1,name='test').id
 
         cache_job_id = CacheJob.objects.create(id = -2, \
@@ -121,7 +126,7 @@ class TransformUploadTestCase(TestCase):
             guid = 'test').id
 
         for ddt in ['uq_id_column','username_column','image_col',
-            'campaign_column','location_column','location_display_name']:
+            'date_column','location_column','location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
@@ -136,6 +141,14 @@ class TransformUploadTestCase(TestCase):
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
+
+        ## associate indicators with tag ##
+        indicator_to_tag_ids = [IndicatorToTag(**{\
+            'indicator_id':ind.id,\
+            'indicator_tag_id': top_lvl_tag.id}) for ind in indicator_ids]
+
+        IndicatorToTag.objects.bulk_create(indicator_to_tag_ids)
+
 
         ## create the uq_id_column configuration ##
 
@@ -153,11 +166,11 @@ class TransformUploadTestCase(TestCase):
             doc_detail_value = 'Wardcode'
         )
 
-        campaign_column_config = DocumentDetail.objects.create(
+        date_column_config = DocumentDetail.objects.create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='campaign_column').id,
-            doc_detail_value = 'Campaign'
+                .objects.get(name='date_column').id,
+            doc_detail_value = 'submission_date'
         )
 
 

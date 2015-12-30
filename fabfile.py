@@ -37,7 +37,7 @@ def start_apache():
 def run_tests():
 
     local("coverage run manage.py test --settings=rhizome.settings.test")
-    local("coverage html --omit='venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
+    local("coverage html --omit='*venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
 
 # build dependencies

@@ -1,6 +1,11 @@
 from django.test import TestCase
 from datapoints.models import *
+from datapoints.agg_tasks import AggRefresh
+from datapoints.cache_meta import LocationTreeCache
 from source_data.models import *
+from datetime import datetime
+from datetime import date, timedelta
+
 
 
 class MasterModelTestCase(TestCase):
@@ -11,8 +16,91 @@ class MasterModelTestCase(TestCase):
 
     def set_up(self):
 
-        print 'pass'
+        pass
 
+class IndicatorTagTest(MasterModelTestCase):
+
+    def set_up(self):
+        self.tag_name = 'Ebola'
+        create_tag = IndicatorTag.objects.create(tag_name = self.tag_name)
+
+    def test_tag_create(self):
+
+        self.set_up()
+        ebola_tag = IndicatorTag.objects.get(tag_name = self.tag_name)
+
+        self.assertEqual(ebola_tag.tag_name,self.tag_name)
+
+    def test_get_indicator_ids_for_tag(self):
+
+        self.set_up()
+        test_tag = IndicatorTag.objects.get(tag_name = self.tag_name)
+
+        ind_ds = test_tag.get_indicator_ids_for_tag()
+
+
+class CampaignTest(MasterModelTestCase):
+
+    # python manage.py test datapoints.tests.test_models.CampaignTest\
+    #    .test_campaign_create --settings=rhizome.settings.test
+
+    def test_campaign_create(self):
+
+        d = date.today()
+        st = d - timedelta(days=1)
+        ed = d + timedelta(days=1)
+
+        u = User.objects.create_user('polio','eradicate@polio.com', 'polio')
+        o = Office.objects.create(name='NGA')
+        lt = LocationType.objects.create(name='country',admin_level=0)
+        ct = CampaignType.objects.create(name='NID')
+        ind_0 = Indicator.objects.create(name='number of VDPV cases',short_name='V')
+        ind_1 = Indicator.objects.create(name='number of WPV cases',short_name='W')
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+        tpl = Location.objects.create(name='NGA',location_code='NGA',\
+            office_id = o.id,location_type_id = lt.id)
+        doc = Document.objects.create(
+            doc_title = 'test',
+            created_by_id = u.id,
+            guid = 'test')
+
+        ### SET UP CAMPAIGN DEFINITION ###
+
+        c = Campaign.objects.create(
+            office_id = o.id,\
+            top_lvl_location_id = tpl.id,
+            top_lvl_indicator_tag_id = ind_tag.id,
+            campaign_type_id = ct.id,
+            name = 'test',\
+            start_date = st,\
+            end_date = ed,\
+        )
+
+        ###### ADD DATA TO CAMPAIGN #####
+
+        ss = SourceSubmission.objects.create(
+            document_id = doc.id,
+            submission_json = '',
+            row_number = 0,
+            data_date = d
+        )
+        dp_0 = DataPoint.objects.create(location_id=tpl.id,\
+            indicator_id=ind_0.id,value=2,data_date = d,
+            changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
+        dp_1 = DataPoint.objects.create(location_id=tpl.id,\
+            indicator_id=ind_1.id,value=3,data_date = d, \
+            changed_by_id = u.id,source_submission_id = ss.id,cache_job_id=-1)
+
+        ltc = LocationTreeCache()
+        ltc.main()
+
+        agr = AggRefresh(campaign_id = c.id)
+
+        dp_ids = c.get_datapoints()
+
+        self.assertEqual(len(dp_ids),2)
+        self.assertTrue(isinstance,(c,Campaign))
+        # self.assertEqual(dpi.__unicode__(),dpi.name)
 
 class IndicatorTest(MasterModelTestCase):
 
@@ -51,8 +139,6 @@ class LocationTest(MasterModelTestCase):
         self.assertTrue(isinstance,(r,Location))
         self.assertEqual(r.__unicode__(),r.name)
 
-        print '...Done Testing location Model...'
-
 class DataPointTest(MasterModelTestCase):
 
     def set_up(self):
@@ -70,20 +156,21 @@ class DataPointTest(MasterModelTestCase):
             guid = 'test')
 
     def create_datapoint(self, note="test", indicator_id=99, location_id = 99,
-        campaign_id=99, value=100.01, changed_by_id = 1):
+        value=100.01, changed_by_id = 1):
 
         self.set_up()
 
         source_submission = SourceSubmission.objects.create(
             document_id = self.document.id,
             submission_json = '',
-            row_number = 1
+            row_number = 1,
+            data_date = '2016-01-01'
         )
 
         dp = DataPoint.objects.create(
             indicator_id=indicator_id,
             location_id = location_id,
-            campaign_id=campaign_id,
+            data_date='2016-01-01',
             value = value,
             changed_by_id=changed_by_id,
             source_submission_id = source_submission.id
