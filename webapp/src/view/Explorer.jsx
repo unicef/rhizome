@@ -2,6 +2,20 @@ import React from 'react'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 
 var Explorer = React.createClass({
+
+  getInitialState: function () {
+    return {
+      campaign: {
+        start: '',
+        end: ''
+      }
+    }
+  },
+
+  updateDateRangePicker: function (key, value) {
+    this.state.campaign[key] = value
+  },
+
   render: function () {
     return (
       <div>
@@ -16,7 +30,11 @@ var Explorer = React.createClass({
             <from className='inline'>
               <label>
                 <div>Time Period</div>
-                <DateRangePicker />
+                <DateRangePicker
+                  start={this.state.campaign.start}
+                  end={this.state.campaign.end}
+                  sendValue={this.updateDateRangePicker}
+                />
               </label>
 
               <div>
