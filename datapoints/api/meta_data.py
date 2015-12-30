@@ -13,12 +13,8 @@ from pandas import notnull
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource,\
     DataPointsException, get_locations_to_return_from_url
-from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
-    LocationType, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
-    LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag, IndicatorToOffice
-from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
-    SourceSubmission
+from datapoints.models import *
+from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.sync_odk import OdkSync
@@ -31,11 +27,22 @@ from django.http import HttpResponse
 
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
-        queryset = Campaign.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,
         }
+
+    def get_object_list(self, request):
+
+        location_ids = list(set(LocationTree.objects\
+            .filter(location_id =self.top_lvl_location_id)\
+            .values_list('parent_location_id',flat=True)))
+
+        qs = Campaign.objects.filter(top_lvl_location_id__in=location_ids)\
+            .values()
+
+        return qs
+
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -43,23 +50,16 @@ class LocationResource(BaseModelResource):
         resource_name = 'location'
 
     def get_object_list(self, request):
+        ## parent_location_id should be parent_location_id__in and all
+        ## logic then can be handled by the get_locations_to_return_from_url
+        ## method.
 
         try:
             pr_id = request.GET['parent_location_id']
-            if pr_id == '-1':
-                pr_id = None
-
             qs = Location.objects.filter(parent_location_id=pr_id).values()
-
         except KeyError:
             location_ids = get_locations_to_return_from_url(request)
-
-
             qs = Location.objects.filter(id__in=location_ids).values()
-
-            print '==='
-            print len(qs)
-            print '==='
 
         return qs
 

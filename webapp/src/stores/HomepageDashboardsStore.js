@@ -47,6 +47,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
   fetchData: function (dashboard) {
     var campaign = dashboard.campaign
+
     var location = dashboard.location
     var charts = dashboard.charts
 
