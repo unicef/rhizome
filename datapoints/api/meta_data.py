@@ -868,6 +868,7 @@ class AggRefreshResource(BaseModelResource):
         resource_name = 'refresh_cache'
 
     def get_object_list(self, request):
+
         AggRefresh()
 
         queryset = DocumentDetail.objects \

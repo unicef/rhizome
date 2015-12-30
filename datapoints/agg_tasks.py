@@ -25,7 +25,7 @@ class AggRefresh(object):
     '''
 
 
-    def __init__(self,campaign_id=None):
+    def __init__(self,campaign_id):
         '''
         If there is a job running, return to with a status code of
         "cache_running".
@@ -39,7 +39,7 @@ class AggRefresh(object):
         table as well as the start / end time.
         '''
 
-        self.dp_columns =['location_id','indicator_id','campaign_id',\
+        self.dp_columns =['location_id','indicator_id',\
             'value','cache_job_id']
 
         self.dwc_batch, self.dwc_tuple_dict = [],{}
@@ -47,26 +47,20 @@ class AggRefresh(object):
         if CacheJob.objects.filter(date_completed=None):
             return
 
-        self.campaign_id = campaign_id
-
-        if self.campaign_id is None:
-
-            try:
-                self.campaign_id = DataPoint.objects.filter(cache_job_id=-1)[0]\
-                    .campaign_id
-            except IndexError:
-                return
-
+        self.campaign = Campaign.objects.get(id = campaign_id)
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
         )
 
-        response_msg = self.main()
+        dp_ids_to_process = self.campaign.get_raw_datapoint_ids()
+        top_lvl_location_id = self.campaign.top_lvl_location_id
 
         ## update the datapoint table with this cache_job_id
-        DataPoint.objects.filter(campaign_id = self.campaign_id)\
+        DataPoint.objects.filter(id__in = dp_ids_to_process)\
             .update(cache_job_id = self.cache_job.id)
+
+        response_msg = self.main()
 
         ## mark job as completed and save
         self.cache_job.date_completed = datetime.now()
@@ -108,7 +102,7 @@ class AggRefresh(object):
         location_tree_columns = ['location_id','parent_location_id','lvl']
 
         dp_df = DataFrame(list(DataPoint.objects\
-            .filter(campaign_id = self.campaign_id)\
+            .filter(cache_job_id = self.cache_job.id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         ## NaN to None
@@ -137,7 +131,7 @@ class AggRefresh(object):
 
         ## group by parent_location_id and take the sum ##
         grouped_df = DataFrame(prepped_for_sum_df\
-            .groupby(['parent_location_id', 'indicator_id','campaign_id'])\
+            .groupby(['parent_location_id', 'indicator_id'])\
             ['value'].sum())
 
         ## add aggregate values to the tuple dict ##
@@ -148,20 +142,21 @@ class AggRefresh(object):
         for ix, dp in no_nan_dp_df.iterrows():
             ## dont override null value from parent if sum exists for children
             if dp.value and dp.value != 'NaN' :
-                tuple_dict[(dp.location_id, dp.indicator_id, dp.campaign_id)] \
+                tuple_dict[(dp.location_id, dp.indicator_id)] \
                     = dp.value
 
         ## now prep the batch for the bulk insert ##
         for dp_unique_key, value in tuple_dict.iteritems():
-            dp_dict =  dict(zip(('location_id','indicator_id','campaign_id')\
+            dp_dict =  dict(zip(('location_id','indicator_id')\
                 ,dp_unique_key))
 
+            dp_dict['campaign_id'] = self.campaign.id
             dp_dict['value'] = value
             dp_dict['cache_job_id'] = self.cache_job.id
 
             agg_dp_batch.append(AggDataPoint(**dp_dict))
 
-        AggDataPoint.objects.filter(campaign_id = self.campaign_id).delete()
+        AggDataPoint.objects.filter(campaign_id = self.campaign.id).delete()
         AggDataPoint.objects.bulk_create(agg_dp_batch)
 
     def calc_datapoints(self):
@@ -200,7 +195,7 @@ class AggRefresh(object):
 
         dp_df = DataFrame(list(AggDataPoint.objects.all()\
             .filter(indicator_id__in = indicator_id_list\
-                .unique(),campaign_id = self.campaign_id)\
+                .unique(),campaign_id = self.campaign.id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         return dp_df
@@ -253,7 +248,7 @@ class AggRefresh(object):
         the raw indicator data will always override the calculated.
         '''
 
-        for adp in AggDataPoint.objects.filter(campaign_id = self.campaign_id):
+        for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
             adp_tuple = (adp.location_id, adp.indicator_id, adp.campaign_id)
             self.dwc_tuple_dict[adp_tuple] = adp.value
 
@@ -281,7 +276,7 @@ class AggRefresh(object):
 
         ## take the sum of all of the component indicators ##
         grouped_df = DataFrame(dp_df_with_calc.merge(dp_df_with_calc)\
-            .groupby(['location_id','calc_indicator_id','campaign_id',])\
+            .groupby(['location_id','calc_indicator_id'])\
             ['value'].sum())
 
         for ix, row_data in grouped_df.iterrows():
@@ -302,7 +297,8 @@ class AggRefresh(object):
         ## now get a dataframe (dependent_calculation_dp_df) that represents ##
         ## the newly calculated data.  This is necessary because the ##
         ## denominator for the part/whole calculation is often a SUM ##
-        dwc_list_of_list = [[k[0],k[1],k[2],v,self.cache_job.id] for k,v in\
+
+        dwc_list_of_list = [[k[0],k[1],v,self.cache_job.id] for k,v in\
             self.dwc_tuple_dict.iteritems()]
         dependent_calculation_dp_df = DataFrame(dwc_list_of_list,columns=\
             self.dp_columns)
@@ -313,7 +309,7 @@ class AggRefresh(object):
 
         ## now join the above dataframe on itself to set up the calculation ##
         prepped_for_calc_df = dp_df_with_calc.merge(dp_df_with_calc,\
-            on=['location_id','campaign_id','calc_indicator_id'])
+            on=['location_id','calc_indicator_id'])
 
         ## iterate through the dataframe, perform the calculation and add
         ## to the dwc_tuple_dict.  ( this could use some clean up )
@@ -322,8 +318,7 @@ class AggRefresh(object):
             if row_data.calc_x == 'NUMERATOR' \
                 and row_data.calc_y == 'DENOMINATOR':
 
-                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
-                    row_data.campaign_id)
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id)
 
                 ## this one line is where the calculation happens ##
                 try:
@@ -350,7 +345,7 @@ class AggRefresh(object):
 
         ## now join the above dataframe on itself to set up the calculation ##
         prepped_for_calc_df = dp_df_with_calc.merge(dp_df_with_calc,\
-            on=['location_id','campaign_id','calc_indicator_id'])
+            on=['location_id','calc_indicator_id'])
 
         ## iterrate through the dataframe above, determine the calculated value
         ## and finally, create the tuple dict calue for the - calculated data
@@ -359,16 +354,14 @@ class AggRefresh(object):
             if row_data.calc_x == 'WHOLE_OF_DIFFERENCE' \
                 and row_data.calc_y == 'PART_OF_DIFFERENCE':
 
-                row_tuple = (row_data.location_id, row_data.calc_indicator_id, \
-                    row_data.campaign_id)
+                row_tuple = (row_data.location_id, row_data.calc_indicator_id)
 
                 ## this one line is where the calculation happens ##
                 try:
-                    calculated_value = (row_data.value_x -row_data.value_y) / \
+                    calculated_value = (row_data.value_x - row_data.value_y) / \
                         row_data.value_x
                 except ZeroDivisionError:
                     calculated_value = 0
-
 
                 self.dwc_tuple_dict[row_tuple] = calculated_value
 
@@ -383,14 +376,14 @@ class AggRefresh(object):
 
             dwc_dict = {'location_id': uq_tuple[0],
                 'indicator_id': uq_tuple[1],
-                'campaign_id': uq_tuple[2],
+                'campaign_id': self.campaign.id,
                 'value': val,
                 'cache_job_id': self.cache_job.id
             }
 
             self.dwc_batch.append(DataPointComputed(**dwc_dict))
 
-        DataPointComputed.objects.filter(campaign_id=self.campaign_id).delete()
+        DataPointComputed.objects.filter(campaign_id=self.campaign.id).delete()
         DataPointComputed.objects.bulk_create(self.dwc_batch)
 
     def get_datapoints_to_agg(self,limit=None):

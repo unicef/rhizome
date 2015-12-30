@@ -11,3 +11,8 @@ before_script:
 script:
   - python manage.py test --settings=rhizome.settings.test
   - cd webapp && gulp build && gulp mocha && cd ..
+
+branches:
+  only:
+    - master
+    - development

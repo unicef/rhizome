@@ -14,7 +14,7 @@ class RefreshMasterTestCase(TestCase):
     def __init__(self, *args, **kwargs):
 
         self.location_code_input_column = 'Wardcode'
-        self.campaign_code_input_column = 'Campaign'
+        self.data_date_input_column = 'submission_date'
         self.uq_code_input_column = 'uq_id'
 
         super(RefreshMasterTestCase, self).__init__(*args, **kwargs)
@@ -104,7 +104,7 @@ class RefreshMasterTestCase(TestCase):
         ss_id, first_submission = submission_qs[0],json.loads(submission_qs[1])
 
         location_code = first_submission[self.location_code_input_column]
-        campaign_code = first_submission[self.campaign_code_input_column]
+        data_date = first_submission[self.data_date_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
 
         indicator_code = raw_indicator_list[-1]
@@ -114,7 +114,6 @@ class RefreshMasterTestCase(TestCase):
 
         ## choose meta data values for the source_map update ##
         map_location_id = Location.objects.all()[0].id
-        map_campaign_id = Campaign.objects.all()[0].id
         first_indicator_id = Indicator.objects.all()[0].id
 
         ## map location ##
@@ -124,14 +123,6 @@ class RefreshMasterTestCase(TestCase):
         )
         som_id_l.master_object_id = map_location_id
         som_id_l.save()
-
-        ## map campaign ##
-        som_id_c = SourceObjectMap.objects.get(
-            content_type = 'campaign',
-            source_object_code = campaign_code,
-        )
-        som_id_c.master_object_id = map_campaign_id
-        som_id_c.save()
 
         ## map indicator ##
         som_id_i = SourceObjectMap.objects.get(
@@ -148,15 +139,14 @@ class RefreshMasterTestCase(TestCase):
             .get(id = ss_id)
 
         ## Test Case 2 ##
-        self.assertEqual(first_submission_detail.location_id, map_location_id)
-        self.assertEqual(first_submission_detail.campaign_id, map_campaign_id)
+        self.assertEqual(first_submission_detail.get_location_id(), map_location_id)
 
         ## now that we have created the mappign, "refresh_master" ##
         ##         should create the relevant datapoints          ##
 
         mr_with_new_meta.submissions_to_doc_datapoints()
         doc_dp_ids = DocDataPoint.objects.filter(document_id =
-            self.document.id)
+            self.document.id,indicator_id=first_indicator_id)
 
         ## Test Case #3
         self.assertEqual(1,len(doc_dp_ids))
@@ -196,7 +186,11 @@ class RefreshMasterTestCase(TestCase):
         Creating the Indicator, location, Campaign, meta data needed for the
         system to aggregate / caclulate.
         '''
+
+        top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
+
         location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
@@ -218,7 +212,7 @@ class RefreshMasterTestCase(TestCase):
             guid = 'test').id
 
         for ddt in ['uq_id_column','username_column','image_col',
-            'campaign_column','location_column','location_display_name']:
+            'date_column','location_column','location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
@@ -245,8 +239,8 @@ class RefreshMasterTestCase(TestCase):
         cp_conif = DocumentDetail.objects.create(
             document_id = document_id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='campaign_column').id,
-            doc_detail_value = self.campaign_code_input_column
+                .objects.get(name='date_column').id,
+            doc_detail_value = self.data_date_input_column
         )
 
         uq_id_config = DocumentDetail.objects.create(

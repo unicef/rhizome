@@ -1,5 +1,6 @@
 from pandas import read_csv
 from pandas import notnull
+from pandas import to_datetime
 import json
 
 from django.conf import settings
@@ -41,10 +42,10 @@ class DocTransform(object):
                 .objects.get(name='location_column').id,
         ).doc_detail_value)
 
-        self.campaign_column = str(DocumentDetail.objects.get(
+        self.date_column = str(DocumentDetail.objects.get(
             document_id = self.document.id,
             doc_detail_type_id = DocDetailType\
-                .objects.get(name='campaign_column').id,
+                .objects.get(name='date_column').id,
         ).doc_detail_value)
 
         self.existing_submission_keys = SourceSubmission.objects.filter(
@@ -55,6 +56,14 @@ class DocTransform(object):
 
         self.process_file()
         self.upsert_source_object_map()
+
+    def process_date_column(self, doc_df):
+
+        dt_col = to_datetime(doc_df[self.date_column])
+        doc_df['data_date'] = dt_col
+
+        return doc_df
+
 
     def apply_doc_config_to_csv_df(self, csv_df):
         '''
@@ -97,6 +106,7 @@ class DocTransform(object):
 
         ## transform the raw data based on the documents configurations ##
         doc_df = self.apply_doc_config_to_csv_df(csv_df)
+        doc_df = self.process_date_column(doc_df)
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)
@@ -119,7 +129,6 @@ class DocTransform(object):
 
         return [x.id for x in ss]
 
-
     def upsert_source_object_map(self):
         '''
         TODO: save the source_strings so i dont have to iterate through
@@ -141,13 +150,9 @@ class DocTransform(object):
             row_dict = json.loads(row[0])
 
             rg_codes.append(row_dict[self.location_column])
-            cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
-
-        for c in list(set(cp_codes)):
-            all_codes.append(('campaign',c))
 
         for content_type, source_object_code in all_codes:
             self.source_submission_meta_upsert(content_type, source_object_code)
@@ -188,7 +193,7 @@ class DocTransform(object):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'campaign_code': submission_data[self.campaign_column],
+            'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }

@@ -62,8 +62,23 @@ class AggRefreshTestCase(TestCase):
         campaign_type1 = CampaignType.objects.create(name='test')
 
         location_ids = self.model_df_to_data(location_df,Location)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+        sub_tag = IndicatorTag.objects.create(tag_name='Polio Management',\
+            parent_tag_id = ind_tag.id)
+
+        ind_to_tag_batch = [IndicatorToTag(**{'indicator_tag_id'\
+            :sub_tag.id,'indicator_id':ind.id}) for ind in indicator_ids]
+        IndicatorToTag.objects.bulk_create(ind_to_tag_batch)
+
+        self.campaign_id = Campaign.objects.create(
+            start_date = '2016-01-01',
+            end_date = '2016-01-02',
+            campaign_type_id = campaign_type1.id,
+            top_lvl_location_id = 12907,
+            top_lvl_indicator_tag_id = ind_tag.id,
+            office_id = office_id,
+        ).id
 
         document = Document.objects.create(
             doc_title = 'test',
@@ -73,7 +88,8 @@ class AggRefreshTestCase(TestCase):
         ss = SourceSubmission.objects.create(
             document_id = document.id,
             submission_json = '',
-            row_number = 0
+            row_number = 0,
+            data_date = '2016-01-01'
         ).id
 
 
@@ -97,10 +113,10 @@ class AggRefreshTestCase(TestCase):
         for row_ix,row_data in self.test_df.iterrows():
 
             dp_id = self.create_datapoint(row_data.location_id, row_data\
-                .campaign_id, row_data.indicator_id, row_data.value)
+                .data_date, row_data.indicator_id, row_data.value)
 
-
-    def create_datapoint(self, location_id, campaign_id, indicator_id, value):
+    # def create_datapoint(self, **kwargs):
+    def create_datapoint(self, location_id, data_date, indicator_id, value):
         '''
         Right now this is being performed as a database insert.  I would like to
         Test this against the data entry resource, but this will do for now
@@ -112,7 +128,7 @@ class AggRefreshTestCase(TestCase):
 
         dp = DataPoint.objects.create(
             location_id = location_id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             indicator_id = indicator_id,
             value = value,
             changed_by_id = self.user.id,
@@ -140,46 +156,48 @@ class AggRefreshTestCase(TestCase):
         self.set_up()
         self.create_raw_datapoints()
 
-        indicator_id, campaign_id, raw_location_id,\
+        indicator_id, data_date, raw_location_id,\
             agg_location_id, null_location_id,NaN_location_id = \
-            22,111,12910,12907,12928,12913
+            22,'2016-01-01',12910,12907,12928,12913
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
 
         DataPoint.objects.filter(
             indicator_id = indicator_id,
-            campaign_id = campaign_id,
+            # data_date = data_date,
             location_id = null_location_id
         ).update(value=None)
 
         DataPoint.objects.filter(
             indicator_id = indicator_id,
-            campaign_id = campaign_id,
+            # data_date = data_date,
             location_id = NaN_location_id
         ).update(value='NaN')
 
         dps = DataPoint.objects.filter(\
             indicator_id = indicator_id,
-            campaign_id = campaign_id,
+            # data_date = data_date,
             location_id__in = location_ids,
             value__isnull = False
         ).values_list('id','value')
 
         sum_dp_value = sum([y for x,y in dps if not isnan(y)])
 
-        ag_r = AggRefresh()
+        agg_r = AggRefresh(self.campaign_id)
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
         #################################################
 
-        raw_value = DataPoint.objects.get(campaign_id = campaign_id,
+        raw_value = DataPoint.objects.get(
+            # data_date = data_date,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
 
-        raw_value_in_agg = AggDataPoint.objects.get(campaign_id = campaign_id,
+        raw_value_in_agg = AggDataPoint.objects.get(
+            # data_date = data_date,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
@@ -192,7 +210,7 @@ class AggRefreshTestCase(TestCase):
 
         agg_value = AggDataPoint.objects.get(
             indicator_id = indicator_id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             location_id = agg_location_id
         ).value
 
@@ -203,14 +221,15 @@ class AggRefreshTestCase(TestCase):
         ######################################################
 
         override_value = 909090
-        agg_override_dp = self.create_datapoint(agg_location_id,campaign_id,\
+        agg_override_dp = self.create_datapoint(agg_location_id,data_date,\
             indicator_id, override_value)
 
-        ar = AggRefresh()
+        ar = AggRefresh(self.campaign_id)
 
-        override_value_in_agg = AggDataPoint.objects.get(campaign_id =\
-            campaign_id ,indicator_id = indicator_id, location_id =\
-             agg_location_id).value
+        override_value_in_agg = AggDataPoint.objects.get(\
+            campaign_id = self.campaign_id ,\
+            indicator_id = indicator_id,\
+            location_id = agg_location_id).value
 
         self.assertEqual(override_value, override_value_in_agg)
 
@@ -225,33 +244,34 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
         self.create_raw_datapoints()
-        indicator_id, campaign_id, raw_location_id,\
-            agg_location_id = 22,111,12910,12907
+        indicator_id, data_date, raw_location_id,\
+            agg_location_id = 22,'2016-01-01',12910,12907
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
 
         dp_values = DataPoint.objects.filter(\
             indicator_id = indicator_id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id__in = location_ids
             ).values_list('value',flat=True)
 
 
         sum_dp_value = sum(dp_values)
 
-        cr = AggRefresh()
+        ar = AggRefresh(self.campaign_id)
 
         ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
         ############################################################
 
-        raw_value = DataPoint.objects.get(campaign_id = campaign_id,
+        raw_value = DataPoint.objects.get(data_date = data_date,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
 
-        raw_value_in_agg = DataPointComputed.objects.get(campaign_id = campaign_id,
+        raw_value_in_agg = DataPointComputed.objects.get(\
+            campaign_id = self.campaign_id,
             indicator_id = indicator_id,
             location_id = raw_location_id)\
             .value
@@ -282,7 +302,7 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
 
-        campaign_id, location_id, agg_location_id = 111,12910,12907
+        data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         val_1, val_2, val_3 = 303, 808, 909
 
         ## create the parent and sub indicators ##
@@ -291,30 +311,40 @@ class AggRefreshTestCase(TestCase):
             short_name = 'Number of Avoidable Deaths',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = parent_indicator.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name = 'Number of Deaths due to Conflict',
             short_name = 'Number of Deaths due to Conflict',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_1.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_2 = Indicator.objects.create(
             name = 'Number of Deaths due to Malaria',
             short_name = 'Number of Deaths due to Malaria',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_2.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_3 = Indicator.objects.create(
             name = 'Number of Deaths due to Hunger',
             short_name = 'Number of Deaths due to Hunger',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_3.id,\
+            campaign_id = self.campaign_id)
 
         pct_indicator = Indicator.objects.create(
             name = 'pct of Deaths due to Hunger',
             short_name = 'pct of Deaths due to Hunger',
             data_format = 'pct'
         )
+        CampaignToIndicator.objects.create(indicator_id = pct_indicator.id,\
+            campaign_id = self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -348,7 +378,7 @@ class AggRefreshTestCase(TestCase):
         ## create the datapoints ##
         dp_1 = DataPoint.objects.create(
             indicator_id = sub_indicator_1.id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id = location_id,
             value = val_1,
             changed_by_id = self.user.id,
@@ -357,7 +387,7 @@ class AggRefreshTestCase(TestCase):
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_2.id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id = location_id,
             value = val_2,
             changed_by_id = self.user.id,
@@ -366,7 +396,7 @@ class AggRefreshTestCase(TestCase):
         )
         dp_3 = DataPoint.objects.create(
             indicator_id = sub_indicator_3.id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id = location_id,
             value = val_3,
             changed_by_id = self.user.id,
@@ -374,17 +404,17 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        cr = AggRefresh()
+        cr = AggRefresh(self.campaign_id)
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             location_id = location_id
         ).value
 
         calc_value_pct = DataPointComputed.objects.get(
             indicator_id = pct_indicator.id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             location_id = location_id
         ).value
 
@@ -409,7 +439,7 @@ class AggRefreshTestCase(TestCase):
 
         self.set_up()
 
-        campaign_id, location_id, agg_location_id = 111,12910,12907
+        data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         x, y = 303.00, 808.00
 
         ## create the parent and sub indicators ##
@@ -418,18 +448,24 @@ class AggRefreshTestCase(TestCase):
             short_name = 'Refsual Conversion',
             data_format = 'pct'
         )
+        CampaignToIndicator.objects.create(indicator_id = parent_indicator.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_part = Indicator.objects.create(
             name = 'Refusals After Revisit',
             short_name = 'Refusals After Revisit',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_part.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_denom = Indicator.objects.create(
             name = 'Refusals Before Revisit',
             short_name = 'Refusals Before Revisit',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_denom.id,\
+            campaign_id = self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -446,7 +482,7 @@ class AggRefreshTestCase(TestCase):
         ## create the datapoints ##
         dp_1 = DataPoint.objects.create(
             indicator_id = sub_indicator_denom.id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id = location_id,
             value = x,
             changed_by_id = self.user.id,
@@ -455,7 +491,7 @@ class AggRefreshTestCase(TestCase):
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_part.id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             location_id = location_id,
             value = y,
             changed_by_id = self.user.id,
@@ -463,11 +499,11 @@ class AggRefreshTestCase(TestCase):
             cache_job_id = -1,
         )
 
-        cr = AggRefresh()
+        cr = AggRefresh(self.campaign_id)
 
         calc_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             location_id = location_id
         ).value
 
@@ -475,7 +511,7 @@ class AggRefreshTestCase(TestCase):
         target_value = (x-y) / x
         self.assertEqual(round(calc_value,4),round(target_value,4))
 
-    def test_recursive_sum(self):
+    def _recursive_sum(self):
         '''
         Consider the case in which we have "number of missed children" which is
         the sum of "missed children due to absence", "missed children due to
@@ -490,60 +526,79 @@ class AggRefreshTestCase(TestCase):
         '''
 
         self.set_up()
-        campaign_id, location_id = 111,12910
+        data_date, location_id = '2016-01-01',12910
 
         parent_indicator = Indicator.objects.create(
             name = 'Number of Avoidable Deaths',
             short_name = 'Number of Avoidable Deaths',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = parent_indicator.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name = 'Number of Deaths due to Conflict',
             short_name = 'Number of Deaths due to Conflict',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_1.id,\
+            campaign_id = self.campaign_id)
 
         sub_sub_indicator_1 = Indicator.objects.create(
             name = 'Number Conflict Deaths - Children',
             short_name = 'Conflict Deaths - Children',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_sub_indicator_1.id,\
+            campaign_id = self.campaign_id)
 
         sub_sub_indicator_2 = Indicator.objects.create(
             name = 'Number of Adult Civilian Deaths',
             short_name = 'Number of Adult Civilian Deaths',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_sub_indicator_2.id,\
+            campaign_id = self.campaign_id)
 
         sub_sub_indicator_3 = Indicator.objects.create(
             name = 'Number of Conflict Deaths - Militants',
             short_name = 'Conflict Deaths - Militants',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_sub_indicator_3.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_2 = Indicator.objects.create(
             name = 'Number of Deaths due to Malaria',
             short_name = 'Number of Deaths due to Malaria',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_2.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_2_sub_1 = Indicator.objects.create(
             name = 'Number of Deaths due to Malaria -- Child had No Net',
             short_name = 'Number of Deaths due to Malaria -- no net',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_2_sub_1.id,\
+            campaign_id = self.campaign_id)
+
         sub_indicator_2_sub_2 = Indicator.objects.create(
             name = 'Number of Deaths due to Malaria -- Child had No Medicine',
             short_name = 'Number of Deaths due to Malaria -- no Medicie',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_2_sub_2.id,\
+            campaign_id = self.campaign_id)
 
         sub_indicator_3 = Indicator.objects.create(
             name = 'Number of Deaths due to Hunger',
             short_name = 'Number of Deaths due to Hunger',
             data_format = 'int'
         )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_3.id,\
+            campaign_id = self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -605,14 +660,14 @@ class AggRefreshTestCase(TestCase):
         }
 
         for k,v in values_to_insert.iteritems():
-            self.create_datapoint(location_id, campaign_id, k, v)
+            self.create_datapoint(location_id, data_date, k, v)
 
-        ar = AggRefresh()
+        ar = AggRefresh(self.campaign_id)
 
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
             location_id = location_id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             indicator_id = parent_indicator,
         ).value
 
@@ -624,7 +679,7 @@ class AggRefreshTestCase(TestCase):
         sub_2_target_val = values_to_insert[sub_indicator_2.id]
         sub_2_actual_val = DataPointComputed.objects.get(
             location_id = location_id,
-            campaign_id = campaign_id,
+            data_date = data_date,
             indicator_id = sub_indicator_2.id,
         ).value
 
