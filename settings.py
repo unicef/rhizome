@@ -82,7 +82,6 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'rhizome',
         'USER': 'djangoapp',
-	    # 'PASSWORD': 'w3b@p01i0',
         'PASSWORD': '3r@d1c@tep0l!0',
         'HOST': '127.0.0.1',
         'PORT': '5432',
