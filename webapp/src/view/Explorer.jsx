@@ -1,10 +1,17 @@
+import _ from 'lodash'
 import React from 'react'
+import api from 'data/api'
+
 import DateRangePicker from 'component/DateTimePicker.jsx'
+import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
 
 var Explorer = React.createClass({
 
   getInitialState: function () {
     return {
+      indicators: [],
+      indicatorSelected: [],
       campaign: {
         start: '',
         end: ''
@@ -12,8 +19,27 @@ var Explorer = React.createClass({
     }
   },
 
+  componentWillMount: function () {
+    api.indicatorsTree()
+      .then(response => {
+        this.setState({
+          indicators: response.objects,
+          indicatorMap: _.indexBy(response.flat, 'id')
+        })
+      })
+  },
+
   updateDateRangePicker: function (key, value) {
     this.state.campaign[key] = value
+  },
+
+  addIndicators: function (id) {
+    this.state.indicatorSelected.push(this.state.indicatorMap[id])
+    this.forceUpdate()
+  },
+
+  removeIndicatored: function (id) {
+    _.remove(this.state.indicatorSelected, {id: id})
   },
 
   render: function () {
@@ -44,8 +70,11 @@ var Explorer = React.createClass({
 
               <div>
                 <label htmlFor='indicators'>Indicators</label>
-                <div id='indicatorSelector'></div>
-                <div id='indicatorList'></div>
+                <IndicatorDropdownMenu
+                  indicators={this.state.indicators}
+                  text='Choose Indicators'
+                  sendValue={this.addIndicators} />
+                <List items={this.state.indicatorSelected} removeItem={this.removeIndicatored} />
               </div>
 
               <div>
