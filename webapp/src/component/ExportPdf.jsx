@@ -62,8 +62,8 @@ var ExportPdf = React.createClass({
 
   render () {
     return (
-      <div className='dropdown-list cd-titlebar-margin'>
-        <a className={this.props.className} onClick={this._onExportDashboard} disabled={this.state.isFetching}>
+      <div className={'dropdown-list cd-titlebar-margin' + (this.state.isFetching ? ' inactive' : ' inactive')}>
+        <a className={this.props.className + (this.state.isFetching ? ' inactive' : '')} onClick={this._onExportDashboard}>
           {this.state.label + this.props.fileType}
         </a>
         <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>
