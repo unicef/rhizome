@@ -113,12 +113,17 @@ TEMPLATE_DIRS = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_ROOT = '/var/www/apps/rhizome/'
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, "static"),
-    os.path.join(BASE_DIR, "assets/bundles"),
-)
+STATIC_ROOT = os.path.join(ROOT_DIR, 'apps/rhizome/webapp/public/static')
+
+# todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
+
+STATICFILES_DIRS = [
+    
+]
+
 
 WEBPACK_LOADER = {
     'BUNDLE_DIR_NAME': 'bundles/',
