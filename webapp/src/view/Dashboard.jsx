@@ -356,8 +356,7 @@ var Dashboard = React.createClass({
       </div>)
     }
 
-    // waffle.switch_is_active('pdf')
-    let exportPdf = dashboardName === 'Management Dashboard'
+    let exportPdf = (waffle.switch_is_active('pdf') && dashboardName === 'Management Dashboard')
       ? (<ExportPdf className='dropdown-list font-weight-600 export-pdf' />)
       : ''
 
