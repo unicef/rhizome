@@ -53,7 +53,13 @@ class LocationResource(BaseModelResource):
 
         except KeyError:
             location_ids = get_locations_to_return_from_url(request)
+
+
             qs = Location.objects.filter(id__in=location_ids).values()
+
+            print '==='
+            print len(qs)
+            print '==='
 
         return qs
 

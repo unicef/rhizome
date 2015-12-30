@@ -63,6 +63,6 @@ class LocationResourceTest(ResourceTestCase):
         self.assertEqual(self.top_lvl_location.id,\
             response_data['meta']['top_lvl_location_id'])
 
-        self.assertEqual(len(response_data), 2)
+        self.assertEqual(len(response_data['objects']), 2)
 
         # self.assertNotEqual(IndicatorTag.objects.all()[0].id, -1)

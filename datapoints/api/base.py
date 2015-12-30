@@ -281,20 +281,19 @@ def get_locations_to_return_from_url(request):
     TO DO - Move all advanced logic from location resource here.
 
     '''
-
     try:
         location_id__in = request.GET['location_id__in']
     except KeyError:
         location_id__in = []
 
     top_lvl_location_id = LocationPermission.objects\
-        .get(user_id=request.user.id).id
+        .get(user_id=request.user.id).top_lvl_location_id
 
     location_id__in.append(top_lvl_location_id)
     location_ids = LocationTree.objects\
         .filter(parent_location_id__in = location_id__in)\
         .values_list('location_id',flat=True)
-
+        
     return location_ids
 
 
