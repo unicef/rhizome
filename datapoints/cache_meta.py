@@ -29,7 +29,7 @@ def calculate_campaign_percentage_complete():
             indicator_id__in = all_indicators
         ).count()
 
-        c.management_dash_pct_complete = ind_count / float(len(all_indicators))
+        c.pct_complete = ind_count / float(len(all_indicators))
         c.save()
 
 class IndicatorCache(object):
