@@ -13,7 +13,6 @@ export default React.createClass({
 
   render: function () {
     var dashboards = this.state.dashboards
-
     var builtins = NavMenuItem.fromArray(_(dashboards)
         .filter(d => (d.builtin && d.id !== -4 && d.title.indexOf('Homepage') === -1))
         .map(function (d) {

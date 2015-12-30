@@ -64,27 +64,21 @@ var NavigationStore = Reflux.createStore({
 
     // Take the first location alphabetically at the highest geographic level
     // available as the default location for this dashboard
-    var office = _.min(offices, _.property('id'))
+    // var office = _.min(offices, _.property('id'))
 
     this.dashboards = _(allDashboards)
       .map(function (d) {
         // Find the latest campaign for the chosen location
-        var campaign = campaigns
-          .filter(c => {
-            return office.id === c.office_id
-          })
-          .max(c => {
-            return moment(c.start_date, 'YYYY-MM-DD').valueOf()
-          })
+        // var campaign = campaigns
+        //   .filter(c => {
+        //     return office.id === c.office_id
+        //   })
+        //   .max(c => {
+        //     return moment(c.start_date, 'YYYY-MM-DD').valueOf()
+        //   })
 
-        let path
-        try {
-          path = d.builtin
-            ? '/' + office.name + '/' + moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
-            : '/'
-        } catch (err) {
-          path = '/'
-        }
+        var path = '/'
+
         // Patch the non-comformant API response
         d.charts = d.charts || d.dashboard_json
 
