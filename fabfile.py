@@ -102,6 +102,7 @@ def _push_to_remote():
 
         # add waffle_switch pdf for exporting pdf
         run(remote_manage_path + " waffle_switch pdf on --create")
+        run(remote_manage_path + " waffle_switch image off --create")
 
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
