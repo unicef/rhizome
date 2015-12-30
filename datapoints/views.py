@@ -15,9 +15,10 @@ from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
 
 @waffle_switch('pdf')
-def export_pdf(request):
+def export_file(request):
+    file_type = request.GET['type']
     url = request.GET['path']
-    file_name = 'dashboards.pdf'
+    file_name = 'dashboards.' + file_type
     css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
 
     cookie = {}

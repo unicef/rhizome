@@ -2,13 +2,14 @@ import React from 'react'
 
 var ExportPdf = React.createClass({
   propTypes: {
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    fileType: React.PropTypes.string
   },
 
   defaults: {
-    label: 'Export PDF',
+    label: 'Export To ',
     isFetching: false,
-    url: '/datapoints/dashboards/export_pdf/?path=',
+    url: '/datapoints/dashboards/export_file/?',
     interval: 1000,
     cookieName: 'fileDownloadToken'
   },
@@ -33,10 +34,12 @@ var ExportPdf = React.createClass({
   },
 
   _onExportDashboard () {
+    var fileType = 'type=' + this.props.fileType
+    var path = 'path=' + window.location.href
     this.setState({
-      label: 'Fetching...',
+      label: 'Fetching ',
       isFetching: true,
-      href: this.state.url + window.location.href
+      href: this.state.url + fileType + '&' + path
     })
     var self = this
     var refreshIntervalId = window.setInterval(() => {
@@ -49,7 +52,7 @@ var ExportPdf = React.createClass({
 
   _isCompleteExportDashboard (refreshIntervalId) {
     this.setState({
-      label: 'Export PDF',
+      label: 'Export To ',
       isFetching: false,
       href: 'about:blank'
     })
@@ -61,7 +64,7 @@ var ExportPdf = React.createClass({
     return (
       <div className='dropdown-list cd-titlebar-margin'>
         <a className={this.props.className} onClick={this._onExportDashboard} disabled={this.state.isFetching}>
-          {this.state.label}
+          {this.state.label + this.props.fileType}
         </a>
         <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>
       </div>
