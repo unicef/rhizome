@@ -290,10 +290,12 @@ def get_locations_to_return_from_url(request):
         .get(user_id=request.user.id).top_lvl_location_id
 
     location_id__in.append(top_lvl_location_id)
-    location_ids = LocationTree.objects\
+    location_ids = list(LocationTree.objects\
         .filter(parent_location_id__in = location_id__in)\
-        .values_list('location_id',flat=True)
-        
+        .values_list('location_id',flat=True))
+
+    location_ids.append(top_lvl_location_id)
+
     return location_ids
 
 

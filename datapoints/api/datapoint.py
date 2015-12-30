@@ -110,7 +110,7 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        location_ids = self.get_locations_to_return_from_url(request)
+        location_ids = get_locations_to_return_from_url(request)
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
