@@ -1,7 +1,8 @@
 import json
 
 from datapoints.models import MinGeo
-from datapoints.api.base import BaseNonModelResource
+from datapoints.api.base import BaseNonModelResource, \
+    get_locations_to_return_from_url
 from tastypie import fields
 from tastypie.resources import ALL
 
@@ -39,7 +40,7 @@ class GeoResource(BaseNonModelResource):
         '''
 
         self.err = None
-        err, locations_to_return = self.get_locations_to_return_from_url(request)
+        locations_to_return = self.get_locations_to_return_from_url(request)
         # since this is not a model resource i will filter explicitly #
 
         if err:

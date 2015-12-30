@@ -20,7 +20,8 @@ except ImportError:
     def csrf_exempt(func):
         return func
 
-from datapoints.models import LocationType, Location
+from datapoints.models import LocationType, Location, LocationPermission,\
+    LocationTree
 from datapoints.api.serialize import CustomSerializer
 
 
@@ -259,100 +260,34 @@ class BaseNonModelResource(Resource):
         bundle.data.pop("resource_uri", None)
         return bundle
 
-    def parse_url_strings(self, query_dict):
-        '''
-        As the geo endpoint is based off of the location/parent_location paremeter
-        we go through a pretty hacky try / except frenzy in order to find the
-        parameters necessary to get location/shape data for the front end.  The
-        parameters here for location_in,level, and parent_location in were
-        constructed in accordance to the request from the front end team.
-        '''
+def get_locations_to_return_from_url(request):
+    '''
+    This method is used in both the /geo and /datapoint endpoints.  Based
+    on the values parsed from the URL parameters find the locations needed
+    to fulfill the request based on the four rules below.
+    1  region__in returns geo data for the regions requested
+    2. passing only parent_region__in  should return the shapes for all the
+       immediate children in that region if no level parameter is supplied
+    3. no params - return locations that the user can see.
 
-        self.location__in, self.parent_location__in = \
-            None, None
+    TO DO - Move all advanced logic from location resource here.
 
-        try:
-            self.location__in = [int(r) for r in query_dict['location__in'].split(',')]
-        except KeyError:
-            pass
-        except ValueError:
-            pass
+    '''
 
-        try:
-            admin_level = query_dict['admin_level']
-            self.location_type_id = LocationType.objects.get(admin_level=admin_level).id
-        except KeyError:
-            self.location_type_id = None
-        except ObjectDoesNotExist:
-            all_r_types = LocationType.objects.all().values_list('name', flat=True)
-            err = 'location type doesnt exist. options are:  %s' % all_r_types
-            self.location_type_id = None
-            return err, []
+    try:
+        location_id__in = request.GET['location_id__in']
+    except KeyError:
+        location_id__in = []
 
-        try:
-            self.parent_location__in = [int(r) for r in query_dict['parent_location__in'].split(',')]
-        except KeyError:
-            pass
-        except ValueError:
-            pass
+    top_lvl_location_id = LocationPermission.objects\
+        .get(user_id=request.user.id).id
 
-        return None
+    location_id__in.append(top_lvl_location_id)
+    location_ids = LocationTree.objects\
+        .filter(parent_location_id__in = location_id__in)\
+        .values_list('location_id',flat=True)
 
-    def get_locations_to_return_from_url(self, request):
-        '''
-        This method is used in both the /geo and /datapoint endpoints.  Based
-        on the values parsed from the URL parameters find the locations needed
-        to fulfill the request based on the four rules below.
-        1  region__in returns geo data for the regions requested
-        2. parent_region__in + level should return the shapes for all the child
-           regions at the specified level that are within the region specified
-        3. passing only parent_region__in  should return the shapes for all the
-           immediate children in that region if no level parameter is supplied
-        4. no params - return top 10 regions.
-
-        '''
-
-        # attach these to self and return only error #
-        err = self.parse_url_strings(request.GET)
-
-        if err:
-            self.err = err
-            return err, []
-
-        # CASE 1 ##
-        if self.location__in is not None:
-
-            location_ids = Location.objects.filter(id__in=self.location__in) \
-                .values_list('id', flat=True)
-
-        # CASE 2 ##
-        elif self.parent_location__in is not None and self.location_type_id is not None:
-
-            location_qs = Location.objects.raw('''
-                SELECT * FROM location_tree lt
-                INNER JOIN location l
-                ON lt.location_id = l.id
-                AND lt.parent_location_id = ANY(%s)
-                INNER JOIN location_type ltype
-                ON l.location_type_id = ltype.id
-                AND ltype.admin_level = %s
-                ''', [self.parent_location__in, self.location_type_id])
-
-            location_ids = [l.id for l in location_qs]
-
-        # CASE 3 #
-
-        elif self.parent_location__in is not None and self.location_type_id is None:
-
-            location_ids = list(self.parent_location__in) + list(Location.objects.filter(
-                parent_location__in=self.parent_location__in).values_list('id', flat=True))
-
-        # CASE 4 ##
-        else:
-            location_ids = Location.objects.filter(parent_location_id__isnull=True). \
-                values_list('id', flat=True)
-
-        return None, location_ids
+    return location_ids
 
 
 def html_decorator(func):

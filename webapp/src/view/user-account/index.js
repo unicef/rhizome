@@ -77,10 +77,6 @@ export default {
       api.location_responsibility({ user_id: this.$parent.$data.user_id }, null, {'cache-control': 'no-cache'}).then(function (data) {
         var location = data.objects[0]
         var location_name = self.location_map[location.top_lvl_location_id].name
-        // _.forEach(locations, function (location) {
-        //   location.name = self.location_map[location.top_lvl_location_id].name
-        // })
-        // self.$set('top_lvl_location_name', 'Planet Earth')
         self.$set('top_lvl_location_name', location_name)
         self.$set('location_responsibilities', null)
         self.$set('locationalAccessLoading', false)

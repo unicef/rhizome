@@ -11,7 +11,8 @@ from django.core.files.base import ContentFile
 from pandas import DataFrame
 from pandas import notnull
 
-from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
+from datapoints.api.base import BaseModelResource, BaseNonModelResource,\
+    DataPointsException, get_locations_to_return_from_url
 from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
     LocationType, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
     LocationPermission, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
@@ -51,7 +52,8 @@ class LocationResource(BaseModelResource):
             qs = Location.objects.filter(parent_location_id=pr_id).values()
 
         except KeyError:
-            qs = Location.objects.all().values()
+            location_ids = get_locations_to_return_from_url(request)
+            qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
 
