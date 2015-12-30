@@ -139,6 +139,9 @@ class BaseModelResource(ModelResource):
         Overrides Tastypie and calls get_list.
         """
 
+        self.top_lvl_location_id = LocationPermission.objects.get(
+            user_id = request.user.id).top_lvl_location_id
+
         allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
         #
         if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
@@ -221,11 +224,7 @@ class BaseModelResource(ModelResource):
 
             bundles.append(obj)
 
-        response_meta = {
-            'limit': None,  # paginator.get_limit(),
-            'offset': None,  # paginator.get_offset(),
-            'total_count': len(objects),
-        }
+        response_meta = self.get_response_meta(len(objects))
 
         response_data = {
             'objects': bundles,
@@ -235,6 +234,15 @@ class BaseModelResource(ModelResource):
 
         return self.create_response(request, response_data)
 
+    def get_response_meta(self, object_len):
+
+        meta_dict = {
+            'top_lvl_location_id': self.top_lvl_location_id,
+            'limit': None,  # paginator.get_limit(),
+            'offset': None,  # paginator.get_offset(),
+            'total_count': object_len,
+        }
+        return meta_dict
 
 class BaseNonModelResource(Resource):
     '''
