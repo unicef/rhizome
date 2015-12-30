@@ -19,11 +19,13 @@ var HomepageDashboardsStore = Reflux.createStore({
     this.onFetchDashboards()
   },
 
-  getDashboardByName: function (dashboardDef, officesIndex) {
-    var obj = _.find(builtins, d => _.kebabCase(d.title) === dashboardDef.name)
+  getDashboardByName: function (officeItem) {
+    var homepageString = 'homepage-' + officeItem.name.toLowerCase()
+    var obj = _.find(builtins, d => _.kebabCase(d.title) === homepageString)
+    console.log('OBJ', obj)
 
-    obj.location = dashboardDef.location
-    obj.latest_campaign_id = officesIndex[dashboardDef.id].latest_campaign_id
+    obj.location = officeItem.name
+    obj.latest_campaign_id = officeItem.latest_campaign_id
     obj.indicators = _(_.get(obj, 'charts', []))
       .pluck('indicators')
       .flatten()
@@ -157,14 +159,14 @@ var HomepageDashboardsStore = Reflux.createStore({
         id: 2
       },
       {
-        name: 'homepage-pakistan',
-        location: 'Pakistan',
-        id: 3
+        name: 'homepage-afghanistan',
+        location: 'Afghanistan',
+        id: 2
       },
       {
-        name: 'homepage-nigeria',
-        location: 'Nigeria',
-        id: 1
+        name: 'homepage-afghanistan',
+        location: 'Afghanistan',
+        id: 2
       }
     ]
 
@@ -180,12 +182,18 @@ var HomepageDashboardsStore = Reflux.createStore({
         return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
       })
 
-      let officesIndex = _.indexBy(offices, 'top_level_location_id')
+      // let officesIndex = _.indexBy(offices, 'top_level_location_id')
+
+      // var tmpdashboardDefs = offices
+      // console.log('dashboardDefs', dashboardDefs)
+      // console.log('tmpdashboardDefs', tmpdashboardDefs)
 
       this.indicators = indicators
-      var enhanced = dashboardDefs
-        .map(item => this.getDashboardByName(item, officesIndex))
+      var enhanced = offices
+        .map(item => this.getDashboardByName(item))
         .map(partialPrepare)
+
+      // console.log('enhanced', enhanced)
 
       var partialDashboardInit = _.partial((country, data) => {
         var dashboardDef = _.find(enhanced, (item) => {
