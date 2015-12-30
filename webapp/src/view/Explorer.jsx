@@ -40,6 +40,7 @@ var Explorer = React.createClass({
 
   removeIndicatored: function (id) {
     _.remove(this.state.indicatorSelected, {id: id})
+    this.forceUpdate()
   },
 
   render: function () {
