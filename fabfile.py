@@ -11,6 +11,7 @@ local_venv_path = None
 remote_work_path = '~/deploy/rhizome-work'
 remote_backend_path = '/var/www/apps/rhizome/'
 remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
+remote_manage_path = remote_backend_path + "manage.py"
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
@@ -96,6 +97,9 @@ def _push_to_remote():
 
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
+
+        # add waffle_switch pdf for exporting pdf
+        run(remote_manage_path + " waffle_switch pdf on --create")
 
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
