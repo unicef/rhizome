@@ -10,7 +10,7 @@ var ExportPdf = React.createClass({
     isFetching: false,
     url: '/datapoints/dashboards/export_pdf/?path=',
     interval: 1000,
-    cookieName: 'pdfDownloadToken'
+    cookieName: 'fileDownloadToken'
   },
 
   getInitialState () {

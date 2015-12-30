@@ -29,7 +29,7 @@ def export_pdf(request):
 
     response = HttpResponse(content=pdf_content, content_type='application/pdf')
     response['Content-Disposition'] = 'attachment; filename=' + file_name
-    response.set_cookie('pdfDownloadToken', 'true')
+    response.set_cookie('fileDownloadToken', 'true')
     return response
 
 ## OPEN VIEWS ( needs authentication, but no specific permissions )##
