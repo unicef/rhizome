@@ -10,18 +10,7 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'webapp/public/static')
-
-# todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
-
-STATICFILES_DIRS = [
-    
-]
-
+BASE_DIR = os.path.dirname(os.path.dirname(__file__)) + '/rhizome'
 LOGIN_REDIRECT_URL = '/datapoints'
 
 # Quick-start development settings - unsuitable for production
@@ -37,7 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-MEDIA_ROOT = 'media/'
+MEDIA_ROOT = '/var/www/apps/rhizome/media/'
 MEDIA_URL = '/media/'
 
 # Application definition
@@ -53,22 +42,20 @@ INSTALLED_APPS = (
     'datapoints',
     'coverage',
     'simple_history',
-    'tastypie',
-    'debug_toolbar',
     'django_cron',
-    'waffle'
+    'tastypie',
+    'waffle',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
-    'django.middleware.gzip.GZipMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
-    'waffle.middleware.WaffleMiddleware'
+    'django.middleware.gzip.GZipMiddleware',
+    'waffle.middleware.WaffleMiddleware',
 )
 
 DEBUG_TOOLBAR_PANELS = (
@@ -80,14 +67,8 @@ DEBUG_TOOLBAR_PANELS = (
 )
 
 AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',  # this is default
+    'django.contrib.auth.backends.ModelBackend', # this is default
 )
-
-CRON_CLASSES = [
-    "rhizome.cron.AggAndComputeDataPoint",
-    "rhizome.cron.MasterRefreshJob",
-    "rhizome.cron.MetaRefreshJob",
-]
 
 ANONYMOUS_USER_ID = -1
 
@@ -103,25 +84,12 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'rhizome',
         'USER': 'djangoapp',
-        'PASSWORD': 'w3b@p01i0',
+	    'PASSWORD': 'w3b@p01i0',
+        # 'PASSWORD': '3r@d1c@tep0l!0',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }
-
-ODK_SETTINGS = {
-    'JAR_FILE': '', ## download here: https://opendatakit.org/downloads/download-info/odk-briefcase/
-    'RHIZOME_USERNAME':'', ##
-    'RHIZOME_KEY':'', ##'get an API key.. http://stackoverflow.com/questions/10940983/
-    'STORAGE_DIRECTORY':'', ## /my/storage/dir',
-    'EXPORT_DIRECTORY':'', ##' /my/output/dir,
-    'ODK_USER':'', ## my_odk_username
-    'ODK_PASS':'', ## my_odk_password
-    'AGGREGATE_URL':'', ##:'https://my-odk-server.appspot.com/',
-    'API_ROOT':'http://localhost:8000/api/v1/',
-}
-
-
 
 
 # Internationalization
@@ -142,10 +110,63 @@ TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'templates'),
 )
 
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.6/howto/static-files/
+
+STATIC_ROOT = '/var/www/apps/rhizome/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+    os.path.join(BASE_DIR, "assets/bundles"),
+)
+
+WEBPACK_LOADER = {
+    'BUNDLE_DIR_NAME': 'bundles/',
+    'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
+    'POLL_DELAY': 0.2,
+    'IGNORE': ['.+\.hot-update.js', '.+\.map']
+}
+
 ## API SETTINGS ##
 
 TASTYPIE_DEFAULT_FORMATS = ['json']
 API_LIMIT_PER_PAGE = 0
 TASTYPIE_FULL_DEBUG = True
 
-INTERNAL_IPS=('127.0.0.1',)
+CRON_CLASSES = [
+    "rhizome.cron.AggAndComputeDataPoint",
+    "rhizome.cron.MasterRefreshJob",
+]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/home/ubuntu/logs/django.log',
+            },
+        },
+    'loggers': {
+        'django_cron': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
+
+ODK_SETTINGS = {
+    'JAR_FILE':'/Users/john/odk/odk_briefcase_v1.4.6_production.jar',
+    'RHIZOME_USERNAME':'demo_user',
+    'RHIZOME_KEY': '67e16b36d64376ba7bf81233cd63d092d5f8582a',
+    'STORAGE_DIRECTORY':'/Users/john/odk/ODK_Briefcase_Storage/',
+    'EXPORT_DIRECTORY':'/Users/john/odk/csv_export/',
+    'ODK_USER':'mike',
+    'ODK_PASS':'nealgoldman',
+    'AGGREGATE_URL':'https://map-soweto.appspot.com/',
+    'API_ROOT':'http://localhost:8000/api/v1/',
+}
+

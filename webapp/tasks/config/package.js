@@ -6,7 +6,8 @@ export default {
     'webapp*/public*/**/*.*',
     'docs*/_build/**/*.*',
     'manage.py',
-    'requirements.txt'
+    'requirements.txt',
+    'settings.py'
   ].map(file => {
     return path.join(process.cwd(), '..') + '/' + file
   }),

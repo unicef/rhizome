@@ -98,6 +98,8 @@ def _push_to_remote():
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
 
+        run("python manage.py collectstatic --noinput")
+
         # add waffle_switch pdf for exporting pdf
         run(remote_manage_path + " waffle_switch pdf on --create")
 
