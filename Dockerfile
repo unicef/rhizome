@@ -10,7 +10,7 @@ RUN sudo apt-get install -y xvfb
 #RUN sudo apt-get remove -y wkhtmltopdf
 
 # The version for local Debian env
-RUN apt-get install -y xfonts-75dpi
+RUN sudo apt-get install -y xfonts-75dpi
 RUN wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
 RUN sudo dpkg -i wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
 RUN rm wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
