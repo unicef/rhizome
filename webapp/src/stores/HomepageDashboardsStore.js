@@ -20,6 +20,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   getDashboardByName: function (officeItem) {
+    console.log('officeItem', officeItem)
     var homepageString = 'homepage-' + officeItem.name.toLowerCase()
     var obj = _.find(builtins, d => _.kebabCase(d.title) === homepageString)
     console.log('OBJ', obj)
@@ -183,7 +184,6 @@ var HomepageDashboardsStore = Reflux.createStore({
       })
 
       // let officesIndex = _.indexBy(offices, 'top_level_location_id')
-
       // var tmpdashboardDefs = offices
       // console.log('dashboardDefs', dashboardDefs)
       // console.log('tmpdashboardDefs', tmpdashboardDefs)

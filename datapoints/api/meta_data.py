@@ -1035,13 +1035,13 @@ class OfficeResult(object):
     id = int()
     name = unicode()
     latest_campaign_id = int()
-
+    location_id = int()
 
 class OfficeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
     latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
-    top_level_location_id = fields.IntegerField(attribute='top_level_location_id')
+    location_id = fields.IntegerField(attribute='location_id')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = OfficeResult
@@ -1060,27 +1060,22 @@ class OfficeResource(BaseNonModelResource):
 
     def get_object_list(self, request):
 
-        # temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1: 43, 2: 299, 3: 45}
-        location_lookup = {1: 1, 2: 2, 3: 3}
+        top_lvl_location_id = LocationPermission.objects.get(user_id = \
+            request.user.id).top_lvl_location.id
+        user_office_id = Location.objects.get(id=top_lvl_location_id)\
+            .office_id
+        ## smarter way to find campaign with most data and latest start date#
+        latest_campaign_id = Campaign.objects.get(start_date = '2015-11-01',\
+            office_id = user_office_id).id
 
         qs = []
-        for row in Office.objects.all():
+        for x in range(0,3):
 
             office_obj = OfficeResult()
-            office_obj.id = row.id
-            office_obj.name = row.name
-
-            try:
-                office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
-                office_obj.top_level_location_id = location_lookup[row.id]
-            except KeyError:
-                office_obj.latest_campaign_id = Campaign.objects.all()\
-                    .values_list('id',flat=True)[0]
-                office_obj.top_level_location_id = Location.objects.all()\
-                    .values_list('id',flat=True)[0]
-
-                pass
+            office_obj.id = user_office_id
+            office_obj.name = Office.objects.get(id=user_office_id).name
+            office_obj.latest_campaign_id = latest_campaign_id
+            office_obj.location_id = top_lvl_location_id
 
             qs.append(office_obj)
 
