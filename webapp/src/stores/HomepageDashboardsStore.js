@@ -153,24 +153,6 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   onFetchDashboards: function () {
-    var dashboardDefs = [
-      {
-        name: 'homepage-afghanistan',
-        location: 'Afghanistan',
-        id: 2
-      },
-      {
-        name: 'homepage-afghanistan',
-        location: 'Afghanistan',
-        id: 2
-      },
-      {
-        name: 'homepage-afghanistan',
-        location: 'Afghanistan',
-        id: 2
-      }
-    ]
-
     Promise.all([
       Location.getLocations(),
       Location.getLocationTypes(),
@@ -183,17 +165,12 @@ var HomepageDashboardsStore = Reflux.createStore({
         return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
       })
 
-      // let officesIndex = _.indexBy(offices, 'top_level_location_id')
-      // var tmpdashboardDefs = offices
-      // console.log('dashboardDefs', dashboardDefs)
-      // console.log('tmpdashboardDefs', tmpdashboardDefs)
+      var dashboardDefs = offices
 
       this.indicators = indicators
       var enhanced = offices
         .map(item => this.getDashboardByName(item))
         .map(partialPrepare)
-
-      // console.log('enhanced', enhanced)
 
       var partialDashboardInit = _.partial((country, data) => {
         var dashboardDef = _.find(enhanced, (item) => {
