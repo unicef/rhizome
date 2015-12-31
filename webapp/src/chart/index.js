@@ -48,9 +48,11 @@ ChartFactory.prototype.initialize = function (el, data, options) {
   this._height = _.get(options, 'height', this._width / aspect)
 
   var svg = this._svg = d3.select(el).append('svg')
-    .attr('viewBox', '0 0 ' + this._width + ' ' + this._height)
+    .attr({
+      'viewBox': '0 0 ' + this._width + ' ' + this._height
+    })
 
-  if (browser.isIE()) {
+  if (browser.isIE() || browser.isWkhtmlToPdf()) {
     svg.attr({
       'width': this._width,
       'height': this._height
@@ -62,9 +64,9 @@ ChartFactory.prototype.initialize = function (el, data, options) {
     .attr({
       'class': 'bg',
       'x': options.margin.left,
-      'y': options.margin.top,
+      'y': 0,
       'width': this._width - options.margin.left - options.margin.right,
-      'height': h
+      'height': this._height - options.margin
     })
 
   var g = svg.append('g')

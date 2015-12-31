@@ -1,20 +1,43 @@
 from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.views import generic
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
-
 from django.template import RequestContext
 
-from pandas import DataFrame
 from datapoints.models import *
 from datapoints.forms import *
-from datapoints import agg_tasks
-from datapoints import cache_meta
 from datapoints.mixins import PermissionRequiredMixin
 
+from datapoints.pdf_utils import print_pdf
+from waffle.decorators import waffle_switch
+from rhizome.settings.base import STATICFILES_DIRS
+
+@waffle_switch('pdf')
+def export_file(request):
+    file_type = request.GET['type']
+    url = request.GET['path']
+    file_name = 'dashboards.' + file_type
+    css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
+
+    cookie = {}
+    cookie['name'] = 'sessionid'
+    cookie['value'] = request.COOKIES[cookie['name']]
+
+    if 'pdf' in file_type:
+        options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
+        content_type = 'application/pdf'
+    else:
+        options = {'javascript-delay': '5000', 'width': '1400', 'quality': '100', 'quiet': ' '}
+        content_type = 'image/JPEG'
+
+    pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+
+    response = HttpResponse(content=pdf_content, content_type=content_type)
+    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    response.set_cookie('fileDownloadToken', 'true')
+    return response
 
 ## OPEN VIEWS ( needs authentication, but no specific permissions )##
 def data_browser(request):

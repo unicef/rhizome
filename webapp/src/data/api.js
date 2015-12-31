@@ -1,14 +1,14 @@
 /* jshint browser: true */
 /* global Promise */
-var BASE_URL = '/api'
+const BASE_URL = '/api'
 
 import _ from 'lodash'
 import request from 'superagent'
 import superagentPrefix from 'superagent-prefix'
-var prefix = superagentPrefix(BASE_URL)
+const prefix = superagentPrefix(BASE_URL)
 
-import treeify from '../data/transform/treeify'
-import campaign from '../data/model/campaign'
+import treeify from 'data/transform/treeify'
+import campaign from 'data/model/campaign'
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
@@ -21,7 +21,7 @@ function getCookie (name) {
   if (document.cookie && document.cookie !== '') {
     var cookies = document.cookie.split('')
     for (var i = 0; i < cookies.length; i++) {
-      var cookie = cookies[i]// jQuery.trim(cookies[i])
+      var cookie = cookies[i] // jQuery.trim(cookies[i])
       // Does this cookie string begin with the name we want?
       if (cookie.substring(0, name.length + 1) === (name + '=')) {
         cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
@@ -89,7 +89,7 @@ function emptyResponsePoint (path, mode, defaultVersion, useDefaults) {
 }
 
 function endPoint (path, mode, defaultVersion, useDefaults) {
-  mode = (mode) ? mode.toUpperCase() : 'GET'
+  mode = mode ? mode.toUpperCase() : 'GET'
   defaultVersion = defaultVersion || 1
   useDefaults = _.isUndefined(useDefaults) ? true : useDefaults
 
@@ -118,8 +118,8 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
     }
 
     return new Promise(function (fulfill, reject) {
-      req.end(function (error, res) {
-        if (error) {
+      req.end(function (err, res) {
+        if (err) {
           reject({
             status: res.status,
             msg: res.body ? res.body.error : '',

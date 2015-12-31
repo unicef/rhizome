@@ -9,7 +9,7 @@ var DEFAULTS = {
   margin: {
     top: 12,
     right: 0,
-    bottom: 12,
+    bottom: 20,
     left: 0
   },
   scale: d3.scale.linear,

@@ -11,7 +11,7 @@ var DEFAULTS = {
   margin: {
     top: 12,
     right: 0,
-    bottom: 12,
+    bottom: 20,
     left: 0
   },
   scale: d3.scale.linear,
@@ -78,7 +78,7 @@ _.extend(LineChart.prototype, {
 
     var yScale = options.scale()
       .domain(range)
-      .range([0.95 * height, 0])
+      .range([0.9 * height, 0])
 
     var x = _.flow(options.x, dataXScale)
     var y = _.flow(options.y, yScale)

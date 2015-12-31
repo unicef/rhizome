@@ -49,8 +49,7 @@ header {
   @include block-grid-html-classes($size: large, $include-spacing: false);
 }
 
-h4,
-h6 {
+h4, h6 {
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -99,20 +98,19 @@ h6 {
     padding: 0;
     margin: 0;
   }
+  .title--wrap {
+    font-size: x-small;
+  }
   .transit-point {
     margin-top: 70%;
   }
 
-  p {
-    font-size: 8px;
-  }
-
-  h4, h6 {
-    font-size: xx-small;
-  }
-
   .chart {
     margin-bottom: 5px;
+  }
+
+  .bullet-chart {
+    margin: 2px 0;
   }
 
   .pie-charts,
@@ -140,11 +138,6 @@ h6 {
 
   .transit-points {
     right: 2em;
-  }
-
-  .bullet-chart svg {
-    width: 3.247cm;
-    height: 1.022cm;
   }
 
   .map-legend {

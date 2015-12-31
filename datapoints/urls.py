@@ -1,7 +1,5 @@
 from django.views.generic import TemplateView
-from django.contrib.auth.decorators import login_required
 from django.conf.urls import url
-from decorator_include import decorator_include
 
 from datapoints import views
 
@@ -15,6 +13,9 @@ urlpatterns = [
     url(r'^dashboards/$', views.dashboard_list,name='dashboard_list'),
     url(r'^dashboards/edit$', views.dashboard_builder,name='dashboard_builder_no_params'),
     url(r'^dashboards/edit/(?P<dashboard_id>[0-9]+)/$', views.dashboard_builder,name='dashboard_builder'),
+
+    # PRINT DASHBOARDS
+    url(r'^dashboards/export_file/?$', views.export_file, name='export_file'),
 
     ## CHART BUILDER ##
     url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder,name='chart_builder'),

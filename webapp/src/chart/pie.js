@@ -42,12 +42,12 @@ _.extend(PieChart.prototype, {
     this._height = this._width = _.get(opts, 'size', el.clientWidth)
 
     var svg = this._svg = d3.select(el).append('svg')
-      .attr('class', 'pie')
       .attr({
+        'class': 'pie',
         'viewBox': '0 0 ' + this._width + ' ' + this._height
       })
 
-    if (browser.isIE()) {
+    if (browser.isIE() || browser.isWkhtmlToPdf()) {
       svg.attr({
         'width': this._width,
         'height': this._height

@@ -82,7 +82,9 @@
     "globals": [
       "describe",
       "context",
-      "it"
+      "it",
+      "waffle",
+      "IsWkhtmlToPdf"
     ],
     "parser": "babel-eslint",
     "ignore": []
