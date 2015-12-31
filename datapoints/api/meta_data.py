@@ -1069,13 +1069,14 @@ class OfficeResource(BaseNonModelResource):
             office_id = user_office_id).id
 
         qs = []
-        for x in range(0,3):
+        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)\
+            .values_list('id',flat=True)[:3]:
 
             office_obj = OfficeResult()
             office_obj.id = user_office_id
+            office_obj.location_id = x
             office_obj.name = Office.objects.get(id=user_office_id).name
             office_obj.latest_campaign_id = latest_campaign_id
-            office_obj.location_id = top_lvl_location_id
 
             qs.append(office_obj)
 
