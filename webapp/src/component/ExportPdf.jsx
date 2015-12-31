@@ -1,5 +1,7 @@
 import React from 'react'
 
+import TitleMenu from 'component/TitleMenu.jsx'
+
 var ExportPdf = React.createClass({
   propTypes: {
     className: React.PropTypes.string,
@@ -61,11 +63,32 @@ var ExportPdf = React.createClass({
   },
 
   render () {
+    var fileList = []
+    if (waffle.switch_is_active('pdf')) {
+      fileList.push({key: 'PDF'})
+    }
+
+    if (waffle.switch_is_active('image')) {
+      fileList.push({key: 'IMAGE'})
+    }
+
+    let items = fileList.map((type) => {
+      return (
+        <li>
+          <a role='menuitem' className={this.props.className + (this.state.isFetching ? ' inactive' : '')} onClick={this._onExportDashboard}>
+            {type.key}
+          </a>
+        </li>)
+    })
+
     return (
-      <div className={'dropdown-list cd-titlebar-margin' + (this.state.isFetching ? ' inactive' : ' inactive')}>
-        <a className={this.props.className + (this.state.isFetching ? ' inactive' : '')} onClick={this._onExportDashboard}>
-          {this.state.label + this.props.fileType}
-        </a>
+      <div>
+        <TitleMenu
+          className={'font-weight-600 ' + this.props.className + (this.state.isFetching ? ' inactive' : '')}
+          icon='fa-chevron-down'
+          text='Export to'>
+          {items}
+        </TitleMenu>
         <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>
       </div>
     )

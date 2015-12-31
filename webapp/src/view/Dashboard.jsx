@@ -356,18 +356,7 @@ var Dashboard = React.createClass({
       </div>)
     }
 
-    let exportModule = waffle.switch_is_active('image')
-      ? (<div className='row'>
-          <div className='medium-6 columns'>
-            <ExportPdf className='dropdown-list font-weight-600 export-file' fileType='pdf'/>
-          </div>
-          <div className='medium-6 columns'>
-            <ExportPdf className='dropdown-list font-weight-600 export-file' fileType='jpeg'/>
-          </div>
-        </div>)
-      : (<ExportPdf className='dropdown-list font-weight-600 export-file' fileType='pdf'/>)
-
-    let exportPdf = waffle.switch_is_active('pdf') ? exportModule : ''
+    let exportModule = (<ExportPdf className='export-file' fileType='pdf'/>)
 
     return (
       <div>
@@ -378,7 +367,11 @@ var Dashboard = React.createClass({
               {settingFilter}
             </div>
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
-              {exportPdf}
+              <div className='row'>
+                <div className='medium-6 columns medium-offset-6'>
+                    {exportModule}
+                </div>
+              </div>
             </div>
             <div className='medium-3 columns'>
               <div>
