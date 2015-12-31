@@ -178,7 +178,7 @@ let ChartWizardStore = Reflux.createStore({
       .value()
 
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
-    this.data.locationFilteredList = this.data.locationList //this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
+    this.data.locationFilteredList = this.data.locationList // this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
     this.data.campaignFilteredList = this.campaignList // this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.chartTypeFilteredList = builderDefinitions.charts
