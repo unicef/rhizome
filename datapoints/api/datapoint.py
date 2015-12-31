@@ -13,7 +13,8 @@ from django.contrib.auth.models import User
 from django.http import HttpResponse
 from django.contrib.sessions.models import Session
 
-from datapoints.api.base import BaseModelResource, BaseNonModelResource
+from datapoints.api.base import BaseModelResource, BaseNonModelResource, \
+    get_locations_to_return_from_url
 from datapoints.models import DataPointComputed, Campaign, Location, Indicator, DataPointEntry
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
@@ -109,10 +110,7 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        err, location_ids = self.get_locations_to_return_from_url(request)
-        if err:
-            self.error = err
-            return []
+        location_ids = get_locations_to_return_from_url(request)
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##

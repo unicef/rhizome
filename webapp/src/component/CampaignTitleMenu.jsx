@@ -15,9 +15,8 @@ var CampaignTitleMenu = React.createClass({
 
   render: function () {
     let campaigns = this.props.campaigns.map(campaign => {
-      let percentageComplete = ' (' + Math.round(campaign.pct_complete * 100) + '% complete)'
       return _.assign({}, campaign, {
-        slug: campaign.slug + percentageComplete
+        slug: campaign.slug
       })
     })
     let campaignItems = CampaignMenuItem.fromArray(campaigns, this.props.sendValue)

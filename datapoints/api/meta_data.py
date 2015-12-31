@@ -11,13 +11,10 @@ from django.core.files.base import ContentFile
 from pandas import DataFrame
 from pandas import notnull
 
-from datapoints.api.base import BaseModelResource, BaseNonModelResource, DataPointsException
-from datapoints.models import Campaign, Location, Indicator, IndicatorTag, CampaignType, \
-    LocationType, CustomChart, CustomDashboard, CalculatedIndicatorComponent, UserGroup, \
-    LocationResponsibility, IndicatorPermission, DocDataPoint, DataPointComputed, ChartType, DataPoint, \
-    ChartTypeToIndicator, Office, IndicatorBound, IndicatorToTag, IndicatorToOffice
-from source_data.models import Document, DocumentDetail, DocumentSourceObjectMap, SourceObjectMap, DocDetailType, \
-    SourceSubmission
+from datapoints.api.base import BaseModelResource, BaseNonModelResource,\
+    DataPointsException, get_locations_to_return_from_url
+from datapoints.models import *
+from source_data.models import *
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.sync_odk import OdkSync
@@ -30,11 +27,22 @@ from django.http import HttpResponse
 
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
-        queryset = Campaign.objects.all().values()
         resource_name = 'campaign'
         filtering = {
             "id": ALL,
         }
+
+    def get_object_list(self, request):
+
+        location_ids = list(set(LocationTree.objects\
+            .filter(location_id =self.top_lvl_location_id)\
+            .values_list('parent_location_id',flat=True)))
+
+        qs = Campaign.objects.filter(top_lvl_location_id__in=location_ids)\
+            .values()
+
+        return qs
+
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -42,16 +50,16 @@ class LocationResource(BaseModelResource):
         resource_name = 'location'
 
     def get_object_list(self, request):
+        ## parent_location_id should be parent_location_id__in and all
+        ## logic then can be handled by the get_locations_to_return_from_url
+        ## method.
 
         try:
             pr_id = request.GET['parent_location_id']
-            if pr_id == '-1':
-                pr_id = None
-
             qs = Location.objects.filter(parent_location_id=pr_id).values()
-
         except KeyError:
-            qs = Location.objects.all().values()
+            location_ids = get_locations_to_return_from_url(request)
+            qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
 
@@ -628,37 +636,32 @@ class UserGroupResource(BaseModelResource):
             return UserGroup.objects.all().values()
 
 
-class LocationResponsibilityResource(BaseModelResource):
+class LocationPermissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
-        # queryset = LocationResponsibility.objects.all().values()
         resource_name = 'location_responsibility'
 
     def get_object_list(self, request):
 
-        try:
-            user_id = request.GET['user_id']
-            return LocationResponsibility.objects \
-                .filter(user_id=user_id).values()
-        except KeyError:
-            return LocationResponsibility.objects.all().values()
+        return LocationPermission.objects\
+            .filter(user_id=request.GET['user_id']).values()
 
     def obj_create(self, bundle, **kwargs):
         '''
-        If post, create file and return the JSON of that object.
-        If get, just query the source_doc table with request parameters
         '''
 
-        new_obj = LocationResponsibility.objects.create(**bundle.data)
-        bundle.obj = new_obj
-        bundle.data['id'] = new_obj.id
+        lp_obj, created = LocationPermission.objects.get_or_create(
+            user_id = bundle.data['user_id'], defaults = {
+                'top_lvl_location_id' : bundle.data['location_id']
+            })
+
+        if not created:
+            lp_obj.top_lvl_location_id = bundle.data['location_id']
+            lp_obj.save()
+
+        bundle.obj = lp_obj
+        bundle.data['id'] = lp_obj.id
+
         return bundle
-
-    def obj_delete_list(self, bundle, **kwargs):
-        """
-        """
-
-        obj_id = int(bundle.request.GET[u'id'])
-        LocationResponsibility.objects.get(id=obj_id).delete()
 
 
 class GroupPermissionResource(BaseModelResource):
@@ -1030,15 +1033,17 @@ class ChartTypeTypeResource(BaseNonModelResource):
 
 class OfficeResult(object):
     id = int()
+    country = unicode()
     name = unicode()
     latest_campaign_id = int()
-
+    location_id = int()
 
 class OfficeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
+    country = fields.CharField(attribute='country')
     latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
-    top_level_location_id = fields.IntegerField(attribute='top_level_location_id')
+    location_id = fields.IntegerField(attribute='location_id')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = OfficeResult
@@ -1057,27 +1062,24 @@ class OfficeResource(BaseNonModelResource):
 
     def get_object_list(self, request):
 
-        # temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1: 43, 2: 299, 3: 45}
-        location_lookup = {1: 1, 2: 2, 3: 3}
+        top_lvl_location_id = LocationPermission.objects.get(user_id = \
+            request.user.id).top_lvl_location.id
+        user_office_id = Location.objects.get(id=top_lvl_location_id)\
+            .office_id
+        ## smarter way to find campaign with most data and latest start date#
+        latest_campaign_id = Campaign.objects.get(start_date = '2015-11-01',\
+            office_id = user_office_id).id
 
         qs = []
-        for row in Office.objects.all():
+        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)\
+            .values_list('id',flat=True)[:3]:
 
             office_obj = OfficeResult()
-            office_obj.id = row.id
-            office_obj.name = row.name
-
-            try:
-                office_obj.latest_campaign_id = latest_campaign_lookup[row.id]
-                office_obj.top_level_location_id = location_lookup[row.id]
-            except KeyError:
-                office_obj.latest_campaign_id = Campaign.objects.all()\
-                    .values_list('id',flat=True)[0]
-                office_obj.top_level_location_id = Location.objects.all()\
-                    .values_list('id',flat=True)[0]
-
-                pass
+            office_obj.id = user_office_id
+            office_obj.location_id = x
+            office_obj.name = Office.objects.get(id=user_office_id).name
+            office_obj.country = office_obj.name
+            office_obj.latest_campaign_id = latest_campaign_id
 
             qs.append(office_obj)
 

@@ -1,5 +1,6 @@
 export default {
   'id': -8,
+  'country': 'nigeria',
   'title': 'Homepage Nigeria',
   'builtin': true,
   'charts': [{

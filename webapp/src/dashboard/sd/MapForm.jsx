@@ -109,9 +109,8 @@ var MapForm = React.createClass({
         3: 'Pakistan'
       }
       var campaigns = this.state.data.campaigns.map(campaign => {
-        let percentageComplete = ' (' + Math.round(campaign.pct_complete * 100) + '% complete)'
         return _.assign({}, campaign, {
-          slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY') + ' ' + percentageComplete
+          slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY')
         })
       })
 

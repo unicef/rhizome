@@ -113,11 +113,10 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        location_type = form.cleaned_data.get('location_type')
+        ## remove this when u remove UserAdminLevelPermission model
         UserAdminLevelPermission.objects.create(
-            user=new_user,location_type=location_type
+            user=new_user,location_type_id=1
         )
-
         return HttpResponseRedirect(self.get_success_url(new_user.id))
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):

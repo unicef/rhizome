@@ -1,7 +1,8 @@
 import json
 
 from datapoints.models import MinGeo
-from datapoints.api.base import BaseNonModelResource
+from datapoints.api.base import BaseNonModelResource, \
+    get_locations_to_return_from_url
 from tastypie import fields
 from tastypie.resources import ALL
 
@@ -38,13 +39,8 @@ class GeoResource(BaseNonModelResource):
         ugly data munging to convert the results from the DB into geojson
         '''
 
-        self.err = None
-        err, locations_to_return = self.get_locations_to_return_from_url(request)
+        locations_to_return = get_locations_to_return_from_url(request)
         # since this is not a model resource i will filter explicitly #
-
-        if err:
-            self.err = err
-            return []
 
         with_parent = None
         try:
@@ -100,7 +96,7 @@ class GeoResource(BaseNonModelResource):
         # get rid of the meta_dict. i will add my own meta data.
         data['type'] = "FeatureCollection"
         data['features'] = data['objects']
-        data['error'] = self.err
+        data['error'] = None ## fix this.
 
         data.pop("objects", None)
         data.pop("meta", None)

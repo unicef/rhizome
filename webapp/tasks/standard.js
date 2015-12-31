@@ -21,7 +21,6 @@ function standardWatch (targetFile) {
     }))
     .pipe(gulp.pipeTimer(TASK_NAME))
 }
-
 function standard () {
   return gulp.autoRegister(TASK_NAME, standardOnce, config => {
     gulp.watch(config.src, evt => {
