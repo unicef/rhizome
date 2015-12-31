@@ -16,15 +16,15 @@ header {
   display: block !important;
 }
 
+.columns {
+  position: relative !important;
+  padding-left: 0.625rem !important;
+  padding-right: 0.625rem !important;
+  float: left;
+}
+
 #management-dashboard {
   width: 1400px !important;
-
-  .columns {
-    position: relative !important;
-    padding-left: 0.625rem !important;
-    padding-right: 0.625rem !important;
-    float: left;
-  }
 
   .medium-1 {
     width: 12.5% !important;
@@ -48,6 +48,47 @@ header {
     width: 87.5% !important;
   }
   .medium-8 {
+    width: 100% !important;
+  }
+}
+
+.dashboard {
+  width: 1400px !important;
+
+  .large-1, .medium-1, .small-1 {
+    width: (100% * 1/12) !important;
+  }
+  .large-2, .medium-2, .small-2 {
+    width: (100% * 2/12) !important;
+  }
+  .large-3, .medium-3, .small-3 {
+    width: (100% * 3/12) !important;
+  }
+  .large-4, .medium-4, .small-4 {
+    width: (100% * 4/12) !important;
+  }
+  .large-5, .medium-5, .small-5 {
+    width: (100% * 5/12) !important;
+  }
+  .large-6, .medium-6, .small-6 {
+    width: (100% * 6/12) !important;
+  }
+  .large-7, .medium-7, .small-7 {
+    width: (100% * 7/12) !important;
+  }
+  .large-8, .medium-8, .small-8 {
+    width: (100% * 8/12) !important;
+  }
+  .large-9, .medium-9, .small-9 {
+    width: (100% * 9/12) !important;
+  }
+  .large-10, .medium-10, .small-10 {
+    width: (100% * 10/12) !important;
+  }
+  .large-11, .medium-11, .small-11 {
+    width: (100% * 11/12) !important;
+  }
+  .large-12, .medium-12, .small-12 {
     width: 100% !important;
   }
 }
