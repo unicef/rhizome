@@ -84,8 +84,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'rhizome',
         'USER': 'djangoapp',
-	    'PASSWORD': 'w3b@p01i0',
-        # 'PASSWORD': '3r@d1c@tep0l!0',
+	    # 'PASSWORD': 'w3b@p01i0',
+        'PASSWORD': '3r@d1c@tep0l!0',
         'HOST': '127.0.0.1',
         'PORT': '5432',
     }
@@ -114,15 +114,10 @@ TEMPLATE_DIRS = (
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
 ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(ROOT_DIR, 'apps/rhizome/webapp/public/static')
 
-# todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
-
-STATICFILES_DIRS = [
-    
-]
+STATICFILES_DIRS = []
 
 
 WEBPACK_LOADER = {

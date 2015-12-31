@@ -97,6 +97,7 @@ def _push_to_remote():
 
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
+        run("python manage.py collectstatic --noinput --settings=settings")
 
         run("python manage.py collectstatic --noinput --settings=settings")
 
