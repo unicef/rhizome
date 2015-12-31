@@ -29,7 +29,7 @@ def export_file(request):
         options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
         content_type = 'application/pdf'
     else:
-        options = {'javascript-delay': '5000', 'width': '1400', 'quality': '100', 'quiet': ' '}
+        options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
         content_type = 'image/JPEG'
 
     pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
