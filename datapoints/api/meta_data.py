@@ -1033,6 +1033,7 @@ class ChartTypeTypeResource(BaseNonModelResource):
 
 class OfficeResult(object):
     id = int()
+    country = unicode()
     name = unicode()
     latest_campaign_id = int()
     location_id = int()
@@ -1040,6 +1041,7 @@ class OfficeResult(object):
 class OfficeResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
+    country = fields.CharField(attribute='country')
     latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
     location_id = fields.IntegerField(attribute='location_id')
 
@@ -1076,6 +1078,7 @@ class OfficeResource(BaseNonModelResource):
             office_obj.id = user_office_id
             office_obj.location_id = x
             office_obj.name = Office.objects.get(id=user_office_id).name
+            office_obj.country = office_obj.name
             office_obj.latest_campaign_id = latest_campaign_id
 
             qs.append(office_obj)

@@ -20,10 +20,10 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   getDashboardByName: function (officeItem) {
-    console.log('officeItem', officeItem)
+    // console.log('officeItem', officeItem)
     var homepageString = 'homepage-' + officeItem.name.toLowerCase()
     var obj = _.find(builtins, d => _.kebabCase(d.title) === homepageString)
-    console.log('OBJ', obj)
+    // console.log('OBJ', obj)
 
     obj.location = officeItem.name
     obj.latest_campaign_id = officeItem.latest_campaign_id
@@ -172,9 +172,9 @@ var HomepageDashboardsStore = Reflux.createStore({
         .map(item => this.getDashboardByName(item))
         .map(partialPrepare)
 
-      var partialDashboardInit = _.partial((country, data) => {
+      var partialDashboardInit = _.partial((data) => {
         var dashboardDef = _.find(enhanced, (item) => {
-          return country.toLowerCase() === item.location.name.toLowerCase()
+          return data
         })
 
         return _.extend({
@@ -213,9 +213,9 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
 
         let dashboards = dataPoints.map(function (item) {
-          let country = item.data[0].campaign.slug.split('-')[0]
+          // let country = item.data[0].campaign.slug.split('-')[0]
           item.mapLoading = true
-          return partialDashboardInit(country, item)
+          return partialDashboardInit(item)
         })
 
         this.trigger({
@@ -226,7 +226,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           dashboards = dataPoints.map((item, index) => {
             item.features = countries[index]
             item.mapLoading = false
-            return partialDashboardInit(item.data[0].campaign.slug.split('-')[0], item)
+            return partialDashboardInit(item)
           })
 
           this.trigger({
