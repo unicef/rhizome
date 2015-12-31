@@ -96,7 +96,12 @@ def _push_to_remote():
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py migrate --settings=settings")
+        run("source env_var/environment_seed.env && python manage.py migrate --settings=settings")
+
+        # add environment variables
+        run("source env_var/environment_seed.env")
+
+        # echo "== COLLECT STATIC =="
         run("python manage.py collectstatic --noinput --settings=settings")
 
         # add waffle_switch pdf for exporting pdf

@@ -17,7 +17,7 @@ LOGIN_REDIRECT_URL = '/datapoints'
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f'
+SECRET_KEY = os.environ.get('SECRET_KEY','7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -26,7 +26,7 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-MEDIA_ROOT = '/var/www/apps/rhizome/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 # Application definition
@@ -63,7 +63,6 @@ DEBUG_TOOLBAR_PANELS = (
     'debug_toolbar.panels.timer.TimerPanel',
     'debug_toolbar.panels.profiling.ProfilingPanel',
     'debug_toolbar.panels.sql.SQLPanel',
-
 )
 
 AUTHENTICATION_BACKENDS = (
@@ -77,20 +76,25 @@ WSGI_APPLICATION = 'rhizome.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
+DB_NAME = os.environ.get('DB_NAME','rhizome')
+DB_USER = os.environ.get('DB_USER','djangoapp')
+DB_PASSWORD = os.environ.get('DB_PASSWORD','w3b@p01i0')
+DB_HOST = os.environ.get('DB_HOST','127.0.0.1')
+DB_PORT = os.environ.get('DB_PORT','5432')
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'rhizome',
-        'USER': 'djangoapp',
-	    # 'PASSWORD': 'w3b@p01i0',
-        'PASSWORD': '3r@d1c@tep0l!0',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': DB_NAME,
+        'USER': DB_USER,
+	    'PASSWORD': DB_PASSWORD,
+        #'PASSWORD': '3r@d1c@tep0l!0',
+        'HOST': DB_HOST,
+        'PORT': DB_PORT,
     }
 }
 
+print DATABASES
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
@@ -113,9 +117,8 @@ TEMPLATE_DIRS = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(ROOT_DIR, 'apps/rhizome/webapp/public/static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'webapp/public/static')
 
 STATICFILES_DIRS = []
 
