@@ -1,6 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from datapoints.models import Office, LocationType, Location, LocationPermission
+
 from datapoints.cache_meta import LocationTreeCache
 
 

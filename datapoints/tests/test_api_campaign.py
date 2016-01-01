@@ -24,6 +24,7 @@ class CampaignResourceTest(ResourceTestCase):
                 location_type_id = self.lt.id,
                 office_id = self.o.id,
             )
+
         self.top_lvl_location = Location.objects.create(
                 name = 'Nigeria',
                 location_code = 'Nigeria',
@@ -38,7 +39,7 @@ class CampaignResourceTest(ResourceTestCase):
                 office_id = self.o.id,
                 parent_location_id = self.top_lvl_location.id
             )
-        self.id = IndicatorTag.objects.create(tag_name='Polio')
+        self.it = IndicatorTag.objects.create(tag_name='Polio')
 
         self.ct = CampaignType.objects.create(name='NID')
         self.can_see_campaign = Campaign.objects.create(
@@ -47,7 +48,7 @@ class CampaignResourceTest(ResourceTestCase):
             office_id = self.o.id,
             campaign_type_id = self.ct.id,
             top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = 1
+            top_lvl_indicator_tag_id = self.it.id
         )
 
         self.can_not_see_campaign = Campaign.objects.create(
@@ -56,7 +57,7 @@ class CampaignResourceTest(ResourceTestCase):
             office_id = self.o.id,
             campaign_type_id = self.ct.id,
             top_lvl_location_id = self.not_allowed_to_see_location.id,
-            top_lvl_indicator_tag_id = 1
+            top_lvl_indicator_tag_id = self.it.id
         )
 
         ### set the user permission ###
