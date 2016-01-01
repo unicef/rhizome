@@ -55,11 +55,11 @@ def _build_dependencies():
         execfile(activate_this_file, dict(__file__=activate_this_file))
 
     # update/install dependencies
-    # local("cd webapp && npm install")
+    local("cd webapp && npm install")
 
     # build fe and package the project
     # with NODE_ENV=production, uglify have be done.
-    # local("cd webapp && npm run package")
+    local("cd webapp && npm run package")
 
 # push build to remote
 def _push_to_remote():
