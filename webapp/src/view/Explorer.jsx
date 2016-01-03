@@ -2,9 +2,40 @@ import _ from 'lodash'
 import React from 'react'
 import api from 'data/api'
 
+import ancestryString from 'data/transform/ancestryString'
+import treeify from 'data/transform/treeify'
+
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
+import DropdownMenu from 'component/DropdownMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+
+function filterMenu (items, pattern) {
+  if (!pattern || pattern.length < 3) {
+    return items
+  }
+
+  let match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
+
+  return _(items).map(match).flatten().value()
+}
+
+function findMatches (item, re) {
+  let matches = []
+
+  if (re.test(_.get(item, 'title'))) {
+    matches.push(_.assign({}, item, {filtered: true}))
+  }
+
+  if (!_.isEmpty(_.get(item, 'children'))) {
+    _.each(item.children, function (child) {
+      matches = matches.concat(findMatches(child, re))
+    })
+  }
+
+  return matches
+}
 
 var Explorer = React.createClass({
 
@@ -12,10 +43,13 @@ var Explorer = React.createClass({
     return {
       indicators: [],
       indicatorSelected: [],
+      locations: [],
+      locationSelected: [],
       campaign: {
         start: '',
         end: ''
-      }
+      },
+      locationSearch: ''
     }
   },
 
@@ -25,6 +59,25 @@ var Explorer = React.createClass({
         this.setState({
           indicators: response.objects,
           indicatorMap: _.indexBy(response.flat, 'id')
+        })
+      })
+    api.locations()
+      .then(response => {
+        this.setState({
+          locations: _(response.objects)
+            .map(location => {
+              return {
+                'title': location.name,
+                'value': location.id,
+                'parent': location.parent_location_id
+              }
+            })
+            .sortBy('title')
+            .reverse()
+            .thru(_.curryRight(treeify)('value'))
+            .map(ancestryString)
+            .value(),
+          locationMap: _.indexBy(response.objects, 'id')
         })
       })
   },
@@ -43,7 +96,25 @@ var Explorer = React.createClass({
     this.forceUpdate()
   },
 
+  addLocation (id) {
+    this.state.locationSelected.push(this.state.locationMap[id])
+    this.forceUpdate()
+  },
+
+  removeLocation (id) {
+    _.remove(this.state.locationSelected, {id: id})
+    this.forceUpdate()
+  },
+
+  setLocationSearch (pattern) {
+    this.setState({
+      locationSearch: pattern
+    })
+  },
+
   render: function () {
+    var locations = MenuItem.fromArray(filterMenu(this.state.locations, this.state.locationSearch), this.addLocation)
+
     return (
       <div>
         <div className='row'>
@@ -66,6 +137,14 @@ var Explorer = React.createClass({
 
               <div>
                 <label htmlFor='locations'>locations</label>
+                <DropdownMenu
+                  icon='fa-globe'
+                  text='Select Location'
+                  searchable
+                  onSearch={this.setLocationSearch}>
+                  {locations}
+                </DropdownMenu>
+                <List items={this.state.locationSelected} removeItem={this.removeLocation} />
                 <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
               </div>
 
