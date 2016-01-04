@@ -25,11 +25,13 @@ def export_file(request):
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
 
+    javascript_delay = '10000'
+
     if 'pdf' in file_type:
-        options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'quiet': ' '}
+        options = {'orientation': 'Landscape', 'javascript-delay': javascript_delay, 'quiet': ' '}
         content_type = 'application/pdf'
     else:
-        options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
+        options = {'javascript-delay': javascript_delay, 'width': '1425', 'quality': '100', 'quiet': ' '}
         content_type = 'image/JPEG'
 
     pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
