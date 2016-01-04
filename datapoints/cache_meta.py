@@ -159,14 +159,6 @@ def update_source_object_names():
 
         UNION ALL
 
-        SELECT som.master_object_id, c.slug, som.content_type
-        FROM source_object_map som
-        INNER JOIN campaign c
-            ON som.master_object_id = c.id
-            AND som.content_type = 'campaign'
-
-        UNION ALL
-
         SELECT som.master_object_id, r.name, som.content_type
         FROM source_object_map som
         INNER JOIN location r

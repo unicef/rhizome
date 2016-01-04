@@ -2,7 +2,7 @@ import json
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from pandas import read_csv, notnull
+from pandas import read_csv, notnull, to_datetime
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -219,7 +219,11 @@ class RefreshMasterTestCase(TestCase):
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
         location_ids = self.model_df_to_data(location_df,Location)
+
+        campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+        campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
         campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
