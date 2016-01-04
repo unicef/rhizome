@@ -11,3 +11,7 @@
 .font-weight-600 {
   font-weight: 600;
 }
+
+.databrowser__button {
+  width: 100%;
+}

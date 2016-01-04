@@ -9,7 +9,8 @@ var DropdownMenu = React.createClass({
     text: React.PropTypes.string,
     icon: React.PropTypes.string,
     size: React.PropTypes.string,
-    multi: React.PropTypes.bool
+    multi: React.PropTypes.bool,
+    style: React.PropTypes.string
   },
 
   getDefaultProps: function () {
@@ -30,7 +31,7 @@ var DropdownMenu = React.createClass({
       ? (<i className={['fa', this.props.icon, this.props.size].join(' ')} />)
       : null
 
-    var classes = 'menu-button'
+    var classes = 'menu-button '
 
     if (this.state.open) {
       classes += ' open'
@@ -38,7 +39,7 @@ var DropdownMenu = React.createClass({
 
     return (
       <span className={classes}>
-        <a className='button' role='button' onClick={this._toggleMenu}>
+        <a className={'button ' + this.props.style} role='button' onClick={this._toggleMenu}>
           {icon} {this.props.text}
         </a>
       </span>

@@ -5,11 +5,12 @@ import api from 'data/api'
 import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
 
+import DropdownMenu from 'component/DropdownMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
+
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
-import DropdownMenu from 'component/DropdownMenu.jsx'
-import MenuItem from 'component/MenuItem.jsx'
 
 function filterMenu (items, pattern) {
   if (!pattern || pattern.length < 3) {
@@ -38,7 +39,6 @@ function findMatches (item, re) {
 }
 
 var Explorer = React.createClass({
-
   getInitialState: function () {
     return {
       indicators: [],
@@ -96,7 +96,7 @@ var Explorer = React.createClass({
     this.forceUpdate()
   },
 
-  addLocation (id) {
+  addLocations (id) {
     this.state.locationSelected.push(this.state.locationMap[id])
     this.forceUpdate()
   },
@@ -113,7 +113,45 @@ var Explorer = React.createClass({
   },
 
   render: function () {
-    var locations = MenuItem.fromArray(filterMenu(this.state.locations, this.state.locationSearch), this.addLocation)
+    let timePeriodSetp = (
+      <label>
+        <div>Time Period</div>
+        <DateRangePicker
+          start={this.state.campaign.start}
+          end={this.state.campaign.end}
+          sendValue={this.updateDateRangePicker}
+        />
+      </label>
+    )
+
+    let locations = MenuItem.fromArray(filterMenu(this.state.locations, this.locationSearch), this.addLocations)
+    let locationSetp = (
+      <div>
+        <label htmlFor='locations'>Locations</label>
+        <DropdownMenu
+          icon='fa-globe'
+          text='Select Location'
+          style='databrowser__button'
+          searchable
+          onSearch={this.setLocationSearch}>
+          {locations}
+        </DropdownMenu>
+        <List items={this.state.locationSelected} removeItem={this.removeLocation} />
+        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+      </div>
+    )
+
+    let indicatorSetp = (
+      <div>
+        <label htmlFor='indicators'>Indicators</label>
+        <IndicatorDropdownMenu
+          indicators={this.state.indicators}
+          text='Choose Indicators'
+          sendValue={this.addIndicators}
+          style='databrowser__button' />
+        <List items={this.state.indicatorSelected} removeItem={this.removeIndicatored} />
+      </div>
+    )
 
     return (
       <div>
@@ -126,37 +164,9 @@ var Explorer = React.createClass({
         <div className='row'>
           <div className='medium-3 columns'>
             <from className='inline'>
-              <label>
-                <div>Time Period</div>
-                <DateRangePicker
-                  start={this.state.campaign.start}
-                  end={this.state.campaign.end}
-                  sendValue={this.updateDateRangePicker}
-                />
-              </label>
-
-              <div>
-                <label htmlFor='locations'>locations</label>
-                <DropdownMenu
-                  icon='fa-globe'
-                  text='Select Location'
-                  searchable
-                  onSearch={this.setLocationSearch}>
-                  {locations}
-                </DropdownMenu>
-                <List items={this.state.locationSelected} removeItem={this.removeLocation} />
-                <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-              </div>
-
-              <div>
-                <label htmlFor='indicators'>Indicators</label>
-                <IndicatorDropdownMenu
-                  indicators={this.state.indicators}
-                  text='Choose Indicators'
-                  sendValue={this.addIndicators} />
-                <List items={this.state.indicatorSelected} removeItem={this.removeIndicatored} />
-              </div>
-
+              {timePeriodSetp}
+              {locationSetp}
+              {indicatorSetp}
               <div>
                 <a className='button success' role='button' v-on='click : refresh({ offset: 0 })' v-class='disabled: !hasSelection' style={{marginTop: '21px'}}>
                   <i className='fa fa-fw fa-refresh' v-class='fa-spin : table.loading'></i>&emsp;Load Data
