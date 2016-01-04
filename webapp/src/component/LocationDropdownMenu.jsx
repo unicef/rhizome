@@ -52,6 +52,10 @@ var LocationsDropDownMenu = React.createClass({
   },
 
   render: function () {
+    if (this.props.locations.length === 0) {
+      return (<button className={'button ' + this.props.style}><i className='fa fa-spinner fa-spin'></i> Loading Locations...</button>)
+    }
+
     let locations = MenuItem.fromArray(filterMenu(this.props.locations, this.state.locationSearch), this.props.sendValue)
 
     return (
