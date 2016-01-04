@@ -41,6 +41,9 @@ class Indicator(models.Model):
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now=True)
+    bound_json = JSONField(default = [])
+    tag_json = JSONField(default = [])
+    office_id = JSONField(default = [])
 
     def __unicode__(self):
         return unicode(self.name)

@@ -64,30 +64,14 @@ class LocationResource(BaseModelResource):
         return qs
 
 
-class IndicatorResult(object):
-    id = int()
-    description = unicode()
-    short_name = unicode()
-    name = unicode()
-    data_format = unicode()
-    bound_json = list()
-    tag_json = list()
-    office_id = list()
+class IndicatorResource(BaseModelResource):
 
-
-class IndicatorResource(BaseNonModelResource):
-    id = fields.IntegerField(attribute='id', null=True)
-    name = fields.CharField(attribute='name')
-    short_name = fields.CharField(attribute='short_name')
-    description = fields.CharField(attribute='description')
-    data_format = fields.CharField(attribute='data_format', null=True)
-    bound_json = fields.ListField(attribute='bound_json', null=True)
-    tag_json = fields.ListField(attribute='tag_json', null=True)
-    office_id = fields.ListField(attribute='office_id', null=True)
-
-    class Meta(BaseNonModelResource.Meta):
-        object_class = IndicatorResult
+    class Meta(BaseModelResource.Meta):
+        queryset = Indicator.objects.all().values()
         resource_name = 'indicator'
+        filtering = {
+            "id": ALL,
+        }
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -145,115 +129,6 @@ class IndicatorResource(BaseNonModelResource):
         bundle.data['id'] = ind.id
 
         return bundle
-
-    def obj_get_list(self, bundle, **kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
-
-        return self.get_object_list(bundle.request)
-
-    def get_indicator_ids_from_request(self, request):
-        '''
-        '''
-
-        try:
-            indicator_id_list = [request.GET['id']]
-            return indicator_id_list
-        except KeyError:
-            pass
-
-        try:
-            x = request.GET['id__in'].split(',')
-            return x
-        except KeyError:
-            pass
-
-        try:
-            office_id = request.GET['office_id']
-            return self.get_indicator_id_by_office(office_id)
-        except KeyError:
-            pass
-
-        return None
-
-    def build_indicator_queryset(self, indicator_id_list):
-        '''
-        Based on the indicator_ids, we make 3 requests, one for the indicators
-        one for the bounds, and another for the tags.
-        '''
-
-        tag_cols = ['indicator_id', 'indicator_tag_id']
-        bound_cols = ['indicator_id', 'bound_name', 'mn_val', 'mx_val']
-        ind_to_office_cols = ['indicator_id', 'office_id']
-
-        if indicator_id_list:
-            # get tags
-            tag_df = DataFrame(list(IndicatorToTag.objects.filter(
-                indicator_id__in=indicator_id_list).values_list(*tag_cols)), columns=tag_cols)
-
-            bound_df = DataFrame(list(
-                IndicatorBound.objects.filter(indicator_id__in=indicator_id_list).values_list(*bound_cols)
-            ), columns=bound_cols)
-
-            office_df = DataFrame(list(IndicatorToOffice.objects
-                                       .filter(indicator_id__in=indicator_id_list)
-                                       .values_list(*ind_to_office_cols)), columns=ind_to_office_cols)
-
-            qs = Indicator.objects.filter(id__in=indicator_id_list)
-
-        else:
-            tag_df = DataFrame(list(IndicatorToTag.objects.all().values_list(*tag_cols)), columns=tag_cols)
-
-            bound_df = DataFrame(list(IndicatorBound.objects.all().values_list(*bound_cols)), columns=bound_cols)
-
-            office_df = DataFrame(list(IndicatorToOffice.objects
-                                       .all().values_list(*ind_to_office_cols)),
-                                  columns=ind_to_office_cols)
-
-            qs = Indicator.objects.all()
-
-        bound_df = bound_df.where((notnull(bound_df)), None)
-        tag_df = tag_df.where((notnull(tag_df)), None)
-        # office_df = office_df.where((notnull(office_df)), None)
-
-        return qs, bound_df, tag_df, office_df
-
-    def get_object_list(self, request):
-        indicator_batch = []
-
-        indicator_id_list = self.get_indicator_ids_from_request(request)
-        qs, bound_df, tag_df, office_df = \
-            self.build_indicator_queryset(indicator_id_list)
-
-        for row in qs:
-
-            # create the ResultObject and assign the basic variables
-            ir = IndicatorResult()
-            ir.id, ir.name, ir.description, ir.short_name, ir.data_format \
-                = row.id, row.name, row.description, row.short_name, row.data_format \
-
-            # look up the bounds / tags from the data two DFs created above
-            filtered_tag_df = tag_df[tag_df['indicator_id'] == row.id]
-            filtered_bound_df = bound_df[bound_df['indicator_id'] == row.id]
-            filtered_office_df = office_df[office_df['indicator_id'] == row.id]
-
-            ir.bound_json = [row.to_dict() for ix, row in filtered_bound_df.iterrows()]
-            ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
-            ir.office_id = list(filtered_office_df['office_id'].unique())
-
-            indicator_batch.append(ir)
-
-        return indicator_batch
-
-    def get_indicator_id_by_office(self, office_id):
-
-        indicator_ids = IndicatorToOffice.objects.filter(office_id=office_id)\
-            .values_list('indicator_id', flat=True)
-
-        return indicator_ids
-
 
 class CampaignTypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
