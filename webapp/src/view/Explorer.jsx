@@ -67,18 +67,18 @@ var Explorer = React.createClass({
     this.forceUpdate()
   },
 
-  addLocations (id) {
+  addLocations: function (id) {
     this.state.locationSelected.push(this.state.locationMap[id])
     this.forceUpdate()
   },
 
-  removeLocation (id) {
+  removeLocation: function (id) {
     _.remove(this.state.locationSelected, {id: id})
     this.forceUpdate()
   },
 
   render: function () {
-    let timePeriodSetp = (
+    let timePeriodStep = (
       <label>
         <div>Time Period</div>
         <DateRangePicker
@@ -89,7 +89,7 @@ var Explorer = React.createClass({
       </label>
     )
 
-    let locationSetp = (
+    let locationStep = (
       <div>
         <label htmlFor='locations'>Locations</label>
         <LocationsDropDownMenu
@@ -102,7 +102,7 @@ var Explorer = React.createClass({
       </div>
     )
 
-    let indicatorSetp = (
+    let indicatorStep = (
       <div>
         <label htmlFor='indicators'>Indicators</label>
         <IndicatorDropdownMenu
@@ -112,6 +112,17 @@ var Explorer = React.createClass({
           style='databrowser__button' />
         <List items={this.state.indicatorSelected} removeItem={this.removeIndicatored} />
       </div>
+    )
+
+    let loadDataStep = (
+      <a className='button success'
+         role='button'
+         v-on='click : refresh({ offset: 0 })'
+         v-class='disabled: !hasSelection'
+         style={{marginTop: '21px'}} >
+        <i className='fa fa-fw fa-refresh'
+           v-class='fa-spin : table.loading'></i>&emsp;Load Data
+      </a>
     )
 
     return (
@@ -125,14 +136,10 @@ var Explorer = React.createClass({
         <div className='row'>
           <div className='medium-3 columns'>
             <from className='inline'>
-              {timePeriodSetp}
-              {locationSetp}
-              {indicatorSetp}
-              <div>
-                <a className='button success' role='button' v-on='click : refresh({ offset: 0 })' v-class='disabled: !hasSelection' style={{marginTop: '21px'}}>
-                  <i className='fa fa-fw fa-refresh' v-class='fa-spin : table.loading'></i>&emsp;Load Data
-                </a>
-              </div>
+              {timePeriodStep}
+              {locationStep}
+              {indicatorStep}
+              {loadDataStep}
             </from>
           </div>
 
