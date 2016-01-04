@@ -5,38 +5,10 @@ import api from 'data/api'
 import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
 
-import DropdownMenu from 'component/DropdownMenu.jsx'
-import MenuItem from 'component/MenuItem.jsx'
-
 import DateRangePicker from 'component/DateTimePicker.jsx'
+import LocationsDropDownMenu from 'component/LocationDropDownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
-
-function filterMenu (items, pattern) {
-  if (!pattern || pattern.length < 3) {
-    return items
-  }
-
-  let match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
-
-  return _(items).map(match).flatten().value()
-}
-
-function findMatches (item, re) {
-  let matches = []
-
-  if (re.test(_.get(item, 'title'))) {
-    matches.push(_.assign({}, item, {filtered: true}))
-  }
-
-  if (!_.isEmpty(_.get(item, 'children'))) {
-    _.each(item.children, function (child) {
-      matches = matches.concat(findMatches(child, re))
-    })
-  }
-
-  return matches
-}
 
 var Explorer = React.createClass({
   getInitialState: function () {
@@ -48,8 +20,7 @@ var Explorer = React.createClass({
       campaign: {
         start: '',
         end: ''
-      },
-      locationSearch: ''
+      }
     }
   },
 
@@ -106,12 +77,6 @@ var Explorer = React.createClass({
     this.forceUpdate()
   },
 
-  setLocationSearch (pattern) {
-    this.setState({
-      locationSearch: pattern
-    })
-  },
-
   render: function () {
     let timePeriodSetp = (
       <label>
@@ -124,18 +89,14 @@ var Explorer = React.createClass({
       </label>
     )
 
-    let locations = MenuItem.fromArray(filterMenu(this.state.locations, this.locationSearch), this.addLocations)
     let locationSetp = (
       <div>
         <label htmlFor='locations'>Locations</label>
-        <DropdownMenu
-          icon='fa-globe'
+        <LocationsDropDownMenu
+          locations={this.state.locations}
           text='Select Location'
-          style='databrowser__button'
-          searchable
-          onSearch={this.setLocationSearch}>
-          {locations}
-        </DropdownMenu>
+          sendValue={this.addLocations}
+          style='databrowser__button' />
         <List items={this.state.locationSelected} removeItem={this.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
       </div>
