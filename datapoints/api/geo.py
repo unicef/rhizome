@@ -42,16 +42,15 @@ class GeoResource(BaseNonModelResource):
         features = []
 
         try:
-            locations_to_return = Location.objects\
+            location_ids_to_return = Location.objects\
                 .filter(parent_location_id__in=request\
                 .GET['parent_location__in']).values_list('id',flat=True)
-            print 'Got Locations'
         except KeyError:
-            print 'KEYEERRORR'
-            locations_to_return = get_locations_to_return_from_url(request)
+            location_ids_to_return = get_locations_to_return_from_url(request)
 
-        polygon_values_list = MinGeo.objects.select_related('location')\
-            .filter(location_id__in=locations_to_return).all()
+        polygon_values_list = MinGeo.objects.filter(location_id__in=\
+            location_ids_to_return)
+
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
