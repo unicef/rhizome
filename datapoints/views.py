@@ -26,7 +26,7 @@ def export_file(request):
     cookie['value'] = request.COOKIES[cookie['name']]
 
     if 'pdf' in file_type:
-        options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
+        options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'quiet': ' '}
         content_type = 'application/pdf'
     else:
         options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
