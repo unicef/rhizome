@@ -6,7 +6,7 @@ import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationsDropDownMenu from 'component/LocationDropDownMenu.jsx'
+import LocationsDropDownMenu from 'component/LocationDropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 
