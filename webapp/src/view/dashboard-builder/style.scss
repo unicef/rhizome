@@ -58,7 +58,9 @@
 }
 
 .export-file {
-  width: 100%;
+  &:not(a) {
+    margin-top: 12px;
+  }
 
   &.inactive {
     background-color: $button-disabled-color;

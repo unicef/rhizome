@@ -3,7 +3,7 @@ from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from datapoints.models import CacheJob, Office, Indicator, Location, LocationType, \
-    DataPointComputed, CampaignType, Campaign, IndicatorTag
+    DataPointComputed, CampaignType, Campaign, IndicatorTag, LocationPermission
 
 class DataPointResourceTest(ResourceTestCase):
     def setUp(self):
@@ -14,6 +14,19 @@ class DataPointResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username,\
                                         'eradicate@polio.com', self.password)
+
+        self.lt = LocationType.objects.create(name='test',admin_level = 0)
+        self.o = Office.objects.create(name = 'Earth')
+
+        self.top_lvl_location = Location.objects.create(
+                name = 'Nigeria',
+                location_code = 'Nigeria',
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+            )
+
+        LocationPermission.objects.create(user_id = self.user.id,\
+            top_lvl_location_id = self.top_lvl_location.id)
 
         self.get_credentials()
 
@@ -42,10 +55,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         # 3. Create The Location
         office = Office.objects.create(name='Nigeria')
-        location_type = LocationType.objects.create(name='Country', admin_level=0)
-        location = Location.objects.create(name='Nigeria' \
-                                           , office=office
-                                           , location_type=location_type)
+        location = self.top_lvl_location
 
         # 4. Create The Campaign
         start_date = '2016-01-01'

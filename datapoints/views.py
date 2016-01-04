@@ -29,7 +29,7 @@ def export_file(request):
         options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
         content_type = 'application/pdf'
     else:
-        options = {'javascript-delay': '5000', 'width': '1400', 'quality': '100', 'quiet': ' '}
+        options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
         content_type = 'image/JPEG'
 
     pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
@@ -113,11 +113,10 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        location_type = form.cleaned_data.get('location_type')
+        ## remove this when u remove UserAdminLevelPermission model
         UserAdminLevelPermission.objects.create(
-            user=new_user,location_type=location_type
+            user=new_user,location_type_id=1
         )
-
         return HttpResponseRedirect(self.get_success_url(new_user.id))
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
@@ -146,16 +145,13 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
         return { 'location_type': lt }
 
     def form_valid(self, form):
-
         new_user = form.save()
         permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
-        form_location_type = form.cleaned_data.get('location_type')
-        permission_obj.location_type = form_location_type
+        user_location_permission = LocationPermission.objects.get(user=new_user)
+        location = Location.objects.get(id=user_location_permission.top_lvl_location_id)
+        permission_obj.location_type = location.location_type
         permission_obj.save()
-
-
         return HttpResponseRedirect(self.get_success_url())
-
 
 def html_decorator(func):
     """

@@ -1,5 +1,6 @@
 export default {
   'id': -6,
+  'country': 'afghanistan',
   'title': 'Homepage Afghanistan',
   'builtin': true,
   'charts': [{

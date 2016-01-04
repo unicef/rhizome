@@ -1,6 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
-from datapoints.models import IndicatorTag
+from datapoints.models import IndicatorTag, LocationPermission, Location,\
+    LocationType, Office
 
 class IndicatorTagResourceTest(ResourceTestCase):
     def setUp(self):
@@ -11,6 +12,18 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username,
                                              'john@john.com', self.password)
+        self.lt = LocationType.objects.create(name='test',admin_level = 0)
+        self.o = Office.objects.create(name = 'Earth')
+
+        self.top_lvl_location = Location.objects.create(
+                name = 'Nigeria',
+                location_code = 'Nigeria',
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+            )
+
+        LocationPermission.objects.create(user_id = self.user.id,\
+            top_lvl_location_id = self.top_lvl_location.id)
 
         self.get_credentials()
 

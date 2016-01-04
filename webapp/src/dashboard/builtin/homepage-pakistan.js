@@ -1,5 +1,6 @@
 export default {
   'id': -7,
+  'country': 'pakistan',
   'title': 'Homepage Pakistan',
   'builtin': true,
   'charts': [{
