@@ -26,7 +26,7 @@ def export_file(request):
     cookie['value'] = request.COOKIES[cookie['name']]
 
     if 'pdf' in file_type:
-        options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
+        options = {'orientation': 'Landscape', 'javascript-delay': '10000', 'quiet': ' '}
         content_type = 'application/pdf'
     else:
         options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
@@ -132,16 +132,13 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
         return context
 
     def form_valid(self, form):
-
         new_user = form.save()
         permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
-        form_location_type = form.cleaned_data.get('location_type')
-        permission_obj.location_type = form_location_type
+        user_location_permission = LocationPermission.objects.get(user=new_user)
+        location = Location.objects.get(id=user_location_permission.top_lvl_location_id)
+        permission_obj.location_type = location.location_type
         permission_obj.save()
-
-
         return HttpResponseRedirect(self.get_success_url())
-
 
 def html_decorator(func):
     """

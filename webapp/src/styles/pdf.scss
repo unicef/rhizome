@@ -24,7 +24,7 @@ header {
 }
 
 #management-dashboard {
-  width: 1400px !important;
+  width: 1425px !important;
 
   .medium-1 {
     width: 12.5% !important;
@@ -52,7 +52,7 @@ header {
   }
 }
 
-.dashboard {
+#nco-dashboard, #district-dashboard, .cd-charts {
   width: 1425px !important;
 
   .large-1, .medium-1, .small-1 {

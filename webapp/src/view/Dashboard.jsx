@@ -356,7 +356,7 @@ var Dashboard = React.createClass({
       </div>)
     }
 
-    let exportModule = (<ExportPdf className='export-file' fileType='pdf'/>)
+    let exportModule = (<ExportPdf className='export-file' />)
 
     return (
       <div>
