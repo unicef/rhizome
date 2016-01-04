@@ -12,7 +12,6 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('source_data', '0001_initial'),
-        ('datapoints', '0001_initial'),
     ]
 
     operations = [
@@ -153,6 +152,7 @@ class Migration(migrations.Migration):
                 ('is_valid', models.BooleanField()),
                 ('agg_on_location', models.BooleanField()),
                 ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('document', models.ForeignKey(to='source_data.Document')),
             ],
             options={
                 'db_table': 'doc_datapoint',
@@ -323,68 +323,6 @@ class Migration(migrations.Migration):
                 'permissions': (('view_office', 'View office'),),
             },
         ),
-        migrations.DeleteModel(
-            name='DocDetailType',
-        ),
-        migrations.RemoveField(
-            model_name='document',
-            name='created_by',
-        ),
-        migrations.AlterUniqueTogether(
-            name='documentdetail',
-            unique_together=set([]),
-        ),
-        migrations.RemoveField(
-            model_name='documentdetail',
-            name='doc_detail_type',
-        ),
-        migrations.RemoveField(
-            model_name='documentdetail',
-            name='document',
-        ),
-        migrations.AlterUniqueTogether(
-            name='documentsourceobjectmap',
-            unique_together=set([]),
-        ),
-        migrations.RemoveField(
-            model_name='documentsourceobjectmap',
-            name='document',
-        ),
-        migrations.RemoveField(
-            model_name='documentsourceobjectmap',
-            name='source_object_map',
-        ),
-        migrations.AlterUniqueTogether(
-            name='sourceobjectmap',
-            unique_together=set([]),
-        ),
-        migrations.RemoveField(
-            model_name='sourceobjectmap',
-            name='mapped_by',
-        ),
-        migrations.AlterUniqueTogether(
-            name='sourcesubmission',
-            unique_together=set([]),
-        ),
-        migrations.RemoveField(
-            model_name='sourcesubmission',
-            name='document',
-        ),
-        migrations.DeleteModel(
-            name='Document',
-        ),
-        migrations.DeleteModel(
-            name='DocumentDetail',
-        ),
-        migrations.DeleteModel(
-            name='DocumentSourceObjectMap',
-        ),
-        migrations.DeleteModel(
-            name='SourceObjectMap',
-        ),
-        migrations.DeleteModel(
-            name='SourceSubmission',
-        ),
         migrations.AddField(
             model_name='location',
             name='location_type',
@@ -419,11 +357,6 @@ class Migration(migrations.Migration):
             model_name='historicaldatapointentry',
             name='source_submission',
             field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='source_data.SourceSubmission', null=True),
-        ),
-        migrations.AddField(
-            model_name='docdatapoint',
-            name='document',
-            field=models.ForeignKey(to='source_data.Document'),
         ),
         migrations.AddField(
             model_name='docdatapoint',
