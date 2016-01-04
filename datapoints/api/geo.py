@@ -1,6 +1,6 @@
 import json
 
-from datapoints.models import MinGeo
+from datapoints.models import MinGeo, Location
 from datapoints.api.base import BaseNonModelResource, \
     get_locations_to_return_from_url
 from tastypie import fields
@@ -39,39 +39,28 @@ class GeoResource(BaseNonModelResource):
         ugly data munging to convert the results from the DB into geojson
         '''
 
-        locations_to_return = get_locations_to_return_from_url(request)
-        # since this is not a model resource i will filter explicitly #
-
-        with_parent = None
-        try:
-            with_parent = request.GET['with_parent']
-        except KeyError:
-            pass
-
         features = []
 
-        if with_parent is None:
-            polygon_values_list = MinGeo.objects.filter(location_id__in=locations_to_return).values()
-            for p in polygon_values_list:
-                geo_dict = json.loads(p['geo_json'])
-                geo_obj = GeoJsonResult()
-                geo_obj.location_id = p['location_id']
-                geo_obj.geometry = geo_dict['geometry']
-                geo_obj.type = geo_dict['type']
-                geo_obj.properties = {'location_id': p['location_id']}
-                features.append(geo_obj)
-        else:
-            polygon_values_list = MinGeo.objects.select_related('location')\
-                .filter(location_id__in=locations_to_return).all()
-            for p in polygon_values_list:
-                geo_obj = GeoJsonResult()
-                geo_obj.location_id = p.location.id
-                geo_obj.geometry = p.geo_json['geometry']
-                geo_obj.type = p.geo_json['type']
-                geo_obj.properties = {'location_id': p.location.id}
-                geo_obj.parent_location_id =\
-                    p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
-                features.append(geo_obj)
+        try:
+            locations_to_return = Location.objects\
+                .filter(parent_location_id__in=request\
+                .GET['parent_location__in']).values_list('id',flat=True)
+            print 'Got Locations'
+        except KeyError:
+            print 'KEYEERRORR'
+            locations_to_return = get_locations_to_return_from_url(request)
+
+        polygon_values_list = MinGeo.objects.select_related('location')\
+            .filter(location_id__in=locations_to_return).all()
+        for p in polygon_values_list:
+            geo_obj = GeoJsonResult()
+            geo_obj.location_id = p.location.id
+            geo_obj.geometry = p.geo_json['geometry']
+            geo_obj.type = p.geo_json['type']
+            geo_obj.properties = {'location_id': p.location.id}
+            geo_obj.parent_location_id =\
+                p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
+            features.append(geo_obj)
         return features
 
     def obj_get_list(self, bundle, **kwargs):
