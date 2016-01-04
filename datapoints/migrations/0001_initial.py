@@ -2,7 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import autoslug.fields
 import jsonfield.fields
 import django.db.models.deletion
 from django.conf import settings
@@ -69,7 +68,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
-                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
                 ('pct_complete', models.FloatField(default=0.001)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
@@ -189,7 +187,6 @@ class Migration(migrations.Migration):
                 ('description', models.CharField(max_length=255)),
                 ('is_reported', models.BooleanField(default=True)),
                 ('data_format', models.CharField(max_length=10)),
-                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
@@ -252,7 +249,6 @@ class Migration(migrations.Migration):
                 ('location_code', models.CharField(unique=True, max_length=255)),
                 ('latitude', models.FloatField(null=True, blank=True)),
                 ('longitude', models.FloatField(null=True, blank=True)),
-                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={

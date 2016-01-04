@@ -1,6 +1,5 @@
 from django.db import models
 
-from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 from pandas import DataFrame
@@ -41,7 +40,6 @@ class Indicator(models.Model):
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
-    slug = AutoSlugField(populate_from='name', unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -220,7 +218,6 @@ class Location(models.Model):
     office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    slug = AutoSlugField(populate_from='name', max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now=True)
     parent_location = models.ForeignKey("self", null=True)
 
@@ -332,7 +329,6 @@ class Campaign(models.Model):
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='name', unique=True)
     pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
