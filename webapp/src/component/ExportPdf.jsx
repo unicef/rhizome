@@ -39,7 +39,7 @@ var ExportPdf = React.createClass({
     var type = 'type=' + fileType
     var path = 'path=' + window.location.href
     this.setState({
-      label: 'Fetching ',
+      label: 'Fetching...',
       isFetching: true,
       href: this.state.url + type + '&' + path
     })
