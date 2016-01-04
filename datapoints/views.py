@@ -111,14 +111,6 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
         return reverse_lazy('datapoints:user_update',\
             kwargs={'pk':new_user_id})
 
-    def form_valid(self, form):
-        new_user = form.save()
-        ## remove this when u remove UserAdminLevelPermission model
-        UserAdminLevelPermission.objects.create(
-            user=new_user,location_type_id=1
-        )
-        return HttpResponseRedirect(self.get_success_url(new_user.id))
-
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
     template_name = 'user_edit.html'
@@ -138,11 +130,6 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
         context['user_id'] = user_obj.id
 
         return context
-
-    def get_initial(self):
-        user_obj = self.get_object()
-        lt = UserAdminLevelPermission.objects.get(user = user_obj).location_type
-        return { 'location_type': lt }
 
     def form_valid(self, form):
 
