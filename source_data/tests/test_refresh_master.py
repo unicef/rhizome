@@ -202,10 +202,6 @@ class RefreshMasterTestCase(TestCase):
         cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01',\
             is_error = False)
 
-        status_id = ProcessStatus.objects.create(
-                status_text = 'TO_PROCESS',
-                status_description = 'TO_PROCESS').id
-
         document_id = Document.objects.create(
             doc_title = 'test',
             created_by_id = user_id,

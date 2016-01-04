@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('datapoints', '0001_initial'),
     ]
 
     operations = [
@@ -63,34 +62,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='EtlJob',
-            fields=[
-                ('date_attempted', models.DateTimeField(auto_now=True)),
-                ('date_completed', models.DateTimeField(null=True)),
-                ('task_name', models.CharField(max_length=55)),
-                ('status', models.CharField(max_length=10)),
-                ('guid', models.CharField(max_length=40, serialize=False, primary_key=True)),
-                ('cron_guid', models.CharField(max_length=40)),
-                ('error_msg', models.TextField(null=True)),
-                ('success_msg', models.CharField(max_length=255)),
-            ],
-            options={
-                'ordering': ('-date_attempted',),
-                'db_table': 'etl_job',
-            },
-        ),
-        migrations.CreateModel(
-            name='ProcessStatus',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('status_text', models.CharField(max_length=25)),
-                ('status_description', models.CharField(max_length=255)),
-            ],
-            options={
-                'db_table': 'process_status',
-            },
-        ),
-        migrations.CreateModel(
             name='SourceObjectMap',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -110,6 +81,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('instance_guid', models.CharField(max_length=255)),
                 ('row_number', models.IntegerField()),
+                ('data_date', models.DateTimeField()),
+                ('location_code', models.CharField(max_length=1000)),
+                ('location_display', models.CharField(max_length=1000)),
                 ('submission_json', jsonfield.fields.JSONField()),
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('process_status', models.CharField(max_length=25)),
@@ -117,26 +91,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'source_submission',
-            },
-        ),
-        migrations.CreateModel(
-            name='SourceSubmissionDetail',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('username_code', models.CharField(max_length=1000)),
-                ('campaign_code', models.CharField(max_length=1000)),
-                ('location_code', models.CharField(max_length=1000)),
-                ('location_display', models.CharField(max_length=1000)),
-                ('img_location', models.CharField(max_length=1000)),
-                ('raw_data_proxy', models.CharField(max_length=1)),
-                ('document', models.ForeignKey(to='source_data.Document')),
-                ('location', models.ForeignKey(to='datapoints.Location', null=True)),
-                ('campaign', models.ForeignKey(to='datapoints.Campaign', null=True)),
-                ('source_submission', models.OneToOneField(to='source_data.SourceSubmission')),
-            ],
-            options={
-                'db_table': 'submission_detail',
-                'ordering': ('document', 'location_code', 'campaign_code'),
             },
         ),
         migrations.AddField(

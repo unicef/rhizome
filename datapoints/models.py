@@ -492,30 +492,6 @@ class LocationPermission(models.Model):
     class Meta:
         db_table = 'location_permission'
 
-class IndicatorPermission(models.Model):
-    '''
-    All users can read all indicators, but permission to update/insert/delete
-    are assigned to a group.  For instance, the security_analyst role, will be
-    permitted to edit data on the security indicators, but not for instance
-    OPV supply indicators.
-    '''
-
-    group = models.ForeignKey('auth.Group')
-    indicator = models.ForeignKey(Indicator)
-
-    class Meta:
-        db_table = 'indicator_permission'
-        unique_together = ('group', 'indicator')
-
-class UserAdminLevelPermission(models.Model):
-    '''
-    '''
-
-    user = models.OneToOneField('auth.User')
-    location_type = models.ForeignKey(LocationType)
-
-    class Meta:
-        db_table = 'user_admin_level_permission'
 
 class UserGroup(models.Model):
     '''
@@ -562,21 +538,3 @@ class CustomChart(models.Model):
 
     class Meta:
         db_table = 'custom_chart'
-
-
-class ChartType(models.Model):
-
-    name = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        db_table = 'chart_type'
-
-
-class ChartTypeToIndicator(models.Model):
-
-    indicator = models.ForeignKey(Indicator, related_name='indicator')
-    chart_type = models.ForeignKey(ChartType, related_name='chart_type')
-
-    class Meta:
-        db_table = 'chart_type_to_indicator'
-        unique_together = ('indicator', 'chart_type')

@@ -12,7 +12,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('auth', '0006_require_contenttypes_0002'),
+        ('source_data', '0001_initial'),
+        ('datapoints', '0001_initial'),
     ]
 
     operations = [
@@ -62,12 +63,58 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Campaign',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=255)),
+                ('start_date', models.DateField()),
+                ('end_date', models.DateField()),
+                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
+                ('pct_complete', models.FloatField(default=0.001)),
+                ('created_at', models.DateTimeField(auto_now=True)),
+            ],
+            options={
+                'ordering': ('-start_date',),
+                'db_table': 'campaign',
+            },
+        ),
+        migrations.CreateModel(
+            name='CampaignToIndicator',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('campaign', models.ForeignKey(to='datapoints.Campaign')),
+            ],
+            options={
+                'db_table': 'campaign_to_indicator',
+            },
+        ),
+        migrations.CreateModel(
+            name='CampaignType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(max_length=55)),
+            ],
+            options={
+                'db_table': 'campaign_type',
+            },
+        ),
+        migrations.CreateModel(
+            name='CustomChart',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('chart_json', jsonfield.fields.JSONField()),
+            ],
+            options={
+                'db_table': 'custom_chart',
+            },
+        ),
+        migrations.CreateModel(
             name='CustomDashboard',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(unique=True, max_length=255)),
                 ('description', models.CharField(max_length=1000)),
-                ('dashboard_json', jsonfield.fields.JSONField(null=True)),
+                ('layout', models.IntegerField(default=0, null=True)),
             ],
             options={
                 'db_table': 'custom_dashboard',
@@ -77,21 +124,14 @@ class Migration(migrations.Migration):
             name='DataPoint',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
+                ('cache_job', models.ForeignKey(default=-1, to='datapoints.CacheJob')),
+                ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'datapoint',
-            },
-        ),
-        migrations.CreateModel(
-            name='DataPointAbstracted',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('indicator_json', jsonfield.fields.JSONField()),
-            ],
-            options={
-                'db_table': 'datapoint_abstracted',
             },
         ),
         migrations.CreateModel(
@@ -99,6 +139,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('value', models.FloatField()),
+                ('cache_job', models.ForeignKey(default=-1, to='datapoints.CacheJob')),
+                ('campaign', models.ForeignKey(to='datapoints.Campaign')),
             ],
             options={
                 'db_table': 'datapoint_with_computed',
@@ -108,9 +150,11 @@ class Migration(migrations.Migration):
             name='DocDataPoint',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('is_valid', models.BooleanField()),
                 ('agg_on_location', models.BooleanField()),
+                ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'doc_datapoint',
@@ -120,6 +164,7 @@ class Migration(migrations.Migration):
             name='HistoricalDataPointEntry',
             fields=[
                 ('id', models.IntegerField(verbose_name='ID', db_index=True, auto_created=True, blank=True)),
+                ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(editable=False, blank=True)),
                 ('history_id', models.AutoField(serialize=False, primary_key=True)),
@@ -143,27 +188,13 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=255)),
                 ('description', models.CharField(max_length=255)),
                 ('is_reported', models.BooleanField(default=True)),
+                ('data_format', models.CharField(max_length=10)),
                 ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'ordering': ('name',),
                 'db_table': 'indicator',
-            },
-        ),
-        migrations.CreateModel(
-            name='IndicatorAbstracted',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('description', models.CharField(max_length=255)),
-                ('short_name', models.CharField(max_length=255)),
-                ('slug', models.CharField(max_length=255)),
-                ('name', models.CharField(max_length=255)),
-                ('bound_json', jsonfield.fields.JSONField()),
-                ('tag_json', jsonfield.fields.JSONField()),
-            ],
-            options={
-                'db_table': 'indicator_abstracted',
             },
         ),
         migrations.CreateModel(
@@ -181,17 +212,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='IndicatorPermission',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('group', models.ForeignKey(to='auth.Group')),
-                ('indicator', models.ForeignKey(to='datapoints.Indicator')),
-            ],
-            options={
-                'db_table': 'indicator_permission',
-            },
-        ),
-        migrations.CreateModel(
             name='IndicatorTag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -203,6 +223,16 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='IndicatorToOffice',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('indicator', models.ForeignKey(to='datapoints.Indicator')),
+            ],
+            options={
+                'db_table': 'indicator_to_office',
+            },
+        ),
+        migrations.CreateModel(
             name='IndicatorToTag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -210,7 +240,7 @@ class Migration(migrations.Migration):
                 ('indicator_tag', models.ForeignKey(to='datapoints.IndicatorTag')),
             ],
             options={
-                'ordering': ['-id'],
+                'ordering': ('-id',),
                 'db_table': 'indicator_to_tag',
             },
         ),
@@ -233,9 +263,8 @@ class Migration(migrations.Migration):
             name='LocationPermission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('read_write', models.CharField(max_length=1)),
-                ('location', models.ForeignKey(to='datapoints.Location')),
-                ('user', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('top_lvl_location', models.ForeignKey(to='datapoints.Location')),
+                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'location_permission',
@@ -257,7 +286,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('lvl', models.IntegerField()),
-                ('immediate_parent', models.ForeignKey(related_name='immediate_parent', to='datapoints.Location')),
                 ('location', models.ForeignKey(to='datapoints.Location')),
                 ('parent_location', models.ForeignKey(related_name='ultimate_parent', to='datapoints.Location')),
             ],
@@ -277,6 +305,17 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='MinGeo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('geo_json', jsonfield.fields.JSONField()),
+                ('location', models.OneToOneField(to='datapoints.Location')),
+            ],
+            options={
+                'db_table': 'min_polygon',
+            },
+        ),
+        migrations.CreateModel(
             name='Office',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -288,73 +327,67 @@ class Migration(migrations.Migration):
                 'permissions': (('view_office', 'View office'),),
             },
         ),
-        migrations.CreateModel(
-            name='Campaign',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
-                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
-                ('created_at', models.DateTimeField(auto_now=True)),
-                ('office', models.ForeignKey(to='datapoints.Office')),
-            ],
-            options={
-                'ordering': ('-start_date',),
-                'db_table': 'campaign',
-            },
+        migrations.DeleteModel(
+            name='DocDetailType',
         ),
-        migrations.CreateModel(
-            name='CampaignAbstracted',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('office_id', models.IntegerField()),
-                ('campaign_type_id', models.IntegerField()),
-                ('start_date', models.DateField()),
-                ('end_date', models.DateField()),
-                ('slug', autoslug.fields.AutoSlugField(populate_from=b'name', unique=True, editable=False)),
-                ('pct_complete', models.FloatField()),
-                ('created_at', models.DateTimeField(auto_now=True)),
-            ],
-            options={
-                'ordering': ('-start_date',),
-                'db_table': 'campaign_abstracted',
-            },
+        migrations.RemoveField(
+            model_name='document',
+            name='created_by',
         ),
-        migrations.CreateModel(
-            name='CampaignType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=55)),
-            ],
-            options={
-                'db_table': 'campaign_type',
-            },
+        migrations.AlterUniqueTogether(
+            name='documentdetail',
+            unique_together=set([]),
         ),
-        migrations.CreateModel(
-            name='UserAbstracted',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('last_login', models.DateTimeField()),
-                ('is_superuser', models.BooleanField()),
-                ('username', models.CharField(max_length=255)),
-                ('first_name', models.CharField(max_length=255)),
-                ('last_name', models.BooleanField()),
-                ('email', models.CharField(max_length=255)),
-                ('is_staff', models.BooleanField()),
-                ('is_active', models.BooleanField()),
-                ('date_joined', models.DateTimeField()),
-                ('group_json', jsonfield.fields.JSONField()),
-                ('location_permission_json', jsonfield.fields.JSONField()),
-                ('user', models.OneToOneField(to=settings.AUTH_USER_MODEL)),
-            ],
-            options={
-                'db_table': 'user_abstracted',
-            },
+        migrations.RemoveField(
+            model_name='documentdetail',
+            name='doc_detail_type',
         ),
-        migrations.AddField(
-            model_name='Campaign',
-            name='campaign_type',
-            field=models.ForeignKey(to='datapoints.CampaignType'),
+        migrations.RemoveField(
+            model_name='documentdetail',
+            name='document',
+        ),
+        migrations.AlterUniqueTogether(
+            name='documentsourceobjectmap',
+            unique_together=set([]),
+        ),
+        migrations.RemoveField(
+            model_name='documentsourceobjectmap',
+            name='document',
+        ),
+        migrations.RemoveField(
+            model_name='documentsourceobjectmap',
+            name='source_object_map',
+        ),
+        migrations.AlterUniqueTogether(
+            name='sourceobjectmap',
+            unique_together=set([]),
+        ),
+        migrations.RemoveField(
+            model_name='sourceobjectmap',
+            name='mapped_by',
+        ),
+        migrations.AlterUniqueTogether(
+            name='sourcesubmission',
+            unique_together=set([]),
+        ),
+        migrations.RemoveField(
+            model_name='sourcesubmission',
+            name='document',
+        ),
+        migrations.DeleteModel(
+            name='Document',
+        ),
+        migrations.DeleteModel(
+            name='DocumentDetail',
+        ),
+        migrations.DeleteModel(
+            name='DocumentSourceObjectMap',
+        ),
+        migrations.DeleteModel(
+            name='SourceObjectMap',
+        ),
+        migrations.DeleteModel(
+            name='SourceSubmission',
         ),
         migrations.AddField(
             model_name='location',
@@ -372,6 +405,11 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='datapoints.Location', null=True),
         ),
         migrations.AddField(
+            model_name='indicatortooffice',
+            name='office',
+            field=models.ForeignKey(to='datapoints.Office'),
+        ),
+        migrations.AddField(
             model_name='historicaldatapointentry',
             name='indicator',
             field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='datapoints.Indicator', null=True),
@@ -383,7 +421,155 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='historicaldatapointentry',
+            name='source_submission',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='source_data.SourceSubmission', null=True),
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='document',
+            field=models.ForeignKey(to='source_data.Document'),
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='indicator',
+            field=models.ForeignKey(to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='location',
+            field=models.ForeignKey(to='datapoints.Location'),
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='source_submission',
+            field=models.ForeignKey(to='source_data.SourceSubmission'),
+        ),
+        migrations.AddField(
+            model_name='datapointcomputed',
+            name='indicator',
+            field=models.ForeignKey(to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='datapointcomputed',
+            name='location',
+            field=models.ForeignKey(to='datapoints.Location'),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='indicator',
+            field=models.ForeignKey(to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='location',
+            field=models.ForeignKey(to='datapoints.Location'),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='source_submission',
+            field=models.ForeignKey(to='source_data.SourceSubmission'),
+        ),
+        migrations.AddField(
+            model_name='customdashboard',
+            name='default_office',
+            field=models.ForeignKey(to='datapoints.Office', null=True),
+        ),
+        migrations.AddField(
+            model_name='customdashboard',
+            name='owner',
+            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
+        ),
+        migrations.AddField(
+            model_name='customchart',
+            name='dashboard',
+            field=models.ForeignKey(to='datapoints.CustomDashboard'),
+        ),
+        migrations.AddField(
+            model_name='campaigntoindicator',
+            name='indicator',
+            field=models.ForeignKey(to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='campaign_type',
+            field=models.ForeignKey(to='datapoints.CampaignType'),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='office',
+            field=models.ForeignKey(to='datapoints.Office'),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='top_lvl_indicator_tag',
+            field=models.ForeignKey(to='datapoints.IndicatorTag'),
+        ),
+        migrations.AddField(
+            model_name='campaign',
+            name='top_lvl_location',
+            field=models.ForeignKey(to='datapoints.Location'),
+        ),
+        migrations.AddField(
+            model_name='calculatedindicatorcomponent',
+            name='indicator',
+            field=models.ForeignKey(related_name='indicator_master', to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='calculatedindicatorcomponent',
+            name='indicator_component',
+            field=models.ForeignKey(related_name='indicator_component', to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='aggdatapoint',
+            name='cache_job',
+            field=models.ForeignKey(default=-1, to='datapoints.CacheJob'),
+        ),
+        migrations.AddField(
+            model_name='aggdatapoint',
             name='campaign',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='datapoints.Campaign', null=True),
+            field=models.ForeignKey(to='datapoints.Campaign'),
+        ),
+        migrations.AddField(
+            model_name='aggdatapoint',
+            name='indicator',
+            field=models.ForeignKey(to='datapoints.Indicator'),
+        ),
+        migrations.AddField(
+            model_name='aggdatapoint',
+            name='location',
+            field=models.ForeignKey(to='datapoints.Location'),
+        ),
+        migrations.CreateModel(
+            name='DataPointEntry',
+            fields=[
+            ],
+            options={
+                'proxy': True,
+            },
+            bases=('datapoints.datapoint',),
+        ),
+        migrations.AlterUniqueTogether(
+            name='locationtree',
+            unique_together=set([('parent_location', 'location')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='indicatortotag',
+            unique_together=set([('indicator', 'indicator_tag')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='datapointcomputed',
+            unique_together=set([('location', 'campaign', 'indicator')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='campaigntoindicator',
+            unique_together=set([('indicator', 'campaign')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='campaign',
+            unique_together=set([('office', 'start_date')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='aggdatapoint',
+            unique_together=set([('location', 'campaign', 'indicator')]),
         ),
     ]

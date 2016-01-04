@@ -4,7 +4,7 @@ from numpy import nan,isnan
 from django.test import TestCase
 
 from datapoints.models import *
-from source_data.models import ProcessStatus, Document, SourceSubmission
+from source_data.models import Document, SourceSubmission
 
 from datapoints.agg_tasks import AggRefresh
 from datapoints.cache_meta import LocationTreeCache
@@ -49,10 +49,6 @@ class AggRefreshTestCase(TestCase):
 
         cache_job_id = CacheJob.objects.create(id = -1,date_completed=\
             '2015-01-01',date_attempted = '2015-01-01', is_error = False)
-
-        status_id = ProcessStatus.objects.create(
-                status_text = 'test',
-                status_description = 'test').id
 
         location_type1 = LocationType.objects.create(admin_level=0,\
             name="country",id=1)

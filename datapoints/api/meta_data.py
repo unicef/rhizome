@@ -663,19 +663,6 @@ class LocationPermissionResource(BaseModelResource):
 
         return bundle
 
-
-class GroupPermissionResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorPermission.objects.all().values()
-        resource_name = 'group_permission'
-
-
-class DocumentReviewResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorPermission.objects.all().values()
-        resource_name = 'document_review'
-
-
 class DocumentDetailResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_detail'
