@@ -924,7 +924,7 @@ class OfficeResource(BaseNonModelResource):
         user_office_id = Location.objects.get(id=top_lvl_location_id)\
             .office_id
         ## smarter way to find campaign with most data and latest start date#
-        latest_campaign_id = Campaign.objects.get(start_date = '2015-11-01',\
+        latest_campaign_id = Campaign.objects.get(start_date = '2015-10-01',\
             office_id = user_office_id).id
 
         qs = []

@@ -45,6 +45,10 @@ class GeoResource(BaseNonModelResource):
             location_ids_to_return = Location.objects\
                 .filter(parent_location_id__in=request\
                 .GET['parent_location__in']).values_list('id',flat=True)
+        except ValueError:
+            location_ids_to_return = Location.objects\
+                .filter(parent_location_id__in=request\
+                .GET['parent_location__in'].split(',')).values_list('id',flat=True)        
         except KeyError:
             location_ids_to_return = get_locations_to_return_from_url(request)
 
