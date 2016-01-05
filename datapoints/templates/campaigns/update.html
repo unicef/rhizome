@@ -9,7 +9,6 @@
                 {% if form.errors %}
                     <span class="error">An error occurred ...</span>{% endif %}
                 {% csrf_token %}
-                {% csrf_token %}
                 {{ form.as_p }}
                 <p class="date-picker-button-container">
                     <button type="submit" class="btn btn-primary">Save Campaign</button>
