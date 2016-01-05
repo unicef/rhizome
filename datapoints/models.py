@@ -116,6 +116,9 @@ class IndicatorTag(models.Model):
     tag_name = models.CharField(max_length=255)
     parent_tag = models.ForeignKey("self", null=True)
 
+    def __unicode__(self):
+        return unicode(self.tag_name)
+
     class Meta:
         db_table = 'indicator_tag'
 
