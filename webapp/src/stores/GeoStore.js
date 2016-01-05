@@ -13,7 +13,7 @@ var GeoStore = Reflux.createStore({
 
   onFetch: function (location) {
     this.location = location
-    api.geo({ parent_location__in: location.id }, null, {'cache-control': 'max-age=604800, public'}).then(this.loadGeography)
+    api.geo({ parent_location_id: location.id }, null, {'cache-control': 'max-age=604800, public'}).then(this.loadGeography)
   },
 
   loadGeography: function (response) {

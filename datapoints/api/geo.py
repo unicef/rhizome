@@ -41,16 +41,11 @@ class GeoResource(BaseNonModelResource):
 
         features = []
 
-        try:
-            location_ids_to_return = Location.objects\
-                .filter(parent_location_id__in=request\
-                .GET['parent_location__in']).values_list('id',flat=True)
-        except ValueError:
-            location_ids_to_return = Location.objects\
-                .filter(parent_location_id__in=request\
-                .GET['parent_location__in'].split(',')).values_list('id',flat=True)        
-        except KeyError:
-            location_ids_to_return = get_locations_to_return_from_url(request)
+        location_ids_to_return = get_locations_to_return_from_url(request)
+
+        print 'len(location_ids_to_return)'
+        print len(location_ids_to_return)
+        print 'len(location_ids_to_return)'
 
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
             location_ids_to_return)

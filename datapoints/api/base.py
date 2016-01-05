@@ -273,29 +273,43 @@ def get_locations_to_return_from_url(request):
     This method is used in both the /geo and /datapoint endpoints.  Based
     on the values parsed from the URL parameters find the locations needed
     to fulfill the request based on the four rules below.
-    1  region__in returns geo data for the regions requested
-    2. passing only parent_region__in  should return the shapes for all the
-       immediate children in that region if no level parameter is supplied
-    3. no params - return locations that the user can see.
+
+    1. location_id =
+    2. location_id__in =
+    3. parent_location_id =
+    4. parent_location_id__in =
 
     TO DO - Move all advanced logic from location resource here.
 
     '''
-    try:
-        location_in_id = request.GET['location__in']
-        return [location_in_id]
-    except KeyError:
-        location_id__in = []
 
+    query_dict = request.GET
+
+    try:
+        pl_id = query_dict['parent_location_id']
+        location_ids = list(Location.objects\
+            .filter(parent_location_id=pl_id)
+            .values_list('id',flat=True))
+        location_ids.append(pl_id)
+
+        return location_ids
+
+    except KeyError:
+        pass
+
+    try:
+        location_ids = request.GET['location__in']
+        return location_ids
+    except KeyError:
+        pass
+
+    ## if no params passed, return what user can see ##
     top_lvl_location_id = LocationPermission.objects\
         .get(user_id=request.user.id).top_lvl_location_id
 
-    location_id__in.append(top_lvl_location_id)
     location_ids = list(LocationTree.objects\
-        .filter(parent_location_id__in = location_id__in)\
+        .filter(parent_location_id__in = top_lvl_location_id)\
         .values_list('location_id',flat=True))
-
-    location_ids.append(top_lvl_location_id)
 
     return location_ids
 

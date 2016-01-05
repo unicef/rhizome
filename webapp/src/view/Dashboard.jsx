@@ -338,6 +338,8 @@ var Dashboard = React.createClass({
       )
     }
 
+    console.log('LOCATION', location)
+
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
@@ -351,6 +353,7 @@ var Dashboard = React.createClass({
           <CampaignTitleMenu
             campaigns={campaigns}
             selected={campaign}
+            location={location}
             sendValue={this._setCampaign}/>
         </div>
       </div>)
