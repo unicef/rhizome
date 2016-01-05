@@ -64,13 +64,8 @@ var ExportPdf = React.createClass({
 
   render () {
     var fileList = []
-    if (waffle.switch_is_active('pdf')) {
-      fileList.push({value: 'pdf', title: 'PDF'})
-    }
-
-    if (waffle.switch_is_active('image')) {
-      fileList.push({value: 'jpeg', title: 'IMAGE'})
-    }
+    fileList.push({value: 'pdf', title: 'PDF'})
+    fileList.push({value: 'jpeg', title: 'IMAGE'})
 
     let items = MenuItem.fromArray(fileList, this._onExportDashboard)
 

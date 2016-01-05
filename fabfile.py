@@ -105,8 +105,8 @@ def _push_to_remote():
         run("python manage.py collectstatic --noinput --settings=settings")
 
         # add waffle_switch pdf for exporting pdf
-        run("./manage.py waffle_switch pdf on --create --settings=settings")
-        run("./manage.py waffle_switch image off --create --settings=settings")
+        # run("./manage.py waffle_switch pdf on --create --settings=settings")
+        # run("./manage.py waffle_switch image on --create --settings=settings")
 
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
