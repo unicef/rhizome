@@ -16,7 +16,7 @@ const fields = {
     }
   },
   id: { title: 'ID', name: 'id' },
-  slug: { title: 'Display Name', name: 'slug' },
+  name: { title: 'Display Name', name: 'name' },
   start_date: { title: 'Start Date', name: 'start_date' },
   end_date: { title: 'End Date', name: 'end_date' },
   created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
@@ -26,7 +26,7 @@ const schema = {
   created_at: { type: 'string', format: 'date-time' }
 }
 
-const fieldNamesOnTable = ['id', 'slug', 'start_date', 'end_date', 'created_at', 'edit_link']
+const fieldNamesOnTable = ['id', 'name', 'start_date', 'end_date', 'created_at', 'edit_link']
 
 var CampaignsAdmin = React.createClass({
   render () {
