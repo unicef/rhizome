@@ -36,8 +36,12 @@ def export_file(request):
 
     pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
 
-    response = HttpResponse(content=pdf_content, content_type=content_type)
-    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    if isinstance(pdf_content, IOError):
+        response = HttpResponse(status=500)
+    else:
+        response = HttpResponse(content=pdf_content, content_type=content_type)
+        response['Content-Disposition'] = 'attachment; filename=' + file_name
+
     response.set_cookie('fileDownloadToken', 'true')
     return response
 
