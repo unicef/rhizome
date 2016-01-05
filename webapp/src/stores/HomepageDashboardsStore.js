@@ -144,7 +144,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   countriesPromise: function (list) {
-    return api.geo({ parent_location__in: list.join(',') }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
+    return api.geo({ parent_location_id__in: list.join(',') }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
       var locations = _(response.objects.features).flatten().groupBy('parent_location_id').value()
       return list.map(item => locations[item])
     })

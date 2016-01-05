@@ -287,13 +287,23 @@ def get_locations_to_return_from_url(request):
 
     try:
         pl_id = query_dict['parent_location_id']
-        location_ids = list(Location.objects\
-            .filter(parent_location_id=pl_id)
+        location_ids = list(Location.objects.filter(parent_location_id=pl_id)
             .values_list('id',flat=True))
         location_ids.append(pl_id)
         return location_ids
     except KeyError:
         location_ids = []
+
+    try:
+        pl_id_list = request.GET['parent_location_id__in'].split(',')
+        location_ids = list(Location.objects\
+            .filter(parent_location_id__in=pl_id_list)
+            .values_list('id',flat=True))
+        location_ids.extend(pl_id_list)
+    except KeyError:
+        location_ids = [
+
+        ]
 
     try:
         location_ids = request.GET['location__id_in']
