@@ -282,7 +282,8 @@ def get_locations_to_return_from_url(request):
 
     '''
     try:
-        location_id__in = request.GET['location_id__in']
+        location_in_id = request.GET['location__in']
+        return [location_in_id]
     except KeyError:
         location_id__in = []
 
