@@ -291,28 +291,25 @@ def get_locations_to_return_from_url(request):
             .filter(parent_location_id=pl_id)
             .values_list('id',flat=True))
         location_ids.append(pl_id)
-
         return location_ids
-
     except KeyError:
-        pass
+        location_ids = []
 
     try:
         location_ids = request.GET['location__in']
         return location_ids
     except KeyError:
-        pass
+        location_ids = []
 
     ## if no params passed, return what user can see ##
     top_lvl_location_id = LocationPermission.objects\
         .get(user_id=request.user.id).top_lvl_location_id
 
-    location_ids = list(LocationTree.objects\
-        .filter(parent_location_id__in = top_lvl_location_id)\
-        .values_list('location_id',flat=True))
+    location_ids = LocationTree.objects\
+        .filter(parent_location_id = top_lvl_location_id)\
+        .values_list('location_id',flat=True)
 
     return location_ids
-
 
 def html_decorator(func):
     """
