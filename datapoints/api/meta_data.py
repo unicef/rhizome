@@ -28,20 +28,17 @@ from django.http import HttpResponse
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'campaign'
-        filtering = {
-            "id": ALL,
-        }
 
     def get_object_list(self, request):
 
-        location_ids = list(set(LocationTree.objects\
-            .filter(location_id =self.top_lvl_location_id)\
-            .values_list('parent_location_id',flat=True)))
+        qs = Campaign.objects.filter(\
+            top_lvl_location_id = self.top_lvl_location_id)
 
-        qs = Campaign.objects.filter(top_lvl_location_id__in=location_ids)\
-            .values()
-
-        return qs
+        try:
+            requested_ids = request.GET['id__in'].split(",")
+            return qs.filter(id__in = requested_ids).values()
+        except:
+            return qs.values()
 
 
 class LocationResource(BaseModelResource):
@@ -130,7 +127,7 @@ class IndicatorResource(BaseModelResource):
 
         return bundle
 
-class CampaignTypeResource(BaseModelResource):
+class TypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
         resource_name = 'campaign_type'
