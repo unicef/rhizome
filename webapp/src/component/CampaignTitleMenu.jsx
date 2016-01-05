@@ -20,6 +20,7 @@ var CampaignTitleMenu = React.createClass({
       })
     })
     let campaignItems = CampaignMenuItem.fromArray(campaigns, this.props.sendValue)
+
     var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
 
     return (

@@ -10,7 +10,7 @@ import builtins from 'dashboard/builtin'
 import randomHash from 'util/randomHash'
 
 import TitleMenu from 'component/TitleMenu.jsx'
-import RegionTitleMenu from 'component/RegionTitleMenu'
+// import RegionTitleMenu from 'component/RegionTitleMenu'
 import CampaignTitleMenu from 'component/CampaignTitleMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import ExportPdf from 'component/ExportPdf.jsx'
@@ -239,6 +239,7 @@ var Dashboard = React.createClass({
 
   render () {
     if (!(this.state.loaded && this.state.dashboard)) {
+      // console.log('dashboard loading', this.state.dashboard)
       let style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -300,6 +301,7 @@ var Dashboard = React.createClass({
       }
       dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
+    // dashboard = '' // JD -- remove this
 
     let campaigns = _(this.state.campaigns)
       .map(campaign => {
@@ -338,17 +340,15 @@ var Dashboard = React.createClass({
       )
     }
 
-    console.log('LOCATION', location)
-
+    // <div className='medium-6 columns'>
+    //   <RegionTitleMenu
+    //     locations={this.state.locations}
+    //     selected={location}
+    //     sendValue={this._setLocation}/>
+    // </div>
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
-        <div className='medium-6 columns'>
-          <RegionTitleMenu
-            locations={this.state.locations}
-            selected={location}
-            sendValue={this._setLocation}/>
-        </div>
         <div className='medium-6 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
@@ -372,7 +372,7 @@ var Dashboard = React.createClass({
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
               <div className='row'>
                 <div className='medium-6 columns medium-offset-6'>
-                    {exportModule}
+                  {exportModule}
                 </div>
               </div>
             </div>

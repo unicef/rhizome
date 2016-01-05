@@ -41,12 +41,14 @@ export default React.createClass({
   componentDidMount: function () {
     window.addEventListener('resize', this._onResize)
 
+    console.log('MOUNTING')
     this._onResize()
     if (this.props.search) {
       React.findDOMNode(this.refs.search).focus()
     } else {
       React.findDOMNode(this).focus()
     }
+    console.log('DONE MOUNTING')
   },
 
   componentDidUpdate: function () {
@@ -58,6 +60,12 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
+    // console.log('shouldComponentUpdate')
+    // console.log('nextProps', nextProps)
+    // console.log('this.props', this.props)
+    // console.log('nextState', nextState)
+    // console.log('this.state', this.state)
+
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 

@@ -47,16 +47,9 @@ class LocationResource(BaseModelResource):
         resource_name = 'location'
 
     def get_object_list(self, request):
-        ## parent_location_id should be parent_location_id__in and all
-        ## logic then can be handled by the get_locations_to_return_from_url
-        ## method.
-
-        try:
-            pr_id = request.GET['parent_location_id']
-            qs = Location.objects.filter(parent_location_id=pr_id).values()
-        except KeyError:
-            location_ids = get_locations_to_return_from_url(request)
-            qs = Location.objects.filter(id__in=location_ids).values()
+    
+        location_ids = get_locations_to_return_from_url(request)
+        qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
 

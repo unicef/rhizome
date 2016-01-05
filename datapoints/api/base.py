@@ -278,9 +278,6 @@ def get_locations_to_return_from_url(request):
     2. location_id__in =
     3. parent_location_id =
     4. parent_location_id__in =
-
-    TO DO - Move all advanced logic from location resource here.
-
     '''
 
     query_dict = request.GET

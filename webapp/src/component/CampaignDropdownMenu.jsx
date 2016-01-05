@@ -19,7 +19,6 @@ function searchValue (campaign) {
     m.format('MM/YYYY'),
     m.format('YYYY/M'),
     m.format('M/YYYY'),
-
     m.format('YY-MM'),
     m.format('MM-YY'),
     m.format('YY-M'),
@@ -59,7 +58,9 @@ var CampaignDropdownMenu = React.createClass({
       .reverse()
       .map(campaign => {
         return (
-          <CampaignMenuItem campaign={campaign}
+          <CampaignMenuItem
+            campaign={campaign}
+            key={'campaign-' + campaign.id}
             sendValue={this.props.sendValue} />
         )
       })
