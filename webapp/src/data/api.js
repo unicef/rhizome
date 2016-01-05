@@ -8,6 +8,7 @@ import superagentPrefix from 'superagent-prefix'
 const prefix = superagentPrefix(BASE_URL)
 
 import treeify from 'data/transform/treeify'
+import campaign from 'data/model/campaign'
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
@@ -155,7 +156,7 @@ function datapoint (q) {
       var campaignData = data.meta.campaign_list
       var campaignIx = _.indexBy(campaignData, 'id')
       for (var i = data.objects.length - 1; i >= 0; --i) {
-        data.objects[i].campaign = campaignIx[data.objects[i].campaign]
+        data.objects[i].campaign = campaign(campaignIx[data.objects[i].campaign])
       }
       fulfill(data)
     }, reject)
