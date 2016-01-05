@@ -30,3 +30,4 @@ webapp/npm-debug.log
 bower_components
 rhizome/settings/private.py
 settings.py
+dev
