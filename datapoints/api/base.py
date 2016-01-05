@@ -278,6 +278,9 @@ def get_locations_to_return_from_url(request):
     2. location_id__in =
     3. parent_location_id =
     4. parent_location_id__in =
+
+    right now -- this only filters if there is no param.. i should get the
+    permitted locations first then do an intersection with the params..
     '''
 
     query_dict = request.GET
@@ -293,7 +296,7 @@ def get_locations_to_return_from_url(request):
         location_ids = []
 
     try:
-        location_ids = request.GET['location__in']
+        location_ids = request.GET['location__id_in']
         return location_ids
     except KeyError:
         location_ids = []
