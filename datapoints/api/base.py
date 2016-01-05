@@ -275,10 +275,8 @@ def get_locations_to_return_from_url(request):
     on the values parsed from the URL parameters find the locations needed
     to fulfill the request based on the four rules below.
 
-    1. location_id =
-    2. location_id__in =
-    3. parent_location_id =
-    4. parent_location_id__in =
+    1. location_id__in =
+    2. parent_location_id__in =
 
     right now -- this only filters if there is no param.. i should get the
     permitted locations first then do an intersection with the params..
@@ -287,13 +285,10 @@ def get_locations_to_return_from_url(request):
     query_dict = request.GET
 
     try:
-        pl_id = query_dict['parent_location_id']
-        location_ids = list(Location.objects.filter(parent_location_id=pl_id)
-            .values_list('id',flat=True))
-        location_ids.append(pl_id)
+        location_ids = request.GET['location_id__in'].split(',')
         return location_ids
     except KeyError:
-        location_ids = []
+        pass
 
     try:
         pl_id_list = request.GET['parent_location_id__in'].split(',')
@@ -301,16 +296,9 @@ def get_locations_to_return_from_url(request):
             .filter(parent_location_id__in=pl_id_list)
             .values_list('id',flat=True))
         location_ids.extend(pl_id_list)
-    except KeyError:
-        location_ids = [
-
-        ]
-
-    try:
-        location_ids = request.GET['location__id_in']
         return location_ids
     except KeyError:
-        location_ids = []
+        pass
 
     ## if no params passed, return what user can see ##
     top_lvl_location_id = LocationPermission.objects\

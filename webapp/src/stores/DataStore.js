@@ -62,19 +62,19 @@ var DataStore = Reflux.createStore({
 
       switch (def.locations) {
         case 'sublocations':
-          q.parent_location__in = location.id
+          q.parent_location_id__in = location.id
           break
 
         case 'type':
           var parent = _.get(location, 'parent.id')
           if (!_.isUndefined(parent)) {
-            q.parent_location__in = parent
+            q.parent_location_id__in = parent
           }
 
           q.location_type = location.location_type
           break
         default:
-          q.location__in = location.id
+          q.location_id__in = location.id
           break
       }
 

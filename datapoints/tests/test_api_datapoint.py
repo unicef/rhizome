@@ -74,7 +74,7 @@ class DataPointResourceTest(ResourceTestCase):
             campaign=campaign)
 
         # 6 Request To The API
-        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id={3}'\
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\
             .format(indicator.id, start_date,end_date, location.id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \

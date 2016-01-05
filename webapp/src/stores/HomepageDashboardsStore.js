@@ -70,19 +70,19 @@ var HomepageDashboardsStore = Reflux.createStore({
 
       switch (def.locations) {
         case 'sublocations':
-          query.parent_location__in = location.id
+          query.parent_location_id__in = location.id
           break
 
         case 'type':
           var parent = _.get(location, 'parent.id')
           if (!_.isUndefined(parent)) {
-            query.parent_location__in = parent
+            query.parent_location_id__in = parent
           }
 
           query.location_type = location.location_type
           break
         default:
-          query.location__in = location.id
+          query.location_id__in = location.id
           break
       }
 
