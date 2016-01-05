@@ -93,7 +93,6 @@ var Performance = React.createClass({
     var pct = d3.format('%')
 
     var missedChildrenMap = data.missedChildrenByProvince
-    console.log('CAMPAIGN ', campaign)
 
     return (
       <div>

@@ -1,5 +1,6 @@
 import traceback
 import numpy as np
+import json
 
 from pandas import DataFrame, pivot_table, notnull
 from tastypie import fields
@@ -15,7 +16,8 @@ from django.contrib.sessions.models import Session
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, \
     get_locations_to_return_from_url
-from datapoints.models import DataPointComputed, Campaign, Location, Indicator, DataPointEntry
+from datapoints.models import DataPointComputed, Campaign, Location, \
+    Indicator, DataPointEntry, LocationPermission
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 
@@ -101,6 +103,9 @@ class DataPointResource(BaseNonModelResource):
         response.
         '''
         self.error = None
+        ## put this in base class ##
+        self.top_lvl_location_id = LocationPermission.objects.get(
+            user_id = request.user.id).top_lvl_location_id
 
         results = []
 
@@ -172,16 +177,7 @@ class DataPointResource(BaseNonModelResource):
         add the total_count to the meta object as well
         '''
 
-        # get rid of the meta_dict. i will add my own meta data.
-        # data['meta'].pop("limit",None)
-
-        # iterate over parsed_params
-        meta_dict = {}
-        for k, v in self.parsed_params.iteritems():
-            meta_dict[k] = v
-
-        # add metadata to response
-        data['requested_params'] = meta_dict
+        data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 
         # add errors if it exists
         if self.error:
@@ -260,12 +256,13 @@ class DataPointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        cs = Campaign.objects.filter(
+        self.campaign_qs = Campaign.objects.filter(
             start_date__gte=campaign_start,
             start_date__lte=campaign_end,
+            top_lvl_location_id=self.top_lvl_location_id
         )
 
-        campaign__in = [c.id for c in cs]
+        campaign__in = [c.id for c in self.campaign_qs]
 
         return campaign__in
 

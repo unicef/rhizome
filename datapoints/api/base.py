@@ -268,6 +268,7 @@ class BaseNonModelResource(Resource):
         bundle.data.pop("resource_uri", None)
         return bundle
 
+
 def get_locations_to_return_from_url(request):
     '''
     This method is used in both the /geo and /datapoint endpoints.  Based
