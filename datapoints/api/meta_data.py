@@ -47,7 +47,7 @@ class LocationResource(BaseModelResource):
         resource_name = 'location'
 
     def get_object_list(self, request):
-    
+
         location_ids = get_locations_to_return_from_url(request)
         qs = Location.objects.filter(id__in=location_ids).values()
 
@@ -445,9 +445,12 @@ class DocumentResource(BaseModelResource):
             base64data = post_data
 
         file_content = ContentFile(base64.b64decode(base64data))
+        file_header = file_content.readline()
+
         sd, created = Document.objects.update_or_create(
             id=doc_id,
-            defaults={'doc_title': doc_title, 'created_by_id': user_id}
+            defaults={'doc_title': doc_title, 'created_by_id': user_id, \
+                'file_header': file_header}
         )
 
         sd.docfile.save(sd.guid, file_content)
