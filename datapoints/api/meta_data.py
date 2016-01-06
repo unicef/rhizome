@@ -721,15 +721,42 @@ class AggRefreshResource(BaseModelResource):
         resource_name = 'refresh_cache'
 
     def get_object_list(self, request):
+       '''
+       If no campaign is provided, find one datapoitn that needs processing,
+       then find the related campaign based on the
 
-        AggRefresh()
+       To Do -- Make a method on the Datapoint model called..
+       get_campaign_for_datapoint so that this logic can be easily extended.
+       '''
 
-        queryset = DocumentDetail.objects \
-            .filter(document_id=1).values()
+       try:
+           campaign_id = request.GET['campaign_id']
+           AggRefresh(campaign_id)
+           return Campaign.objects.filter(id=campaign_id).values()
+       except KeyError:
+           campsign_id = None
 
-        return queryset
+       try:
+           one_dp_that_needs_agg = DataPoint.objects\
+               .filter(cache_job_id = -1)[0]
+       except IndexError:
+           return Office.objects.all().values()
 
+       location_id = one_dp_that_needs_agg.location_id
+       data_date = one_dp_that_needs_agg.data_date
+       campaigns_in_date_range = Campaign.objects.filter(
+           start_date__lt = data_date, end_date__gt = data_date)
+       parent_location_list = LocationTree.objects\
+           .filter(location_id = location_id)\
+           .values_list('parent_location_id',flat=True)
 
+       for c in campaigns_in_date_range:
+           if c.top_lvl_location_id in parent_location_list:
+               campaign_id = c.id
+               break
+
+       return Campaign.objects.filter(id=campaign_id).values()
+       
 class RefreshMasterResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
