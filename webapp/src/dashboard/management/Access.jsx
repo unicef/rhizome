@@ -83,6 +83,7 @@ var Access = React.createClass({
                           margin: {top: 10, right: 0, bottom: 0, left: 0},
                           domain: _.constant([0, 1]),
                           values: _.property('values'),
+                          x: d => { return d.campaign ? moment(d.campaign.start_date).startOf('month').valueOf() : '' },
                           y0: _.property('y0'),
                           yFormat: d3.format('%'),
                           color: ['#717B8B', '#A6A6A6', '#8FB6BD', '#A4B7D4', '#5D5D5D', '#202020'],

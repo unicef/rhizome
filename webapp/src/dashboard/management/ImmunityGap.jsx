@@ -32,7 +32,7 @@ var ImmunityGap = React.createClass({
             color: immunityGapData.color,
             domain: _.constant(immunityGapData.immunityScale),
             values: _.property('values'),
-            x: function (d) { return moment(d.campaign.start_date).startOf('quarter').valueOf() },
+            x: function (d) { return d.campaign ? moment(d.campaign.start_date).startOf('quarter').valueOf() : '' },
             xFormat: function (d) { return moment(d).format('[Q]Q [ ]YYYY') },
             y0: _.property('y0'),
             yFormat: d3.format('%'),
