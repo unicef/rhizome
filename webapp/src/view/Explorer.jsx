@@ -92,7 +92,7 @@ let Explorer = React.createClass({
           text='Choose Indicators'
           sendValue={ExplorerActions.addIndicators}
           style='databrowser__button' />
-        <List items={this.state.data.indicatorSelected} removeItem={ExplorerActions.removeIndicatored} />
+        <List items={this.state.data.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
       </div>
     )
 
@@ -131,7 +131,6 @@ let Explorer = React.createClass({
 
           <div className='medium-9 columns'>
             {loadDataTable}
-
             <div className='medium-12 columns' style={{textAlign: 'right'}}>
               <a role='button' className='button success' aria-label='Download All'
                 v-class='disabled: !hasSelection'

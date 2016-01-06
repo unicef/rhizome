@@ -21,7 +21,6 @@ let DatabrowserTable = React.createClass({
   mixins: [Reflux.connect(DataBrowserTableStore, 'data')],
 
   render: function () {
-    console.log(this.state.data)
     if (this.state.data === null || this.state.data.data === null) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {

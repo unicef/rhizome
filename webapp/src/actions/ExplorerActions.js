@@ -5,5 +5,7 @@ export default Reflux.createActions([
   'updateDateRangePicker',
   'addLocations',
   'removeLocation',
-  'getIndicators'
+  'getIndicators',
+  'addIndicators',
+  'removeIndicator'
 ])
