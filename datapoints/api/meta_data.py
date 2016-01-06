@@ -727,6 +727,8 @@ class AggRefreshResource(BaseModelResource):
 
        To Do -- Make a method on the Datapoint model called..
        get_campaign_for_datapoint so that this logic can be easily extended.
+
+       This needs cleanup.
        '''
 
        try:
@@ -744,8 +746,11 @@ class AggRefreshResource(BaseModelResource):
 
        location_id = one_dp_that_needs_agg.location_id
        data_date = one_dp_that_needs_agg.data_date
+
+       date_no_datetime = data_date.date()
        campaigns_in_date_range = Campaign.objects.filter(
-           start_date__lt = data_date, end_date__gt = data_date)
+           start_date__lte = date_no_datetime, end_date__gt = data_date)
+
        parent_location_list = LocationTree.objects\
            .filter(location_id = location_id)\
            .values_list('parent_location_id',flat=True)
@@ -753,10 +758,16 @@ class AggRefreshResource(BaseModelResource):
        for c in campaigns_in_date_range:
            if c.top_lvl_location_id in parent_location_list:
                campaign_id = c.id
-               break
+               AggRefresh(c.id)
 
-       return Campaign.objects.filter(id=campaign_id).values()
-       
+               return Campaign.objects.filter(id=campaign_id).values()
+
+       ## if code reaches here that means there is noting to process ##
+       return Office.objects.all().values()
+
+
+
+
 class RefreshMasterResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
