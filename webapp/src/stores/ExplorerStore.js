@@ -73,12 +73,12 @@ var ExplorerStore = Reflux.createStore({
 
   onAddIndicators: function (id) {
     this.data.indicatorSelected.push(this.data.indicatorMap[id])
-    this.forceUpdate()
+    this.trigger(this.data)
   },
 
   onRemoveIndicator: function (id) {
     _.remove(this.data.indicatorSelected, {id: id})
-    this.forceUpdate()
+    this.trigger(this.data)
   }
 })
 

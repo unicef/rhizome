@@ -7,6 +7,7 @@ import api from 'data/api'
 
 var DataBrowserTableStore = Reflux.createStore({
   listenables: [require('actions/DataBrowserTableActions')],
+
   data: {
     data: null,
     schema: null,
@@ -17,25 +18,29 @@ var DataBrowserTableStore = Reflux.createStore({
     return this.data
   },
 
-  onApiCall: function (options, fields) {
-    console.log(options)
+  onGetTableData: function (options, columns) {
     api.datapoints(options, null, {'cache-control': 'no-cache'})
       .then(response => {
-        var datapoints = response.objects.map(function (item) {
-          var result = _.pick(item, 'location')
+        if (!response.objects || response.objects.length < 1) {
+          this.data.data = null
+          this.trigger(this.data)
+          return
+        }
 
+        var value = response.objects.map(function (item) {
+          var result = _.pick(item, 'location')
           result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
 
           item.indicators.forEach(function (indicator) {
             result['indicators'] = indicator.value
           })
-
           return result
         })
 
-        this.data.data = datapoints
+        this.data.data = value
         this.data.schema = parseSchema(response)
-        this.data.fields = ['location', 'campaign', 'indicators']
+        this.data.fields = ['location', 'campaign', 'indicators'] || columns
+
         this.trigger(this.data)
       })
   }

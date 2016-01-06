@@ -13,21 +13,16 @@ let {
 } = require('react-datascope')
 
 let DatabrowserTable = React.createClass({
-  propTypes: {
-    fields: React.PropTypes.array.isRequired,
-    options: React.PropTypes.string.isRequired
-  },
-
-  mixins: [Reflux.connect(DataBrowserTableStore, 'data')],
+  mixins: [Reflux.connect(DataBrowserTableStore)],
 
   render: function () {
-    if (this.state.data === null || this.state.data.data === null) {
+    if (!this.state || !this.state.data) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
-      let fields = this.state.data.fields.map(column => (<SimpleDataTableColumn name={column}/>))
+      let fields = this.state.fields.map(column => (<SimpleDataTableColumn name={column}/>))
       return (<LocalDatascope
-          data={this.state.data.data}
-          schema={this.state.data.schema}
+          data={this.state.data}
+          schema={this.state.schema}
           pageSize={10} >
           <Datascope>
             <SimpleDataTable>

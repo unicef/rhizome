@@ -14,15 +14,7 @@ import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 import ExplorerActions from 'actions/ExplorerActions'
 
 let Explorer = React.createClass({
-  getInitialState: function () {
-    return {
-      columns: [],
-      rows: [],
-      options: null
-    }
-  },
-
-  mixins: [Reflux.connect(ExplorerStore, 'data')],
+  mixins: [Reflux.connect(ExplorerStore)],
 
   componentWillMount: function () {
     ExplorerActions.getLocations()
@@ -30,20 +22,20 @@ let Explorer = React.createClass({
   },
 
   refresh: function (pagination) {
-    let locations = _.map(this.state.data.locationSelected, 'id')
+    let locations = _.map(this.state.locationSelected, 'id')
     let options = {indicator__in: []}
     let columns = ['location', 'campaign']
 
-    if (this.state.data.locationSelected.length > 0) {
+    if (this.state.locationSelected.length > 0) {
       options.location__in = locations
     }
 
-    if (this.state.data.campaign.start) {
-      options.campaign_start = this.state.data.campaign.start
+    if (this.state.campaign.start) {
+      options.campaign_start = this.state.campaign.start
     }
 
-    if (this.state.data.campaign.end) {
-      options.campaign_end = this.state.data.campaign.end
+    if (this.state.campaign.end) {
+      options.campaign_end = this.state.campaign.end
     }
 
     this.state.indicatorSelected.forEach(indicator => {
@@ -51,12 +43,7 @@ let Explorer = React.createClass({
       columns.push(indicator.title)
     })
 
-    _.defaults(options, pagination, _.omit(this.state.pagination, 'total_count'))
-
-    this.state.columns = columns
-    this.state.options = options
-
-    DataBrowserTableActions.apiCall(this.state.options, columns)
+    DataBrowserTableActions.getTableData(options, columns)
   },
 
   render: function () {
@@ -64,8 +51,8 @@ let Explorer = React.createClass({
       <label>
         <div>Time Period</div>
         <DateRangePicker
-          start={this.state.data.campaign.start}
-          end={this.state.data.campaign.end}
+          start={this.state.campaign.start}
+          end={this.state.campaign.end}
           sendValue={ExplorerActions.updateDateRangePicker}
         />
       </label>
@@ -75,11 +62,11 @@ let Explorer = React.createClass({
       <div>
         <label htmlFor='locations'>Locations</label>
         <LocationDropdownMenu
-          locations={this.state.data.locations}
+          locations={this.state.locations}
           text='Select Location'
           sendValue={ExplorerActions.addLocations}
           style='databrowser__button' />
-        <List items={this.state.data.locationSelected} removeItem={ExplorerActions.removeLocation} />
+        <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
       </div>
     )
@@ -88,11 +75,11 @@ let Explorer = React.createClass({
       <div>
         <label htmlFor='indicators'>Indicators</label>
         <IndicatorDropdownMenu
-          indicators={this.state.data.indicators}
+          indicators={this.state.indicators}
           text='Choose Indicators'
           sendValue={ExplorerActions.addIndicators}
           style='databrowser__button' />
-        <List items={this.state.data.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
+        <List items={this.state.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
       </div>
     )
 
@@ -107,9 +94,7 @@ let Explorer = React.createClass({
     )
 
     let loadDataTable = (
-      <DatabrowserTable
-        fields={this.state.columns}
-        options={this.state.options} />
+      <DatabrowserTable />
     )
     return (
       <div>
