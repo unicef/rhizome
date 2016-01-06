@@ -18,7 +18,8 @@ var ExplorerStore = Reflux.createStore({
     campaign: {
       start: '',
       end: ''
-    }
+    },
+    src: ''
   },
 
   getInitialState: function () {

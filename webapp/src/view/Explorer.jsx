@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import api from 'data/api'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
@@ -46,6 +47,34 @@ let Explorer = React.createClass({
     })
 
     DataBrowserTableActions.getTableData(options, columns)
+  },
+
+  download: function () {
+    let locations = _.map(this.state.locationSelected, 'id')
+    let indicators = _.map(this.state.indicatorSelected, 'id')
+    let query = {
+      'format': 'csv'
+    }
+
+    if (indicators.length > 0) {
+      query.indicator__in = indicators
+    }
+
+    if (locations.length > 0) {
+      query.location_id__in = locations
+    }
+
+    if (this.state.campaign.start) {
+      query.campaign_start = this.state.campaign.start
+    }
+
+    if (this.state.campaign.end) {
+      query.campaign_end = this.state.campaign.end
+    }
+
+    this.setState({
+      src: api.datapoints.toString(query)
+    })
   },
 
   render: function () {
@@ -97,6 +126,17 @@ let Explorer = React.createClass({
     let loadDataTable = (
       <DatabrowserTable />
     )
+
+    let download = (
+      <div className='medium-12 columns' style={{textAlign: 'right'}}>
+        <br />
+        <a role='button'
+          className={this.state.couldLoad ? 'button success' : 'button success disabled'}
+          onClick={this.download}>
+          <i className='fa fa-fw fa-download' />&emsp;Download All
+        </a>
+      </div>
+    )
     return (
       <div>
         <div className='row'>
@@ -117,16 +157,10 @@ let Explorer = React.createClass({
 
           <div className='medium-9 columns'>
             {loadDataTable}
-            <div className='medium-12 columns' style={{textAlign: 'right'}}>
-              <a role='button' className='button success' aria-label='Download All'
-                v-class='disabled: !hasSelection'
-                v-on='click: download()'>
-                <i className='fa fa-fw fa-download'></i>&emsp;Download All
-              </a>
-            </div>
+            {download}
           </div>
         </div>
-        <iframe width='0' height='0' src='' className='hidden'></iframe>
+        <iframe width='0' height='0' src={this.state.src} className='hidden'></iframe>
       </div>
     )
   }
