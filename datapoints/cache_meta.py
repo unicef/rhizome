@@ -5,75 +5,64 @@ from datapoints.models import *
 from source_data.models import SourceObjectMap
 
 
-def calculate_campaign_percentage_complete():
-    '''
-    Add the pct-complete to the campaign based ont he pct of management
-    indiators present for that campaign for the top level locations.
-    '''
-
-    ## temporarily harcoding indicators until we get management dashboard
-    ## definition loading from the api... see trello #226:
-    all_indicators = [168, 431, 432, 433, 166, 164, 167, 165, 475, 187, 189, \
-    27, 28, 175, 176, 177, 204, 178, 228, 179, 184, 180, 185, 230, 226, 239, \
-    245, 236, 192, 193, 191, 194, 219, 173, 172, 169, 233, 158, 174, 442, 443, \
-    444, 445, 446, 447, 448, 449, 450]
-
-    for c in Campaign.objects.all():
-
-        top_level_location_id =  Location.objects\
-            .get(parent_location_id__isnull=True,office_id = c.office_id).id
-
-        ind_count = DataPointComputed.objects.filter(
-            campaign_id = c.id,
-            location_id = top_level_location_id,
-            indicator_id__in = all_indicators
-        ).count()
-
-        c.pct_complete = ind_count / float(len(all_indicators))
-        c.save()
 
 class IndicatorCache(object):
     '''
     from datapoints.cache_meta import IndicatorCache as ic
-    ic_obj = ic()
-    # ic_obj = ic(indicator_id_list=[164])
+    ic_obj = ic(indicator_id_list=[164])
     ic_obj.main()
     '''
     def __init__(self, indicator_id_list = None):
 
-        if indicator_id_list:
-            self.indicator_id_list = indicator_id_list
-        else:
+        if not indicator_id_list:
             self.indicator_id_list = Indicator.objects.all().values_list('id',\
                 flat =True)
+        else:
+            self.indicator_id_list = indicator_id_list
 
     def main(self):
         '''
         Find the office id for each indicator.
+
+        Find the Tags for Each indicator
+
+        Find the bounds for each indicator
+
         '''
 
-        ## find the data for the indicators requested ##
-        df = DataFrame(list(DataPointComputed.objects.filter(indicator_id__in=\
-            self.indicator_id_list).values_list('indicator_id','campaign_id')\
-            .distinct()),columns=['indicator_id','campaign_id'])
+        indicator_batch = []
+        qs,  bound_df, tag_df = self.build_related_objects()
 
-        ## find all campaigns + office combinations
-        office_lookup_df = DataFrame(list(Campaign.objects.all()\
-            .values_list('id','office_id')),columns=['campaign_id','office_id'])
+        for ind in qs:
 
-        ## Join the two dataframes and take the distinct office, indicator ##
-        joined_df = df.merge(office_lookup_df)
-        unique_df = joined_df[['indicator_id','office_id']].drop_duplicates()
+            # look up the bounds / tags from the data two DFs created above
+            filtered_tag_df = tag_df[tag_df['indicator_id'] == ind.id]
+            filtered_bound_df = bound_df[bound_df['indicator_id'] == ind.id]
 
-        ## iterrate throught the DF, create objects and prep for bulk_create
-        ind_to_office_batch = []
-        for ix, data in unique_df.iterrows():
-            ind_to_office_batch.append(IndicatorToOffice(**data.to_dict()))
+            ind.bound_json = [row.to_dict() for ix, row in filtered_bound_df.iterrows()]
+            ind.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
 
-        ## delete then re-insert  ##
-        IndicatorToOffice.objects.filter(indicator_id__in = \
-            self.indicator_id_list).delete()
-        IndicatorToOffice.objects.bulk_create(ind_to_office_batch)
+            ind.save()
+
+    def build_related_objects(self):
+        tag_cols = ['indicator_id', 'indicator_tag_id']
+        bound_cols = ['indicator_id', 'bound_name', 'mn_val', 'mx_val']
+        ind_to_office_cols = ['indicator_id', 'office_id']
+
+        tag_df = DataFrame(list(IndicatorToTag.objects.filter(
+            indicator_id__in=self.indicator_id_list).values_list(*tag_cols)), columns=tag_cols)
+
+        bound_df = DataFrame(list(
+            IndicatorBound.objects.filter(indicator_id__in=self.indicator_id_list).values_list(*bound_cols)
+        ), columns=bound_cols)
+
+        qs = Indicator.objects.filter(id__in=self.indicator_id_list)
+
+        bound_df = bound_df.where((notnull(bound_df)), None)
+        tag_df = tag_df.where((notnull(tag_df)), None)
+        # office_df = office_df.where((notnull(office_df)), None)
+
+        return qs, bound_df, tag_df
 
 
 class LocationTreeCache(object):
@@ -159,14 +148,6 @@ def update_source_object_names():
 
         UNION ALL
 
-        SELECT som.master_object_id, c.slug, som.content_type
-        FROM source_object_map som
-        INNER JOIN campaign c
-            ON som.master_object_id = c.id
-            AND som.content_type = 'campaign'
-
-        UNION ALL
-
         SELECT som.master_object_id, r.name, som.content_type
         FROM source_object_map som
         INNER JOIN location r
@@ -244,8 +225,6 @@ def minify_polygon(polygon):
 
 
 def cache_all_meta():
-
-    campaign_cache_data = calculate_campaign_percentage_complete()
 
     location_tree_cache_data = LocationTreeCache()
     location_tree_cache_data.main()

@@ -14,8 +14,9 @@ if instance == 'docker':
 
 if env == 'production':
     from rhizome.settings.production import *
-elif env == 'test':
-    from rhizome.settings.test import *
+
+# elif env == 'test':
+#     from rhizome.settings.test import *
 
 ## import ODK_SETTING, and anything specifc to personal development ##
 ## for instance if you need an API key from rapid pro, you would store it

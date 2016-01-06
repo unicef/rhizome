@@ -2,7 +2,7 @@ import json
 
 from django.test import TestCase
 from django.contrib.auth.models import User
-from pandas import read_csv, notnull
+from pandas import read_csv, notnull, to_datetime
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
@@ -202,10 +202,6 @@ class RefreshMasterTestCase(TestCase):
         cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01',\
             is_error = False)
 
-        status_id = ProcessStatus.objects.create(
-                status_text = 'TO_PROCESS',
-                status_description = 'TO_PROCESS').id
-
         document_id = Document.objects.create(
             doc_title = 'test',
             created_by_id = user_id,
@@ -223,7 +219,11 @@ class RefreshMasterTestCase(TestCase):
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
         location_ids = self.model_df_to_data(location_df,Location)
+
+        campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+        campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
         campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+
         indicator_ids = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)

@@ -128,7 +128,7 @@ export default {
       }]
 
       if (locations.length > 0) {
-        options.location__in = locations
+        options.location_id__in = locations
       }
 
       if (this.campaign.start) {
@@ -211,7 +211,7 @@ export default {
 
       query.indicator__in = indicators
       if (locations.length > 0) {
-        query.location__in = locations
+        query.location_id__in = locations
       }
 
       if (this.campaign.start) {

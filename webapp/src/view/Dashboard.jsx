@@ -239,6 +239,7 @@ var Dashboard = React.createClass({
 
   render () {
     if (!(this.state.loaded && this.state.dashboard)) {
+      // console.log('dashboard loading', this.state.dashboard)
       let style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -341,22 +342,23 @@ var Dashboard = React.createClass({
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
-        <div className='medium-6 columns'>
-          <RegionTitleMenu
-            locations={this.state.locations}
-            selected={location}
-            sendValue={this._setLocation}/>
-        </div>
+      <div className='medium-6 columns'>
+        <RegionTitleMenu
+          locations={this.state.locations}
+          selected={location}
+          sendValue={this._setLocation}/>
+      </div>
         <div className='medium-6 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
             selected={campaign}
+            location={location}
             sendValue={this._setCampaign}/>
         </div>
       </div>)
     }
 
-    let exportModule = (<ExportPdf className='export-file' fileType='pdf'/>)
+    let exportModule = (<ExportPdf className='export-file' />)
 
     return (
       <div>
@@ -369,7 +371,7 @@ var Dashboard = React.createClass({
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
               <div className='row'>
                 <div className='medium-6 columns medium-offset-6'>
-                    {exportModule}
+                  {exportModule}
                 </div>
               </div>
             </div>

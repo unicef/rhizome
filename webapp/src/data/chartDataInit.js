@@ -63,6 +63,7 @@ export default {
 
     let campaignIndex = _.indexBy(campaignList, 'id')
 
+    console.log('CHART DATA INIT DATA LINE 66', data)
     data.campaign = chartDef.campaignValue && campaignIndex[chartDef.campaignValue]
       ? campaignIndex[chartDef.campaignValue]
       : campaignList[0]
@@ -84,7 +85,7 @@ export default {
 
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
-      location__in: _.map(data.locationAggregated, _.property('id')),
+      location_id__in: _.map(data.locationAggregated, _.property('id')),
       campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
       campaign_end: upper.format('YYYY-MM-DD')
     }

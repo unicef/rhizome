@@ -150,29 +150,15 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
 function datapoint (q) {
   var fetch = endPoint('/datapoint/')
 
-  // Return a promise so we can chain the requests for datapoints with the
-  // campaign lookups.
   return new Promise(function (fulfill, reject) {
-    // Fetch datapoints first, then look up the campaigns. Once campaign data
-    // has been filled in, fulfill the promise.
-
+    // needs to be cleaned up -- previously this method called the campaign api
     fetch(q, null, {'cache-control': 'no-cache'}).then(function (data) {
-      var campaigns = data.objects.map(function (d) {
-        return d.campaign
-      })
-
-      endPoint('/campaign/', 'get', 1)({
-        id__in: _.uniq(campaigns)
-      }, null, {'cache-control': 'max-age=3600, public'}).then(function (campaignData) {
-        var campaigns = _.indexBy(campaignData.objects, 'id')
-
-        // Replace the campaign IDs with campaign objects
-        for (var i = data.objects.length - 1; i >= 0; --i) {
-          data.objects[i].campaign = campaign(campaigns[data.objects[i].campaign])
-        }
-
-        fulfill(data)
-      })
+      var campaignData = data.meta.campaign_list
+      var campaignIx = _.indexBy(campaignData, 'id')
+      for (var i = data.objects.length - 1; i >= 0; --i) {
+        data.objects[i].campaign = campaign(campaignIx[data.objects[i].campaign])
+      }
+      fulfill(data)
     }, reject)
   })
 }

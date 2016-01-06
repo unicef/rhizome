@@ -221,7 +221,7 @@ export default {
       var options = {
         campaign__in: parseInt(self.$data.campaign_id, 10),
         indicator__in: [],
-        location__in: []
+        location_id__in: []
       }
 
       // add locations to request
@@ -229,7 +229,7 @@ export default {
         // get all high risk children of selected locations
         _.forEach(self.locations, function (locationVue) {
           var location = self.$data.locationData[locationVue.value]
-          options.location__in.push(location.id)
+          options.location_id__in.push(location.id)
 
           if (self.includeSublocations) {
             // this will include all child locations:
@@ -237,16 +237,16 @@ export default {
             // this will include only high risk child locations
             // var children = flattenChildren(location, 'children', null, function (d) { return d.is_high_risk === true })
             if (children.length > 0) {
-              options.location__in = options.location__in.concat(_.map(children, 'id'))
+              options.location_id__in = options.location_id__in.concat(_.map(children, 'id'))
             }
           }
         })
 
         // make unique
-        options.location__in = _.uniq(options.location__in)
+        options.location_id__in = _.uniq(options.location_id__in)
 
         // sort locations
-        options.location__in = options.location__in.sort(function (a, b) {
+        options.location_id__in = options.location_id__in.sort(function (a, b) {
           var ra = self.$data.locationData[a]
           var rb = self.$data.locationData[b]
           // sort by location type first
@@ -275,7 +275,7 @@ export default {
         }
       ]
       // add location names as columns
-      _.forEach(options.location__in, function (location_id) {
+      _.forEach(options.location_id__in, function (location_id) {
         columns.push({
           header: self.$data.locationData[location_id].name,
           type: 'value',

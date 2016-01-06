@@ -8,12 +8,11 @@ from datapoints.models import LocationType, Campaign
 class CampaignForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(CampaignForm, self).__init__(*args, **kwargs)
-        self.fields['management_dash_pct_complete'].widget = forms.HiddenInput()
+        self.fields['pct_complete'].widget = forms.HiddenInput()
 
     class Meta:
         model = Campaign
         exclude = ['created_at']
-
 
 class UserCreateForm(UserCreationForm):
     email = forms.EmailField(required=True)

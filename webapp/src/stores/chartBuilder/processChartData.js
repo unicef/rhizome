@@ -284,7 +284,7 @@ export default {
     let zAxis = chartDef.z
 
     var locationsIndex = _.indexBy(locations, 'id')
-    return Promise.all([dataPromise, api.geo({ location__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
+    return Promise.all([dataPromise, api.geo({ location_id__in: _.map(locations, function (location) { return location.id }) }, null, {'cache-control': 'max-age=604800, public'})])
     .then(_.spread(function (data, border) {
       var chartOptions = {
         aspect: aspects[layout].choroplethMap,
@@ -468,7 +468,7 @@ export default {
     let locations_map = _.indexBy(locations, 'id')
 
     return api.datapoints({
-      location__in: locations_ids,
+      location_id__in: locations_ids,
       admin_level: 2,
       indicator__in: indicators_ids,
       campaign_start: '2015-04-01',

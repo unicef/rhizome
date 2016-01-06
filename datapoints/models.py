@@ -1,6 +1,5 @@
 from django.db import models
 
-from autoslug import AutoSlugField
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 from pandas import DataFrame
@@ -41,8 +40,10 @@ class Indicator(models.Model):
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
-    slug = AutoSlugField(populate_from='name', unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now=True)
+    bound_json = JSONField(default = [])
+    tag_json = JSONField(default = [])
+    office_id = JSONField(default = [])
 
     def __unicode__(self):
         return unicode(self.name)
@@ -114,6 +115,9 @@ class IndicatorTag(models.Model):
 
     tag_name = models.CharField(max_length=255)
     parent_tag = models.ForeignKey("self", null=True)
+
+    def __unicode__(self):
+        return unicode(self.tag_name)
 
     class Meta:
         db_table = 'indicator_tag'
@@ -220,7 +224,6 @@ class Location(models.Model):
     office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    slug = AutoSlugField(populate_from='name', max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now=True)
     parent_location = models.ForeignKey("self", null=True)
 
@@ -332,7 +335,6 @@ class Campaign(models.Model):
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='name', unique=True)
     pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
@@ -480,30 +482,6 @@ class AggDataPoint(models.Model):
         unique_together = ('location', 'campaign', 'indicator')
 
 
-class LocationResponsibility(models.Model):
-    '''
-    REMOVE THIS MODEL WHEN feature/abstract BRANCH IS MERGED
-    '''
-
-    user = models.ForeignKey('auth.User')
-    location = models.ForeignKey(Location)
-
-    class Meta:
-        db_table = 'location_responsibility'
-        unique_together = ('user', 'location')
-
-
-class AdminLevelPermission(models.Model):
-    '''
-    REMOVE THIS MODEL WHEN feature/abstract BRANCH IS MERGED
-    '''
-
-    user = models.OneToOneField('auth.User')
-    location_type = models.ForeignKey(LocationType,default=1)
-
-    class Meta:
-        db_table = 'admin_level_permission'
-
 class LocationPermission(models.Model):
     '''
     This controls what the user sees.  If you have Nigeria as the top lvl
@@ -516,30 +494,6 @@ class LocationPermission(models.Model):
     class Meta:
         db_table = 'location_permission'
 
-class IndicatorPermission(models.Model):
-    '''
-    All users can read all indicators, but permission to update/insert/delete
-    are assigned to a group.  For instance, the security_analyst role, will be
-    permitted to edit data on the security indicators, but not for instance
-    OPV supply indicators.
-    '''
-
-    group = models.ForeignKey('auth.Group')
-    indicator = models.ForeignKey(Indicator)
-
-    class Meta:
-        db_table = 'indicator_permission'
-        unique_together = ('group', 'indicator')
-
-class UserAdminLevelPermission(models.Model):
-    '''
-    '''
-
-    user = models.OneToOneField('auth.User')
-    location_type = models.ForeignKey(LocationType)
-
-    class Meta:
-        db_table = 'user_admin_level_permission'
 
 class UserGroup(models.Model):
     '''
@@ -586,21 +540,3 @@ class CustomChart(models.Model):
 
     class Meta:
         db_table = 'custom_chart'
-
-
-class ChartType(models.Model):
-
-    name = models.CharField(max_length=255, unique=True)
-
-    class Meta:
-        db_table = 'chart_type'
-
-
-class ChartTypeToIndicator(models.Model):
-
-    indicator = models.ForeignKey(Indicator, related_name='indicator')
-    chart_type = models.ForeignKey(ChartType, related_name='chart_type')
-
-    class Meta:
-        db_table = 'chart_type_to_indicator'
-        unique_together = ('indicator', 'chart_type')

@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from django.conf import settings
-from pandas import read_csv, notnull
+from pandas import read_csv, notnull, to_datetime
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.models import *
@@ -104,6 +104,9 @@ class TransformUploadTestCase(TestCase):
         campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
+        campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+        campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
+
         location_df= read_csv('datapoints/tests/_data/locations.csv')
         indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
@@ -114,10 +117,6 @@ class TransformUploadTestCase(TestCase):
 
         cache_job_id = CacheJob.objects.create(id = -2, \
             date_attempted = '2015-01-01',is_error = False)
-
-        status_id = ProcessStatus.objects.create(
-                status_text = 'TO_PROCESS',
-                status_description = 'TO_PROCESS').id
 
         document_id = Document.objects.create(
             doc_title = 'test',

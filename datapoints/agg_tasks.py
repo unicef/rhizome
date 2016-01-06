@@ -33,10 +33,6 @@ class AggRefresh(object):
         If passed an explicit list of datapoints ids, then we process those
         other wise the datapoint IDs to process are handled in the set_up()
         method.
-
-        By initializing this class we run the set_up() method followed my the
-        main method. We capture and store any errors returned in the etljob
-        table as well as the start / end time.
         '''
 
         self.dp_columns =['location_id','indicator_id',\

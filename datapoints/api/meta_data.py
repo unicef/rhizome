@@ -28,20 +28,17 @@ from django.http import HttpResponse
 class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'campaign'
-        filtering = {
-            "id": ALL,
-        }
 
     def get_object_list(self, request):
 
-        location_ids = list(set(LocationTree.objects\
-            .filter(location_id =self.top_lvl_location_id)\
-            .values_list('parent_location_id',flat=True)))
+        qs = Campaign.objects.filter(\
+            top_lvl_location_id = self.top_lvl_location_id)
 
-        qs = Campaign.objects.filter(top_lvl_location_id__in=location_ids)\
-            .values()
-
-        return qs
+        try:
+            requested_ids = request.GET['id__in'].split(",")
+            return qs.filter(id__in = requested_ids).values()
+        except:
+            return qs.values()
 
 
 class LocationResource(BaseModelResource):
@@ -50,46 +47,21 @@ class LocationResource(BaseModelResource):
         resource_name = 'location'
 
     def get_object_list(self, request):
-        ## parent_location_id should be parent_location_id__in and all
-        ## logic then can be handled by the get_locations_to_return_from_url
-        ## method.
-
-        try:
-            pr_id = request.GET['parent_location_id']
-            qs = Location.objects.filter(parent_location_id=pr_id).values()
-        except KeyError:
-            location_ids = get_locations_to_return_from_url(request)
-            qs = Location.objects.filter(id__in=location_ids).values()
+    
+        location_ids = get_locations_to_return_from_url(request)
+        qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
 
 
-class IndicatorResult(object):
-    id = int()
-    description = unicode()
-    short_name = unicode()
-    slug = unicode()
-    name = unicode()
-    data_format = unicode()
-    bound_json = list()
-    tag_json = list()
-    office_id = list()
+class IndicatorResource(BaseModelResource):
 
-
-class IndicatorResource(BaseNonModelResource):
-    id = fields.IntegerField(attribute='id', null=True)
-    name = fields.CharField(attribute='name')
-    short_name = fields.CharField(attribute='short_name')
-    slug = fields.CharField(attribute='slug', null=True)
-    description = fields.CharField(attribute='description')
-    data_format = fields.CharField(attribute='data_format', null=True)
-    bound_json = fields.ListField(attribute='bound_json', null=True)
-    tag_json = fields.ListField(attribute='tag_json', null=True)
-    office_id = fields.ListField(attribute='office_id', null=True)
-
-    class Meta(BaseNonModelResource.Meta):
-        object_class = IndicatorResult
+    class Meta(BaseModelResource.Meta):
+        queryset = Indicator.objects.all().values()
         resource_name = 'indicator'
+        filtering = {
+            "id": ALL,
+        }
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -148,116 +120,7 @@ class IndicatorResource(BaseNonModelResource):
 
         return bundle
 
-    def obj_get_list(self, bundle, **kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
-
-        return self.get_object_list(bundle.request)
-
-    def get_indicator_ids_from_request(self, request):
-        '''
-        '''
-
-        try:
-            indicator_id_list = [request.GET['id']]
-            return indicator_id_list
-        except KeyError:
-            pass
-
-        try:
-            x = request.GET['id__in'].split(',')
-            return x
-        except KeyError:
-            pass
-
-        try:
-            office_id = request.GET['office_id']
-            return self.get_indicator_id_by_office(office_id)
-        except KeyError:
-            pass
-
-        return None
-
-    def build_indicator_queryset(self, indicator_id_list):
-        '''
-        Based on the indicator_ids, we make 3 requests, one for the indicators
-        one for the bounds, and another for the tags.
-        '''
-
-        tag_cols = ['indicator_id', 'indicator_tag_id']
-        bound_cols = ['indicator_id', 'bound_name', 'mn_val', 'mx_val']
-        ind_to_office_cols = ['indicator_id', 'office_id']
-
-        if indicator_id_list:
-            # get tags
-            tag_df = DataFrame(list(IndicatorToTag.objects.filter(
-                indicator_id__in=indicator_id_list).values_list(*tag_cols)), columns=tag_cols)
-
-            bound_df = DataFrame(list(
-                IndicatorBound.objects.filter(indicator_id__in=indicator_id_list).values_list(*bound_cols)
-            ), columns=bound_cols)
-
-            office_df = DataFrame(list(IndicatorToOffice.objects
-                                       .filter(indicator_id__in=indicator_id_list)
-                                       .values_list(*ind_to_office_cols)), columns=ind_to_office_cols)
-
-            qs = Indicator.objects.filter(id__in=indicator_id_list)
-
-        else:
-            tag_df = DataFrame(list(IndicatorToTag.objects.all().values_list(*tag_cols)), columns=tag_cols)
-
-            bound_df = DataFrame(list(IndicatorBound.objects.all().values_list(*bound_cols)), columns=bound_cols)
-
-            office_df = DataFrame(list(IndicatorToOffice.objects
-                                       .all().values_list(*ind_to_office_cols)),
-                                  columns=ind_to_office_cols)
-
-            qs = Indicator.objects.all()
-
-        bound_df = bound_df.where((notnull(bound_df)), None)
-        tag_df = tag_df.where((notnull(tag_df)), None)
-        # office_df = office_df.where((notnull(office_df)), None)
-
-        return qs, bound_df, tag_df, office_df
-
-    def get_object_list(self, request):
-        indicator_batch = []
-
-        indicator_id_list = self.get_indicator_ids_from_request(request)
-        qs, bound_df, tag_df, office_df = \
-            self.build_indicator_queryset(indicator_id_list)
-
-        for row in qs:
-
-            # create the ResultObject and assign the basic variables
-            ir = IndicatorResult()
-            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format \
-                = row.id, row.name, row.description, row.short_name, row.slug, row.data_format \
-
-            # look up the bounds / tags from the data two DFs created above
-            filtered_tag_df = tag_df[tag_df['indicator_id'] == row.id]
-            filtered_bound_df = bound_df[bound_df['indicator_id'] == row.id]
-            filtered_office_df = office_df[office_df['indicator_id'] == row.id]
-
-            ir.bound_json = [row.to_dict() for ix, row in filtered_bound_df.iterrows()]
-            ir.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
-            ir.office_id = list(filtered_office_df['office_id'].unique())
-
-            indicator_batch.append(ir)
-
-        return indicator_batch
-
-    def get_indicator_id_by_office(self, office_id):
-
-        indicator_ids = IndicatorToOffice.objects.filter(office_id=office_id)\
-            .values_list('indicator_id', flat=True)
-
-        return indicator_ids
-
-
-class CampaignTypeResource(BaseModelResource):
+class TypeResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = CampaignType.objects.all().values()
         resource_name = 'campaign_type'
@@ -663,19 +526,6 @@ class LocationPermissionResource(BaseModelResource):
 
         return bundle
 
-
-class GroupPermissionResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorPermission.objects.all().values()
-        resource_name = 'group_permission'
-
-
-class DocumentReviewResource(BaseModelResource):
-    class Meta(BaseModelResource.Meta):
-        queryset = IndicatorPermission.objects.all().values()
-        resource_name = 'document_review'
-
-
 class DocumentDetailResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_detail'
@@ -726,8 +576,6 @@ class DocumentDetailResource(BaseModelResource):
                 'document_id', 'doc_detail_value')
 
 
-
-
 class DocDataPointResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_datapoint'
@@ -738,7 +586,7 @@ class DocDataPointResource(BaseModelResource):
             document_id=request.GET['document_id'],
             # campaign_id=campaign_id,
             # location_id__in=all_location_ids,
-        )[:50].values('location__name', 'indicator__short_name', 'campaign__slug', 'value')
+        )[:50].values('location__name', 'indicator__short_name', 'campaign__name', 'value')
 
         return queryset
 
@@ -810,7 +658,6 @@ class SourceObjectMapResource(BaseModelResource):
 
         # som_obj = SourceObjectMap.objects.get(id=3078)
         qs_map = {
-            'campaign': ['slug',Campaign.objects.get],
             'indicator': ['short_name',Indicator.objects.get],
             'location': ['name',Location.objects.get],
         }
@@ -1067,7 +914,7 @@ class OfficeResource(BaseNonModelResource):
         user_office_id = Location.objects.get(id=top_lvl_location_id)\
             .office_id
         ## smarter way to find campaign with most data and latest start date#
-        latest_campaign_id = Campaign.objects.get(start_date = '2015-11-01',\
+        latest_campaign_id = Campaign.objects.get(start_date = '2015-10-01',\
             office_id = user_office_id).id
 
         qs = []

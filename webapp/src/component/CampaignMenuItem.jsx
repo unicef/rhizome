@@ -12,6 +12,7 @@ var CampaignMenuItem = React.createClass({
         return (
           <CampaignMenuItem
             campaign={campaign}
+            key={'campaign-' + campaign.id}
             sendValue={sendValue} />
         )
       })

@@ -71,11 +71,17 @@ def to_pdf(args, path=None):
 
     exit_code = result.returncode
 
+    if 'cannot connect to X server' in stderr.decode('utf-8'):
+        return IOError('%s\n'
+                    'You will need to run whktmltopdf within a "virutal" X server.\n'
+                    'Go to the link above for more information\n'
+                    'https://github.com/JazzCore/python-pdfkit/wiki/Using-wkhtmltopdf-without-X-server' % stderr.decode('utf-8'))
+
     if 'Error' in stderr.decode('utf-8'):
-        raise IOError('wkhtmltopdf reported an error:\n' + stderr.decode('utf-8'))
+        return IOError('wkhtmltopdf reported an error:\n' + stderr.decode('utf-8'))
 
     if exit_code != 0:
-        raise IOError("wkhtmltopdf exited with non-zero code {0}. error:\n{1}".format(exit_code, stderr.decode("utf-8")))
+        return IOError("wkhtmltopdf exited with non-zero code {0}. error:\n{1}".format(exit_code, stderr.decode("utf-8")))
 
     if '--quiet' not in args:
         sys.stdout.write(stderr.decode('utf-8'))
@@ -88,11 +94,11 @@ def to_pdf(args, path=None):
                 # read 4 bytes to get PDF signature '%PDF'
                 text = f.read(4)
                 if text == '':
-                    raise IOError('Command failed: %s\n'
+                    return IOError('Command failed: %s\n'
                                   'Check whhtmltopdf output without \'quiet\' '
                                   'option' % ' '.join(args))
                 return True
         except IOError:
-            raise IOError('Command failed: %s\n'
+            return IOError('Command failed: %s\n'
                           'Check whhtmltopdf output without \'quiet\' option' %
                           ' '.join(args))

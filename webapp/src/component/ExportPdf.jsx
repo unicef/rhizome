@@ -1,11 +1,11 @@
 import React from 'react'
 
 import TitleMenu from 'component/TitleMenu.jsx'
+import MenuItem from 'component/MenuItem.jsx'
 
 var ExportPdf = React.createClass({
   propTypes: {
-    className: React.PropTypes.string,
-    fileType: React.PropTypes.string
+    className: React.PropTypes.string
   },
 
   defaults: {
@@ -35,13 +35,13 @@ var ExportPdf = React.createClass({
     return ''
   },
 
-  _onExportDashboard () {
-    var fileType = 'type=' + this.props.fileType
+  _onExportDashboard (fileType) {
+    var type = 'type=' + fileType
     var path = 'path=' + window.location.href
     this.setState({
-      label: 'Fetching ',
+      label: 'Fetching...',
       isFetching: true,
-      href: this.state.url + fileType + '&' + path
+      href: this.state.url + type + '&' + path
     })
     var self = this
     var refreshIntervalId = window.setInterval(() => {
@@ -64,29 +64,17 @@ var ExportPdf = React.createClass({
 
   render () {
     var fileList = []
-    if (waffle.switch_is_active('pdf')) {
-      fileList.push({key: 'PDF'})
-    }
+    fileList.push({value: 'pdf', title: 'PDF'})
+    fileList.push({value: 'jpeg', title: 'IMAGE'})
 
-    if (waffle.switch_is_active('image')) {
-      fileList.push({key: 'IMAGE'})
-    }
-
-    let items = fileList.map((type) => {
-      return (
-        <li>
-          <a role='menuitem' className={this.props.className + (this.state.isFetching ? ' inactive' : '')} onClick={this._onExportDashboard}>
-            {type.key}
-          </a>
-        </li>)
-    })
+    let items = MenuItem.fromArray(fileList, this._onExportDashboard)
 
     return (
       <div>
         <TitleMenu
           className={'font-weight-600 ' + this.props.className + (this.state.isFetching ? ' inactive' : '')}
           icon='fa-chevron-down'
-          text='Export to'>
+          text={this.state.label}>
           {items}
         </TitleMenu>
         <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>

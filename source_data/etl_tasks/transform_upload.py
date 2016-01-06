@@ -27,9 +27,6 @@ class DocTransform(object):
         self.file_path = str(Document.objects.get(id=self.document.id).\
             docfile)
 
-        self.to_process_status = ProcessStatus.objects.\
-            get(status_text='TO_PROCESS').id
-
         self.uq_id_column = DocumentDetail.objects.get(
             document_id = self.document.id,
             doc_detail_type_id = DocDetailType\

@@ -143,10 +143,6 @@ class DataPointTest(MasterModelTestCase):
 
     def set_up(self):
 
-        self.status = ProcessStatus.objects.create(
-            status_text = 'test',
-            status_description = 'test')
-
         self.user = User.objects.create(
             username='john')
 

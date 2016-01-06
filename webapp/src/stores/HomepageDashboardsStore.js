@@ -70,19 +70,19 @@ var HomepageDashboardsStore = Reflux.createStore({
 
       switch (def.locations) {
         case 'sublocations':
-          query.parent_location__in = location.id
+          query.parent_location_id__in = location.id
           break
 
         case 'type':
           var parent = _.get(location, 'parent.id')
           if (!_.isUndefined(parent)) {
-            query.parent_location__in = parent
+            query.parent_location_id__in = parent
           }
 
           query.location_type = location.location_type
           break
         default:
-          query.location__in = location.id
+          query.location_id__in = location.id
           break
       }
 
@@ -144,7 +144,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   countriesPromise: function (list) {
-    return api.geo({ parent_location__in: list.join(','), with_parent: true }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
+    return api.geo({ parent_location_id__in: list.join(',') }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
       var locations = _(response.objects.features).flatten().groupBy('parent_location_id').value()
       return list.map(item => locations[item])
     })

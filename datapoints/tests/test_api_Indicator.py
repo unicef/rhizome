@@ -7,6 +7,8 @@ from datapoints.models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent,IndicatorToTag, IndicatorBound, \
     LocationPermission, Location, LocationType, Office
 
+from datapoints.cache_meta import IndicatorCache
+
 class IndicatorResourceTest(ResourceTestCase):
     def setUp(self):
         super(IndicatorResourceTest, self).setUp()
@@ -193,6 +195,10 @@ class IndicatorResourceTest(ResourceTestCase):
         ind_bound_0 = IndicatorBound.objects.create(**bound_dict_0)
         ind_bound_1 = IndicatorBound.objects.create(**bound_dict_1)
 
+        ## cache the indicator id ##
+        ic = IndicatorCache([ind.id])
+        ic.main()
+
         target_tag_json = [ind_tag_0.id, ind_tag_1.id]
         target_bound_json = [bound_dict_0, bound_dict_1]
 
@@ -207,8 +213,8 @@ class IndicatorResourceTest(ResourceTestCase):
         self.assertEqual(ind.name,objects[0]['name'])
         self.assertEqual(ind.description,objects[0]['description'])
 
-        ## pivoted attributes ##
 
+        ## pivoted attributes ##
         self.assertEqual(sorted(target_tag_json)\
             ,sorted(objects[0]['tag_json']))
         self.assertEqual(sorted(target_bound_json)\

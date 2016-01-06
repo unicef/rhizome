@@ -103,7 +103,7 @@ export default {
       ]
 
       var datapoints = api.datapoints({
-        parent_location__in: this.location.id,
+        parent_location_id__in: this.location.id,
         admin_level: 2,
         indicator__in: indicators,
         campaign_start: moment(this.campaign.start_date).format('YYYY-MM-DD'),

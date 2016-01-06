@@ -25,17 +25,23 @@ def export_file(request):
     cookie['name'] = 'sessionid'
     cookie['value'] = request.COOKIES[cookie['name']]
 
+    javascript_delay = '10000'
+
     if 'pdf' in file_type:
-        options = {'orientation': 'Landscape', 'javascript-delay': '5000', 'print-media-type': ' ', 'quiet': ' '}
+        options = {'orientation': 'Landscape', 'javascript-delay': javascript_delay, 'quiet': ' '}
         content_type = 'application/pdf'
     else:
-        options = {'javascript-delay': '5000', 'width': '1425', 'quality': '100', 'quiet': ' '}
+        options = {'javascript-delay': javascript_delay, 'width': '1425', 'quality': '100', 'quiet': ' '}
         content_type = 'image/JPEG'
 
     pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
 
-    response = HttpResponse(content=pdf_content, content_type=content_type)
-    response['Content-Disposition'] = 'attachment; filename=' + file_name
+    if isinstance(pdf_content, IOError):
+        response = HttpResponse(status=500)
+    else:
+        response = HttpResponse(content=pdf_content, content_type=content_type)
+        response['Content-Disposition'] = 'attachment; filename=' + file_name
+
     response.set_cookie('fileDownloadToken', 'true')
     return response
 
@@ -92,7 +98,7 @@ class CampaignCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Campaign
     success_url = '/manage_system/campaigns'
     template_name = 'campaigns/create.html'
-    fields = ['office', 'campaign_type', 'start_date', 'end_date']
+    fields = ['office',  'top_lvl_location', 'top_lvl_indicator_tag', 'campaign_type', 'start_date', 'end_date']
 
 
 class CampaignUpdateView(PermissionRequiredMixin, generic.UpdateView):
@@ -110,14 +116,6 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     def get_success_url(self,new_user_id):
         return reverse_lazy('datapoints:user_update',\
             kwargs={'pk':new_user_id})
-
-    def form_valid(self, form):
-        new_user = form.save()
-        ## remove this when u remove UserAdminLevelPermission model
-        UserAdminLevelPermission.objects.create(
-            user=new_user,location_type_id=1
-        )
-        return HttpResponseRedirect(self.get_success_url(new_user.id))
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
@@ -138,11 +136,6 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
         context['user_id'] = user_obj.id
 
         return context
-
-    def get_initial(self):
-        user_obj = self.get_object()
-        lt = UserAdminLevelPermission.objects.get(user = user_obj).location_type
-        return { 'location_type': lt }
 
     def form_valid(self, form):
         new_user = form.save()

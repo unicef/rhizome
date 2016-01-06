@@ -1,4 +1,4 @@
-id,name,description,is_reported,slug,created_at,short_name
-22,"Number of children missed due to child not available","Number of children missed due to child not available",t,"number-of-children-missed-due-to-child-not-available","2014-10-29 15:58:51.853222-04","Child not available"
-164,"% missed children due to child not available","% missed children due to child not available",f,"-missed-children-due-to-child-not-available","2015-02-20 15:11:00.275945-05","Child absent"
-55,"Number of children targeted in high-risk districts","Number of children targeted in high-risk districts",t,"number-of-targeted-under-five-children","2015-01-15 13:00:13.456531-05","Number of children targeted in HRDs"
+id,name,description,is_reported,created_at,short_name
+22,Number of children missed due to child not available,Number of children missed due to child not available,t,58:51.9,Child not available
+164,% missed children due to child not available,% missed children due to child not available,f,11:00.3,Child absent
+55,Number of children targeted in high-risk districts,Number of children targeted in high-risk districts,t,00:13.5,Number of children targeted in HRDs
