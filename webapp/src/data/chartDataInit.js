@@ -63,7 +63,6 @@ export default {
 
     let campaignIndex = _.indexBy(campaignList, 'id')
 
-    console.log('CHART DATA INIT DATA LINE 66', data)
     data.campaign = chartDef.campaignValue && campaignIndex[chartDef.campaignValue]
       ? campaignIndex[chartDef.campaignValue]
       : campaignList[0]

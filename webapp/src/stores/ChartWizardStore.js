@@ -118,8 +118,6 @@ let ChartWizardStore = Reflux.createStore({
     let campaigns = await api.campaign()
     let offices = await api.office()
 
-    // console.log('OFFICEE', offices)
-
     this.locationIndex = _.indexBy(locations.objects, 'id')
     this.data.country = offices.objects[0]
 

@@ -168,9 +168,6 @@ var DashboardBuilderStore = Reflux.createStore({
     this.data.dashboard.charts[index] = chartDef
     DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
-    // this api do no need to save the dashboard.
-    // this.saveDashboard()
-
     var data = {
       id: chartDef.id,
       chart_json: JSON.stringify(chartDef)
