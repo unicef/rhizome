@@ -9,10 +9,8 @@ import DashboardInit from 'data/dashboardInit'
 import builtins from 'dashboard/builtin'
 import randomHash from 'util/randomHash'
 
-import TitleMenu from 'component/TitleMenu.jsx'
 import RegionTitleMenu from 'component/RegionTitleMenu'
 import CampaignTitleMenu from 'component/CampaignTitleMenu.jsx'
-import MenuItem from 'component/MenuItem.jsx'
 import ExportPdf from 'component/ExportPdf.jsx'
 
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'
@@ -315,28 +313,19 @@ var Dashboard = React.createClass({
       campaign = campaigns[0]
     }
 
-    let dashboardItems = MenuItem.fromArray(
-      _.map(this.state.allDashboards, d => {
-        return {
-          title: d.title,
-          value: _.kebabCase(d.title)
-        }
-      }),
-      this._setDashboard)
-
-    let edit
-    if (dashboardDef.owned_by_current_user) {
-      edit = (
-        <span>
-          <a className='menu-button fa-stack'
-             href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
-            <i className='fa fa-stack-2x fa-circle'></i>
-            <i className='fa fa-stack-1x fa-pencil'></i>
-          </a>
-          &emsp;
-        </span>
-      )
-    }
+    // let edit
+    // if (dashboardDef.owned_by_current_user) {
+    //   edit = (
+    //     <span>
+    //       <a className='menu-button fa-stack'
+    //          href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
+    //         <i className='fa fa-stack-2x fa-circle'></i>
+    //         <i className='fa fa-stack-1x fa-pencil'></i>
+    //       </a>
+    //       &emsp;
+    //     </span>
+    //   )
+    // }
 
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
@@ -372,16 +361,6 @@ var Dashboard = React.createClass({
                 <div className='medium-6 columns medium-offset-6'>
                   {exportModule}
                 </div>
-              </div>
-            </div>
-            <div className='medium-3 columns'>
-              <div>
-                {edit}
-                <TitleMenu text={dashboardName}
-                           icon='fa-chevron-down'
-                           className='cd-titlebar-margin'>
-                  {dashboardItems}
-                </TitleMenu>
               </div>
             </div>
           </div>
