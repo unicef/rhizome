@@ -1,6 +1,7 @@
 import React from 'react'
 import Vue from 'vue'
 
+import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
 import CampaignsPage from './ufadmin/CampaignsPage.js'
@@ -20,6 +21,11 @@ Vue.filter('num', require('./util/format').num)
 Vue.partial('tooltip-stacked-bar', require('./partial/tooltip-stacked-bar.html'))
 Vue.partial('tooltip-heatmap', require('./partial/tooltip-heatmap.html'))
 Vue.partial('tooltip-indicator', require('./partial/tooltip-indicator.html'))
+
+React.render(
+  React.createElement(DashboardNav),
+  document.getElementById('dashboards-nav')
+)
 
 export default {
   Explorer: function (el) {
