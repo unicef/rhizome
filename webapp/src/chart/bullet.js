@@ -88,8 +88,11 @@ _.extend(BulletChart.prototype, {
     var x = _.flow(options.marker, xScale)
     var width = _.flow(options.value, xScale)
     var measureHeight = _.isFinite(yScale.rangeBand()) ? yScale.rangeBand() * 0.5 : 0
+    var rectStartPosition = this._height - dataHeight - measureHeight + margin.top
 
     var isEmpty = !_(data).map(options.value).all(_.isFinite)
+
+    svg.select('.x.axis').attr('transform', 'translate(0, ' + rectStartPosition + ')')
 
     // Draw qualitative ranges
     if (!(isEmpty || _.isEmpty(options.thresholds) || _.isEmpty(options.targets))) {
@@ -98,8 +101,7 @@ _.extend(BulletChart.prototype, {
       tick.enter()
         .append('g')
         .attr({
-          'class': 'tick',
-          'transform': 'translate(0, ' + (this._height - dataHeight - measureHeight) + ')'
+          'class': 'tick'
         })
         .style('fill', options.axisFill)
       tick.exit().remove()
@@ -118,7 +120,6 @@ _.extend(BulletChart.prototype, {
         })
     } else {
       svg.select('.x.axis')
-        .attr('transform', 'translate(0, ' + dataHeight + ')')
         .call(qualitativeAxis()
           .height(dataHeight)
           .width(w)
@@ -140,7 +141,7 @@ _.extend(BulletChart.prototype, {
     )
 
     var g = svg.select('.data')
-      .attr('transform', 'translate(' + margin.left + ', ' + (this._height - dataHeight - measureHeight + margin.top) + ')')
+      .attr('transform', 'translate(' + margin.left + ', ' + rectStartPosition + ')')
 
     // Draw value
     var bar = g.selectAll('.bar').data(data)
