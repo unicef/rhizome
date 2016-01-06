@@ -6,11 +6,16 @@ import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationsDropDownMenu from 'component/LocationDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
 
-var Explorer = React.createClass({
+let {
+  SimpleDataTable, SimpleDataTableColumn
+} = require('react-datascope')
+
+let Explorer = React.createClass({
   getInitialState: function () {
     return {
       indicators: [],
@@ -20,7 +25,13 @@ var Explorer = React.createClass({
       campaign: {
         start: '',
         end: ''
-      }
+      },
+      columns: [],
+      rows: [],
+      loading: true,
+      options: null,
+      data: null,
+      schema: null
     }
   },
 
@@ -77,6 +88,37 @@ var Explorer = React.createClass({
     this.forceUpdate()
   },
 
+  refresh: function (pagination) {
+    let locations = _.map(this.state.locationSelected, 'id')
+    let options = {indicator__in: []}
+    let columns = ['location', 'campaign']
+
+    if (this.state.locationSelected.length > 0) {
+      options.location__in = locations
+    }
+
+    if (this.state.campaign.start) {
+      options.campaign_start = this.state.campaign.start
+    }
+
+    if (this.state.campaign.end) {
+      options.campaign_end = this.state.campaign.end
+    }
+
+    this.state.indicatorSelected.forEach(indicator => {
+      options.indicator__in.push(indicator.id)
+      columns.push(indicator.title)
+    })
+
+    _.defaults(options, pagination, _.omit(this.state.pagination, 'total_count'))
+    this.state.columns = columns
+    this.state.options = options
+
+    this.setState({
+      loading: false
+    })
+  },
+
   render: function () {
     let timePeriodStep = (
       <label>
@@ -92,7 +134,7 @@ var Explorer = React.createClass({
     let locationStep = (
       <div>
         <label htmlFor='locations'>Locations</label>
-        <LocationsDropDownMenu
+        <LocationDropdownMenu
           locations={this.state.locations}
           text='Select Location'
           sendValue={this.addLocations}
@@ -117,13 +159,26 @@ var Explorer = React.createClass({
     let loadDataStep = (
       <a className='button success'
          role='button'
-         v-on='click : refresh({ offset: 0 })'
+         onClick={this.refresh}
          v-class='disabled: !hasSelection'
          style={{marginTop: '21px'}} >
-        <i className='fa fa-fw fa-refresh'
-           v-class='fa-spin : table.loading'></i>&emsp;Load Data
+        <i className='fa fa-fw fa-refresh' />&emsp;Load Data
       </a>
     )
+
+    let loadDataTable = this.state.loading
+      ? <div className='medium-12 columns ds-data-table-empty'>No data.</div>
+      : (<DatabrowserTable
+            getData={api.datapoints}
+            fields={this.state.columns}
+            options={this.state.options} >
+          <SimpleDataTable>
+            {this.state.columns.map(column => {
+              return <SimpleDataTableColumn name={column}/>
+            })}
+          </SimpleDataTable>
+        </DatabrowserTable>
+      )
 
     return (
       <div>
@@ -144,15 +199,9 @@ var Explorer = React.createClass({
           </div>
 
           <div className='medium-9 columns'>
-            <vue-table v-with='table'></vue-table>
+            {loadDataTable}
 
-            <div className='medium-6 columns'
-              v-component='vue-pagination'
-              v-with='offset: pagination.offset,
-                      limit: pagination.limit,
-                      total_count: pagination.total_count'></div>
-
-            <div className='medium-4 columns' style={{textAlign: 'right'}}>
+            <div className='medium-12 columns' style={{textAlign: 'right'}}>
               <a role='button' className='button success' aria-label='Download All'
                 v-class='disabled: !hasSelection'
                 v-on='click: download()'>
@@ -161,7 +210,7 @@ var Explorer = React.createClass({
             </div>
           </div>
         </div>
-        <iframe width='0' height='0' src='{{ src }}' className='hidden'></iframe>
+        <iframe width='0' height='0' src='' className='hidden'></iframe>
       </div>
     )
   }
