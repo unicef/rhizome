@@ -14,6 +14,7 @@ var ExplorerStore = Reflux.createStore({
     locationSelected: [],
     indicators: [],
     indicatorSelected: [],
+    couldLoad: false,
     campaign: {
       start: '',
       end: ''
@@ -56,6 +57,10 @@ var ExplorerStore = Reflux.createStore({
       })
   },
 
+  _setCouldLoad: function () {
+    this.data.couldLoad = this.data.indicatorSelected.length > 0 && this.data.locationSelected.length > 0
+  },
+
   onUpdateDateRangePicker: function (key, value) {
     this.data.campaign[key] = value
     this.trigger(this.data)
@@ -63,21 +68,25 @@ var ExplorerStore = Reflux.createStore({
 
   onAddLocations: function (id) {
     this.data.locationSelected.push(this.data.locationMap[id])
+    this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onRemoveLocation: function (id) {
     _.remove(this.data.locationSelected, {id: id})
+    this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onAddIndicators: function (id) {
     this.data.indicatorSelected.push(this.data.indicatorMap[id])
+    this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onRemoveIndicator: function (id) {
     _.remove(this.data.indicatorSelected, {id: id})
+    this._setCouldLoad()
     this.trigger(this.data)
   }
 })

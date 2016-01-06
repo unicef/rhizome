@@ -21,7 +21,9 @@ let Explorer = React.createClass({
     ExplorerActions.getIndicators()
   },
 
-  refresh: function (pagination) {
+  refresh: function () {
+    if (!this.state.couldLoad) return
+
     let locations = _.map(this.state.locationSelected, 'id')
     let options = {indicator__in: []}
     let columns = ['location', 'campaign']
@@ -84,10 +86,9 @@ let Explorer = React.createClass({
     )
 
     let loadDataStep = (
-      <a className='button success'
-         role='button'
+      <a role='button'
          onClick={this.refresh}
-         v-class='disabled: !hasSelection'
+         className={this.state.couldLoad ? 'button success' : 'button success disabled'}
          style={{marginTop: '21px'}} >
         <i className='fa fa-fw fa-refresh' />&emsp;Load Data
       </a>

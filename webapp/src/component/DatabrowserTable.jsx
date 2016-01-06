@@ -4,10 +4,7 @@ import Reflux from 'reflux'
 import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 
 const {
-  Datascope, LocalDatascope
-} = require('react-datascope')
-
-let {
+  Datascope, LocalDatascope,
   SimpleDataTable, SimpleDataTableColumn,
   Paginator
 } = require('react-datascope')
