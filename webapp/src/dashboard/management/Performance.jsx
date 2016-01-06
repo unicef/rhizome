@@ -108,7 +108,7 @@ var Performance = React.createClass({
                    options={{
                      aspect: 2.26,
                      domain: _.constant([lower.valueOf(), upper.valueOf()]),
-                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                     x: d => { return d.campaign ? moment(d.campaign.start_date).startOf('month').valueOf() : '' },
                      xFormat: d => moment(d).format('MMM YYYY'),
                      yFormat: d3.format(',.1%'),
                      total: true
@@ -125,7 +125,7 @@ var Performance = React.createClass({
                      domain: _.constant([lower.toDate(), upper.toDate()]),
                      range: _.constant([0, 1]),
                      color: ['#377EA3', '#D95348', '#82888e', '#98a0a8', '#b6c0cc'],
-                     x: d => moment(d.campaign.start_date).startOf('month').valueOf(),
+                     x: d => { return d.campaign ? moment(d.campaign.start_date).startOf('month').valueOf() : '' },
                      xFormat: d => moment(d).format('MMM YYYY'),
                      yFormat: pct
                    }}/>
