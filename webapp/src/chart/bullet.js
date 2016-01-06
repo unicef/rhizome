@@ -262,7 +262,10 @@ _.extend(BulletChart.prototype, {
     var compareValue = bar.selectAll('.comparative-text')
       .data(function (d) {
         var v = options.value(d)
-        return width(d) > options.fontSize * 2 ? [options.valueText(v)] : [options.valueText(v).slice(0, 1)]
+        var text = options.valueText(v)
+        return !_.isUndefined(text)
+          ? width(d) > options.fontSize * 2 ? [text] : [text.slice(0, 1)]
+          : ''
       })
 
     compareValue.enter().append('text')
