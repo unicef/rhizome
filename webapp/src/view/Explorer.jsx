@@ -1,28 +1,25 @@
 import _ from 'lodash'
 import React from 'react'
+import Reflux from 'reflux'
 import api from 'data/api'
-
-import ancestryString from 'data/transform/ancestryString'
-import treeify from 'data/transform/treeify'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
+
+import ExplorerStore from 'stores/ExplorerStore'
+
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
+import ExplorerActions from 'actions/ExplorerActions'
 
 let Explorer = React.createClass({
   getInitialState: function () {
     return {
       indicators: [],
       indicatorSelected: [],
-      locations: [],
       locationSelected: [],
-      campaign: {
-        start: '',
-        end: ''
-      },
       columns: [],
       rows: [],
       loading: true,
@@ -30,7 +27,10 @@ let Explorer = React.createClass({
     }
   },
 
+  mixins: [Reflux.connect(ExplorerStore, 'data')],
+
   componentWillMount: function () {
+    ExplorerActions.getLocations()
     api.indicatorsTree()
       .then(response => {
         this.setState({
@@ -38,29 +38,6 @@ let Explorer = React.createClass({
           indicatorMap: _.indexBy(response.flat, 'id')
         })
       })
-    api.locations()
-      .then(response => {
-        this.setState({
-          locations: _(response.objects)
-            .map(location => {
-              return {
-                'title': location.name,
-                'value': location.id,
-                'parent': location.parent_location_id
-              }
-            })
-            .sortBy('title')
-            .reverse()
-            .thru(_.curryRight(treeify)('value'))
-            .map(ancestryString)
-            .value(),
-          locationMap: _.indexBy(response.objects, 'id')
-        })
-      })
-  },
-
-  updateDateRangePicker: function (key, value) {
-    this.state.campaign[key] = value
   },
 
   addIndicators: function (id) {
@@ -74,7 +51,7 @@ let Explorer = React.createClass({
   },
 
   addLocations: function (id) {
-    this.state.locationSelected.push(this.state.locationMap[id])
+    this.state.locationSelected.push(this.state.data.locationMap[id])
     this.forceUpdate()
   },
 
@@ -92,12 +69,12 @@ let Explorer = React.createClass({
       options.location__in = locations
     }
 
-    if (this.state.campaign.start) {
-      options.campaign_start = this.state.campaign.start
+    if (this.state.data.campaign.start) {
+      options.campaign_start = this.state.data.campaign.start
     }
 
-    if (this.state.campaign.end) {
-      options.campaign_end = this.state.campaign.end
+    if (this.state.data.campaign.end) {
+      options.campaign_end = this.state.data.campaign.end
     }
 
     this.state.indicatorSelected.forEach(indicator => {
@@ -117,9 +94,9 @@ let Explorer = React.createClass({
       <label>
         <div>Time Period</div>
         <DateRangePicker
-          start={this.state.campaign.start}
-          end={this.state.campaign.end}
-          sendValue={this.updateDateRangePicker}
+          start={this.state.data.campaign.start}
+          end={this.state.data.campaign.end}
+          sendValue={ExplorerActions.updateDateRangePicker}
         />
       </label>
     )
@@ -128,7 +105,7 @@ let Explorer = React.createClass({
       <div>
         <label htmlFor='locations'>Locations</label>
         <LocationDropdownMenu
-          locations={this.state.locations}
+          locations={this.state.data.locations}
           text='Select Location'
           sendValue={this.addLocations}
           style='databrowser__button' />
