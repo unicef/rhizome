@@ -1,52 +1,48 @@
 import React from 'react'
-import parseSchema from 'ufadmin/utils/parseSchema'
+import Reflux from 'reflux'
 
-// const {
-//   Datascope, LocalDatascope
-// } = require('react-datascope')
+import DataBrowserTableStore from 'stores/DataBrowserTableStore'
+
+const {
+  Datascope, LocalDatascope
+} = require('react-datascope')
+
+let {
+  SimpleDataTable, SimpleDataTableColumn,
+  Paginator
+} = require('react-datascope')
 
 let DatabrowserTable = React.createClass({
   propTypes: {
-    getData: React.PropTypes.func.isRequired,
     fields: React.PropTypes.array.isRequired,
-    options: React.PropTypes.string.isRequired,
-    children: React.PropTypes.array
+    options: React.PropTypes.string.isRequired
   },
 
-  getInitialState: function () {
-    return {
-      data: null,
-      schema: null
-    }
-  },
-
-  _callApi: function () {
-    this.props.getData(this.props.options, null, {'cache-control': 'no-cache'})
-      .then(response => {
-        this.setState({
-          data: response.objects,
-          schema: parseSchema(this.props.fields)
-        })
-      })
-  },
-
-  componentWillMount: function () {
-    this._callApi()
-  },
+  mixins: [Reflux.connect(DataBrowserTableStore, 'data')],
 
   componentWillUpdate: function (nextProps, nextState) {
-    if (nextProps.fields !== this.props.fields) {
-      this._callApi()
-      return
-    }
+    return nextProps.fields !== this.props.fields
   },
 
   render: function () {
-    return (
-      <div>
-        table
-      </div>
-    )
+    console.log(this.state.data)
+    if (this.state.data === null || this.state.data.data === null) {
+      return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
+    } else {
+      return (<LocalDatascope
+          data={this.state.data.data}
+          schema={this.state.data.schema}
+          pageSize={10} >
+          <Datascope>
+            <SimpleDataTable>
+              {this.state.data.fields.map(column => {
+                return <SimpleDataTableColumn name={column}/>
+              })}
+            </SimpleDataTable>
+            <Paginator />
+          </Datascope>
+        </LocalDatascope>)
+    }
   }
 })
 

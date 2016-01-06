@@ -10,10 +10,7 @@ import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
-
-let {
-  SimpleDataTable, SimpleDataTableColumn
-} = require('react-datascope')
+import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 
 let Explorer = React.createClass({
   getInitialState: function () {
@@ -29,9 +26,7 @@ let Explorer = React.createClass({
       columns: [],
       rows: [],
       loading: true,
-      options: null,
-      data: null,
-      schema: null
+      options: null
     }
   },
 
@@ -114,9 +109,7 @@ let Explorer = React.createClass({
     this.state.columns = columns
     this.state.options = options
 
-    this.setState({
-      loading: false
-    })
+    DataBrowserTableActions.apiCall(this.state.options, columns)
   },
 
   render: function () {
@@ -166,20 +159,11 @@ let Explorer = React.createClass({
       </a>
     )
 
-    let loadDataTable = this.state.loading
-      ? <div className='medium-12 columns ds-data-table-empty'>No data.</div>
-      : (<DatabrowserTable
-            getData={api.datapoints}
-            fields={this.state.columns}
-            options={this.state.options} >
-          <SimpleDataTable>
-            {this.state.columns.map(column => {
-              return <SimpleDataTableColumn name={column}/>
-            })}
-          </SimpleDataTable>
-        </DatabrowserTable>
-      )
-
+    let loadDataTable = (
+      <DatabrowserTable
+        fields={this.state.columns}
+        options={this.state.options} />
+    )
     return (
       <div>
         <div className='row'>
