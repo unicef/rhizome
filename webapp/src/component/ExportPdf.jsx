@@ -9,7 +9,7 @@ var ExportPdf = React.createClass({
   },
 
   defaults: {
-    label: 'Export To ',
+    label: 'Export',
     isFetching: false,
     url: '/datapoints/dashboards/export_file/?',
     interval: 1000,
