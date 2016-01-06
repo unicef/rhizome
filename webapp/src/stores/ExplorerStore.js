@@ -11,6 +11,9 @@ var ExplorerStore = Reflux.createStore({
   data: {
     locations: [],
     locationMap: [],
+    locationSelected: [],
+    indicators: [],
+    indicatorSelected: [],
     campaign: {
       start: '',
       end: ''
@@ -37,7 +40,17 @@ var ExplorerStore = Reflux.createStore({
           .thru(_.curryRight(treeify)('value'))
           .map(ancestryString)
           .value()
+
         this.data.locationMap = _.indexBy(response.objects, 'id')
+        this.trigger(this.data)
+      })
+  },
+
+  onGetIndicators: function () {
+    api.indicatorsTree()
+      .then(response => {
+        this.data.indicators = response.objects
+        this.data.indicatorMap = _.indexBy(response.flat, 'id')
 
         this.trigger(this.data)
       })
@@ -46,7 +59,28 @@ var ExplorerStore = Reflux.createStore({
   onUpdateDateRangePicker: function (key, value) {
     this.data.campaign[key] = value
     this.trigger(this.data)
-  }
+  },
+
+  onAddLocations: function (id) {
+    this.data.locationSelected.push(this.data.locationMap[id])
+    this.trigger(this.data)
+  },
+
+  onRemoveLocation: function (id) {
+    _.remove(this.data.locationSelected, {id: id})
+    this.trigger(this.data)
+  },
+
+  addIndicators: function (id) {
+    this.state.indicatorSelected.push(this.state.indicatorMap[id])
+    this.forceUpdate()
+  },
+
+  removeIndicatored: function (id) {
+    _.remove(this.state.indicatorSelected, {id: id})
+    this.forceUpdate()
+  },
+
 })
 
 export default ExplorerStore

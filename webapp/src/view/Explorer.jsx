@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import api from 'data/api'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
@@ -17,12 +16,8 @@ import ExplorerActions from 'actions/ExplorerActions'
 let Explorer = React.createClass({
   getInitialState: function () {
     return {
-      indicators: [],
-      indicatorSelected: [],
-      locationSelected: [],
       columns: [],
       rows: [],
-      loading: true,
       options: null
     }
   },
@@ -31,41 +26,15 @@ let Explorer = React.createClass({
 
   componentWillMount: function () {
     ExplorerActions.getLocations()
-    api.indicatorsTree()
-      .then(response => {
-        this.setState({
-          indicators: response.objects,
-          indicatorMap: _.indexBy(response.flat, 'id')
-        })
-      })
-  },
-
-  addIndicators: function (id) {
-    this.state.indicatorSelected.push(this.state.indicatorMap[id])
-    this.forceUpdate()
-  },
-
-  removeIndicatored: function (id) {
-    _.remove(this.state.indicatorSelected, {id: id})
-    this.forceUpdate()
-  },
-
-  addLocations: function (id) {
-    this.state.locationSelected.push(this.state.data.locationMap[id])
-    this.forceUpdate()
-  },
-
-  removeLocation: function (id) {
-    _.remove(this.state.locationSelected, {id: id})
-    this.forceUpdate()
+    ExplorerActions.getIndicators()
   },
 
   refresh: function (pagination) {
-    let locations = _.map(this.state.locationSelected, 'id')
+    let locations = _.map(this.state.data.locationSelected, 'id')
     let options = {indicator__in: []}
     let columns = ['location', 'campaign']
 
-    if (this.state.locationSelected.length > 0) {
+    if (this.state.data.locationSelected.length > 0) {
       options.location__in = locations
     }
 
@@ -83,6 +52,7 @@ let Explorer = React.createClass({
     })
 
     _.defaults(options, pagination, _.omit(this.state.pagination, 'total_count'))
+
     this.state.columns = columns
     this.state.options = options
 
@@ -107,9 +77,9 @@ let Explorer = React.createClass({
         <LocationDropdownMenu
           locations={this.state.data.locations}
           text='Select Location'
-          sendValue={this.addLocations}
+          sendValue={ExplorerActions.addLocations}
           style='databrowser__button' />
-        <List items={this.state.locationSelected} removeItem={this.removeLocation} />
+        <List items={this.state.data.locationSelected} removeItem={ExplorerActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
       </div>
     )
@@ -118,11 +88,11 @@ let Explorer = React.createClass({
       <div>
         <label htmlFor='indicators'>Indicators</label>
         <IndicatorDropdownMenu
-          indicators={this.state.indicators}
+          indicators={this.state.data.indicators}
           text='Choose Indicators'
-          sendValue={this.addIndicators}
+          sendValue={ExplorerActions.addIndicators}
           style='databrowser__button' />
-        <List items={this.state.indicatorSelected} removeItem={this.removeIndicatored} />
+        <List items={this.state.data.indicatorSelected} removeItem={ExplorerActions.removeIndicatored} />
       </div>
     )
 
