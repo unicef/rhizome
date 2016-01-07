@@ -84,6 +84,15 @@ var SimpleForm = React.createClass({
       return
     }
   },
+  validateData: function (data) {
+    var maxLength = 255
+    for (var key in data) {
+      if (!data[key] || data[key].length > maxLength) {
+        return false
+      }
+    }
+    return true
+  },
   onSubmit: function (e) {
     e.preventDefault()
     var data = this.refs.form_data.getValue()
@@ -93,7 +102,9 @@ var SimpleForm = React.createClass({
       data[key] = this.state.extraFormData[key]
     }
 
-    SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
+    if (this.validateData(data)) {
+      SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
+    }
   },
 
   setParentTag: function (e) {
