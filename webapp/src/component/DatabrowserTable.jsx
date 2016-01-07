@@ -16,11 +16,11 @@ let DatabrowserTable = React.createClass({
     updateValue: React.PropTypes.func.isRequired
   },
 
-  componentWillUpdate: function () {
-    this.props.updateValue(this.state.data)
+  componentWillUpdate: function (nextProps, nextState) {
+    this.props.updateValue(nextState.data)
   },
 
-  shouldComponentUpdate: function(nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     return nextState !== this.state
   },
 

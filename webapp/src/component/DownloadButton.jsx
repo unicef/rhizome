@@ -34,6 +34,8 @@ var DownloadButton = React.createClass({
   },
 
   _download () {
+    if (!this.props.enable || this.state.isWorking) return
+
     let url = this.props.onClick()
     this.setState({
       url: url,
