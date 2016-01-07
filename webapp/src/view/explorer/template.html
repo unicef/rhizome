@@ -48,12 +48,6 @@
 		<div class="medium-9 columns">
 			<vue-table v-with="table"></vue-table>
 
-			<div class="medium-6 columns"
-			     v-component="vue-pagination"
-			     v-with="offset     : pagination.offset,
-			             limit      : pagination.limit,
-			             total_count: pagination.total_count"></div>
-
 			<div class="medium-4 columns" style="text-align:right">
 				<a role="button" class="button success" aria-label="Download All"
 				   v-class="disabled: !hasSelection"

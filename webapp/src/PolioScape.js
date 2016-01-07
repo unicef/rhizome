@@ -12,7 +12,6 @@ Vue.config.debug = true
 Vue.component('vue-dropdown', require('./component/dropdown'))
 Vue.component('vue-table', require('./component/table'))
 Vue.component('vue-table-editable', require('./component/table-editable'))
-Vue.component('vue-pagination', require('./component/pagination'))
 Vue.component('vue-tooltip', require('./component/vue-tooltip'))
 Vue.component('vue-menu', require('./component/vue-menu'))
 
