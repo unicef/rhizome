@@ -8,6 +8,7 @@ import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
+import DownloadButton from 'component/DownloadButton.jsx'
 
 import ExplorerStore from 'stores/ExplorerStore'
 
@@ -20,6 +21,10 @@ let Explorer = React.createClass({
   componentWillMount: function () {
     ExplorerActions.getLocations()
     ExplorerActions.getIndicators()
+  },
+
+  _tableValueUpdate: function (data) {
+    this.setState({hasData: data && data.length > 0})
   },
 
   refresh: function () {
@@ -49,7 +54,7 @@ let Explorer = React.createClass({
     DataBrowserTableActions.getTableData(options, locations, columns)
   },
 
-  download: function () {
+  _download: function () {
     let locations = _.map(this.state.locationSelected, 'id')
     let indicators = _.map(this.state.indicatorSelected, 'id')
     let query = {
@@ -72,9 +77,7 @@ let Explorer = React.createClass({
       query.campaign_end = this.state.campaign.end
     }
 
-    this.setState({
-      src: api.datapoints.toString(query)
-    })
+    return api.datapoints.toString(query)
   },
 
   render: function () {
@@ -124,19 +127,9 @@ let Explorer = React.createClass({
     )
 
     let loadDataTable = (
-      <DatabrowserTable />
+      <DatabrowserTable updateValue={this._tableValueUpdate} />
     )
 
-    let download = (
-      <div className='medium-12 columns' style={{textAlign: 'right'}}>
-        <br />
-        <a role='button'
-          className={this.state.couldLoad ? 'button success' : 'button success disabled'}
-          onClick={this.download}>
-          <i className='fa fa-fw fa-download' />&emsp;Download All
-        </a>
-      </div>
-    )
     return (
       <div>
         <div className='row'>
@@ -157,10 +150,14 @@ let Explorer = React.createClass({
 
           <div className='medium-9 columns'>
             {loadDataTable}
-            {download}
+            <DownloadButton
+              onClick={this._download}
+              enable={this.state.hasData}
+              text='Download All'
+              working='Downloading'
+              cookieName='dataBrowserCsvDownload' />
           </div>
         </div>
-        <iframe width='0' height='0' src={this.state.src} className='hidden'></iframe>
       </div>
     )
   }

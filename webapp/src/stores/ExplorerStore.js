@@ -15,11 +15,11 @@ var ExplorerStore = Reflux.createStore({
     indicators: [],
     indicatorSelected: [],
     couldLoad: false,
+    hasData: false,
     campaign: {
       start: '',
       end: ''
-    },
-    src: ''
+    }
   },
 
   getInitialState: function () {
