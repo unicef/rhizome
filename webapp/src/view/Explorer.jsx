@@ -104,9 +104,7 @@ let Explorer = React.createClass({
       </a>
     )
 
-    let loadDataTable = (
-      <DatabrowserTable updateValue={this._tableValueUpdate} />
-    )
+    let loadDataTable = (<DatabrowserTable updateValue={this._tableValueUpdate} />)
 
     return (
       <div>

@@ -33,8 +33,7 @@ let DatabrowserTable = React.createClass({
       return (<LocalDatascope
           data={this.state.data}
           schema={this.state.schema}
-          fields={this.state.fields}
-          pageSize={10} >
+          pageSize={10}>
           <Datascope>
             <SimpleDataTable>
               {columns}
