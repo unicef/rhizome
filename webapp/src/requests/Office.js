@@ -7,7 +7,7 @@ export default {
     })
   },
   getHomePageCharts () {
-    return api.office({'is_homepage': 1}, null, {'cache-control': 'max-age=604800, public'}).then(response => {
+    return api.homepage(null, null, {'cache-control': 'max-age=604800, public'}).then(response => {
       return response.objects
     })
   }

@@ -336,6 +336,7 @@ export default {
   datapointsRaw: endPoint('/datapointentry/', 'get', 1),
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
+  homepage: endPoint('/homepage/', 'get', 1),
   location_type: endPoint('/location_type/', 'get', 1),
   post_indicator: endPoint('/indicator/', 'post', 1),
   indicator_to_calc: endPoint('/indicator_calculation/', 'get', 1),

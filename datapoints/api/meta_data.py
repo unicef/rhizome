@@ -919,23 +919,44 @@ class ChartTypeTypeResource(BaseNonModelResource):
 
         return qs
 
-class OfficeResult(object):
-    id = int()
-    country = unicode()
-    name = unicode()
-    latest_campaign_id = int()
-    location_id = int()
+class OfficeResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        queryset = Office.objects.all().values()
+        resource_name = 'office'
 
-class OfficeResource(BaseNonModelResource):
+class HomePageResult(object):
+    # campaign: Object
+    # charts: Array[4]
+    # dashboard: Object
+    #     builtin: true
+    #     charts: Array[4]
+    #     country: "afghanistan"
+    #     id: -6
+    #     indicators: Array[9]
+    #     latest_campaign_id: 299
+    #     location: "Badghis"
+    #     title: "Homepage Afghanistan"
+    # hasMap: true
+    # location: Object
+
+    id = int()
+    campaign = dict()
+    charts = list()
+    dashboard = dict()
+    location = dict()
+    campaign = dict()
+
+class HomePageResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id')
-    name = fields.CharField(attribute='name')
-    country = fields.CharField(attribute='country')
-    latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
-    location_id = fields.IntegerField(attribute='location_id')
+    location = fields.DictField(attribute='location')
+    charts = fields.ListField(attribute='charts')
+    dashboard = fields.DictField(attribute='dashboard')
+    location = fields.DictField(attribute='location')
+    campaign = fields.DictField(attribute='campaign')
 
     class Meta(BaseNonModelResource.Meta):
-        object_class = OfficeResult
-        resource_name = 'office'
+        object_class = HomePageResult
+        resource_name = 'homepage'
         filtering = {
             "id": ALL,
         }
@@ -948,58 +969,36 @@ class OfficeResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def build_home_page_charts(self, request):
+    def get_object_list(self, request):
 
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
             request.user.id).top_lvl_location.id
 
-        user_office_id = Location.objects.get(id=top_lvl_location_id)\
-            .office_id
-        ## smarter way to find campaign with most data and latest start date#
-        latest_campaign_id = Campaign.objects.get(start_date = '2015-10-01',\
-            office_id = user_office_id).id
+        ## replace with fancier logic i.e. locations wiht highest msd chd % ##
+        three_locations = Location.objects.filter(parent_location_id=\
+            top_lvl_location_id)[:3]
+        three_location_ids = [x.id for x in three_locations]
+
+        campaign_obj = Campaign.objects\
+            .filter(top_lvl_location_id=top_lvl_location_id)\
+            .order_by('-start_date')[0]
 
         qs = []
-        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)[:3]:
 
-            office_obj = OfficeResult()
-            office_obj.id = user_office_id
-            office_obj.location_id = x.id
-            office_obj.name = x.name
-            office_obj.country = Office.objects.get(id=user_office_id)\
-                .name.lower()
-            office_obj.latest_campaign_id = latest_campaign_id
+        for loc in three_locations:
 
-            qs.append(office_obj)
+            x = {'foo':'bar','fo':'fum'}
+            hp_obj = HomePageResult()
+            hp_obj.campaign = campaign_obj.__dict__
+            hp_obj.campaign.pop('_state', None)
+            hp_obj.charts = []
+            hp_obj.dashboard = x
+            hp_obj.location = x
 
-        return Office.objects.all().values()
-
-    def get_object_list(self, request):
-
-        ## make this a new endpoint called "homepage"
-        try:
-            homepage_param = request.GET['is_homepage']
-            is_homepage = True
-        except KeyError:
-            is_homepage = False
-
-        if is_homepage == 1:
-            return self.build_home_page_charts(request)
-
-        qs = []
-        for x in Office.objects.all():
-
-            office_obj = OfficeResult()
-            office_obj.id = x.id
-            office_obj.location_id = x.id
-            office_obj.name = x.name
-            office_obj.country = x.name.lower()
-            office_obj.latest_campaign_id = Campaign.objects\
-                .filter(office_id = x.id)[0].id
-
-            qs.append(office_obj)
+            qs.append(hp_obj)
 
         return qs
+
 
 
 def clean_post_data(post_data_dict):
