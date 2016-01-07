@@ -1043,15 +1043,12 @@ class HomePageResource(BaseNonModelResource):
             hp_obj.dashboard = self.build_dashboard_for_loc(loc)
             hp_obj.charts = hp_obj.dashboard['charts']
 
-
             hp_obj.campaign.pop('_state', None)
             hp_obj.location.pop('_state', None)
 
             qs.append(hp_obj)
 
         return qs
-
-
 
 def clean_post_data(post_data_dict):
     cleaned = {}

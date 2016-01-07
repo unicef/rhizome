@@ -52,8 +52,7 @@ var HomepageChartsView = React.createClass({
         location: item.location,
         mapLoading: item.mapLoading
       }
-
-      list.push(<HomepageChartsSection location={item.location} data={dashboardProps}/>)
+      list.push(<HomepageChartsSection location={item.location.name} data={dashboardProps}/>)
     })
 
     return (
