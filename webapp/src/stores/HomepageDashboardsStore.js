@@ -20,9 +20,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   getDashboardByName: function (officeItem) {
-    var homepageString = 'homepage-' + officeItem.name.toLowerCase()
-    var obj = _.find(builtins, d => _.kebabCase(d.title) === homepageString)
-
+    var obj = _.find(builtins, d => d.country === officeItem.country)
     obj.location = officeItem.name
     obj.latest_campaign_id = officeItem.latest_campaign_id
     obj.indicators = _(_.get(obj, 'charts', []))

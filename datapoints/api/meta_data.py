@@ -966,7 +966,8 @@ class OfficeResource(BaseNonModelResource):
             office_obj.id = user_office_id
             office_obj.location_id = x.id
             office_obj.name = x.name
-            office_obj.country = Office.objects.get(id=user_office_id).name
+            office_obj.country = Office.objects.get(id=user_office_id)\
+                .name.lower()
             office_obj.latest_campaign_id = latest_campaign_id
 
             qs.append(office_obj)
