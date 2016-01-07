@@ -46,7 +46,7 @@ let Explorer = React.createClass({
       columns.push(indicator.title)
     })
 
-    DataBrowserTableActions.getTableData(options, columns)
+    DataBrowserTableActions.getTableData(options, locations, columns)
   },
 
   download: function () {
