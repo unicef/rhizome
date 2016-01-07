@@ -159,24 +159,12 @@ var HomepageDashboardsStore = Reflux.createStore({
     .then(_.spread((locations, locationsTypes, campaigns, indicators, dashboardDefs) => {
       this.indicators = indicators
       var enhanced = dashboardDefs
-      console.log('dashboardDefs', dashboardDefs)
 
       var partialDashboardInit = _.partial((data) => {
         var dashboardDef = _.find(enhanced, (item) => {
           return data
         })
-      // let dataPoints = [d1, d2, d3].map((item) => {
-      //   return {
-      //     data: _(item)
-      //     .pluck('objects')
-      //     .flatten()
-      //     .sortBy(_.method('campaign.start_date.getTime'))
-      //     .map(this.melt)
-      //     .flatten()
-      //     .value()
-      //   }
-      // })
-      // var partialDashboardInit = dashboardDefs.map(dashboardDef) => {
+
         return _.extend({
           campaign: dashboardDef.campaign,
           location: dashboardDef.location,
@@ -196,7 +184,6 @@ var HomepageDashboardsStore = Reflux.createStore({
           )
         })
       })
-
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
@@ -213,7 +200,6 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
 
         let dashboards = dataPoints.map(function (item) {
-          // let country = item.data[0].campaign.slug.split('-')[0]
           item.mapLoading = true
           return partialDashboardInit(item)
         })

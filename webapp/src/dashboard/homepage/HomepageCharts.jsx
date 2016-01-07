@@ -56,8 +56,6 @@ var HomepageCharts = React.createClass({
     var width = 390
     var height = 0.87 * width
 
-    console.log(missedChildrenData, 'missedChildrenData')
-
     var buildMapChart = function (loading) {
       return <div>
           <h4 className='chart-title'>Missed children, {missedChildrenData.location.name}</h4>
