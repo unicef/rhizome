@@ -87,6 +87,7 @@ class DataPointResource(BaseNonModelResource):
 
         if desired_format == 'text/csv':
             response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
+            response.set_cookie('dataBrowserCsvDownload', 'true')
 
         return response
 
