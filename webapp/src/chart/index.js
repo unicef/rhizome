@@ -66,7 +66,7 @@ ChartFactory.prototype.initialize = function (el, data, options) {
       'x': options.margin.left,
       'y': 0,
       'width': this._width - options.margin.left - options.margin.right,
-      'height': this._height - options.margin
+      'height': h
     })
 
   var g = svg.append('g')
