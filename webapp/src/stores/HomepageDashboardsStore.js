@@ -154,19 +154,19 @@ var HomepageDashboardsStore = Reflux.createStore({
       Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
       Indicator.getIndicators(),
-      Office.getOffices()
+      Office.getHomePageCharts()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
-      var partialPrepare = _.partial((dashboard) => {
-        return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
-      })
-
-      var dashboardDefs = offices
+    .then(_.spread((locations, locationsTypes, campaigns, indicators, dashboardDefs) => {
+      // var partialPrepare = _.partial((dashboard) => {
+      //   return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
+      // })
 
       this.indicators = indicators
-      var enhanced = offices
-        .map(item => this.getDashboardByName(item))
-        .map(partialPrepare)
+      var enhanced = dashboardDefs
+        // .map(item => this.getDashboardByName(item))
+        // .map(partialPrepare)
+
+      console.log('enhanced', enhanced)
 
       var partialDashboardInit = _.partial((data) => {
         var dashboardDef = _.find(enhanced, (item) => {

@@ -948,7 +948,7 @@ class OfficeResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def get_object_list(self, request):
+    def build_home_page_charts(self, request):
 
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
             request.user.id).top_lvl_location.id
@@ -969,6 +969,33 @@ class OfficeResource(BaseNonModelResource):
             office_obj.country = Office.objects.get(id=user_office_id)\
                 .name.lower()
             office_obj.latest_campaign_id = latest_campaign_id
+
+            qs.append(office_obj)
+
+        return Office.objects.all().values()
+
+    def get_object_list(self, request):
+
+        ## make this a new endpoint called "homepage"
+        try:
+            homepage_param = request.GET['is_homepage']
+            is_homepage = True
+        except KeyError:
+            is_homepage = False
+
+        if is_homepage == 1:
+            return self.build_home_page_charts(request)
+
+        qs = []
+        for x in Office.objects.all():
+
+            office_obj = OfficeResult()
+            office_obj.id = x.id
+            office_obj.location_id = x.id
+            office_obj.name = x.name
+            office_obj.country = x.name.lower()
+            office_obj.latest_campaign_id = Campaign.objects\
+                .filter(office_id = x.id)[0].id
 
             qs.append(office_obj)
 
