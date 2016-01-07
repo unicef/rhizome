@@ -46,12 +46,12 @@ var DownloadButton = React.createClass({
     var refreshIntervalId = window.setInterval(() => {
       var cookieValue = self._getCookie(self.props.cookieName)
       if (cookieValue === 'true') {
-        this._isCompleteDownload(refreshIntervalId)
+        this._completeDownload(refreshIntervalId)
       }
     }, 1000)
   },
 
-  _isCompleteDownload (refreshIntervalId) {
+  _completeDownload (refreshIntervalId) {
     this.setState({
       isWorking: false,
       url: 'about:blank'
@@ -61,7 +61,7 @@ var DownloadButton = React.createClass({
   },
 
   render () {
-    let text = !this.state.isWorking ? this.props.text : this.props.working
+    let text = this.state.isWorking ? this.props.working : this.props.text
     let download = (
       <div className='medium-12 columns text-right'>
         <br />
