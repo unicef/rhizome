@@ -222,7 +222,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           dashboards: dashboards
         })
 
-        this.countriesPromise(dashboardDefs.map(item => item.id)).then(countries => {
+        this.countriesPromise(dashboardDefs.map(item => item.location.id)).then(countries => {
           dashboards = dataPoints.map((item, index) => {
             item.features = countries[index]
             item.mapLoading = false

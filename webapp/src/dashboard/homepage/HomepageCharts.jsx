@@ -36,12 +36,11 @@ var HomepageCharts = React.createClass({
 
   prepareChartsData: function () {
     var loading = this.props.loading
-    var locationName = this.props.location.name
 
     var missedChildrenData = ChartUtil.prepareMissedChildrenData({
       data: this.props.data.performance,
       campaign: this.props.campaign,
-      location: locationName
+      location: this.props.location
     })
 
     var underImmunizedData = ChartUtil.prepareUnderImmunizedData({
@@ -57,9 +56,11 @@ var HomepageCharts = React.createClass({
     var width = 390
     var height = 0.87 * width
 
+    console.log(missedChildrenData, 'missedChildrenData')
+
     var buildMapChart = function (loading) {
       return <div>
-          <h4 className='chart-title'>Missed children, {missedChildrenData.locationName}</h4>
+          <h4 className='chart-title'>Missed children, {missedChildrenData.location.name}</h4>
           <Chart type='ChoroplethMap'
                  data={missedChildrenData.missedChildrenMap}
                  loading={loading}
