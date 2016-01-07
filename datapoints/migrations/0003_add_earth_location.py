@@ -8,7 +8,7 @@ import jsonfield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0002_add_earth_location'),
+        ('datapoints', '0002_indicator_json_fields'),
     ]
 
     operations = [

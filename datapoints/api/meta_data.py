@@ -952,6 +952,7 @@ class OfficeResource(BaseNonModelResource):
 
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
             request.user.id).top_lvl_location.id
+
         user_office_id = Location.objects.get(id=top_lvl_location_id)\
             .office_id
         ## smarter way to find campaign with most data and latest start date#
@@ -959,14 +960,13 @@ class OfficeResource(BaseNonModelResource):
             office_id = user_office_id).id
 
         qs = []
-        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)\
-            .values_list('id',flat=True)[:3]:
+        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)[:3]:
 
             office_obj = OfficeResult()
             office_obj.id = user_office_id
-            office_obj.location_id = x
-            office_obj.name = Office.objects.get(id=user_office_id).name
-            office_obj.country = office_obj.name
+            office_obj.location_id = x.id
+            office_obj.name = x.name
+            office_obj.country = Office.objects.get(id=user_office_id).name
             office_obj.latest_campaign_id = latest_campaign_id
 
             qs.append(office_obj)
