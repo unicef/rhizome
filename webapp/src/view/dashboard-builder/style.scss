@@ -52,14 +52,20 @@
   a {
   position: absolute;
   right: 0;
-  top: 0;
+  top: -10px;
   color: $rhz-background-color;
   }
 }
 
+.dashboard-nav__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .export-file {
-  width: 70%;
-  margin-left: 30%;
+  $export-button-width: 90%;
+  width: $export-button-width;
+  margin-left: 100% - $export-button-width;
 
   &:not(a) {
     margin-top: 12px;
