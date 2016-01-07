@@ -23,7 +23,7 @@ var HomepageChartsSection = React.createClass({
 
   render: function () {
     var dashboard = React.createElement(HomepageCharts, this.props.data)
-    var chartId = `${this.props.location.toLowerCase()}-chart`
+    var chartId = `${this.props.location.name.toLowerCase()}-chart`
 
     var controls
     if (this.props.location === 'Nigeria') {

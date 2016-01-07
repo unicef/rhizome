@@ -969,6 +969,57 @@ class HomePageResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
+    def build_dashboard_for_loc(self, loc):
+        #     charts: Array[4]
+        #     country: "afghanistan"
+        #     id: -6
+        #     indicators: Array[9]
+        #     latest_campaign_id: 299
+        #     location: "Badghis"
+        #     title: "Homepage Afghanistan"
+
+        dashboard = {}
+        country_obj = Office.objects.get(id = loc.office_id)
+        dashboard['country'] = country_obj.name.lower()
+        dashboard['title'] = 'Home Page %s' % country_obj.name
+        dashboard['latest_campaign_id'] = Campaign.objects\
+            .filter(office_id = country_obj.id).order_by('-start_date')[0].id
+        ## FIXME -- pull these from the database ! ##
+        dashboard['charts'] = [{
+            'title': 'Polio Cases YTD',
+            'section': 'impact',
+            'indicators': [168],
+            'startOf': 'year',
+            'timeRange': {
+              'years': 2
+            }
+          }, {
+            'title': 'Under-Immunized Children',
+            'section': 'impact',
+            'indicators': [431, 432, 433],
+            'startOf': 'quarter',
+            'timeRange': {
+              'years': 3
+            }
+          }, {
+            'title': 'Missed Children',
+            'section': 'performance',
+            'indicators': [166, 164, 167, 165],
+            'timeRange': {
+              'months': 12
+            }
+          }, {
+            'title': 'Missed Children by Province',
+            'section': 'performance',
+            'type': 'ChoroplethMap',
+            'locations': 'sublocations',
+            'timeRange': 0,
+            'indicators': [475]
+          }
+        ]
+
+        return dashboard
+
     def get_object_list(self, request):
 
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
@@ -986,14 +1037,15 @@ class HomePageResource(BaseNonModelResource):
         qs = []
 
         for loc in three_locations:
-
-            x = {'foo':'bar','fo':'fum'}
             hp_obj = HomePageResult()
             hp_obj.campaign = campaign_obj.__dict__
+            hp_obj.location = loc.__dict__
+            hp_obj.dashboard = self.build_dashboard_for_loc(loc)
+            hp_obj.charts = hp_obj.dashboard['charts']
+
+
             hp_obj.campaign.pop('_state', None)
-            hp_obj.charts = []
-            hp_obj.dashboard = x
-            hp_obj.location = x
+            hp_obj.location.pop('_state', None)
 
             qs.append(hp_obj)
 
