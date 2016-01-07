@@ -29,29 +29,7 @@ let Explorer = React.createClass({
 
   refresh: function () {
     if (!this.state.couldLoad) return
-
-    let locations = _.map(this.state.locationSelected, 'id')
-    let options = {indicator__in: []}
-    let columns = ['location', 'campaign']
-
-    if (this.state.locationSelected.length > 0) {
-      options.location__in = locations
-    }
-
-    if (this.state.campaign.start) {
-      options.campaign_start = this.state.campaign.start
-    }
-
-    if (this.state.campaign.end) {
-      options.campaign_end = this.state.campaign.end
-    }
-
-    this.state.indicatorSelected.forEach(indicator => {
-      options.indicator__in.push(indicator.id)
-      columns.push(indicator.title)
-    })
-
-    DataBrowserTableActions.getTableData(options, locations, columns)
+    DataBrowserTableActions.getTableData(this.state.campaign, this.state.locationSelected, this.state.indicatorSelected)
   },
 
   _download: function () {

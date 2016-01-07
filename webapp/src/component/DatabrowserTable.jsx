@@ -21,21 +21,23 @@ let DatabrowserTable = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return nextState !== this.state
+    let shouldUpdate = nextState !== this.state
+    return shouldUpdate
   },
 
   render: function () {
     if (!this.state || !this.state.data) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
-      let fields = this.state.fields.map(column => (<SimpleDataTableColumn name={column}/>))
+      let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
       return (<LocalDatascope
           data={this.state.data}
           schema={this.state.schema}
+          fields={this.state.fields}
           pageSize={10} >
           <Datascope>
             <SimpleDataTable>
-              {fields}
+              {columns}
             </SimpleDataTable>
             <Paginator />
           </Datascope>
