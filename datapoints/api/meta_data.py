@@ -982,8 +982,9 @@ class HomePageResource(BaseNonModelResource):
         country_obj = Office.objects.get(id = loc.office_id)
         dashboard['country'] = country_obj.name.lower()
         dashboard['title'] = 'Home Page %s' % country_obj.name
-        dashboard['latest_campaign_id'] = Campaign.objects\
-            .filter(office_id = country_obj.id).order_by('-start_date')[0].id
+        dashboard['latest_campaign_id'] = 297
+        # dashboard['latest_campaign_id'] = Campaign.objects\
+        #     .filter(office_id = country_obj.id).order_by('-start_date')[0].id
         ## FIXME -- pull these from the database ! ##
         dashboard['charts'] = [{
             'title': 'Polio Cases YTD',
@@ -1026,8 +1027,10 @@ class HomePageResource(BaseNonModelResource):
             request.user.id).top_lvl_location.id
 
         ## replace with fancier logic i.e. locations wiht highest msd chd % ##
-        three_locations = Location.objects.filter(parent_location_id=\
-            top_lvl_location_id)[:3]
+        # three_locations = Location.objects.filter(parent_location_id=\
+        #     top_lvl_location_id)[:3]
+        three_locations = Location.objects.filter(id__in=[3100,3085,3074])
+
         three_location_ids = [x.id for x in three_locations]
 
         campaign_obj = Campaign.objects\

@@ -30,7 +30,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   fetchData: function (dashboard) {
-    console.log('3: fetching data for dashboard :', dashboard)
+    console.log('3: fetching data for location :', dashboard.location.name)
     var campaign = dashboard.campaign
 
     var location = dashboard.location
@@ -70,51 +70,6 @@ var HomepageDashboardsStore = Reflux.createStore({
     })
 
     return Promise.all(promises)
-  },
-
-  prepareQuery: function (locations, campaigns, dashboard) {
-    var locationIdx = _.indexBy(locations, 'id')
-
-    _.each(this.locations, function (r) {
-      r.parent = locationIdx[r.parent_location_id]
-    })
-
-    var indicators = _.reduce(dashboard.charts, this.generateIndicator, {})
-    var query = this.getQueriesByIndicators(indicators)
-
-    var topLevelLocations = _(locations)
-      .filter(function (r) {
-        return !locationIdx.hasOwnProperty(r.parent_location_id)
-      })
-      .sortBy('name')
-
-    var location = _.find(locations, function (r) {
-      return r.name === dashboard.location
-    })
-
-    if (!location) {
-      location = topLevelLocations.first()
-    }
-
-    var campaign = _(campaigns)
-      .filter(function (c) {
-        return c.office_id === location.office_id &&
-          (dashboard.latest_campaign_id === c.id)
-      })
-      .sortBy('start_date')
-      .last()
-
-    var hasMap = _(dashboard.charts)
-      .pluck('type')
-      .any(t => _.endsWith(t, 'Map'))
-
-    return {
-      campaign: campaign,
-      dashboard: dashboard,
-      charts: query,
-      location: location,
-      hasMap: hasMap
-    }
   },
 
   countriesPromise: function (list) {
@@ -162,11 +117,12 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
       })
       console.log('2: right before fetch data.. should happen ')
-
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
+        console.log('4: fetching datapoints data')
         let dataPoints = [d1, d2, d3].map((item) => {
+          console.log('in letDatapoints method... this is item', item)
           return {
             data: _(item)
             .pluck('objects')
@@ -178,15 +134,20 @@ var HomepageDashboardsStore = Reflux.createStore({
           }
         })
 
+        // console.log('this here.. is dataPoints.. i need to add the location id here', dataPoints)
+
         let dashboards = dataPoints.map(function (item) {
+          console.log('5: passing this "item" to partial dashboard inint', item)
           item.mapLoading = true
           return partialDashboardInit(item)
         })
 
+        console.log('6: trigger the dashboards with these dashboards: ', dashboards)
         this.trigger({
           dashboards: dashboards
         })
 
+        console.log('7: query the geo api: ')
         this.countriesPromise(dashboardDefs.map(item => item.location.id)).then(countries => {
           dashboards = dataPoints.map((item, index) => {
             item.features = countries[index]
@@ -199,38 +160,6 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
       }))
     }))
-  },
-
-  getQueriesByIndicators: function (indicators) {
-    var qs = _.groupBy(indicators, function (def) {
-      return [def.duration, def.startOf, def.locations].join('-')
-    })
-
-    return _.map(qs, function (arr) {
-      return _.merge.apply(null, arr.concat(function (a, b) {
-        if (_.isArray(a)) {
-          return a.concat(b)
-        }
-      }))
-    })
-  },
-
-  generateIndicator: function (indicators, chart) {
-    var base = _.omit(chart, 'indicators', 'title')
-
-    _.each(chart.indicators, function (id) {
-      var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity
-      var hash = [id, chart.startOf, chart.locations].join('-')
-
-      if (!indicators.hasOwnProperty(hash) || duration > indicators[hash].duration) {
-        indicators[hash] = _.defaults({
-          duration: duration,
-          indicators: [id]
-        }, base)
-      }
-    })
-
-    return indicators
   }
 })
 
