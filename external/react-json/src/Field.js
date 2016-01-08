@@ -122,7 +122,7 @@ var Field = React.createClass({
 		//		else
 		//			error.path = name + '.' + error.path;
 		//	});
-    //
+		//
 		//	if( childErrors.length )
 		//		this.setState( {error: true} );
 		//}
@@ -141,7 +141,7 @@ var Field = React.createClass({
 
 			error.path = name;
 			error.message = message;
-      //this.setState( {error: message} );
+			//this.setState( {error: message} );
 			childErrors = childErrors.concat( [error] );
 		}
 		else if( this.state.error ){
