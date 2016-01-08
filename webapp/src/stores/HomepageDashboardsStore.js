@@ -3,7 +3,6 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import api from 'data/api'
-import builtins from 'dashboard/builtin'
 import DashboardInit from 'data/dashboardInit'
 
 import Indicator from 'requests/Indicator'
@@ -19,20 +18,6 @@ var HomepageDashboardsStore = Reflux.createStore({
     this.onFetchDashboards()
   },
 
-  getDashboardByName: function (officeItem) {
-    var obj = _.find(builtins, d => d.country === officeItem.country)
-    obj.location = officeItem.name
-    obj.latest_campaign_id = officeItem.latest_campaign_id
-    obj.indicators = _(_.get(obj, 'charts', []))
-      .pluck('indicators')
-      .flatten()
-      .uniq()
-      .map(id => this.indicators[id])
-      .value()
-
-    return obj
-  },
-
   melt: function (d) {
     var base = _.omit(d, 'indicators')
 
@@ -45,6 +30,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   fetchData: function (dashboard) {
+    console.log('3: fetching data for dashboard :', dashboard)
     var campaign = dashboard.campaign
 
     var location = dashboard.location
@@ -71,14 +57,6 @@ var HomepageDashboardsStore = Reflux.createStore({
           query.parent_location_id__in = location.id
           break
 
-        case 'type':
-          var parent = _.get(location, 'parent.id')
-          if (!_.isUndefined(parent)) {
-            query.parent_location_id__in = parent
-          }
-
-          query.location_type = location.location_type
-          break
         default:
           query.location_id__in = location.id
           break
@@ -94,12 +72,10 @@ var HomepageDashboardsStore = Reflux.createStore({
     return Promise.all(promises)
   },
 
-  prepareQuery: function (locations, campaigns, locationsTypes, dashboard) {
+  prepareQuery: function (locations, campaigns, dashboard) {
     var locationIdx = _.indexBy(locations, 'id')
-    var types = _.indexBy(locationsTypes, 'id')
 
     _.each(this.locations, function (r) {
-      r.location_type = _.get(types[r.location_type_id], 'name')
       r.parent = locationIdx[r.parent_location_id]
     })
 
@@ -151,14 +127,15 @@ var HomepageDashboardsStore = Reflux.createStore({
   onFetchDashboards: function () {
     Promise.all([
       Location.getLocations(),
-      Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
       Indicator.getIndicators(),
       Office.getHomePageCharts()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns, indicators, dashboardDefs) => {
+    .then(_.spread((locations, campaigns, indicators, dashboardDefs) => {
       this.indicators = indicators
       var enhanced = dashboardDefs
+
+      console.log('1: onFetchDashboards')
 
       var partialDashboardInit = _.partial((data) => {
         var dashboardDef = _.find(enhanced, (item) => {
@@ -184,6 +161,8 @@ var HomepageDashboardsStore = Reflux.createStore({
           )
         })
       })
+      console.log('2: right before fetch data.. should happen ')
+
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
@@ -214,7 +193,6 @@ var HomepageDashboardsStore = Reflux.createStore({
             item.mapLoading = false
             return partialDashboardInit(item)
           })
-
           this.trigger({
             dashboards: dashboards
           })
