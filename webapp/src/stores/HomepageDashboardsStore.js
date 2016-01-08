@@ -30,7 +30,6 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   fetchData: function (dashboard) {
-    // console.log('3: fetching data for location :', dashboard.location.name)
     var campaign = dashboard.campaign
 
     var location = dashboard.location
@@ -90,22 +89,17 @@ var HomepageDashboardsStore = Reflux.createStore({
       this.indicators = indicators
       var enhanced = dashboardDefs
 
-      // console.log('1: onFetchDashboards')
-
       var partialDashboardInit = _.partial((data) => {
-        console.log('5.4.1: what is DATA here......', data)
-        var locationOfPassedData = data.data[0].location
-        console.log('locationOfPassedData', locationOfPassedData)
+        var passedLocation = data.data[0].location
+        // FIXME hackAlert.. this method is called twice, once the ID is passed,
+        // and in the other the location Object is passed.. need to dig in more.
+        if (typeof passedLocation === 'object') {
+          var locationIdOfPassedData = passedLocation.id
+        } else {
+          locationIdOfPassedData = passedLocation
+        }
 
-        // var dashboardDef =
-        var dashboardDef = _.find(enhanced, dash => dash.location.id === locationOfPassedData)
-        // var dashboardDef = _.find(enhanced, (item) => {
-        //   console.log('5.5: what is item.location in partialDashboardInit', item.location)
-        //   return data
-        // })
-
-        console.log('dashboardDef', dashboardDef)
-
+        var dashboardDef = _.find(enhanced, dash => dash.location.id === locationIdOfPassedData)
         return _.extend({
           campaign: dashboardDef.campaign,
           location: dashboardDef.location,
@@ -125,11 +119,9 @@ var HomepageDashboardsStore = Reflux.createStore({
           )
         })
       })
-      // console.log('2: right before fetch data.. should happen ')
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        // console.log('4: fetching datapoints data')
         let dataPoints = [d1, d2, d3].map((item) => {
           return {
             data: _(item)
@@ -142,22 +134,16 @@ var HomepageDashboardsStore = Reflux.createStore({
           }
         })
 
-        // console.log('this here.. is dataPoints.. i need to add the location id here', dataPoints)
-
         let dashboards = dataPoints.map(function (item) {
-          console.log('5: passing this "item" to partial dashboard inint', item)
           item.mapLoading = true
           var some_obj = partialDashboardInit(item)
-          // console.log('5.6: this is some obj ( after partial dash init )', some_obj)
           return some_obj
         })
 
-        // console.log('6: trigger the dashboards with these dashboards: ', dashboards)
         this.trigger({
           dashboards: dashboards
         })
 
-        console.log('7: query the geo api: ')
         this.countriesPromise(dashboardDefs.map(item => item.location.id)).then(countries => {
           dashboards = dataPoints.map((item, index) => {
             item.features = countries[index]
