@@ -18,7 +18,6 @@ let UserGroup = React.createClass({
   },
 
   render: function () {
-    console.log(this.props.userId)
     let groups = this.state.userGroups.map(userGroup => {
       return (
         <li>
