@@ -58,7 +58,10 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(nextProps, this.props)
+    // RAN INTO HUGE PROBLEMS HERE!!! -- WHY was the initial code checking
+    // both props and state ?  What do i lose by only checking props?
+
+    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
   _onResize: function () {
