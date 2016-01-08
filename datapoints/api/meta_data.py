@@ -969,7 +969,7 @@ class HomePageResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def build_dashboard_for_loc(self, loc):
+    def build_dashboard_for_loc(self, loc, campaign_obj):
         #     charts: Array[4]
         #     country: "afghanistan"
         #     id: -6
@@ -982,7 +982,7 @@ class HomePageResource(BaseNonModelResource):
         country_obj = Office.objects.get(id = loc.office_id)
         dashboard['country'] = country_obj.name.lower()
         dashboard['title'] = 'Home Page %s' % country_obj.name
-        dashboard['latest_campaign_id'] = 297
+        dashboard['latest_campaign_id'] = campaign_obj.id
         # dashboard['latest_campaign_id'] = Campaign.objects\
         #     .filter(office_id = country_obj.id).order_by('-start_date')[0].id
         ## FIXME -- pull these from the database ! ##
@@ -1033,9 +1033,11 @@ class HomePageResource(BaseNonModelResource):
 
         three_location_ids = [x.id for x in three_locations]
 
-        campaign_obj = Campaign.objects\
-            .filter(top_lvl_location_id=top_lvl_location_id)\
-            .order_by('-start_date')[0]
+        # campaign_obj = Campaign.objects\
+        #     .filter(top_lvl_location_id=top_lvl_location_id)\
+        #     .order_by('-start_date')[0]
+
+        campaign_obj = Campaign.objects.get(id=299)
 
         qs = []
 
@@ -1043,7 +1045,7 @@ class HomePageResource(BaseNonModelResource):
             hp_obj = HomePageResult()
             hp_obj.campaign = campaign_obj.__dict__
             hp_obj.location = loc.__dict__
-            hp_obj.dashboard = self.build_dashboard_for_loc(loc)
+            hp_obj.dashboard = self.build_dashboard_for_loc(loc,campaign_obj)
             hp_obj.charts = hp_obj.dashboard['charts']
 
             hp_obj.campaign.pop('_state', None)
