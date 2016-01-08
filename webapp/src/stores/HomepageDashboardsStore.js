@@ -30,7 +30,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   fetchData: function (dashboard) {
-    console.log('3: fetching data for location :', dashboard.location.name)
+    // console.log('3: fetching data for location :', dashboard.location.name)
     var campaign = dashboard.campaign
 
     var location = dashboard.location
@@ -90,12 +90,21 @@ var HomepageDashboardsStore = Reflux.createStore({
       this.indicators = indicators
       var enhanced = dashboardDefs
 
-      console.log('1: onFetchDashboards')
+      // console.log('1: onFetchDashboards')
 
       var partialDashboardInit = _.partial((data) => {
-        var dashboardDef = _.find(enhanced, (item) => {
-          return data
-        })
+        console.log('5.4.1: what is DATA here......', data)
+        var locationOfPassedData = data.data[0].location
+        console.log('locationOfPassedData', locationOfPassedData)
+
+        // var dashboardDef =
+        var dashboardDef = _.find(enhanced, dash => dash.location.id === locationOfPassedData)
+        // var dashboardDef = _.find(enhanced, (item) => {
+        //   console.log('5.5: what is item.location in partialDashboardInit', item.location)
+        //   return data
+        // })
+
+        console.log('dashboardDef', dashboardDef)
 
         return _.extend({
           campaign: dashboardDef.campaign,
@@ -116,13 +125,12 @@ var HomepageDashboardsStore = Reflux.createStore({
           )
         })
       })
-      console.log('2: right before fetch data.. should happen ')
+      // console.log('2: right before fetch data.. should happen ')
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
-        console.log('4: fetching datapoints data')
+        // console.log('4: fetching datapoints data')
         let dataPoints = [d1, d2, d3].map((item) => {
-          console.log('in letDatapoints method... this is item', item)
           return {
             data: _(item)
             .pluck('objects')
@@ -139,10 +147,12 @@ var HomepageDashboardsStore = Reflux.createStore({
         let dashboards = dataPoints.map(function (item) {
           console.log('5: passing this "item" to partial dashboard inint', item)
           item.mapLoading = true
-          return partialDashboardInit(item)
+          var some_obj = partialDashboardInit(item)
+          // console.log('5.6: this is some obj ( after partial dash init )', some_obj)
+          return some_obj
         })
 
-        console.log('6: trigger the dashboards with these dashboards: ', dashboards)
+        // console.log('6: trigger the dashboards with these dashboards: ', dashboards)
         this.trigger({
           dashboards: dashboards
         })
