@@ -9,6 +9,7 @@ from decorator_include import decorator_include
 
 from datapoints.api.geo import GeoResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
+from datapoints.api.homepage import HomePageResource
 from datapoints.api.meta_data import *
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system
