@@ -44,13 +44,9 @@ export default {
     var SourceData = require('view/SourceData.jsx')
     React.render(React.createElement(SourceData), el)
   },
-  UserAccount: function (el, user_id) {
-    let vue = new Vue({
-      el: el,
-      components: { 'uf-user-account': require('./view/user-account') },
-      data: {'user_id': user_id}
-    })
-    return vue
+  UserAccount: function (el, userId) {
+    let UserAccount = require('view/user-account/UserAccount.jsx')
+    React.render(React.createElement(UserAccount, {userId: userId}), el)
   },
   DashboardList: function (el) {
     React.render(React.createElement(DashboardList), el)

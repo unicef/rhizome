@@ -54,6 +54,7 @@
         </div>
 
         <div v-component="uf-user-account" v-with="user_id:user_id"></div>
+        <div id="uf-user-account"></div>
 
         <div class="row">
             <div class="columns small-4 left-box">
@@ -70,7 +71,5 @@
 {% endblock %}
 
 {% block scripts %}
-    <script>
-        Polio.UserAccount('#main', {{user_id}});
-    </script>
+    <script>Polio.UserAccount(document.getElementById('uf-user-account'), {{user_id}});</script>
 {% endblock %}
