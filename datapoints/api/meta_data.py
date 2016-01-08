@@ -1026,10 +1026,10 @@ class HomePageResource(BaseNonModelResource):
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
             request.user.id).top_lvl_location.id
 
-        ## replace with fancier logic i.e. locations wiht highest msd chd % ##
+        # replace with fancier logic i.e. locations wiht highest msd chd % ##
         # three_locations = Location.objects.filter(parent_location_id=\
         #     top_lvl_location_id)[:3]
-        three_locations = Location.objects.filter(id__in=[3100,3085,3074]) # hilmand, kandahar, nangarhar
+        three_locations = Location.objects.filter(id__in=[3093,3100,3085]) # hilmand, kandahar, nangarhar
         three_location_ids = [x.id for x in three_locations]
 
         # campaign_obj = Campaign.objects\
