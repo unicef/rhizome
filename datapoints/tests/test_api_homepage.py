@@ -55,4 +55,8 @@ class IndicatorResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/homepage/', format='json'\
             , data={}, authentication=self.get_credentials())
 
+        response_data = self.deserialize(resp)
+        chart_objects = response_data['objects']
+
+        # self.assertEqual(3,len(chart_objects))
         self.assertValidJSONResponse(resp)
