@@ -146,10 +146,10 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     .style('fill', 'inherit')
 
   column.attr({
-    'height': height,
+    'height': d => { return _.isFinite(height(d)) ? height(d) : 0 },
     'width': xScale.rangeBand(),
     'x': x,
-    'y': y
+    'y': d => { return _.isFinite(y(d)) ? y(d) : 0 }
   })
     .on('mouseover', hover.over)
     .on('mouseout', hover.out)
