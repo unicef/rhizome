@@ -28,7 +28,6 @@ var Field = React.createClass({
 			className = 'jsonField',
 			type = definition.type || TypeField.prototype.guessType( this.props.value ),
 			id = this.props.id + '_' + this.props.name,
-			error = '',
 			typeField
 		;
 
@@ -37,12 +36,13 @@ var Field = React.createClass({
 
 		typeField = this.renderTypeField( type, id );
 
+    var error = this.getValidationErrors(this.props.value)
+
 		className += ' ' + type + 'Field';
 
-		if( this.state.error ){
+		if( error.length > 0 ){
 			className += ' jsonError';
-			if( this.state.error !== true )
-				error = React.DOM.span({ key:'e', className: 'jsonErrorMsg' }, this.state.error );
+      error = React.DOM.span({ key:'e', className: 'jsonErrorMsg' }, error[0].message );
 		}
 
 		var jsonName = [ React.DOM.label({ key: 's1', htmlFor: id }, (definition.title || this.props.name) + ':' ) ];
@@ -111,25 +111,24 @@ var Field = React.createClass({
 			field = this.refs.typeField
 		;
 
-		if( !field )
-			return [];
+		//if( !field )
+		//	return [];
 
-		if( field.fieldType == 'object' ){
-			childErrors = field.getValidationErrors( jsonValue );
-			childErrors.forEach( function( error ){
-				if( !error.path )
-					error.path = name;
-				else
-					error.path = name + '.' + error.path;
-			});
-
-			if( childErrors.length )
-				this.setState( {error: true} );
-		}
+		//if( field && field.fieldType == 'object' ){
+		//	childErrors = field.getValidationErrors( jsonValue );
+		//	childErrors.forEach( function( error ){
+		//		if( !error.path )
+		//			error.path = name;
+		//		else
+		//			error.path = name + '.' + error.path;
+		//	});
+    //
+		//	if( childErrors.length )
+		//		this.setState( {error: true} );
+		//}
 
 		if( !validates )
 			return childErrors;
-
 
 		var error = Validation.getValidationError( this.props.value, jsonValue, validates ),
 			message
@@ -142,7 +141,7 @@ var Field = React.createClass({
 
 			error.path = name;
 			error.message = message;
-			this.setState( {error: message} );
+      //this.setState( {error: message} );
 			childErrors = childErrors.concat( [error] );
 		}
 		else if( this.state.error ){

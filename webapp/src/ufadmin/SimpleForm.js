@@ -3,6 +3,7 @@ import React from 'react'
 import page from 'page'
 import Reflux from 'reflux'
 import ReactJson from 'react-json'
+import _ from 'lodash'
 
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
@@ -26,7 +27,8 @@ var SimpleForm = React.createClass({
     return {
       objectId: null,
       extraFormData: {},
-      tagTree: []
+      tagTree: [],
+      formFields: {}
     }
   },
 
@@ -84,6 +86,15 @@ var SimpleForm = React.createClass({
       return
     }
   },
+  validateData: function (data) {
+    var maxLength = 255
+    for (var key in data) {
+      if (!data[key] || data[key].length > maxLength) {
+        return false
+      }
+    }
+    return true
+  },
   onSubmit: function (e) {
     e.preventDefault()
     var data = this.refs.form_data.getValue()
@@ -93,7 +104,17 @@ var SimpleForm = React.createClass({
       data[key] = this.state.extraFormData[key]
     }
 
-    SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
+    var formFields = this.state.store.formSettings.fields
+
+    _.forIn(formFields, (value) => {
+      value['validates'] = 'required length[0, 255]'
+    })
+
+    this.setState({formFields: formFields})
+
+    if (this.validateData(data)) {
+      SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
+    }
   },
 
   setParentTag: function (e) {
@@ -107,6 +128,10 @@ var SimpleForm = React.createClass({
     var dataObject = this.state.store.dataObject
     var formSettings = this.state.store.formSettings
     var formData = this.state.store.formData
+
+    if (formSettings && !_.isEmpty(this.state.fields)) {
+      formSettings.fields = this.state.fields
+    }
 
     let message = this.state.store.displayMsg
       ? (

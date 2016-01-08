@@ -27,12 +27,14 @@ var SimpleFormStore = Reflux.createStore({
     var form_data = {'indicator': {'name': '', 'short_name': '', 'data_format': '', 'description': ''}, 'indicator_tag': {'tag_name': ''}}
     var api_fn = fnLookup[content_type]
 
-    var id_to_post = object_id || -1
-
-    data_to_post['id'] = id_to_post
+    let all_data = {}
+    all_data['id'] = object_id || -1
+    for (var key in data_to_post) {
+      all_data[key] = data_to_post[key]
+    }
 
     Promise.all([
-      api_fn(data_to_post)
+      api_fn(all_data)
     ])
     .then(_.spread(function (apiResponse) {
       self.data.formData = form_data[content_type]
