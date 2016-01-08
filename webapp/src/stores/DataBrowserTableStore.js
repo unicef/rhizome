@@ -37,6 +37,9 @@ var DataBrowserTableStore = Reflux.createStore({
   },
 
   onGetTableData: function (campaign, locations, indicators) {
+    this.data.data = null
+    this.trigger(this.data)
+
     let fields = {location: {title: 'Location', name: 'location'}, campaign: {title: 'Campaign', name: 'campaign'}}
     let columns = ['location', 'campaign']
     let options = {indicator__in: []}
