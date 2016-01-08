@@ -28,7 +28,7 @@ var SimpleForm = React.createClass({
       objectId: null,
       extraFormData: {},
       tagTree: [],
-      formFields: {}
+      errorMessage: {}
     }
   },
 
@@ -87,13 +87,17 @@ var SimpleForm = React.createClass({
     }
   },
   validateData: function (data) {
+    var errorMessage = {}
     var maxLength = 255
     for (var key in data) {
-      if (!data[key] || data[key].length > maxLength) {
-        return false
+      if (!data[key]) {
+        errorMessage[key] = key.toUpperCase() + ' could not be blank.'
+      }
+      if (data[key].length > maxLength) {
+        errorMessage[key] = key.toUpperCase() + ' is too long.'
       }
     }
-    return true
+    return errorMessage
   },
   onSubmit: function (e) {
     e.preventDefault()
@@ -104,17 +108,11 @@ var SimpleForm = React.createClass({
       data[key] = this.state.extraFormData[key]
     }
 
-    var formFields = this.state.store.formSettings.fields
+    let errorMessage = this.validateData(data)
 
-    _.forIn(formFields, (value) => {
-      value['validates'] = 'required length[0, 255]'
-    })
-
-    this.setState({formFields: formFields})
-
-    if (this.validateData(data)) {
-      SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
-    }
+    _.isEmpty(errorMessage)
+      ? SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
+      : this.setState({errorMessage: errorMessage})
   },
 
   setParentTag: function (e) {
@@ -128,10 +126,6 @@ var SimpleForm = React.createClass({
     var dataObject = this.state.store.dataObject
     var formSettings = this.state.store.formSettings
     var formData = this.state.store.formData
-
-    if (formSettings && !_.isEmpty(this.state.fields)) {
-      formSettings.fields = this.state.fields
-    }
 
     let message = this.state.store.displayMsg
       ? (
@@ -241,7 +235,7 @@ var SimpleForm = React.createClass({
             <h2>Manage Admin Page</h2>
             {idInfo}
             {message}
-            <ReactJson value={formData} settings={formSettings} ref='form_data'/>
+            <ReactJson value={formData} settings={formSettings} errorMessage={this.state.errorMessage} ref='form_data'/>
             {additionalFormComponents}
             <br />
             <button className='tiny' onClick={ this.onSubmit }>Save</button>
