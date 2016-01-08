@@ -20,29 +20,31 @@ var Field = React.createClass({
 	},
 	getDefaultProps: function(){
 		return {
-			definition: {}
-		};
+      definition: {},
+    };
+	},
+  shouldComponentUpdate: function( nextProps, nextState ){
+		return nextProps.value != this.props.value || nextProps.errorMessage != this.props.errorMessage ||nextState.error != this.state.error;
 	},
 	render: function(){
 		var definition = this.props.definition || {},
+      errorMessage = this.props.errorMessage || '',
 			className = 'jsonField',
 			type = definition.type || TypeField.prototype.guessType( this.props.value ),
 			id = this.props.id + '_' + this.props.name,
-			typeField
-		;
+      error = '',
+			typeField;
 
 		if( type == 'react' )
 			return this.renderReactField( definition );
 
 		typeField = this.renderTypeField( type, id );
 
-    var error = this.getValidationErrors(this.props.value)
-
 		className += ' ' + type + 'Field';
 
-		if( error.length > 0 ){
+    if(errorMessage.length > 0){
 			className += ' jsonError';
-      error = React.DOM.span({ key:'e', className: 'jsonErrorMsg' }, error[0].message );
+      error = React.DOM.span({ key:'e', className: 'jsonErrorMsg' }, errorMessage );
 		}
 
 		var jsonName = [ React.DOM.label({ key: 's1', htmlFor: id }, (definition.title || this.props.name) + ':' ) ];
@@ -91,10 +93,6 @@ var Field = React.createClass({
 		this.props.onDeleted( this.props.name );
 	},
 
-	shouldComponentUpdate: function( nextProps, nextState ){
-		return nextProps.value != this.props.value || nextState.error != this.state.error;
-	},
-
 	onUpdated: function( value ){
 		var definition = this.props.definition;
 		if( this.props.value !== value ){
@@ -111,21 +109,21 @@ var Field = React.createClass({
 			field = this.refs.typeField
 		;
 
-		//if( !field )
-		//	return [];
+		if( !field )
+			return [];
 
-		//if( field && field.fieldType == 'object' ){
-		//	childErrors = field.getValidationErrors( jsonValue );
-		//	childErrors.forEach( function( error ){
-		//		if( !error.path )
-		//			error.path = name;
-		//		else
-		//			error.path = name + '.' + error.path;
-		//	});
-		//
-		//	if( childErrors.length )
-		//		this.setState( {error: true} );
-		//}
+		if( field && field.fieldType == 'object' ){
+			childErrors = field.getValidationErrors( jsonValue );
+			childErrors.forEach( function( error ){
+				if( !error.path )
+					error.path = name;
+				else
+					error.path = name + '.' + error.path;
+			});
+
+			if( childErrors.length )
+				this.setState( {error: true} );
+		}
 
 		if( !validates )
 			return childErrors;
@@ -141,7 +139,6 @@ var Field = React.createClass({
 
 			error.path = name;
 			error.message = message;
-			//this.setState( {error: message} );
 			childErrors = childErrors.concat( [error] );
 		}
 		else if( this.state.error ){

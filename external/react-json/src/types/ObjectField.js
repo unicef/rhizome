@@ -34,6 +34,7 @@ var ObjectField = React.createClass({
 	render: function(){
 		var me = this,
 			settings = this.props.settings,
+      errorMessage = this.props.errorMessage,
 			className = this.state.editing || settings.header === false ? 'open jsonObject jsonCompound' : 'jsonObject jsonCompound',
 			openHash = '',
 			definitions = this.state.fields,
@@ -49,8 +50,9 @@ var ObjectField = React.createClass({
 			// If the field is an array handle grouping
 			if( field.constructor === Array )
 				attrs.push( me.renderGroup( field, fixedFields, ++groupCount ) );
-			else if( !hidden[ field ] )
-				attrs.push( me.renderField( field, fixedFields ) );
+			else if( !hidden[ field ] ) {
+        attrs.push( me.renderField( field, fixedFields ) );
+      }
 		});
 
 		var openHashChildren = [ attrs ];
@@ -67,6 +69,7 @@ var ObjectField = React.createClass({
 
 	renderField: function( key, fixedFields ){
 		var value = this.props.value[ key ],
+      errorMessage = this.props.errorMessage[ key ] || '',
 			definition = this.state.fields[ key ] || {},
 			fixed = fixedFields === true || typeof fixedFields == 'object' && fixedFields[ key ]
 		;
@@ -78,7 +81,8 @@ var ObjectField = React.createClass({
 			value: value,
 			key: key,
 			name: key,
-			ref: key,
+      errorMessage: errorMessage,
+			ref: this.refs[key],
 			fixed: fixed,
 			id: this.props.id,
 			definition: definition,
