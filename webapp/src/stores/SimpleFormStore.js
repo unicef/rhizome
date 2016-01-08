@@ -77,18 +77,17 @@ var SimpleFormStore = Reflux.createStore({
       'indicator': {
         'form': true,
         fields: {
-          'name': {type: 'string', validates: 'required length[0, 255]'},
-          'short_name': {type: 'string', validates: 'required length[0, 255]'},
+          'name': {type: 'string'},
+          'short_name': {type: 'string'},
           'data_format': {
             type: 'select',
-            validates: 'required',
             settings: {options: [
               { value: 'pct', label: 'pct' },
               { value: 'bool', label: 'bool' },
               { value: 'int', label: 'int' }
             ]}
           },
-          'description': {type: 'string', validates: 'required length[0, 255]'}
+          'description': {type: 'string'}
         }
       }
     }
