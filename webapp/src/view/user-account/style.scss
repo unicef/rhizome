@@ -1,5 +1,5 @@
 .user-account-container {
-	width: 700px; 
+	width: 700px;
 	margin: 30px auto;
 	.row {
 		.left-box {
@@ -10,7 +10,7 @@
 		    padding: 5px;
 		    text-align: left;
 		  }
-		
+
 		}
 		.right-box {
 		    .location-table {
@@ -25,7 +25,7 @@
 		        }
 		        span.fa {
 		        	cursor: pointer;
-		        }	
+		        }
 		      }
 		    }
 			.user-roles {
@@ -37,35 +37,4 @@
 			}
 		}
 	}
-/*	.row {
-	  .arrow-container {
-	  	text-align: center;
-	  }
-	  .columns .indicator-verification {
-	  	line-height: 35px;
-	  	float: right
-	  }
-	  .check-column {
-	      text-align: left;
-	      padding-left: 0;
-	      padding-top: 3px;
-	  }
-	}
-	.footer-row {
-		padding-top: 20px;
-		.columns { 
-		     .warning-div {
-		     	font-size: 14px;
-		     	.warning-sub {
-		     	  font-size: 20px;
-		     	  line-height: 40px;
-		     	}
-		     }
-		}
-		.cancel-column {
-			font-size: 14px;
-			padding-left: 0px;
-			  padding-top: 9px;
-		}
-	}*/
 }
