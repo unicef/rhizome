@@ -16,7 +16,7 @@ let UserAccount = React.createClass({
   },
 
   componentWillMount: function () {
-    UserAccountActions.getLocations()
+    UserAccountActions.getLocations(this.props.userId)
   },
 
   render: function () {
