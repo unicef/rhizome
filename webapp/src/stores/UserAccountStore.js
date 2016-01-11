@@ -38,25 +38,26 @@ var UserAccountStore = Reflux.createStore({
         this.data.locationMap = _.indexBy(response.objects, 'id')
         this.trigger(this.data)
 
-        this._getLocationalAccess(userId)
+        this._getLocationAccess(userId)
       })
   },
 
-  onAddLocations: function (id) {
-    this.data.locationSelected.push(this.data.locationMap[id])
-    this.trigger(this.data)
-  },
-
-  onRemoveLocation: function (id) {
+  onRemoveLocationAccess: function (id) {
     _.remove(this.data.locationSelected, {id: id})
     this.trigger(this.data)
   },
 
-  _getLocationalAccess: function (userId) {
+  onAddLocationAccess: function (userId, locationId) {
+    var self = this
+    api.set_location_responsibility({ user_id: userId, location_id: locationId }).then(function () {
+      self._getLocationAccess()
+    })
+  },
+
+  _getLocationAccess: function (userId) {
     let self = this
     api.location_responsibility({ user_id: userId }, null, {'cache-control': 'no-cache'}).then(function (data) {
       let locations = data.objects
-      console.log(userId)
       locations.forEach(location => {
         self.data.locationSelected.push(self.data.locationMap[location.top_lvl_location_id])
       })

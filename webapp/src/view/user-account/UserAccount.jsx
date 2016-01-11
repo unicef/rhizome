@@ -19,6 +19,14 @@ let UserAccount = React.createClass({
     UserAccountActions.getLocations(this.props.userId)
   },
 
+  _addLocation: function (locationId) {
+    UserAccountActions.addLocationAccess(this.props.userId, locationId)
+  },
+
+  _removeLocation: function (locationId) {
+    UserAccountActions.removeLocationAccess(this.props.userId, locationId)
+  },
+
   render: function () {
     let selectRole = (
       <div className='row' style={{marginBottom: '15px'}}>
@@ -41,8 +49,8 @@ let UserAccount = React.createClass({
            <LocationDropdownMenu
              locations={this.state.locations}
              text='Select Location'
-             sendValue={UserAccountActions.addLocations} />
-           <List items={this.state.locationSelected} removeItem={UserAccountActions.removeLocation} />
+             sendValue={this._addLocation} />
+           <List items={this.state.locationSelected} removeItem={this._removeLocation} />
          </div>
       </div>
     )
