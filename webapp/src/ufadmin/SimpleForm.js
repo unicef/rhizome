@@ -28,7 +28,8 @@ var SimpleForm = React.createClass({
       objectId: null,
       extraFormData: {},
       tagTree: [],
-      errorMessage: {}
+      errorMessage: {},
+      formData: {}
     }
   },
 
@@ -97,6 +98,11 @@ var SimpleForm = React.createClass({
         errorMessage[key] = key.toUpperCase() + ' is too long.'
       }
     }
+
+    if (!errorMessage.name) {
+      SimpleFormActions.getIndicators()
+    }
+
     return errorMessage
   },
   onSubmit: function (e) {
@@ -112,7 +118,10 @@ var SimpleForm = React.createClass({
 
     _.isEmpty(errorMessage)
       ? SimpleFormActions.baseFormSave(this.props.params.id, this.props.params.contentType, data)
-      : this.setState({errorMessage: errorMessage})
+      : this.setState({
+        errorMessage: errorMessage,
+        formData: data
+      })
   },
 
   setParentTag: function (e) {
@@ -125,7 +134,7 @@ var SimpleForm = React.createClass({
     var contentType = this.props.params.contentType
     var dataObject = this.state.store.dataObject
     var formSettings = this.state.store.formSettings
-    var formData = this.state.store.formData
+    var formData = _.isEmpty(this.state.formData) ? this.state.store.formData : this.state.formData
 
     let message = this.state.store.displayMsg
       ? (
