@@ -11,7 +11,6 @@ function qualitativeAxis () {
   var _width = 0
   var _scale = d3.scale.linear()
   var _threshold = d3.scale.threshold()
-  var _fontSize = 9
 
   function axis (selection) {
     selection.each(function () {
@@ -48,27 +47,6 @@ function qualitativeAxis () {
         'height': _height,
         'fill': '#FFFFFF',
         'width': 2
-      })
-
-      var text = tick.selectAll('text').data(_inherit)
-
-      text.enter().append('text')
-      text.attr({
-        'dx': '0.4rem',
-        'y': _height,
-        'dy': '-0.2rem'
-      })
-      .style({
-        'fill': '#ffffff',
-        'opacity': d => { return d === 'good' ? 1 : 0 },
-        'font-size': _fontSize,
-        'font-weight': 'bold'
-      })
-      .text(d => {
-        var gap = _width - x(d, true)
-        return gap > _fontSize * 2
-          ? d
-          : gap > _fontSize / 3 ? d.slice(0, 1) : ''
       })
     })
   }

@@ -9,6 +9,7 @@ from decorator_include import decorator_include
 
 from datapoints.api.geo import GeoResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
+from datapoints.api.homepage import HomePageResource
 from datapoints.api.meta_data import *
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system
@@ -26,6 +27,7 @@ v1_api.register(CampaignResource())
 v1_api.register(LocationResource())
 v1_api.register(IndicatorResource())
 v1_api.register(OfficeResource())
+v1_api.register(HomePageResource())
 v1_api.register(LocationTypeResource())
 v1_api.register(IndicatorTagResource())
 v1_api.register(IndicatorToTagResource())

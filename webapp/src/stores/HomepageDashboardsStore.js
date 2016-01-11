@@ -3,7 +3,6 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import api from 'data/api'
-import builtins from 'dashboard/builtin'
 import DashboardInit from 'data/dashboardInit'
 
 import Indicator from 'requests/Indicator'
@@ -17,22 +16,6 @@ var HomepageDashboardsStore = Reflux.createStore({
 
   onInitialize () {
     this.onFetchDashboards()
-  },
-
-  getDashboardByName: function (officeItem) {
-    var homepageString = 'homepage-' + officeItem.name.toLowerCase()
-    var obj = _.find(builtins, d => _.kebabCase(d.title) === homepageString)
-
-    obj.location = officeItem.name
-    obj.latest_campaign_id = officeItem.latest_campaign_id
-    obj.indicators = _(_.get(obj, 'charts', []))
-      .pluck('indicators')
-      .flatten()
-      .uniq()
-      .map(id => this.indicators[id])
-      .value()
-
-    return obj
   },
 
   melt: function (d) {
@@ -73,14 +56,6 @@ var HomepageDashboardsStore = Reflux.createStore({
           query.parent_location_id__in = location.id
           break
 
-        case 'type':
-          var parent = _.get(location, 'parent.id')
-          if (!_.isUndefined(parent)) {
-            query.parent_location_id__in = parent
-          }
-
-          query.location_type = location.location_type
-          break
         default:
           query.location_id__in = location.id
           break
@@ -96,53 +71,6 @@ var HomepageDashboardsStore = Reflux.createStore({
     return Promise.all(promises)
   },
 
-  prepareQuery: function (locations, campaigns, locationsTypes, dashboard) {
-    var locationIdx = _.indexBy(locations, 'id')
-    var types = _.indexBy(locationsTypes, 'id')
-
-    _.each(this.locations, function (r) {
-      r.location_type = _.get(types[r.location_type_id], 'name')
-      r.parent = locationIdx[r.parent_location_id]
-    })
-
-    var indicators = _.reduce(dashboard.charts, this.generateIndicator, {})
-    var query = this.getQueriesByIndicators(indicators)
-
-    var topLevelLocations = _(locations)
-      .filter(function (r) {
-        return !locationIdx.hasOwnProperty(r.parent_location_id)
-      })
-      .sortBy('name')
-
-    var location = _.find(locations, function (r) {
-      return r.name === dashboard.location
-    })
-
-    if (!location) {
-      location = topLevelLocations.first()
-    }
-
-    var campaign = _(campaigns)
-      .filter(function (c) {
-        return c.office_id === location.office_id &&
-          (dashboard.latest_campaign_id === c.id)
-      })
-      .sortBy('start_date')
-      .last()
-
-    var hasMap = _(dashboard.charts)
-      .pluck('type')
-      .any(t => _.endsWith(t, 'Map'))
-
-    return {
-      campaign: campaign,
-      dashboard: dashboard,
-      charts: query,
-      location: location,
-      hasMap: hasMap
-    }
-  },
-
   countriesPromise: function (list) {
     return api.geo({ parent_location_id__in: list.join(',') }, null, { 'cache-control': 'max-age=604800, public' }).then(response => {
       var locations = _(response.objects.features).flatten().groupBy('parent_location_id').value()
@@ -153,28 +81,25 @@ var HomepageDashboardsStore = Reflux.createStore({
   onFetchDashboards: function () {
     Promise.all([
       Location.getLocations(),
-      Location.getLocationTypes(),
       CampaignStore.getCampaignsPromise(),
       Indicator.getIndicators(),
-      Office.getOffices()
+      Office.getHomePageCharts()
     ])
-    .then(_.spread((locations, locationsTypes, campaigns, indicators, offices) => {
-      var partialPrepare = _.partial((dashboard) => {
-        return this.prepareQuery(locations, campaigns, locationsTypes, dashboard)
-      })
-
-      var dashboardDefs = offices
-
+    .then(_.spread((locations, campaigns, indicators, dashboardDefs) => {
       this.indicators = indicators
-      var enhanced = offices
-        .map(item => this.getDashboardByName(item))
-        .map(partialPrepare)
+      var enhanced = dashboardDefs
 
       var partialDashboardInit = _.partial((data) => {
-        var dashboardDef = _.find(enhanced, (item) => {
-          return data
-        })
+        var passedLocation = data.data[0].location
+        // FIXME hackAlert.. this method is called twice, once the ID is passed,
+        // and in the other the location Object is passed.. need to dig in more.
+        if (typeof passedLocation === 'object') {
+          var locationIdOfPassedData = passedLocation.id
+        } else {
+          locationIdOfPassedData = passedLocation
+        }
 
+        var dashboardDef = _.find(enhanced, dash => dash.location.id === locationIdOfPassedData)
         return _.extend({
           campaign: dashboardDef.campaign,
           location: dashboardDef.location,
@@ -194,7 +119,6 @@ var HomepageDashboardsStore = Reflux.createStore({
           )
         })
       })
-
       var queries = enhanced.map(this.fetchData)
 
       Promise.all(queries).then(_.spread((d1, d2, d3) => {
@@ -211,60 +135,27 @@ var HomepageDashboardsStore = Reflux.createStore({
         })
 
         let dashboards = dataPoints.map(function (item) {
-          // let country = item.data[0].campaign.slug.split('-')[0]
           item.mapLoading = true
-          return partialDashboardInit(item)
+          var some_obj = partialDashboardInit(item)
+          return some_obj
         })
 
         this.trigger({
           dashboards: dashboards
         })
 
-        this.countriesPromise(dashboardDefs.map(item => item.id)).then(countries => {
+        this.countriesPromise(dashboardDefs.map(item => item.location.id)).then(countries => {
           dashboards = dataPoints.map((item, index) => {
             item.features = countries[index]
             item.mapLoading = false
             return partialDashboardInit(item)
           })
-
           this.trigger({
             dashboards: dashboards
           })
         })
       }))
     }))
-  },
-
-  getQueriesByIndicators: function (indicators) {
-    var qs = _.groupBy(indicators, function (def) {
-      return [def.duration, def.startOf, def.locations].join('-')
-    })
-
-    return _.map(qs, function (arr) {
-      return _.merge.apply(null, arr.concat(function (a, b) {
-        if (_.isArray(a)) {
-          return a.concat(b)
-        }
-      }))
-    })
-  },
-
-  generateIndicator: function (indicators, chart) {
-    var base = _.omit(chart, 'indicators', 'title')
-
-    _.each(chart.indicators, function (id) {
-      var duration = !_.isNull(_.get(chart, 'timeRange', null)) ? moment.duration(chart.timeRange) : Infinity
-      var hash = [id, chart.startOf, chart.locations].join('-')
-
-      if (!indicators.hasOwnProperty(hash) || duration > indicators[hash].duration) {
-        indicators[hash] = _.defaults({
-          duration: duration,
-          indicators: [id]
-        }, base)
-      }
-    })
-
-    return indicators
   }
 })
 

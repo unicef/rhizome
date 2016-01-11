@@ -900,11 +900,6 @@ class ChartTypeTypeResource(BaseNonModelResource):
         return self.get_object_list(bundle.request)
 
     def get_object_list(self, request):
-        ## the chart_Type_to_indicator table needs to be populated by the
-        ## cache_indicator_abstracted method, based on logic defined around
-        ## calculated_indicator_component, and Indicator.data_format.  For now
-        ## we return all chart_types for all indicators so that when i add a new
-        ## indicator i can immediately visualize it in the chart wizard
 
         chart_types =["PieChart","LineChart","BarChart","ColumnChart",\
             "ChoroplethMap","ScatterChart","TableChart"]
@@ -919,59 +914,10 @@ class ChartTypeTypeResource(BaseNonModelResource):
 
         return qs
 
-class OfficeResult(object):
-    id = int()
-    country = unicode()
-    name = unicode()
-    latest_campaign_id = int()
-    location_id = int()
-
-class OfficeResource(BaseNonModelResource):
-    id = fields.IntegerField(attribute='id')
-    name = fields.CharField(attribute='name')
-    country = fields.CharField(attribute='country')
-    latest_campaign_id = fields.IntegerField(attribute='latest_campaign_id')
-    location_id = fields.IntegerField(attribute='location_id')
-
-    class Meta(BaseNonModelResource.Meta):
-        object_class = OfficeResult
+class OfficeResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        queryset = Office.objects.all().values()
         resource_name = 'office'
-        filtering = {
-            "id": ALL,
-        }
-
-    def obj_get_list(self, bundle, **kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
-
-        return self.get_object_list(bundle.request)
-
-    def get_object_list(self, request):
-
-        top_lvl_location_id = LocationPermission.objects.get(user_id = \
-            request.user.id).top_lvl_location.id
-        user_office_id = Location.objects.get(id=top_lvl_location_id)\
-            .office_id
-        ## smarter way to find campaign with most data and latest start date#
-        latest_campaign_id = Campaign.objects.get(start_date = '2015-10-01',\
-            office_id = user_office_id).id
-
-        qs = []
-        for x in Location.objects.filter(parent_location_id=top_lvl_location_id)\
-            .values_list('id',flat=True)[:3]:
-
-            office_obj = OfficeResult()
-            office_obj.id = user_office_id
-            office_obj.location_id = x
-            office_obj.name = Office.objects.get(id=user_office_id).name
-            office_obj.country = office_obj.name
-            office_obj.latest_campaign_id = latest_campaign_id
-
-            qs.append(office_obj)
-
-        return qs
 
 
 def clean_post_data(post_data_dict):

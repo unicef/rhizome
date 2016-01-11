@@ -58,7 +58,7 @@ var HomepageCharts = React.createClass({
 
     var buildMapChart = function (loading) {
       return <div>
-          <h4 className='chart-title'>Missed children, {missedChildrenData.location}</h4>
+          <h4 className='chart-title'>Missed children, {missedChildrenData.location.name}</h4>
           <Chart type='ChoroplethMap'
                  data={missedChildrenData.missedChildrenMap}
                  loading={loading}

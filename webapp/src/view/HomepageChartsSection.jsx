@@ -62,7 +62,6 @@ var HomepageChartsSection = React.createClass({
             {controls}
           </div>
         </div>
-
       </div>
     )
   }
