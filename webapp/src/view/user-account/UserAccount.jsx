@@ -3,7 +3,6 @@ import Reflux from 'reflux'
 
 import UserGroup from 'component/UserGroup.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
-import List from 'component/list/List.jsx'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'
@@ -19,12 +18,8 @@ let UserAccount = React.createClass({
     UserAccountActions.getLocations(this.props.userId)
   },
 
-  _addLocation: function (locationId) {
-    UserAccountActions.addLocationAccess(this.props.userId, locationId)
-  },
-
-  _removeLocation: function (locationId) {
-    UserAccountActions.removeLocationAccess(this.props.userId, locationId)
+  _setLocation: function (locationId) {
+    UserAccountActions.setLocationAccess(this.props.userId, locationId)
   },
 
   render: function () {
@@ -48,9 +43,8 @@ let UserAccount = React.createClass({
          <div className='columns small-8 right-box'>
            <LocationDropdownMenu
              locations={this.state.locations}
-             text='Select Location'
-             sendValue={this._addLocation} />
-           <List items={this.state.locationSelected} removeItem={this._removeLocation} />
+             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
+             sendValue={this._setLocation} />
          </div>
       </div>
     )
