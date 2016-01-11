@@ -1,7 +1,7 @@
 {% extends "data-entry/base.html" %}
-{% block content %}	
-<uf-entry-form></uf-entry-form>
+{% block content %}
+<div id='uf-entry-form'></div>
 {% endblock %}
 {% block scripts %}
-<script>Polio.DataEntry('#main');</script>
+<script>Polio.DataEntry(document.getElementById('uf-entry-form'));</script>
 {% endblock %}

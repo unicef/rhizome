@@ -34,11 +34,7 @@ export default {
     React.render(React.createElement(require('view/Dashboard.jsx')), el)
   },
   DataEntry: function (el) {
-    let vue = new Vue({
-      el: el,
-      components: { 'uf-entry-form': require('./view/entry-form') }
-    })
-    return vue
+    React.render(React.createElement(require('view/entry-form/EntryForm.jsx')), el)
   },
   SourceData: function (el) {
     var SourceData = require('view/SourceData.jsx')
