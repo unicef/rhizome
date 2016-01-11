@@ -9,9 +9,7 @@
     "superagent-prefix": "superagent-prefix",
     "lodash": "lodash",
     "moment": "moment",
-    "fixed-data-table": "fixed-data-table",
     "page": "page",
-    "react-dnd": "react-dnd",
     "react-layer": "react-layer"
   },
   "browserify": {
