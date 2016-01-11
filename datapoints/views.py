@@ -139,11 +139,12 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
-        user_location_permission = LocationPermission.objects.get(user=new_user)
-        location = Location.objects.get(id=user_location_permission.top_lvl_location_id)
-        permission_obj.location_type = location.location_type
-        permission_obj.save()
+        # set the user location permission just use the ajax call.
+        # permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
+        # user_location_permission = LocationPermission.objects.get(user=new_user)
+        # location = Location.objects.get(id=user_location_permission.top_lvl_location_id)
+        # permission_obj.location_type = location.location_type
+        # permission_obj.save()
         return HttpResponseRedirect(self.get_success_url())
 
 def html_decorator(func):
