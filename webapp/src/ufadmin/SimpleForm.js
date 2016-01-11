@@ -88,6 +88,7 @@ var SimpleForm = React.createClass({
     }
   },
   validateData: function (data) {
+    var indicators = this.state.store.indicators
     var errorMessage = {}
     var maxLength = 255
     for (var key in data) {
@@ -99,8 +100,11 @@ var SimpleForm = React.createClass({
       }
     }
 
-    if (!errorMessage.name) {
-      SimpleFormActions.getIndicators()
+    if (!errorMessage['name']) {
+      var result = _.find(indicators, d => { return d === data.name })
+      if (result) {
+        errorMessage['name'] = 'The indicator of this NAME already existed.'
+      }
     }
 
     return errorMessage

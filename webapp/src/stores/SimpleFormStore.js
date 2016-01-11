@@ -12,7 +12,8 @@ var SimpleFormStore = Reflux.createStore({
     formData: {},
     loading: true,
     saving: false,
-    saveSuccess: false
+    saveSuccess: false,
+    indicators: []
   },
 
   listenables: [SimpleFormActions],
@@ -102,6 +103,11 @@ var SimpleFormStore = Reflux.createStore({
         self.data.loading = false
         self.trigger(self.data)
       })
+
+    api.indicators(null, null, {'cache-control': 'no-cache'}).then(response => {
+      self.data.indicators = _.pluck(_.sortBy(response.objects, 'name'), 'name')
+      self.trigger(self.data)
+    })
   },
 
   onAddTagToIndicator: function (indicator_id, tag_id) {
