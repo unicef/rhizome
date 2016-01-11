@@ -36,7 +36,7 @@ class IndicatorResourceTest(ResourceTestCase):
             end_date = '2016-01-01',
             office_id = self.o.id,
             top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = 1,
+            top_lvl_indicator_tag_id = self.it.id,
             campaign_type_id = 1
         )
 
