@@ -25,6 +25,27 @@ var UserGroupStore = Reflux.createStore({
           this.trigger(this.data)
         })
     })
+  },
+
+  _setUserGroupItemActive: function (groupId, actived) {
+    this.data.userGroups.forEach(item => {
+      if (item.id === groupId) {
+        item.active = actived
+        return
+      }
+    })
+  },
+
+  onChangeSelectGroup: function (actived, userId, groupId) {
+    if (!actived) {
+      api.post_user_permission({'user_id': userId, 'group_id': groupId})
+      this._setUserGroupItemActive(groupId, true)
+      this.trigger(this.data)
+    } else {
+      api.delete_user_permission({'user_id': userId, 'group_id': groupId})
+      this._setUserGroupItemActive(groupId, false)
+      this.trigger(this.data)
+    }
   }
 })
 
