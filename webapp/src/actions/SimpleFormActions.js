@@ -12,5 +12,6 @@ export default Reflux.createActions([
   'initIndicatorToTag',
   'initIndicatorToCalc',
   'refreshTags',
-  'refreshCalculation'
+  'refreshCalculation',
+  'getIndicators'
 ])
