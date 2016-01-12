@@ -31,8 +31,12 @@ class CampaignResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        qs = Campaign.objects.filter(\
-            top_lvl_location_id = self.top_lvl_location_id)
+
+        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back !
+            qs = Campaign.objects.all()
+        else:
+            qs = Campaign.objects.filter(\
+                top_lvl_location_id = self.top_lvl_location_id)
 
         try:
             requested_ids = request.GET['id__in'].split(",")
