@@ -60,7 +60,7 @@ var Dashboard = React.createClass({
   },
 
   componentWillMount () {
-    this.getAllDashboards()
+    // this.getAllDashboards()
     page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/:dashboard', this._showDefault)
@@ -196,15 +196,9 @@ var Dashboard = React.createClass({
   },
 
   _showDefault (ctx) {
-    api.get_dashboard().then(res => {
-      let customDashboards = _(res.objects).sortBy('id').reverse().value()
-      let allDashboards = builtins.concat(customDashboards)
-      this.setState({ allDashboards: allDashboards })
-      this._getDashboard(ctx.params.dashboard).then(dashboard => {
-        DashboardActions.setDashboard({
-          dashboard
-        })
-      })
+    this.setState({ allDashboards: NavigationStore.dashboards })
+    this._getDashboard(ctx.params.dashboard).then(dashboard => {
+      DashboardActions.setDashboard({dashboard})
     })
   },
 
