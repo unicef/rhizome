@@ -3,7 +3,7 @@ import locale
 from collections import defaultdict
 import json
 
-from pandas import DataFrame
+from pandas import DataFrame, concat
 from bulk_update.helper import bulk_update
 
 from source_data.models import *
@@ -208,45 +208,60 @@ class MasterRefresh(object):
         if not ss_id_list:
             ss_id_list = self.submission_data.keys()
 
-        dps = DataPoint.objects.raw('''
-            DROP TABLE IF EXISTS _tmp_dp;
-            CREATE TABLE _tmp_dp
-            AS
-            SELECT
-                  MAX(id) as id
-                , location_id
-                , indicator_id
-                , MAX(source_submission_id) as source_submission_id
-                , SUM(value) as value
-            FROM doc_datapoint dd
-            WHERE source_submission_id = ANY(%s)
-            GROUP BY location_id, indicator_id;
 
-            DELETE FROM datapoint d
-            USING _tmp_dp t
-            WHERE d.location_id = t.location_id
-            AND d.indicator_id = t.indicator_id;
+        doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
+            source_submission_id__in = ss_id_list).values()))
 
-            INSERT INTO datapoint
-            (location_id, data_date, indicator_id, value, cache_job_id, source_submission_id, created_at, changed_by_id)
-            SELECT dd.location_id, dd.data_date, dd.indicator_id, dd.value, -1, dd.source_submission_id, now(), %s
-            FROM  _tmp_dp td
-            INNER JOIN doc_datapoint dd
-            ON td.location_id = dd.location_id
-            AND td.indicator_id = dd.indicator_id;
+        location_ids = doc_dp_df['location_id'].unique()
+        indicator_ids = doc_dp_df['indicator_id'].unique()
+        min_date, max_date = doc_dp_df['data_date'].min(),\
+            doc_dp_df['data_date'].max()
 
-            SELECT d.id FROM datapoint d
-            INNER JOIN _tmp_dp t
-            ON d.location_id = t.location_id
-            AND d.indicator_id = t.indicator_id
-            LIMIT 1;
-        ''',[ss_id_list,self.user_id])
+        pontential_conflict_doc_dp_df = DataFrame(list(DocDataPoint\
+            .objects.filter(
+                indicator_id__in = indicator_ids,
+                location_id__in = location_ids,
+                data_date__gte = min_date,
+                data_date__lte = max_date,
+            ).values()))
 
-        for dp in dps:
-            print dp.id
+        full_dp_df = concat([doc_dp_df,pontential_conflict_doc_dp_df])
+        dp_df = full_dp_df.drop_duplicates()
+
+        ss_columns = ['id','created_at']
+        ss_dp_df = DataFrame(list(SourceSubmission.objects.filter(
+            id__in = ss_id_list).values(*ss_columns)),columns=ss_columns)
+
+        merged_df = dp_df.merge(ss_dp_df, left_on = 'source_submission_id', \
+            right_on = 'id')
+
+        ready_for_sync_tuple_dict = DataFrame(merged_df\
+            .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
+
+        print ready_for_sync_tuple_dict
+
+        dp_batch, dp_ids_to_delete = [],[]
+        for ix, row in merged_df.iterrows():
+            max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
+                row.indicator_id)]
+
+            if row.created_at == max_created_at:
+                dp_batch.append(DataPoint**{
+                    'indicator_id' : row.indicator_id,
+                    'location_id' : row.locaiton_id,
+                    'data_date' : row.data_date,
+                    'value' : row.value,
+                    'changed_by_id' : self.user.id,
+                })
+
+            else:
+                ## THIS IS WRONG -- NEED TO LOOK UP DATAPOINT ID
+                dp_ids_to_delete.append(row.id_x)
+
+        DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
+        DataPoint.objects.bulk_create(dp_batch)
 
 
-    ## main() helper methods ##
     def process_source_submission(self,row):
 
 

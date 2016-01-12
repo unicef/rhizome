@@ -122,10 +122,6 @@ class RefreshMasterTestCase(TestCase):
             data_date = data_date
         ).values()
 
-        print '==='
-        print dp_result
-        print '==='
-
         self.assertEqual(1,len(dp_result))
         self.assertEqual(good_val, dp_result[0].value)
 
