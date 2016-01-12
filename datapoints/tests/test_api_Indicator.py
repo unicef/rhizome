@@ -166,7 +166,7 @@ class IndicatorResourceTest(ResourceTestCase):
 
         self.assertEqual(Indicator.objects.count(), 1)
 
-    def test_bound_and_tag_json(self):
+    def bound_and_tag_json(self):
 
         ind = Indicator.objects.create(**{
             'name':'test name',
@@ -209,6 +209,7 @@ class IndicatorResourceTest(ResourceTestCase):
         objects = data['objects']
 
         ## basic attributes ##
+
         self.assertEqual(ind.short_name,objects[0]['short_name'])
         self.assertEqual(ind.name,objects[0]['name'])
         self.assertEqual(ind.description,objects[0]['description'])
