@@ -220,7 +220,6 @@ class MasterRefresh(object):
                 , SUM(value) as value
             FROM doc_datapoint dd
             WHERE source_submission_id = ANY(%s)
-            AND is_valid = 't'
             GROUP BY location_id, indicator_id;
 
             DELETE FROM datapoint d
@@ -290,7 +289,6 @@ class MasterRefresh(object):
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
                 'changed_by_id': self.user_id,
-                'is_valid': True,
                 'agg_on_location': True,
             })
 
