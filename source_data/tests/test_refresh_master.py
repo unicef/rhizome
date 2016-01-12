@@ -7,7 +7,7 @@ from pandas import read_csv, notnull, to_datetime
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import *
-from datapoints.models import*
+from datapoints.models import *
 
 class RefreshMasterTestCase(TestCase):
 
@@ -67,6 +67,64 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertEqual(len(source_submissions_data)\
             ,len(submission_details))
+
+    def test_latest_data_gets_synced(self):
+
+        self.set_up()
+
+        test_ind_id = Indicator.objects.all()[0].id
+        test_loc_id = Location.objects.all()[0].id
+        bad_val, old_create_date = 10, '2015-01-01'
+        good_val, new_create_date = 20, '2016-01-01'
+        data_date = '2015-12-31'
+        ss_id = SourceSubmission.objects\
+            .filter(document_id = self.document.id)\
+            .values_list('id',flat=True)[0]
+
+        base_doc_dp_dict = {
+            'document_id' : self.document.id,
+            'indicator_id' : test_ind_id,
+            'location_id' : test_loc_id,
+            'data_date' : data_date,
+            'changed_by_id' : self.user.id,
+            'source_submission_id' : ss_id,
+            'is_valid' : True,
+            'agg_on_location': True,
+        }
+
+        bad_doc_dp_dict = {
+            'value' : bad_val,
+            'data_date' : old_create_date
+        }
+        bad_doc_dp_dict.update(base_doc_dp_dict)
+
+        good_doc_dp_dict = {
+            'value' : good_val,
+            'data_date' : new_create_date
+/            'created_at' :
+        }
+        good_doc_dp_dict.update(base_doc_dp_dict)
+
+        DocDataPoint.objects.create(**good_doc_dp_dict)
+        DocDataPoint.objects.create(**bad_doc_dp_dict)
+
+        mr = MasterRefresh(self.user.id, self.document.id)
+        mr.sync_datapoint([ss_id])
+
+        dp_result = DataPoint.objects.filter(
+            location_id = test_loc_id,
+            indicator_id = test_ind_id,
+            data_date = data_date
+        ).values()
+
+        print '==='
+        print dp_result
+        print '==='
+
+        self.assertEqual(1,len(dp_result))
+        self.assertEqual(good_val, dp_result[0].value)
+
+
 
     def test_submission_to_datapoint(self):
         '''

@@ -201,10 +201,12 @@ class MasterRefresh(object):
 
             doc_dps = self.process_source_submission(row)
 
-    def sync_datapoint(self):
+    def sync_datapoint(self, ss_id_list = None):
 
         dp_batch = []
-        ss_id_list = self.submission_data.keys()
+
+        if not ss_id_list:
+            ss_id_list = self.submission_data.keys()
 
         dps = DataPoint.objects.raw('''
             DROP TABLE IF EXISTS _tmp_dp;
