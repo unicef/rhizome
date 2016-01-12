@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 from tastypie import fields
 
 from datapoints.api.base import BaseModelResource, BaseNonModelResource
-from datapoints.models import Campaign, Location, LocationPermission
+from datapoints.models import Campaign, Location, LocationPermission, Office
 
 
 class HomePageResult(object):
