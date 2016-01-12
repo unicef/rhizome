@@ -437,7 +437,7 @@ class DocDataPoint(models.Model):
     value = models.FloatField(null=True)
     changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
-    is_valid = models.BooleanField()
+    created_at = models.DateTimeField(auto_now=True)
     agg_on_location = models.BooleanField()
 
     class Meta:
