@@ -257,11 +257,19 @@ class DataPointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        self.campaign_qs = Campaign.objects.filter(
-            start_date__gte=campaign_start,
-            start_date__lte=campaign_end,
-            top_lvl_location_id=self.top_lvl_location_id
-        )
+        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back !
+            self.campaign_qs = Campaign.objects.filter(
+                start_date__gte=campaign_start,
+                start_date__lte=campaign_end
+                # top_lvl_location_id=self.top_lvl_location_id
+            )
+
+        else:
+            self.campaign_qs = Campaign.objects.filter(
+                start_date__gte=campaign_start,
+                start_date__lte=campaign_end,
+                top_lvl_location_id=self.top_lvl_location_id
+            )
 
         campaign__in = [c.id for c in self.campaign_qs]
 

@@ -6,20 +6,6 @@ from datapoints.models import Campaign, Location, LocationPermission, Office
 
 
 class HomePageResult(object):
-    # campaign: Object
-    # charts: Array[4]
-    # dashboard: Object
-    #     builtin: true
-    #     charts: Array[4]
-    #     country: "afghanistan"
-    #     id: -6
-    #     indicators: Array[9]
-    #     latest_campaign_id: 299
-    #     location: "Badghis"
-    #     title: "Homepage Afghanistan"
-    # hasMap: true
-    # location: Object
-
     id = int()
     campaign = dict()
     charts = list()
@@ -50,23 +36,18 @@ class HomePageResource(BaseNonModelResource):
 
         return self.get_object_list(bundle.request)
 
-    def build_dashboard_for_loc(self, loc, campaign_obj):
-        #     charts: Array[4]
-        #     country: "afghanistan"
-        #     id: -6
-        #     indicators: Array[9]
-        #     latest_campaign_id: 299
-        #     location: "Badghis"
-        #     title: "Homepage Afghanistan"
-
+    def build_dashboard_for_loc(self, location_obj, campaign_obj):
+        '''
+        This is a hack.
+        '''
         dashboard = {}
-        country_obj = Office.objects.get(id = loc.office_id)
+        country_obj = Office.objects.get(id = location_obj.office_id)
+
+
         dashboard['country'] = country_obj.name.lower()
         dashboard['title'] = 'Home Page %s' % country_obj.name
         dashboard['latest_campaign_id'] = campaign_obj.id
-        # dashboard['latest_campaign_id'] = Campaign.objects\
-        #     .filter(office_id = country_obj.id).order_by('-start_date')[0].id
-        ## FIXME -- pull these from the database ! ##
+
         dashboard['charts'] = [{
             'title': 'Polio Cases YTD',
             'section': 'impact',
@@ -103,29 +84,35 @@ class HomePageResource(BaseNonModelResource):
         return dashboard
 
     def get_object_list(self, request):
+        '''
+        Hacking this temporarily.  This is dependent on ranking of locations
+        in the cache_meta process.
+        '''
 
         top_lvl_location_id = LocationPermission.objects.get(user_id = \
             request.user.id).top_lvl_location.id
 
-        # replace with fancier logic i.e. locations wiht highest msd chd % ##
-        # three_locations = Location.objects.filter(parent_location_id=\
-        #     top_lvl_location_id)[:3]
-        three_locations = Location.objects.filter(id__in=[3093,3100,3085]) # hilmand, kandahar, nangarhar
-        three_location_ids = [x.id for x in three_locations]
+        homepage_lookup = {
+            # top_lvl_location_id {[campagn_id,sub_loc]...}
+            1: [[296, 7],[296, 8],[296, 12]],
+            2: [[302, 3093],[302, 3100],[302, 3100]],
+            3: [[45, 3108],[45, 3113],[45, 3110]],
+            4721: [[296, 1],[302, 2],[45, 3]]
+        }
 
-        # campaign_obj = Campaign.objects\
-        #     .filter(top_lvl_location_id=top_lvl_location_id)\
-        #     .order_by('-start_date')[0]
-
-        campaign_obj = Campaign.objects.get(id=302)
-
+        hp_config = homepage_lookup[top_lvl_location_id]
         qs = []
 
-        for loc in three_locations:
+        for campaign_id, location_id in hp_config:
+
+            campaign_obj = Campaign.objects.get(id = campaign_id)
+            location_obj = Location.objects.get(id = location_id)
+
             hp_obj = HomePageResult()
             hp_obj.campaign = campaign_obj.__dict__
-            hp_obj.location = loc.__dict__
-            hp_obj.dashboard = self.build_dashboard_for_loc(loc,campaign_obj)
+            hp_obj.location = location_obj.__dict__
+            hp_obj.dashboard = self.build_dashboard_for_loc(location_obj\
+                ,campaign_obj)
             hp_obj.charts = hp_obj.dashboard['charts']
 
             hp_obj.campaign.pop('_state', None)
