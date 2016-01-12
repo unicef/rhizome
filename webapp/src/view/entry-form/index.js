@@ -121,7 +121,7 @@ export default {
               return a.office - b.office
             })
             .map(function (d) {
-              d.text = d.slug
+              d.text = d.name
               d.value = d.id
               return d
             })
