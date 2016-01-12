@@ -74,12 +74,18 @@ class RefreshMasterTestCase(TestCase):
 
         test_ind_id = Indicator.objects.all()[0].id
         test_loc_id = Location.objects.all()[0].id
-        bad_val, old_create_date = 10, '2015-01-01'
-        good_val, new_create_date = 20, '2016-01-01'
+        bad_val, good_val = 10, 20
         data_date = '2015-12-31'
-        ss_id = SourceSubmission.objects\
-            .filter(document_id = self.document.id)\
-            .values_list('id',flat=True)[0]
+        ss_0 = SourceSubmission.objects\
+            .filter(document_id = self.document.id)[0]
+
+        ss_1 = SourceSubmission.objects\
+            .filter(document_id = self.document.id)[1]
+
+        if ss_0.created_at < ss_1.created_at:
+            ss_old, ss_new = ss_0, ss_1
+        else:
+            ss_old, ss_new = ss_1, ss_0
 
         base_doc_dp_dict = {
             'document_id' : self.document.id,
@@ -87,21 +93,20 @@ class RefreshMasterTestCase(TestCase):
             'location_id' : test_loc_id,
             'data_date' : data_date,
             'changed_by_id' : self.user.id,
-            'source_submission_id' : ss_id,
-            'is_valid' : True,
             'agg_on_location': True,
         }
 
         bad_doc_dp_dict = {
             'value' : bad_val,
-            'data_date' : old_create_date
+            'data_date' : data_date,
+            'source_submission_id' : ss_old.id,
         }
         bad_doc_dp_dict.update(base_doc_dp_dict)
 
         good_doc_dp_dict = {
             'value' : good_val,
-            'data_date' : new_create_date
-/            'created_at' :
+            'data_date' : data_date,
+            'source_submission_id' : ss_new.id,
         }
         good_doc_dp_dict.update(base_doc_dp_dict)
 
@@ -109,7 +114,7 @@ class RefreshMasterTestCase(TestCase):
         DocDataPoint.objects.create(**bad_doc_dp_dict)
 
         mr = MasterRefresh(self.user.id, self.document.id)
-        mr.sync_datapoint([ss_id])
+        mr.sync_datapoint([ss_old.id, ss_new.id])
 
         dp_result = DataPoint.objects.filter(
             location_id = test_loc_id,
