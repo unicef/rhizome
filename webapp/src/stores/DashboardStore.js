@@ -66,22 +66,17 @@ var DashboardStore = Reflux.createStore({
     var locations = this.locations
     var campaigns = this.campaigns
 
-    var locationIdx = _.indexBy(locations, 'id')
-    var topLevellocations = _(locations)
-      .filter(function (r) {
-        return !locationIdx.hasOwnProperty(r.parent_location_id)
-      })
-      .sortBy('name')
-
     var location = _.find(locations, location => {
       return location.name === this.location
     })
 
     if (!location) {
-      location = topLevellocations.first()
+      // get the default configuration from the api //
+      location = locations[0]
     }
 
     var campaign = _(campaigns)
+      // get the default configuration from the api //
       .filter(function (c) {
         return c.office_id === location.office_id &&
           (!this.date || _.startsWith(c.start_date, this.date))

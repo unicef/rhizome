@@ -52,6 +52,9 @@ class LocationResource(BaseModelResource):
 
     def get_object_list(self, request):
 
+        if self.top_lvl_location_id == 4721:
+            return Location.objects.exclude(id = 4721).order_by('location_type_id').values()
+
         location_ids = get_locations_to_return_from_url(request)
         qs = Location.objects.filter(id__in=location_ids).values()
 
@@ -68,12 +71,13 @@ class IndicatorResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        ind_ids = IndicatorToOffice.objects\
-            .filter(office_id = Location.objects.get(id = self\
-            .top_lvl_location_id).office_id )\
-            .values_list('indicator_id',flat=True)
-
-        return Indicator.objects.filter(id__in=ind_ids).values()
+        # ind_ids = IndicatorToOffice.objects\
+        #     .filter(office_id = Location.objects.get(id = self\
+        #     .top_lvl_location_id).office_id )\
+        #     .values_list('indicator_id',flat=True)
+        #
+        # return Indicator.objects.filter(id__in=ind_ids).values()
+        return Indicator.objects.all().values()
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}

@@ -89,10 +89,10 @@ var HomepageDashboardsStore = Reflux.createStore({
       this.indicators = indicators
       var enhanced = dashboardDefs
 
-      console.log('1: enhanced', enhanced)
+      // console.log('1: enhanced', enhanced)
 
       var partialDashboardInit = _.partial((data) => {
-        console.log('3: ', data)
+        // console.log('3: ', data)
         var passedLocation = data.data[0].location
         // FIXME hackAlert.. this method is called twice, once the ID is passed,
         // and in the other the location Object is passed.. need to dig in more.
@@ -139,7 +139,7 @@ var HomepageDashboardsStore = Reflux.createStore({
 
         let dashboards = dataPoints.map(function (item) {
           item.mapLoading = true
-          console.log('2: item', item)
+          // console.log('2: item', item)
           var some_obj = partialDashboardInit(item)
           return some_obj
         })
