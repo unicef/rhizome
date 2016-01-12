@@ -57,11 +57,19 @@ class LocationResource(BaseModelResource):
 class IndicatorResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
-        queryset = Indicator.objects.all().values()
         resource_name = 'indicator'
         filtering = {
             "id": ALL,
         }
+
+    def get_object_list(self, request):
+
+        ind_ids = IndicatorToOffice.objects\
+            .filter(office_id = Location.objects.get(id = self\
+            .top_lvl_location_id).office_id )\
+            .values_list('indicator_id',flat=True)
+
+        return Indicator.objects.filter(id__in=ind_ids).values()
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
