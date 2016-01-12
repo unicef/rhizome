@@ -1,5 +1,7 @@
 import Reflux from 'reflux'
 
 export default Reflux.createActions([
-  'setIndicator'
+  'setIndicator',
+  'getCampaigns',
+  'setCampaign'
 ])

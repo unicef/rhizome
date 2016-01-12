@@ -13,23 +13,38 @@ let EntryForm = React.createClass({
     }
   },
 
+  componentWillMount: function () {
+    EntryFormActions.getCampaigns()
+  },
+
   _setIndicator: function (event) {
     EntryFormActions.setIndicator(event.target.value)
   },
 
-  render () {
-    let indicationOptions = (
-      <select value={this.state.indicationSelected} onChange={this._setIndicator}>
-        {this.state.indicatorSets.map(data => {
-          return (<option value={data.id}>{data.title}</option>)
-        })}
-      </select>
-    )
+  _setCampaign: function (event) {
+    EntryFormActions.setCampaign(event.target.value)
+  },
 
+  render () {
     let indicatorSet = (
       <div className='medium-2 columns'>
         <label htmlFor='sets'>Indicator Set</label>
-        {indicationOptions}
+        <select value={this.state.indicator_set_id} onChange={this._setIndicator}>
+          {this.state.indicatorSets.map(data => {
+            return (<option value={data.id}>{data.title}</option>)
+          })}
+        </select>
+      </div>
+    )
+
+    let campaignSet = (
+      <div className='medium-2 columns'>
+        <label htmlFor='campaigns'>Campaign</label>
+        <select value={this.state.campaign_id} onChange={this._setCampaign}>
+          {this.state.campaigns.map(campaign => {
+            return (<option value={campaign.value}>{campaign.text}</option>)
+          })}
+        </select>
       </div>
     )
 
@@ -38,6 +53,7 @@ let EntryForm = React.createClass({
         <form className='inline'>
           <div className='row'>
             {indicatorSet}
+            {campaignSet}
           </div>
         </form>
       </div>
