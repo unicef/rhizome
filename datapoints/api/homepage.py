@@ -117,10 +117,7 @@ class HomePageResource(BaseNonModelResource):
         #     .filter(top_lvl_location_id=top_lvl_location_id)\
         #     .order_by('-start_date')[0]
 
-        campaign_obj = Campaign.objects.get(id=299)
-
-
-
+        campaign_obj = Campaign.objects.get(id=302)
 
         qs = []
 

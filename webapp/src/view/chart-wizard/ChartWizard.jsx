@@ -114,7 +114,7 @@ let ChartWizard = React.createClass({
           Please choose the first indicator you would like to show in the chart. You may also choose more indicators later.
         </p>
         <IndicatorDropdownMenu
-          text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || 'Add Indicators'}
+          text={this.state.data.indicatorSelected[0] && this.state.data.indicatorSelected[0].name || ' Select an Indicator'}
           icon='fa-plus'
           indicators= {this.state.data.indicatorList}
           sendValue={ChartWizardActions.addFirstIndicator} />

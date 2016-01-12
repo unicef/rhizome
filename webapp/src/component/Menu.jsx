@@ -61,7 +61,8 @@ export default React.createClass({
     // RAN INTO HUGE PROBLEMS HERE!!! -- WHY was the initial code checking
     // both props and state ?  What do i lose by only checking props?
 
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
+    // console.log('menu.jsx - shouldComponentUpdate ')
+    return !_.isEqual(nextProps, this.props)
   },
 
   _onResize: function () {
