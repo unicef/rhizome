@@ -234,5 +234,5 @@ def cache_all_meta():
 
     source_object_cache = update_source_object_names()
 
-    minify_geo_json()
+    # minify_geo_json()
 
