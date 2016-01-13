@@ -238,24 +238,24 @@ class MasterRefresh(object):
         ready_for_sync_tuple_dict = DataFrame(merged_df\
             .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
 
-        print ready_for_sync_tuple_dict
-
         dp_batch, dp_ids_to_delete = [],[]
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
                 row.indicator_id)]
 
-            if row.created_at == max_created_at:
-                dp_batch.append(DataPoint**{
+            row_created_at = row.created_at.replace(tzinfo=None)
+
+            if row_created_at == max_created_at:
+                dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
-                    'location_id' : row.locaiton_id,
+                    'location_id' : row.location_id,
                     'data_date' : row.data_date,
                     'value' : row.value,
-                    'changed_by_id' : self.user.id,
-                })
+                    'changed_by_id' : self.user_id,
+                    'source_submission_id' : row.source_submission_id,
+                }))
 
             else:
-                ## THIS IS WRONG -- NEED TO LOOK UP DATAPOINT ID
                 dp_ids_to_delete.append(row.id_x)
 
         DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
