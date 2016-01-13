@@ -69,21 +69,6 @@ var DocOverviewStore = Reflux.createStore({
         self.data.isProcessing = false
         self.trigger(self.data)
       })
-  },
-  onDownloadRaw: function (document_id) {
-    console.log('DOWNLOAD RAW', document_id)
-    var self = this
-    self.data.isDownloading = true
-    self.trigger(self.data)
-
-    api.source_submission({'document_id': document_id, format: 'csv'}, null, {'cache-control': 'no-cache'})
-      .then(function (response) {
-        self.data.isDownloading = false
-        self.trigger(self.data)
-      }, function (response) {
-        self.data.isDownloading = false
-        self.trigger(self.data)
-      })
   }
 })
 

@@ -147,6 +147,15 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
   return fetch
 }
 
+function submissionDownload (document_id) {
+  var fetch = endPoint('/source_submission/', null, null, true)
+  return new Promise(function (fulfill, reject) {
+    fetch({'document_id': document_id, 'format': 'csv'}, null, {'cache-control': 'no-cache'}).then(function (data) {
+      fulfill(data)
+    }, reject)
+  })
+}
+
 function datapoint (q) {
   var fetch = endPoint('/datapoint/')
 
@@ -326,6 +335,7 @@ function tagTree (q) {
 export default {
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
   datapoints: datapoint,
+  submissionDownload: submissionDownload,
   indicatorsTree: indicatorsTree,
   tagTree: tagTree,
   buildIndicatorsTree: buildIndicatorsTree,
