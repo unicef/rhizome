@@ -56,7 +56,7 @@ let EntryForm = React.createClass({
       <div>
         <label htmlFor='locations'>Locations</label>
         <LocationDropdownMenu
-          locations={this.state.locations}
+          locations={this.state.filterLocations}
           text='Select Location'
           sendValue={EntryFormActions.addLocations}
           style='databrowser__button' />
