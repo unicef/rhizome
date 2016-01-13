@@ -29,5 +29,5 @@ node_modules
 webapp/npm-debug.log
 bower_components
 rhizome/settings/private.py
-settings.py
+# settings.py
 dev
