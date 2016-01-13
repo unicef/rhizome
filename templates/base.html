@@ -7,7 +7,9 @@
     <title>{% block title %}{% endblock %}RhizomeDB</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    {% load static from staticfiles %}
     <link rel="stylesheet" href="{% static "css/screen-ddff506646.css" %}">
+    {% load static from staticfiles %}
     <link rel="stylesheet" href="{% static "css/print-redesign-27445033fc.css" %}" media="print">
 </head>
 
@@ -113,7 +115,9 @@
 </footer>
 
 <script src="{% url 'wafflejs' %}"></script>
+{% load static from staticfiles %}
 <script src="{% static "js/vendor-24f5548b98.js" %}"></script>
+{% load static from staticfiles %}
 <script src="{% static "js/main-92eb806c90.js" %}"></script>
 
 {% block scripts %}{% endblock %}
