@@ -8,15 +8,17 @@ import api from 'data/api'
 let EntryFormStore = Reflux.createStore({
   listenables: [require('actions/EntryFormActions')],
 
+  locations: [],
+
   data: {
     indicator_set_id: 2,
     campaigns: [],
     campaign_id: null,
     couldLoad: false,
-    locations: [],
     filterLocations: [],
     locationMap: [],
-    locationSelected: []
+    locationSelected: [],
+    includeSublocations: false
   },
 
   getInitialState: function () {
@@ -65,9 +67,9 @@ let EntryFormStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.data.locations = locations
+        this.locations = locations
         this.data.filterLocations = locations
-
+        this._filterLocationsByCampaign()
         this.data.locationMap = _.indexBy(response.objects, 'id')
         this.trigger(this.data)
       })
@@ -82,9 +84,18 @@ let EntryFormStore = Reflux.createStore({
       return campaign.id === parseInt(this.data.campaign_id, 10)
     })
 
-    this.data.filterLocations = this.data.locations.filter(location => {
+    this.data.filterLocations = this.locations.filter(location => {
       return location.value === campaign.office_id
     })
+  },
+
+  onChangeSelect: function () {
+    if (this.data.includeSublocations) {
+      this.data.includeSublocations = false
+    } else {
+      this.data.includeSublocations = true
+    }
+    this.trigger(this.data)
   },
 
   onSetIndicator: function (indicatorId) {

@@ -64,6 +64,17 @@ let EntryForm = React.createClass({
       </div>
     )
 
+    let includeSublocations = (
+      <div>
+        <br />
+        <label className={this.state.couldLoad ? '' : 'disabled'}>
+          <input type='checkbox'
+            checked={this.state.includeSublocations && this.state.couldLoad}
+            onClick={EntryFormActions.changeSelect} />Include Sublocations
+        </label>
+      </div>
+    )
+
     let loadEntryForm = (
       <div>
         <br />
@@ -82,6 +93,7 @@ let EntryForm = React.createClass({
             {indicatorSet}
             {campaignSet}
             {locationSet}
+            {includeSublocations}
             {loadEntryForm}
           </div>
         </form>

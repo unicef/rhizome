@@ -6,5 +6,6 @@ export default Reflux.createActions([
   'setCampaign',
   'getLocations',
   'addLocations',
-  'removeLocation'
+  'removeLocation',
+  'changeSelect'
 ])
