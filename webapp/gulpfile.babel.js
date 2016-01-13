@@ -8,6 +8,7 @@ requireDir('./tasks')
 
 gulp.config('base.src', './src')
 gulp.config('base.dist', './public')
+gulp.config('templates', '../templates')
 
 gulp.config('tasks', requireDir('./tasks/config'))
 

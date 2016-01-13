@@ -7,8 +7,8 @@
     <title>{% block title %}{% endblock %}RhizomeDB</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link rel="stylesheet" href="{% static "css/screen-ddff506646.css" %}">
-    <link rel="stylesheet" href="{% static "css/print-redesign-27445033fc.css" %}" media="print">
+    <link rel="stylesheet" href="{% static "{{ assetPath "css/screen.css" }}" %}">
+    <link rel="stylesheet" href="{% static "{{ assetPath "css/print-redesign.css" }}" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
@@ -113,8 +113,8 @@
 </footer>
 
 <script src="{% url 'wafflejs' %}"></script>
-<script src="{% static "js/vendor-24f5548b98.js" %}"></script>
-<script src="{% static "js/main-92eb806c90.js" %}"></script>
+<script src="{% static "{{ assetPath "js/vendor.js" }}" %}"></script>
+<script src="{% static "{{ assetPath "js/main.js" }}" %}"></script>
 
 {% block scripts %}{% endblock %}
 

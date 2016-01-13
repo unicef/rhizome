@@ -48,6 +48,7 @@
     "eslint-plugin-react": "^3.2.3",
     "gulp": "^3.9.0",
     "gulp-autoprefixer": "2.3.1",
+    "gulp-compile-handlebars": "^0.6.1",
     "gulp-concat": "^2.6.0",
     "gulp-eslint": "^1.0.0",
     "gulp-rename": "^1.2.2",
