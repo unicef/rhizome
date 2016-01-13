@@ -137,15 +137,13 @@ class CustomSerializer(Serializer):
         data = self.to_simple(data, options)
         data_objects = data['objects']
 
-        # print dir(self)
-        # print self._meta.resource_name
-
         try:
             meta_lookup = self.build_meta_lookup(data_objects)
         except KeyError:
             ## a little bit of a hack, but this is the condition that for now
             ## alerts the system that this is a raw csv for a document_id.
-            return self.build_csv_for_source_doc(data_objects)
+            submission_data = [row['submission_json'] for row in data_objects]
+            return self.clean_and_prep_csv(submission_data)
 
         expanded_objects = []
 
@@ -166,23 +164,11 @@ class CustomSerializer(Serializer):
 
             expanded_objects.append(expanded_obj)
 
-        csv_df = DataFrame(expanded_objects)
-
-        ## rearrange column order ( POLIO-200 ) ##
-        ## http://stackoverflow.com/questions/13148429 ##
-        cols = csv_df.columns.tolist()
-        cols = cols[-2:] + cols[:-2]
-        csv_df = csv_df[cols]
-
-        csv = StringIO.StringIO(str(csv_df.to_csv(index=False)))
+        csv = self.clean_and_prep_csv(expanded_objects)
 
         return csv
 
-    def build_csv_for_source_doc(self, data_objects):
-
-        print '====\n' * 3
-        print data_objects
-        print '====\n' * 3
+    def clean_and_prep_csv(self, data_objects):
 
         csv_df = DataFrame(data_objects)
 

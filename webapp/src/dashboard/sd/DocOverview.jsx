@@ -116,6 +116,11 @@ var DocOverview = React.createClass({
            onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
         </a>
       </p>
+      <p>
+        <a disabled={this.state.isDownloading} className='button button-refresh large-3 medium-3 small-12 columns'
+           onClick={this.downloadRaw}> { this.state.isRefreshing ? 'Downloading..' : 'Download Raw Data'}
+        </a>
+      </p>
       {odkRefreshBtn}
     </div>)
 
