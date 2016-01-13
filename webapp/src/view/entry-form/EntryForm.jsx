@@ -1,6 +1,9 @@
 import React from 'react'
 import Reflux from 'reflux'
 
+import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
+
 import EntryFormStore from 'stores/EntryFormStore'
 import EntryFormActions from 'actions/EntryFormActions'
 
@@ -15,6 +18,7 @@ let EntryForm = React.createClass({
 
   componentWillMount: function () {
     EntryFormActions.getCampaigns()
+    EntryFormActions.getLocations()
   },
 
   _setIndicator: function (event) {
@@ -27,7 +31,7 @@ let EntryForm = React.createClass({
 
   render () {
     let indicatorSet = (
-      <div className='medium-2 columns'>
+      <div>
         <label htmlFor='sets'>Indicator Set</label>
         <select value={this.state.indicator_set_id} onChange={this._setIndicator}>
           {this.state.indicatorSets.map(data => {
@@ -38,7 +42,7 @@ let EntryForm = React.createClass({
     )
 
     let campaignSet = (
-      <div className='medium-2 columns'>
+      <div>
         <label htmlFor='campaigns'>Campaign</label>
         <select value={this.state.campaign_id} onChange={this._setCampaign}>
           {this.state.campaigns.map(campaign => {
@@ -48,12 +52,37 @@ let EntryForm = React.createClass({
       </div>
     )
 
+    let locationSet = (
+      <div>
+        <label htmlFor='locations'>Locations</label>
+        <LocationDropdownMenu
+          locations={this.state.locations}
+          text='Select Location'
+          sendValue={EntryFormActions.addLocations}
+          style='databrowser__button' />
+        <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
+      </div>
+    )
+
+    let loadEntryForm = (
+      <div>
+        <br />
+        <a role='button'
+          on='click : refresh'
+          className={this.state.couldLoad ? 'button success' : 'button success disabled'} >
+          <i className='fa fa-fw fa-refresh' />Load Entry Form
+        </a>
+      </div>
+    )
+
     return (
       <div>
-        <form className='inline'>
-          <div className='row'>
+        <form className='row'>
+          <div className='medium-2 columns'>
             {indicatorSet}
             {campaignSet}
+            {locationSet}
+            {loadEntryForm}
           </div>
         </form>
       </div>

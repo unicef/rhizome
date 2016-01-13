@@ -1,5 +1,8 @@
+import _ from 'lodash'
 import Reflux from 'reflux'
 
+import ancestryString from 'data/transform/ancestryString'
+import treeify from 'data/transform/treeify'
 import api from 'data/api'
 
 let EntryFormStore = Reflux.createStore({
@@ -9,7 +12,10 @@ let EntryFormStore = Reflux.createStore({
     indicator_set_id: 2,
     campaigns: [],
     campaign_id: null,
-    campaign_office_id: null
+    couldLoad: false,
+    locations: [],
+    locationMap: [],
+    locationSelected: []
   },
 
   getInitialState: function () {
@@ -41,6 +47,34 @@ let EntryFormStore = Reflux.createStore({
       })
   },
 
+  onGetLocations: function () {
+    api.locations()
+      .then(response => {
+        let locations = _(response.objects)
+          .map(location => {
+            return {
+              'title': location.name,
+              'value': location.id,
+              'parent': location.parent_location_id
+            }
+          })
+          .sortBy('title')
+          .reverse()
+          .thru(_.curryRight(treeify)('value'))
+          .map(ancestryString)
+          .value()
+
+        this.data.locations = locations
+
+        this.data.locationMap = _.indexBy(response.objects, 'id')
+        this.trigger(this.data)
+      })
+  },
+
+  _setCouldLoad: function () {
+    this.data.couldLoad = this.data.locationSelected.length > 0
+  },
+
   onSetIndicator: function (optionId) {
     this.data.indicator_set_id = optionId
     this.trigger(this.data)
@@ -48,6 +82,18 @@ let EntryFormStore = Reflux.createStore({
 
   onSetCampaign: function (campaignId) {
     this.data.campaign_id = campaignId
+    this.trigger(this.data)
+  },
+
+  onAddLocations: function (id) {
+    this.data.locationSelected.push(this.data.locationMap[id])
+    this._setCouldLoad()
+    this.trigger(this.data)
+  },
+
+  onRemoveLocation: function (id) {
+    _.remove(this.data.locationSelected, {id: id})
+    this._setCouldLoad()
     this.trigger(this.data)
   }
 })
