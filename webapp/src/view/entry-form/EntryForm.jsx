@@ -33,7 +33,7 @@ let EntryForm = React.createClass({
     let indicatorSet = (
       <div>
         <label htmlFor='sets'>Indicator Set</label>
-        <select value={this.state.indicator_set_id} onChange={this._setIndicator}>
+        <select value={this.state.indicatorSelected} onChange={this._setIndicator}>
           {this.state.indicatorSets.map(data => {
             return (<option value={data.id}>{data.title}</option>)
           })}
@@ -44,7 +44,7 @@ let EntryForm = React.createClass({
     let campaignSet = (
       <div>
         <label htmlFor='campaigns'>Campaign</label>
-        <select value={this.state.campaign_id} onChange={this._setCampaign}>
+        <select value={this.state.campaignSelected} onChange={this._setCampaign}>
           {this.state.campaigns.map(campaign => {
             return (<option value={campaign.value}>{campaign.text}</option>)
           })}
@@ -79,7 +79,7 @@ let EntryForm = React.createClass({
       <div>
         <br />
         <a role='button'
-          on='click : refresh'
+          onClick={this.refresh}
           className={this.state.couldLoad ? 'button success' : 'button success disabled'} >
           <i className='fa fa-fw fa-refresh' />Load Entry Form
         </a>

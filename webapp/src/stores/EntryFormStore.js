@@ -11,9 +11,9 @@ let EntryFormStore = Reflux.createStore({
   locations: [],
 
   data: {
-    indicator_set_id: 2,
+    indicatorSelected: 2,
     campaigns: [],
-    campaign_id: null,
+    campaignSelected: null,
     couldLoad: false,
     filterLocations: [],
     locationMap: [],
@@ -45,7 +45,7 @@ let EntryFormStore = Reflux.createStore({
           })
         }
         this.data.campaigns = campains
-        this.data.campaign_id = this.data.campaigns[0].value
+        this.data.campaignSelected = this.data.campaigns[0].value
         this.trigger(this.data)
       })
   },
@@ -81,7 +81,7 @@ let EntryFormStore = Reflux.createStore({
 
   _filterLocationsByCampaign: function () {
     let campaign = _(this.data.campaigns).find(campaign => {
-      return campaign.id === parseInt(this.data.campaign_id, 10)
+      return campaign.id === parseInt(this.data.campaignSelected, 10)
     })
 
     this.data.filterLocations = this.locations.filter(location => {
@@ -99,12 +99,12 @@ let EntryFormStore = Reflux.createStore({
   },
 
   onSetIndicator: function (indicatorId) {
-    this.data.indicator_set_id = indicatorId
+    this.data.indicatorSelected = indicatorId
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
-    this.data.campaign_id = campaignId
+    this.data.campaignSelected = campaignId
     this._filterLocationsByCampaign()
     this.trigger(this.data)
   },
