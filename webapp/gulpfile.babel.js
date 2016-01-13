@@ -17,7 +17,8 @@ gulp.config('tasks.build', {
     'copy',
     'sass',
     'standard',
-    'browserify'
+    'browserify',
+    'rev'
   ]
 })
 
