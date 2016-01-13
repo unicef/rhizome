@@ -1,5 +1,6 @@
 import Reflux from 'reflux'
 import React from 'react'
+import api from 'data/api'
 
 import DocOverviewActions from 'actions/DocOverviewActions'
 import DocOverviewStore from 'stores/DocOverviewStore'
@@ -52,7 +53,6 @@ var DocOverview = React.createClass({
     var self = this
     DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
   },
-
   syncOdk () {
     var self = this
     DocOverviewActions.syncOdk({document_id: self.props.doc_id})
@@ -65,6 +65,18 @@ var DocOverview = React.createClass({
 
   renderLoading () {
     return <div className='admin-loading'> Doc Details Loading...</div>
+  },
+
+  _download: function () {
+    var self = this
+    console.log('_download')
+
+    let query = {
+      'format': 'csv', 'document_id': self.props.doc_id
+      // return api.datapoints.toString(query)
+    }
+
+    return api.submission(query)
   },
 
   render () {
@@ -118,7 +130,7 @@ var DocOverview = React.createClass({
       </p>
       <p>
         <a disabled={this.state.isDownloading} className='button button-refresh large-3 medium-3 small-12 columns'
-           onClick={this.downloadRaw}> { this.state.isRefreshing ? 'Downloading..' : 'Download Raw Data'}
+           onClick={this._download}> { this.state.isDownloading ? 'Downloading' : 'Download Raw'}
         </a>
       </p>
       {odkRefreshBtn}

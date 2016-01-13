@@ -4,6 +4,5 @@ export default Reflux.createActions([
   'getDocDetails',
   'refreshMaster',
   'queueReprocess',
-  'syncOdk',
-  'downloadRaw'
+  'syncOdk'
 ])
