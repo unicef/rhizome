@@ -58,9 +58,6 @@ class RefreshMasterTestCase(TestCase):
             .filter(document_id = self.document.id)\
             .values_list('id',flat=True)
 
-        # = read_csv(self.test_file)
-        ## fake the submission_data
-
         mr.refresh_submission_details()
         submission_details = SourceSubmission.objects\
             .filter(document_id = self.document.id)
@@ -69,6 +66,10 @@ class RefreshMasterTestCase(TestCase):
             ,len(submission_details))
 
     def test_latest_data_gets_synced(self):
+        '''
+        I upload a spreadsheet on tuesday, but i realized that the data was wrong, so i upload another sheet with the same locations, dates
+        and indicators.  The new spreasheet should override, and not aggregate any duplicative data.
+        '''
 
         self.set_up()
 
@@ -76,16 +77,26 @@ class RefreshMasterTestCase(TestCase):
         test_loc_id = Location.objects.all()[0].id
         bad_val, good_val = 10, 20
         data_date = '2015-12-31'
-        ss_0 = SourceSubmission.objects\
+        ss_old = SourceSubmission.objects\
             .filter(document_id = self.document.id)[0]
 
-        ss_1 = SourceSubmission.objects\
-            .filter(document_id = self.document.id)[1]
 
-        if ss_0.created_at < ss_1.created_at:
-            ss_old, ss_new = ss_0, ss_1
-        else:
-            ss_old, ss_new = ss_1, ss_0
+        doc_to_override = Document.objects.create(
+                doc_title = 'override',
+                created_by_id = self.user.id,
+                guid = 'override'
+        )
+
+        ss_new = SourceSubmission.objects.create(
+            document_id = doc_to_override.id,
+            instance_guid = 'override',
+            row_number = 1,
+            data_date = '2016-01-01',
+            location_code = 'OVERRIDE',
+            location_display = 'OVERRIDE',
+            submission_json = '',
+            process_status = 1
+        )
 
         base_doc_dp_dict = {
             'document_id' : self.document.id,
