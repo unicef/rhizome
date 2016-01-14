@@ -10,7 +10,9 @@ import handlebars from 'gulp-compile-handlebars'
 const TASK_NAME = 'revReplace'
 
 function revCompile (config) {
-  var manifest = JSON.parse(fs.readFileSync(config.revManifest, 'utf8'))
+  var manifest = (process.env.NODE_ENV === 'production')
+    ? JSON.parse(fs.readFileSync(config.proManifest, 'utf8'))
+    : JSON.parse(fs.readFileSync(config.devManifest, 'utf8'))
 
   var handlebarOpts = {
     helpers: {

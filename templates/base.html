@@ -8,9 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
     {% load static from staticfiles %}
-    <link rel="stylesheet" href="{% static "css/screen-ddff506646.css" %}">
+    <link rel="stylesheet" href="{% static "css/screen.css" %}">
     {% load static from staticfiles %}
-    <link rel="stylesheet" href="{% static "css/print-redesign-27445033fc.css" %}" media="print">
+    <link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
@@ -116,9 +116,9 @@
 
 <script src="{% url 'wafflejs' %}"></script>
 {% load static from staticfiles %}
-<script src="{% static "js/vendor-24f5548b98.js" %}"></script>
+<script src="{% static "js/vendor.js" %}"></script>
 {% load static from staticfiles %}
-<script src="{% static "js/main-3a2362fecb.js" %}"></script>
+<script src="{% static "js/main.js" %}"></script>
 
 {% block scripts %}{% endblock %}
 

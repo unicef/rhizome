@@ -7,7 +7,8 @@ const jsDestFolder = `${gulp.config('base.dist')}/static`
 export default {
   files: [
     {
-      'revManifest': jsDestFolder + '/rev-manifest.json',
+      'proManifest': jsDestFolder + '/rev-manifest.json',
+      'devManifest': './rev-manifest.json',
       'templates': `${gulp.config('templates')}`,
       'entry': jsDestFolder,
       'dest': jsDestFolder
