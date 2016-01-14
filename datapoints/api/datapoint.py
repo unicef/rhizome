@@ -290,7 +290,7 @@ class DataPointEntryResource(BaseModelResource):
         'indicator_id': Indicator
     }
     location = fields.IntegerField(attribute='location_id')
-    campaign = fields.IntegerField(attribute='campaign_id')
+    # campaign = fields.IntegerField(attribute='campaign_id')
     indicator = fields.IntegerField(attribute='indicator_id')
 
     class Meta():
@@ -532,7 +532,8 @@ class DataPointEntryResource(BaseModelResource):
         else:  # otherwise, this is a GET request
             bundle.data['datapoint_id'] = bundle.data['id']
             del bundle.data['id']
-            for key in ['campaign', 'indicator', 'location']:
+            # for key in ['campaign', 'indicator', 'location']:
+            for key in ['indicator', 'location']:
                 bundle.data['{0}_id'.format(key)] = bundle.data[key]
                 del bundle.data[key]
             for key in ['created_at', 'resource_uri']:
