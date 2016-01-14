@@ -316,8 +316,6 @@ class DataPointEntryResource(BaseModelResource):
         but should make it possible to do more advanced things.
         """
 
-        # applicable_filters.pop('campaign_id__in', None)
-
         return self.get_object_list(request)#.filter(**applicable_filters)
 
     def get_object_list(self, request):
@@ -331,24 +329,12 @@ class DataPointEntryResource(BaseModelResource):
 
         campaign_obj = Campaign.objects.get(id=campaign_param)
 
-        try:
-            qs = DataPoint.objects.filter(
+        return DataPoint.objects.filter(
                 data_date__gte = campaign_obj.start_date,
                 data_date__lte = campaign_obj.end_date,
                 location_id = campaign_obj.top_lvl_location_id,
                 indicator__in = indicator__in
             )
-        except Exception as err:
-            print '======'
-            print err
-            print '======'
-
-        print 'HERERERERE'
-
-        return qs
-
-        # return super(DataPointEntryResource, self)\
-        #     .get_object_list(request)
 
 
     def save(self, bundle, skip_errors=False):
@@ -404,6 +390,10 @@ class DataPointEntryResource(BaseModelResource):
                 raise InputError(0, 'Could not get User ID from cookie')
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
+
+            print '==existing_datapoint===\n' * 5
+            print existing_datapoint
+
             if existing_datapoint is not None:
 
                 update_kwargs = {
@@ -419,7 +409,7 @@ class DataPointEntryResource(BaseModelResource):
                 # create
                 bundle.response = self.success_response()
                 return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        # catch all other exceptions & format them the way the client is expecting
+                # catch all other exceptions & format them the way the client is expecting
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
@@ -475,14 +465,17 @@ class DataPointEntryResource(BaseModelResource):
         Assumes data is valid
         (i.e. data should have passed validate_object first)
         """
+
+        campaign = Campaign.objects.get(id=int(data['campaign_id']))
+
         try:
             obj = DataPointEntry.objects.get(
                 location_id=int(data['location_id']),
-                campaign_id=int(data['campaign_id']),
+                data_date=campaign.start_date,
                 indicator_id=int(data['indicator_id']),
             )
             return obj
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as err:
             return
 
     def hydrate(self, bundle):
