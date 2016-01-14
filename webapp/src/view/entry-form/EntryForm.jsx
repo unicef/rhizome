@@ -29,6 +29,11 @@ let EntryForm = React.createClass({
     EntryFormActions.setCampaign(event.target.value)
   },
 
+  refresh: function () {
+    EntryFormActions.getTableData(this.state.indicatorSets, this.state.indicatorSelected,
+      this.state.campaignSelected, this.state.locationSelected)
+  },
+
   render () {
     let indicatorSet = (
       <div>

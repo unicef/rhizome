@@ -7,5 +7,6 @@ export default Reflux.createActions([
   'getLocations',
   'addLocations',
   'removeLocation',
-  'changeSelect'
+  'changeSelect',
+  'getTableData'
 ])

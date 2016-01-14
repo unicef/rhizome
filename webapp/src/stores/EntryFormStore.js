@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 
 import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
+import flattenChildren from 'data/transform/flattenChildren'
 import api from 'data/api'
 
 let EntryFormStore = Reflux.createStore({
@@ -11,7 +12,7 @@ let EntryFormStore = Reflux.createStore({
   locations: [],
 
   data: {
-    indicatorSelected: 2,
+    indicatorSelected: '2',
     campaigns: [],
     campaignSelected: null,
     couldLoad: false,
@@ -119,6 +120,46 @@ let EntryFormStore = Reflux.createStore({
     _.remove(this.data.locationSelected, {id: id})
     this._setCouldLoad()
     this.trigger(this.data)
+  },
+
+  onGetTableData: function (indicatorSet, indicatorSelected, campaignSelected, locationSelected) {
+    let options = {
+      campaign__in: parseInt(this.data.campaignSelected, 10),
+      indicator__in: [],
+      location_id__in: []
+    }
+
+    if (locationSelected.length > 0) {
+      options.location_id__in = _.map(locationSelected, 'id')
+
+      _.forEach(locationSelected, location => {
+        if (this.data.includeSublocations) {
+          let parentLocations = this._findLocationObject(this.locations, location.id)
+
+          let children = flattenChildren(parentLocations, 'children', null, function () { return true }, 1)
+          if (children.length > 0) {
+            options.location_id__in = options.location_id__in.concat(_.map(children, 'value'))
+          }
+        }
+      })
+      options.location_id__in = _.uniq(options.location_id__in)
+    }
+
+    _.forEach(indicatorSet, function (indicator) {
+      if (indicator.id.toString() === indicatorSelected) {
+        options.indicator__in = _.compact(_.map(indicator.indicators, 'id'))
+      }
+    })
+
+    api.datapointsRaw(options, null, {'cache-control': 'no-cache'})
+  },
+
+  _findLocationObject: function (locations, locationId) {
+    return _.find(locations, location => {
+      return location.value === locationId
+        ? location : !location.children && location.children.length > 0
+        ? this._filterLocationsByCampaign(location.children, locationId) : []
+    })
   }
 })
 
