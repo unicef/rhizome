@@ -17,7 +17,7 @@ from django.contrib.sessions.models import Session
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, \
     get_locations_to_return_from_url
 from datapoints.models import DataPointComputed, Campaign, Location, \
-    Indicator, DataPointEntry, LocationPermission
+    Indicator, DataPointEntry, LocationPermission, DataPoint
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 
@@ -307,6 +307,50 @@ class DataPointEntryResource(BaseModelResource):
         }
         serializer = CustomJSONSerializer()
 
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        An ORM-specific implementation of ``apply_filters``.
+
+        The default simply applies the ``applicable_filters`` as ``**kwargs``,
+        but should make it possible to do more advanced things.
+        """
+
+        # applicable_filters.pop('campaign_id__in', None)
+
+        return self.get_object_list(request)#.filter(**applicable_filters)
+
+    def get_object_list(self, request):
+        '''
+        '''
+
+        campaign_param, indicator_param = request.GET['campaign__in'], \
+            request.GET['indicator__in']
+
+        indicator__in = indicator_param.split(',')
+
+        campaign_obj = Campaign.objects.get(id=campaign_param)
+
+        try:
+            qs = DataPoint.objects.filter(
+                data_date__gte = campaign_obj.start_date,
+                data_date__lte = campaign_obj.end_date,
+                location_id = campaign_obj.top_lvl_location_id,
+                indicator__in = indicator__in
+            )
+        except Exception as err:
+            print '======'
+            print err
+            print '======'
+
+        print 'HERERERERE'
+
+        return qs
+
+        # return super(DataPointEntryResource, self)\
+        #     .get_object_list(request)
+
+
     def save(self, bundle, skip_errors=False):
         '''
         Overriding Tastypie save method here because the
@@ -317,7 +361,8 @@ class DataPointEntryResource(BaseModelResource):
         self.is_valid(bundle)
 
         if bundle.errors and not skip_errors:
-            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+            raise ImmediateHttpResponse(response=self\
+                .error_response(bundle.request, bundle.errors))
 
         # Check if they're authorized.
         # if bundle.obj.pk:
