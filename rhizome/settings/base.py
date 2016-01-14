@@ -22,7 +22,6 @@ STATIC_ROOT = os.path.join(SITE_ROOT,'../static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'webapp/public/static')
 ]
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.CachedStaticFilesStorage'
 
 LOGIN_REDIRECT_URL = '/datapoints'
 
