@@ -426,9 +426,7 @@ class DataPointEntryResource(BaseModelResource):
                 bundle.obj = DataPoint.objects.create(**data_to_insert)
 
                 bundle.data['id'] = bundle.obj.id
-                bundle.data['campaign_id'] = campaign_obj.id
-
-                print bundle.data
+                bundle.obj.campaign_id = campaign_obj.id
 
                 return bundle
 
@@ -538,6 +536,7 @@ class DataPointEntryResource(BaseModelResource):
                 del bundle.data[key]
             for key in ['created_at', 'resource_uri']:
                 del bundle.data[key]
+
         return bundle
 
     def validate_object(self, obj):
