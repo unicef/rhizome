@@ -16,6 +16,7 @@ class CacheJob(models.Model):
     date_completed = models.DateTimeField(null=True)
     is_error = models.BooleanField()
     response_msg = models.CharField(max_length=255)
+    full_error_response = models.TextField(null=True)
 
     class Meta:
         db_table = 'cache_job'
