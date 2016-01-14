@@ -391,9 +391,6 @@ class DataPointEntryResource(BaseModelResource):
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
 
-            print '==existing_datapoint===\n' * 5
-            print existing_datapoint
-
             if existing_datapoint is not None:
 
                 update_kwargs = {
@@ -406,10 +403,35 @@ class DataPointEntryResource(BaseModelResource):
                 return self.obj_update(bundle, **update_kwargs)
 
             else:
-                # create
-                bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-                # catch all other exceptions & format them the way the client is expecting
+                # CREATE
+                data_to_insert = bundle.data
+
+                # find the campaign object from the parameter
+                try:
+                    campaign_obj = Campaign.objects.get(id=int(\
+                        data_to_insert['campaign_id']))
+                except Exception as err:
+                    print err
+
+                ## create the dictionary used to insert into datapoint ##
+                data_to_insert['data_date'] = campaign_obj.start_date
+                data_to_insert['source_submission_id'] = -1 # data_entry
+                data_to_insert['cache_job_id'] = -1 # to process
+                data_to_insert['cache_job_id'] = -1 # to process
+
+                ## remove campaign id from dict to insert
+                data_to_insert.pop('campaign_id',None)
+
+                ## insert into datpaoint table ##
+                bundle.obj = DataPoint.objects.create(**data_to_insert)
+
+                bundle.data['id'] = bundle.obj.id
+                bundle.data['campaign_id'] = campaign_obj.id
+
+                print bundle.data
+
+                return bundle
+
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
