@@ -393,25 +393,16 @@ class DataPointEntryResource(BaseModelResource):
 
             if existing_datapoint is not None:
 
-                update_kwargs = {
-                    'location_id': existing_datapoint.location_id,
-                    'campaign_id': existing_datapoint.campaign_id,
-                    'indicator_id': existing_datapoint.indicator_id
-                }
-                bundle.response = self.success_response()
+                bundle.response = self.success_response() ##?
+                return self.obj_update(bundle, **{'id': existing_datapoint.id})
 
-                return self.obj_update(bundle, **update_kwargs)
+            else: # CREATE
 
-            else:
-                # CREATE
                 data_to_insert = bundle.data
 
                 # find the campaign object from the parameter
-                try:
-                    campaign_obj = Campaign.objects.get(id=int(\
-                        data_to_insert['campaign_id']))
-                except Exception as err:
-                    print err
+                campaign_obj = Campaign.objects.get(id=int(\
+                    data_to_insert['campaign_id']))
 
                 ## create the dictionary used to insert into datapoint ##
                 data_to_insert['data_date'] = campaign_obj.start_date
@@ -454,7 +445,17 @@ class DataPointEntryResource(BaseModelResource):
         if value_to_update == 'NaN':
             bundle.data['value'] = None
 
-        return super(DataPointEntryResource, self).obj_update(bundle, **kwargs)
+        dp = DataPoint.objects.get(id=kwargs['id'])
+        dp.value = value_to_update
+        dp.save()
+
+        dp.campaign_id = bundle.data['campaign_id']
+
+        bundle.obj = dp
+        bundle.data['value'] = value_to_update
+        bundle.data['id'] = kwargs['id']
+
+        return bundle
 
     def get_user_id(self, bundle):
         request = bundle.request
