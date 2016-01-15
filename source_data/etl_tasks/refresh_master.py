@@ -143,6 +143,12 @@ class MasterRefresh(object):
         campaign_df = DataFrame(list(campaign_qs\
             .values('office_id','start_date','end_date')))
 
+        if len(campaign_df) == 0:
+            ## no campaigns match the datapoitns so update all with cj_id = -2
+            DataPoint.objects.filter(id__in=new_dp_df['id'].unique())\
+                .update(cache_job_id = -2)
+            return
+
         dp_merged_df = new_dp_df.merge(office_lookup_df)
         cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
 
