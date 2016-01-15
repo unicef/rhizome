@@ -76,9 +76,8 @@ class AggRefresh(object):
             self.agg_datapoints()
             self.calc_datapoints()
         except Exception as err:
-            self.cache_job.full_error_response = err
             self.cache_job.is_error = True
-            self.cache_job.response_msg = 'FAIL'
+            self.cache_job.response_msg = err
             self.cache_job.save()
             return 'FAIL'
 

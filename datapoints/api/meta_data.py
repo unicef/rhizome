@@ -761,6 +761,9 @@ class AggRefreshResource(BaseModelResource):
        get_campaign_for_datapoint so that this logic can be easily extended.
 
        This needs cleanup.
+
+       cache_jobo_id = -1 --> NEEDS PROCESSING
+       cache_jobo_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
        '''
 
        try:
@@ -782,7 +785,7 @@ class AggRefreshResource(BaseModelResource):
 
        date_no_datetime = data_date.date()
        campaigns_in_date_range = Campaign.objects.filter(
-           start_date__lte = date_no_datetime, end_date__gt = data_date)
+           start_date__lte = date_no_datetime, end_date__gte = data_date)
 
        parent_location_list = LocationTree.objects\
            .filter(location_id = location_id)\
