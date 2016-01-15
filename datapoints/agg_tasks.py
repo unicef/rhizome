@@ -35,12 +35,14 @@ class AggRefresh(object):
         method.
         '''
 
+        self.cache_job = None
+
         self.dp_columns =['location_id','indicator_id',\
             'value','cache_job_id']
 
         self.dwc_batch, self.dwc_tuple_dict = [],{}
 
-        if CacheJob.objects.filter(date_completed=None):
+        if CacheJob.objects.filter(response_msg = 'PENDING'):
             return
 
         self.campaign = Campaign.objects.get(id = campaign_id)
@@ -63,13 +65,22 @@ class AggRefresh(object):
         self.cache_job.response_msg = response_msg
         self.cache_job.save()
 
-
     def main(self):
         '''
         '''
 
-        self.agg_datapoints()
-        self.calc_datapoints()
+        if not self.cache_job:
+            return 'ANOTHER_AGG_IN_PROCESS'
+
+        try:
+            self.agg_datapoints()
+            self.calc_datapoints()
+        except Exception as err:
+            self.cache_job.full_error_response = err
+            self.cache_job.is_error = True
+            self.cache_job.response_msg = 'FAIL'
+            self.cache_job.save()
+            return 'FAIL'
 
         ic = IndicatorCache()
         ic.main()

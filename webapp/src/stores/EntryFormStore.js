@@ -70,7 +70,6 @@ let EntryFormStore = Reflux.createStore({
 
         this.locations = locations
         this.data.filterLocations = locations
-        this._filterLocationsByCampaign()
         this.data.locationMap = _.indexBy(response.objects, 'id')
         this.trigger(this.data)
       })
@@ -158,7 +157,7 @@ let EntryFormStore = Reflux.createStore({
     return _.find(locations, location => {
       return location.value === locationId
         ? location : !location.children && location.children.length > 0
-        ? this._filterLocationsByCampaign(location.children, locationId) : []
+        ? this._findLocationObject(location.children, locationId) : []
     })
   }
 })
