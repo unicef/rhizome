@@ -128,23 +128,23 @@ class MasterRefresh(object):
                 self.ss_ids_to_process).values()))
 
         date_series = new_dp_df['data_date']
-        mn_date, mx_date = min(date_series), max(date_series)
+        mn_date, mx_date = min(date_series).date(), max(date_series).date()
 
         office_lookup_df = DataFrame(list(Location.objects\
             .filter(id__in = list(set(new_dp_df['location_id'])))\
             .values_list('id','office_id')), \
              columns = ['location_id', 'office_id'])
 
-        campaign_df = DataFrame(list(Campaign.objects\
-                .filter(start_date__gte = mn_date, \
-                    end_date__lt = mx_date, \
-                    office_id__in = office_lookup_df\
-                    ['office_id'].unique())\
-                .values('office_id','start_date','end_date')))
+        campaign_qs = Campaign.objects.filter(
+            end_date__gte = mn_date, start_date__lte = mx_date,
+            office_id__in = office_lookup_df\
+            ['office_id'].unique())
+
+        campaign_df = DataFrame(list(campaign_qs\
+            .values('office_id','start_date','end_date')))
 
         dp_merged_df = new_dp_df.merge(office_lookup_df)
         cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
-
 
         dp_ids_that_need_campaign = []
         dp_merged_with_campaign = cleaned_dp_df.merge(campaign_df)
