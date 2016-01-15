@@ -116,9 +116,14 @@ class MasterRefresh(object):
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
+        self.mark_datapoints_with_needs_campaign()
 
         SourceSubmission.objects.filter(id__in = self.ss_ids_to_process)\
             .update(process_status = 'PROCESSED')
+
+    def mark_datapoints_with_needs_campaign(self):
+
+        pass
 
     def delete_unmapped(self):
         ## if a user re-maps data, we need to delete the
