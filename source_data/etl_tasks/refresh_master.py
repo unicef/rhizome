@@ -123,7 +123,41 @@ class MasterRefresh(object):
 
     def mark_datapoints_with_needs_campaign(self):
 
-        pass
+        new_dp_df = DataFrame(list(DataPoint.objects\
+            .filter(source_submission_id__in = \
+                self.ss_ids_to_process).values()))
+
+        date_series = new_dp_df['data_date']
+        mn_date, mx_date = min(date_series), max(date_series)
+
+        office_lookup_df = DataFrame(list(Location.objects\
+            .filter(id__in = list(set(new_dp_df['location_id'])))\
+            .values_list('id','office_id')), \
+             columns = ['location_id', 'office_id'])
+
+        campaign_df = DataFrame(list(Campaign.objects\
+                .filter(start_date__gte = mn_date, \
+                    end_date__lt = mx_date, \
+                    office_id__in = office_lookup_df\
+                    ['office_id'].unique())\
+                .values('office_id','start_date','end_date')))
+
+        dp_merged_df = new_dp_df.merge(office_lookup_df)
+        cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
+
+
+        dp_ids_that_need_campaign = []
+        dp_merged_with_campaign = cleaned_dp_df.merge(campaign_df)
+
+        ## iterrate over the dps and check if there is a campaign ##
+        for ix, r in dp_merged_with_campaign.iterrows():
+            ## convert date time to date
+            r_date = r.data_date.date()
+            if r_date >= r.end_date or r_date < r.start_date:
+                dp_ids_that_need_campaign.append(r.id)
+
+        DataPoint.objects.filter(id__in=dp_ids_that_need_campaign)\
+            .update(cache_job_id = -2)
 
     def delete_unmapped(self):
         ## if a user re-maps data, we need to delete the

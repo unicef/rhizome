@@ -86,14 +86,13 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-        mr = MasterRefresh(self.user.id, self.document.id)
 
         office_obj = Office.objects.all()[0]
         tag_obj = IndicatorTag.objects.all()[0]
         location_obj = Location.objects.all()[0]
         indicator_obj = Indicator.objects.all()[0]
         campaign_type_obj = CampaignType.objects.all()[0]
-        start_date, end_date, bad_date = '2016-12-01','2016-12-31','2017-01-01'
+        start_date, end_date, bad_date = '2016-12-01','2016-12-30','2017-01-01'
         source_submission_obj = SourceSubmission.objects.all()[0]
 
         my_campaign = Campaign.objects.create(
@@ -113,7 +112,6 @@ class RefreshMasterTestCase(TestCase):
             'indicator_id': indicator_obj.id,
             'value': 100,
             'source_submission_id': source_submission_obj.id,
-            'cache_job_id': -1,
             'changed_by_id' : self.user.id
         }
 
@@ -128,15 +126,20 @@ class RefreshMasterTestCase(TestCase):
         dp_without_campaign = DataPoint.objects.create(**no_campaign_dp_dict)
         dp_with_campaign = DataPoint.objects.create(**has_campaign_dp_dict)
 
+        ## instantiate the MasterRefresh object ##
+        mr = MasterRefresh(self.user.id, self.document.id)
+        mr.ss_ids_to_process = [source_submission_obj]
+
         ## this is the method we are testing ##
         mr.mark_datapoints_with_needs_campaign()
 
         ## now fetch the data after updating the cache_job_ids ##
+        no_campaign_dp_dict.pop('cache_job_id', None)
         no_campaign = DataPoint.objects.get(**no_campaign_dp_dict)
         has_campaign = DataPoint.objects.get(**has_campaign_dp_dict)
 
         self.assertEqual(has_campaign.cache_job_id,-1)
-        # self.assertEqual(no_campaign.cache_job_id,-2)
+        self.assertEqual(no_campaign.cache_job_id,-2)
 
     def test_latest_data_gets_synced(self):
         '''
