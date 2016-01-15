@@ -6,19 +6,13 @@ import List from 'component/list/List.jsx'
 
 import EntryFormStore from 'stores/EntryFormStore'
 import EntryFormActions from 'actions/EntryFormActions'
+import TableEditale from 'component/table-editable/TableEditable.jsx'
 
 let EntryForm = React.createClass({
   mixins: [Reflux.connect(EntryFormStore)],
 
-  getInitialState: function () {
-    return {
-      indicatorSets: require('./structure/indicator_sets')
-    }
-  },
-
   componentWillMount: function () {
-    EntryFormActions.getCampaigns()
-    EntryFormActions.getLocations()
+    EntryFormActions.initData()
   },
 
   _setIndicator: function (event) {
@@ -30,8 +24,7 @@ let EntryForm = React.createClass({
   },
 
   refresh: function () {
-    EntryFormActions.getTableData(this.state.indicatorSets, this.state.indicatorSelected,
-      this.state.campaignSelected, this.state.locationSelected)
+    EntryFormActions.getTableData()
   },
 
   render () {
@@ -92,8 +85,8 @@ let EntryForm = React.createClass({
     )
 
     return (
-      <div>
-        <form className='row'>
+      <div className='row'>
+        <form>
           <div className='medium-2 columns'>
             {indicatorSet}
             {campaignSet}
@@ -102,6 +95,13 @@ let EntryForm = React.createClass({
             {loadEntryForm}
           </div>
         </form>
+        <div className='medium-10 columns'>
+          <TableEditale data={this.state.data}
+            loaded={this.state.loaded}
+            indicatorSet={this.state.indicatorSet}
+            indicatorMap = {this.state.indicatorMap}
+            locations={this.state.locationSelected} />
+        </div>
       </div>
     )
   }

@@ -12,28 +12,39 @@ let EntryFormStore = Reflux.createStore({
   locations: [],
 
   data: {
+    indicatorSets: require('./IndicatorSets'),
+    indicatorMap: null,
+    data: null,
+    loaded: false,
     indicatorSelected: '2',
     campaigns: [],
     campaignSelected: null,
     couldLoad: false,
     filterLocations: [],
-    locationMap: [],
+    locationMap: null,
     locationSelected: [],
-    includeSublocations: false
+    includeSublocations: false,
+    indicatorSet: null,
+    pagination: {
+      total_count: 0
+    }
   },
 
   getInitialState: function () {
     return this.data
   },
 
-  onGetCampaigns: function () {
-    api.campaign(null, null, {'cache-control': 'no-cache'})
-      .then(response => {
-        let campains
-        if (!response.objects) {
-          campains = null
+  onInitData: function () {
+    let self = this
+    Promise.all([api.campaign(null, null, {'cache-control': 'no-cache'}),
+      api.locations(),
+      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})]).then(_.spread(function (campaigns, locations, indicators) {
+        // campains
+        let campainResult
+        if (!campaigns.objects) {
+          campainResult = null
         } else {
-          campains = response.objects.sort(function (a, b) {
+          campainResult = campaigns.objects.sort(function (a, b) {
             if (a.office === b.office) {
               return a.start_date > b.start_data ? -1 : 1
             }
@@ -45,16 +56,11 @@ let EntryFormStore = Reflux.createStore({
             return d
           })
         }
-        this.data.campaigns = campains
-        this.data.campaignSelected = this.data.campaigns[0].value
-        this.trigger(this.data)
-      })
-  },
+        self.data.campaigns = campainResult
+        self.data.campaignSelected = campainResult[0].value
 
-  onGetLocations: function () {
-    api.locations()
-      .then(response => {
-        let locations = _(response.objects)
+        // locations
+        let locationResult = _(locations.objects)
           .map(location => {
             return {
               'title': location.name,
@@ -68,11 +74,15 @@ let EntryFormStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        this.locations = locations
-        this.data.filterLocations = locations
-        this.data.locationMap = _.indexBy(response.objects, 'id')
-        this.trigger(this.data)
+        self.locations = locationResult
+        self.data.filterLocations = locationResult
+        self.data.locationMap = _.indexBy(locations.objects, 'id')
+
+        // Indicators
+        self.data.indicators = _.indexBy(indicators.objects, 'id')
+        self.trigger(self.data)
       })
+    )
   },
 
   _setCouldLoad: function () {
@@ -121,17 +131,17 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
 
-  onGetTableData: function (indicatorSet, indicatorSelected, campaignSelected, locationSelected) {
+  onGetTableData: function () {
     let options = {
       campaign__in: parseInt(this.data.campaignSelected, 10),
       indicator__in: [],
       location_id__in: []
     }
 
-    if (locationSelected.length > 0) {
-      options.location_id__in = _.map(locationSelected, 'id')
+    if (this.data.locationSelected.length > 0) {
+      options.location_id__in = _.map(this.data.locationSelected, 'id')
 
-      _.forEach(locationSelected, location => {
+      _.forEach(this.data.locationSelected, location => {
         if (this.data.includeSublocations) {
           let parentLocations = this._findLocationObject(this.locations, location.id)
 
@@ -144,13 +154,20 @@ let EntryFormStore = Reflux.createStore({
       options.location_id__in = _.uniq(options.location_id__in)
     }
 
-    _.forEach(indicatorSet, function (indicator) {
-      if (indicator.id.toString() === indicatorSelected) {
+    _.forEach(this.data.indicatorSets, indicator => {
+      if (indicator.id.toString() === this.data.indicatorSelected) {
+        this.data.indicatorSet = indicator
         options.indicator__in = _.compact(_.map(indicator.indicators, 'id'))
       }
     })
 
-    api.datapointsRaw(options, null, {'cache-control': 'no-cache'})
+    _.defaults(options, this.data.pagination)
+
+    api.datapointsRaw(options, null, {'cache-control': 'no-cache'}).then(response => {
+      this.data.loaded = true
+      this.data.data = response.objects
+      this.trigger(this.data)
+    })
   },
 
   _findLocationObject: function (locations, locationId) {

@@ -1,10 +1,9 @@
 import Reflux from 'reflux'
 
 export default Reflux.createActions([
+  'initData',
   'setIndicator',
-  'getCampaigns',
   'setCampaign',
-  'getLocations',
   'addLocations',
   'removeLocation',
   'changeSelect',
