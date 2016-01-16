@@ -34,10 +34,13 @@ var DateRangePicker = React.createClass({
         onChange={self.handleDateChange.bind(this, type)}/>)
     }
     return (
-        <div>
-        {dateTimePicker(this.state.start, 'start')}
-            <div className='centered'>to</div>
-        {dateTimePicker(this.state.end, 'end')}
+        <div className='row'>
+          <div className='small-date-box'>
+            {dateTimePicker(this.state.start, 'start')}
+          </div>
+           &nbsp;&nbsp; <div className='small-date-box'>
+            {dateTimePicker(this.state.end, 'end')}
+          </div>
         </div>
     )
   }

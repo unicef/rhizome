@@ -6,7 +6,7 @@ import Reflux from 'reflux'
 // import ChartWizardStep from './ChartWizardStep.jsx'
 // import ChartWizardStepList from './ChartWizardStepList.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
-// import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 // import List from 'component/list/List.jsx'
@@ -114,55 +114,44 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    console.log('THIS DOT STATE.data', this.state.data)
-
+    let locationStep = (
+      <div>
+        <LocationDropdownMenu
+          text='Add Locations'
+          locations={this.state.data.locationFilteredList}
+          sendValue={ExplorerActions.addLocations}
+          style='databrowser__button' />
+        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+      </div>
+    )
     let indicatorStep = (
       <div>
-        <label htmlFor='indicators'>Indicators</label>
         <IndicatorDropdownMenu
           indicators={this.state.data.indicatorList}
           text='Choose Indicators'
           sendValue={ExplorerActions.addIndicators}
           style='databrowser__button' />
-        </div>
+      </div>
     )
-
     let timePeriodStep = (
-      <label>
-        <div>Time Period</div>
+      <div>
         <DateRangePicker
           start={this.state.startTime}
           end={this.state.endTime}
           sendValue={ExplorerActions.updateDateRangePicker}
         />
-      </label>
+    </div>
     )
     let chartTypeStep = (
       <label>
-        <div>ChartType</div>
+        <br></br>
         <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
       </label>
     )
-
-    // <ChartWizardStep
-    //   title={`3. Select Chart Type${this.state.data.chartDef.type ? ' - ' + this.state.data.chartDef.type.match(/[A-Z][a-z]*/g).join(' ') : ''}`}
-    //   refer='chart-type'>
-    // </ChartWizardStep>
-
     // locations={this.state.locations}
+    // <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
 
-    // let locationStep = (
-    //   <div>
-    //     <label htmlFor='locations'>Locations</label>
-    //     <LocationDropdownMenu
-    //       text='Select Location'
-    //       sendValue={ExplorerActions.addLocations}
-    //       style='databrowser__button' />
-    //     <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
-    //     <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-    //   </div>
-    // )
     // <List items={this.state.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
 
     // let loadDataStep = (
@@ -309,7 +298,9 @@ let ChartWizard = React.createClass({
     //   </ChartWizardStepList>
 
     let chartWizardSelector = <div className='medium-3 columns'>
+          <h1>Chart Builder</h1>
             <from className='inline'>
+              {locationStep}
               {indicatorStep}
               {timePeriodStep}
               {chartTypeStep}
