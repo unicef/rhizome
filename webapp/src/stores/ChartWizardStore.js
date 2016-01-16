@@ -113,6 +113,7 @@ let ChartWizardStore = Reflux.createStore({
 
   async onInitialize (chartDef) {
     this.data.chartDef = _.clone(chartDef)
+    // console.log('initialize ChartWizard', chartDef)
 
     let locations = await api.locations()
     let campaigns = await api.campaign()
@@ -174,6 +175,8 @@ let ChartWizardStore = Reflux.createStore({
       .sortBy(_.method('start_date.getTime'))
       .reverse()
       .value()
+
+    // console.log('this dot campaign list', this.campaignList)
 
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
     this.data.locationFilteredList = this.data.locationList // this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
