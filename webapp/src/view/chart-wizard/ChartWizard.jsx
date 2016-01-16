@@ -5,11 +5,11 @@ import Reflux from 'reflux'
 
 // import ChartWizardStep from './ChartWizardStep.jsx'
 // import ChartWizardStepList from './ChartWizardStepList.jsx'
-// import DateRangePicker from 'component/DateTimePicker.jsx'
+import DateRangePicker from 'component/DateTimePicker.jsx'
 // import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 // import ChartSelect from './ChartSelect.jsx'
-import List from 'component/list/List.jsx'
+// import List from 'component/list/List.jsx'
 // import MenuItem from 'component/MenuItem.jsx'
 // import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
@@ -75,7 +75,9 @@ let ChartWizard = React.createClass({
 
   getInitialState () {
     return {
-      refer: 'first-indicator'
+      refer: 'first-indicator',
+      startTime: '2016-01-01',
+      endDate: '2016-30-01'
     }
   },
 
@@ -112,16 +114,18 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    // let timePeriodStep = (
-    //   <label>
-    //     <div>Time Period</div>
-    //     <DateRangePicker
-    //       start={this.state.campaign.start}
-    //       end={this.state.campaign.end}
-    //       sendValue={ExplorerActions.updateDateRangePicker}
-    //     />
-    //   </label>
-    // )
+    console.log('THIS DOT STATE.data', this.state.data)
+
+    let timePeriodStep = (
+      <label>
+        <div>Time Period</div>
+        <DateRangePicker
+          start={this.state.startTime}
+          end={this.state.endTime}
+          sendValue={ExplorerActions.updateDateRangePicker}
+        />
+      </label>
+    )
     // locations={this.state.locations}
 
     // let locationStep = (
@@ -136,7 +140,6 @@ let ChartWizard = React.createClass({
     //   </div>
     // )
 
-    console.log('THIS DOT STATE', this.state)
     // console.log('THIS DOT PROPS', this.props)
 
     let indicatorStep = (
@@ -298,6 +301,7 @@ let ChartWizard = React.createClass({
     let chartWizardSelector = <div className='medium-3 columns'>
             <from className='inline'>
               {indicatorStep}
+              {timePeriodStep}
             </from>
           </div>
 
@@ -310,10 +314,10 @@ let ChartWizard = React.createClass({
             : (<div className='empty'>No Data</div>)
           }
         </PreviewScreen>
-        <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>
       </div>
     )
   }
 })
+// <span className='chart-wizard__cancel' onClick={this.props.cancel}>Cancel</span>
 
 export default ChartWizard
