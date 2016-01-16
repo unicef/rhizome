@@ -8,7 +8,7 @@ import Reflux from 'reflux'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 // import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
-// import ChartSelect from './ChartSelect.jsx'
+import ChartSelect from './ChartSelect.jsx'
 // import List from 'component/list/List.jsx'
 // import MenuItem from 'component/MenuItem.jsx'
 // import DropdownMenu from 'component/DropdownMenu.jsx'
@@ -116,6 +116,17 @@ let ChartWizard = React.createClass({
   render () {
     console.log('THIS DOT STATE.data', this.state.data)
 
+    let indicatorStep = (
+      <div>
+        <label htmlFor='indicators'>Indicators</label>
+        <IndicatorDropdownMenu
+          indicators={this.state.data.indicatorList}
+          text='Choose Indicators'
+          sendValue={ExplorerActions.addIndicators}
+          style='databrowser__button' />
+        </div>
+    )
+
     let timePeriodStep = (
       <label>
         <div>Time Period</div>
@@ -126,6 +137,19 @@ let ChartWizard = React.createClass({
         />
       </label>
     )
+    let chartTypeStep = (
+      <label>
+        <div>ChartType</div>
+        <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
+          onChange={ChartWizardActions.changeChart}/>
+      </label>
+    )
+
+    // <ChartWizardStep
+    //   title={`3. Select Chart Type${this.state.data.chartDef.type ? ' - ' + this.state.data.chartDef.type.match(/[A-Z][a-z]*/g).join(' ') : ''}`}
+    //   refer='chart-type'>
+    // </ChartWizardStep>
+
     // locations={this.state.locations}
 
     // let locationStep = (
@@ -139,20 +163,6 @@ let ChartWizard = React.createClass({
     //     <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
     //   </div>
     // )
-
-    // console.log('THIS DOT PROPS', this.props)
-
-    let indicatorStep = (
-      <div>
-        <label htmlFor='indicators'>Indicators</label>
-        <IndicatorDropdownMenu
-          indicators={this.state.data.indicatorList}
-          text='Choose Indicators'
-          sendValue={ExplorerActions.addIndicators}
-          style='databrowser__button' />
-        </div>
-    )
-
     // <List items={this.state.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
 
     // let loadDataStep = (
@@ -302,6 +312,7 @@ let ChartWizard = React.createClass({
             <from className='inline'>
               {indicatorStep}
               {timePeriodStep}
+              {chartTypeStep}
             </from>
           </div>
 
