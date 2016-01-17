@@ -299,9 +299,9 @@ let ChartWizardStore = Reflux.createStore({
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
-    // this.data.chartDef.x = this.data.indicatorSelected[0].id
-    // this.data.chartDef.y = this.data.indicatorSelected[1] ? this.data.indicatorSelected[1].id : 0
-    // this.data.chartDef.z = this.data.indicatorSelected[2] ? this.data.indicatorSelected[2].id : 0
+    this.data.chartDef.x = this.data.indicatorSelected[0].id
+    this.data.chartDef.y = this.data.indicatorSelected[1] ? this.data.indicatorSelected[1].id : 0
+    this.data.chartDef.z = this.data.indicatorSelected[2] ? this.data.indicatorSelected[2].id : 0
 
     this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
