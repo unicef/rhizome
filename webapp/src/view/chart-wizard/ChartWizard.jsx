@@ -121,7 +121,7 @@ let ChartWizard = React.createClass({
         <LocationDropdownMenu
           text='Add Locations'
           locations={this.state.data.locationFilteredList}
-          sendValue={ChartWizardActions.addLocations}
+          sendValue={ChartWizardActions.addLocation}
           style='databrowser__button' />
         <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
@@ -132,7 +132,7 @@ let ChartWizard = React.createClass({
         <IndicatorDropdownMenu
           indicators={this.state.data.indicatorList}
           text='Choose Indicators'
-          sendValue={ChartWizardActions.addIndicators}
+          sendValue={ChartWizardActions.addIndicator}
           style='databrowser__button' />
         <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
       </div>
