@@ -70,12 +70,14 @@ var ExplorerStore = Reflux.createStore({
   },
 
   onAddLocations: function (id) {
+    console.log('add location_id: ', id)
     this.data.locationSelected.push(this.data.locationMap[id])
     this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onRemoveLocation: function (id) {
+    console.log('remove location_id: ', id)
     _.remove(this.data.locationSelected, {id: id})
     this._setCouldLoad()
     this.trigger(this.data)

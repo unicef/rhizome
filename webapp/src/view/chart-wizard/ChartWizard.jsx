@@ -9,7 +9,7 @@ import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
-// import List from 'component/list/List.jsx'
+import List from 'component/list/List.jsx'
 // import MenuItem from 'component/MenuItem.jsx'
 // import DropdownMenu from 'component/DropdownMenu.jsx'
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
@@ -18,6 +18,7 @@ import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 // import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
+import ExplorerStore from 'stores/ExplorerStore'
 import ExplorerActions from 'actions/ExplorerActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
@@ -71,7 +72,7 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
-  mixins: [Reflux.connect(ChartWizardStore, 'data')],
+  mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(ExplorerStore)],
 
   getInitialState () {
     return {
@@ -121,6 +122,7 @@ let ChartWizard = React.createClass({
           locations={this.state.data.locationFilteredList}
           sendValue={ExplorerActions.addLocations}
           style='databrowser__button' />
+        <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
       </div>
     )
