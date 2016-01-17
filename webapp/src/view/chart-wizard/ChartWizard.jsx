@@ -115,6 +115,7 @@ let ChartWizard = React.createClass({
   },
 
   render () {
+    console.log('this dot state dot data: ', this.state.data)
     let locationStep = (
       <div>
         <LocationDropdownMenu
@@ -133,6 +134,7 @@ let ChartWizard = React.createClass({
           text='Choose Indicators'
           sendValue={ExplorerActions.addIndicators}
           style='databrowser__button' />
+        <List items={this.state.data.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
       </div>
     )
     let timePeriodStep = (

@@ -35,10 +35,10 @@ var DateRangePicker = React.createClass({
     }
     return (
         <div className='row'>
-          <div className='small-date-box'>
+          Start:&nbsp; <div className='small-date-box'>
             {dateTimePicker(this.state.start, 'start')}
           </div>
-           &nbsp;&nbsp; <div className='small-date-box'>
+           &nbsp;&nbsp; End:&nbsp; <div className='small-date-box'>
             {dateTimePicker(this.state.end, 'end')}
           </div>
         </div>

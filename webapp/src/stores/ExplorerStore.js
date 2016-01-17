@@ -27,7 +27,6 @@ var ExplorerStore = Reflux.createStore({
   },
 
   onGetLocations: function () {
-    console.log('onGetLocations')
     api.locations()
       .then(response => {
         this.data.locations = _(response.objects)
@@ -44,7 +43,6 @@ var ExplorerStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        console.log('response.objects', response.objects)
         this.data.locationMap = _.indexBy(response.objects, 'id')
         this.trigger(this.data)
       })
@@ -70,14 +68,12 @@ var ExplorerStore = Reflux.createStore({
   },
 
   onAddLocations: function (id) {
-    console.log('add location_id: ', id)
     this.data.locationSelected.push(this.data.locationMap[id])
     this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onRemoveLocation: function (id) {
-    console.log('remove location_id: ', id)
     _.remove(this.data.locationSelected, {id: id})
     this._setCouldLoad()
     this.trigger(this.data)
