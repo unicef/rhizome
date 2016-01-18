@@ -71,13 +71,29 @@ class IndicatorResource(BaseModelResource):
 
     def get_object_list(self, request):
 
+        indicator_id_list = []
+
+        try:
+            indicator_id = int(request.GET['id'])
+            indicator_id_list.append(indicator_id)
+        except KeyError:
+            pass
+
+        try:
+            indicator_id_list = [int(x) for x in request.GET['id__in'].split(',')]
+        except KeyError:
+            pass
+
+        if len(indicator_id_list) == 0:
+            return Indicator.objects.all().values()
+
+        else:
+            return Indicator.objects.filter(id__in=indicator_id_list).values()
+
         # ind_ids = IndicatorToOffice.objects\
         #     .filter(office_id = Location.objects.get(id = self\
         #     .top_lvl_location_id).office_id )\
         #     .values_list('indicator_id',flat=True)
-        #
-        # return Indicator.objects.filter(id__in=ind_ids).values()
-        return Indicator.objects.all().values()
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -745,11 +761,15 @@ class AggRefreshResource(BaseModelResource):
        get_campaign_for_datapoint so that this logic can be easily extended.
 
        This needs cleanup.
+
+       cache_jobo_id = -1 --> NEEDS PROCESSING
+       cache_jobo_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
        '''
 
        try:
            campaign_id = request.GET['campaign_id']
-           AggRefresh(campaign_id)
+           ar = AggRefresh(campaign_id)
+           agg_refresh_result = ar.main()
            return Campaign.objects.filter(id=campaign_id).values()
        except KeyError:
            campsign_id = None
@@ -765,7 +785,7 @@ class AggRefreshResource(BaseModelResource):
 
        date_no_datetime = data_date.date()
        campaigns_in_date_range = Campaign.objects.filter(
-           start_date__lte = date_no_datetime, end_date__gt = data_date)
+           start_date__lte = date_no_datetime, end_date__gte = data_date)
 
        parent_location_list = LocationTree.objects\
            .filter(location_id = location_id)\
@@ -774,7 +794,10 @@ class AggRefreshResource(BaseModelResource):
        for c in campaigns_in_date_range:
            if c.top_lvl_location_id in parent_location_list:
                campaign_id = c.id
-               AggRefresh(c.id)
+               ar =  AggRefresh(c.id)
+               agg_refresh_result = ar.main()
+
+               print agg_refresh_result
 
                return Campaign.objects.filter(id=campaign_id).values()
 

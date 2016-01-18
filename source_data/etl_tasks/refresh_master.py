@@ -116,9 +116,54 @@ class MasterRefresh(object):
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
+        self.mark_datapoints_with_needs_campaign()
 
         SourceSubmission.objects.filter(id__in = self.ss_ids_to_process)\
             .update(process_status = 'PROCESSED')
+
+    def mark_datapoints_with_needs_campaign(self):
+
+        new_dp_df = DataFrame(list(DataPoint.objects\
+            .filter(source_submission_id__in = \
+                self.ss_ids_to_process).values()))
+
+        date_series = new_dp_df['data_date']
+        mn_date, mx_date = min(date_series).date(), max(date_series).date()
+
+        office_lookup_df = DataFrame(list(Location.objects\
+            .filter(id__in = list(set(new_dp_df['location_id'])))\
+            .values_list('id','office_id')), \
+             columns = ['location_id', 'office_id'])
+
+        campaign_qs = Campaign.objects.filter(
+            end_date__gte = mn_date, start_date__lte = mx_date,
+            office_id__in = office_lookup_df\
+            ['office_id'].unique())
+
+        campaign_df = DataFrame(list(campaign_qs\
+            .values('office_id','start_date','end_date')))
+
+        if len(campaign_df) == 0:
+            ## no campaigns match the datapoitns so update all with cj_id = -2
+            DataPoint.objects.filter(id__in=new_dp_df['id'].unique())\
+                .update(cache_job_id = -2)
+            return
+
+        dp_merged_df = new_dp_df.merge(office_lookup_df)
+        cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
+
+        dp_ids_that_need_campaign = []
+        dp_merged_with_campaign = cleaned_dp_df.merge(campaign_df)
+
+        ## iterrate over the dps and check if there is a campaign ##
+        for ix, r in dp_merged_with_campaign.iterrows():
+            ## convert date time to date
+            r_date = r.data_date.date()
+            if r_date >= r.end_date or r_date < r.start_date:
+                dp_ids_that_need_campaign.append(r.id)
+
+        DataPoint.objects.filter(id__in=dp_ids_that_need_campaign)\
+            .update(cache_job_id = -2)
 
     def delete_unmapped(self):
         ## if a user re-maps data, we need to delete the

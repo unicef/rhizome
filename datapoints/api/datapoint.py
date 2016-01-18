@@ -17,7 +17,7 @@ from django.contrib.sessions.models import Session
 from datapoints.api.base import BaseModelResource, BaseNonModelResource, \
     get_locations_to_return_from_url
 from datapoints.models import DataPointComputed, Campaign, Location, \
-    Indicator, DataPointEntry, LocationPermission
+    Indicator, DataPointEntry, LocationPermission, DataPoint
 from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
 
 
@@ -290,7 +290,7 @@ class DataPointEntryResource(BaseModelResource):
         'indicator_id': Indicator
     }
     location = fields.IntegerField(attribute='location_id')
-    campaign = fields.IntegerField(attribute='campaign_id')
+    # campaign = fields.IntegerField(attribute='campaign_id')
     indicator = fields.IntegerField(attribute='indicator_id')
 
     class Meta():
@@ -307,6 +307,36 @@ class DataPointEntryResource(BaseModelResource):
         }
         serializer = CustomJSONSerializer()
 
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        An ORM-specific implementation of ``apply_filters``.
+
+        The default simply applies the ``applicable_filters`` as ``**kwargs``,
+        but should make it possible to do more advanced things.
+        """
+
+        return self.get_object_list(request)#.filter(**applicable_filters)
+
+    def get_object_list(self, request):
+        '''
+        '''
+
+        campaign_param, indicator_param = request.GET['campaign__in'], \
+            request.GET['indicator__in']
+
+        indicator__in = indicator_param.split(',')
+
+        campaign_obj = Campaign.objects.get(id=campaign_param)
+
+        return DataPoint.objects.filter(
+                data_date__gte = campaign_obj.start_date,
+                data_date__lte = campaign_obj.end_date,
+                location_id = campaign_obj.top_lvl_location_id,
+                indicator__in = indicator__in
+            )
+
+
     def save(self, bundle, skip_errors=False):
         '''
         Overriding Tastypie save method here because the
@@ -317,7 +347,8 @@ class DataPointEntryResource(BaseModelResource):
         self.is_valid(bundle)
 
         if bundle.errors and not skip_errors:
-            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+            raise ImmediateHttpResponse(response=self\
+                .error_response(bundle.request, bundle.errors))
 
         # Check if they're authorized.
         # if bundle.obj.pk:
@@ -359,22 +390,37 @@ class DataPointEntryResource(BaseModelResource):
                 raise InputError(0, 'Could not get User ID from cookie')
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
+
             if existing_datapoint is not None:
 
-                update_kwargs = {
-                    'location_id': existing_datapoint.location_id,
-                    'campaign_id': existing_datapoint.campaign_id,
-                    'indicator_id': existing_datapoint.indicator_id
-                }
-                bundle.response = self.success_response()
+                bundle.response = self.success_response() ##?
+                return self.obj_update(bundle, **{'id': existing_datapoint.id})
 
-                return self.obj_update(bundle, **update_kwargs)
+            else: # CREATE
 
-            else:
-                # create
-                bundle.response = self.success_response()
-                return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
-        # catch all other exceptions & format them the way the client is expecting
+                data_to_insert = bundle.data
+
+                # find the campaign object from the parameter
+                campaign_obj = Campaign.objects.get(id=int(\
+                    data_to_insert['campaign_id']))
+
+                ## create the dictionary used to insert into datapoint ##
+                data_to_insert['data_date'] = campaign_obj.start_date
+                data_to_insert['source_submission_id'] = -1 # data_entry
+                data_to_insert['cache_job_id'] = -1 # to process
+                data_to_insert['cache_job_id'] = -1 # to process
+
+                ## remove campaign id from dict to insert
+                data_to_insert.pop('campaign_id',None)
+
+                ## insert into datpaoint table ##
+                bundle.obj = DataPoint.objects.create(**data_to_insert)
+
+                bundle.data['id'] = bundle.obj.id
+                bundle.obj.campaign_id = campaign_obj.id
+
+                return bundle
+
         except Exception, e:
             e.code = 0
             e.data = traceback.format_exc()
@@ -399,7 +445,17 @@ class DataPointEntryResource(BaseModelResource):
         if value_to_update == 'NaN':
             bundle.data['value'] = None
 
-        return super(DataPointEntryResource, self).obj_update(bundle, **kwargs)
+        dp = DataPoint.objects.get(id=kwargs['id'])
+        dp.value = value_to_update
+        dp.save()
+
+        dp.campaign_id = bundle.data['campaign_id']
+
+        bundle.obj = dp
+        bundle.data['value'] = value_to_update
+        bundle.data['id'] = kwargs['id']
+
+        return bundle
 
     def get_user_id(self, bundle):
         request = bundle.request
@@ -430,14 +486,17 @@ class DataPointEntryResource(BaseModelResource):
         Assumes data is valid
         (i.e. data should have passed validate_object first)
         """
+
+        campaign = Campaign.objects.get(id=int(data['campaign_id']))
+
         try:
             obj = DataPointEntry.objects.get(
                 location_id=int(data['location_id']),
-                campaign_id=int(data['campaign_id']),
+                data_date=campaign.start_date,
                 indicator_id=int(data['indicator_id']),
             )
             return obj
-        except ObjectDoesNotExist:
+        except ObjectDoesNotExist as err:
             return
 
     def hydrate(self, bundle):
@@ -473,11 +532,13 @@ class DataPointEntryResource(BaseModelResource):
         else:  # otherwise, this is a GET request
             bundle.data['datapoint_id'] = bundle.data['id']
             del bundle.data['id']
-            for key in ['campaign', 'indicator', 'location']:
+            # for key in ['campaign', 'indicator', 'location']:
+            for key in ['indicator', 'location']:
                 bundle.data['{0}_id'.format(key)] = bundle.data[key]
                 del bundle.data[key]
             for key in ['created_at', 'resource_uri']:
                 del bundle.data[key]
+
         return bundle
 
     def validate_object(self, obj):

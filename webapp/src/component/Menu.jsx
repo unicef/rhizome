@@ -58,11 +58,7 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    // RAN INTO HUGE PROBLEMS HERE!!! -- WHY was the initial code checking
-    // both props and state ?  What do i lose by only checking props?
-
-    // console.log('menu.jsx - shouldComponentUpdate ')
-    return !_.isEqual(nextProps, this.props)
+    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
   _onResize: function () {
@@ -75,7 +71,7 @@ export default React.createClass({
 
     // Default position is centered
     var orientation = 'center'
-    var marginLeft = -menu.width / 2
+    var marginLeft = -Math.floor(menu.width / 2)
 
     // Calculate the edges based on a centered menu
     var rightEdge = x + (menu.width / 2)
