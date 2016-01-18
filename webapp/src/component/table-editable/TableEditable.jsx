@@ -1,9 +1,16 @@
 import React from 'react'
+import Reflux from 'reflux'
 import _ from 'lodash'
 import d3 from 'd3'
 import api from '../../data/api'
 
+import Cell from 'component/table-editable/Cell.jsx'
+import TableEditableStore from 'stores/TableEditableStore'
+import TableEditableActions from 'actions/TableEditableActions'
+
 var TableEditale = React.createClass({
+  mixins: [Reflux.connect(TableEditableStore)],
+
   propTypes: {
     data: React.PropTypes.object,
     loaded: React.PropTypes.bool,
@@ -16,6 +23,17 @@ var TableEditale = React.createClass({
 
   shouldComponentUpdate: function (nextProps, nextState) {
     return !_.isEqual(nextProps.loaded, this.props.loaded)
+  },
+
+  completionClass: function (v) {
+    if (v === 0) {
+      return 'statusText-bad'
+    } else if (v === 1) {
+      return 'statusText-good'
+    } else if (v > 0 && v < 1) {
+      return 'statusText-okay'
+    }
+    return null
   },
 
   _buildData: function () {
@@ -146,11 +164,69 @@ var TableEditale = React.createClass({
   },
 
   _buildTable: function (data) {
-    let tableContent = (
+    console.log(this.state.total.total)
+    TableEditableActions.updateStats(data)
+    console.log(this.state.total.total)
+    let contentTitle = (
       <div>
         <h5>
-        data
+          Form is <span className={this.completionClass(this.state.total.complete / this.state.total.total)}>
+          {this.state.total.complete / this.state.total.total} </span>
+           complete ({this.state.total.complete} / {this.state.total.total} values entered)
         </h5>
+      </div>
+    )
+
+    let tableHeader = ''
+    let tableBody = ''
+
+    if (data.rows.length > 0) {
+      tableHeader = data.columns.map(column => {
+        return (
+          <tr>
+            <th></th>
+            <th className={column.headerClasses}>
+              <div className='th-inner'>
+                {column.header}
+                <div className={'completionStatus'}>
+                </div>
+              </div>
+            </th>
+          </tr>
+        )
+      })
+    }
+
+    tableBody = data.rows.map(row => {
+      return (
+        <tr>
+          <td className='rowCompletionStatus'>
+            <div className='completionStatus'>
+            </div>
+          </td>
+          <td>
+            <Cell />
+          </td>
+        </tr>
+      )
+    })
+
+    let tableContent = (
+      <div>
+        {contentTitle}
+        <div className='fixed-table-container'>
+          <div className='header-background'></div>
+          <div className='fixed-table-container-inner'>
+            <table>
+              <thead>
+                {tableHeader}
+              </thead>
+              <tbody>
+                {tableBody}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     )
     return tableContent
