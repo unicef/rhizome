@@ -371,8 +371,8 @@ export default {
   },
   processScatterChart: function (dataPromise, locations, indicators, chartDef, layout) {
     var locationsIndex = _.indexBy(locations, 'id')
-    let xAxis = chartDef.xAxis
-    let yAxis = chartDef.yAxis
+    let xAxis = chartDef.x
+    let yAxis = chartDef.y
 
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {

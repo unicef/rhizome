@@ -24,7 +24,7 @@ function findMatches (item, re) {
 }
 
 function filterMenu (items, pattern) {
-  if (_.size(pattern) < 4) {
+  if (_.size(pattern) < 3) {
     return items
   }
 
