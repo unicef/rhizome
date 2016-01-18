@@ -16,7 +16,6 @@ class CacheJob(models.Model):
     date_completed = models.DateTimeField(null=True)
     is_error = models.BooleanField()
     response_msg = models.CharField(max_length=255)
-    full_error_response = models.TextField(null=True)
 
     class Meta:
         db_table = 'cache_job'
@@ -376,6 +375,14 @@ class Campaign(models.Model):
 
         CampaignToIndicator.objects.filter(campaign_id=self.id).delete()
         CampaignToIndicator.objects.bulk_create(cti_batch)
+
+        self.mark_datapoints_as_to_process()
+
+    def mark_datapoints_as_to_process(self):
+
+        dp_ids = self.get_raw_datapoint_ids()
+        DataPoint.objects.filter(id__in=dp_ids,cache_job_id = -2
+            ).update(cache_job_id = -1)
 
 
     class Meta:
