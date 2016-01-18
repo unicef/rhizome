@@ -8,23 +8,23 @@ import api from 'data/api'
 
 let EntryFormStore = Reflux.createStore({
   listenables: [require('actions/EntryFormActions')],
-
-  locations: [],
+  locationList: [],
 
   data: {
     indicatorSets: require('./IndicatorSets'),
     indicatorMap: null,
+    indicatorSet: null,
+    indicatorSelected: '2',
     data: null,
     loaded: false,
-    indicatorSelected: '2',
     campaigns: [],
     campaignSelected: null,
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
     locationSelected: [],
+    locations: [],
     includeSublocations: false,
-    indicatorSet: null,
     pagination: {
       total_count: 0
     }
@@ -74,12 +74,12 @@ let EntryFormStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        self.locations = locationResult
+        self.locationList = locationResult
         self.data.filterLocations = locationResult
         self.data.locationMap = _.indexBy(locations.objects, 'id')
 
         // Indicators
-        self.data.indicators = _.indexBy(indicators.objects, 'id')
+        self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
         self.trigger(self.data)
       })
     )
@@ -94,8 +94,46 @@ let EntryFormStore = Reflux.createStore({
       return campaign.id === parseInt(this.data.campaignSelected, 10)
     })
 
-    this.data.filterLocations = this.locations.filter(location => {
+    this.data.filterLocations = this.locationList.filter(location => {
       return location.value === campaign.office_id
+    })
+  },
+
+  _filteredIndicatorSet: function (indicatorSetId) {
+    var indicatorSet = _.find(this.data.indicatorSets, function (d) { return d.id === parseInt(indicatorSetId, 10) })
+    if (!indicatorSet) return null
+
+    var filtered = _.clone(indicatorSet)
+    filtered.indicators = []
+    _.each(indicatorSet.indicators, row => {
+      if (row.type === 'section-header') { // header
+        // remove previous section header if no indicators are included under it
+        if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+          filtered.indicators.splice(filtered.indicators.length - 1, 1)
+        }
+        filtered.indicators.push(row)
+      } else { // indicator
+        // filter out indicators the user cannot edit
+        if (row.id && this.data.indicatorMap[row.id] !== undefined) {
+          row.name = this.data.indicatorMap[row.id].name
+          filtered.indicators.push(row)
+        }
+      }
+    })
+
+    // remove last row if empty section header
+    if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+      filtered.indicators.pop()
+    }
+
+    return filtered
+  },
+
+  _findLocationObject: function (locations, locationId) {
+    return _.find(locations, location => {
+      return location.value === locationId
+        ? location : !location.children && location.children.length > 0
+        ? this._findLocationObject(location.children, locationId) : []
     })
   },
 
@@ -143,7 +181,7 @@ let EntryFormStore = Reflux.createStore({
 
       _.forEach(this.data.locationSelected, location => {
         if (this.data.includeSublocations) {
-          let parentLocations = this._findLocationObject(this.locations, location.id)
+          let parentLocations = this._findLocationObject(this.locationList, location.id)
 
           let children = flattenChildren(parentLocations, 'children', null, function () { return true }, 1)
           if (children.length > 0) {
@@ -152,29 +190,41 @@ let EntryFormStore = Reflux.createStore({
         }
       })
       options.location_id__in = _.uniq(options.location_id__in)
+
+      // sort locations
+      options.location_id__in = options.location_id__in.sort((a, b) => {
+        var ra = this.data.locationMap[a]
+        var rb = this.data.locationMap[b]
+        // sort by location type first
+        if (ra.location_type_id !== rb.location_type_id) {
+          return ra.location_type_id - rb.location_type_id
+        } else {
+          return ra.name > rb.name ? 1 : -1
+        }
+      })
+
+      this.data.locations = options.location_id__in
     }
 
-    _.forEach(this.data.indicatorSets, indicator => {
-      if (indicator.id.toString() === this.data.indicatorSelected) {
-        this.data.indicatorSet = indicator
-        options.indicator__in = _.compact(_.map(indicator.indicators, 'id'))
-      }
-    })
+    this.data.indicatorSet = this._filteredIndicatorSet(this.data.indicatorSelected)
+
+    options.indicator__in = _(this.data.indicatorSet.indicators)
+                  .filter(function (d) { return d.id })
+                  .map(function (d) { return d.id })
+                  .value()
 
     _.defaults(options, this.data.pagination)
+
+    this.data.loaded = false
+    this.trigger(this.data)
 
     api.datapointsRaw(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.data = response.objects
       this.trigger(this.data)
-    })
-  },
-
-  _findLocationObject: function (locations, locationId) {
-    return _.find(locations, location => {
-      return location.value === locationId
-        ? location : !location.children && location.children.length > 0
-        ? this._findLocationObject(location.children, locationId) : []
+    }, function (err) {
+      this.data.loaded = false
+      console.error(err)
     })
   }
 })

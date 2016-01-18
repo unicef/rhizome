@@ -99,8 +99,10 @@ let EntryForm = React.createClass({
           <TableEditale data={this.state.data}
             loaded={this.state.loaded}
             indicatorSet={this.state.indicatorSet}
-            indicatorMap = {this.state.indicatorMap}
-            locations={this.state.locationSelected} />
+            indicatorMap={this.state.indicatorMap}
+            locationMap={this.state.locationMap}
+            locations={this.state.locations}
+            campaignId={this.state.campaignSelected}/>
         </div>
       </div>
     )
