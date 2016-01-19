@@ -98,17 +98,19 @@ let TableEditable = React.createClass({
     let tableContent = (
       <div>
         {contentTitle}
-        <div className='fixed-table-container'>
-          <div className='header-background'></div>
-          <div className='fixed-table-container-inner'>
-            <table>
-              <thead>
-                {tableHeader}
-              </thead>
-              <tbody>
-                {tableBody}
-              </tbody>
-            </table>
+        <div>
+          <div className='fixed-table-container'>
+            <div className='header-background'></div>
+            <div className='fixed-table-container-inner'>
+              <table>
+                <thead>
+                  {tableHeader}
+                </thead>
+                <tbody>
+                  {tableBody}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>

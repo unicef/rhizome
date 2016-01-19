@@ -384,7 +384,7 @@ table {
   background-color: white;
   position: relative; /* could be absolute or relative */
   padding-top: $defaultHeaderHeight; /* height of header */
-
+  width: 100%;
   .fixed-table-container-inner {
     overflow-x: hidden;
     overflow-y: auto;
