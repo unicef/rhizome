@@ -223,8 +223,9 @@ let EntryFormStore = Reflux.createStore({
       this.data.data = response.objects
       this.trigger(this.data)
     }, function (err) {
-      this.data.loaded = false
       console.error(err)
+      this.data.loaded = false
+      this.trigger(this.data)
     })
   }
 })
