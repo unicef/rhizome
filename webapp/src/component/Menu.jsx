@@ -58,8 +58,7 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    // return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
-    return !_.isEqual(nextProps, this.props)// @vivi -- stack trace exceeded issue still exists .
+    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
   _onResize: function () {
@@ -72,7 +71,7 @@ export default React.createClass({
 
     // Default position is centered
     var orientation = 'center'
-    var marginLeft = -Math.floor(menu.width / 2)
+    var marginLeft = -menu.width / 2
 
     // Calculate the edges based on a centered menu
     var rightEdge = x + (menu.width / 2)
@@ -88,8 +87,8 @@ export default React.createClass({
 
     this.setState({
       orientation: orientation,
-      maxHeight: window.innerHeight - y - (menu.height - items.height),
-      marginLeft: marginLeft
+      maxHeight: Math.floor(window.innerHeight - y - (menu.height - items.height)),
+      marginLeft: Math.floor(marginLeft)
     })
   },
 
