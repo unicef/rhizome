@@ -769,7 +769,6 @@ class AggRefreshResource(BaseModelResource):
        try:
            campaign_id = request.GET['campaign_id']
            ar = AggRefresh(campaign_id)
-           agg_refresh_result = ar.main()
            return Campaign.objects.filter(id=campaign_id).values()
        except KeyError:
            campsign_id = None
@@ -795,9 +794,6 @@ class AggRefreshResource(BaseModelResource):
            if c.top_lvl_location_id in parent_location_list:
                campaign_id = c.id
                ar =  AggRefresh(c.id)
-               agg_refresh_result = ar.main()
-
-               print agg_refresh_result
 
                return Campaign.objects.filter(id=campaign_id).values()
 
