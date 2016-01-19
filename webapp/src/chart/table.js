@@ -34,6 +34,7 @@ var DEFAULTS = {
   onMouseOut: null,
   onRowClick: null,
   seriesName: _.property('name'),
+  seriesParentName: _.property('parentName'),
   sortValue: _sortValue,
   values: _.property('values'),
   value: _.property('value')
@@ -76,7 +77,7 @@ _.extend(TableChart.prototype, {
     // console.log('THERE SHOULD BE TWO ', data[0].name)
     // chartData.push(data[0])
 
-    // console.log('chartdata', chartData)
+    console.log('chartdata', chartData)
     // console.log('options', options)
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
@@ -101,6 +102,10 @@ _.extend(TableChart.prototype, {
 
     var yScale = d3.scale.ordinal()
       .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
+      .rangeBands([0, h], 0.1)
+
+    var zScale = d3.scale.ordinal()
+      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesParentName).value())
       .rangeBands([0, h], 0.1)
 
     var y = _.flow(options.seriesName, yScale)
@@ -143,7 +148,7 @@ _.extend(TableChart.prototype, {
 
     // console.log('chartData', chartData)
     var row = g.selectAll('.row').data(chartData)
-    console.log('ROW', row)
+    // console.log('ROW', row)
 
     row.enter().append('g')
         .attr({
@@ -250,19 +255,20 @@ _.extend(TableChart.prototype, {
       })
 
     // .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
+    // console.log('zScale', zScale)
     svg.select('.z.axis')
       .transition().duration(500)
       .attr('transform', 'translate(-120, 0)')
       .call(d3.svg.axis()
-        .scale(yScale)
+        .scale(zScale)
         .orient('left')
         .outerTickSize(0))
 
-    // svg.selectAll('.z.axis text')
-    //   .style('font-size', options.fontSize)
-    //   .on('click', function (d, i) {
-    //     options.onRowClick(d, i, this)
-    //   })
+    svg.selectAll('.z.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', function (d, i) {
+        options.onRowClick(d, i, this)
+      })
 
     svg.select('.y.axis')
       .transition().duration(500)
