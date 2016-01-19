@@ -511,7 +511,6 @@ export default {
           }
         })
 
-        console.log(locations_map)
         return {
           name: locations_map[d.location].name,
           parentName: locations_map[d.location].parent_location_id,

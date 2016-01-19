@@ -216,22 +216,27 @@ _.extend(TableChart.prototype, {
         .on('click', options.onClick)
 
     // BEGIN SOURCE FOOTER //
-    console.log('STARTING FRESH')
-    var someData = [1, 2]
-    var sourceCell = svg.selectAll('.source-footer').data(someData).append('g')
+    var someData = [10.6, 116.6]
+    var sourceCell = svg.select('.source-footer').data(someData).append('g')
 
-    console.log('sourceCell', sourceCell)
     sourceCell.append('rect')
         .attr({
           'class': 'cell',
           'height': yScale.rangeBand(),
-          'x': 100,
+          'transform': 'translate(0,' + h + ')',
+          'x': function (d) {
+            console.log('XXXXX', d)
+            return d
+          },
           'width': xScale.rangeBand()
         })
-      .style({
-        'opacity': 0,
-        'fill': '#2FB0D3'
-      })
+        .style({
+          'opacity': 0,
+          'fill': '#2FB0D3'
+        })
+        .transition()
+        .duration(500)
+      .style('opacity', 1)
 
     // END SOURCE FOOTER //
 
