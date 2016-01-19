@@ -25,7 +25,7 @@ var DEFAULTS = {
     top: 120,
     right: 120,
     bottom: 0,
-    left: 120
+    left: 180
   },
   onClick: null,
   onColumnHeadOver: null,
@@ -54,6 +54,7 @@ _.extend(TableChart.prototype, {
 
     var g = svg.append('g').attr('class', 'margin')
 
+    g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
     g.append('g').attr('class', 'x axis')
     g.append('g').attr('class', 'data')
@@ -64,12 +65,22 @@ _.extend(TableChart.prototype, {
 
   update: function (data, options) {
     options = _.extend(this._options, options)
+    // console.log('options', options)
     var margin = options.margin
 
+    margin.left = 180 // fix..
+    // console.log('MARGIN !: ', margin)
+
     var self = this
+    var chartData = data
+    // console.log('THERE SHOULD BE TWO ', data[0].name)
+    // chartData.push(data[0])
+
+    // console.log('chartdata', chartData)
+    // console.log('options', options)
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(data.length * options.cellSize, 0)
+    var h = Math.max(chartData.length * options.cellSize, 0)
 
     var svg = this._svg
       .attr({
@@ -77,7 +88,7 @@ _.extend(TableChart.prototype, {
         'width': (w + margin.left + margin.right),
         'height': (h + margin.top + margin.bottom)
       })
-      .datum(data)
+      .datum(chartData)
 
     var xScale = d3.scale.ordinal()
         .domain(_.map(options.headers, options.headerText))
@@ -89,13 +100,14 @@ _.extend(TableChart.prototype, {
     var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
 
     var yScale = d3.scale.ordinal()
-      .domain(_(data).sortBy(sortValue, this).map(options.seriesName).value())
+      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
 
     var y = _.flow(options.seriesName, yScale)
+    // console.log('what is yScale', yScale)
 
     var transform = function (d, i) {
-      return 'translate(0, ' + y(d) + ')'
+      return 'translate(25, ' + y(d) + ')'
     }
 
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
@@ -129,7 +141,9 @@ _.extend(TableChart.prototype, {
 
     g.on('mouseout', function () { self._onRowOut.apply(self) })
 
-    var row = g.selectAll('.row').data(data)
+    // console.log('chartData', chartData)
+    var row = g.selectAll('.row').data(chartData)
+    console.log('ROW', row)
 
     row.enter().append('g')
         .attr({
@@ -181,6 +195,10 @@ _.extend(TableChart.prototype, {
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
+            // 'x': function (d) {
+            //   console.log('is this location ', d)
+            //   return x(d) + 3 * options.cellSize / 2
+            // },
             'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
@@ -231,18 +249,33 @@ _.extend(TableChart.prototype, {
         options.onColumnHeadOut(d, i, this)
       })
 
+    // .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
+    svg.select('.z.axis')
+      .transition().duration(500)
+      .attr('transform', 'translate(-120, 0)')
+      .call(d3.svg.axis()
+        .scale(yScale)
+        .orient('left')
+        .outerTickSize(0))
+
+    // svg.selectAll('.z.axis text')
+    //   .style('font-size', options.fontSize)
+    //   .on('click', function (d, i) {
+    //     options.onRowClick(d, i, this)
+    //   })
+
     svg.select('.y.axis')
       .transition().duration(500)
       .call(d3.svg.axis()
         .scale(yScale)
         .orient('left')
         .outerTickSize(0))
-
-    svg.selectAll('.y.axis text')
-      .style('font-size', options.fontSize)
-      .on('click', function (d, i) {
-        options.onRowClick(d, i, this)
-      })
+    //
+    // svg.selectAll('.y.axis text')
+    //   .style('font-size', options.fontSize)
+    //   .on('click', function (d, i) {
+    //     options.onRowClick(d, i, this)
+    //   })
 
     if (options.legend) {
       svg.select('.legend')
@@ -278,7 +311,7 @@ _.extend(TableChart.prototype, {
 
   _setSort: function (d) {
     this.sortCol = (d === this.sortCol) ? null : d
-    this.update(this._svg.selectAll('.row').data())
+    this.update(this._svg.selectAll('.row').chartData())
   }
 })
 
