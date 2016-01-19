@@ -226,7 +226,7 @@ export default {
       },
       TableChart: {
         fn: this.processTableChart,
-        para: [indicators, locations]
+        para: [dataPromise, locations, indicators, chartDef, layout]
       }
     }
     return chartProcessors[chartType].fn(...chartProcessors[chartType].para)
@@ -461,18 +461,14 @@ export default {
       return { options: chartOptions, data: chartData }
     })
   },
-  processTableChart: function (indicators, locations) {
-    let indicators_ids = _.map(indicators, 'id')
-    let locations_ids = _.map(locations, 'id')
+  processTableChart: function (dataPromise, locations, indicators, chartDef, layout) {
     let indicators_map = _.indexBy(indicators, 'id')
     let locations_map = _.indexBy(locations, 'id')
-
-    return api.datapoints({
-      location_id__in: locations_ids,
-      admin_level: 2,
-      indicator__in: indicators_ids,
-      campaign_start: '2015-04-01',
-      campaign_end: '2015-04-01'
+    return dataPromise.then(function (data) {
+      if (!data || data.length === 0) {
+        return { options: null, data: null }
+      }
+      return data
     }).then(function (datapoints) {
       let chartOptions = {
         cellSize: 36,
@@ -492,10 +488,19 @@ export default {
 
         _.each(d.indicators, i => {
           if (i.value != null) {
+            var displayValue = i.value
+            if (indicators_map[i.indicator].data_format === 'pct') {
+              displayValue = (i.value * 100).toString().substring(0, 5) + ' %'
+            } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
+              displayValue = 'No'
+            } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {
+              displayValue = 'Yes'
+            }
             values.push({
               indicator: indicators_map[i.indicator],
-              value: i.value,
+              value: d.value,
               campaign: d.campaign,
+              displayValue: displayValue,
               location: locations_map[d.location]
             })
 
