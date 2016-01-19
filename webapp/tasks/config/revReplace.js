@@ -1,6 +1,4 @@
 import gulp from 'gulp'
-import path from 'path'
-import _ from 'lodash'
 
 const jsDestFolder = `${gulp.config('base.dist')}/static`
 
