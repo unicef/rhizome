@@ -58,7 +58,8 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
+    // return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
+    return !_.isEqual(nextProps, this.props) // @vivi -- stack trace exceeded issue still exists . 
   },
 
   _onResize: function () {

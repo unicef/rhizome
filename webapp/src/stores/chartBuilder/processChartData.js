@@ -488,10 +488,19 @@ export default {
 
         _.each(d.indicators, i => {
           if (i.value != null) {
+            var displayValue = i.value
+            if (indicators_map[i.indicator].data_format === 'pct') {
+              displayValue = (i.value * 100).toString().substring(0, 5) + ' %'
+            } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
+              displayValue = 'No'
+            } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {
+              displayValue = 'Yes'
+            }
             values.push({
               indicator: indicators_map[i.indicator],
-              value: i.value,
+              value: d.value,
               campaign: d.campaign,
+              displayValue: displayValue,
               location: locations_map[d.location]
             })
 

@@ -188,7 +188,7 @@ _.extend(TableChart.prototype, {
             'text-anchor': 'middle',
             'font-weight': 'bold'
           })
-          .text(function (d) { return parseFloat(d.value).toFixed(4) })
+          .text(function (d) { return d.displayValue })
           .transition()
           .duration(500)
 
