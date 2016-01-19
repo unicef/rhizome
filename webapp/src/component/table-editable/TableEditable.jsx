@@ -63,29 +63,30 @@ let TableEditable = React.createClass({
     let tableBody = ''
 
     if (this.state.table.rows.length > 0) {
-      tableHeader = this.state.table.columns.map(column => {
+      tableHeader = this.state.table.columns.map((column, index) => {
+        let isShowLabel = column.type !== 'value'
+        let className = (isShowLabel ? 'col' : this.completionClass(this.state.byColumn[index].complete / this.state.byColumn[index].total)) + ' completionStatus'
+        let headerContent = isShowLabel ? '' : this.state.byColumn[index].complete + ' / ' + this.state.byColumn[index].total
         return (
-          <tr>
-            <th></th>
-            <th className={column.headerClasses}>
-              <div className='th-inner'>
-                {column.header}
-                <div className='completionStatus'>
-                  {this.state.total.complete} / {this.state.total.total}
-                </div>
+          <th className={column.headerClasses}>
+            <div className='th-inner'>
+              {column.header}
+              <div className={className}>
+                {headerContent}
               </div>
-            </th>
-          </tr>
+            </div>
+          </th>
         )
       })
     }
 
-    tableBody = this.state.table.rows.map(row => {
+    tableBody = this.state.table.rows.map((row, index) => {
+      let className = this.completionClass(this.state.byRow[index].complete / this.state.byRow[index].total) + ' completionStatus'
       return (
         <tr>
           <td className='rowCompletionStatus'>
-            <div className='completionStatus'>
-              {this.state.total.complete} / {this.state.total.total}
+            <div className={className}>
+              {this.state.byRow[index].complete} / {this.state.byRow[index].total}
             </div>
           </td>
           <td>
@@ -98,19 +99,20 @@ let TableEditable = React.createClass({
     let tableContent = (
       <div>
         {contentTitle}
-        <div>
-          <div className='fixed-table-container'>
-            <div className='header-background'></div>
-            <div className='fixed-table-container-inner'>
-              <table>
-                <thead>
+        <div className='fixed-table-container'>
+          <div className='header-background'></div>
+          <div className='fixed-table-container-inner'>
+            <table>
+              <thead>
+                <tr>
+                  <th></th>
                   {tableHeader}
-                </thead>
-                <tbody>
-                  {tableBody}
-                </tbody>
-              </table>
-            </div>
+                </tr>
+              </thead>
+              <tbody>
+              {tableBody}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

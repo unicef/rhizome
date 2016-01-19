@@ -28,14 +28,9 @@ let TableEditaleStore = Reflux.createStore({
     if (this.data.table.rows.length > 0) {
       this.data.total = newCounter()
       _.forEach(this.data.table.rows, (row, rowIndex) => {
-        if (this.data.byRow[rowIndex] === undefined) {
-          this.data.byRow[rowIndex] = newCounter()
-        }
-
+        this.data.byRow[rowIndex] = newCounter()
         _.forEach(row, (cell, colIndex) => {
-          if (this.data.byColumn[colIndex] === undefined) {
-            this.data.byColumn[colIndex] = newCounter()
-          }
+          this.data.byColumn[colIndex] = newCounter()
 
           if (cell.isEditable) {
             this.data.total.total ++
