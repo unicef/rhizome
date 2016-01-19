@@ -59,6 +59,7 @@ _.extend(TableChart.prototype, {
     g.append('g').attr('class', 'y axis')
     g.append('g').attr('class', 'x axis')
     g.append('g').attr('class', 'data')
+    g.append('g').attr('class', 'source-footer')
     g.append('g').attr('class', 'legend')
 
     this.update(data)
@@ -66,19 +67,12 @@ _.extend(TableChart.prototype, {
 
   update: function (data, options) {
     options = _.extend(this._options, options)
-    // console.log('options', options)
     var margin = options.margin
-
     margin.left = 180 // fix..
-    // console.log('MARGIN !: ', margin)
+    margin.bottom = 140 // fix..
 
     var self = this
     var chartData = data
-    // console.log('THERE SHOULD BE TWO ', data[0].name)
-    // chartData.push(data[0])
-
-    console.log('chartdata', chartData)
-    // console.log('options', options)
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
@@ -109,10 +103,9 @@ _.extend(TableChart.prototype, {
       .rangeBands([0, h], 0.1)
 
     var y = _.flow(options.seriesName, yScale)
-    // console.log('what is yScale', yScale)
 
     var transform = function (d, i) {
-      return 'translate(25, ' + y(d) + ')'
+      return 'translate(0, ' + y(d) + ')'
     }
 
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
@@ -146,9 +139,7 @@ _.extend(TableChart.prototype, {
 
     g.on('mouseout', function () { self._onRowOut.apply(self) })
 
-    // console.log('chartData', chartData)
     var row = g.selectAll('.row').data(chartData)
-    // console.log('ROW', row)
 
     row.enter().append('g')
         .attr({
@@ -200,10 +191,6 @@ _.extend(TableChart.prototype, {
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
-            // 'x': function (d) {
-            //   console.log('is this location ', d)
-            //   return x(d) + 3 * options.cellSize / 2
-            // },
             'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
@@ -227,6 +214,26 @@ _.extend(TableChart.prototype, {
         .on('mousemove', options.onMouseMove)
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
+
+    // BEGIN SOURCE FOOTER //
+    console.log('STARTING FRESH')
+    var someData = [1, 2]
+    var sourceCell = svg.selectAll('.source-footer').data(someData).append('g')
+
+    console.log('sourceCell', sourceCell)
+    sourceCell.append('rect')
+        .attr({
+          'class': 'cell',
+          'height': yScale.rangeBand(),
+          'x': 100,
+          'width': xScale.rangeBand()
+        })
+      .style({
+        'opacity': 0,
+        'fill': '#2FB0D3'
+      })
+
+    // END SOURCE FOOTER //
 
     svg.select('.x.axis')
       .transition().duration(500)
@@ -254,8 +261,7 @@ _.extend(TableChart.prototype, {
         options.onColumnHeadOut(d, i, this)
       })
 
-    // .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
-    // console.log('zScale', zScale)
+    // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
       .attr('transform', 'translate(-120, 0)')
@@ -276,12 +282,12 @@ _.extend(TableChart.prototype, {
         .scale(yScale)
         .orient('left')
         .outerTickSize(0))
-    //
-    // svg.selectAll('.y.axis text')
-    //   .style('font-size', options.fontSize)
-    //   .on('click', function (d, i) {
-    //     options.onRowClick(d, i, this)
-    //   })
+
+    svg.selectAll('.y.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', function (d, i) {
+        options.onRowClick(d, i, this)
+      })
 
     if (options.legend) {
       svg.select('.legend')
