@@ -24,6 +24,7 @@ let EntryForm = React.createClass({
   },
 
   refresh: function () {
+    if (!this.state.couldLoad) return
     EntryFormActions.getTableData()
   },
 

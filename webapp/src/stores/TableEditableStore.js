@@ -26,6 +26,7 @@ let TableEditaleStore = Reflux.createStore({
 
   _updateStats: function () {
     if (this.data.table.rows.length > 0) {
+      this.data.total = newCounter()
       _.forEach(this.data.table.rows, (row, rowIndex) => {
         if (this.data.byRow[rowIndex] === undefined) {
           this.data.byRow[rowIndex] = newCounter()
@@ -57,6 +58,9 @@ let TableEditaleStore = Reflux.createStore({
   },
 
   onInit: function (data, indicatorSet, indicatorMap, locationMap, locations, campaignId) {
+    this.data.processed = false
+    this.trigger(this.data)
+
     // define columns
     let columns = [{
       header: 'Indicator',
@@ -74,7 +78,7 @@ let TableEditaleStore = Reflux.createStore({
       })
     })
 
-    // cell formatters
+    // cell formatter
     var numericFormatter = function (v) {
       return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
     }
@@ -182,9 +186,9 @@ let TableEditaleStore = Reflux.createStore({
 
     this.data.table.rows = rows
     this.data.table.columns = columns
-    this.data.processed = true
-
     this._updateStats()
+
+    this.data.processed = true
     this.trigger(this.data)
   },
 

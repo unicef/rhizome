@@ -2,17 +2,12 @@ import React from 'react'
 import Reflux from 'reflux'
 import _ from 'lodash'
 import d3 from 'd3'
-// import api from '../../data/api'
 
 import Cell from 'component/table-editable/Cell.jsx'
 import TableEditableStore from 'stores/TableEditableStore'
 import TableEditableActions from 'actions/TableEditableActions'
 
-let formats = {
-  percent: d3.format('%')
-}
-
-let TableEditale = React.createClass({
+let TableEditable = React.createClass({
   mixins: [Reflux.connect(TableEditableStore)],
 
   propTypes: {
@@ -26,7 +21,7 @@ let TableEditale = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    if (nextProps.loaded && nextProps.data) {
+    if (!this.props.loaded && nextProps.loaded) {
       TableEditableActions.init(nextProps.data, nextProps.indicatorSet,
         nextProps.indicatorMap, nextProps.locationMap,
         nextProps.locations, nextProps.campaignId)
@@ -34,7 +29,7 @@ let TableEditale = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(nextProps.loaded, this.props.loaded)
+    return !_.isEqual(nextProps.loaded, this.props.loaded) || !_.isEqual(this.state.processed, nextState.processed)
   },
 
   completionClass: function (v) {
@@ -49,7 +44,8 @@ let TableEditale = React.createClass({
   },
 
   percent: function (v) {
-    return formats.percent(v)
+    const percent = d3.format('%')
+    return percent(v)
   },
 
   _buildTable: function () {
@@ -117,6 +113,7 @@ let TableEditale = React.createClass({
         </div>
       </div>
     )
+
     return tableContent
   },
 
@@ -131,4 +128,4 @@ let TableEditale = React.createClass({
   }
 })
 
-export default TableEditale
+export default TableEditable
