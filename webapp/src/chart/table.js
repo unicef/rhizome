@@ -46,7 +46,7 @@ _.extend(TableChart.prototype, {
   defaults: DEFAULTS,
   sortCol: null,
 
-  initialize: function (el, data, options) {
+  initialize: function (el, data, options, indicators) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
     var svg = this._svg = d3.select(el)
@@ -65,7 +65,7 @@ _.extend(TableChart.prototype, {
     this.update(data)
   },
 
-  update: function (data, options) {
+  update: function (data, options, indicators) {
     options = _.extend(this._options, options)
     var margin = options.margin
     margin.left = 180 // fix..
@@ -215,31 +215,6 @@ _.extend(TableChart.prototype, {
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
 
-    // BEGIN SOURCE FOOTER //
-    var someData = [10.6, 116.6]
-    var sourceCell = svg.select('.source-footer').data(someData).append('g')
-
-    sourceCell.append('rect')
-        .attr({
-          'class': 'cell',
-          'height': yScale.rangeBand(),
-          'transform': 'translate(0,' + h + ')',
-          'x': function (d) {
-            console.log('XXXXX', d)
-            return d
-          },
-          'width': xScale.rangeBand()
-        })
-        .style({
-          'opacity': 0,
-          'fill': '#2FB0D3'
-        })
-        .transition()
-        .duration(500)
-      .style('opacity', 1)
-
-    // END SOURCE FOOTER //
-
     svg.select('.x.axis')
       .transition().duration(500)
       .call(d3.svg.axis()
@@ -293,6 +268,36 @@ _.extend(TableChart.prototype, {
       .on('click', function (d, i) {
         options.onRowClick(d, i, this)
       })
+    // BEGIN SOURCE FOOTER //
+
+    var someData = [{x: 26, str: 'first'}, {x: 116, str: '2nd'}, {x: 222, str: '3rd'}]
+    // var indicatorData = indicators
+    // console.log('indicatorData', indicatorData)
+    // console.log('someData', someData)
+
+    var sourceCell = svg.selectAll('.source-footer').data(someData)
+    var sourceG = sourceCell.enter().append('g')
+
+    console.log('SOURCE G', sourceG)
+
+    sourceG.append('rect')
+        .attr({
+          'class': 'cell',
+          'height': yScale.rangeBand(),
+          'transform': 'translate(0,' + h + ')',
+          'x': function (d) {
+            return d.x
+          },
+          'width': xScale.rangeBand()
+        })
+        .style({
+          'opacity': 0,
+          'fill': '#2FB0D3'
+        })
+        .transition()
+        .duration(500)
+      .style('opacity', 1)
+    // END SOURCE FOOTER //
 
     if (options.legend) {
       svg.select('.legend')

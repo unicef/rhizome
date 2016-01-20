@@ -518,7 +518,7 @@ export default {
         }
       })
 
-      return { options: chartOptions, data: chartData }
+      return { options: chartOptions, data: chartData, indicators: indicators }
     })
   }
 }
