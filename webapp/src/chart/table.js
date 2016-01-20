@@ -270,12 +270,9 @@ _.extend(TableChart.prototype, {
       })
     // BEGIN SOURCE FOOTER //
 
-    var someData = [{x: 26, str: 'first'}, {x: 116, str: '2nd'}, {x: 222, str: '3rd'}]
-    // var indicatorData = indicators
-    // console.log('indicatorData', indicatorData)
-    // console.log('someData', someData)
-
-    var sourceCell = svg.selectAll('.source-footer').data(someData)
+    var someData = [{x: 10.5, str: 'first'}, {x: 116, str: '2nd'}, {x: 222, str: '3rd'}, {x: 328, str: '4th'}, {x: 434, str: '5th'}]
+    var sourceFooter = svg.select('.source-footer')
+    var sourceCell = sourceFooter.selectAll('.source-cell').data(someData)
     var sourceG = sourceCell.enter().append('g')
 
     console.log('SOURCE G', sourceG)
@@ -297,6 +294,22 @@ _.extend(TableChart.prototype, {
         .transition()
         .duration(500)
       .style('opacity', 1)
+
+    sourceG.append('text')
+            .attr({
+              'height': yScale.rangeBand(),
+              'transform': 'translate(0,' + h + ')',
+              'x': function (d) { return d.x + options.cellSize / 2 },
+              'y': options.cellSize / 2,
+              'width': xScale.rangeBand(),
+              'dominant-baseline': 'central',
+              'text-anchor': 'middle',
+              'font-weight': 'bold'
+            })
+            .text(function (d) { return d.str })
+            .transition()
+            .duration(500)
+
     // END SOURCE FOOTER //
 
     if (options.legend) {
