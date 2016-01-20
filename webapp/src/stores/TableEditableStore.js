@@ -15,10 +15,10 @@ let TableEditaleStore = Reflux.createStore({
 
   data: {
     table: {
-      rows: [],
-      columns: []
+      rows: null,
+      columns: null
     },
-    total: newCounter(),
+    total: null,
     byRow: [],
     byColumn: [],
     processed: false
@@ -27,10 +27,17 @@ let TableEditaleStore = Reflux.createStore({
   _updateStats: function () {
     if (this.data.table.rows.length > 0) {
       this.data.total = newCounter()
+      this.data.byRow = []
+      this.data.byColumn = []
+
       _.forEach(this.data.table.rows, (row, rowIndex) => {
-        this.data.byRow[rowIndex] = newCounter()
+        if (this.data.byRow[rowIndex] === undefined) {
+          this.data.byRow[rowIndex] = newCounter()
+        }
         _.forEach(row, (cell, colIndex) => {
-          this.data.byColumn[colIndex] = newCounter()
+          if (this.data.byColumn[colIndex] === undefined) {
+            this.data.byColumn[colIndex] = newCounter()
+          }
 
           if (cell.isEditable) {
             this.data.total.total ++
