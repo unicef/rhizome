@@ -118,7 +118,7 @@ var SimpleForm = React.createClass({
       }
     }
 
-    if (!errorMessage['name']) {
+    if (!errorMessage['name'] & !this.props.params.id) {
       var result = _.find(indicators, d => { return d === data.name })
       if (result) {
         errorMessage['name'] = 'The indicator of this NAME already existed.'

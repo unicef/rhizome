@@ -117,7 +117,10 @@ class IndicatorResource(BaseModelResource):
                 'name': post_data['name'],
                 'short_name': post_data['short_name'],
                 'description': post_data['description'],
-                'data_format': post_data['data_format']
+                'data_format': post_data['data_format'],
+                'high_bound': post_data['high_bound'],
+                'low_bound': post_data['low_bound'],
+                'source_name': post_data['source_name']
             }
         except Exception as error:
             data = {
