@@ -297,14 +297,14 @@ _.extend(TableChart.prototype, {
             .attr({
               'height': yScale.rangeBand(),
               'transform': 'translate(0,' + h + ')',
-              'x': function (d) { return x(d) + options.cellSize / 2 },
+              'x': function (d) { return x(d) + 45 },
               'y': options.cellSize / 2,
               'width': xScale.rangeBand(),
               'dominant-baseline': 'central',
               'text-anchor': 'middle',
               'font-weight': 'bold'
             })
-            .text(function (d) { return d.indicator.data_format })
+            .text(function (d) { return d.indicator.source_name })
               .transition()
               .duration(500)
 
