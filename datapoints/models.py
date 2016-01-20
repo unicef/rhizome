@@ -44,6 +44,8 @@ class Indicator(models.Model):
     bound_json = JSONField(default = [])
     tag_json = JSONField(default = [])
     office_id = JSONField(default = [])
+    high_bound = models.FloatField(null=True)
+    low_bound = models.FloatField(null=True)
 
     def __unicode__(self):
         return unicode(self.name)

@@ -90,10 +90,6 @@ class IndicatorResource(BaseModelResource):
         else:
             return Indicator.objects.filter(id__in=indicator_id_list).values()
 
-        # ind_ids = IndicatorToOffice.objects\
-        #     .filter(office_id = Location.objects.get(id = self\
-        #     .top_lvl_location_id).office_id )\
-        #     .values_list('indicator_id',flat=True)
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}

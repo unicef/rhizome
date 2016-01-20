@@ -115,13 +115,8 @@ _.extend(TableChart.prototype, {
     var targets = _(options.headers)
       .indexBy('id')
       .mapValues(ind => {
-        var bounds = _(ind.bound_json)
-          .reject(b => b.bound_name === 'invalid')
-          .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
-          .sortBy('1')
-
-        var extents = bounds.pluck('1').slice(1).value()
-        var names = bounds.pluck('0').value()
+        var extents = [ ind.low_bound, ind.high_bound ]
+        var names = ['bad', 'ok', 'good']
 
         return d3.scale.threshold()
           .domain(extents)
