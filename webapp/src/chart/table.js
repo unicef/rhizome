@@ -182,7 +182,11 @@ _.extend(TableChart.prototype, {
         })
         .style({
           'opacity': 0,
-          'fill': fill
+          'fill': function (d) {
+            var someFill = fill(d)
+            console.log('d', d)
+            console.log('someFill', someFill)
+          }
         })
         .transition()
         .duration(500)
@@ -274,8 +278,6 @@ _.extend(TableChart.prototype, {
     var sourceFooter = svg.select('.source-footer')
     var sourceCell = sourceFooter.selectAll('.source-cell').data(someData)
     var sourceG = sourceCell.enter().append('g')
-
-    console.log('SOURCE G', sourceG)
 
     sourceG.append('rect')
         .attr({
