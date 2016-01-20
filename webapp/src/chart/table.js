@@ -46,7 +46,7 @@ _.extend(TableChart.prototype, {
   defaults: DEFAULTS,
   sortCol: null,
 
-  initialize: function (el, data, options, indicators) {
+  initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
     var svg = this._svg = d3.select(el)
@@ -65,10 +65,11 @@ _.extend(TableChart.prototype, {
     this.update(data)
   },
 
-  update: function (data, options, indicators) {
+  update: function (data, options) {
+    // console.log('WHAT IS META IN TABLE.js', meta)
     options = _.extend(this._options, options)
     var margin = options.margin
-    margin.left = 180 // fix..
+    margin.left = 220 // fix..
     margin.bottom = 140 // fix..
 
     var self = this
@@ -98,9 +99,11 @@ _.extend(TableChart.prototype, {
       .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
 
-    var zScale = d3.scale.ordinal()
-      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesParentName).value())
-      .rangeBands([0, h], 0.1)
+    // new to .js -> this should be a one liner ;-)
+    // var locationLookup = {}
+    // chartData.forEach(function (chartRow) {
+    //   locationLookup[chartRow.name] = chartRow.parentName
+    // })
 
     var y = _.flow(options.seriesName, yScale)
 
@@ -182,11 +185,7 @@ _.extend(TableChart.prototype, {
         })
         .style({
           'opacity': 0,
-          'fill': function (d) {
-            var someFill = fill(d)
-            console.log('d', d)
-            console.log('someFill', someFill)
-          }
+          'fill': fill
         })
         .transition()
         .duration(500)
@@ -248,9 +247,13 @@ _.extend(TableChart.prototype, {
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
-      .attr('transform', 'translate(-120, 0)')
+      .attr('transform', 'translate(-140, 0)')
       .call(d3.svg.axis()
-        .scale(zScale)
+        .scale(yScale)
+        .tickFormat(function (d) {
+          // return locationLookup[d]
+          return 'Afghanistan'
+        })
         .orient('left')
         .outerTickSize(0))
 
@@ -274,24 +277,22 @@ _.extend(TableChart.prototype, {
       })
     // BEGIN SOURCE FOOTER //
 
-    var someData = [{x: 10.5, str: 'first'}, {x: 116, str: '2nd'}, {x: 222, str: '3rd'}, {x: 328, str: '4th'}, {x: 434, str: '5th'}]
+    var singleRowIndicators = chartData[0].values
     var sourceFooter = svg.select('.source-footer')
-    var sourceCell = sourceFooter.selectAll('.source-cell').data(someData)
+    var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
     var sourceG = sourceCell.enter().append('g')
 
     sourceG.append('rect')
         .attr({
           'class': 'cell',
-          'height': yScale.rangeBand(),
+          'height': yScale.rangeBand() * 1.5,
           'transform': 'translate(0,' + h + ')',
-          'x': function (d) {
-            return d.x
-          },
+          'x': x,
           'width': xScale.rangeBand()
         })
         .style({
           'opacity': 0,
-          'fill': '#2FB0D3'
+          'fill': '#CCFFFF'
         })
         .transition()
         .duration(500)
@@ -301,16 +302,16 @@ _.extend(TableChart.prototype, {
             .attr({
               'height': yScale.rangeBand(),
               'transform': 'translate(0,' + h + ')',
-              'x': function (d) { return d.x + options.cellSize / 2 },
+              'x': function (d) { return x(d) + options.cellSize / 2 },
               'y': options.cellSize / 2,
               'width': xScale.rangeBand(),
               'dominant-baseline': 'central',
               'text-anchor': 'middle',
               'font-weight': 'bold'
             })
-            .text(function (d) { return d.str })
-            .transition()
-            .duration(500)
+            .text(function (d) { return d.indicator.data_format })
+              .transition()
+              .duration(500)
 
     // END SOURCE FOOTER //
 
