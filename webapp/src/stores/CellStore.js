@@ -20,6 +20,11 @@ var CellStore = Reflux.createStore({
       this.data.isEditing = true !== 'undefined' ? true : !this.data.isEditing
       this.trigger(this.data)
     }
+  },
+
+  onSubmit: function () {
+    this.data.isEditing = false
+    this.trigger(this.data)
   }
 })
 

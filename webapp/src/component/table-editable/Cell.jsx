@@ -29,7 +29,7 @@ var Cell = React.createClass({
     let input = (
       <input type='textfield' className='editControl'
         v-model='value | validator'
-        v-on='keyup: submit | key 13, blur: submit' />
+        onBlur={CellActions.submit} />
     )
 
     let itemInput = this.state.isEditing && this.props.item.isEditable ? input : ''
