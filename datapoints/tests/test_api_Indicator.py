@@ -159,7 +159,12 @@ class IndicatorResourceTest(ResourceTestCase):
         post_data = {'name': 'New test indicator name', \
             'short_name': 'New test short name', \
             'data_format':'int', \
-            'id': -1,'description':'test'}
+            'id': -1,\
+            'description':'test',\
+            'low_bound': 1,
+            'high_bound': 10,
+            'source_name': 'RHIZOME'
+            }
 
         resp = self.api_client.post('/api/v1/indicator/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
