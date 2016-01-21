@@ -8,6 +8,8 @@ import CellActions from 'actions/CellActions'
 var Cell = React.createClass({
   mixins: [Reflux.connect(CellStore)],
 
+  isEditing: false,
+
   propTypes: {
     item: React.PropTypes.object
   },
@@ -15,14 +17,17 @@ var Cell = React.createClass({
   formatted: function () {
     if (this.props.item.value === undefined || this.props.item.value === null) {
       return ''
-    } else {
-      // format according to attached method if it exists
-      return this.format ? this.format(this.value) : this.value
     }
   },
 
   missing: function () {
     return _.isNull(this.props.item.value)
+  },
+
+  _EditValue: function (isEditable) {
+    this.isEditing = true
+    this.forceUpdate()
+    CellActions.toggleEditing(isEditable)
   },
 
   render: function () {
@@ -32,17 +37,17 @@ var Cell = React.createClass({
         onBlur={CellActions.submit} />
     )
 
-    let itemInput = this.state.isEditing && this.props.item.isEditable ? input : ''
+    let itemInput = this.isEditing && this.props.item.isEditable ? input : ''
 
     let isEditable = this.props.item.isEditable ? 'editable ' : ''
-    let isEditing = this.state.isEditing ? 'editing ' : ''
+    let isEditing = this.isEditing ? 'editing ' : ''
     let missing = this.missing() ? 'missing ' : ''
     let saving = this.state.isSaving ? 'saving ' : ''
 
     return (
       <td className={isEditable + isEditing + missing + saving + this.props.item.class} colSpan={this.props.item.colspan}>
         {this.props.item.value}
-        <div onClick={CellActions.toggleEditing.bind(this, this.props.item.isEditable)} className='displayValue'>
+        <div onClick={this._EditValue.bind(this, this.props.item.isEditable)} className='displayValue'>
           {this.formatted()}
         </div>
         {itemInput}
