@@ -71,6 +71,7 @@ _.extend(TableChart.prototype, {
     var margin = options.margin
     margin.left = 220 // fix..
     margin.bottom = 140 // fix..
+    margin.top = 40 // fix..
 
     var self = this
     var chartData = data
@@ -99,7 +100,7 @@ _.extend(TableChart.prototype, {
       .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
 
-    // new to .js -> this should be a one liner ;-)
+    // new to .js -> this should be a one liner -)
     // var locationLookup = {}
     // chartData.forEach(function (chartRow) {
     //   locationLookup[chartRow.name] = chartRow.parentName
@@ -215,6 +216,33 @@ _.extend(TableChart.prototype, {
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
 
+    // Begin X Axis //
+    function wrap (text, width) {
+      text.each(function () {
+        var text = d3.select(this)
+        var words = text.text().split(/\s+/).reverse()
+        var line = []
+        var lineNumber = 0
+        var lineHeight = 1.1 // ems
+        var y = text.attr('y') - 10
+        var dy = parseFloat(text.attr('dy'))
+        var tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
+        // while (word = words.pop()) {
+        var i = 0
+        for (i = 0; i < words.length; i += 1) {
+          var word = words[i]
+          line.push(word)
+          tspan.text(line.join(' '))
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop()
+            tspan.text(line.join(' '))
+            line = [word]
+            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
+          }
+        }
+      })
+    }
+
     svg.select('.x.axis')
       .transition().duration(500)
       .call(d3.svg.axis()
@@ -222,24 +250,26 @@ _.extend(TableChart.prototype, {
         .orient('top')
         .outerTickSize(0))
 
-    svg.selectAll('.x.axis text')
-      .style({
-        'text-anchor': 'start',
-        'font-size': options.fontSize,
-        'fontWeight': function (d) {
-          return (d === sortCol)
-            ? 'bold'
-            : 'normal'
-        }
-      })
-      .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
-      .on('click', function (d, i) { self._setSort(d, i) })
-      .on('mouseover', function (d, i) {
-        options.onColumnHeadOver(d, i, this)
-      })
-      .on('mouseout', function (d, i) {
-        options.onColumnHeadOut(d, i, this)
-      })
+    // svg.selectAll('.x.axis text')
+    //   .style({
+    //     'text-anchor': 'start',
+    //     'font-size': options.fontSize,
+    //     'fontWeight': function (d) {
+    //       return (d === sortCol)
+    //         ? 'bold'
+    //         : 'normal'
+    //     }
+    //   })
+    //   .attr('transform', 'translate(' + (xScale.rangeBand() / 30) + ', 0) rotate(-35)')
+    //   .on('click', function (d, i) { self._setSort(d, i) })
+    //   .on('mouseover', function (d, i) {
+    //     options.onColumnHeadOver(d, i, this)
+    //   })
+    //   .on('mouseout', function (d, i) {
+    //     options.onColumnHeadOut(d, i, this)
+    //   })
+
+    svg.selectAll('.x.axis text').call(wrap, xScale.rangeBand())
 
     // the z axis shows the parent location//
     svg.select('.z.axis')
@@ -272,6 +302,7 @@ _.extend(TableChart.prototype, {
       .on('click', function (d, i) {
         options.onRowClick(d, i, this)
       })
+
     // BEGIN SOURCE FOOTER //
 
     var singleRowIndicators = chartData[0].values
