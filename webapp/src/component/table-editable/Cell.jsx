@@ -26,15 +26,21 @@ var Cell = React.createClass({
 
   _EditValue: function (isEditable) {
     this.isEditing = true
-    this.forceUpdate()
     CellActions.toggleEditing(isEditable)
+    this.forceUpdate()
+  },
+
+  _submit: function () {
+    this.isEditing = false
+    CellActions.submit()
+    this.forceUpdate()
   },
 
   render: function () {
     let input = (
       <input type='textfield' className='editControl'
         v-model='value | validator'
-        onBlur={CellActions.submit} />
+        onBlur={this._submit} />
     )
 
     let itemInput = this.isEditing && this.props.item.isEditable ? input : ''
