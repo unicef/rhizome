@@ -97,6 +97,8 @@ let EntryFormStore = Reflux.createStore({
     this.data.filterLocations = this.locationList.filter(location => {
       return location.value === campaign.office_id
     })
+
+    this.data.locationSelected = []
   },
 
   _filteredIndicatorSet: function (indicatorSetId) {
