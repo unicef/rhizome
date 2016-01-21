@@ -33,8 +33,7 @@ export default React.createClass({
     return {
       maxHeight: 'none',
       marginLeft: 0,
-      orientation: 'center',
-      pattern: ''
+      orientation: 'center'
     }
   },
 
@@ -50,6 +49,10 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
+    // @john you can console here and try to search when choosing an indicator in custom dashboard, then this method will be called.
+    // And the dropdown list will be re-positioned by _onResize method.
+    // So the Math.floor method have fixed the max stack overflow issue when searching for an indicator.
+    // If you commented the Math.floor method, then try to search, you will see the max stack overflow error.
     this._onResize()
   },
 
@@ -58,6 +61,8 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
+    // @john we check this.state here to fix the position of the dropdown list.
+    // If this.state is not equal to nextState, then will go to componentDidUpdate, then _onResize method.
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
@@ -71,7 +76,7 @@ export default React.createClass({
 
     // Default position is centered
     var orientation = 'center'
-    var marginLeft = -Math.floor(menu.width / 2)
+    var marginLeft = -menu.width / 2
 
     // Calculate the edges based on a centered menu
     var rightEdge = x + (menu.width / 2)
@@ -87,8 +92,8 @@ export default React.createClass({
 
     this.setState({
       orientation: orientation,
-      maxHeight: window.innerHeight - y - (menu.height - items.height),
-      marginLeft: marginLeft
+      maxHeight: Math.floor(window.innerHeight - y - (menu.height - items.height)),
+      marginLeft: Math.floor(marginLeft)
     })
   },
 

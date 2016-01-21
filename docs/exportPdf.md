@@ -1,0 +1,210 @@
+# Export PDF
+
+## Tools
+
+### Wkhtmltopdf
+* Convert HTML to PDF
+
+* Use Command Line Tool provided by Wkhtmltopdf to convert URL to PDF
+
+* Wkhtmltopdf Version
+
+* Use `--quiet` option 
+
+
+## Docker
+
+* Dockerfile
+
+	1. Wkhtmltopdf Version
+	
+	2. xvfb-run
+	
+	3. xfonts-75dpi
+	
+	4. Server -> Manually Install
+	
+
+			# The version for local Debian env
+			RUN sudo apt-get install -y xfonts-75dpi
+			RUN wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
+
+			RUN sudo dpkg -i wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
+			RUN rm wkhtmltox-0.12.2.1_linux-jessie-amd64.deb
+
+			# The version for server Ubuntu env
+			RUN wget http://download.gna.org/wkhtmltopdf/0.12/0.12.2.1/wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+			RUN sudo dpkg -i wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+			RUN rm wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
+
+		
+
+
+## Python
+* URL
+
+		# PRINT DASHBOARDS
+    	url(r'^dashboards/export_pdf/?$',views.export_pdf, name='export_pdf'),
+
+* View
+
+		from datapoints.pdf_utils import print_pdf
+		from rhizome.settings.base import STATICFILES_DIRS
+
+		def export_pdf(request):
+    		url = request.GET['path']
+    		file_name = 'dashboards.pdf'
+    		css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
+
+		    cookie = {}
+    		cookie['name'] = 'sessionid'
+    		cookie['value'] = request.COOKIES[cookie['name']]
+
+    		options = {'orientation': 'Landscape', 'javascript-delay': '1000', 'print-media-type': ' ', 'quiet': ' '}
+    		pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+
+    		response = HttpResponse(content=pdf_content, content_type='application/pdf')
+    		response['Content-Disposition'] = 'attachment; filename=' + file_name
+    		return response
+
+
+* PDF Util
+
+* Requirementst.txt
+
+	django-waffle==0.11 
+		
+
+* Toggle
+
+	1. Command Line
+		[Django-waffle](http://waffle.readthedocs.org/en/v0.11/usage/cli.html)
+		
+		`./manage.py waffle_switch pdf on --create`
+	2. [Django-admin](http://localhost:8000/admin)
+	3. [Using Waffle](http://waffle.readthedocs.org/en/v0.11/usage/index.html)		  	       		        		
+ 
+			from waffle.decorators import waffle_switch
+
+			@waffle_switch('pdf')
+			def export_pdf(request):
+
+
+		
+
+
+## Javascript
+
+* Function Bind
+
+	Since Webkit cannot support `bind` method in Javascript, so we need to replace bind method.
+```
+function _replaceBindMethodForWktToPdf () {
+    let replaceFunction = Function
+    if (typeof replaceFunction.prototype.bind !== 'function') {
+    ...
+  }
+}
+```
+
+* PDF control iFrame
+
+		// ExportPdf.jsx
+		<iframe width='0' height='0' className='hidden' src={this.state.href}/>
+
+* Using waffle in JS
+
+	1. Django 
+			    
+			# Waffle PATH
+    		url(r'^', include('waffle.urls')),
+    		
+    2. JS
+    
+```
+let exportPdf = ((waffle.switch_is_active('pdf')) && dashboardName === 'Management Dashboard')
+    ? (<ExportPdf className='cd-titlebar-margin' />)
+    : ''
+```
+      			
+* package.json
+
+```
+"standard": {
+  "globals": [
+      "describe",
+      "context",
+      "it",
+      "waffle",
+      "IsWkhtmlToPdf"
+  ],
+  "parser": "babel-eslint",
+  "ignore": []
+}
+```
+
+* svg
+
+	1. **viewbox**
+	
+	2. **bullet chart**
+
+* IsWkhtmlToPdf
+
+```
+// Polyfill.js
+global.IsWkhtmlToPdf = global.IsWkhtmlToPdf || (typeof Function.prototype.bind !== 'function')
+
+// browser.js
+export default {
+    isIE: function () {
+      return ('ActiveXObject' in window)
+    },
+    isWkhtmlToPdf: () => {
+      return IsWkhtmlToPdf
+    }
+}
+```
+		
+* Button pop up after downloading
+
+	Cookie
+		
+	Python -> Set cookit in response
+		
+	JS -> Set Interval -> Check cookie -> Clear Interval -> Delete cookie
+
+		
+
+## CSS
+
+* css file -> pdf.scss
+
+1. Foundation
+
+2. gulp
+
+```
+entry: `${gulp.config('base.src')}/styles/pdf.scss`,
+src: [
+  `${gulp.config('base.src')}/styles/_settings.scss`,
+  `${gulp.config('base.src')}/styles/pdf.scss`
+],
+dest: `${gulp.config('base.dist')}/static/css`
+```
+  
+3. wkhtmltopdf
+
+```
+from rhizome.settings.base import STATICFILES_DIRS
+
+css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
+  ...
+pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+```
+
+ 4. css file path
+				
+```
+from rhizome.settings.base import STATICFILES_DIRS\
+```	

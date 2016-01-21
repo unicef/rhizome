@@ -1,4 +1,5 @@
 import gulp from 'gulp'
+import path from 'path'
 import requireDir from 'require-dir'
 import gulpTaskConfig from './tasks/libs/gulp-task-config'
 
@@ -8,6 +9,7 @@ requireDir('./tasks')
 
 gulp.config('base.src', './src')
 gulp.config('base.dist', './public')
+gulp.config('templates', '../templates')
 
 gulp.config('tasks', requireDir('./tasks/config'))
 
@@ -17,7 +19,9 @@ gulp.config('tasks.build', {
     'copy',
     'sass',
     'standard',
-    'browserify'
+    'browserify',
+    'revCompile',
+    'revReplace'
   ]
 })
 

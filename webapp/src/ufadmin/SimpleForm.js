@@ -50,17 +50,35 @@ var SimpleForm = React.createClass({
     SimpleFormActions.initialize(nextProps.params.id, nextProps.params.contentType)
   },
 
-  addTagToIndicator: function (tag_id) {
+  findCurrentIndicatorId: function () {
     var mainID = this.props.params.id
-    if (mainID === null) return
-    SimpleFormActions.addTagToIndicator(mainID, tag_id)
+    var data = this.refs.form_data.getValue()
+    if (_.isEmpty(mainID)) {
+      var dataObject = this.state.store.dataObject
+      this.setState({
+        formData: data,
+        store: {
+          dataObject: dataObject,
+          loading: false,
+          displayMsg: true,
+          saveSuccess: false,
+          message: 'Please save the indicator first before adding tags or calculations!'
+        }
+      })
+    }
+    return (!_.isEmpty(mainID))
+  },
+
+  addTagToIndicator: function (tag_id) {
+    if (this.findCurrentIndicatorId()) {
+      SimpleFormActions.addTagToIndicator(this.props.params.id, tag_id)
+    }
   },
 
   addCalculationToIndicator: function (typeInfo, indicator_id) {
-    var mainID = this.props.params.id
-    if (mainID === null) return
-
-    SimpleFormActions.addCalculationToIndicator(mainID, indicator_id, typeInfo)
+    if (this.findCurrentIndicatorId()) {
+      SimpleFormActions.addCalculationToIndicator(this.props.params.id, indicator_id, typeInfo)
+    }
   },
 
   removeCalculationFromIndicator: function (id) {
@@ -100,7 +118,7 @@ var SimpleForm = React.createClass({
       }
     }
 
-    if (!errorMessage['name']) {
+    if (!errorMessage['name'] & !this.props.params.id) {
       var result = _.find(indicators, d => { return d === data.name })
       if (result) {
         errorMessage['name'] = 'The indicator of this NAME already existed.'
