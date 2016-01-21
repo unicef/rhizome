@@ -393,6 +393,14 @@ table {
     border-top: none;
     border-left: none;
     border-right: none;
+    .entry-table-row-header {
+      div {
+        width: 10px;
+        text-align: center;
+        margin: auto;
+        display: inline-block;
+      }
+    }
   }
 
   .header-background {

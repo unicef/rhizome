@@ -85,7 +85,7 @@ let TableEditable = React.createClass({
       let cellItems = row.map(item => <Cell item={item} />)
       return (
         <tr>
-          <td className='rowCompletionStatus'>
+          <td className='rowCompletionStatus entry-table-row-header'>
             <div className={className}>
               {this.state.byRow[index].complete} / {this.state.byRow[index].total}
             </div>
