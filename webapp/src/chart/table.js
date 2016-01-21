@@ -34,7 +34,6 @@ var DEFAULTS = {
   onMouseOut: null,
   onRowClick: null,
   seriesName: _.property('name'),
-  seriesParentName: _.property('parentName'),
   sortValue: _sortValue,
   values: _.property('values'),
   value: _.property('value')
@@ -71,7 +70,7 @@ _.extend(TableChart.prototype, {
 
     var self = this
     var chartData = data.chartData
-    var parentLocationData = data.parentLocationData
+    var parentLocationMap = data.parentLocationMap
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
@@ -268,8 +267,7 @@ _.extend(TableChart.prototype, {
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
-          console.log('tickFormat', d)
-          return parentLocationData[d]
+          return parentLocationMap[d].parent_location__name
         })
         .orient('left')
         .outerTickSize(0))

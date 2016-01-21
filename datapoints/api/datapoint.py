@@ -116,8 +116,7 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        self.location_ids, self.parent_location_ids = \
-            get_locations_to_return_from_url(request)
+        self.location_ids = get_locations_to_return_from_url(request)
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
@@ -185,12 +184,11 @@ class DataPointResource(BaseNonModelResource):
             chart_type = None
 
         if chart_type == 'TableChart':
-            parent_loc_qs = Location.objects\
-                .filter(id__in = self.parent_location_ids).values()
-            data['meta']['parent_location_list'] = [l for l in parent_loc_qs]
-            print 'TableChart\n' * 3
-            print self.parent_location_ids
-            print 'TableChart\n' * 3
+            p_loc_qs = Location.objects\
+                .filter(id__in = self.location_ids)\
+                .values('name','parent_location__name')
+
+            data['meta']['parent_location_list'] = [l for l in p_loc_qs]
 
         data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 

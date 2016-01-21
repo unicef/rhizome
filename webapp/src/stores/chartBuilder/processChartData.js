@@ -465,7 +465,6 @@ export default {
     let indicators_map = _.indexBy(indicators, 'id')
     let locations_map = _.indexBy(locations, 'id')
 
-    // console.log('locations_map :', locations_map)
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -486,8 +485,8 @@ export default {
       }
       let addedHeaders = {}
 
-      let parentLocationData = datapoints.meta.parent_location_list
-      console.log('parentLocationData: ', parentLocationData)
+      let parent_location_map = _.indexBy(datapoints.meta.parent_location_list, 'name')
+
       let chartData = _.map(datapoints.objects, d => {
         let values = []
 
@@ -518,12 +517,10 @@ export default {
 
         return {
           name: locations_map[d.location].name,
-          parentName: locations_map[d.location].parent_location_id,
           values: values
         }
       })
-
-      let data = {'chartData': chartData, 'parentLocationData': parentLocationData}
+      let data = {'chartData': chartData, 'parentLocationMap': parent_location_map}
       return { options: chartOptions, data: data }
     })
   }
