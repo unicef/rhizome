@@ -34,15 +34,21 @@ var DocForm = React.createClass({
       doc_detail_meta: null,
       doc_is_refreshed: false,
       new_doc_title: null,
-      is_odk_config_form: false
+      is_odk_config_form: false,
+      errorMessage: ''
     }
   },
 
   onDrop: function (files) {
-    this.handleFile(files[0])
+    if (_.isEqual(files[0].type, 'text/csv')) {
+      this.handleFile(files[0])
+    } else {
+      this.setState({
+        errorMessage: 'You could only upload a csv file!'
+      })
+    }
   },
 
-  // prevent form from submitting; we are going to capture the file contents
   handleSubmit: function (e) {
     e.preventDefault()
   },
@@ -171,11 +177,12 @@ var DocForm = React.createClass({
       : (
         <div>
           <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the
-            <br></br>
-            <div className='medium-12 columns upload__csv--step'>
+          <br />
+          <div className='medium-12 columns upload__csv--step'>
             or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
-            </div>
           </div>
+          <div className='error'>{this.state.errorMessage}</div>
+        </div>
       )
 
     if (this.state.is_odk_config_form) {
