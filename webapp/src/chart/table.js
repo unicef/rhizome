@@ -66,15 +66,12 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    // console.log('WHAT IS META IN TABLE.js', meta)
     options = _.extend(this._options, options)
     var margin = options.margin
-    margin.left = 220 // fix..
-    margin.bottom = 140 // fix..
-    margin.top = 40 // fix..
 
     var self = this
-    var chartData = data
+    var chartData = data.chartData
+    var parentLocationData = data.parentLocationData
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
@@ -99,12 +96,6 @@ _.extend(TableChart.prototype, {
     var yScale = d3.scale.ordinal()
       .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
-
-    // new to .js -> this should be a one liner -)
-    // var locationLookup = {}
-    // chartData.forEach(function (chartRow) {
-    //   locationLookup[chartRow.name] = chartRow.parentName
-    // })
 
     var y = _.flow(options.seriesName, yScale)
 
@@ -187,7 +178,6 @@ _.extend(TableChart.prototype, {
         .duration(500)
         .style('opacity', 1)
 
-    console.log('options : ', options)
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
@@ -274,12 +264,12 @@ _.extend(TableChart.prototype, {
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
-      .attr('transform', 'translate(-140, 0)')
+      .attr('transform', 'translate(-150, 0)')
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
-          // return locationLookup[d]
-          return 'Afghanistan'
+          console.log('tickFormat', d)
+          return parentLocationData[d]
         })
         .orient('left')
         .outerTickSize(0))

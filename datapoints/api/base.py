@@ -286,7 +286,10 @@ def get_locations_to_return_from_url(request):
 
     try:
         location_ids = request.GET['location_id__in'].split(',')
-        return location_ids
+        parent_location_ids = list(set(Location.objects\
+            .filter(id__in=location_ids)\
+            .values_list('parent_location_id', flat = True)))
+        return location_ids, parent_location_ids
     except KeyError:
         pass
 
@@ -296,7 +299,7 @@ def get_locations_to_return_from_url(request):
             .filter(parent_location_id__in=pl_id_list)
             .values_list('id',flat=True))
         location_ids.extend(pl_id_list)
-        return location_ids
+        return location_ids, pl_id_list
     except KeyError:
         pass
 
@@ -304,11 +307,17 @@ def get_locations_to_return_from_url(request):
     top_lvl_location_id = LocationPermission.objects\
         .get(user_id=request.user.id).top_lvl_location_id
 
-    location_ids = LocationTree.objects\
+    location_qs = LocationTree.objects\
         .filter(parent_location_id = top_lvl_location_id)\
-        .values_list('location_id',flat=True)
+        .values_list('location_id','parent_location_id')
 
-    return location_ids
+    location_ids, parent_location_ids = [], []
+    for loc_id, parent_loc_id in location_qs:
+        location_ids.append(location_ids)
+        parent_location_ids.append(parent_loc_id)
+
+    # bla = list(set(parent_location_ids))
+    return location_ids, parent_location_ids
 
 def html_decorator(func):
     """

@@ -41,7 +41,7 @@ class GeoResource(BaseNonModelResource):
 
         features = []
 
-        location_ids_to_return = get_locations_to_return_from_url(request)
+        location_ids_to_return, parent_location_ids = get_locations_to_return_from_url(request)
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
             location_ids_to_return)
 

@@ -464,6 +464,8 @@ export default {
   processTableChart: function (dataPromise, locations, indicators, chartDef, layout) {
     let indicators_map = _.indexBy(indicators, 'id')
     let locations_map = _.indexBy(locations, 'id')
+
+    // console.log('locations_map :', locations_map)
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -474,16 +476,18 @@ export default {
         cellSize: 36,
         fontSize: 14,
         margin: {
-          top: 120,
+          top: 40,
           right: 120,
-          bottom: 0,
-          left: 120
+          bottom: 140,
+          left: 220
         },
         cellFontSize: 14,
         headers: []
       }
       let addedHeaders = {}
 
+      let parentLocationData = datapoints.meta.parent_location_list
+      console.log('parentLocationData: ', parentLocationData)
       let chartData = _.map(datapoints.objects, d => {
         let values = []
 
@@ -519,7 +523,8 @@ export default {
         }
       })
 
-      return { options: chartOptions, data: chartData }
+      let data = {'chartData': chartData, 'parentLocationData': parentLocationData}
+      return { options: chartOptions, data: data }
     })
   }
 }

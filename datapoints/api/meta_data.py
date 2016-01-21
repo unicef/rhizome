@@ -55,7 +55,7 @@ class LocationResource(BaseModelResource):
         if self.top_lvl_location_id == 4721:
             return Location.objects.exclude(id = 4721).order_by('location_type_id').values()
 
-        location_ids = get_locations_to_return_from_url(request)
+        location_ids, parent_location_ids = get_locations_to_return_from_url(request)
         qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
