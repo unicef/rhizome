@@ -21,7 +21,28 @@ var Cell = React.createClass({
     item: React.PropTypes.object
   },
 
+  componentWillMount: function () {
+    this.previousValue = this.props.item.value || null
+  },
+
+  validateValue: function (val) {
+    if (_.isString(val)) { // string
+      if (val.length === 0) { val = null }
+    } else if (_.isNaN(val)) { // NaN
+      val = null
+    }
+
+    // custom validation
+    if (this.props.item.validate) {
+      val = this.props.item.validate(val)
+    }
+
+    // update value
+    return val
+  },
+
   formatted: function () {
+    console.log(this.props.item.value)
     if (this.props.item.value === undefined || this.props.item.value === null) {
       return ''
     } else {
@@ -44,19 +65,67 @@ var Cell = React.createClass({
 
   _keuUp: function (event) {
     if (event.keyCode === 13) {
-      this._submit()
+      this._submit(event)
     }
   },
 
-  _submit: function () {
+  _submit: function (event) {
     if (this.props.item.isEditable) {
-      this.isEditing = false
-      this.forceUpdate()
+      if (this.isSaving === false) {
+        // only perform the save if value has changed
+        let value = event.target.value
+        if (value !== this.previousValue) {
+          this.isSaving = true
+          var passed = true
+
+          let validatedValue = this.validateValue(value)
+          // validation
+          if (validatedValue !== null) {
+            value = validatedValue
+          } else {
+            // did not pass validation
+            this.hasError = true
+            this.isSaving = false
+            passed = false
+          }
+
+          // submit value for saving
+          if (passed === true && this.props.item.buildSubmitPromise !== undefined) {
+            // TODO: validation of value
+            var promise = this.props.item.buildSubmitPromise(value)
+            promise.then(response => {
+              // fulfilled
+              if (this.props.item.withResponse) {
+                this.props.item.withResponse(response)
+              }
+              // done saving
+              this.previousValue = value
+              this.isSaving = false
+            }, function (error) {
+              // or rejected
+              if (this.props.item.withError) {
+                this.props.item.withError(error)
+              } else {
+                console.log('Error', error)
+              }
+
+              // set to previous value
+              this.hasError = true
+              value = this.previousValue
+
+              // done saving do not update value
+              this.isSaving = false
+            })
+          }
+        }
+        this.isEditing = false
+        this.forceUpdate()
+      }
     }
   },
 
   render: function () {
-    let input = (<input type='textfield' className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId}/>)
+    let input = (<input type='textfield' className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
 
     let itemInput = this.props.item.isEditable && this.isEditing ? input : ''
     let isEditable = this.props.item.isEditable ? 'editable ' : ''
