@@ -479,6 +479,7 @@ export default {
           bottom: 0,
           left: 120
         },
+        cellFontSize: 14,
         headers: []
       }
       let addedHeaders = {}
@@ -490,7 +491,7 @@ export default {
           if (i.value != null) {
             var displayValue = i.value
             if (indicators_map[i.indicator].data_format === 'pct') {
-              displayValue = (i.value * 100).toString().substring(0, 5) + ' %'
+              displayValue = (i.value * 100).toFixed(1) + ' %'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
               displayValue = 'No'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {

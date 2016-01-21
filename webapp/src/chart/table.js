@@ -186,16 +186,18 @@ _.extend(TableChart.prototype, {
         .duration(500)
         .style('opacity', 1)
 
+    console.log('options : ', options)
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
-            'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
+            'x': function (d) { return x(d) + xScale.rangeBand() / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
             'dominant-baseline': 'central',
             'text-anchor': 'middle',
             'font-weight': 'bold'
           })
+          .style({'font-size': options.cellFontSize})
           .text(function (d) { return d.displayValue })
           .transition()
           .duration(500)
