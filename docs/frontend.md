@@ -110,3 +110,37 @@ instead of
 **Write React in ES6+**
 
 Writing React in ES6/ES7 is not compulsory but highly recommended. Read this [guide](http://babeljs.io/blog/2015/06/07/react-on-es6-plus/) in babeljs.org.
+
+##File Structure
+
+```
+rhizome
+ |- webapp
+    |- public
+       |- static
+       |  |- ....
+       |_ index.html
+    |- src
+       |- actions
+       |- chart
+       |- component
+       |- dashboard
+       |- store
+       |- ufadmin
+       |- view
+       |- ....
+       |_ PolioScape.js
+       |_ ....
+       
+       
+```
+
+As above file structure, all front-end files store in rhizome/webapp folder, and we use [Gulp](gulp.md) to generate script and html files to `public` folder.
+ 
+Base on the architecture of Reflux, there are some target folders: `actions` `store` `view` which are Reflux actions, store and views. So please put your code file to these folders, when you create new Reflux module. `component` folder keeps all our Reflux components.
+
+And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all 'Manage System' functionality.  
+
+##Program Entry Point
+PolioScape.js is the javascript entry point. 
+

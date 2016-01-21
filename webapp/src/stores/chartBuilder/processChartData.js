@@ -498,7 +498,7 @@ export default {
             }
             values.push({
               indicator: indicators_map[i.indicator],
-              value: d.value,
+              value: i.value,
               campaign: d.campaign,
               displayValue: displayValue,
               location: locations_map[d.location]
@@ -513,6 +513,7 @@ export default {
 
         return {
           name: locations_map[d.location].name,
+          parentName: locations_map[d.location].parent_location_id,
           values: values
         }
       })

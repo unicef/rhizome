@@ -90,10 +90,6 @@ class IndicatorResource(BaseModelResource):
         else:
             return Indicator.objects.filter(id__in=indicator_id_list).values()
 
-        # ind_ids = IndicatorToOffice.objects\
-        #     .filter(office_id = Location.objects.get(id = self\
-        #     .top_lvl_location_id).office_id )\
-        #     .values_list('indicator_id',flat=True)
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -121,7 +117,10 @@ class IndicatorResource(BaseModelResource):
                 'name': post_data['name'],
                 'short_name': post_data['short_name'],
                 'description': post_data['description'],
-                'data_format': post_data['data_format']
+                'data_format': post_data['data_format'],
+                'high_bound': post_data['high_bound'],
+                'low_bound': post_data['low_bound'],
+                'source_name': post_data['source_name']
             }
         except Exception as error:
             data = {
@@ -769,7 +768,6 @@ class AggRefreshResource(BaseModelResource):
        try:
            campaign_id = request.GET['campaign_id']
            ar = AggRefresh(campaign_id)
-           agg_refresh_result = ar.main()
            return Campaign.objects.filter(id=campaign_id).values()
        except KeyError:
            campsign_id = None
@@ -795,9 +793,6 @@ class AggRefreshResource(BaseModelResource):
            if c.top_lvl_location_id in parent_location_list:
                campaign_id = c.id
                ar =  AggRefresh(c.id)
-               agg_refresh_result = ar.main()
-
-               print agg_refresh_result
 
                return Campaign.objects.filter(id=campaign_id).values()
 

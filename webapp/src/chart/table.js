@@ -25,7 +25,7 @@ var DEFAULTS = {
     top: 120,
     right: 120,
     bottom: 0,
-    left: 120
+    left: 180
   },
   onClick: null,
   onColumnHeadOver: null,
@@ -34,6 +34,7 @@ var DEFAULTS = {
   onMouseOut: null,
   onRowClick: null,
   seriesName: _.property('name'),
+  seriesParentName: _.property('parentName'),
   sortValue: _sortValue,
   values: _.property('values'),
   value: _.property('value')
@@ -54,22 +55,28 @@ _.extend(TableChart.prototype, {
 
     var g = svg.append('g').attr('class', 'margin')
 
+    g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
     g.append('g').attr('class', 'x axis')
     g.append('g').attr('class', 'data')
+    g.append('g').attr('class', 'source-footer')
     g.append('g').attr('class', 'legend')
 
     this.update(data)
   },
 
   update: function (data, options) {
+    // console.log('WHAT IS META IN TABLE.js', meta)
     options = _.extend(this._options, options)
     var margin = options.margin
+    margin.left = 220 // fix..
+    margin.bottom = 140 // fix..
 
     var self = this
+    var chartData = data
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(data.length * options.cellSize, 0)
+    var h = Math.max(chartData.length * options.cellSize, 0)
 
     var svg = this._svg
       .attr({
@@ -77,7 +84,7 @@ _.extend(TableChart.prototype, {
         'width': (w + margin.left + margin.right),
         'height': (h + margin.top + margin.bottom)
       })
-      .datum(data)
+      .datum(chartData)
 
     var xScale = d3.scale.ordinal()
         .domain(_.map(options.headers, options.headerText))
@@ -89,8 +96,14 @@ _.extend(TableChart.prototype, {
     var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
 
     var yScale = d3.scale.ordinal()
-      .domain(_(data).sortBy(sortValue, this).map(options.seriesName).value())
+      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
+
+    // new to .js -> this should be a one liner ;-)
+    // var locationLookup = {}
+    // chartData.forEach(function (chartRow) {
+    //   locationLookup[chartRow.name] = chartRow.parentName
+    // })
 
     var y = _.flow(options.seriesName, yScale)
 
@@ -102,13 +115,8 @@ _.extend(TableChart.prototype, {
     var targets = _(options.headers)
       .indexBy('id')
       .mapValues(ind => {
-        var bounds = _(ind.bound_json)
-          .reject(b => b.bound_name === 'invalid')
-          .map(b => [b.bound_name, _.isNumber(b.mn_val) ? b.mn_val : -Infinity])
-          .sortBy('1')
-
-        var extents = bounds.pluck('1').slice(1).value()
-        var names = bounds.pluck('0').value()
+        var extents = [ ind.low_bound, ind.high_bound ]
+        var names = ['bad', 'ok', 'good']
 
         return d3.scale.threshold()
           .domain(extents)
@@ -129,7 +137,7 @@ _.extend(TableChart.prototype, {
 
     g.on('mouseout', function () { self._onRowOut.apply(self) })
 
-    var row = g.selectAll('.row').data(data)
+    var row = g.selectAll('.row').data(chartData)
 
     row.enter().append('g')
         .attr({
@@ -231,6 +239,25 @@ _.extend(TableChart.prototype, {
         options.onColumnHeadOut(d, i, this)
       })
 
+    // the z axis shows the parent location//
+    svg.select('.z.axis')
+      .transition().duration(500)
+      .attr('transform', 'translate(-140, 0)')
+      .call(d3.svg.axis()
+        .scale(yScale)
+        .tickFormat(function (d) {
+          // return locationLookup[d]
+          return 'Afghanistan'
+        })
+        .orient('left')
+        .outerTickSize(0))
+
+    svg.selectAll('.z.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', function (d, i) {
+        options.onRowClick(d, i, this)
+      })
+
     svg.select('.y.axis')
       .transition().duration(500)
       .call(d3.svg.axis()
@@ -243,6 +270,45 @@ _.extend(TableChart.prototype, {
       .on('click', function (d, i) {
         options.onRowClick(d, i, this)
       })
+    // BEGIN SOURCE FOOTER //
+
+    var singleRowIndicators = chartData[0].values
+    var sourceFooter = svg.select('.source-footer')
+    var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
+    var sourceG = sourceCell.enter().append('g')
+
+    sourceG.append('rect')
+        .attr({
+          'class': 'cell',
+          'height': yScale.rangeBand() * 1.5,
+          'transform': 'translate(0,' + h + ')',
+          'x': x,
+          'width': xScale.rangeBand()
+        })
+        .style({
+          'opacity': 0,
+          'fill': '#CCFFFF'
+        })
+        .transition()
+        .duration(500)
+      .style('opacity', 1)
+
+    sourceG.append('text')
+            .attr({
+              'height': yScale.rangeBand(),
+              'transform': 'translate(0,' + h + ')',
+              'x': function (d) { return x(d) + 45 },
+              'y': options.cellSize / 2,
+              'width': xScale.rangeBand(),
+              'dominant-baseline': 'central',
+              'text-anchor': 'middle',
+              'font-weight': 'bold'
+            })
+            .text(function (d) { return d.indicator.source_name })
+              .transition()
+              .duration(500)
+
+    // END SOURCE FOOTER //
 
     if (options.legend) {
       svg.select('.legend')
@@ -278,7 +344,7 @@ _.extend(TableChart.prototype, {
 
   _setSort: function (d) {
     this.sortCol = (d === this.sortCol) ? null : d
-    this.update(this._svg.selectAll('.row').data())
+    this.update(this._svg.selectAll('.row').chartData())
   }
 })
 

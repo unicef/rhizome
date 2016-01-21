@@ -14,7 +14,6 @@ from datapoints.pdf_utils import print_pdf
 from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
 
-@waffle_switch('pdf')
 def export_file(request):
     file_type = request.GET['type']
     url = request.GET['path']
