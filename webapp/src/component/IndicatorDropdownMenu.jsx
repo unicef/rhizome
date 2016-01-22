@@ -24,13 +24,14 @@ function findMatches (item, re) {
 }
 
 function filterMenu (items, pattern) {
-  if (_.size(pattern) < 3) {
+  if (_.size(pattern) < 4) {
     return items
   }
 
   var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
-  return _(items).map(match).flatten().value()
+  var itemList = _(items).map(match).flatten().value()
+  return _.uniq(itemList, (item) => { return item.id })
 }
 
 var IndicatorDropdownMenu = React.createClass({

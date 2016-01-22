@@ -464,6 +464,7 @@ export default {
   processTableChart: function (dataPromise, locations, indicators, chartDef, layout) {
     let indicators_map = _.indexBy(indicators, 'id')
     let locations_map = _.indexBy(locations, 'id')
+
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -474,14 +475,17 @@ export default {
         cellSize: 36,
         fontSize: 14,
         margin: {
-          top: 120,
+          top: 40,
           right: 120,
-          bottom: 0,
-          left: 120
+          bottom: 140,
+          left: 220
         },
+        cellFontSize: 14,
         headers: []
       }
       let addedHeaders = {}
+
+      let parent_location_map = _.indexBy(datapoints.meta.parent_location_list, 'name')
 
       let chartData = _.map(datapoints.objects, d => {
         let values = []
@@ -490,7 +494,7 @@ export default {
           if (i.value != null) {
             var displayValue = i.value
             if (indicators_map[i.indicator].data_format === 'pct') {
-              displayValue = (i.value * 100).toString().substring(0, 5) + ' %'
+              displayValue = (i.value * 100).toFixed(1) + ' %'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
               displayValue = 'No'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {
@@ -513,12 +517,11 @@ export default {
 
         return {
           name: locations_map[d.location].name,
-          parentName: locations_map[d.location].parent_location_id,
           values: values
         }
       })
-
-      return { options: chartOptions, data: chartData }
+      let data = {'chartData': chartData, 'parentLocationMap': parent_location_map}
+      return { options: chartOptions, data: data }
     })
   }
 }

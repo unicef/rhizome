@@ -34,7 +34,6 @@ var DEFAULTS = {
   onMouseOut: null,
   onRowClick: null,
   seriesName: _.property('name'),
-  seriesParentName: _.property('parentName'),
   sortValue: _sortValue,
   values: _.property('values'),
   value: _.property('value')
@@ -66,14 +65,12 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    // console.log('WHAT IS META IN TABLE.js', meta)
     options = _.extend(this._options, options)
     var margin = options.margin
-    margin.left = 220 // fix..
-    margin.bottom = 140 // fix..
 
     var self = this
-    var chartData = data
+    var chartData = data.chartData
+    var parentLocationMap = data.parentLocationMap
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
@@ -98,12 +95,6 @@ _.extend(TableChart.prototype, {
     var yScale = d3.scale.ordinal()
       .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
       .rangeBands([0, h], 0.1)
-
-    // new to .js -> this should be a one liner ;-)
-    // var locationLookup = {}
-    // chartData.forEach(function (chartRow) {
-    //   locationLookup[chartRow.name] = chartRow.parentName
-    // })
 
     var y = _.flow(options.seriesName, yScale)
 
@@ -189,13 +180,14 @@ _.extend(TableChart.prototype, {
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
-            'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
+            'x': function (d) { return x(d) + xScale.rangeBand() / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
             'dominant-baseline': 'central',
             'text-anchor': 'middle',
             'font-weight': 'bold'
           })
+          .style({'font-size': options.cellFontSize})
           .text(function (d) { return d.displayValue })
           .transition()
           .duration(500)
@@ -213,6 +205,33 @@ _.extend(TableChart.prototype, {
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
 
+    // Begin X Axis //
+    function wrap (text, width) {
+      text.each(function () {
+        var text = d3.select(this)
+        var words = text.text().split(/\s+/).reverse()
+        var line = []
+        var lineNumber = 0
+        var lineHeight = 1.1 // ems
+        var y = text.attr('y') - 10
+        var dy = parseFloat(text.attr('dy'))
+        var tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
+        // while (word = words.pop()) {
+        var i = 0
+        for (i = 0; i < words.length; i += 1) {
+          var word = words[i]
+          line.push(word)
+          tspan.text(line.join(' '))
+          if (tspan.node().getComputedTextLength() > width) {
+            line.pop()
+            tspan.text(line.join(' '))
+            line = [word]
+            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
+          }
+        }
+      })
+    }
+
     svg.select('.x.axis')
       .transition().duration(500)
       .call(d3.svg.axis()
@@ -220,34 +239,35 @@ _.extend(TableChart.prototype, {
         .orient('top')
         .outerTickSize(0))
 
-    svg.selectAll('.x.axis text')
-      .style({
-        'text-anchor': 'start',
-        'font-size': options.fontSize,
-        'fontWeight': function (d) {
-          return (d === sortCol)
-            ? 'bold'
-            : 'normal'
-        }
-      })
-      .attr('transform', 'translate(' + (xScale.rangeBand() / 2) + ', 0) rotate(-45)')
-      .on('click', function (d, i) { self._setSort(d, i) })
-      .on('mouseover', function (d, i) {
-        options.onColumnHeadOver(d, i, this)
-      })
-      .on('mouseout', function (d, i) {
-        options.onColumnHeadOut(d, i, this)
-      })
+    // svg.selectAll('.x.axis text')
+    //   .style({
+    //     'text-anchor': 'start',
+    //     'font-size': options.fontSize,
+    //     'fontWeight': function (d) {
+    //       return (d === sortCol)
+    //         ? 'bold'
+    //         : 'normal'
+    //     }
+    //   })
+    //   .attr('transform', 'translate(' + (xScale.rangeBand() / 30) + ', 0) rotate(-35)')
+    //   .on('click', function (d, i) { self._setSort(d, i) })
+    //   .on('mouseover', function (d, i) {
+    //     options.onColumnHeadOver(d, i, this)
+    //   })
+    //   .on('mouseout', function (d, i) {
+    //     options.onColumnHeadOut(d, i, this)
+    //   })
+
+    svg.selectAll('.x.axis text').call(wrap, xScale.rangeBand())
 
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
-      .attr('transform', 'translate(-140, 0)')
+      .attr('transform', 'translate(-150, 0)')
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
-          // return locationLookup[d]
-          return 'Afghanistan'
+          return parentLocationMap[d].parent_location__name
         })
         .orient('left')
         .outerTickSize(0))
@@ -270,6 +290,7 @@ _.extend(TableChart.prototype, {
       .on('click', function (d, i) {
         options.onRowClick(d, i, this)
       })
+
     // BEGIN SOURCE FOOTER //
 
     var singleRowIndicators = chartData[0].values

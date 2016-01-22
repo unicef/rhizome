@@ -86,7 +86,8 @@ export default {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
       location_id__in: _.map(data.locationAggregated, _.property('id')),
       campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
-      campaign_end: upper.format('YYYY-MM-DD')
+      campaign_end: upper.format('YYYY-MM-DD'),
+      chart_type: chartDef.type
     }
 
     return processChartData.init(api.datapoints(query),

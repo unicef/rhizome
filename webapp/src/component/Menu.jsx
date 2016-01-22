@@ -33,7 +33,8 @@ export default React.createClass({
     return {
       maxHeight: 'none',
       marginLeft: 0,
-      orientation: 'center'
+      orientation: 'center',
+      pattern: ''
     }
   },
 

@@ -304,11 +304,11 @@ def get_locations_to_return_from_url(request):
     top_lvl_location_id = LocationPermission.objects\
         .get(user_id=request.user.id).top_lvl_location_id
 
-    location_ids = LocationTree.objects\
+    location_qs = LocationTree.objects\
         .filter(parent_location_id = top_lvl_location_id)\
-        .values_list('location_id',flat=True)
+        .values_list('location_id',flat = True)
 
-    return location_ids
+    return location_qs
 
 def html_decorator(func):
     """
