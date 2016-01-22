@@ -42,7 +42,6 @@ var Cell = React.createClass({
   },
 
   formatted: function () {
-    console.log(this.props.item.value)
     if (this.props.item.value === undefined || this.props.item.value === null) {
       return ''
     } else {
@@ -55,12 +54,21 @@ var Cell = React.createClass({
     return _.isNull(this.props.item.value)
   },
 
-  _editValue: function () {
-    if (this.props.item.isEditable) {
-      this.isEditing = true
+  _toggleEditing: function (editing) {
+    if (this.props.item.isEditable === true) {
+      this.isEditing = editing !== undefined ? editing : !this.isEditing
       this.forceUpdate()
-      CellActions.focusInput(this.cellId)
+
+      // set focus on input
+      if (this.isEditing === true) {
+        CellActions.focusInput(this.cellId)
+      }
     }
+  },
+  _focus: function () {
+    var dom = document.getElementById(this.cellId)
+    dom.value = this.props.item.value
+    dom.select()
   },
 
   _keuUp: function (event) {
@@ -87,6 +95,7 @@ var Cell = React.createClass({
             this.hasError = true
             this.isSaving = false
             passed = false
+            this._toggleEditing(true)
           }
 
           // submit value for saving
@@ -100,7 +109,10 @@ var Cell = React.createClass({
               }
               // done saving
               this.previousValue = value
+              this.props.item.value = value
               this.isSaving = false
+              this.isEditing = false
+              this._toggleEditing(false)
             }, function (error) {
               // or rejected
               if (this.props.item.withError) {
@@ -111,21 +123,22 @@ var Cell = React.createClass({
 
               // set to previous value
               this.hasError = true
-              value = this.previousValue
+              this.props.item.value = this.previousValue
 
               // done saving do not update value
               this.isSaving = false
             })
           }
         }
-        this.isEditing = false
-        this.forceUpdate()
+
+        this._toggleEditing(false)
       }
     }
   },
 
   render: function () {
-    let input = (<input type='textfield' className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
+    let inputValue = this.formatted()
+    let input = (<input type='textfield' onFocus={this._focus} className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
 
     let itemInput = this.props.item.isEditable && this.isEditing ? input : ''
     let isEditable = this.props.item.isEditable ? 'editable ' : ''
@@ -139,8 +152,8 @@ var Cell = React.createClass({
     return (
       <td className={className} colSpan={this.props.item.colspan}>
         {icon}
-        <div onClick={this._editValue} className='displayValue'>
-          {this.formatted()}
+        <div onClick={this._toggleEditing.bind(this, true)} className='displayValue'>
+          {inputValue}
         </div>
         {itemInput}
       </td>
