@@ -7,6 +7,7 @@ export default {
   options: {
     r: 'src/helpers/jsdom.js',
     R: 'dot',
-    compilers: '.:babel/register'
+    compilers: '.:babel/register',
+    istanbul: true
   }
 }
