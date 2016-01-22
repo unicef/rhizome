@@ -29,7 +29,9 @@ let TableEditable = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(nextProps.loaded, this.props.loaded) || !_.isEqual(this.state.processed, nextState.processed)
+    return !_.isEqual(nextProps.loaded, this.props.loaded) ||
+      !_.isEqual(this.state.processed, nextState.processed) ||
+      nextState.total !== this.state.total
   },
 
   completionClass: function (v) {

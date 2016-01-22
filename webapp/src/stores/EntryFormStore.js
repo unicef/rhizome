@@ -100,6 +100,7 @@ let EntryFormStore = Reflux.createStore({
     })
 
     this.data.locationSelected = []
+    this._setCouldLoad()
   },
 
   _filteredIndicatorSet: function (indicatorSetId) {

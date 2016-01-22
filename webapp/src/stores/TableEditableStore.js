@@ -21,7 +21,8 @@ let TableEditaleStore = Reflux.createStore({
     total: null,
     byRow: [],
     byColumn: [],
-    processed: false
+    processed: false,
+    reload: false
   },
 
   _updateStats: function () {
@@ -161,7 +162,10 @@ let TableEditaleStore = Reflux.createStore({
               }
 
               // callback to specifically handle response
-              cell.withResponse = function (response) {}
+              cell.withResponse = (response) => {
+                this._updateStats()
+                this.trigger(this.data)
+              }
 
               // callback to handle error
               cell.withError = function (error) {
@@ -191,11 +195,6 @@ let TableEditaleStore = Reflux.createStore({
     this._updateStats()
 
     this.data.processed = true
-    this.trigger(this.data)
-  },
-
-  onUpdateStats: function () {
-    this._updateStats()
     this.trigger(this.data)
   }
 })

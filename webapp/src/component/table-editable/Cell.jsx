@@ -110,9 +110,6 @@ var Cell = React.createClass({
           if (passed === true && this.props.item.buildSubmitPromise !== undefined) {
             var promise = this.props.item.buildSubmitPromise(value)
             promise.then(response => {
-              if (this.props.item.withResponse) {
-                this.props.item.withResponse(response)
-              }
               // done saving
               this.previousValue = value
               this.props.item.value = value
@@ -121,6 +118,10 @@ var Cell = React.createClass({
               this.hasError = false
               this.isEditing = false
               this._toggleEditing(false)
+
+              if (this.props.item.withResponse) {
+                this.props.item.withResponse(response)
+              }
             }, function (error) {
               // or rejected
               if (this.props.item.withError) {
