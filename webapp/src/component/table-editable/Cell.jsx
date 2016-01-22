@@ -14,6 +14,7 @@ var Cell = React.createClass({
   isEditable: false, // whether the cell is editable
   isEditing: false, // whether the cell is currently being edited
   hasError: false,
+  displayValue: null,
 
   cellId: 'edit_id_' + randomHash(),
 
@@ -22,36 +23,47 @@ var Cell = React.createClass({
   },
 
   componentWillMount: function () {
-    this.previousValue = this.props.item.value || null
+    if (this.props.item.value) {
+      this.previousValue = this.props.item.value.toString()
+      this.displayValue = this.previousValue
+    }
   },
 
   validateValue: function (val) {
+    var validated = true
     if (_.isString(val)) { // string
-      if (val.length === 0) { val = null }
+      if (val.length === 0) {
+        val = null
+      } else if (isNaN(Number(val))) {
+        val = null
+        validated = false
+      }
     } else if (_.isNaN(val)) { // NaN
       val = null
+      validated = false
     }
 
     // custom validation
     if (this.props.item.validate) {
       val = this.props.item.validate(val)
+      validated = val !== null
     }
 
     // update value
-    return val
+    return {value: val, validated: validated}
   },
 
   formatted: function () {
-    if (this.props.item.value === undefined || this.props.item.value === null) {
+    if (this.displayValue === undefined || this.displayValue === null) {
       return ''
     } else {
       // format according to attached method if it exists
-      return this.props.item.format ? this.props.item.format(this.props.item.value) : this.props.item.value
+      return this.props.item.format ? this.props.item.format(this.displayValue) : this.displayValue
     }
   },
 
   missing: function () {
-    return _.isNull(this.props.item.value)
+    return _.isNull(this.displayValue)
   },
 
   _toggleEditing: function (editing) {
@@ -61,14 +73,9 @@ var Cell = React.createClass({
 
       // set focus on input
       if (this.isEditing === true) {
-        CellActions.focusInput(this.cellId)
+        CellActions.focusInput(this.cellId, this.displayValue)
       }
     }
-  },
-  _focus: function () {
-    var dom = document.getElementById(this.cellId)
-    dom.value = this.props.item.value
-    dom.select()
   },
 
   _keuUp: function (event) {
@@ -77,49 +84,41 @@ var Cell = React.createClass({
     }
   },
 
-  _judgeValue: function (value) {
-    if (!Number(value)) {
-      this.hasError = true
-    } else {
-      this.hasError = false
-    }
-  },
-
   _submit: function (event) {
     if (this.props.item.isEditable) {
       if (this.isSaving === false) {
         // only perform the save if value has changed
         let value = event.target.value
-        this._judgeValue(value)
         if (value !== this.previousValue) {
           this.isSaving = true
           var passed = true
 
-          let validatedValue = this.validateValue(value)
+          let result = this.validateValue(value)
           // validation
-          if (validatedValue !== null) {
-            value = validatedValue
+
+          if (result.validated) {
+            value = result.value
           } else {
             // did not pass validation
+            this.displayValue = value
             this.hasError = true
             this.isSaving = false
             passed = false
-            this._toggleEditing(true)
           }
 
           // submit value for saving
           if (passed === true && this.props.item.buildSubmitPromise !== undefined) {
-            // TODO: validation of value
             var promise = this.props.item.buildSubmitPromise(value)
             promise.then(response => {
-              // fulfilled
               if (this.props.item.withResponse) {
                 this.props.item.withResponse(response)
               }
               // done saving
               this.previousValue = value
               this.props.item.value = value
+              this.displayValue = value
               this.isSaving = false
+              this.hasError = false
               this.isEditing = false
               this._toggleEditing(false)
             }, function (error) {
@@ -133,11 +132,15 @@ var Cell = React.createClass({
               // set to previous value
               this.hasError = true
               this.props.item.value = this.previousValue
-
+              this.displayValue = this.previousValue
               // done saving do not update value
               this.isSaving = false
+              this._toggleEditing(true)
             })
           }
+        } else {
+          this.displayValue = this.previousValue
+          this.hasError = false
         }
 
         this._toggleEditing(false)
@@ -147,7 +150,7 @@ var Cell = React.createClass({
 
   render: function () {
     let inputValue = this.formatted()
-    let input = (<input type='textfield' onFocus={this._focus} className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
+    let input = (<input type='textfield' className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
 
     let itemInput = this.props.item.isEditable && this.isEditing ? input : ''
     let isEditable = this.props.item.isEditable ? 'editable ' : ''

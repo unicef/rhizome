@@ -10,8 +10,11 @@ var CellStore = Reflux.createStore({
     return this.data
   },
 
-  onFocusInput: function (cellId) {
-    document.getElementById(cellId).focus()
+  onFocusInput: function (cellId, value) {
+    let dom = document.getElementById(cellId)
+    dom.value = value
+    dom.focus()
+    dom.select()
   }
 })
 
