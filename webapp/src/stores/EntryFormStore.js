@@ -80,6 +80,7 @@ let EntryFormStore = Reflux.createStore({
 
         // Indicators
         self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
+        self._filterLocationsByCampaign()
         self.trigger(self.data)
       })
     )
