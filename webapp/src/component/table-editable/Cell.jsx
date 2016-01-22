@@ -77,11 +77,20 @@ var Cell = React.createClass({
     }
   },
 
+  _judgeValue: function (value) {
+    if (!Number(value)) {
+      this.hasError = true
+    } else {
+      this.hasError = false
+    }
+  },
+
   _submit: function (event) {
     if (this.props.item.isEditable) {
       if (this.isSaving === false) {
         // only perform the save if value has changed
         let value = event.target.value
+        this._judgeValue(value)
         if (value !== this.previousValue) {
           this.isSaving = true
           var passed = true
