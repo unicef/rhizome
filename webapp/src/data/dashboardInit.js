@@ -32,7 +32,7 @@ export function childOf (parent, child) {
     : !!child.parent_location_id && parent.id === child.parent_location_id
 }
 
-function inChart (chart, campaign, location, datum) {
+export function inChart (chart, campaign, location, datum) {
   var dt = moment(datum.campaign.start_date).valueOf()
   var end = moment(campaign.start_date, 'YYYY-MM-DD')
   var start = -Infinity
