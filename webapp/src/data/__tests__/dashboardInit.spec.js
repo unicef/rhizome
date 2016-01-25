@@ -4,6 +4,7 @@ import { expect } from 'chai'
 import { childOf } from '../dashboardInit.js'
 import { inChart } from '../dashboardInit.js'
 import { choropleth } from '../dashboardInit.js'
+import { getFacet } from '../dashboardInit.js'
 
 describe(__filename, () => {
   context('child of', () => {
@@ -161,6 +162,19 @@ describe(__filename, () => {
       ]
       let actualFeatures = choropleth(null, data, campaign, originalFeatures)
       expect(actualFeatures).to.eql(originalFeatures)
+    })
+  })
+
+  context('getFacet', () => {
+    context('should get path in data when path exists', () => {
+      let datum = { name: 'test' }
+      let path = 'name'
+      expect(getFacet(datum, path)).to.eql('test')
+    })
+    context('should get first element in data when data has two layers', () => {
+      let datum = {name: {short_name: 'test', name: 'test_indicator', title: 'ttt', id: '1'}}
+      let path = 'name'
+      expect(getFacet(datum, path)).to.eql('test')
     })
   })
 })

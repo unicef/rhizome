@@ -5,7 +5,7 @@ import moment from 'moment'
 /**
  * Return the facet value for a datum given a path.
  */
-function getFacet (datum, path) {
+export function getFacet (datum, path) {
   var facet = _.get(datum, path)
 
   // Handle pieces of the application that replace IDs with their
