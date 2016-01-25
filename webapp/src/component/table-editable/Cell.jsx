@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import Layer from 'react-layer'
+import Tooltip from 'component/Tooltip.jsx'
 
 import CellStore from 'stores/CellStore'
 import CellActions from 'actions/CellActions'
@@ -15,6 +17,7 @@ var Cell = React.createClass({
   isEditing: false, // whether the cell is currently being edited
   hasError: false,
   displayValue: null,
+  tip: null,
 
   cellId: 'edit_id_' + randomHash(),
 
@@ -149,6 +152,35 @@ var Cell = React.createClass({
     }
   },
 
+  _mouseOver: function (event) {
+    let message = _.isNull(this.props.item.value) ? 'Missing value' : this.props.item.value
+
+    let render = function () {
+      return (
+        <Tooltip left={event.pageX} top={event.pageY}>
+          <div>
+            {message}
+          </div>
+        </Tooltip>
+      )
+    }
+
+    if (!this.tip) {
+      this.tip = new Layer(document.body, render)
+    } else {
+      this.tip._render = render
+    }
+
+    this.tip.render()
+  },
+
+  _mouseOut: function () {
+    if (this.tip) {
+      this.tip.destroy()
+      this.tip = null
+    }
+  },
+
   render: function () {
     let inputValue = this.formatted()
     let input = (<input type='textfield' className='editControl' onBlur={this._submit} onKeyUp={this._keuUp} id={this.cellId} />)
@@ -165,7 +197,8 @@ var Cell = React.createClass({
     return (
       <td className={className} colSpan={this.props.item.colspan}>
         {icon}
-        <div onClick={this._toggleEditing.bind(this, true)} className='displayValue'>
+        <div onClick={this._toggleEditing.bind(this, true)} className='displayValue'
+          onMouseOver={this._mouseOver} onMouseOut={this._mouseOut}>
           {inputValue}
         </div>
         {itemInput}
