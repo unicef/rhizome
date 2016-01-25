@@ -5,6 +5,7 @@ import { childOf } from '../dashboardInit.js'
 import { inChart } from '../dashboardInit.js'
 import { choropleth } from '../dashboardInit.js'
 import { getFacet } from '../dashboardInit.js'
+import { series } from '../dashboardInit.js'
 
 describe(__filename, () => {
   context('child of', () => {
@@ -175,6 +176,44 @@ describe(__filename, () => {
       let datum = {name: {short_name: 'test', name: 'test_indicator', title: 'ttt', id: '1'}}
       let path = 'name'
       expect(getFacet(datum, path)).to.eql('test')
+    })
+  })
+
+  context('test for series method', () => {
+    context('should get legal data', () => {
+      let chart = { groupBy: 'location.name' }
+      let legalDataA = {
+        location: { id: 1, name: 'a' },
+        indicator: { id: 1 },
+        value: 1
+      }
+      let dataValueEqualsZero = {
+        location: { id: 1, name: 'a' },
+        indicator: { id: 2 },
+        value: 0
+      }
+      let legalDataB = {
+        location: { id: 2, name: 'b' },
+        indicator: { id: 3 },
+        value: 2
+      }
+      let originalData = [
+        legalDataA,
+        dataValueEqualsZero,
+        legalDataB
+      ]
+      let expectedData = [
+        {
+          name: 'a',
+          values: [legalDataA]
+        },
+        {
+          name: 'b',
+          values: [legalDataB]
+        }
+      ]
+      console.log(series(chart, originalData), expectedData)
+      expect(series(chart, originalData)).to.eql(expectedData)
     })
   })
 })

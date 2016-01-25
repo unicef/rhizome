@@ -84,7 +84,7 @@ export function choropleth (chart, data, campaign, features) {
   return features
 }
 
-function series (chart, data) {
+export function series (chart, data) {
   return _(data)
     .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
     .map((originalValues, name) => {
