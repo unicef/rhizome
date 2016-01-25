@@ -478,7 +478,7 @@ export default {
           top: 40,
           right: 120,
           bottom: 140,
-          left: 220
+          left: 180
         },
         cellFontSize: 14,
         headers: []
@@ -517,6 +517,7 @@ export default {
 
         return {
           name: locations_map[d.location].name,
+          parent_location_id: locations_map[d.location].parent_location_id,
           values: values
         }
       })

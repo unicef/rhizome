@@ -17,6 +17,7 @@ function _sortValue (s, sortCol) {
 var DEFAULTS = {
   cellSize: 16,
   column: _.property('indicator.short_name'),
+  sourceColumn: _.property('short_name'),
   fontSize: 12,
   format: formatUtil.general,
   headerText: _.property('short_name'),
@@ -68,6 +69,7 @@ _.extend(TableChart.prototype, {
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
+    var z = 150 //  extra margin space needed to add the "z" (parent) axis"
 
     var svg = this._svg
       .attr({
@@ -82,6 +84,9 @@ _.extend(TableChart.prototype, {
         .rangeBands([0, w], 0.1)
 
     var x = _.flow(options.column, xScale)
+    var sourceFlow = _.flow(options.sourceColumn, xScale)
+    // var sourceFlow = _.flow(options.headers, xScale)
+    // console.log('options.columns:', options.columns)
 
     var sortCol = this.sortCol
     var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
@@ -94,7 +99,7 @@ _.extend(TableChart.prototype, {
 
     var transform = function (d, i) {
       var yVal = y(d) + 10
-      return 'translate(0, ' + yVal + ')'
+      return 'translate(' + z + ' , ' + yVal + ')'
     }
 
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
@@ -229,6 +234,7 @@ _.extend(TableChart.prototype, {
 
     svg.select('.x.axis')
       .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',0)'})
       .call(d3.svg.axis()
         .scale(xScale)
         .orient('top')
@@ -258,7 +264,6 @@ _.extend(TableChart.prototype, {
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
-      .attr('transform', 'translate(-150, 0)')
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
@@ -275,6 +280,7 @@ _.extend(TableChart.prototype, {
 
     svg.select('.y.axis')
       .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',0)'})
       .call(d3.svg.axis()
         .scale(yScale)
         .orient('left')
@@ -288,7 +294,7 @@ _.extend(TableChart.prototype, {
 
     // BEGIN SOURCE FOOTER //
 
-    var singleRowIndicators = chartData[0].values
+    var singleRowIndicators = options.headers // chartData[0].values
     var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
     var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
     var sourceG = sourceCell.enter().append('g')
@@ -297,8 +303,8 @@ _.extend(TableChart.prototype, {
         .attr({
           'class': 'cell',
           'height': yScale.rangeBand() * 1.5,
-          'transform': 'translate(0,' + h + ')',
-          'x': x,
+          'transform': 'translate(' + z + ',' + h + ')',
+          'x': sourceFlow,
           'width': xScale.rangeBand()
         })
         .style({
@@ -312,15 +318,15 @@ _.extend(TableChart.prototype, {
     sourceG.append('text')
             .attr({
               'height': yScale.rangeBand(),
-              'transform': 'translate(0,' + h + ')',
-              'x': function (d) { return x(d) + 45 },
+              'transform': 'translate(' + z + ',' + h + ')',
+              'x': function (d) { return sourceFlow(d) + 45 },
               'y': options.cellSize / 2,
               'width': xScale.rangeBand(),
               'dominant-baseline': 'central',
               'text-anchor': 'middle',
               'font-weight': 'bold'
             })
-            .text(function (d) { return d.indicator.source_name })
+            .text(function (d) { return d.source_name })
               .transition()
               .duration(500)
 
