@@ -87,8 +87,10 @@ export function choropleth (chart, data, campaign, features) {
 function series (chart, data) {
   return _(data)
     .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
-    .map((values, name) => ({ name, values }))
-    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
+    .map((originalValues, name) => {
+      var values = _.reject(originalValues, d => !d.value || d.value === 0 || !_.isFinite(d.value))
+      return { name, values }
+    })
     .value()
 }
 
