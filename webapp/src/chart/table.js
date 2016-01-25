@@ -21,12 +21,6 @@ var DEFAULTS = {
   format: formatUtil.general,
   headerText: _.property('short_name'),
   headers: [],
-  margin: {
-    top: 120,
-    right: 120,
-    bottom: 0,
-    left: 180
-  },
   onClick: null,
   onColumnHeadOver: null,
   onColumnHeadOut: null,
@@ -99,7 +93,8 @@ _.extend(TableChart.prototype, {
     var y = _.flow(options.seriesName, yScale)
 
     var transform = function (d, i) {
-      return 'translate(0, ' + y(d) + ')'
+      var yVal = y(d) + 10
+      return 'translate(0, ' + yVal + ')'
     }
 
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
@@ -294,7 +289,7 @@ _.extend(TableChart.prototype, {
     // BEGIN SOURCE FOOTER //
 
     var singleRowIndicators = chartData[0].values
-    var sourceFooter = svg.select('.source-footer')
+    var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
     var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
     var sourceG = sourceCell.enter().append('g')
 
