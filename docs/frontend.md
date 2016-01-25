@@ -156,9 +156,12 @@ There is two kinds dashboard, one is the built-in dashboard, one is the custom d
 4. NGA campaign monitoring url: /datapoints/nga-campaign-monitoring/ Indicators are defined in webapp/dashboard/builtin/nco.js
 
 ####Custom Dashboard
-The custom dashboard is created by a user, click the url /datapoints/dashboards/edit and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder
-
+The custom dashboard is created by a user, click the url /datapoints/dashboards/edit and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder, and custom dashbaord is rendered by webapp/src/dashboard/CustomDashboard.jsx component.
 
 ##ChartWizard
-When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard.    
+When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard. The ChartWizard code is at the webapp/src/view/chart-wizard/ the ChartWizard.js defines the whole page UI, you can add the chart settings and actions in this component.
+ 
+ChartWizard options folder (/webapp/src/view/chart-wizard/options) defines all chart options, you can change or define every different chart options as you want.
 
+
+##UfAdmin
