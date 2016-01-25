@@ -135,7 +135,7 @@ rhizome
 
 As above file structure, all front-end files store in rhizome/webapp folder, and we use [Gulp](gulp.md) to generate script and html files to `public` folder.
  
-Base on the architecture of Reflux, there are some target folders: `actions` `store` `view` which are Reflux actions, store and views. So please put your code file to these folders, when you create new Reflux module. `component` folder keeps all our Reflux components.
+Base on the architecture of Reflux, there is some target folders: `actions` `store` `view` which are Reflux actions, store and views. So please put your code file to these folders, when you create new Reflux module. `component` folder keeps all our Reflux components.
 
 And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all Manage System page functionality.  
 
@@ -144,12 +144,21 @@ PolioScape.js is the javascript entry point. rhizome/templates/base.html include
 
 The server side page routing rule is defined in rhizome/urls.py, So the default empty site root address is routed to homepage.html, homepage.html call Polio.HomepageCharts, then the homepage is rendered. Other pages are similar as the homepage. 
 
-The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call PolioScape target page class to render whole page.
+The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call PolioScape target page class to render the whole page.
 
 ##Dashboard
+There is two kinds dashboard, one is the built-in dashboard, one is the custom dashboard. Built-in dashboards are shown in 4 places:
+
+####Built in Dashboard
+1. The Homepage, Indicators are defined in: webapp/dashboard/builtin/homepage-afghanistan.js homepage-nigeria.js homepage-pakistan.js
+2. Management dashboard url: /datapoints/management-dashboard/ Indicators are defined in webapp/dashboard/builtin/management.js
+3. District dashboard url: /datapoints/district-dashboard/ Indicators are defined in webapp/dashboard/builtin/district.js
+4. NGA campaign monitoring url: /datapoints/nga-campaign-monitoring/ Indicators are defined in webapp/dashboard/builtin/nco.js
+
+####Custom Dashboard
+The custom dashboard is created by a user, click the url /datapoints/dashboards/edit and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder
 
 
 ##ChartWizard
-
-
+When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard.    
 
