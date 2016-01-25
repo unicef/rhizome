@@ -2,7 +2,6 @@
   "browser": {
     "react": "react",
     "react-datascope": "react-datascope",
-    "vue": "vue",
     "d3": "d3",
     "reflux": "reflux",
     "superagent": "superagent",

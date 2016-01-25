@@ -29,8 +29,7 @@
     "react-widgets": "^2.8.2",
     "reflux": "^0.2.12",
     "superagent": "1.4.0",
-    "superagent-prefix": "0.0.2",
-    "vue": "^0.11.10"
+    "superagent-prefix": "0.0.2"
   },
   "devDependencies": {
     "babel": "^5.8.21",
