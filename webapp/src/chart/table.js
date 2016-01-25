@@ -109,6 +109,12 @@ _.extend(TableChart.prototype, {
         var extents = [ ind.low_bound, ind.high_bound ]
         var names = ['bad', 'ok', 'good']
 
+        if (ind.low_bound > ind.high_bound) {
+          names = ['good', 'ok', 'bad']
+        // } else if (ind.low_bound === 0 && ind.high_bound === 1) {
+        //   names = ['bad', 'bad', 'good']
+        }
+
         return d3.scale.threshold()
           .domain(extents)
           .range(names)
