@@ -2,7 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 import api from 'data/api'
-import path from 'vue/src/parsers/path'
+import path from 'util/parsers/path'
 import util from 'util/data'
 
 function melt (data, indicatorArray) {

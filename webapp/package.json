@@ -86,6 +86,8 @@
       "IsWkhtmlToPdf"
     ],
     "parser": "babel-eslint",
-    "ignore": []
+    "ignore": [
+      "/src/util/parsers/"
+    ]
   }
 }

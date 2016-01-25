@@ -1,13 +1,10 @@
 import React from 'react'
-import Vue from 'vue'
 
 import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
 import CampaignsPage from './ufadmin/CampaignsPage.js'
 import HomepageChartsView from 'view/HomepageChartsView.jsx'
-
-Vue.component('vue-tooltip', require('./component/vue-tooltip'))
 
 React.render(
   React.createElement(DashboardNav),
