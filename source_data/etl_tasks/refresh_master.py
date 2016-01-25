@@ -366,6 +366,18 @@ class MasterRefresh(object):
         if val is None:
             return None
 
+        ## clean!  i am on a deadline rn :-/  ##
+        if val == 'Yes':
+            print val
+            val = 1
+            print val
+        if val == 'yes':
+            val = 1
+        if val == 'No':
+            val = 1
+        if val == 'no':
+            val = 1
+
         locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
         try:

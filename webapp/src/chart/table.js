@@ -215,7 +215,7 @@ _.extend(TableChart.prototype, {
     function wrap (text, width) {
       text.each(function () {
         var text = d3.select(this)
-        var words = text.text().split(/\s+/).reverse()
+        var words = text.text().split(/\s+/)
         var line = []
         var lineNumber = 0
         var lineHeight = 1.1 // ems
