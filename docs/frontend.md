@@ -131,16 +131,25 @@ rhizome
        |- ....
        |_ PolioScape.js
        |_ ....
-       
-       
 ```
 
 As above file structure, all front-end files store in rhizome/webapp folder, and we use [Gulp](gulp.md) to generate script and html files to `public` folder.
  
 Base on the architecture of Reflux, there are some target folders: `actions` `store` `view` which are Reflux actions, store and views. So please put your code file to these folders, when you create new Reflux module. `component` folder keeps all our Reflux components.
 
-And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all 'Manage System' functionality.  
+And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all Manage System page functionality.  
 
 ##Program Entry Point
-PolioScape.js is the javascript entry point. 
+PolioScape.js is the javascript entry point. rhizome/templates/base.html includes the vendor.js and main.js. The vendor.js is for all script package javascript, the main.js is for all source javascript. There are some major page javascript classes: `Explorer` `Dashboard` `DataEntry` `SourceData` `UserAccount` `DashboardList` `HomepageCharts` `DashboardBuilder` `UFAdmin` in PolioScape.js
+
+The server side page routing rule is defined in rhizome/urls.py, So the default empty site root address is routed to homepage.html, homepage.html call Polio.HomepageCharts, then the homepage is rendered. Other pages are similar as the homepage. 
+
+The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call PolioScape target page class to render whole page.
+
+##Dashboard
+
+
+##ChartWizard
+
+
 
