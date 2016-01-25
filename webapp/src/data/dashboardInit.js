@@ -66,7 +66,7 @@ export function inChart (chart, campaign, location, datum) {
   return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inlocation
 }
 
-function choropleth (chart, data, campaign, features) {
+export function choropleth (chart, data, campaign, features) {
   // Make sure we only get data for the current campaign maps can't
   // display historical data. Index by location for quick lookup.
   var dataIdx = _(data)

@@ -3,6 +3,7 @@ import { expect } from 'chai'
 
 import { childOf } from '../dashboardInit.js'
 import { inChart } from '../dashboardInit.js'
+import { choropleth } from '../dashboardInit.js'
 
 describe(__filename, () => {
   context('child of', () => {
@@ -114,6 +115,52 @@ describe(__filename, () => {
         var chartData = _.filter(data, _.partial(inChart, chart, legalCampaign, legalLocation))
         expect(chartData).to.eql([legalDatum])
       })
+    })
+  })
+
+  context('get choropleth data', () => {
+    let campaign = { id: 1 }
+    let data = [
+      {
+        campaign: { id: 1 },
+        location: { id: 1 },
+        indicator: { id: 1 },
+        value: 0.3
+      },
+      {
+        campaign: { id: 2 },
+        location: { id: 1 },
+        indicator: { id: 1 },
+        value: 0.5
+      }
+    ]
+
+    context('should generate chropleth features when original features matches data', () => {
+      let originalFeatures = [
+        {
+          properties: { location_id: 1 }
+        }
+      ]
+      let expectedFeatures = [
+        {
+          properties:
+            {
+              location_id: 1,
+              1: 0.3
+            }
+        }
+      ]
+      let actualFeatures = choropleth(null, data, campaign, originalFeatures)
+      expect(actualFeatures).to.eql(expectedFeatures)
+    })
+    context('should not generate chropleth features when original features donnot match data', () => {
+      let originalFeatures = [
+        {
+          properties: { location_id: 3 }
+        }
+      ]
+      let actualFeatures = choropleth(null, data, campaign, originalFeatures)
+      expect(actualFeatures).to.eql(originalFeatures)
     })
   })
 })
