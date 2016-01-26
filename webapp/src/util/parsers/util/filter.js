@@ -1,18 +1,5 @@
 var _ = require('./debug')
 
-/**
- * Resolve read & write filters for a vm instance. The
- * filters descriptor Array comes from the directive parser.
- *
- * This is extracted into its own utility so it can
- * be used in multiple scenarios.
- *
- * @param {Vue} vm
- * @param {Array<Object>} filters
- * @param {Object} [target]
- * @return {Object}
- */
-
 exports.resolveFilters = function (vm, filters, target) {
   if (!filters) {
     return
@@ -50,16 +37,6 @@ exports.resolveFilters = function (vm, filters, target) {
   })
   return res
 }
-
-/**
- * Apply filters to a value
- *
- * @param {*} value
- * @param {Array} filters
- * @param {Vue} vm
- * @param {*} oldVal
- * @return {*}
- */
 
 exports.applyFilters = function (value, filters, vm, oldVal) {
   if (!filters) {

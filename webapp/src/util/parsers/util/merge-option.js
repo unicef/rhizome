@@ -1,18 +1,6 @@
 var _ = require('./index')
 var extend = _.extend
 
-/**
- * Option overwriting strategies are functions that handle
- * how to merge a parent option value and a child option
- * value into the final value.
- *
- * All strategy functions follow the same signature:
- *
- * @param {*} parentVal
- * @param {*} childVal
- * @param {Vue} [vm]
- */
-
 var strats = Object.create(null)
 
 /**
@@ -39,7 +27,6 @@ function mergeData (to, from) {
 
 strats.data = function (parentVal, childVal, vm) {
   if (!vm) {
-    // in a Vue.extend merge, both should be functions
     if (!childVal) {
       return parentVal
     }
@@ -222,16 +209,6 @@ function guardComponents (components) {
     }
   }
 }
-
-/**
- * Merge two option objects into a new one.
- * Core utility used in both instantiation and inheritance.
- *
- * @param {Object} parent
- * @param {Object} child
- * @param {Vue} [vm] - if vm is present, indicates this is
- *                     an instantiation merge.
- */
 
 module.exports = function mergeOptions (parent, child, vm) {
   guardComponents(child.components)

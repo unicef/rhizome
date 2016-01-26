@@ -11,7 +11,7 @@ enableDebug()
 function enableDebug () {
 
   var hasConsole = typeof console !== 'undefined'
-  
+
   /**
    * Log a message.
    *
@@ -20,7 +20,7 @@ function enableDebug () {
 
   exports.log = function (msg) {
     if (hasConsole && config.debug) {
-      console.log('[Vue info]: ' + msg)
+      console.log('[info]: ' + msg)
     }
   }
 
@@ -32,7 +32,7 @@ function enableDebug () {
 
   exports.warn = function (msg) {
     if (hasConsole && (!config.silent || config.debug)) {
-      console.warn('[Vue warn]: ' + msg)
+      console.warn('[warn]: ' + msg)
       /* istanbul ignore if */
       if (config.debug) {
         /* jshint debug: true */

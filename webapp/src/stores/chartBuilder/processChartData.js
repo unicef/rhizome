@@ -50,7 +50,7 @@ function value (datapoint) {
   return null
 }
 
-var tooltipDiv = document.createElement('div') // Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
+var tooltipDiv = document.createElement('div')
 document.body.appendChild(tooltipDiv)
 
 function _columnData (data, groups, groupBy) {
