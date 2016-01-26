@@ -362,21 +362,13 @@ class MasterRefresh(object):
         Big point of future controversy... what do we do with zero values?  In order to
         keep the size of the database manageable, we only accept non zero values.
         '''
+        str_lookup = {'yes':1,'no':0}
+
 
         if val is None:
             return None
 
         ## clean!  i am on a deadline rn :-/  ##
-        if val == 'Yes':
-            print val
-            val = 1
-            print val
-        if val == 'yes':
-            val = 1
-        if val == 'No':
-            val = 1
-        if val == 'no':
-            val = 1
 
         locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
@@ -385,6 +377,10 @@ class MasterRefresh(object):
         except AttributeError:
             cleaned_val = float(val)
         except ValueError:
-            raise ValueError(' can not convert to float')
+
+            try:
+                cleaned_val = str_lookup[val.lower()]
+            except KeyError:
+                raise ValueError('Bad Value!')
 
         return cleaned_val
