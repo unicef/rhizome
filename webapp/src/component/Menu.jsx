@@ -50,10 +50,6 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
-    // @john you can console here and try to search when choosing an indicator in custom dashboard, then this method will be called.
-    // And the dropdown list will be re-positioned by _onResize method.
-    // So the Math.floor method have fixed the max stack overflow issue when searching for an indicator.
-    // If you commented the Math.floor method, then try to search, you will see the max stack overflow error.
     this._onResize()
   },
 
@@ -62,8 +58,6 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    // @john we check this.state here to fix the position of the dropdown list.
-    // If this.state is not equal to nextState, then will go to componentDidUpdate, then _onResize method.
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
