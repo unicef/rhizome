@@ -160,8 +160,10 @@ The custom dashboard is created by a user, click the url /datapoints/dashboards/
 
 ##ChartWizard
 When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard. The ChartWizard code is at the webapp/src/view/chart-wizard/ the ChartWizard.js defines the whole page UI, you can add the chart settings and actions in this component.
- 
+
 ChartWizard options folder (/webapp/src/view/chart-wizard/options) defines all chart options, you can change or define every different chart options as you want.
 
 
 ##UfAdmin
+UfAdmin is our Manage System functionality, the code is in webapp/src/ufadmin The webapp/src/ufadmin/index.js is the entry point, and we use client React-Router to link these pages. AdminPage.js is the whole abstract page component, all UfAdmin pages inherit from it. 
+
