@@ -167,3 +167,11 @@ ChartWizard options folder (/webapp/src/view/chart-wizard/options) defines all c
 ##UfAdmin
 UfAdmin is our Manage System functionality, the code is in webapp/src/ufadmin The webapp/src/ufadmin/index.js is the entry point, and we use client React-Router to link these pages. AdminPage.js is the whole abstract page component, all UfAdmin pages inherit from it. 
 
+##Data Entry
+Data entry form gives the user direct access to entry the data that the system reports on. Url: /datapoints/entry/  Code: webapp/src/view/entry-form
+
+##Source Data
+The source data page is to upload and manage data source from csv files. This part of the functionality will help a user to manage uploaded data source: validate data, map the location, campaign and indicator, and view the results of the upload. Url: /datapoints/source-data/ Code: webapp/src/dashboard/sd/
+
+##Data Browser
+The data browser page is to browse system raw data. you can view the raw data from data browser page. Url: /datapoints/data_browser/ Code: webapp/src/view/Explorer.jsx
