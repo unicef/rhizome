@@ -478,7 +478,7 @@ export default {
           top: 40,
           right: 120,
           bottom: 140,
-          left: 220
+          left: 180
         },
         cellFontSize: 14,
         headers: []
@@ -497,8 +497,10 @@ export default {
               displayValue = (i.value * 100).toFixed(1) + ' %'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
               displayValue = 'No'
+              i.value = -1 // temporary hack to deal with coloring the booleans.
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {
               displayValue = 'Yes'
+              i.value = 2 // temporary hack to deal with coloring the booleans.
             }
             values.push({
               indicator: indicators_map[i.indicator],
@@ -517,6 +519,7 @@ export default {
 
         return {
           name: locations_map[d.location].name,
+          parent_location_id: locations_map[d.location].parent_location_id,
           values: values
         }
       })

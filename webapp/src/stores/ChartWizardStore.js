@@ -254,7 +254,6 @@ let ChartWizardStore = Reflux.createStore({
     if (this.data.location.map(item => item.id).indexOf(index) >= 0) return
     this.data.location.push(this.locationIndex[index])
     this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
-    this.data.campaign = this.data.campaignFilteredList[0]
     this.previewChart()
   },
 
@@ -266,7 +265,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddFirstIndicator (index) {
     this.data.indicatorSelected[0] = this.indicatorIndex[index]
-    this.filterChartTypeByIndicator()
+    // this.filterChartTypeByIndicator()
     this.previewChart()
   },
 
@@ -302,6 +301,7 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.locationAggregated = builderDefinitions.locationLevels[this.data.locationLevelValue].getAggregated(this.data.location, this.locationIndex)
     this.data.chartData = []
+
     this.previewChart()
   },
 

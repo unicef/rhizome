@@ -3,6 +3,9 @@ import { expect } from 'chai'
 
 import { childOf } from '../dashboardInit.js'
 import { inChart } from '../dashboardInit.js'
+import { choropleth } from '../dashboardInit.js'
+import { getFacet } from '../dashboardInit.js'
+import { series } from '../dashboardInit.js'
 
 describe(__filename, () => {
   context('child of', () => {
@@ -114,6 +117,103 @@ describe(__filename, () => {
         var chartData = _.filter(data, _.partial(inChart, chart, legalCampaign, legalLocation))
         expect(chartData).to.eql([legalDatum])
       })
+    })
+  })
+
+  context('get choropleth data', () => {
+    let campaign = { id: 1 }
+    let data = [
+      {
+        campaign: { id: 1 },
+        location: { id: 1 },
+        indicator: { id: 1 },
+        value: 0.3
+      },
+      {
+        campaign: { id: 2 },
+        location: { id: 1 },
+        indicator: { id: 1 },
+        value: 0.5
+      }
+    ]
+
+    context('should generate chropleth features when original features matches data', () => {
+      let originalFeatures = [
+        {
+          properties: { location_id: 1 }
+        }
+      ]
+      let expectedFeatures = [
+        {
+          properties:
+            {
+              location_id: 1,
+              1: 0.3
+            }
+        }
+      ]
+      let actualFeatures = choropleth(null, data, campaign, originalFeatures)
+      expect(actualFeatures).to.eql(expectedFeatures)
+    })
+    context('should not generate chropleth features when original features donnot match data', () => {
+      let originalFeatures = [
+        {
+          properties: { location_id: 3 }
+        }
+      ]
+      let actualFeatures = choropleth(null, data, campaign, originalFeatures)
+      expect(actualFeatures).to.eql(originalFeatures)
+    })
+  })
+
+  context('getFacet', () => {
+    context('should get path in data when path exists', () => {
+      let datum = { name: 'test' }
+      let path = 'name'
+      expect(getFacet(datum, path)).to.eql('test')
+    })
+    context('should get first element in data when data has two layers', () => {
+      let datum = {name: {short_name: 'test', name: 'test_indicator', title: 'ttt', id: '1'}}
+      let path = 'name'
+      expect(getFacet(datum, path)).to.eql('test')
+    })
+  })
+
+  context('test for series method', () => {
+    context('should get legal data', () => {
+      let chart = { groupBy: 'location.name' }
+      let legalDataA = {
+        location: { id: 1, name: 'a' },
+        indicator: { id: 1 },
+        value: 1
+      }
+      let dataValueEqualsZero = {
+        location: { id: 1, name: 'a' },
+        indicator: { id: 2 },
+        value: 0
+      }
+      let legalDataB = {
+        location: { id: 2, name: 'b' },
+        indicator: { id: 3 },
+        value: 2
+      }
+      let originalData = [
+        legalDataA,
+        dataValueEqualsZero,
+        legalDataB
+      ]
+      let expectedData = [
+        {
+          name: 'a',
+          values: [legalDataA]
+        },
+        {
+          name: 'b',
+          values: [legalDataB]
+        }
+      ]
+      console.log(series(chart, originalData), expectedData)
+      expect(series(chart, originalData)).to.eql(expectedData)
     })
   })
 })
