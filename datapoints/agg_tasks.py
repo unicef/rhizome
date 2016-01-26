@@ -79,7 +79,8 @@ class AggRefresh(object):
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
             self.cache_job.save()
-            return 'FAIL'
+
+            return err
 
         ic = IndicatorCache()
         ic.main()
@@ -146,13 +147,19 @@ class AggRefresh(object):
 
         ## now add the raw data to the dict ( overriding agregate if exists )
         for ix, dp in no_nan_dp_df.iterrows():
-            ## dont override null value from parent if sum exists for children
+
             if dp.value and dp.value != 'NaN' :
-                tuple_dict[(dp.location_id, dp.indicator_id)] \
-                    = dp.value
+                ## dont override null value from parent if sum exists for children
+                tuple_dict[(dp.location_id, dp.indicator_id)] = dp.value
+
+            if dp.value == 0:
+                # pandas treats NaN as zero it seems so do this explicity
+                tuple_dict[(dp.location_id, dp.indicator_id)] = dp.value
+
 
         ## now prep the batch for the bulk insert ##
         for dp_unique_key, value in tuple_dict.iteritems():
+
             dp_dict =  dict(zip(('location_id','indicator_id')\
                 ,dp_unique_key))
 
