@@ -482,11 +482,11 @@ export default {
         },
         cellFontSize: 14,
         headers: [],
+        parentLocationMap: _.indexBy(datapoints.meta.parent_location_list, 'name'),
         defaultSortOrder: datapoints.meta.default_sort_order
       }
       let addedHeaders = {}
 
-      let parent_location_map = _.indexBy(datapoints.meta.parent_location_list, 'name')
       let chartData = _.map(datapoints.objects, d => {
         let values = []
 
@@ -523,8 +523,7 @@ export default {
           values: values
         }
       })
-      let data = {'chartData': chartData, 'parentLocationMap': parent_location_map}
-      return { options: chartOptions, data: data }
+      return { options: chartOptions, data: chartData }
     })
   }
 }
