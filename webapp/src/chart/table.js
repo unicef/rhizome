@@ -71,9 +71,17 @@ _.extend(TableChart.prototype, {
     var h = Math.max(chartData.length * options.cellSize, 0)
     var z = 160 //  extra margin space needed to add the "z" (parent) axis"
 
+    // hacky way to sclae the view box.. this shoudl be done by taking into
+    // account the user's screen size... needs some time to get 100% right.. //
+    var viewBoxHeightScale = 1 + (options.headers.length - 8) / 10
+    if (viewBoxHeightScale < 1) {
+      viewBoxHeightScale = 1
+    }
+    var viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
+
     var svg = this._svg
       .attr({
-        'viewBox': '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
+        'viewBox': viewBox,
         'width': (w + margin.left + margin.right),
         'height': (h + margin.top + margin.bottom)
       })
@@ -113,8 +121,6 @@ _.extend(TableChart.prototype, {
 
         if (ind.low_bound > ind.high_bound) {
           names = ['good', 'ok', 'bad']
-        // } else if (ind.low_bound === 0 && ind.high_bound === 1) {
-        //   names = ['bad', 'bad', 'good']
         }
 
         return d3.scale.threshold()

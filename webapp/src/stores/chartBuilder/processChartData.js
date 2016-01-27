@@ -476,9 +476,9 @@ export default {
         fontSize: 14,
         margin: {
           top: 40,
-          right: 120,
-          bottom: 140,
-          left: 180
+          right: 40,
+          bottom: 40,
+          left: 40
         },
         cellFontSize: 14,
         headers: [],
@@ -487,7 +487,6 @@ export default {
       let addedHeaders = {}
 
       let parent_location_map = _.indexBy(datapoints.meta.parent_location_list, 'name')
-
       let chartData = _.map(datapoints.objects, d => {
         let values = []
 
