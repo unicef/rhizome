@@ -230,7 +230,7 @@ var Dashboard = React.createClass({
   },
 
   render () {
-    if (!(this.state.loaded && this.state.dashboard)) {
+    if (!(this.state.dashboard)) {
       let style = {
         fontSize: '2rem',
         zIndex: 9999
