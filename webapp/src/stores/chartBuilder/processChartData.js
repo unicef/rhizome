@@ -481,7 +481,8 @@ export default {
           left: 180
         },
         cellFontSize: 14,
-        headers: []
+        headers: [],
+        defaultSortOrder: datapoints.meta.default_sort_order
       }
       let addedHeaders = {}
 

@@ -85,14 +85,16 @@ _.extend(TableChart.prototype, {
 
     var x = _.flow(options.column, xScale)
     var sourceFlow = _.flow(options.sourceColumn, xScale)
-    // var sourceFlow = _.flow(options.headers, xScale)
-    // console.log('options.columns:', options.columns)
 
-    var sortCol = this.sortCol
-    var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
+    // This code is used to sort by column values //
+    // var sortCol = this.sortCol // 'Refused'
+    // var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
+    // var domain = _(chartData).sortBy(sortValue, this).map(options.seriesName).value()
+
+    var domain = options.defaultSortOrder
 
     var yScale = d3.scale.ordinal()
-      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
+      .domain(domain)
       .rangeBands([0, h], 0.1)
 
     var y = _.flow(options.seriesName, yScale)
@@ -247,6 +249,12 @@ _.extend(TableChart.prototype, {
         .outerTickSize(0))
 
     // svg.selectAll('.x.axis text')
+    //   .on('click', function (d, i) {
+    //     svg.selectAll('.row')
+    //       .sort(function (a, b) { return x0(a.letter) - x0(b.letter) })
+    //     // self._setSort(d, i)
+    //   })
+
     //   .style({
     //     'text-anchor': 'start',
     //     'font-size': options.fontSize,
@@ -257,7 +265,6 @@ _.extend(TableChart.prototype, {
     //     }
     //   })
     //   .attr('transform', 'translate(' + (xScale.rangeBand() / 30) + ', 0) rotate(-35)')
-    //   .on('click', function (d, i) { self._setSort(d, i) })
     //   .on('mouseover', function (d, i) {
     //     options.onColumnHeadOver(d, i, this)
     //   })

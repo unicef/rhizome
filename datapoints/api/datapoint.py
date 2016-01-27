@@ -189,6 +189,7 @@ class DataPointResource(BaseNonModelResource):
                 .values('name','parent_location__name')
 
             data['meta']['parent_location_list'] = [l for l in p_loc_qs]
+            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
         data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 
