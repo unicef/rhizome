@@ -69,7 +69,7 @@ _.extend(TableChart.prototype, {
 
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     var h = Math.max(chartData.length * options.cellSize, 0)
-    var z = 150 //  extra margin space needed to add the "z" (parent) axis"
+    var z = 160 //  extra margin space needed to add the "z" (parent) axis"
 
     var svg = this._svg
       .attr({
@@ -277,6 +277,7 @@ _.extend(TableChart.prototype, {
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
+      .attr({'transform': 'translate(0,10)'})
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
@@ -293,7 +294,7 @@ _.extend(TableChart.prototype, {
 
     svg.select('.y.axis')
       .transition().duration(500)
-      .attr({'transform': 'translate(' + z + ',0)'})
+      .attr({'transform': 'translate(' + z + ',10)'})
       .call(d3.svg.axis()
         .scale(yScale)
         .orient('left')
@@ -362,12 +363,10 @@ _.extend(TableChart.prototype, {
 
   _onRowOver: function (d) {
     var seriesName = this._options.seriesName
-    var target = seriesName(d)
-
     this._svg.selectAll('.row')
       .transition().duration(300)
       .style('opacity', function (e) {
-        return (seriesName(e) === target) ? 1 : 0.4
+        return (seriesName(e) === d[0].name) ? 1 : 0.4
       })
   },
 
