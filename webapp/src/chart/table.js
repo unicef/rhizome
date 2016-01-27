@@ -31,7 +31,8 @@ var DEFAULTS = {
   seriesName: _.property('name'),
   sortValue: _sortValue,
   values: _.property('values'),
-  value: _.property('value')
+  value: _.property('value'),
+  sortDirection: 1
 }
 
 function TableChart () {}
@@ -60,10 +61,8 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    console.log('update function')
     options = _.extend(this._options, options)
     var margin = options.margin
-    // console.log('DATA', data)
 
     var self = this
     var parentLocationMap = options.parentLocationMap
@@ -95,10 +94,18 @@ _.extend(TableChart.prototype, {
     var x = _.flow(options.column, xScale)
     var sourceFlow = _.flow(options.sourceColumn, xScale)
 
-    var domain = options.defaultSortOrder
+    // if there is a sortCol set, order the data that way. //
     if (this.sortCol) {
       let sortValue = _.partial(options.sortValue.bind(this), _, this.sortCol)
-      domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
+      var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
+    } else {
+      // if not, show default.  This also applies to the third click of a header
+      domain = options.defaultSortOrder
+      this.sortDirection = 1
+    }
+
+    if (this.sortDirection === -1) {
+      domain = domain.reverse()
     }
 
     var yScale = d3.scale.ordinal()
@@ -231,22 +238,6 @@ _.extend(TableChart.prototype, {
 
     svg.selectAll('.x.axis text')
       .on('click', function (d, i) { self._setSort(d, i) })
-    //   .style({
-    //     'text-anchor': 'start',
-    //     'font-size': options.fontSize,
-    //     'fontWeight': function (d) {
-    //       return (d === sortCol)
-    //         ? 'bold'
-    //         : 'normal'
-    //     }
-    //   })
-    //   .attr('transform', 'translate(' + (xScale.rangeBand() / 30) + ', 0) rotate(-35)')
-    //   .on('mouseover', function (d, i) {
-    //     options.onColumnHeadOver(d, i, this)
-    //   })
-    //   .on('mouseout', function (d, i) {
-    //     options.onColumnHeadOut(d, i, this)
-    //   })
 
     svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
 
@@ -378,8 +369,17 @@ _.extend(TableChart.prototype, {
   },
 
   _setSort: function (d) {
-    this.sortCol = (d === this.sortCol) ? null : d
-    console.log('updateSort')
+    // Fist click, order ascending, Second order descending, third order default
+    if (d === this.sortCol && this.sortDirection === -1) {
+      this.sortCol = null
+    } else if (d === this.sortCol && this.sortDirection === 1) {
+      this.sortCol = d
+      this.sortDirection = -1
+    } else {
+      this.sortCol = d
+      this.sortDirection = 1
+    }
+
     this.update(this._svg.selectAll('.row').data())
   }
 })
