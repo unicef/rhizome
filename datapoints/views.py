@@ -97,7 +97,7 @@ class CampaignCreateView(PermissionRequiredMixin, generic.CreateView):
     model = Campaign
     success_url = '/manage_system/campaigns'
     template_name = 'campaigns/create.html'
-    fields = ['office',  'top_lvl_location', 'top_lvl_indicator_tag', 'campaign_type', 'start_date', 'end_date']
+    fields = ['office', 'name', 'top_lvl_location', 'top_lvl_indicator_tag', 'campaign_type', 'start_date', 'end_date']
 
 
 class CampaignUpdateView(PermissionRequiredMixin, generic.UpdateView):
