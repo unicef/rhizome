@@ -761,8 +761,8 @@ class AggRefreshResource(BaseModelResource):
 
        This needs cleanup.
 
-       cache_jobo_id = -1 --> NEEDS PROCESSING
-       cache_jobo_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
+       cache_job_id = -1 --> NEEDS PROCESSING
+       cache_job_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
        '''
 
        try:
@@ -770,36 +770,8 @@ class AggRefreshResource(BaseModelResource):
            ar = AggRefresh(campaign_id)
            return Campaign.objects.filter(id=campaign_id).values()
        except KeyError:
-           campsign_id = None
-
-       try:
-           one_dp_that_needs_agg = DataPoint.objects\
-               .filter(cache_job_id = -1)[0]
-       except IndexError:
+           ar = AggRefresh()
            return Office.objects.all().values()
-
-       location_id = one_dp_that_needs_agg.location_id
-       data_date = one_dp_that_needs_agg.data_date
-
-       date_no_datetime = data_date.date()
-       campaigns_in_date_range = Campaign.objects.filter(
-           start_date__lte = date_no_datetime, end_date__gte = data_date)
-
-       parent_location_list = LocationTree.objects\
-           .filter(location_id = location_id)\
-           .values_list('parent_location_id',flat=True)
-
-       for c in campaigns_in_date_range:
-           if c.top_lvl_location_id in parent_location_list:
-               campaign_id = c.id
-               ar =  AggRefresh(c.id)
-
-               return Campaign.objects.filter(id=campaign_id).values()
-
-       ## if code reaches here that means there is noting to process ##
-       return Office.objects.all().values()
-
-
 
 
 class RefreshMasterResource(BaseModelResource):
@@ -811,6 +783,8 @@ class RefreshMasterResource(BaseModelResource):
 
         mr = MasterRefresh(request.user.id, document_id)
         mr.main()
+
+        ar = AggRefresh()
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id=document_id,

@@ -25,7 +25,7 @@ class AggRefresh(object):
     '''
 
 
-    def __init__(self,campaign_id):
+    def __init__(self,campaign_id = None):
         '''
         If there is a job running, return to with a status code of
         "cache_running".
@@ -34,6 +34,10 @@ class AggRefresh(object):
         other wise the datapoint IDs to process are handled in the set_up()
         method.
         '''
+
+        if not campaign_id:
+            campaign_id_list = self.get_campaign_ids_to_process()
+            campaign_id = campaign_id_list[0]
 
         self.cache_job = None
 
@@ -87,6 +91,26 @@ class AggRefresh(object):
 
         return 'SUCCESS'
 
+    def get_campaign_ids_to_process(self):
+
+        try:
+            one_dp_that_needs_agg = DataPoint.objects\
+                .filter(cache_job_id = -1)[0]
+        except IndexError:
+            return
+
+        location_id = one_dp_that_needs_agg.location_id
+        data_date = one_dp_that_needs_agg.data_date
+
+        date_no_datetime = data_date.date()
+        campaigns_in_date_range = Campaign.objects.filter(
+            start_date__lte = date_no_datetime, end_date__gte = data_date)
+
+        parent_location_list = LocationTree.objects\
+            .filter(location_id = location_id)\
+            .values_list('parent_location_id',flat=True)
+
+        return [c.id for c in campaigns_in_date_range]
 
     def agg_datapoints(self):
         '''
