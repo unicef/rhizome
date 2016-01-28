@@ -1,3 +1,11 @@
+---
+label: Manage Indicators Document
+id: rhizome_front_end_manage_indicators_doc
+categorySlug: front_end
+categoryLabel: Front End Document
+categoryRank: 1
+documentRank: 2
+
 # Manage Indicators
 
 ## React-Json
