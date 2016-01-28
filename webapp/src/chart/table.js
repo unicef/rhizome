@@ -66,9 +66,8 @@ _.extend(TableChart.prototype, {
 
     var self = this
     var parentLocationMap = options.parentLocationMap
-
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(data.length * options.cellSize, 0)
+    var h = Math.max(options.defaultSortOrder.length * options.cellSize, 0)
     var z = 160 //  extra margin space needed to add the "z" (parent) axis"
 
     // hacky way to sclae the view box.. this shoudl be done by taking into
@@ -78,7 +77,6 @@ _.extend(TableChart.prototype, {
       viewBoxHeightScale = 1
     }
     var viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
-
     var svg = this._svg
       .attr({
         'viewBox': viewBox,
@@ -106,6 +104,16 @@ _.extend(TableChart.prototype, {
 
     if (this.sortDirection === -1) {
       domain = domain.reverse()
+    }
+
+    // For empty data points i need to add the x axis domain items explicitly //
+    // otherwise the domain will be less ( and different the ) the yScale //
+    // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
+    if (domain.length < options.defaultSortOrder.length) {
+      var diff = options.defaultSortOrder.filter(function (x) {
+        return domain.indexOf(x) < 0
+      })
+      domain = domain.concat(diff)
     }
 
     var yScale = d3.scale.ordinal()
