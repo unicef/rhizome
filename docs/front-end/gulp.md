@@ -1,3 +1,11 @@
+---
+label: Gulp Document
+id: rhizome_front_end_gulp_doc
+categorySlug: front_end
+categoryLabel: Front End Document
+categoryRank: 1
+documentRank: 2
+
 # GULP Documentation
 
 ## Environment

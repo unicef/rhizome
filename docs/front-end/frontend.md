@@ -1,3 +1,11 @@
+---
+label: Front End Document
+id: rhizome_front_end_doc
+categorySlug: front_end
+categoryLabel: Front End Document
+categoryRank: 1
+documentRank: 1
+
 # Front-end Documentation
 
 ## Environment

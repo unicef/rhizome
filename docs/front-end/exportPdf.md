@@ -1,3 +1,11 @@
+---
+label: PDF Document
+id: rhizome_front_end_pdf_doc
+categorySlug: front_end
+categoryLabel: Front End Document
+categoryRank: 1
+documentRank: 3
+
 # Export PDF
 
 ## Tools
