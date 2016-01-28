@@ -22,7 +22,7 @@ gulp.task('default', ['build'])
 ```
 
 * Use `gulp dev` in local development environment to build and watch frontend change.
-* Use `gulp` in production environment for deployment.
+* Use `gulp build` in production environment for deployment.
 
 ##Tasks
 
@@ -45,6 +45,22 @@ All the tasks are defined seperately in `/webapp/tasks` folder.
 ###Standard
 
 **Standard** task is used to check JavaScript code with the standard syntax.
+
+We're using [standard](https://github.com/feross/standard) with [babel-eslint](https://github.com/babel/babel-eslint) to format our Javascript code. Make sure run standard before committing any Javascript code.
+
+Install `standard` and `babel-eslint` by `npm install -g standard` and `npm install -g babel-eslint`. They must be installed globally. Run `standard` in `/webapp` folder to check Javascript format. Fix any format error before you commit.
+
+Standard will be added to CI pipeline to ensure the code format is strictly followed.
+
+Here's a quick view of standard rules. For more details, visit standard homepage or check standard error output.
+
+* 2 spaces for indentation. No tab is allowed.
+* Single quotes for strings.
+* No unused variables.
+* No semicolons.
+* Always use === instead of == except for `null`.
+* Space after keywords as `if` and function name.
+* React props must be defined by `propTypes`.
 
 ###Browserify and Watchify
 
@@ -99,9 +115,17 @@ These two `rev-manifest.json` looks different:
 }
 ```
 
-In this way, we can use revisioning static files in production env, and will not influnce our development env.
+In this way, we can use revisional static files in production env, and will not influence our development env.
 
-So `base.html` in development env will not use revisioning files.
+How to use these two manifest file in different env are defined in `/tasks/config/revReplace.js`:
+
+```
+var proManifest =  jsDestFolder + '/rev-manifest.json'
+var devManifest = './rev-manifest.json'
+var manifestFile = (process.env.NODE_ENV === 'production') ? proManifest : devManifest
+```
+
+So `base.html` in **development env** will not use revisional files.
 
 		
 		//This is base.html in development env
@@ -113,7 +137,7 @@ So `base.html` in development env will not use revisioning files.
 		<script src="{% static "js/vendor.js" %}"></script>
 		<script src="{% static "js/main.js" %}"></script>
 		
-And `base.html` in production env will use revisioning files.
+And `base.html` in **production env** will use revisional files.
 
 		//This is base.html in production env
 		//static css files
@@ -131,7 +155,29 @@ And `base.html` in production env will use revisioning files.
 
 ###Mocha
 
-**Mocha** task is used to run Mocha tests in a separate process from the gulp process.
+[**Mocha**](https://github.com/knpwrs/gulp-spawn-mocha) task is used to run Mocha tests in a separate process from the gulp process.
+
+We can use `gulp mocha` to run the tests separately from other tasks.
+
+And `gulp mocha` will also generate a coverage report for frontend code. The report is in `/webapp/coverage/lcov-report/` folder and you can view the report through `/webapp/coverage/lcov-report/index.html` file.
+
+If you do not want to test the coverage, you can change the config in `/tasks/config/mocha.js`:
+
+```
+export default {
+  src: [
+    `${gulp.config('base.src')}/**/__tests__/*.spec.js{,x}`
+  ],
+  options: {
+    r: 'src/helpers/jsdom.js',
+    R: 'dot',
+    compilers: '.:babel/register',
+    istanbul: true  // Will test coverage and generate report.
+    istanbul: false  // Will not test coverage and generate report.
+  }
+}
+
+```
 
 ###Package
 
