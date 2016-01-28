@@ -112,6 +112,9 @@ class MasterRefresh(object):
 
     def main(self):
 
+        if len(self.ss_ids_to_process) == 0:
+            return
+
         self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
