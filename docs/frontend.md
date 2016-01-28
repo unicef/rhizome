@@ -1,6 +1,6 @@
-#Front-end Documentation
+# Front-end Documentation
 
-##Environment
+## Environment
 
 Node: >= 0.10, suggested 0.12. Don't use Node 4.0.
 
@@ -8,8 +8,8 @@ Npm: >= 2.0. Feature of installing local dependency is needed.
 
 Working direction: `/webapp`
 
-##Code Principle
-###standard
+## Code Principle
+### standard
 
 We're using [standard](https://github.com/feross/standard) with [babel-eslint](https://github.com/babel/babel-eslint) to format our Javascript code. Make sure run standard before committing any Javascript code.
 
@@ -27,7 +27,7 @@ Here's a quick view of standard rules. For more details, visit standard homepage
 * Space after keywords as `if` and function name.
 * React props must be defined by `propTypes`.
 
-###General Rules
+### General Rules
 
 We're using ES6(ECMAScript 6) entirely in our project. There are also some general rules which are not restricted by standard but we need to follow. As soon as we format the legacy code, these rules will also be added into standard lint.
 
@@ -70,7 +70,7 @@ export default {
 * React file should be named as `.jsx` instead of `.js`.
 
 
-##Test
+## Test
 
 We're using mocha/chai as our test suites. Run `gulp mocha` will run all front end tests.
 
@@ -87,7 +87,7 @@ Use existing spec file as example to create new spec when needed.
 
 Javascript tests are focused on dealing complicate data model and processing, rather than UI interaction. Tests now are in Unit Test level.
 
-##React/Reflux
+## React/Reflux
 
 **Avoid sending API request in store.init()**
 
@@ -111,7 +111,7 @@ instead of
 
 Writing React in ES6/ES7 is not compulsory but highly recommended. Read this [guide](http://babeljs.io/blog/2015/06/07/react-on-es6-plus/) in babeljs.org.
 
-##File Structure
+## File Structure
 
 ```
 rhizome
@@ -139,39 +139,39 @@ Base on the architecture of Reflux, there is some target folders: `actions` `sto
 
 And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all Manage System page functionality.  
 
-##Program Entry Point
+## Program Entry Point
 PolioScape.js is the javascript entry point. rhizome/templates/base.html includes the vendor.js and main.js. The vendor.js is for all script package javascript, the main.js is for all source javascript. There are some major page javascript classes: `Explorer` `Dashboard` `DataEntry` `SourceData` `UserAccount` `DashboardList` `HomepageCharts` `DashboardBuilder` `UFAdmin` in PolioScape.js
 
 The server side page routing rule is defined in rhizome/urls.py, So the default empty site root address is routed to homepage.html, homepage.html call Polio.HomepageCharts, then the homepage is rendered. Other pages are similar as the homepage. 
 
 The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call PolioScape target page class to render the whole page.
 
-##Dashboard
+## Dashboard
 There is two kinds dashboard, one is the built-in dashboard, one is the custom dashboard. Built-in dashboards are shown in 4 places:
 
-####Built in Dashboard
+#### Built in Dashboard
 1. The Homepage, Indicators are defined in: webapp/dashboard/builtin/homepage-afghanistan.js homepage-nigeria.js homepage-pakistan.js
 2. Management dashboard url: /datapoints/management-dashboard/ Indicators are defined in webapp/dashboard/builtin/management.js
 3. District dashboard url: /datapoints/district-dashboard/ Indicators are defined in webapp/dashboard/builtin/district.js
 4. NGA campaign monitoring url: /datapoints/nga-campaign-monitoring/ Indicators are defined in webapp/dashboard/builtin/nco.js
 
-####Custom Dashboard
+#### Custom Dashboard
 The custom dashboard is created by a user, click the url /datapoints/dashboards/edit and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder, and custom dashbaord is rendered by webapp/src/dashboard/CustomDashboard.jsx component.
 
-##ChartWizard
+## ChartWizard
 When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard. The ChartWizard code is at the webapp/src/view/chart-wizard/ the ChartWizard.js defines the whole page UI, you can add the chart settings and actions in this component.
 
 ChartWizard options folder (/webapp/src/view/chart-wizard/options) defines all chart options, you can change or define every different chart options as you want.
 
 
-##UfAdmin
+## UfAdmin
 UfAdmin is our Manage System functionality, the code is in webapp/src/ufadmin The webapp/src/ufadmin/index.js is the entry point, and we use client React-Router to link these pages. AdminPage.js is the whole abstract page component, all UfAdmin pages inherit from it. 
 
-##Data Entry
+## Data Entry
 Data entry form gives the user direct access to entry the data that the system reports on. Url: /datapoints/entry/  Code: webapp/src/view/entry-form
 
-##Source Data
+## Source Data
 The source data page is to upload and manage data source from csv files. This part of the functionality will help a user to manage uploaded data source: validate data, map the location, campaign and indicator, and view the results of the upload. Url: /datapoints/source-data/ Code: webapp/src/dashboard/sd/
 
-##Data Browser
+## Data Browser
 The data browser page is to browse system raw data. you can view the raw data from data browser page. Url: /datapoints/data_browser/ Code: webapp/src/view/Explorer.jsx

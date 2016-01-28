@@ -1,6 +1,6 @@
-#GULP Documentation
+# GULP Documentation
 
-##Environment
+## Environment
 
 In this project, we use gulp to build frontend system.
 
@@ -24,25 +24,25 @@ gulp.task('default', ['build'])
 * Use `gulp dev` in local development environment to build and watch frontend change.
 * Use `gulp build` in production environment for deployment.
 
-##Tasks
+## Tasks
 
 We have sevaral gulp tasks, `clean, copy, sass, standard, browserify and revision`. 
 
 All the tasks are defined seperately in `/webapp/tasks` folder.
 
-###Clean
+### Clean
 
 **Clean** task is used to remove the whole gulp destination directory `/webapp/public`  to prepare for next step.
 
-###Copy
+### Copy
 
 **Copy** task is used to copy all static assets from gulp src directory to gulp dest directory.
 
-###Sass
+### Sass
 
 **Sass** task is used to compile all sass files to css files.
 
-###Standard
+### Standard
 
 **Standard** task is used to check JavaScript code with the standard syntax.
 
@@ -62,13 +62,13 @@ Here's a quick view of standard rules. For more details, visit standard homepage
 * Space after keywords as `if` and function name.
 * React props must be defined by `propTypes`.
 
-###Browserify and Watchify
+### Browserify and Watchify
 
 **Browserify** task is used to build a bundle which can be served up to browser in a single `<script>` tag.
 
 **Watchify** task will update any source file and the browserify bundle will be recompiled on the spot.
 
-###Revision
+### Revision
 
 [**RevCompile**](https://github.com/sindresorhus/gulp-rev) task will revision static asset by appending content hash to filenames, such as `unicorn.css => unicorn-d41d8cd98f.css`.
 
@@ -149,11 +149,11 @@ And `base.html` in **production env** will use revisional files.
 		<script src="{% static "js/main-efc4d25176.js" %}"></script>
 		
 		
-###Lint
+### Lint
 
 **Lint** task is used to identify and report on patterns found in ECMAScript/JavaScript code.
 
-###Mocha
+### Mocha
 
 [**Mocha**](https://github.com/knpwrs/gulp-spawn-mocha) task is used to run Mocha tests in a separate process from the gulp process.
 
@@ -179,7 +179,7 @@ export default {
 
 ```
 
-###Package
+### Package
 
 **Package** task is used to compress frontend code into a zip package.
 
