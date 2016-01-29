@@ -304,7 +304,7 @@ var Dashboard = React.createClass({
       dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
 
-    campaigns.map(campaign => {
+    campaigns = campaigns.map(campaign => {
       return _.assign({}, campaign, {
         slug: moment(campaign.start_date).format('MMMM YYYY')
       })
