@@ -48,6 +48,14 @@ class CampaignResource(BaseModelResource):
 
         post_data = bundle.data
 
+        try:
+            campaign_id = int(post_data['id'])
+            if campaign_id == -1:
+                campaign_id = None
+        except KeyError:
+            campaign_id = None
+
+        
         return bundle
 
 class CampaignTypeResource(BaseModelResource):
