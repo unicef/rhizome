@@ -298,7 +298,7 @@ _.extend(TableChart.prototype, {
         })
         .style({
           'opacity': 0,
-          'fill': '#CCFFFF'
+          'fill': '#F1F1F1'
         })
         .transition()
         .duration(500)
