@@ -76,9 +76,8 @@ class CampaignResource(BaseModelResource):
                                         status=500,
                                         content_type='application/json'))
 
-
         try:
-            ind, created = Campaign.objects.update_or_create(
+            campaign, created = Campaign.objects.update_or_create(
                 id=campaign_id,
                 defaults=defaults
             )
@@ -91,8 +90,8 @@ class CampaignResource(BaseModelResource):
                                         status=422,
                                         content_type='application/json'))
 
-        bundle.obj = ind
-        bundle.data['id'] = ind.id
+        bundle.obj = campaign
+        bundle.data['id'] = campaign.id
 
         return bundle
 
