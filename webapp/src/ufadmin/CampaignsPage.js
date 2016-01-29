@@ -64,8 +64,8 @@ var CampaignsPage = React.createClass ({
       </div>
     )
 
-    let startDate = moment('2015-02-01').toDate()
-    let endDate = moment('2015-02-20').toDate()
+    let startDate = moment(new Date()).toDate()
+    let endDate = moment(new Date()).toDate()
 
     let startDatePicker = (
       <div>
