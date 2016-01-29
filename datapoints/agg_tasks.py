@@ -286,7 +286,7 @@ class AggRefresh(object):
         '''
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
-            adp_tuple = (adp.location_id, adp.indicator_id, adp.campaign_id)
+            adp_tuple = (adp.location_id, adp.indicator_id)
             self.dwc_tuple_dict[adp_tuple] = adp.value
 
     def sum_of_parts(self):
