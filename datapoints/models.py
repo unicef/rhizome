@@ -353,12 +353,12 @@ class Campaign(models.Model):
         flat_location_id_list = LocationTree.objects.filter(parent_location_id=\
             self.top_lvl_location_id).values_list('location_id',flat=True)
 
-        indicator_id_list = CampaignToIndicator.objects.filter(campaign_id = \
-            self.id).values_list('indicator_id',flat=True)
+        # indicator_id_list = CampaignToIndicator.objects.filter(campaign_id = \
+        #     self.id).values_list('indicator_id',flat=True)
 
         qs = DataPoint.objects.filter(
             location_id__in = flat_location_id_list,
-            indicator_id__in = indicator_id_list,
+            # indicator_id__in = indicator_id_list,
             data_date__lt = self.end_date,
             data_date__gte = self.start_date,
         ).values_list('id',flat=True)

@@ -6,6 +6,7 @@ from pandas import notnull
 
 from datapoints.models import *
 from datapoints.cache_meta import IndicatorCache
+from source_data.models import SourceSubmission
 
 class AggRefresh(object):
     '''
@@ -95,7 +96,7 @@ class AggRefresh(object):
 
         try:
             one_dp_that_needs_agg = DataPoint.objects\
-                .filter(cache_job_id = -1)[0]
+                .filter(cache_job_id = -1, value__gte = 0)[0]
         except IndexError:
             return
 
