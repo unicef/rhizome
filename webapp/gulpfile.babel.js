@@ -6,6 +6,7 @@ gulpTaskConfig(gulp)
 
 requireDir('./tasks')
 
+gulp.config('base.root', '..')
 gulp.config('base.src', './src')
 gulp.config('base.dist', './public')
 gulp.config('templates', '../templates')
