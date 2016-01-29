@@ -24,7 +24,7 @@ var DatePicker = React.createClass({
         value={this.state.date}
         time={false}
         format={'yyyy-MM-dd'}
-        onChange={this.handleDateChange.bind(this)}
+        onChange={this.handleDateChange}
       />
     )
   }
