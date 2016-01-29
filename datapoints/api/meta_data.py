@@ -44,6 +44,11 @@ class CampaignResource(BaseModelResource):
         except:
             return qs.values()
 
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        return bundle
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
