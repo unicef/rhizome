@@ -66,7 +66,7 @@ class CampaignResource(BaseModelResource):
                 'end_date': post_data['end_date'],
                 'pct_complete': post_data['pct_complete']
             }
-            
+
         except Exception as error:
             data = {
                 'error': 'Please provide ' + str(error) + ' for the campaign.',
@@ -113,7 +113,9 @@ class LocationResource(BaseModelResource):
         if self.top_lvl_location_id == 4721:
             return Location.objects.exclude(id = 4721).order_by('location_type_id').values()
 
-        location_ids = get_locations_to_return_from_url(request)
+        location_ids = list(get_locations_to_return_from_url(request))
+        location_ids.append(self.top_lvl_location_id)
+        # Add code to append afhganistan top the list of its own children
         qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
