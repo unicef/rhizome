@@ -50,6 +50,14 @@ class CampaignResource(BaseModelResource):
 
         return bundle
 
+class CampaignTypeResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'campaign_type'
+
+    def get_object_list(self, request):
+        queryset = CampaignType.objects.all().values()
+        return queryset
+
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         queryset = Location.objects.all().values()
