@@ -5,7 +5,8 @@ var DateRangePicker = React.createClass({
   propTypes: {
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired,
+    text: React.PropTypes.string
   },
 
   getInitialState: function () {
@@ -36,7 +37,7 @@ var DateRangePicker = React.createClass({
     return (
         <div>
         {dateTimePicker(this.state.start, 'start')}
-            <div className='centered'>to</div>
+            <div className='centered'>{this.props.text}</div>
         {dateTimePicker(this.state.end, 'end')}
         </div>
     )
