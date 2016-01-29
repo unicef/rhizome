@@ -55,7 +55,45 @@ class CampaignResource(BaseModelResource):
         except KeyError:
             campaign_id = None
 
-        
+        try:
+            defaults = {
+                'name': post_data['name'],
+                'top_lvl_location': post_data['top_lvl_location'],
+                'top_lvl_indicator_tag': post_data['top_lvl_indicator_tag'],
+                'office': post_data['office'],
+                'campaign_type': post_data['campaign_type'],
+                'start_date': post_data['start_date'],
+                'end_date': post_data['end_date'],
+                'pct_complete': post_data['pct_complete']
+            }
+            
+        except Exception as error:
+            data = {
+                'error': 'Please provide ' + str(error) + ' for the campaign.',
+                'code': -1
+            }
+            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
+                                        status=500,
+                                        content_type='application/json'))
+
+
+        try:
+            ind, created = Campaign.objects.update_or_create(
+                id=campaign_id,
+                defaults=defaults
+            )
+        except Exception as error:
+            data = {
+                'error': error.message,
+                'code': -1
+            }
+            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
+                                        status=422,
+                                        content_type='application/json'))
+
+        bundle.obj = ind
+        bundle.data['id'] = ind.id
+
         return bundle
 
 class CampaignTypeResource(BaseModelResource):
