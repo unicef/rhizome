@@ -1,7 +1,6 @@
 import React from 'react'
 import Reflux from 'reflux'
-import moment from 'moment'
-import DatePicker from 'component/DatePicker.jsx'
+import DateRangePicker from 'component/DateTimePicker.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
@@ -64,20 +63,14 @@ var CampaignsPage = React.createClass ({
       </div>
     )
 
-    let startDate = moment(new Date()).toDate()
-    let endDate = moment(new Date()).toDate()
-
-    let startDatePicker = (
+    let dateRangePicker = (
       <div>
         <label htmlFor='start_date'>Start date: </label>
-        <DatePicker date={startDate} sendValue={null} />
-      </div>
-    )
-
-    let endDatePicker = (
-      <div>
-        <label htmlFor='start_date'>End date: </label>
-        <DatePicker date={endDate} sendValue={null} />
+        <DateRangePicker
+          start={this.state.campaign.startDate}
+          end={this.state.campaign.endDate}
+          sendValue={CampaignPageActions.updateCampaignRange}
+          text='End date: ' />
       </div>
     )
 
@@ -98,9 +91,7 @@ var CampaignsPage = React.createClass ({
             {topLevelLocationSet}
             {topLevelIndicatorTagSet}
             {campaignTypeSet}
-            {startDatePicker}
-            <br />
-            {endDatePicker}
+            {dateRangePicker}
             {submitButton}
           </form>
         </div>

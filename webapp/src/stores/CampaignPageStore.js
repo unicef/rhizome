@@ -14,7 +14,11 @@ let CampaignPageStore = Reflux.createStore({
   data: {
     offices: [],
     locations: [],
-    indicatorToTags: []
+    indicatorToTags: [],
+    campaign: {
+      startDate: '',
+      endDate: ''
+    }
   },
 
   getInitialState: function () {
@@ -35,6 +39,11 @@ let CampaignPageStore = Reflux.createStore({
       }), function (error) {
       self.trigger(self.data)
     })
+  },
+
+  onUpdateCampaignRange: function (key, value) {
+    this.data.campaign[key] = value
+    this.trigger(this.data)
   }
 })
 

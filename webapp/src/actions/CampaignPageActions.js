@@ -1,5 +1,6 @@
 import Reflux from 'reflux'
 
 export default Reflux.createActions([
-  'initData'
+  'initData',
+  'updateCampaignRange'
 ])
