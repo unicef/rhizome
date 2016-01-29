@@ -1,29 +1,24 @@
 import React from 'react'
+import Reflux from 'reflux'
 import moment from 'moment'
 import DatePicker from 'component/DatePicker.jsx'
 
-var CampaignsPage = React.createClass ({
-  render: function () {
-    let offices = [
-      {
-        id: 0,
-        name: 'Af'
-      },
-      {
-        id: 1,
-        name: 'Ni'
-      },
-      {
-        id: 2,
-        name: 'Pa'
-      }
-    ]
+import CampaignPageActions from 'actions/CampaignPageActions'
+import CampaignPageStore from 'stores/CampaignPageStore'
 
+var CampaignsPage = React.createClass ({
+  mixins: [Reflux.connect(CampaignPageStore)],
+
+  componentWillMount: function () {
+    CampaignPageActions.initData()
+  },
+
+  render: function () {
     let officeSet = (
       <div>
         <label htmlFor='office'>Office: </label>
         <select>
-          {offices.map(d => { return (<option value={d.id}>{d.name}</option>) })}
+          {this.state.offices.map(d => { return (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
     )
@@ -35,35 +30,20 @@ var CampaignsPage = React.createClass ({
       </div>
     )
 
-    let locations = [
-      {
-        id: 1,
-        name: 'brady'
-      }
-    ]
-
     let topLevelLocationSet = (
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
         <select>
-          {locations.map(d => { return (<option value={d.id}>{d.name}</option>) })}
+          {this.state.locations.map(d => { return (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
     )
-
-    let indicators = [
-      {
-        id: 1,
-        name: 'test indicator',
-        short_name: 'test'
-      }
-    ]
 
     let topLevelIndicatorTagSet = (
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
         <select>
-          {indicators.map(d => { return (<option value={d.id}>{d.short_name}</option>) })}
+          {this.state.indicatorToTags.map(d => { return (<option value={d.id}>{d.tag_name}</option>) })}
         </select>
       </div>
     )
@@ -110,7 +90,7 @@ var CampaignsPage = React.createClass ({
 
     return (
       <div className='row'>
-        <div className="large-6 large-offset-3 columns">
+        <div className="large-4 large-offset-4 columns">
           <h2>Manage Campaign Page</h2>
           <form>
             {officeSet}

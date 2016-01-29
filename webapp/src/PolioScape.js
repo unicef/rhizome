@@ -3,7 +3,7 @@ import React from 'react'
 import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
-import CampaignsPage from './ufadmin/CampaignsPage.jsx'
+import CampaignsPage from './ufadmin/CampaignsPage.js'
 import HomepageChartsView from 'view/HomepageChartsView.jsx'
 
 React.render(
