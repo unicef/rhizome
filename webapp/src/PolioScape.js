@@ -3,7 +3,7 @@ import React from 'react'
 import DashboardNav from 'component/DashboardNav.jsx'
 import DashboardList from 'view/dashboard-list/DashboardList.jsx'
 import AdminApp from './ufadmin'
-import CampaignsPage from './ufadmin/CampaignsPage.js'
+import CampaignsPage from './ufadmin/CampaignsPage.jsx'
 import HomepageChartsView from 'view/HomepageChartsView.jsx'
 
 React.render(
@@ -42,7 +42,7 @@ export default {
   UFAdmin: function (el) {
     AdminApp.render(document.getElementById('main'))
   },
-  CampaignsPage: function (id_start_date, id_end_date) {
-    CampaignsPage.render(id_start_date, id_end_date)
+  CampaignsPage: function (el) {
+    React.render(React.createElement(CampaignsPage), el)
   }
 }
