@@ -43,7 +43,11 @@ var CampaignsPage = React.createClass({
       <div>
         <label htmlFor='office'>Office: </label>
         <select value={this.state.postData.office_id} onChange={this._setOffice}>
-          {this.state.offices.map(d => { return (<option value={d.id}>{d.name}</option>) })}
+          {this.state.offices.map(d => {
+            return d.id === this.state.postData.office_id
+              ? (<option value={d.id} selected='selected'>{d.name}</option>)
+              : (<option value={d.id}>{d.name}</option>)
+          })}
         </select>
       </div>
     )
@@ -59,7 +63,11 @@ var CampaignsPage = React.createClass({
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
         <select value={this.state.postData.top_lvl_location_id} onChange={this._setLocation}>
-          {this.state.locations.map(d => { return (<option value={d.id}>{d.name}</option>) })}
+          {this.state.locations.map(d => {
+            return d.id === this.state.postData.top_lvl_location_id
+              ? (<option value={d.id} selected='selected'>{d.name}</option>)
+              : (<option value={d.id}>{d.name}</option>)
+          })}
         </select>
       </div>
     )
@@ -68,7 +76,11 @@ var CampaignsPage = React.createClass({
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
         <select value={this.state.postData.top_lvl_indicator_tag_id} onChange={this._setIndicatorTag}>
-          {this.state.indicatorToTags.map(d => { return (<option value={d.id}>{d.tag_name}</option>) })}
+          {this.state.indicatorToTags.map(d => {
+            return d.id === this.state.postData.top_lvl_indicator_tag_id
+              ? (<option value={d.id} selected='selected'>{d.tag_name}</option>)
+              : (<option value={d.id}>{d.tag_name}</option>)
+          })}
         </select>
       </div>
     )
@@ -77,7 +89,10 @@ var CampaignsPage = React.createClass({
       <div>
         <label htmlFor='campaign_type'>Campaign type: </label>
         <select value={this.state.postData.campaign_type_id} onChange={this._setCampaignType}>
-          {this.state.campaignTypes.map(d => { return (<option value={d.id}>{d.name}</option>) })}
+          {this.state.campaignTypes.map(d => {
+            return d.id === this.state.postData.campaign_type_id
+              ? (<option value={d.id} selected='selected'>{d.name}</option>)
+              : (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
     )
