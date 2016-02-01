@@ -29,7 +29,9 @@ let CampaignPageStore = Reflux.createStore({
       end_date: ''
     },
     displayMsg: false,
-    message: ''
+    message: '',
+    isLoaded: false,
+    saveSuccess: false
   },
 
   getInitialState: function () {
@@ -45,6 +47,7 @@ let CampaignPageStore = Reflux.createStore({
       api.campaign_type(),
       id ? api.campaign({'id__in': id}) : []
     ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
+      self.data.isLoaded = true
       var currentCampaign = campaign.objects ? campaign.objects[0] : ''
       self.data.offices = offices.objects
       self.data.locations = locations.objects
@@ -65,7 +68,7 @@ let CampaignPageStore = Reflux.createStore({
       }
       self.trigger(self.data)
     }), function (error) {
-      console.error(error)
+      self.data.isLoaded = true
       self.trigger(self.data)
     })
   },
@@ -74,11 +77,13 @@ let CampaignPageStore = Reflux.createStore({
     Promise.all([api.post_campaign(postData)]).then(_.spread(function (response) {
       self.data.campaignName = response.objects.name
       self.data.displayMsg = true
-      self.data.message = 'Campaign is successfully created.'
+      self.data.saveSuccess = true
+      self.data.message = postData.id === -1 ? 'Campaign is successfully created.' : 'Campaign is updated successfully.'
       self.trigger(self.data)
     }), function (error) {
       self.data.campaignName = postData.name
       self.data.displayMsg = true
+      self.data.saveSuccess = false
       self.data.message = error.msg
       self.trigger(self.data)
     })

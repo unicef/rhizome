@@ -41,11 +41,22 @@ var CampaignsPage = React.createClass({
   _save: function (e) {
     e.preventDefault()
     var today = new Date().toJSON().slice(0, 10)
+    this.state.postData.name = this.refs.campaignName.getDOMNode().value
     this.state.postData.start_date = this.state.campaign.start ? this.state.campaign.start : today
     this.state.postData.end_date = this.state.campaign.end ? this.state.campaign.end : today
     CampaignPageActions.saveCampaign(this.state.postData)
   },
   render: function () {
+    if (!this.state.isLoaded) {
+      return (<div className='row'>
+          <div className='large-6 columns'>
+            <h2>Manage Campaign Page</h2>
+
+            <h2>Loading...</h2>
+          </div>
+        </div>)
+    }
+
     let officeSet = (
       <div>
         <label htmlFor='office'>Office: </label>
@@ -62,7 +73,7 @@ var CampaignsPage = React.createClass({
     let nameSet = (
       <div>
         <label htmlFor='name'>Name: </label>
-        <input type='text' defaultValue={this.state.postData.name} onBlur={this._setCampaignName} />
+        <input type='text' defaultValue={this.state.postData.name} onBlur={this._setCampaignName} ref='campaignName'/>
       </div>
     )
 
