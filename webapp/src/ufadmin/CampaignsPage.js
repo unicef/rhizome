@@ -1,40 +1,158 @@
 import React from 'react'
+import Reflux from 'reflux'
 import moment from 'moment'
-import DatePicker from 'component/DatePicker.jsx'
 
-var CampaignsPage = (function () {
-  return {
-    render: function (start_date_dom_id, end_date_dom_id) {
-      var createControl = function (id) {
-        var original_dom = document.getElementById(id)
-        original_dom.type = 'hidden'
+import DateRangePicker from 'component/DateTimePicker.jsx'
+import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
 
-        var parent_dom = original_dom.parentNode
-        var input_dom = document.createElement('div')
-        input_dom.id = id + '_date_picker'
-        parent_dom.appendChild(input_dom)
-        input_dom.className = 'admin_campaigns_date_picker'
+import CampaignPageActions from 'actions/CampaignPageActions'
+import CampaignPageStore from 'stores/CampaignPageStore'
 
-        var sendValue = function (date, dateStr) {
-          original_dom.value = dateStr
-        }
+var CampaignsPage = React.createClass({
+  mixins: [Reflux.connect(CampaignPageStore)],
 
-        var date_value = original_dom.value
-        var set_date_value = null
-        if (date_value !== null && date_value !== '') set_date_value = moment(date_value).toDate()
+  propTypes: {
+    params: React.PropTypes.object
+  },
 
-        var datePickerProps = {
-          date: set_date_value,
-          sendValue: sendValue
-        }
-
-        React.render(React.createElement(DatePicker, datePickerProps), input_dom)
-      }
-
-      createControl(start_date_dom_id)
-      createControl(end_date_dom_id)
+  getInitialState: function () {
+    return {
+      campaignId: null
     }
+  },
+
+  componentWillMount: function () {
+    var id = this.props.params.id
+    this.setState({'campaignId': id})
+    CampaignPageActions.initialize(id)
+  },
+  _setOffice: function (event) {
+    CampaignPageActions.setOffice(event.target.value)
+  },
+  _setCampaignName: function (event) {
+    CampaignPageActions.setCampaignName(event.target.value)
+  },
+  _setIndicatorTag: function (tagId) {
+    CampaignPageActions.setIndicatorTag(tagId)
+  },
+  _setCampaignType: function (event) {
+    CampaignPageActions.setCampaignType(event.target.value)
+  },
+  _save: function (e) {
+    e.preventDefault()
+    this.state.postData.name = this.refs.campaignName.getDOMNode().value
+    this.state.postData.start_date = moment(this.state.campaign.start).format('YYYY-M-D')
+    this.state.postData.end_date = moment(this.state.campaign.end).format('YYYY-M-D')
+    CampaignPageActions.saveCampaign(this.state.postData)
+  },
+  render: function () {
+    if (!this.state.isLoaded) {
+      return (<div className='row'>
+          <div className='large-6 columns'>
+            <h2>Manage Campaign Page</h2>
+
+            <h2>Loading...</h2>
+          </div>
+        </div>)
+    }
+
+    let officeSet = (
+      <div>
+        <label htmlFor='office'>Office: </label>
+        <select value={this.state.postData.office_id} onChange={this._setOffice}>
+          {this.state.offices.map(d => {
+            return d.id === this.state.postData.office_id
+              ? (<option value={d.id} selected>{d.name}</option>)
+              : (<option value={d.id}>{d.name}</option>)
+          })}
+        </select>
+      </div>
+    )
+
+    let nameSet = (
+      <div>
+        <label htmlFor='name'>Name: </label>
+        <input type='text' defaultValue={this.state.postData.name} onBlur={this._setCampaignName} ref='campaignName'/>
+      </div>
+    )
+
+    let topLevelLocationSet = (
+      <div>
+        <label htmlFor='top_lvl_location'>Top level location: </label>
+        <LocationDropdownMenu
+             locations={this.state.locations}
+             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
+             sendValue={CampaignPageActions.setLocation} />
+      </div>
+    )
+
+    let topLevelIndicatorTagSet = (
+      <div>
+        <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
+        <IndicatorTagDropdownMenu
+          tag_tree={this.state.indicatorToTags}
+          text={this.state.tagSelected[0] && this.state.tagSelected[0].tag_name || 'Select Tag'}
+          sendValue={this._setIndicatorTag} />
+      </div>
+    )
+
+    let campaignTypeSet = (
+      <div>
+        <label htmlFor='campaign_type'>Campaign type: </label>
+        <select value={this.state.postData.campaign_type_id} onChange={this._setCampaignType}>
+          {this.state.campaignTypes.map(d => {
+            return d.id === this.state.postData.campaign_type_id
+              ? (<option value={d.id} selected>{d.name}</option>)
+              : (<option value={d.id}>{d.name}</option>) })}
+        </select>
+      </div>
+    )
+
+    let dateRangePicker = (
+      <div>
+        <label htmlFor='start_date'>Start date: </label>
+        <DateRangePicker
+          start={this.state.campaign.start}
+          end={this.state.campaign.end}
+          sendValue={CampaignPageActions.updateCampaignRange}
+          text='End date: ' />
+      </div>
+    )
+
+    let submitButton = (
+      <div>
+        <br />
+        <button className='tiny' onClick={this._save}>Save</button>
+      </div>
+    )
+
+    let message = this.state.displayMsg
+      ? (
+        <div className={`message${this.state.saveSuccess ? ' success' : ' error'}`}>
+          {this.state.message}
+        </div>
+      )
+      : null
+
+    return (
+      <div className='row'>
+        <div className='large-6 columns'>
+          <h2>Manage Campaign Page</h2>
+          {message}
+          <form>
+            {officeSet}
+            {nameSet}
+            {topLevelLocationSet}
+            {topLevelIndicatorTagSet}
+            {campaignTypeSet}
+            {dateRangePicker}
+            {submitButton}
+          </form>
+        </div>
+      </div>
+    )
   }
-})()
+})
 
 export default CampaignsPage

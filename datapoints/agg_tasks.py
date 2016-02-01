@@ -6,6 +6,7 @@ from pandas import notnull
 
 from datapoints.models import *
 from datapoints.cache_meta import IndicatorCache
+from source_data.models import SourceSubmission
 
 class AggRefresh(object):
     '''
@@ -25,7 +26,7 @@ class AggRefresh(object):
     '''
 
 
-    def __init__(self,campaign_id):
+    def __init__(self,campaign_id = None):
         '''
         If there is a job running, return to with a status code of
         "cache_running".
@@ -34,6 +35,10 @@ class AggRefresh(object):
         other wise the datapoint IDs to process are handled in the set_up()
         method.
         '''
+
+        if not campaign_id:
+            campaign_id_list = self.get_campaign_ids_to_process()
+            campaign_id = campaign_id_list[0]
 
         self.cache_job = None
 
@@ -79,13 +84,34 @@ class AggRefresh(object):
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
             self.cache_job.save()
-            return 'FAIL'
+
+            return err
 
         ic = IndicatorCache()
         ic.main()
 
         return 'SUCCESS'
 
+    def get_campaign_ids_to_process(self):
+
+        try:
+            one_dp_that_needs_agg = DataPoint.objects\
+                .filter(cache_job_id = -1, value__gte = 0)[0]
+        except IndexError:
+            return
+
+        location_id = one_dp_that_needs_agg.location_id
+        data_date = one_dp_that_needs_agg.data_date
+
+        date_no_datetime = data_date.date()
+        campaigns_in_date_range = Campaign.objects.filter(
+            start_date__lte = date_no_datetime, end_date__gte = data_date)
+
+        parent_location_list = LocationTree.objects\
+            .filter(location_id = location_id)\
+            .values_list('parent_location_id',flat=True)
+
+        return [c.id for c in campaigns_in_date_range]
 
     def agg_datapoints(self):
         '''
@@ -146,13 +172,19 @@ class AggRefresh(object):
 
         ## now add the raw data to the dict ( overriding agregate if exists )
         for ix, dp in no_nan_dp_df.iterrows():
-            ## dont override null value from parent if sum exists for children
+
             if dp.value and dp.value != 'NaN' :
-                tuple_dict[(dp.location_id, dp.indicator_id)] \
-                    = dp.value
+                ## dont override null value from parent if sum exists for children
+                tuple_dict[(dp.location_id, dp.indicator_id)] = dp.value
+
+            if dp.value == 0:
+                # pandas treats NaN as zero it seems so do this explicity
+                tuple_dict[(dp.location_id, dp.indicator_id)] = dp.value
+
 
         ## now prep the batch for the bulk insert ##
         for dp_unique_key, value in tuple_dict.iteritems():
+
             dp_dict =  dict(zip(('location_id','indicator_id')\
                 ,dp_unique_key))
 
@@ -255,7 +287,7 @@ class AggRefresh(object):
         '''
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
-            adp_tuple = (adp.location_id, adp.indicator_id, adp.campaign_id)
+            adp_tuple = (adp.location_id, adp.indicator_id)
             self.dwc_tuple_dict[adp_tuple] = adp.value
 
     def sum_of_parts(self):

@@ -25,7 +25,8 @@ var defaults = {
   y0: _.partial(_.get, _, 'y0', 0),
   yFormat: String,
   yScale: d3.scale.linear,
-  widthRatio: 0.15
+  widthRatio: 0.15,
+  fontSize: 11
 }
 
 function processData (originalData, options) {
@@ -310,6 +311,7 @@ function defaultColumnChart (data, options, svg, h, w, topLegendHeight) {
     svg.select('.annotation').selectAll('.series.label')
       .data(annotations)
       .call(seriesLabel.align(true))
+      .style('text-anchor', d => { return options.fontSize * d.text.length / 3 > d.x ? 'start' : 'end' })
 
     var axisLabel = svg.select('.annotation')
       .selectAll('.axis.label')

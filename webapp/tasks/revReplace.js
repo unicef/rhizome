@@ -10,9 +10,7 @@ import handlebars from 'gulp-compile-handlebars'
 const TASK_NAME = 'revReplace'
 
 function revCompile (config) {
-  var manifest = (process.env.NODE_ENV === 'production')
-    ? JSON.parse(fs.readFileSync(config.proManifest, 'utf8'))
-    : JSON.parse(fs.readFileSync(config.devManifest, 'utf8'))
+  var manifestFile = JSON.parse(fs.readFileSync(config.manifestFile, 'utf8'))
 
   var handlebarOpts = {
     helpers: {
@@ -21,7 +19,7 @@ function revCompile (config) {
   }
 
   return gulp.src(config.templates + '/base.hbs')
-        .pipe(handlebars(manifest, handlebarOpts))
+        .pipe(handlebars(manifestFile, handlebarOpts))
         .pipe(rename('base.html'))
         .pipe(gulp.dest(config.templates))
 }

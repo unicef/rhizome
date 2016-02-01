@@ -70,7 +70,6 @@ var Dashboard = React.createClass({
     if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
       return
     }
-
     let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
     let title = [
       nextState.dashboard.title,
@@ -188,11 +187,16 @@ var Dashboard = React.createClass({
     }
 
     let location = _.get(params, 'location', this.state.location.name)
-    let campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
     if (_.isNumber(location)) {
       location = _.find(this.state.locations, r => r.id === location).name
     }
-    page('/datapoints/' + [slug, location, campaign].join('/'))
+
+    let campaign_dates = _.get(params, 'campaign', moment(this.state.campaigns[0].start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+    if (typeof this.state.campaign !== 'undefined') {
+      campaign_dates = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
+    }
+
+    page('/datapoints/' + [slug, location, campaign_dates].join('/'))
   },
 
   _showDefault (ctx) {
@@ -230,7 +234,7 @@ var Dashboard = React.createClass({
   },
 
   render () {
-    if (!(this.state.loaded && this.state.dashboard)) {
+    if (!(this.state.dashboard)) {
       let style = {
         fontSize: '2rem',
         zIndex: 9999
@@ -249,6 +253,13 @@ var Dashboard = React.createClass({
 
     let dashboardDef = this.state.dashboard
     let dashboardName = _.get(dashboardDef, 'title', '')
+
+    let campaigns = _(this.state.campaigns)
+
+    let campaignExists = typeof campaign !== 'undefined'
+    if (!campaignExists || (campaign.office_id !== location.office_id)) {
+      campaign = campaigns.first()
+    };
 
     let indicators
     if (this.indicators) {
@@ -293,19 +304,19 @@ var Dashboard = React.createClass({
       dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
 
-    let campaigns = _(this.state.campaigns)
-      .map(campaign => {
-        return _.assign({}, campaign, {
-          slug: moment(campaign.start_date).format('MMMM YYYY')
-        })
+    campaigns = campaigns.map(campaign => {
+      return _.assign({}, campaign, {
+        slug: moment(campaign.start_date).format('MMMM YYYY')
       })
-      .sortBy('start_date')
-      .reverse()
-      .value()
+    })
+    .sortBy('start_date')
+    .reverse()
+    .value()
 
-    if (campaign.office_id !== location.office_id) {
-      campaign = campaigns[0]
-    }
+    // if (campaign.office_id  !== location.office_id) {
+    //   console.log('office id issue');
+    //   campaign = campaigns[0]
+    // }
 
     // let edit
     // if (dashboardDef.owned_by_current_user) {

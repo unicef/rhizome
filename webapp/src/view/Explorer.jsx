@@ -66,6 +66,7 @@ let Explorer = React.createClass({
           start={this.state.campaign.start}
           end={this.state.campaign.end}
           sendValue={ExplorerActions.updateDateRangePicker}
+          text='to'
         />
       </label>
     )
@@ -79,7 +80,6 @@ let Explorer = React.createClass({
           sendValue={ExplorerActions.addLocations}
           style='databrowser__button' />
         <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
-        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
       </div>
     )
 

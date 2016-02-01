@@ -384,7 +384,7 @@ table {
   background-color: white;
   position: relative; /* could be absolute or relative */
   padding-top: $defaultHeaderHeight; /* height of header */
-
+  width: 100%;
   .fixed-table-container-inner {
     overflow-x: hidden;
     overflow-y: auto;
@@ -392,6 +392,15 @@ table {
     border: 1px solid $borderColor;
     border-top: none;
     border-left: none;
+    border-right: none;
+    .entry-table-row-header {
+      div {
+        width: 10px;
+        text-align: center;
+        margin: auto;
+        display: inline-block;
+      }
+    }
   }
 
   .header-background {

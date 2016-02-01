@@ -1,14 +1,14 @@
 import gulp from 'gulp'
-import path from 'path'
-import _ from 'lodash'
 
 const jsDestFolder = `${gulp.config('base.dist')}/static`
+var proManifest =  jsDestFolder + '/rev-manifest.json'
+var devManifest = './rev-manifest.json'
+var manifestFile = (process.env.NODE_ENV === 'production') ? proManifest : devManifest
 
 export default {
   files: [
     {
-      'proManifest': jsDestFolder + '/rev-manifest.json',
-      'devManifest': './rev-manifest.json',
+      'manifestFile': manifestFile,
       'templates': `${gulp.config('templates')}`,
       'entry': jsDestFolder,
       'dest': jsDestFolder

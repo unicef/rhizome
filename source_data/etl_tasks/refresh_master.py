@@ -112,6 +112,9 @@ class MasterRefresh(object):
 
     def main(self):
 
+        if len(self.ss_ids_to_process) == 0:
+            return
+
         self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
@@ -362,9 +365,13 @@ class MasterRefresh(object):
         Big point of future controversy... what do we do with zero values?  In order to
         keep the size of the database manageable, we only accept non zero values.
         '''
+        str_lookup = {'yes':1,'no':0}
+
 
         if val is None:
             return None
+
+        ## clean!  i am on a deadline rn :-/  ##
 
         locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
 
@@ -373,6 +380,10 @@ class MasterRefresh(object):
         except AttributeError:
             cleaned_val = float(val)
         except ValueError:
-            raise ValueError(' can not convert to float')
+
+            try:
+                cleaned_val = str_lookup[val.lower()]
+            except KeyError:
+                raise ValueError('Bad Value!')
 
         return cleaned_val

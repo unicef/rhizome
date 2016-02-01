@@ -39,11 +39,26 @@ function wrapWithPluginError (originalError) {
   gutil.log(new gutil.PluginError(TASK_NAME, message))
 }
 
-function bundle (config) {
+function bundleOnce (config) {
   return config.bundler.bundle()
     .on('error', err => {
       wrapWithPluginError(err)
       process.exit(1)
+    })
+    .pipe(source(config.entry))
+    .pipe(rename(obj => {
+      obj.dirname = ''
+      obj.basename = config.options.basename || obj.basename
+      obj.extname = '.js'
+    }))
+    .pipe(whenInProductionDoUglify())
+    .pipe(gulp.dest(config.dest))
+}
+
+function bundleWatch (config) {
+  return config.bundler.bundle()
+    .on('error', err => {
+      wrapWithPluginError(err)
     })
     .pipe(source(config.entry))
     .pipe(rename(obj => {
@@ -74,7 +89,7 @@ function browserifyOnce (config = {}) {
         }
       })
   })
-  return bundle(config)
+  return bundleOnce(config)
 }
 
 function browserifyTask () {
@@ -82,7 +97,7 @@ function browserifyTask () {
     config.bundler = browserify(_.merge({}, config.options, watchify.args))
     config.bundler = watchify(config.bundler)
 
-    config.bundler.on('update', bundle.bind(null, config))
+    config.bundler.on('update', bundleWatch.bind(null, config))
     config.bundler.on('time', time => {
       gutil.log(gutil.colors.cyan('watchify'),
         're-bundled', 'after', gutil.colors.magenta(time > 1000 ? time / 1000 + ' s' : time + ' ms'))

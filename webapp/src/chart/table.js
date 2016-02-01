@@ -17,16 +17,11 @@ function _sortValue (s, sortCol) {
 var DEFAULTS = {
   cellSize: 16,
   column: _.property('indicator.short_name'),
+  sourceColumn: _.property('short_name'),
   fontSize: 12,
   format: formatUtil.general,
   headerText: _.property('short_name'),
   headers: [],
-  margin: {
-    top: 120,
-    right: 120,
-    bottom: 0,
-    left: 180
-  },
   onClick: null,
   onColumnHeadOver: null,
   onColumnHeadOut: null,
@@ -34,10 +29,10 @@ var DEFAULTS = {
   onMouseOut: null,
   onRowClick: null,
   seriesName: _.property('name'),
-  seriesParentName: _.property('parentName'),
   sortValue: _sortValue,
   values: _.property('values'),
-  value: _.property('value')
+  value: _.property('value'),
+  sortDirection: 1
 }
 
 function TableChart () {}
@@ -66,50 +61,70 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    // console.log('WHAT IS META IN TABLE.js', meta)
     options = _.extend(this._options, options)
     var margin = options.margin
-    margin.left = 220 // fix..
-    margin.bottom = 140 // fix..
-    margin.top = 40 // fix..
 
     var self = this
-    var chartData = data
-
+    var parentLocationMap = options.parentLocationMap
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(chartData.length * options.cellSize, 0)
+    var h = Math.max(options.defaultSortOrder.length * options.cellSize, 0)
+    var z = 160 //  extra margin space needed to add the "z" (parent) axis"
 
+    // hacky way to sclae the view box.. this shoudl be done by taking into
+    // account the user's screen size... needs some time to get 100% right.. //
+    var viewBoxHeightScale = 1 + (options.headers.length - 8) / 10
+    if (viewBoxHeightScale < 1) {
+      viewBoxHeightScale = 1
+    }
+    var viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     var svg = this._svg
       .attr({
-        'viewBox': '0 0 ' + (w + margin.left + margin.right) + ' ' + (h + margin.top + margin.bottom),
+        'viewBox': viewBox,
         'width': (w + margin.left + margin.right),
         'height': (h + margin.top + margin.bottom)
       })
-      .datum(chartData)
+      .datum(data)
 
     var xScale = d3.scale.ordinal()
         .domain(_.map(options.headers, options.headerText))
         .rangeBands([0, w], 0.1)
 
     var x = _.flow(options.column, xScale)
+    var sourceFlow = _.flow(options.sourceColumn, xScale)
 
-    var sortCol = this.sortCol
-    var sortValue = _.partial(options.sortValue.bind(this), _, sortCol)
+    // if there is a sortCol set, order the data that way. //
+    if (this.sortCol) {
+      let sortValue = _.partial(options.sortValue.bind(this), _, this.sortCol)
+      var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
+    } else {
+      // if not, show default.  This also applies to the third click of a header
+      domain = options.defaultSortOrder
+      this.sortDirection = 1
+    }
+
+    if (this.sortDirection === -1) {
+      domain = domain.reverse()
+    }
+
+    // For empty data points i need to add the x axis domain items explicitly //
+    // otherwise the domain will be less ( and different the ) the yScale //
+    // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
+    if (domain.length < options.defaultSortOrder.length) {
+      var diff = options.defaultSortOrder.filter(function (x) {
+        return domain.indexOf(x) < 0
+      })
+      domain = domain.concat(diff)
+    }
 
     var yScale = d3.scale.ordinal()
-      .domain(_(chartData).sortBy(sortValue, this).map(options.seriesName).value())
+      .domain(domain)
       .rangeBands([0, h], 0.1)
-
-    // new to .js -> this should be a one liner -)
-    // var locationLookup = {}
-    // chartData.forEach(function (chartRow) {
-    //   locationLookup[chartRow.name] = chartRow.parentName
-    // })
 
     var y = _.flow(options.seriesName, yScale)
 
     var transform = function (d, i) {
-      return 'translate(0, ' + y(d) + ')'
+      var yVal = y(d) + 10
+      return 'translate(' + z + ' , ' + yVal + ')'
     }
 
     // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
@@ -118,6 +133,10 @@ _.extend(TableChart.prototype, {
       .mapValues(ind => {
         var extents = [ ind.low_bound, ind.high_bound ]
         var names = ['bad', 'ok', 'good']
+
+        if (ind.low_bound > ind.high_bound) {
+          names = ['good', 'ok', 'bad']
+        }
 
         return d3.scale.threshold()
           .domain(extents)
@@ -138,7 +157,7 @@ _.extend(TableChart.prototype, {
 
     g.on('mouseout', function () { self._onRowOut.apply(self) })
 
-    var row = g.selectAll('.row').data(chartData)
+    var row = g.selectAll('.row').data(data)
 
     row.enter().append('g')
         .attr({
@@ -190,13 +209,14 @@ _.extend(TableChart.prototype, {
     cg.append('text')
           .attr({
             'height': yScale.rangeBand(),
-            'x': function (d) { return x(d) + 3 * options.cellSize / 2 },
+            'x': function (d) { return x(d) + xScale.rangeBand() / 2 },
             'y': options.cellSize / 2,
             'width': xScale.rangeBand(),
             'dominant-baseline': 'central',
             'text-anchor': 'middle',
             'font-weight': 'bold'
           })
+          .style({'font-size': options.cellFontSize})
           .text(function (d) { return d.displayValue })
           .transition()
           .duration(500)
@@ -214,35 +234,9 @@ _.extend(TableChart.prototype, {
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
 
-    // Begin X Axis //
-    function wrap (text, width) {
-      text.each(function () {
-        var text = d3.select(this)
-        var words = text.text().split(/\s+/).reverse()
-        var line = []
-        var lineNumber = 0
-        var lineHeight = 1.1 // ems
-        var y = text.attr('y') - 10
-        var dy = parseFloat(text.attr('dy'))
-        var tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
-        // while (word = words.pop()) {
-        var i = 0
-        for (i = 0; i < words.length; i += 1) {
-          var word = words[i]
-          line.push(word)
-          tspan.text(line.join(' '))
-          if (tspan.node().getComputedTextLength() > width) {
-            line.pop()
-            tspan.text(line.join(' '))
-            line = [word]
-            tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
-          }
-        }
-      })
-    }
-
     svg.select('.x.axis')
       .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',0)'})
       .call(d3.svg.axis()
         .scale(xScale)
         .orient('top')
@@ -267,17 +261,16 @@ _.extend(TableChart.prototype, {
     //     options.onColumnHeadOut(d, i, this)
     //   })
 
-    svg.selectAll('.x.axis text').call(wrap, xScale.rangeBand())
+    svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
 
     // the z axis shows the parent location//
     svg.select('.z.axis')
       .transition().duration(500)
-      .attr('transform', 'translate(-140, 0)')
+      .attr({'transform': 'translate(0,10)'})
       .call(d3.svg.axis()
         .scale(yScale)
         .tickFormat(function (d) {
-          // return locationLookup[d]
-          return 'Afghanistan'
+          return parentLocationMap[d].parent_location__name
         })
         .orient('left')
         .outerTickSize(0))
@@ -290,6 +283,7 @@ _.extend(TableChart.prototype, {
 
     svg.select('.y.axis')
       .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',10)'})
       .call(d3.svg.axis()
         .scale(yScale)
         .orient('left')
@@ -303,8 +297,8 @@ _.extend(TableChart.prototype, {
 
     // BEGIN SOURCE FOOTER //
 
-    var singleRowIndicators = chartData[0].values
-    var sourceFooter = svg.select('.source-footer')
+    var singleRowIndicators = options.headers // chartData[0].values
+    var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
     var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
     var sourceG = sourceCell.enter().append('g')
 
@@ -312,13 +306,13 @@ _.extend(TableChart.prototype, {
         .attr({
           'class': 'cell',
           'height': yScale.rangeBand() * 1.5,
-          'transform': 'translate(0,' + h + ')',
-          'x': x,
+          'transform': 'translate(' + z + ',' + h + ')',
+          'x': sourceFlow,
           'width': xScale.rangeBand()
         })
         .style({
           'opacity': 0,
-          'fill': '#CCFFFF'
+          'fill': '#F1F1F1'
         })
         .transition()
         .duration(500)
@@ -327,15 +321,15 @@ _.extend(TableChart.prototype, {
     sourceG.append('text')
             .attr({
               'height': yScale.rangeBand(),
-              'transform': 'translate(0,' + h + ')',
-              'x': function (d) { return x(d) + 45 },
+              'transform': 'translate(' + z + ',' + h + ')',
+              'x': function (d) { return sourceFlow(d) + 45 },
               'y': options.cellSize / 2,
               'width': xScale.rangeBand(),
               'dominant-baseline': 'central',
               'text-anchor': 'middle',
               'font-weight': 'bold'
             })
-            .text(function (d) { return d.indicator.source_name })
+            .text(function (d) { return d.source_name })
               .transition()
               .duration(500)
 
@@ -356,14 +350,37 @@ _.extend(TableChart.prototype, {
     }
   },
 
+  _wrap: function (text, width) {
+    text.each(function () {
+      var text = d3.select(this)
+      var words = text.text().split(/\s+/)
+      var line = []
+      var lineNumber = 0
+      var lineHeight = 1.1 // ems
+      var y = text.attr('y') - 10
+      var dy = parseFloat(text.attr('dy'))
+      var tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
+      var i = 0
+      for (i = 0; i < words.length; i += 1) {
+        var word = words[i]
+        line.push(word)
+        tspan.text(line.join(' '))
+        if (tspan.node().getComputedTextLength() > width) {
+          line.pop()
+          tspan.text(line.join(' '))
+          line = [word]
+          tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
+        }
+      }
+    })
+  },
+
   _onRowOver: function (d) {
     var seriesName = this._options.seriesName
-    var target = seriesName(d)
-
     this._svg.selectAll('.row')
       .transition().duration(300)
       .style('opacity', function (e) {
-        return (seriesName(e) === target) ? 1 : 0.4
+        return (seriesName(e) === d[0].name) ? 1 : 0.4
       })
   },
 
@@ -374,8 +391,18 @@ _.extend(TableChart.prototype, {
   },
 
   _setSort: function (d) {
-    this.sortCol = (d === this.sortCol) ? null : d
-    this.update(this._svg.selectAll('.row').chartData())
+    // Fist click, order ascending, Second order descending, third order default
+    if (d === this.sortCol && this.sortDirection === -1) {
+      this.sortCol = null
+    } else if (d === this.sortCol && this.sortDirection === 1) {
+      this.sortCol = d
+      this.sortDirection = -1
+    } else {
+      this.sortCol = d
+      this.sortDirection = 1
+    }
+
+    this.update(this._svg.selectAll('.row').data())
   }
 })
 

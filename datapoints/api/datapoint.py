@@ -116,7 +116,7 @@ class DataPointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        location_ids = get_locations_to_return_from_url(request)
+        self.location_ids = get_locations_to_return_from_url(request)
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
@@ -124,7 +124,7 @@ class DataPointResource(BaseNonModelResource):
         dwc_df = DataFrame(
             list(DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
-                location__in=location_ids,
+                location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
                 .values_list(*df_columns)), columns=df_columns)
 
@@ -177,6 +177,19 @@ class DataPointResource(BaseNonModelResource):
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
+
+        try:
+            chart_type = request.GET['chart_type']
+        except KeyError:
+            chart_type = None
+
+        if chart_type == 'TableChart':
+            p_loc_qs = Location.objects\
+                .filter(id__in = self.location_ids)\
+                .values('name','parent_location__name')
+
+            data['meta']['parent_location_list'] = [l for l in p_loc_qs]
+            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
         data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 

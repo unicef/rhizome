@@ -5,12 +5,18 @@
 1. [Node][] >= 0.10.0
 2. VirtualBox
 
-## Building technical documentation
+## Building back-end technical documentation
 
 1. cd docs
 2. make clean
 3. make html
 4. Docs files now available here: docs/_build/html
+
+## Building front-end technical documentation
+1. cd webapp
+2. gulp doc
+3.  Docs files now available here: docs/_build/front-end/index.html
+
 
 ## Coding Standards
 

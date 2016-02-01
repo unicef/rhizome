@@ -44,6 +44,51 @@ class CampaignResource(BaseModelResource):
         except:
             return qs.values()
 
+    def obj_create(self, bundle, **kwargs):
+
+        post_data = bundle.data
+
+        try:
+            campaign_id = int(post_data['id'])
+            if campaign_id == -1:
+                campaign_id = None
+        except KeyError:
+            campaign_id = None
+
+        try:
+            defaults = {
+                'name': str(post_data['name']),
+                'top_lvl_location_id': post_data['top_lvl_location_id'],
+                'top_lvl_indicator_tag_id': post_data['top_lvl_indicator_tag_id'],
+                'office_id': post_data['office_id'],
+                'campaign_type_id': post_data['campaign_type_id'],
+                'start_date': datetime.strptime(post_data['start_date'], '%Y-%m-%d'),
+                'end_date':  datetime.strptime(post_data['end_date'], '%Y-%m-%d'),
+                'pct_complete': post_data['pct_complete']
+            }
+        except Exception as error:
+            raise DataPointsException('Please provide "{0}" for the campaign.'.format(error))
+
+        try:
+            campaign, created = Campaign.objects.update_or_create(
+                id=campaign_id,
+                defaults=defaults
+            )
+        except Exception as error:
+            raise DataPointsException(error)
+
+        bundle.obj = campaign
+        bundle.data['id'] = campaign.id
+
+        return bundle
+
+class CampaignTypeResource(BaseModelResource):
+    class Meta(BaseModelResource.Meta):
+        resource_name = 'campaign_type'
+
+    def get_object_list(self, request):
+        queryset = CampaignType.objects.all().values()
+        return queryset
 
 class LocationResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -55,7 +100,9 @@ class LocationResource(BaseModelResource):
         if self.top_lvl_location_id == 4721:
             return Location.objects.exclude(id = 4721).order_by('location_type_id').values()
 
-        location_ids = get_locations_to_return_from_url(request)
+        location_ids = list(get_locations_to_return_from_url(request))
+        location_ids.append(self.top_lvl_location_id)
+        # Add code to append afhganistan top the list of its own children
         qs = Location.objects.filter(id__in=location_ids).values()
 
         return qs
@@ -130,7 +177,6 @@ class IndicatorResource(BaseModelResource):
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
                                         status=500,
                                         content_type='application/json'))
-
 
         try:
             ind, created = Indicator.objects.update_or_create(
@@ -761,8 +807,8 @@ class AggRefreshResource(BaseModelResource):
 
        This needs cleanup.
 
-       cache_jobo_id = -1 --> NEEDS PROCESSING
-       cache_jobo_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
+       cache_job_id = -1 --> NEEDS PROCESSING
+       cache_job_id = -2 --> NEEDS CAMPAIGN ASSOCIATED
        '''
 
        try:
@@ -770,36 +816,8 @@ class AggRefreshResource(BaseModelResource):
            ar = AggRefresh(campaign_id)
            return Campaign.objects.filter(id=campaign_id).values()
        except KeyError:
-           campsign_id = None
-
-       try:
-           one_dp_that_needs_agg = DataPoint.objects\
-               .filter(cache_job_id = -1)[0]
-       except IndexError:
+           ar = AggRefresh()
            return Office.objects.all().values()
-
-       location_id = one_dp_that_needs_agg.location_id
-       data_date = one_dp_that_needs_agg.data_date
-
-       date_no_datetime = data_date.date()
-       campaigns_in_date_range = Campaign.objects.filter(
-           start_date__lte = date_no_datetime, end_date__gte = data_date)
-
-       parent_location_list = LocationTree.objects\
-           .filter(location_id = location_id)\
-           .values_list('parent_location_id',flat=True)
-
-       for c in campaigns_in_date_range:
-           if c.top_lvl_location_id in parent_location_list:
-               campaign_id = c.id
-               ar =  AggRefresh(c.id)
-
-               return Campaign.objects.filter(id=campaign_id).values()
-
-       ## if code reaches here that means there is noting to process ##
-       return Office.objects.all().values()
-
-
 
 
 class RefreshMasterResource(BaseModelResource):
@@ -811,6 +829,8 @@ class RefreshMasterResource(BaseModelResource):
 
         mr = MasterRefresh(request.user.id, document_id)
         mr.main()
+
+        ar = AggRefresh()
 
         doc_detail, created = DocumentDetail.objects.update_or_create(
             document_id=document_id,

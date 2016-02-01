@@ -2,7 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 import api from 'data/api'
-import path from 'vue/src/parsers/path'
+import path from 'util/parsers/path'
 import util from 'util/data'
 
 function melt (data, indicatorArray) {
@@ -50,7 +50,7 @@ function value (datapoint) {
   return null
 }
 
-var tooltipDiv = document.createElement('div') // Vue needs a el to bind to to hold tooltips outside the svg, seems like the least messy solution
+var tooltipDiv = document.createElement('div')
 document.body.appendChild(tooltipDiv)
 
 function _columnData (data, groups, groupBy) {
@@ -464,6 +464,7 @@ export default {
   processTableChart: function (dataPromise, locations, indicators, chartDef, layout) {
     let indicators_map = _.indexBy(indicators, 'id')
     let locations_map = _.indexBy(locations, 'id')
+
     return dataPromise.then(function (data) {
       if (!data || data.length === 0) {
         return { options: null, data: null }
@@ -474,12 +475,15 @@ export default {
         cellSize: 36,
         fontSize: 14,
         margin: {
-          top: 120,
-          right: 120,
-          bottom: 0,
-          left: 120
+          top: 40,
+          right: 40,
+          bottom: 40,
+          left: 40
         },
-        headers: []
+        cellFontSize: 14,
+        headers: [],
+        parentLocationMap: _.indexBy(datapoints.meta.parent_location_list, 'name'),
+        defaultSortOrder: datapoints.meta.default_sort_order
       }
       let addedHeaders = {}
 
@@ -490,11 +494,13 @@ export default {
           if (i.value != null) {
             var displayValue = i.value
             if (indicators_map[i.indicator].data_format === 'pct') {
-              displayValue = (i.value * 100).toString().substring(0, 5) + ' %'
+              displayValue = (i.value * 100).toFixed(1) + ' %'
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value === 0) {
               displayValue = 'No'
+              i.value = -1 // temporary hack to deal with coloring the booleans.
             } else if (indicators_map[i.indicator].data_format === 'bool' && i.value > 0) {
               displayValue = 'Yes'
+              i.value = 2 // temporary hack to deal with coloring the booleans.
             }
             values.push({
               indicator: indicators_map[i.indicator],
@@ -513,11 +519,10 @@ export default {
 
         return {
           name: locations_map[d.location].name,
-          parentName: locations_map[d.location].parent_location_id,
+          parent_location_id: locations_map[d.location].parent_location_id,
           values: values
         }
       })
-
       return { options: chartOptions, data: chartData }
     })
   }

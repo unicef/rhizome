@@ -5,7 +5,7 @@ import moment from 'moment'
 /**
  * Return the facet value for a datum given a path.
  */
-function getFacet (datum, path) {
+export function getFacet (datum, path) {
   var facet = _.get(datum, path)
 
   // Handle pieces of the application that replace IDs with their
@@ -32,7 +32,7 @@ export function childOf (parent, child) {
     : !!child.parent_location_id && parent.id === child.parent_location_id
 }
 
-function inChart (chart, campaign, location, datum) {
+export function inChart (chart, campaign, location, datum) {
   var dt = moment(datum.campaign.start_date).valueOf()
   var end = moment(campaign.start_date, 'YYYY-MM-DD')
   var start = -Infinity
@@ -66,7 +66,7 @@ function inChart (chart, campaign, location, datum) {
   return _.includes(chart.indicators, datum.indicator.id) && inPeriod && inlocation
 }
 
-function choropleth (chart, data, campaign, features) {
+export function choropleth (chart, data, campaign, features) {
   // Make sure we only get data for the current campaign maps can't
   // display historical data. Index by location for quick lookup.
   var dataIdx = _(data)
@@ -84,11 +84,13 @@ function choropleth (chart, data, campaign, features) {
   return features
 }
 
-function series (chart, data) {
+export function series (chart, data) {
   return _(data)
     .groupBy(_.partial(getFacet, _, _.get(chart, 'groupBy')))
-    .map((values, name) => ({ name, values }))
-    .reject(s => _.all(s.values, d => d.value === 0 || !_.isFinite(d.value)))
+    .map((originalValues, name) => {
+      var values = _.reject(originalValues, d => !d.value || d.value === 0 || !_.isFinite(d.value))
+      return { name, values }
+    })
     .value()
 }
 
