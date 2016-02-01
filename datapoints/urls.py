@@ -30,9 +30,9 @@ urlpatterns = [
     url(r'^source-data/$', views.source_data, name='source_data'),
 
     ## ADMIN FUNCTINALITY THAT NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
-    url(r'^campaigns/create/$',views.CampaignCreateView.as_view(),
+    url(r'^campaigns/create/$',views.create_campaign,
         name='create_campaign'),
-    url(r'^campaigns/update/(?P<pk>[0-9]+)/$', views.CampaignUpdateView.as_view(),
+    url(r'^campaigns/update/(?P<campaign_id>[0-9]+)/$', views.update_campaign,
         name='update_campaign'),
     url(r'^users/create/$', views.UserCreateView.as_view(),
         name='create_user'),

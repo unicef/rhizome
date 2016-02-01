@@ -83,6 +83,12 @@ def manage_system(request):
     return render_to_response('manage_system.html',\
         context_instance=RequestContext(request))
 
+def create_campaign(request):
+    return render_to_response('campaigns/create.html', context_instance=RequestContext(request))
+
+def update_campaign(request, campaign_id):
+    return render_to_response('campaigns/update.html', {'campaign_id': campaign_id}, context_instance=RequestContext(request))
+
 class DashBoardView(generic.ListView):
     paginate_by = 50
 
@@ -91,21 +97,6 @@ class DashBoardView(generic.ListView):
 
     def get_queryset(self): ## not sure why this works. ##
         return DataPoint.objects.all()[:1]
-
-
-class CampaignCreateView(PermissionRequiredMixin, generic.CreateView):
-    model = Campaign
-    success_url = '/manage_system/campaigns'
-    template_name = 'campaigns/create.html'
-    fields = ['office', 'name', 'top_lvl_location', 'top_lvl_indicator_tag', 'campaign_type', 'start_date', 'end_date']
-
-
-class CampaignUpdateView(PermissionRequiredMixin, generic.UpdateView):
-    model = Campaign
-    success_url = '/manage_system/campaigns'
-    template_name = 'campaigns/update.html'
-    form_class = CampaignForm
-
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User
