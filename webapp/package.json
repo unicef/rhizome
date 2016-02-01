@@ -5,8 +5,7 @@
     "dev": "gulp dev",
     "build": "NODE_ENV=production gulp build",
     "test": "gulp lint && gulp mocha",
-    "package": "npm run build && gulp package",
-    "standard": "watch 'standard'"
+    "package": "npm run build && gulp package"
   },
   "dependencies": {
     "babel-runtime": "^5.8.20",
