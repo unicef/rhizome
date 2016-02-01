@@ -1,6 +1,12 @@
 import Reflux from 'reflux'
 
 export default Reflux.createActions([
-  'initData',
-  'updateCampaignRange'
+  'initialize',
+  'updateCampaignRange',
+  'setOffice',
+  'setCampaignName',
+  'setIndicatorTag',
+  'setCampaignType',
+  'setLocation',
+  'saveCampaign'
 ])
