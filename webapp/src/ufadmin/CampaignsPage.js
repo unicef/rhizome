@@ -63,7 +63,7 @@ var CampaignsPage = React.createClass({
         <select value={this.state.postData.office_id} onChange={this._setOffice}>
           {this.state.offices.map(d => {
             return d.id === this.state.postData.office_id
-              ? (<option defaultValue={d.id}>{d.name}</option>)
+              ? (<option value={d.id} selected>{d.name}</option>)
               : (<option value={d.id}>{d.name}</option>)
           })}
         </select>
@@ -73,7 +73,7 @@ var CampaignsPage = React.createClass({
     let nameSet = (
       <div>
         <label htmlFor='name'>Name: </label>
-        <input type='text' defaultValue={this.state.postData.name} onBlur={this._setCampaignName} ref='campaignName'/>
+        <input type='text' value={this.state.postData.name} onBlur={this._setCampaignName} ref='campaignName'/>
       </div>
     )
 
@@ -103,7 +103,7 @@ var CampaignsPage = React.createClass({
         <select value={this.state.postData.campaign_type_id} onChange={this._setCampaignType}>
           {this.state.campaignTypes.map(d => {
             return d.id === this.state.postData.campaign_type_id
-              ? (<option defaultValue={d.id}>{d.name}</option>)
+              ? (<option value={d.id} selected>{d.name}</option>)
               : (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
