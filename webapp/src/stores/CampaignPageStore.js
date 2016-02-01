@@ -17,10 +17,17 @@ let CampaignPageStore = Reflux.createStore({
       end: ''
     },
     campaignName: '',
-    selectedOffice: '',
-    selectedIndicatorTag: '',
-    selectedLocation: '',
-    selectedCampaignType: '',
+    postData: {
+      id: -1,
+      campaign_type_id: '',
+      name: '',
+      office_id: '',
+      top_lvl_indicator_tag_id: '',
+      top_lvl_location_id: '',
+      pct_complete: 0.001,
+      start_date: '',
+      end_date: ''
+    },
     displayMsg: false,
     message: ''
   },
@@ -36,16 +43,24 @@ let CampaignPageStore = Reflux.createStore({
       api.locations(),
       api.get_indicator_tag(),
       api.campaign_type(),
-      id ? api.campaign(id) : []
+      id ? api.campaign({'id__in': id}) : []
     ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
+      var currentCampaign = campaign.objects
       self.data.offices = offices.objects
       self.data.locations = locations.objects
       self.data.indicatorToTags = indicatorToTags.objects
       self.data.campaignTypes = campaignTypes.objects
-      self.data.selectedOffice = self.data.offices ? self.data.offices[0].id : ''
-      self.data.selectedIndicatorTag = self.data.indicatorToTags ? self.data.indicatorToTags[0].id : ''
-      self.data.selectedLocation = self.data.locations ? self.data.locations[0].id : ''
-      self.data.selectedCampaignType = self.data.campaignTypes ? self.data.campaignTypes[0].id : ''
+      if (currentCampaign) {
+        self.data.postData = _.omit(currentCampaign, 'start_date', 'end_date')
+      } else {
+        self.data.postData.id = -1
+        self.data.postData.name = ''
+        self.data.postData.campaign_type_id = self.data.campaignTypes ? self.data.campaignTypes[0].id : ''
+        self.data.postData.office_id = self.data.offices ? self.data.offices[0].id : ''
+        self.data.postData.top_lvl_indicator_tag_id = self.data.indicatorToTags ? self.data.indicatorToTags[0].id : ''
+        self.data.postData.top_lvl_location_id = self.data.locations ? self.data.locations[0].id : ''
+        self.data.postData.pct_complete = 0.001
+      }
       self.trigger(self.data)
     }), function (error) {
       console.error(error)
@@ -71,23 +86,23 @@ let CampaignPageStore = Reflux.createStore({
     this.trigger(this.data)
   },
   onSetOffice: function (officeId) {
-    this.data.selectedOffice = officeId
+    this.data.postData.office_id = officeId
     this.trigger(this.data)
   },
   onSetIndicatorTag: function (indicatorTagId) {
-    this.data.selectedIndicatorTag = indicatorTagId
+    this.data.postData.top_lvl_indicator_tag_id = indicatorTagId
     this.trigger(this.data)
   },
   onSetCampaignType: function (campaignTypeId) {
-    this.data.selectedCampaignType = campaignTypeId
+    this.data.postData.campaign_type_id = campaignTypeId
     this.trigger(this.data)
   },
   onSetLocation: function (locationId) {
-    this.data.selectedLocation = locationId
+    this.data.postData.top_lvl_location_id = locationId
     this.trigger(this.data)
   },
   onSetCampaignName: function (name) {
-    this.data.campaignName = name
+    this.data.postData.name = name
     this.trigger(this.data)
   }
 })

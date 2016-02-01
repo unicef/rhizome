@@ -34,24 +34,15 @@ var CampaignsPage = React.createClass({
   _save: function (e) {
     e.preventDefault()
     var today = new Date().toJSON().slice(0, 10)
-    var postData = {
-      id: this.props.campaignId || -1,
-      name: this.state.campaignName,
-      top_lvl_location: this.state.selectedLocation,
-      top_lvl_indicator_tag: this.state.selectedIndicatorTag,
-      office: this.state.selectedOffice,
-      campaign_type: this.state.selectedCampaignType,
-      start_date: this.state.campaign.start ? this.state.campaign.start : today,
-      end_date: this.state.campaign.end ? this.state.campaign.end : today,
-      pct_complete: 0.001
-    }
-    CampaignPageActions.saveCampaign(postData)
+    this.state.postData['start_date'] = this.state.campaign.start ? this.state.campaign.start : today
+    this.state.postData['end_date'] = this.state.campaign.end ? this.state.campaign.end : today
+    CampaignPageActions.saveCampaign(this.state.postData)
   },
   render: function () {
     let officeSet = (
       <div>
         <label htmlFor='office'>Office: </label>
-        <select value={this.state.selectedOffice} onChange={this._setOffice}>
+        <select value={this.state.postData.office_id} onChange={this._setOffice}>
           {this.state.offices.map(d => { return (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
@@ -60,14 +51,14 @@ var CampaignsPage = React.createClass({
     let nameSet = (
       <div>
         <label htmlFor='name'>Name: </label>
-        <input type='text' value={this.state.campaignName} onChange={this._setCampaignName}/>
+        <input type='text' value={this.state.postData.name} onChange={this._setCampaignName}/>
       </div>
     )
 
     let topLevelLocationSet = (
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
-        <select value={this.state.selectedLocation} onChange={this._setLocation}>
+        <select value={this.state.postData.top_lvl_location_id} onChange={this._setLocation}>
           {this.state.locations.map(d => { return (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
@@ -76,7 +67,7 @@ var CampaignsPage = React.createClass({
     let topLevelIndicatorTagSet = (
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-        <select value={this.state.selectedIndicatorTag} onChange={this._setIndicatorTag}>
+        <select value={this.state.postData.top_lvl_indicator_tag_id} onChange={this._setIndicatorTag}>
           {this.state.indicatorToTags.map(d => { return (<option value={d.id}>{d.tag_name}</option>) })}
         </select>
       </div>
@@ -85,7 +76,7 @@ var CampaignsPage = React.createClass({
     let campaignTypeSet = (
       <div>
         <label htmlFor='campaign_type'>Campaign type: </label>
-        <select value={this.state.selectedCampaignType} onChange={this._setCampaignType}>
+        <select value={this.state.postData.campaign_type_id} onChange={this._setCampaignType}>
           {this.state.campaignTypes.map(d => { return (<option value={d.id}>{d.name}</option>) })}
         </select>
       </div>
