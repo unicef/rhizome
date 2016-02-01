@@ -7,6 +7,6 @@ export default Reflux.createActions([
   'setCampaignName',
   'setIndicatorTag',
   'setCampaignType',
-  'setLocation',
-  'saveCampaign'
+  'saveCampaign',
+  'setLocation'
 ])

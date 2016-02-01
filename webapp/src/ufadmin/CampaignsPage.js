@@ -2,6 +2,9 @@ import React from 'react'
 import Reflux from 'reflux'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 
+import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import List from 'component/list/List.jsx'
+
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
 
@@ -28,9 +31,6 @@ var CampaignsPage = React.createClass({
   },
   _setCampaignName: function (event) {
     CampaignPageActions.setCampaignName(event.target.value)
-  },
-  _setLocation: function (event) {
-    CampaignPageActions.setLocation(event.target.value)
   },
   _setIndicatorTag: function (event) {
     CampaignPageActions.setIndicatorTag(event.target.value)
@@ -80,13 +80,10 @@ var CampaignsPage = React.createClass({
     let topLevelLocationSet = (
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
-        <select value={this.state.postData.top_lvl_location_id} onChange={this._setLocation}>
-          {this.state.locations.map(d => {
-            return d.id === this.state.postData.top_lvl_location_id
-              ? (<option defaultValue={d.id}>{d.name}</option>)
-              : (<option value={d.id}>{d.name}</option>)
-          })}
-        </select>
+        <LocationDropdownMenu
+             locations={this.state.locations}
+             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
+             sendValue={CampaignPageActions.setLocation} />
       </div>
     )
 

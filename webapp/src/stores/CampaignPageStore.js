@@ -4,12 +4,16 @@ import Reflux from 'reflux'
 import api from 'data/api'
 import CampaignPageActions from 'actions/CampaignPageActions'
 
+import ancestryString from 'data/transform/ancestryString'
+import treeify from 'data/transform/treeify'
+
 let CampaignPageStore = Reflux.createStore({
   listenables: [CampaignPageActions],
 
   data: {
     offices: [],
     locations: [],
+    locationMap: [],
     indicatorToTags: [],
     campaignTypes: [],
     campaign: {
@@ -17,6 +21,7 @@ let CampaignPageStore = Reflux.createStore({
       end: ''
     },
     campaignName: '',
+    locationSelected: [],
     postData: {
       id: -1,
       campaign_type_id: '',
@@ -45,18 +50,32 @@ let CampaignPageStore = Reflux.createStore({
       api.locations(),
       api.get_indicator_tag(),
       api.campaign_type(),
-      id ? api.campaign({'id__in': id}) : []
+      id ? api.campaign({'id__in': id}, null, {'cache-control': 'no-cache'}) : []
     ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
       self.data.isLoaded = true
       var currentCampaign = campaign.objects ? campaign.objects[0] : ''
       self.data.offices = offices.objects
-      self.data.locations = locations.objects
+      self.data.locations = _(locations.objects)
+        .map(location => {
+          return {
+            'title': location.name,
+            'value': location.id,
+            'parent': location.parent_location_id
+          }
+        })
+        .sortBy('title')
+        .reverse()
+        .thru(_.curryRight(treeify)('value'))
+        .map(ancestryString)
+        .value()
+      self.data.locationMap = _.indexBy(locations.objects, 'id')
       self.data.indicatorToTags = indicatorToTags.objects
       self.data.campaignTypes = campaignTypes.objects
       if (currentCampaign) {
         self.data.postData = _.clone(currentCampaign)
         self.data.campaign.start = currentCampaign.start_date
         self.data.campaign.end = currentCampaign.end_date
+        self.data.locationSelected[0] = self.data.locationMap[self.data.postData.top_lvl_location_id]
       } else {
         self.data.postData.id = -1
         self.data.postData.name = ''
@@ -67,7 +86,7 @@ let CampaignPageStore = Reflux.createStore({
         self.data.postData.pct_complete = 0.001
       }
       self.trigger(self.data)
-    }), function (error) {
+    }), function () {
       self.data.isLoaded = true
       self.trigger(self.data)
     })
@@ -104,12 +123,13 @@ let CampaignPageStore = Reflux.createStore({
     this.data.postData.campaign_type_id = campaignTypeId
     this.trigger(this.data)
   },
-  onSetLocation: function (locationId) {
-    this.data.postData.top_lvl_location_id = locationId
-    this.trigger(this.data)
-  },
   onSetCampaignName: function (name) {
     this.data.postData.name = name
+    this.trigger(this.data)
+  },
+  onSetLocation: function (locationId) {
+    this.data.postData.top_lvl_location_id = locationId
+    this.data.locationSelected[0] = this.data.locationMap[locationId]
     this.trigger(this.data)
   }
 })
