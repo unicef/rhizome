@@ -57,24 +57,17 @@ class CampaignResource(BaseModelResource):
 
         try:
             defaults = {
-                'name': post_data['name'],
-                'top_lvl_location': post_data['top_lvl_location'],
-                'top_lvl_indicator_tag': post_data['top_lvl_indicator_tag'],
-                'office': post_data['office'],
-                'campaign_type': post_data['campaign_type'],
-                'start_date': post_data['start_date'],
-                'end_date': post_data['end_date'],
+                'name': str(post_data['name']),
+                'top_lvl_location': Location.objects.get(id=post_data['top_lvl_location']),
+                'top_lvl_indicator_tag': IndicatorTag.objects.get(id=post_data['top_lvl_indicator_tag']),
+                'office': Office.objects.get(id=post_data['office']),
+                'campaign_type': CampaignType.objects.get(id=post_data['campaign_type']),
+                'start_date': datetime.strptime(post_data['start_date'], '%Y-%m-%d'),
+                'end_date':  datetime.strptime(post_data['end_date'], '%Y-%m-%d'),
                 'pct_complete': post_data['pct_complete']
             }
-
         except Exception as error:
-            data = {
-                'error': 'Please provide ' + str(error) + ' for the campaign.',
-                'code': -1
-            }
-            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
-                                        status=500,
-                                        content_type='application/json'))
+            raise DataPointsException('Please provide "{0}" for the campaign.'.format(error))
 
         try:
             campaign, created = Campaign.objects.update_or_create(
@@ -82,13 +75,7 @@ class CampaignResource(BaseModelResource):
                 defaults=defaults
             )
         except Exception as error:
-            data = {
-                'error': error.message,
-                'code': -1
-            }
-            raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
-                                        status=422,
-                                        content_type='application/json'))
+            raise DataPointsException(error)
 
         bundle.obj = campaign
         bundle.data['id'] = campaign.id
@@ -190,7 +177,6 @@ class IndicatorResource(BaseModelResource):
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
                                         status=500,
                                         content_type='application/json'))
-
 
         try:
             ind, created = Indicator.objects.update_or_create(
