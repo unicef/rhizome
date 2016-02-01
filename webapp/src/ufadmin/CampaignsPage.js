@@ -1,9 +1,9 @@
 import React from 'react'
 import Reflux from 'reflux'
-import DateRangePicker from 'component/DateTimePicker.jsx'
+import moment from 'moment'
 
+import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
-import List from 'component/list/List.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
@@ -40,10 +40,9 @@ var CampaignsPage = React.createClass({
   },
   _save: function (e) {
     e.preventDefault()
-    var today = new Date().toJSON().slice(0, 10)
     this.state.postData.name = this.refs.campaignName.getDOMNode().value
-    this.state.postData.start_date = this.state.campaign.start ? this.state.campaign.start : today
-    this.state.postData.end_date = this.state.campaign.end ? this.state.campaign.end : today
+    this.state.postData.start_date = moment(this.state.campaign.start).format('YYYY-M-D')
+    this.state.postData.end_date = moment(this.state.campaign.end).format('YYYY-M-D')
     CampaignPageActions.saveCampaign(this.state.postData)
   },
   render: function () {

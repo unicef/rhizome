@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
+import moment from 'moment'
 
 import api from 'data/api'
 import CampaignPageActions from 'actions/CampaignPageActions'
@@ -53,7 +54,7 @@ let CampaignPageStore = Reflux.createStore({
       id ? api.campaign({'id__in': id}, null, {'cache-control': 'no-cache'}) : []
     ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
       self.data.isLoaded = true
-      var currentCampaign = campaign.objects ? campaign.objects[0] : ''
+      var currentCampaign = campaign.objects ? campaign.objects[0] : null
       self.data.offices = offices.objects
       self.data.locations = _(locations.objects)
         .map(location => {
@@ -73,13 +74,15 @@ let CampaignPageStore = Reflux.createStore({
       self.data.campaignTypes = campaignTypes.objects
       if (currentCampaign) {
         self.data.postData = _.clone(currentCampaign)
-        self.data.campaign.start = currentCampaign.start_date
-        self.data.campaign.end = currentCampaign.end_date
+        self.data.campaign.start = moment(currentCampaign.start_date).toDate()
+        self.data.campaign.end = moment(currentCampaign.end_date).toDate()
         self.data.locationSelected[0] = self.data.locationMap[self.data.postData.top_lvl_location_id]
       } else {
         self.data.postData.id = -1
         self.data.postData.name = ''
         self.data.postData.campaign_type_id = self.data.campaignTypes ? self.data.campaignTypes[0].id : ''
+        self.data.campaign.start = new Date()
+        self.data.campaign.end = new Date()
         self.data.postData.office_id = self.data.offices ? self.data.offices[0].id : ''
         self.data.postData.top_lvl_indicator_tag_id = self.data.indicatorToTags ? self.data.indicatorToTags[0].id : ''
         self.data.postData.top_lvl_location_id = self.data.locations ? self.data.locations[0].id : ''
