@@ -62,7 +62,7 @@ var CampaignsPage = React.createClass({
     let nameSet = (
       <div>
         <label htmlFor='name'>Name: </label>
-        <input type='text' value={this.state.postData.name} onChange={this._setCampaignName}/>
+        <input type='text' defaultValue={this.state.postData.name} onBlur={this._setCampaignName} />
       </div>
     )
 
