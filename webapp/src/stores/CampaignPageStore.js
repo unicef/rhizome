@@ -45,13 +45,15 @@ let CampaignPageStore = Reflux.createStore({
       api.campaign_type(),
       id ? api.campaign({'id__in': id}) : []
     ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
-      var currentCampaign = campaign.objects
+      var currentCampaign = campaign.objects ? campaign.objects[0] : ''
       self.data.offices = offices.objects
       self.data.locations = locations.objects
       self.data.indicatorToTags = indicatorToTags.objects
       self.data.campaignTypes = campaignTypes.objects
       if (currentCampaign) {
-        self.data.postData = _.omit(currentCampaign, 'start_date', 'end_date')
+        self.data.postData = _.clone(currentCampaign)
+        self.data.campaign.start = currentCampaign.start_date
+        self.data.campaign.end = currentCampaign.end_date
       } else {
         self.data.postData.id = -1
         self.data.postData.name = ''

@@ -34,8 +34,8 @@ var CampaignsPage = React.createClass({
   _save: function (e) {
     e.preventDefault()
     var today = new Date().toJSON().slice(0, 10)
-    this.state.postData['start_date'] = this.state.campaign.start ? this.state.campaign.start : today
-    this.state.postData['end_date'] = this.state.campaign.end ? this.state.campaign.end : today
+    this.state.postData.start_date = this.state.campaign.start ? this.state.campaign.start : today
+    this.state.postData.end_date = this.state.campaign.end ? this.state.campaign.end : today
     CampaignPageActions.saveCampaign(this.state.postData)
   },
   render: function () {
