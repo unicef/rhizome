@@ -89,8 +89,8 @@ let CampaignPageStore = Reflux.createStore({
         self.data.campaign.start = new Date()
         self.data.campaign.end = new Date()
         self.data.postData.office_id = self.data.offices ? self.data.offices[0].id : ''
-        self.data.postData.top_lvl_indicator_tag_id = self.data.indicatorToTags ? self.data.indicatorToTags[0].id : ''
-        self.data.postData.top_lvl_location_id = self.data.locations ? self.data.locations[0].id : ''
+        self.data.postData.top_lvl_indicator_tag_id = self.data.tagSelected[0] ? self.data.tagSelected[0].id : ''
+        self.data.postData.top_lvl_location_id = self.data.locationSelected[0] ? self.data.locationSelected[0].id : ''
         self.data.postData.pct_complete = 0.001
       }
       self.trigger(self.data)
