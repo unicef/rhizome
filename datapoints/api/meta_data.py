@@ -58,10 +58,10 @@ class CampaignResource(BaseModelResource):
         try:
             defaults = {
                 'name': str(post_data['name']),
-                'top_lvl_location': Location.objects.get(id=post_data['top_lvl_location']),
-                'top_lvl_indicator_tag': IndicatorTag.objects.get(id=post_data['top_lvl_indicator_tag']),
-                'office': Office.objects.get(id=post_data['office']),
-                'campaign_type': CampaignType.objects.get(id=post_data['campaign_type']),
+                'top_lvl_location_id': post_data['top_lvl_location_id'],
+                'top_lvl_indicator_tag_id': post_data['top_lvl_indicator_tag_id'],
+                'office_id': post_data['office_id'],
+                'campaign_type_id': post_data['campaign_type_id'],
                 'start_date': datetime.strptime(post_data['start_date'], '%Y-%m-%d'),
                 'end_date':  datetime.strptime(post_data['end_date'], '%Y-%m-%d'),
                 'pct_complete': post_data['pct_complete']
