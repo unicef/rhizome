@@ -13,7 +13,8 @@ var CampaignsPage = React.createClass({
   },
 
   componentWillMount: function () {
-    CampaignPageActions.initialize()
+    var id = this.props.campaignId
+    CampaignPageActions.initialize(id)
   },
   _setOffice: function (event) {
     CampaignPageActions.setOffice(event.target.value)
@@ -36,10 +37,10 @@ var CampaignsPage = React.createClass({
     var postData = {
       id: this.props.campaignId || -1,
       name: this.state.campaignName,
-      top_lvl_location: this.state.selectedLocation.id,
-      top_lvl_indicator_tag: this.state.selectedIndicatorTag.id,
-      office: this.state.selectedOffice.id,
-      campaign_type: this.state.selectedCampaignType.id,
+      top_lvl_location: this.state.selectedLocation,
+      top_lvl_indicator_tag: this.state.selectedIndicatorTag,
+      office: this.state.selectedOffice,
+      campaign_type: this.state.selectedCampaignType,
       start_date: this.state.campaign.start ? this.state.campaign.start : today,
       end_date: this.state.campaign.end ? this.state.campaign.end : today,
       pct_complete: 0.001

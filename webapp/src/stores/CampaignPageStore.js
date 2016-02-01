@@ -17,10 +17,10 @@ let CampaignPageStore = Reflux.createStore({
       end: ''
     },
     campaignName: '',
-    selectedOffice: [],
-    selectedIndicatorTag: [],
-    selectedLocation: [],
-    selectedCampaignType: [],
+    selectedOffice: '',
+    selectedIndicatorTag: '',
+    selectedLocation: '',
+    selectedCampaignType: '',
     displayMsg: false,
     message: ''
   },
@@ -29,22 +29,23 @@ let CampaignPageStore = Reflux.createStore({
     return this.data
   },
 
-  onInitialize: function () {
+  onInitialize: function (id) {
     let self = this
     Promise.all([
       api.office(),
       api.locations(),
       api.get_indicator_tag(),
-      api.campaign_type()
-    ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes) {
+      api.campaign_type(),
+      id ? api.campaign(id) : []
+    ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
       self.data.offices = offices.objects
       self.data.locations = locations.objects
       self.data.indicatorToTags = indicatorToTags.objects
       self.data.campaignTypes = campaignTypes.objects
-      self.data.selectedOffice = self.data.offices ? self.data.offices[0] : []
-      self.data.selectedIndicatorTag = self.data.indicatorToTags ? self.data.indicatorToTags[0] : []
-      self.data.selectedLocation = self.data.locations ? self.data.locations[0] : []
-      self.data.selectedCampaignType = self.data.campaignTypes ? self.data.campaignTypes[0] : []
+      self.data.selectedOffice = self.data.offices ? self.data.offices[0].id : ''
+      self.data.selectedIndicatorTag = self.data.indicatorToTags ? self.data.indicatorToTags[0].id : ''
+      self.data.selectedLocation = self.data.locations ? self.data.locations[0].id : ''
+      self.data.selectedCampaignType = self.data.campaignTypes ? self.data.campaignTypes[0].id : ''
       self.trigger(self.data)
     }), function (error) {
       console.error(error)
@@ -53,7 +54,6 @@ let CampaignPageStore = Reflux.createStore({
   },
   onSaveCampaign: function (postData) {
     let self = this
-    console.log(postData)
     Promise.all([api.post_campaign(postData)]).then(_.spread(function (response) {
       self.data.campaignName = response.objects.name
       self.data.displayMsg = true
