@@ -8,6 +8,10 @@ import CampaignPageStore from 'stores/CampaignPageStore'
 var CampaignsPage = React.createClass({
   mixins: [Reflux.connect(CampaignPageStore)],
 
+  propTypes: {
+    campaignId: React.PropTypes.number
+  },
+
   componentWillMount: function () {
     CampaignPageActions.initialize()
   },
@@ -30,7 +34,7 @@ var CampaignsPage = React.createClass({
     e.preventDefault()
     var today = new Date().toJSON().slice(0, 10)
     var postData = {
-      id: -1,
+      id: this.props.campaignId || -1,
       name: this.state.campaignName,
       top_lvl_location: this.state.selectedLocation.id,
       top_lvl_indicator_tag: this.state.selectedIndicatorTag.id,

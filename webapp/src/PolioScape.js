@@ -42,7 +42,11 @@ export default {
   UFAdmin: function (el) {
     AdminApp.render(document.getElementById('main'))
   },
-  CampaignsPage: function (el) {
-    React.render(React.createElement(CampaignsPage), el)
+  CampaignsPage: function (el, campaignId) {
+    if (campaignId) {
+      React.render(React.createElement(CampaignsPage, {campaignId: campaignId}), el)
+    } else {
+      React.render(React.createElement(CampaignsPage), el)
+    }
   }
 }
