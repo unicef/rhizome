@@ -83,11 +83,8 @@ def manage_system(request):
     return render_to_response('manage_system.html',\
         context_instance=RequestContext(request))
 
-def create_campaign(request):
-    return render_to_response('campaigns/create.html', context_instance=RequestContext(request))
-
-def update_campaign(request, campaign_id):
-    return render_to_response('campaigns/update.html', {'campaign_id': campaign_id}, context_instance=RequestContext(request))
+def update_campaign(request):
+    return render_to_response('manage_system.html', context_instance=RequestContext(request))
 
 class DashBoardView(generic.ListView):
     paginate_by = 50

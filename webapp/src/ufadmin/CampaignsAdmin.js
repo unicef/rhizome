@@ -12,7 +12,7 @@ const fields = {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/datapoints/campaigns/update/${id}`}>Edit Campaign</a>
+      return <a href={`/datapoints/campaign/${id}`}>Edit Campaign</a>
     }
   },
   id: { title: 'ID', name: 'id' },
