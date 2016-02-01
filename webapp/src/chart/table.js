@@ -234,6 +234,8 @@ _.extend(TableChart.prototype, {
         .on('mouseout', options.onMouseOut)
         .on('click', options.onClick)
 
+    // Begin X Axis //
+
     svg.select('.x.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(' + z + ',0)'})
@@ -242,24 +244,8 @@ _.extend(TableChart.prototype, {
         .orient('top')
         .outerTickSize(0))
 
-    // svg.selectAll('.x.axis text')
-    //   .style({
-    //     'text-anchor': 'start',
-    //     'font-size': options.fontSize,
-    //     'fontWeight': function (d) {
-    //       return (d === sortCol)
-    //         ? 'bold'
-    //         : 'normal'
-    //     }
-    //   })
-    //   .attr('transform', 'translate(' + (xScale.rangeBand() / 30) + ', 0) rotate(-35)')
-    //   .on('click', function (d, i) { self._setSort(d, i) })
-    //   .on('mouseover', function (d, i) {
-    //     options.onColumnHeadOver(d, i, this)
-    //   })
-    //   .on('mouseout', function (d, i) {
-    //     options.onColumnHeadOut(d, i, this)
-    //   })
+    svg.selectAll('.x.axis text')
+      .on('click', function (d, i) { self._setSort(d, i) })
 
     svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
 

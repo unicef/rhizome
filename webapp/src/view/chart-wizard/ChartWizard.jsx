@@ -3,8 +3,8 @@ import Reflux from 'reflux'
 // import _ from 'lodash'
 // import moment from 'moment'
 
-// import ChartWizardStep from './ChartWizardStep.jsx'
-// import ChartWizardStepList from './ChartWizardStepList.jsx'
+import ChartWizardStep from './ChartWizardStep.jsx'
+// import `ChartWizardStep`List from './ChartWizardStepList.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
@@ -115,7 +115,8 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    console.log('this dot state dot data: ', this.state.data)
+    // console.log('this dot state dot data: ', this.state.data)
+    console.log('this dot props', this.props)
     let locationStep = (
       <div>
         <LocationDropdownMenu
@@ -304,7 +305,9 @@ let ChartWizard = React.createClass({
     let chartWizardSelector = <div className='medium-3 columns'>
           <h1>Chart Builder</h1>
             <from className='inline'>
+              <ChartWizardStep title='Indicators' refer='preview'>
               {locationStep}
+              </ChartWizardStep>
               {indicatorStep}
               {timePeriodStep}
               {chartTypeStep}
