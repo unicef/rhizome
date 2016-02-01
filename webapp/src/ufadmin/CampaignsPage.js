@@ -4,6 +4,7 @@ import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
@@ -32,8 +33,8 @@ var CampaignsPage = React.createClass({
   _setCampaignName: function (event) {
     CampaignPageActions.setCampaignName(event.target.value)
   },
-  _setIndicatorTag: function (event) {
-    CampaignPageActions.setIndicatorTag(event.target.value)
+  _setIndicatorTag: function (tagId) {
+    CampaignPageActions.setIndicatorTag(tagId)
   },
   _setCampaignType: function (event) {
     CampaignPageActions.setCampaignType(event.target.value)
@@ -89,13 +90,10 @@ var CampaignsPage = React.createClass({
     let topLevelIndicatorTagSet = (
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-        <select value={this.state.postData.top_lvl_indicator_tag_id} onChange={this._setIndicatorTag}>
-          {this.state.indicatorToTags.map(d => {
-            return d.id === this.state.postData.top_lvl_indicator_tag_id
-              ? (<option defaultValue={d.id}>{d.tag_name}</option>)
-              : (<option value={d.id}>{d.tag_name}</option>)
-          })}
-        </select>
+        <IndicatorTagDropdownMenu
+          tag_tree={this.state.indicatorToTags}
+          text={this.state.tagSelected[0] && this.state.tagSelected[0].tag_name || 'Select Tag'}
+          sendValue={this._setIndicatorTag} />
       </div>
     )
 
