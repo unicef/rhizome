@@ -17,6 +17,8 @@ let CampaignPageStore = Reflux.createStore({
     locationMap: [],
     indicatorToTags: [],
     campaignTypes: [],
+    tagSelected: [],
+    tagMap: null,
     campaign: {
       start: '',
       end: ''
@@ -49,10 +51,11 @@ let CampaignPageStore = Reflux.createStore({
     Promise.all([
       api.office(),
       api.locations(),
+      api.tagTree(),
       api.get_indicator_tag(),
       api.campaign_type(),
       id ? api.campaign({'id__in': id}, null, {'cache-control': 'no-cache'}) : []
-    ]).then(_.spread(function (offices, locations, indicatorToTags, campaignTypes, campaign) {
+    ]).then(_.spread(function (offices, locations, indicatorToTags, allTags, campaignTypes, campaign) {
       self.data.isLoaded = true
       var currentCampaign = campaign.objects ? campaign.objects[0] : null
       self.data.offices = offices.objects
@@ -71,12 +74,14 @@ let CampaignPageStore = Reflux.createStore({
         .value()
       self.data.locationMap = _.indexBy(locations.objects, 'id')
       self.data.indicatorToTags = indicatorToTags.objects
+      self.data.tagMap = _.indexBy(allTags.objects, 'id')
       self.data.campaignTypes = campaignTypes.objects
       if (currentCampaign) {
         self.data.postData = _.clone(currentCampaign)
         self.data.campaign.start = moment(currentCampaign.start_date).toDate()
         self.data.campaign.end = moment(currentCampaign.end_date).toDate()
         self.data.locationSelected[0] = self.data.locationMap[self.data.postData.top_lvl_location_id]
+        self.data.tagSelected[0] = self.data.tagMap[self.data.postData.top_lvl_indicator_tag_id]
       } else {
         self.data.postData.id = -1
         self.data.postData.name = ''
@@ -120,6 +125,7 @@ let CampaignPageStore = Reflux.createStore({
   },
   onSetIndicatorTag: function (indicatorTagId) {
     this.data.postData.top_lvl_indicator_tag_id = indicatorTagId
+    this.data.tagSelected[0] = this.data.tagMap[indicatorTagId]
     this.trigger(this.data)
   },
   onSetCampaignType: function (campaignTypeId) {
