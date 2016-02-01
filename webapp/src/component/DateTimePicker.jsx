@@ -11,8 +11,8 @@ var DateRangePicker = React.createClass({
 
   getInitialState: function () {
     return {
-      start: new Date(),
-      end: new Date()
+      start: this.props.start,
+      end: this.props.end
     }
   },
 
