@@ -13,12 +13,12 @@
 
 .chart-wizard__step {
   list-style: none;
-  border: 1px solid #ccc;
-  border-bottom: none;
+  // border: 1px solid #ccc;
+  // border-bottom: none;
 
-  &:last-child {
-    border-bottom: 1px solid #ccc;
-  }
+  // &:last-child {
+  //   border-bottom: 1px solid #ccc;
+  // }
 
   h2 {
     background: #fff;
@@ -39,7 +39,7 @@
   .chart-wizard__expandable {
     display: none;
     position: relative;
-    min-height: 300px;
+    min-height: 100px;
     padding: 10px 10px 80px;
   }
 

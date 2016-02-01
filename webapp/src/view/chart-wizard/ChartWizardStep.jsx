@@ -11,7 +11,7 @@ let ChartWizardStep = React.createClass({
 
   getInitialState: function getInitialState () {
     return {
-      isActive: true
+      isActive: false
     }
   },
 

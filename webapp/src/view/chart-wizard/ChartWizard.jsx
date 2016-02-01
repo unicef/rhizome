@@ -302,16 +302,26 @@ let ChartWizard = React.createClass({
     //     </ChartWizardStep>
     //   </ChartWizardStepList>
 
+    // <from className='inline'>
+    // </from>
+
     let chartWizardSelector = <div className='medium-3 columns'>
           <h1>Chart Builder</h1>
-            <from className='inline'>
-              <ChartWizardStep title='Indicators' refer='preview'>
+            <ChartWizardStep title='Locations' refer='preview'>
               {locationStep}
-              </ChartWizardStep>
+            </ChartWizardStep>
+
+            <ChartWizardStep title='Indicators' refer='preview'>
               {indicatorStep}
+            </ChartWizardStep>
+
+            <ChartWizardStep title='Time' refer='preview'>
               {timePeriodStep}
+            </ChartWizardStep>
+
+            <ChartWizardStep title='Chart Type' refer='preview'>
               {chartTypeStep}
-            </from>
+            </ChartWizardStep>
           </div>
 
     return (
