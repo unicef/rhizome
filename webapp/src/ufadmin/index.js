@@ -2,6 +2,7 @@ import React from 'react'
 import Router from 'react-router'
 var {Route, RouteHandler, Link} = Router
 import SimpleForm from './SimpleForm'
+import CampaignsPage from './CampaignsPage'
 
 var AdminApp = React.createClass({
   contextTypes: {
@@ -30,6 +31,8 @@ var AdminApp = React.createClass({
 var routes = (
     <Route name='app' path='/manage_system/' handler={AdminApp}>
       <Route name='manage' path='/manage_system/manage/:contentType/:id?' handler={SimpleForm}/>
+      <Route name='createCampaign' path='/datapoints/campaigns/create/?' handler={CampaignsPage}/>
+      <Route name='updateCampaign' path='/datapoints/campaigns/update/:id/?' handler={CampaignsPage}/>
       <Route name='users' handler={require('./UsersAdmin')} />
       <Route name='locations' handler={require('./LocationAdmin')} />
       <Route name='campaigns' handler={require('./CampaignsAdmin')} />

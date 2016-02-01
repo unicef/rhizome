@@ -9,11 +9,18 @@ var CampaignsPage = React.createClass({
   mixins: [Reflux.connect(CampaignPageStore)],
 
   propTypes: {
-    campaignId: React.PropTypes.number
+    params: React.PropTypes.object
+  },
+
+  getInitialState: function () {
+    return {
+      campaignId: null
+    }
   },
 
   componentWillMount: function () {
-    var id = this.props.campaignId
+    var id = this.props.params.id
+    this.setState({'campaignId': id})
     CampaignPageActions.initialize(id)
   },
   _setOffice: function (event) {
@@ -125,7 +132,7 @@ var CampaignsPage = React.createClass({
 
     return (
       <div className='row'>
-        <div className='large-4 large-offset-4 columns'>
+        <div className='large-6 columns'>
           <h2>Manage Campaign Page</h2>
           {message}
           <form>
