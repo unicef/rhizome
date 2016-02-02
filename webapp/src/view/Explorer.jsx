@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
+import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
@@ -48,11 +49,11 @@ let Explorer = React.createClass({
     }
 
     if (this.state.campaign.start) {
-      query.campaign_start = this.state.campaign.start
+      query.campaign_start = moment(this.state.campaign.start).format('YYYY-M-D')
     }
 
     if (this.state.campaign.end) {
-      query.campaign_end = this.state.campaign.end
+      query.campaign_end = moment(this.state.campaign.end).format('YYYY-M-D')
     }
 
     return api.datapoints.toString(query)

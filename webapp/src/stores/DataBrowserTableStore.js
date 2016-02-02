@@ -49,11 +49,11 @@ var DataBrowserTableStore = Reflux.createStore({
     }
 
     if (campaign.start) {
-      options.campaign_start = campaign.start
+      options.campaign_start = moment(campaign.start).format('YYYY-M-D')
     }
 
     if (campaign.end) {
-      options.campaign_end = campaign.end
+      options.campaign_end = moment(campaign.end).format('YYYY-M-D')
     }
 
     indicators.forEach(indicator => {

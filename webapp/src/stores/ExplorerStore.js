@@ -17,8 +17,8 @@ var ExplorerStore = Reflux.createStore({
     couldLoad: false,
     hasData: false,
     campaign: {
-      start: '',
-      end: ''
+      start: new Date(),
+      end: new Date()
     }
   },
 
