@@ -1,5 +1,5 @@
 import React from 'react'
-// import DateTimePicker from 'react-widgets/lib/DateTimePicker'
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
 var DateRangePicker = React.createClass({
   propTypes: {
@@ -26,21 +26,22 @@ var DateRangePicker = React.createClass({
   },
 
   render () {
-    // var self = this
-    // var dateTimePicker = function (dateValue, type) {
-    //   return (<DateTimePicker
-    //     value={dateValue}
-    //     time={false}
-    //     format={'yyyy-MM-dd'}
-    //     onChange={self.handleDateChange.bind(this, type)}/>)
-    // }
+    var self = this
+    var dateTimePicker = function (dateValue, type) {
+      return (<DateTimePicker
+        value={dateValue}
+        time={false}
+        format={'yyyy-MM-dd'}
+        onChange={self.handleDateChange.bind(this, type)}/>)
+    }
     return (
-        <div className='row'>
+        <div>
+        {dateTimePicker(this.state.start, 'start')}
+            <div className='centered'>{this.props.text}</div>
+        {dateTimePicker(this.state.end, 'end')}
         </div>
     )
   }
 })
-// {dateTimePicker(this.state.start, 'start')}
-// <div className='centered'>{this.props.text}</div>
-// {dateTimePicker(this.state.end, 'end')}
+
 export default DateRangePicker
