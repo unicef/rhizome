@@ -35,7 +35,7 @@ let ChartWizardStep = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return nextState.isActive !== this.state.isActive
+    return nextState.isActive !== this.state.isActive || this.props.children !== nextProps.children
   }
 })
 

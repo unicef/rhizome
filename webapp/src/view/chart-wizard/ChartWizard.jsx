@@ -76,7 +76,6 @@ let ChartWizard = React.createClass({
 
   getInitialState () {
     return {
-      refer: 'first-indicator',
       startTime: '2016-01-01',
       endTime: '2016-03-01'
     }
@@ -116,7 +115,21 @@ let ChartWizard = React.createClass({
 
   render () {
     // console.log('this dot state dot data: ', this.state.data)
-    console.log('this dot props', this.props)
+    console.log('this dot state dot data: ', this.state.data)
+    let availableIndicators = this.state.data.indicatorList
+    let indicatorStep = (
+      <div>
+        <ChartWizardStep title='Indicators' refer='preview'>
+        <IndicatorDropdownMenu
+          indicators={availableIndicators}
+          text='Choose Indicators'
+          sendValue={ChartWizardActions.addIndicator}
+          style='databrowser__button' />
+        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
+        </ChartWizardStep>
+      </div>
+    )
+
     let locationStep = (
       <div>
         <LocationDropdownMenu
@@ -126,16 +139,6 @@ let ChartWizard = React.createClass({
           style='databrowser__button' />
         <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-      </div>
-    )
-    let indicatorStep = (
-      <div>
-        <IndicatorDropdownMenu
-          indicators={this.state.data.indicatorList}
-          text='Choose Indicators'
-          sendValue={ChartWizardActions.addIndicator}
-          style='databrowser__button' />
-        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
       </div>
     )
     let timePeriodStep = (
@@ -308,12 +311,9 @@ let ChartWizard = React.createClass({
 
     let chartWizardSelector = <div className='medium-3 columns'>
           <h1>Chart Builder</h1>
+            {indicatorStep}
             <ChartWizardStep title='Locations' refer='preview'>
               {locationStep}
-            </ChartWizardStep>
-
-            <ChartWizardStep title='Indicators' refer='preview'>
-              {indicatorStep}
             </ChartWizardStep>
 
             <ChartWizardStep title='Time' refer='preview'>
