@@ -153,6 +153,17 @@ var CustomDashboard = React.createClass({
       let campaign = chart.campaignValue ? campaignIndex[chart.campaignValue] : this.props.campaigns[0]
       let options = data[id] && data[id].options || getOptions(chart, campaign)
 
+      // Sort the indicators based on the order they were saved into the custom_chart table
+      let sortedArray = []
+      _.forEach(chart.indicators, function (indicator) {
+        options.headers.map(function (header) {
+          if (header.id === indicator) {
+            sortedArray.push(header)
+          }
+        })
+      }, this)
+      options.headers = sortedArray
+
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
           <h4 className='custom-dashboard__chart-title'>&nbsp;{title} {controls}</h4>

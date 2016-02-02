@@ -85,8 +85,10 @@ _.extend(TableChart.prototype, {
       })
       .datum(data)
 
+    var xDomain = typeof (options.xDomain) !== 'undefined' ? options.xDomain : _.map(options.headers, options.headerText)
+
     var xScale = d3.scale.ordinal()
-        .domain(_.map(options.headers, options.headerText))
+        .domain(xDomain)
         .rangeBands([0, w], 0.1)
 
     var x = _.flow(options.column, xScale)

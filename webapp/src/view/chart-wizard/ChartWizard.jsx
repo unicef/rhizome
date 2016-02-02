@@ -8,6 +8,7 @@ import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
+import ReorderableList from 'component/list/ReorderableList.jsx'
 
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
@@ -85,7 +86,7 @@ let ChartWizard = React.createClass({
           text='Choose Indicators'
           sendValue={ChartWizardActions.addIndicator}
           style='databrowser__button' />
-        <List items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} />
+        <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
         </ChartWizardStep>
       </div>
     )
