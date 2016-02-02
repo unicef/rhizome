@@ -38,7 +38,9 @@ let ChartWizardStore = Reflux.createStore({
     rawIndicators: null,
     rawTags: null,
     xLabel: null,
-    yLabel: null
+    yLabel: null,
+    startDate: null,
+    endDate: null
   },
   LAYOUT_PREVIEW: 0,
 
@@ -229,6 +231,12 @@ let ChartWizardStore = Reflux.createStore({
       xLabel: null,
       yLabel: null
     }
+  },
+
+  onUpdateDateRangePicker: function (key, value) {
+    var fullKey = key + 'Date'
+    this.data[fullKey] = value
+    this.previewChart()
   },
 
   onEditTitle (value) {

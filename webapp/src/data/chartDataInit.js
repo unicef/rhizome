@@ -78,15 +78,14 @@ export default {
     let locationIndex = _.indexBy(data.locationAggregated, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
-    let start = moment(data.campaign.start_date)
-    let lower = builderDefinitions.times[_.findIndex(builderDefinitions.times, { json: chartDef.timeRange })].getLower(start)
-    let upper = start.clone().startOf('month')
+    let startDate = data.startDate || moment(data.campaign.start_date).format('YYYY-MM-DD')
+    let endDate = data.endDate
 
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
       location_id__in: _.map(data.locationAggregated, _.property('id')),
-      campaign_start: (lower ? lower.format('YYYY-MM-DD') : null),
-      campaign_end: upper.format('YYYY-MM-DD'),
+      campaign_start: startDate,
+      campaign_end: endDate,
       chart_type: chartDef.type
     }
 
@@ -94,8 +93,8 @@ export default {
       chartDef.type,
       data.indicatorSelected,
       data.locationAggregated,
-      lower,
-      upper,
+      startDate,
+      endDate,
       groups,
       chartDef,
       layout

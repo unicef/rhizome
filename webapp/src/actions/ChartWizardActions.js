@@ -21,7 +21,8 @@ let ChartWizardActions = Reflux.createActions([
   'changeZAxis',
   'changePalette',
   'setXYAxisLabel',
-  'saveChart'
+  'saveChart',
+  'updateDateRangePicker'
 ])
 
 export default ChartWizardActions

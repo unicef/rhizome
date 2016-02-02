@@ -115,7 +115,7 @@ let ChartWizard = React.createClass({
         <DateRangePicker
           start={moment(this.state.startTime).toDate()}
           end={moment(this.state.endTime).toDate()}
-          sendValue={ExplorerActions.updateDateRangePicker}
+          sendValue={ChartWizardActions.updateDateRangePicker}
         />
         </ChartWizardStep>
     </div>
