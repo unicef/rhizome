@@ -279,6 +279,11 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  onReorderIndicator (reorderedIndicators) {
+    this.data.indicatorSelected = reorderedIndicators
+    this.previewChart()
+  },
+
   onRemoveIndicator (id) {
     _.remove(this.data.indicatorSelected, {id: id})
     this.previewChart()
@@ -385,6 +390,11 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   previewChart () {
+    // We use the short_name for ordering becuase that is what defines the xDomain in table.js
+    this.data.indicatorOrder = this.data.indicatorSelected.map(indicator => {
+      return indicator.short_name
+    })
+
     if (!(this.data.indicatorSelected.length && this.data.campaign && this.data.location.length)) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
