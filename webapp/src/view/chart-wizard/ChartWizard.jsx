@@ -1,7 +1,7 @@
 import React from 'react'
 import Reflux from 'reflux'
 // import _ from 'lodash'
-// import moment from 'moment'
+import moment from 'moment'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 // import `ChartWizardStep`List from './ChartWizardStepList.jsx'
@@ -78,7 +78,7 @@ let ChartWizard = React.createClass({
     return {
       refer: 'first-indicator',
       startTime: '2016-01-01',
-      endDate: '2016-30-01'
+      endTime: '2016-03-01'
     }
   },
 
@@ -140,11 +140,12 @@ let ChartWizard = React.createClass({
     )
     let timePeriodStep = (
       <div>
+        <label htmlFor='start_date'>Start date: </label>
         <DateRangePicker
-          start={this.state.startTime}
-          end={this.state.endTime}
+          start={moment(this.state.startTime).toDate()}
+          end={moment(this.state.endTime).toDate()}
           sendValue={ExplorerActions.updateDateRangePicker}
-        />
+          text='End date: ' />
     </div>
     )
     let chartTypeStep = (
