@@ -236,6 +236,7 @@ let ChartWizardStore = Reflux.createStore({
   onUpdateDateRangePicker: function (key, value) {
     var fullKey = key + 'Date'
     this.data[fullKey] = value
+    this.data.chartDef[fullKey] = value
     this.previewChart()
   },
 
@@ -325,12 +326,6 @@ let ChartWizardStore = Reflux.createStore({
   onChangeLocationLevelRadio (value) {
     this.data.locationLevelValue = value
     this.data.locationAggregated = builderDefinitions.locationLevels[value].getAggregated(this.data.location, this.locationIndex)
-    this.previewChart()
-  },
-
-  onChangeTimeRadio (value) {
-    this.data.timeValue = value
-    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[value].json
     this.previewChart()
   },
 

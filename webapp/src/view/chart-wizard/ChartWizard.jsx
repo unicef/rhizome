@@ -42,13 +42,6 @@ let ChartWizard = React.createClass({
 
   mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(ExplorerStore)],
 
-  getInitialState () {
-    return {
-      startTime: '2016-01-01',
-      endTime: '2016-03-01'
-    }
-  },
-
   componentWillMount: function () {
     ExplorerActions.getLocations()
     ExplorerActions.getIndicators()
@@ -82,6 +75,7 @@ let ChartWizard = React.createClass({
   },
 
   render () {
+    // console.log('this.state', this.state)
     let availableIndicators = this.state.data.indicatorList
     let indicatorStep = (
       <div>
@@ -113,8 +107,8 @@ let ChartWizard = React.createClass({
       <div>
         <ChartWizardStep title='Time' refer='preview'>
         <DateRangePicker
-          start={moment(this.state.startTime).toDate()}
-          end={moment(this.state.endTime).toDate()}
+          start={moment(this.state.data.chartDef.startDate).toDate()}
+          end={moment(this.state.data.chartDef.endDate).toDate()}
           sendValue={ChartWizardActions.updateDateRangePicker}
         />
         </ChartWizardStep>

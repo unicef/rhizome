@@ -78,7 +78,7 @@ export default {
     let locationIndex = _.indexBy(data.locationAggregated, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
-    let startDate = data.startDate || moment(data.campaign.start_date).format('YYYY-MM-DD')
+    let startDate = chartDef.startDate || moment(data.campaign.start_date).format('YYYY-MM-DD')
     let endDate = data.endDate
 
     let query = {
