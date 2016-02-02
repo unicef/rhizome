@@ -46,9 +46,7 @@ documentRank: 3
 			RUN rm wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 
 		
-
-
-## Python
+## Backend
 * URL
 
 		# PRINT DASHBOARDS
@@ -56,100 +54,140 @@ documentRank: 3
 
 * View
 
+```
 		from datapoints.pdf_utils import print_pdf
 		from rhizome.settings.base import STATICFILES_DIRS
 
-		def export_pdf(request):
-    		url = request.GET['path']
-    		file_name = 'dashboards.pdf'
-    		css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
+		def export_file(request):
+    file_type = request.GET['type']
+    url = request.GET['path']
+    file_name = 'dashboards.' + file_type
+    css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
 
-		    cookie = {}
-    		cookie['name'] = 'sessionid'
-    		cookie['value'] = request.COOKIES[cookie['name']]
+    cookie = {}
+    cookie['name'] = 'sessionid'
+    cookie['value'] = request.COOKIES[cookie['name']]
 
-    		options = {'orientation': 'Landscape', 'javascript-delay': '1000', 'print-media-type': ' ', 'quiet': ' '}
-    		pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+    javascript_delay = '10000'
 
-    		response = HttpResponse(content=pdf_content, content_type='application/pdf')
-    		response['Content-Disposition'] = 'attachment; filename=' + file_name
-    		return response
+    if 'pdf' in file_type:
+        options = {'orientation': 'Landscape', 'javascript-delay': javascript_delay, 'quiet': ' '}
+        content_type = 'application/pdf'
+    else:
+        options = {'javascript-delay': javascript_delay, 'width': '1425', 'quality': '100', 'quiet': ' '}
+        content_type = 'image/JPEG'
+
+    pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+
+    if isinstance(pdf_content, IOError):
+        response = HttpResponse(status=500)
+    else:
+        response = HttpResponse(content=pdf_content, content_type=content_type)
+        response['Content-Disposition'] = 'attachment; filename=' + file_name
+
+    response.set_cookie('fileDownloadToken', 'true')
+    return response
+```
 
 
 * PDF Util
 
-* Requirementst.txt
+```
+  // pdf_utils.py
+  class Configuration(object):
+  
+  def print_pdf(type, url, output_path, options=None, cookie=None, css_file=None):
+    if 'pdf' in type:
+      // print pdf
+      wk_command = configuration.wkhtmltopdf.decode('utf-8')
+    else:
+      // print image
+      wk_command = configuration.wkhtmltoimage.decode('utf-8')
+  
+  def to_pdf(args, path=None):
+```
 
-	django-waffle==0.11 
-		
+* Feature Toggle
 
-* Toggle
+  This project uses Django-waffle as a feature toggle tool.
 
-	1. Command Line
+  i. Command Line
 		[Django-waffle](http://waffle.readthedocs.org/en/v0.11/usage/cli.html)
 		
-		`./manage.py waffle_switch pdf on --create`
-	2. [Django-admin](http://localhost:8000/admin)
-	3. [Using Waffle](http://waffle.readthedocs.org/en/v0.11/usage/index.html)		  	       		        		
- 
-			from waffle.decorators import waffle_switch
-
-			@waffle_switch('pdf')
-			def export_pdf(request):
-
-
+		```
+		./manage.py waffle_switch pdf on --create
+		```
 		
+  ii. [Django-admin](http://localhost:8000/admin)
+  
+  iii. [Using Waffle](http://waffle.readthedocs.org/en/v0.11/usage/index.html)		  	       		        		
+ 
+  ```
+  from waffle.decorators import waffle_switch
+
+  @waffle_switch('pdf')
+  def export_pdf(request):
+  ```
+
+  iv. Requirementst.txt
+
+  ```
+  django-waffle==0.11 
+  ```
 
 
-## Javascript
+## Frontend
 
 * Function Bind
 
 	Since Webkit cannot support `bind` method in Javascript, so we need to replace bind method.
-```
-function _replaceBindMethodForWktToPdf () {
-    let replaceFunction = Function
-    if (typeof replaceFunction.prototype.bind !== 'function') {
-    ...
+  ```
+  function _replaceBindMethodForWktToPdf () {
+      let replaceFunction = Function
+      if (typeof replaceFunction.prototype.bind !== 'function') {
+      ...
+    }
   }
-}
-```
+  ```
 
 * PDF control iFrame
 
-		// ExportPdf.jsx
-		<iframe width='0' height='0' className='hidden' src={this.state.href}/>
+  ```
+  // ExportPdf.jsx
+  <iframe width='0' height='0' className='hidden' src={this.state.href}/>
+  ```
 
 * Using waffle in JS
 
-	1. Django 
-			    
-			# Waffle PATH
-    		url(r'^', include('waffle.urls')),
-    		
-    2. JS
+  1. Django 
+    ```
+    # Waffle PATH
+      url(r'^', include('waffle.urls')),
+    ```
+    			
+  2. JS
     
-```
-let exportPdf = ((waffle.switch_is_active('pdf')) && dashboardName === 'Management Dashboard')
-    ? (<ExportPdf className='cd-titlebar-margin' />)
-    : ''
-```
+  ```
+  let exportPdf = ((waffle.switch_is_active('pdf')) && dashboardName === 'Management Dashboard')
+      ? (<ExportPdf className='cd-titlebar-margin' />)
+      : ''
+  ```
       			
 * package.json
 
-```
-"standard": {
-  "globals": [
-      "describe",
-      "context",
-      "it",
-      "waffle",
-      "IsWkhtmlToPdf"
-  ],
-  "parser": "babel-eslint",
-  "ignore": []
-}
-```
+  ```
+  "standard": {
+    "globals": [
+        "describe",
+        "context",
+        "it",
+        "waffle",
+        "IsWkhtmlToPdf"
+    ],
+    "parser": "babel-eslint",
+    "ignore": []
+  }
+  ```
 
 * svg
 
@@ -159,20 +197,20 @@ let exportPdf = ((waffle.switch_is_active('pdf')) && dashboardName === 'Manageme
 
 * IsWkhtmlToPdf
 
-```
-// Polyfill.js
-global.IsWkhtmlToPdf = global.IsWkhtmlToPdf || (typeof Function.prototype.bind !== 'function')
-
-// browser.js
-export default {
-    isIE: function () {
-      return ('ActiveXObject' in window)
-    },
-    isWkhtmlToPdf: () => {
-      return IsWkhtmlToPdf
-    }
-}
-```
+  ```
+  // Polyfill.js
+  global.IsWkhtmlToPdf = global.IsWkhtmlToPdf || (typeof Function.prototype.bind !== 'function')
+  
+  // browser.js
+  export default {
+      isIE: function () {
+        return ('ActiveXObject' in window)
+      },
+      isWkhtmlToPdf: () => {
+        return IsWkhtmlToPdf
+      }
+  }
+  ```
 		
 * Button pop up after downloading
 
@@ -186,33 +224,33 @@ export default {
 
 ## CSS
 
-* css file -> pdf.scss
+1. css file -> pdf.scss
 
-1. Foundation
+2. Foundation
 
-2. gulp
+3. gulp
 
-```
-entry: `${gulp.config('base.src')}/styles/pdf.scss`,
-src: [
-  `${gulp.config('base.src')}/styles/_settings.scss`,
-  `${gulp.config('base.src')}/styles/pdf.scss`
-],
-dest: `${gulp.config('base.dist')}/static/css`
-```
+  ```
+  entry: `${gulp.config('base.src')}/styles/pdf.scss`,
+  src: [
+    `${gulp.config('base.src')}/styles/_settings.scss`,
+    `${gulp.config('base.src')}/styles/pdf.scss`
+  ],
+  dest: `${gulp.config('base.dist')}/static/css`
+  ```
   
-3. wkhtmltopdf
+4. wkhtmltopdf
 
-```
-from rhizome.settings.base import STATICFILES_DIRS
+  ```
+  from rhizome.settings.base import STATICFILES_DIRS
+  
+  css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
+    ...
+  pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+  ```
 
-css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
-  ...
-pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
-```
-
- 4. css file path
+ 5. css file path
 				
-```
-from rhizome.settings.base import STATICFILES_DIRS\
-```	
+  ```
+  from rhizome.settings.base import STATICFILES_DIRS\
+  ```
