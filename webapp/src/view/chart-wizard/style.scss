@@ -39,8 +39,8 @@
   .chart-wizard__expandable {
     display: none;
     position: relative;
-    min-height: 100px;
-    padding: 10px 10px 80px;
+    min-height: 10px;
+    padding: 10px 10px 10px;
   }
 
   &.active {
@@ -77,8 +77,8 @@
 .chart-wizard__save,
 .chart-wizard__cancel,
 .chart-wizard__next {
-  display: block;
-  margin: 10px 0;
+  display: inline-block;;
+  margin: 10px 10px;
   text-align: center;
   text-transform: uppercase;
   background: #344b61;
@@ -91,12 +91,13 @@
 }
 
 .chart-wizard__cancel {
-  width: 250px;
-  padding: 20px;
+  width: 85px;
+  padding: 10px;
 }
 
 .chart-wizard__save {
-  padding: 20px;
+  width: 85px;
+  padding: 10px;
 }
 
 .chart-wizard__next {
