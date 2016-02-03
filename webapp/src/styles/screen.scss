@@ -9,6 +9,8 @@
 @import "charts";
 @import "buttons";
 @import "dashboards-redesign";
+@import "tables";
+@import "text";
 @import "admin";
 @import "react-widgets";
 @import "react-widgets-core";
@@ -52,50 +54,6 @@ body {
   padding-bottom: 100px;
 }
 
-h6 {
-  //margin-bottom: 0.1rem;
-  margin-top: 3px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  font-size: 1.1em;
-  color: #7A909E;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  a {
-    color: inherit;
-
-    &:not([href]) {
-      color: inherit;
-      cursor: default;
-    }
-  }
-
-  label {
-    display: inline-block;
-    text-transform: none;
-    font-size: rem-calc(12);
-    margin-right: 1em;
-  }
-
-  input[type="radio"] {
-    margin-bottom: 0;
-  }
-}
-
-h3 {
-  border-bottom: 1px solid $iron;
-  color: $steel;
-  text-transform: uppercase;
-}
-
-h4 {
-  margin: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  font-size: 0.9rem;
-}
 
 select {
   padding-right: 1.5em;
@@ -142,9 +100,7 @@ nav#main-nav {
   }
 }
 
-p {
-  margin-bottom: 0;
-}
+
 
 .pageWelcome {
   color: #999;
@@ -185,107 +141,7 @@ a {
   }
 }
 
-table {
-  border: 1px solid #DDDDDD;
-  border-collapse: collapse;
-  margin-top: 10pt;
-  width: 100%;
 
-  thead {
-    tr {
-      th {
-        color: $rhz-font-color;
-        padding: 0.5rem 0.625rem 0.625rem;
-        text-align: left;
-        text-transform: uppercase;
-        background-color: $rhz-background-color;
-      }
-    }
-  }
-
-  td {
-    background-color: white;
-    cursor: default;
-    font-size: 9pt;
-    padding: 3pt 0;
-  }
-
-  tbody {
-    tr:not(.empty):hover {
-      td {
-        background-color: $ghost;
-      }
-    }
-  }
-
-  tfoot {
-    td {
-      background-color: #DDDDDD;
-      padding: 0;
-
-      &.more {
-        font-size: rem-calc(10);
-        text-align: center;
-
-        &:hover {
-          background-color: #DDDDDD;
-        }
-
-        a {
-          color: $body-font-color;
-          display: block;
-          font-weight: bold;
-          opacity: 0.6;
-
-          transition: opacity 300ms ease-in-out;
-
-          &:hover {
-            color: inherit;
-            opacity: 1;
-          }
-        }
-      }
-    }
-  }
-
-  .numeric {
-    text-align: right;
-  }
-
-  .empty {
-    td {
-      background-color: transparent;
-      font-size: 150%;
-      padding: 2em 0;
-      text-align: center;
-    }
-  }
-
-  .odd {
-    td {
-      background-color: #f0f0f0;
-    }
-  }
-
-  &.pie-charts {
-    border: none;
-    border-collapse: separate;
-    border-spacing: 0.5em;
-
-    margin: 0.25em 0 0.25rem 0;
-
-    tr {
-      background-color: transparent !important;
-
-      td {
-        font-size: 0.625rem;
-        line-height: 1;
-        padding: 0;
-        vertical-align: middle;
-      }
-    }
-  }
-}
 
 *[role="menuitem"] {
   color: $body-font-color;
@@ -319,105 +175,7 @@ table {
 
 
 
-/* fixed-header tables */
-.fixed-table-container {
 
-  $defaultTableHeight: 475px;
-  $defaultHeaderHeight: 50px;
-  $defaultHeaderLineHeight: 25px;
-  $borderColor: #ddd;
-
-  display: inline-block; /* required to make horizontal scrolling work */
-  height: $defaultTableHeight;
-  background-color: white;
-  position: relative; /* could be absolute or relative */
-  padding-top: $defaultHeaderHeight; /* height of header */
-  width: 100%;
-  .fixed-table-container-inner {
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: 100%;
-    border: 1px solid $borderColor;
-    border-top: none;
-    border-left: none;
-    border-right: none;
-    .entry-table-row-header {
-      div {
-        width: 10px;
-        text-align: center;
-        margin: auto;
-        display: inline-block;
-      }
-    }
-  }
-
-  .header-background {
-    height: $defaultHeaderHeight; /* height of header */
-    background-color: #F5F5F5;
-    border: solid 1px $borderColor;
-    border-bottom: none;
-    position: absolute;
-    top: 0;
-    right: 0;
-    left: 0;
-  }
-
-  table {
-    background-color: white;
-    width: 100%;
-    overflow-x: hidden;
-    overflow-y: auto;
-    margin: -18px 0 -1px 0;
-
-    th {
-      border-bottom: 1px solid $borderColor;
-    }
-
-    td {
-      border-left: 1px solid $borderColor;
-      &:first-child {
-        border-left: none;
-      }
-
-      &.section-header, &.section-header:hover {
-        font-size: 11px;
-        background-color: #999;
-        font-weight: 100;
-        color: #fff;
-        text-transform: uppercase;
-      }
-    }
-
-    .th-inner {
-      position: absolute;
-      top: 1px;
-      line-height: $defaultHeaderLineHeight; /* height of header */
-      text-align: left;
-      height: $defaultHeaderHeight;
-      padding-left: 5px;
-      margin-left: -10px;
-      z-index: 900;
-
-      border-left: 1px solid $borderColor;
-      background-color: #F5F5F5;
-
-      /* to hide overflow text, and then reveal on hover: */
-      white-space: nowrap;
-      overflow-x: hidden;
-      &:hover {
-        overflow-x: visible;
-        z-index: 1000;
-        width: auto;
-        padding-right: 10px;
-      }
-    }
-    th:first-child .th-inner {
-      border-left: none;
-    }
-
-  }
-
-}
 
 .statusText-good {
   color: #29A13A;

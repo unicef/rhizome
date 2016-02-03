@@ -1,0 +1,45 @@
+h1, h2, h3, h4, h5, h6 {
+  a {
+    color: inherit;
+    &:not([href]) {
+      color: inherit;
+      cursor: default;
+    }
+  }
+  label {
+    display: inline-block;
+    text-transform: none;
+    font-size: rem-calc(12);
+    margin-right: 1em;
+  }
+  input[type="radio"] {
+    margin-bottom: 0;
+  }
+}
+
+h3 {
+  border-bottom: 1px solid $iron;
+  color: $steel;
+  text-transform: uppercase;
+}
+
+h4 {
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+h6 {
+  margin-top: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 1.1em;
+  color: #7A909E;
+}
+
+p {
+  margin-bottom: 0;
+  font-size: .8rem;
+}
