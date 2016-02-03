@@ -76,7 +76,6 @@ let ChartWizard = React.createClass({
   },
 
   render () {
-    // console.log('this.state', this.state)
     let availableIndicators = this.state.data.indicatorList
     let indicatorStep = (
       <div>

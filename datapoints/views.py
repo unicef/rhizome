@@ -5,6 +5,7 @@ from django.views import generic
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
 from django.template import RequestContext
+from django.shortcuts import get_object_or_404
 
 from datapoints.models import *
 from datapoints.forms import *
@@ -13,6 +14,7 @@ from datapoints.mixins import PermissionRequiredMixin
 from datapoints.pdf_utils import print_pdf
 from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
+
 
 def export_file(request):
     file_type = request.GET['type']
@@ -100,7 +102,9 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     template_name = 'user_create.html'
     form_class = UserCreateForm
 
-    def get_success_url(self,new_user_id):
+    def get_success_url(self):
+        new_user_id = self.object.id
+
         return reverse_lazy('datapoints:user_update',\
             kwargs={'pk':new_user_id})
 

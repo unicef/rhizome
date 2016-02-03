@@ -45,7 +45,7 @@ var DataBrowserTableStore = Reflux.createStore({
     let options = {indicator__in: []}
 
     if (locations.length > 0) {
-      options.location__in = _.map(locations, 'id')
+      options.location_id__in = _.map(locations, 'id')
     }
 
     if (campaign.start) {

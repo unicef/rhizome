@@ -25,6 +25,16 @@ var DashboardBuilderStore = Reflux.createStore({
   onInitialize (id) {
     this.dashboardId = id
     if (_.isNull(id)) {
+      var data = {
+        title: randomHash(),
+        description: '',
+        default_office_id: null,
+        dashboard_json: '[]',
+        layout: 1
+      }
+      api.save_dashboard(data).then(res => {
+        this.data.newDashboardId = res.objects.id
+      })
       this.data.newDashboard = true
       this.data.loaded = true
       this.trigger(this.data)

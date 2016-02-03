@@ -23,7 +23,7 @@ let ChartWizardStore = Reflux.createStore({
     locationFilteredList: [],
     locationAggregated: [],
     campaignFilteredList: [],
-    timeRangeFilteredList: [],
+    // timeRangeFilteredList: [],
     chartTypeFilteredList: [],
     groupByValue: 0,
     locationLevelValue: 0,
@@ -72,12 +72,12 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
-  filterTimeRangeByChartType (timeRanges, chartType) {
-    let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
-    return timeRanges.filter(time => {
-      return _.includes(expectTimes, time.value)
-    })
-  },
+  // filterTimeRangeByChartType (timeRanges, chartType) {
+  //   let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
+  //   return timeRanges.filter(time => {
+  //     return _.includes(expectTimes, time.value)
+  //   })
+  // },
 
   filterChartTypeByIndicator () {
     api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
@@ -104,7 +104,7 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.chartDef.locations = builderDefinitions.locationLevels[this.data.locationLevelValue].value
     this.data.chartDef.groupBy = builderDefinitions.groups[this.data.groupByValue].value
-    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
+    // this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
     this.data.chartDef.yFormat = builderDefinitions.formats[this.data.yFormatValue].value
     this.data.chartDef.xFormat = builderDefinitions.formats[this.data.xFormatValue].value
   },
@@ -183,7 +183,7 @@ let ChartWizardStore = Reflux.createStore({
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
     this.data.locationFilteredList = this.data.locationList // this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
     this.data.campaignFilteredList = this.campaignList // this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
-    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+    // this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
     this.data.chartTypeFilteredList = builderDefinitions.charts
 
     if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
@@ -214,7 +214,7 @@ let ChartWizardStore = Reflux.createStore({
       locationFilteredList: [],
       locationAggregated: [],
       campaignFilteredList: [],
-      timeRangeFilteredList: [],
+      // timeRangeFilteredList: [],
       chartTypeFilteredList: [],
       groupByValue: 0,
       locationLevelValue: 0,
@@ -305,9 +305,9 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeChart (value) {
     this.data.chartDef.type = value
-    this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
-    this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
-    this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
+    // this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+    // this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
+    // this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
 
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
@@ -382,7 +382,7 @@ let ChartWizardStore = Reflux.createStore({
           countries: this.data.countrySelected.map(country => country.id),
           locationValue: this.data.location.map(location => location.id),
           campaignValue: this.data.campaign.id,
-          timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
+          // timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
           xFormat: builderDefinitions.formats[this.data.xFormatValue].value
         }, (source, override) => {
