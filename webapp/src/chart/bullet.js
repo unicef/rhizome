@@ -9,7 +9,7 @@ import qualitativeAxis from './qualitative-axis'
 
 var defaults = {
   domain: _.constant([0, 1]),
-  fontSize: 11,
+  fontSize: 13,
   lineHeight: 1.3,
   padding: 0,
   scale: d3.scale.linear,

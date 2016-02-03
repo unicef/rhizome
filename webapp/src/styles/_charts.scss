@@ -110,7 +110,7 @@ svg {
   }
 
   .legend {
-    font-size: 0.625rem;
+    font-size: 0.8rem;
   }
 }
 
@@ -351,6 +351,9 @@ svg {
 }
 
 .bullet-chart {
+  .title {
+    font-size: 13px;
+  }
   margin-bottom: 5px;
   rect {
     shape-rendering: crispEdges;

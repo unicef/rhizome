@@ -167,7 +167,7 @@ _.extend(MapLegend.prototype, {
         })
         .style({
           'text-anchor': 'start',
-          'font-size': 10
+          'font-size': 12
         })
         .text(function (d) { return d })
     }

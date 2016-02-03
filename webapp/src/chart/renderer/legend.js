@@ -83,7 +83,7 @@ function legend (chartOptions) {
           'x': _size + _padding,
           'y': _size / 2
         })
-        .style('font-size', _size + 2)
+        .style('font-size', _size + 4)
 
       series.exit()
         .transition()
