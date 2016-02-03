@@ -36,19 +36,17 @@ var DownloadButton = React.createClass({
 
   _download () {
     if (!this.props.enable || this.state.isWorking) return
-
     let url = this.props.onClick()
     this.setState({
       url: url,
       isWorking: true
     })
-
-    var self = this
+    // var self = this
     var refreshIntervalId = window.setInterval(() => {
-      var cookieValue = self._getCookie(self.props.cookieName)
-      if (cookieValue === 'true') {
+      // var cookieValue = self._getCookie(self.props.cookieName)
+      // if (cookieValue === 'true') {
         this._completeDownload(refreshIntervalId)
-      }
+      // }
     }, 1000)
   },
 
