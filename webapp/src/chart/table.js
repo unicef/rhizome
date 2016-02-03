@@ -320,6 +320,7 @@ _.extend(TableChart.prototype, {
             .text(function (d) { return d.source_name })
               .transition()
               .duration(500)
+              .call(this._wrap, xScale.rangeBand())
 
     // END SOURCE FOOTER //
 
@@ -341,13 +342,14 @@ _.extend(TableChart.prototype, {
   _wrap: function (text, width) {
     text.each(function () {
       var text = d3.select(this)
-      var words = text.text().split(/\s+/)
+      var words = text.text().split(/\s+/).reverse()
       var line = []
       var lineNumber = 0
       var lineHeight = 1.1 // ems
-      var y = text.attr('y') - 10
-      var dy = parseFloat(text.attr('dy'))
-      var tspan = text.text(null).append('tspan').attr('x', 0).attr('y', y).attr('dy', dy + 'em')
+      var y = text.attr('y')
+      var x = text.attr('x')
+      var dy = 0 // parseFloat(text.attr("dy"))
+      var tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em')
       var i = 0
       for (i = 0; i < words.length; i += 1) {
         var word = words[i]
@@ -357,7 +359,7 @@ _.extend(TableChart.prototype, {
           line.pop()
           tspan.text(line.join(' '))
           line = [word]
-          tspan = text.append('tspan').attr('x', 0).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
+          tspan = text.append('tspan').attr('x', x).attr('y', y).attr('dy', ++lineNumber * lineHeight + dy + 'em').text(word)
         }
       }
     })
