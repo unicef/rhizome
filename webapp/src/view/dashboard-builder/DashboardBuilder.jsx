@@ -241,7 +241,7 @@ export default React.createClass({
             <div className='large-2 columns'>
               <button className='cd-button'
                       onClick={this.newChart}
-                      style={{visibility: (showAddChartButton() ? 'visible' : 'hidden')}}>
+                      style={{visibility: (showAddChartButton() ? 'visible' : 'invisible')}}>
                 <span> <i className='fa fa-icon fa-fw fa-plus' /> Add Chart </span>
               </button>
             </div>

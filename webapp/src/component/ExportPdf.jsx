@@ -77,7 +77,7 @@ var ExportPdf = React.createClass({
           text={this.state.label}>
           {items}
         </TitleMenu>
-        <iframe width='0' height='0' className='hidden' src={this.state.href}></iframe>
+        <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
       </div>
     )
   }

@@ -15,3 +15,11 @@
 .databrowser__button {
   width: 100%;
 }
+
+.invisible {
+  visibility: hidden;
+}
+
+.hidden {
+	display: none;
+}
