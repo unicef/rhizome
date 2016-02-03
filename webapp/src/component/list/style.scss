@@ -1,7 +1,7 @@
-ul.list {
+ul.list, .reorderable-list {
   margin-left: 0px;
 
-  li {
+  li, div.reorderable-item {
     list-style: none;
     position: relative;
     margin-bottom: 2px;

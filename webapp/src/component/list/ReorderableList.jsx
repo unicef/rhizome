@@ -24,8 +24,8 @@ export default React.createClass({
       holdTime='100'
       template={ReorderableItem}
       callback={this.rearrangeItems}
-      listClass='list'
-      itemClass='list-item'
+      listClass='reorderable-list'
+      itemClass='reorderable-item'
       removeItem={this.props.removeItem}
       disableReorder={false}
       list={items}/>
