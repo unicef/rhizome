@@ -7,6 +7,7 @@
 @import "utilities";
 @import "forms";
 @import "charts";
+@import "buttons";
 @import "dashboards-redesign";
 @import "admin";
 @import "react-widgets";
@@ -297,49 +298,6 @@ table {
   }
 }
 
-//button,
-.button,
-*[role="button"] {
-  background-color: $rhz-button-bg-color;
-  color: $rhz-font-color;
-  text-transform: uppercase;
-  font-size: 0.625rem;
-  border-style: hidden;
-  font-family: adelle;
-
-  &:not(.disabled):not(.success):hover {
-    background-color: #426281;
-    color: $rhz-font-color;
-  }
-
-  &:focus {
-    outline: none;
-  }
-}
-
-.search-button {
-  background-color: #FAFAFA;
-  .icon {
-    color: #000000;
-  }
-  &:not(.disabled):not(.success):hover {
-    background-color: #FAFAFA;
-  }
-}
-
-.button-bar {
-  .button-bar__edit {
-    display: inline-block;
-    padding: 0 3px;
-    color: white;
-    font-size: 14px;
-    cursor: pointer;
-
-    &:hover {
-      color: darken(white, 20%);
-    }
-  }
-}
 
 [class*="block-grid-"] > li {
   padding-bottom: 0;
@@ -359,17 +317,7 @@ table {
   text-decoration: underline;
 }
 
-.button.read-only {
-  //border-bottom-width: 1px;
-  //cursor: initial;
-  color: $rhz-font-color;
-  &:not(.disabled):not(.success):hover {
-    //border-color: $button-border-color;
-    background-color: #426281;
-    color: $rhz-font-color;
-  }
 
-}
 
 /* fixed-header tables */
 .fixed-table-container {
