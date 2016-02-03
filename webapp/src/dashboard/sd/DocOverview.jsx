@@ -4,6 +4,7 @@ import api from 'data/api'
 
 import DocOverviewActions from 'actions/DocOverviewActions'
 import DocOverviewStore from 'stores/DocOverviewStore'
+import DownloadButton from 'component/DownloadButton.jsx'
 
 var DocOverview = React.createClass({
   mixins: [
@@ -68,15 +69,7 @@ var DocOverview = React.createClass({
   },
 
   _download: function () {
-    var self = this
-    console.log('_download')
-
-    let query = {
-      'format': 'csv', 'document_id': self.props.doc_id
-      // return api.datapoints.toString(query)
-    }
-
-    return api.submission(query)
+    return api.submission.toString({'format': 'csv', 'document_id': this.props.doc_id})
   },
 
   render () {
@@ -95,18 +88,17 @@ var DocOverview = React.createClass({
       </div>
     ]
 
-    var odkRefreshBtn = <p>''</p>
+    var odkRefreshBtn = <span>&nbsp;</span>
 
     for (var i = 0; i < doc_deets.length; i++) {
       var doc_detail = doc_deets[i]
 
       if (doc_detail.doc_detail_type__name === 'odk_form_name') {
         odkRefreshBtn = (
-          <p>
-            <a disabled={this.state.isFetchingOdk} className='button button-refresh large-3 medium-3 small-12 columns'
-               onClick={this.syncOdk}> { this.state.isFetchingOdk ? 'Refreshing' : 'Fetch ODK Data'}
-            </a>
-          </p>)
+          <a disabled={this.state.isFetchingOdk} className='button button-refresh large-3 medium-3 small-12 columns'
+             onClick={this.syncOdk}> { this.state.isFetchingOdk ? 'Refreshing' : 'Fetch ODK Data'}
+          </a>
+        )
       }
 
       rows.push(
@@ -116,29 +108,28 @@ var DocOverview = React.createClass({
         </div>)
     }
 
-    var refresh_master_btn = (<div>
-      <p>
+    var button_row = (
+      <div className='button-row small-12 columns'>
         <a disabled={this.state.isProcessing} className='button button-refresh large-3 medium-3 small-12 columns'
            onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
         </a>
-      </p>
-
-      <p>
         <a disabled={this.state.isRefreshing} className='button button-refresh large-3 medium-3 small-12 columns'
            onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
         </a>
-      </p>
-      <p>
-        <a disabled={this.state.isDownloading} className='button button-refresh large-3 medium-3 small-12 columns'
-           onClick={this._download}> { this.state.isDownloading ? 'Downloading' : 'Download Raw'}
-        </a>
-      </p>
-      {odkRefreshBtn}
-    </div>)
+        <DownloadButton
+          onClick={this._download}
+          classes="large-3 medium-3 small-12 columns"
+          enable='true'
+          text='Download Raw'
+          working='Downloading'
+          cookieName='dataBrowserCsvDownload' />
+        {odkRefreshBtn}
+      </div>
+    )
 
     return <div className='row csv-upload__message'>
       {rows}
-      {refresh_master_btn}
+      {button_row}
     </div>
   }
 })
