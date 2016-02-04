@@ -13,7 +13,7 @@ import DashboardActions from 'actions/DashboardActions'
 import DashboardStore from 'stores/DashboardStore'
 
 import GeoActions from 'actions/GeoActions'
-import TitleInput from 'component/TitleInput.jsx'
+// import TitleInput from 'component/TitleInput.jsx'
 // import LayoutOptions from 'component/layout-options/LayoutOptions.jsx'
 // import LayoutDefaultSettings from 'dashboard/builtin/layout-options'
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'
@@ -154,24 +154,6 @@ export default React.createClass({
                            chartDef={chartDef}
                            save={this.saveChart}
                            cancel={this.cancelEditChart}/>)
-      // return (
-      //   <form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
-      //     <h1>Create a New Custom Dashboard</h1>
-      //     <div className='cd-title small-12'>Dashboard Title</div>
-      //     <input type='text'
-      //       className='description small-12'
-      //       value={this.state.title}
-      //       onChange={this._updateNewTitle}
-      //       autoFocus />
-      //     <div className='cd-title float-none'>Choose a Layout</div>
-      //     <LayoutOptions values={LayoutDefaultSettings.values}
-      //       value={this.state.store.layout}
-      //       onChange={DashboardBuilderActions.changeLayout} />
-      //     <a href='#'
-      //       className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
-      //       onClick={DashboardBuilderActions.addDashboard}>Next</a>
-      //   </form>
-      // )
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard) || this.state.dataStore.loading) {
       let style = {fontSize: '2rem', zIndex: 9999}
       return (
@@ -209,60 +191,16 @@ export default React.createClass({
       </div>
     )
 
-    let showAddChartButton = () => {
-      let layout = this.state.store.dashboard.layout
-      let numCharts = this.state.store.dashboard.charts.length
-      return (
-        (layout === 1 && !numCharts) ||
-        (layout === 2 && numCharts < 8) ||
-        (layout === 3 && numCharts < 3)
-      )
-    }
     let dashboardBuilderContainer = (
       <div>
-        <form className='inline no-print row cd-titlebar'>
-          <div className='large-6 columns'> </div>
-          <div className='large-6 columns'>
-            <div className='row'>
-              <div className='large-6 medium-4 small-12 columns'>
-                <label className='cd-title-label cd-titlebar-margin'>Dashboard Title</label>
-              </div>
-              <div className='large-6 medium-8 small-12 columns'>
-                <TitleInput className='cd-title-input cd-titlebar-margin'
-                            initialText={this.state.title}
-                            save={this._updateTitle}/>
-              </div>
-            </div>
-          </div>
-        </form>
         {this.state.store.dashboard.charts.length ? dashboard : addDashboardLinkContainer}
         <div className='cd-footer'>
           <div className='row'>
             <div className='large-2 columns'>
-              <button className='cd-button'
-                      onClick={this.newChart}
-                      style={{visibility: (showAddChartButton() ? 'visible' : 'invisible')}}>
-                <span> <i className='fa fa-icon fa-fw fa-plus' /> Add Chart </span>
-              </button>
             </div>
             <div className='large-7 columns'>
-              <div className='row'>
-                <div className='large-2 columns'>
-                  <label className='description-text'>Description&ensp;:</label>
-                </div>
-                <div className='large-5 columns'>
-                  <TitleInput className='description' initialText={this.state.description}
-                              save={this._updateDescription}/>
-                </div>
-                <div className='large-5 columns'>
-                  <div className='description-text'>Changes are saved when you make them.</div>
-                </div>
-              </div>
             </div>
             <div className='large-3 columns'>
-              <button className='cd-button float-right' href='#' onClick={this._deleteDashboard}>
-                <i className='fa fa-icon fa-fw fa-trash'/>Delete this dashboard
-              </button>
             </div>
           </div>
         </div>

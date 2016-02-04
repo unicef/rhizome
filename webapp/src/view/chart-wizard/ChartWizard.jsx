@@ -58,7 +58,7 @@ let ChartWizard = React.createClass({
   },
 
   saveChart () {
-    ChartWizardActions.saveChart(this.props.save)    
+    ChartWizardActions.saveChart(this.props.save)
   },
 
   toggleStep (refer) {
