@@ -342,13 +342,13 @@ _.extend(TableChart.prototype, {
   _wrap: function (text, width) {
     text.each(function () {
       var text = d3.select(this)
-      var words = text.text().split(/\s+/).reverse()
+      var words = text.text().split(/\s+/)
       var line = []
       var lineNumber = 0
       var lineHeight = 1.1 // ems
-      var y = text.attr('y')
-      var x = text.attr('x')
-      var dy = 0 // parseFloat(text.attr("dy"))
+      var y = text.attr('y') - 10
+      var x = text.attr('x') !== null ? text.attr('x') : 0
+      var dy = 0
       var tspan = text.text(null).append('tspan').attr('x', x).attr('y', y).attr('dy', dy + 'em')
       var i = 0
       for (i = 0; i < words.length; i += 1) {
