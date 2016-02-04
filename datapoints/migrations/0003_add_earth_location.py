@@ -14,6 +14,14 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL('''
 
+        INSERT INTO office
+        (id, name, created_at)
+        SELECT 1, 'Earth', now()
+        WHERE NOT EXISTS (
+            SELECT 1 FROM office where id = 1
+        );
+
+
         INSERT INTO location_type
         (name, admin_level)
         SELECT 'Planet', -1
@@ -21,9 +29,9 @@ class Migration(migrations.Migration):
             SELECT 1 FROM location_type where name = 'Planet'
         );
         INSERT INTO location
-        (name,location_code,slug,location_type_id,office_id,parent_location_id,created_at)
+        (name,location_code,location_type_id,office_id,parent_location_id,created_at)
 
-        SELECT 'Earth', 'Earth', 'earth', lt.id, 1, null, now()
+        SELECT 'Earth', 'Earth',lt.id, 1, null, now()
         FROM location_type lt
         WHERE lt.name = 'Planet'
         AND NOT EXISTS (
