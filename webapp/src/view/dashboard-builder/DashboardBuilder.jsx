@@ -150,7 +150,7 @@ export default React.createClass({
   render () {
     if (this.state.store.newDashboard) {
       var chartDef = {'indicators': [], 'type': 'TableChart'}
-      return (<ChartWizard dashboardId={this.state.store.newDashboardId}
+      return (<ChartWizard dashboardId={-1}
                            chartDef={chartDef}
                            save={this.saveChart}
                            cancel={this.cancelEditChart}/>)

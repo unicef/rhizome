@@ -58,7 +58,7 @@ let ChartWizard = React.createClass({
   },
 
   saveChart () {
-    ChartWizardActions.saveChart(this.props.save)
+    ChartWizardActions.saveChart(this.props.save)    
   },
 
   toggleStep (refer) {
@@ -76,6 +76,9 @@ let ChartWizard = React.createClass({
   },
 
   render () {
+    // console.log('this.state: ', this.state)
+    // console.log('this.props: ', this.props)
+
     let availableIndicators = this.state.data.indicatorList
     let indicatorStep = (
       <div>
@@ -128,16 +131,14 @@ let ChartWizard = React.createClass({
     }
 
     let styleSelector = React.createElement(previews[this.state.data.chartDef.type], {
-      chartTitle: this.state.data.chartDef.title
+      chartTitle: this.state.data.chartDef.title,
+      onEditTitle: ChartWizardActions.editTitle,
+      palette: this.state.data.chartDef.palette,
+      onChangePalette: ChartWizardActions.changePalette,
+      xLabel: this.state.data.chartDef.xLabel,
+      yLabel: this.state.data.chartDef.yLabel,
+      onSetXYAxisLabel: ChartWizardActions.setXYAxisLabel
     })
-
-    let styleStep = (
-      <div>
-        <ChartWizardStep title='Style' refer='preview'>
-          {styleSelector}
-        </ChartWizardStep>
-      </div>
-    )
 
     let chart = (
       <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
@@ -149,7 +150,7 @@ let ChartWizard = React.createClass({
             {locationStep}
             {timePeriodStep}
             {chartTypeStep}
-
+            {styleSelector}
             <div className='row'>
               <button className='chart-wizard__save' onClick={this.saveChart}>
                   Save
@@ -161,11 +162,9 @@ let ChartWizard = React.createClass({
           </div>
 
     let chartWizardEditor = <div className='row'>
-        <div className='medium-4 columns'></div>
-        <div className='medium-4 columns'></div>
-        <div className='medium-4 columns'>
-          {styleStep}
-        </div>
+        <div className='medium-4 columns'>A</div>
+        <div className='medium-4 columns'>B</div>
+        <div className='medium-4 columns'>C</div>
     </div>
     return (
       <div className='chart-wizard'>

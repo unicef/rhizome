@@ -24,19 +24,12 @@ var DashboardBuilderStore = Reflux.createStore({
 
   onInitialize (id) {
     this.dashboardId = id
+    console.log('id: ', id)
     if (_.isNull(id)) {
-      var data = {
-        title: randomHash(),
-        description: '',
-        default_office_id: null,
-        dashboard_json: '[]',
-        layout: 1
-      }
-      api.save_dashboard(data).then(res => {
-        this.data.newDashboardId = res.objects.id
-      })
       this.data.newDashboard = true
       this.data.loaded = true
+      this.data.dashboard = {}
+      this.data.dashboard.charts = []
       this.trigger(this.data)
     } else {
       api.get_dashboard({ id: id }, null, { 'cache-control': 'no-cache' }).then(dashboard => {
@@ -68,6 +61,7 @@ var DashboardBuilderStore = Reflux.createStore({
     // in this api do not need set the chart id.
     // chartDef.id = chartDef.title + (new Date()).valueOf()
 
+    console.log('chartDef: ', chartDef)
     this.data.dashboard.charts.push(chartDef)
     DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 

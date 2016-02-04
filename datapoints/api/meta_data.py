@@ -353,19 +353,27 @@ class CustomChartResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
+        chart_json = json.loads(post_data['chart_json'])
+        chart_id = None
 
         try:
             chart_id = int(post_data['id'])
             dashboard_id = CustomChart.objects.get(id=chart_id).dashboard_id
         except KeyError:
-            chart_id = None
-            dashboard_id = post_data['dashboard_id']
+            pass
 
-        chart_json = json.loads(post_data['chart_json'])
+        try:
+            dashboard_id = post_data['dashboard_id']
+        except KeyError:
+            print 'KEYERROR HERE\n' * 3
+            dashboard_id = CustomDashboard.objects.create(
+                title = chart_json['title'],
+                owner_id = bundle.request.user.id
+            ).id
 
         defaults = {
             'dashboard_id': dashboard_id,
-            'chart_json': chart_json,
+            'chart_json': chart_json
         }
 
         chart, created = CustomChart.objects.update_or_create(

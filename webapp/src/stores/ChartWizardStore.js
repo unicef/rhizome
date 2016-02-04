@@ -178,8 +178,6 @@ let ChartWizardStore = Reflux.createStore({
       .reverse()
       .value()
 
-    // console.log('this dot campaign list', this.campaignList)
-
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
     this.data.locationFilteredList = this.data.locationList // this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
     this.data.campaignFilteredList = this.campaignList // this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
@@ -381,7 +379,7 @@ let ChartWizardStore = Reflux.createStore({
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
           countries: this.data.countrySelected.map(country => country.id),
           locationValue: this.data.location.map(location => location.id),
-          campaignValue: this.data.campaign.id,
+          // campaignValue: this.data.campaign.id,
           // timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
           xFormat: builderDefinitions.formats[this.data.xFormatValue].value
@@ -390,6 +388,7 @@ let ChartWizardStore = Reflux.createStore({
         }
       )
     )
+    this.data.charDef.saved = true
   },
 
   previewChart () {
