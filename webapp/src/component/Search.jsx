@@ -37,7 +37,8 @@ var Search = React.createClass({
         <input ref='input' type='text' tabIndex='1'
           onChange={this._setPattern}
           onBlur={this._onBlur}
-          value={this.state.pattern} />
+          value={this.state.pattern}
+          placeholder='Search'/>
         {clear}
       </div>
     )
