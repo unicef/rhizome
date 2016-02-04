@@ -388,7 +388,6 @@ let ChartWizardStore = Reflux.createStore({
         }
       )
     )
-    this.data.charDef.saved = true
   },
 
   previewChart () {

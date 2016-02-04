@@ -24,7 +24,6 @@ var DashboardBuilderStore = Reflux.createStore({
 
   onInitialize (id) {
     this.dashboardId = id
-    console.log('id: ', id)
     if (_.isNull(id)) {
       this.data.newDashboard = true
       this.data.loaded = true
@@ -61,7 +60,6 @@ var DashboardBuilderStore = Reflux.createStore({
     // in this api do not need set the chart id.
     // chartDef.id = chartDef.title + (new Date()).valueOf()
 
-    console.log('chartDef: ', chartDef)
     this.data.dashboard.charts.push(chartDef)
     DashboardActions.setDashboard({ dashboard: this.data.dashboard })
 
@@ -76,6 +74,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
     api.post_chart(data).then(res => {
       chartDef.id = res.objects.id
+      this.data.newDashboard = false
       this.trigger(this.data)
     }, res => {
       console.log('add chart error,', res)
