@@ -12,13 +12,14 @@ import ReorderableList from 'component/list/ReorderableList.jsx'
 
 import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
+import TitleInput from 'component/TitleInput.jsx'
 
 import ExplorerStore from 'stores/ExplorerStore'
 import ExplorerActions from 'actions/ExplorerActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
 // import options from './options/options'
-import previews from './preview/previews'
+// import previews from './preview/previews'
 
 const defaultChartDef = {
   title: '',
@@ -130,16 +131,6 @@ let ChartWizard = React.createClass({
       return null
     }
 
-    let styleSelector = React.createElement(previews[this.state.data.chartDef.type], {
-      chartTitle: this.state.data.chartDef.title,
-      onEditTitle: ChartWizardActions.editTitle,
-      palette: this.state.data.chartDef.palette,
-      onChangePalette: ChartWizardActions.changePalette,
-      xLabel: this.state.data.chartDef.xLabel,
-      yLabel: this.state.data.chartDef.yLabel,
-      onSetXYAxisLabel: ChartWizardActions.setXYAxisLabel
-    })
-
     let chart = (
       <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
         options={this.state.data.chartOptions}/>
@@ -150,7 +141,6 @@ let ChartWizard = React.createClass({
             {locationStep}
             {timePeriodStep}
             {chartTypeStep}
-            {styleSelector}
             <div className='row'>
               <button className='chart-wizard__save' onClick={this.saveChart}>
                   Save
@@ -159,13 +149,14 @@ let ChartWizard = React.createClass({
                   Cancel
               </button>
            </div>
+           <div>
+             <br></br>
+             <label>Title</label>
+             <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
+           </div>
           </div>
 
-    let chartWizardEditor = <div className='row'>
-        <div className='medium-4 columns'>A</div>
-        <div className='medium-4 columns'>B</div>
-        <div className='medium-4 columns'>C</div>
-    </div>
+    let chartWizardEditor = <div className='row'></div>
     return (
       <div className='chart-wizard'>
         {chartWizardSelector}

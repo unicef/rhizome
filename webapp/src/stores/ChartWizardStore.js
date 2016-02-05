@@ -368,6 +368,11 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onSaveChart (callback) {
+    if (!this.data.chartDef.title){
+      window.alert('Please add a Title to your chart')
+      return
+    }
+
     callback(
       _.merge(
         this.data.chartDef,
