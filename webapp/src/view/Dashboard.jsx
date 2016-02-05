@@ -51,6 +51,10 @@ var Dashboard = React.createClass({
     }
   },
 
+  editChart (index) {
+    this.setState({chartBuilderindex: index, chartBuilderActive: true})
+  },
+
   getAllDashboards () {
     api.get_dashboard().then(res => {
       let customDashboards = _(res.objects).sortBy('id').reverse().value()
@@ -313,24 +317,16 @@ var Dashboard = React.createClass({
     .reverse()
     .value()
 
-    // if (campaign.office_id  !== location.office_id) {
-    //   console.log('office id issue');
-    //   campaign = campaigns[0]
-    // }
-
-    // let edit
     // if (dashboardDef.owned_by_current_user) {
-    //   edit = (
-    //     <span>
-    //       <a className='menu-button fa-stack'
-    //          href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
-    //         <i className='fa fa-stack-2x fa-circle'></i>
-    //         <i className='fa fa-stack-1x fa-pencil'></i>
-    //       </a>
-    //       &emsp;
-    //     </span>
-    //   )
-    // }
+    // this should be an onClick -- not a link.  see DashboardBuilder.jsx -- this.editChart
+    let edit = (
+        <span style={{'display': 'inline', 'text-align': 'right'}}>
+          <a className='menu-button fa-stack'
+             href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
+            <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
+          </a>
+        </span>
+      )
 
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
@@ -350,7 +346,6 @@ var Dashboard = React.createClass({
         </div>
       </div>)
     }
-
     let exportModule = (<ExportPdf className='export-file' />)
 
     return (
@@ -363,8 +358,11 @@ var Dashboard = React.createClass({
             </div>
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
               <div className='row'>
-                <div className='medium-6 columns medium-offset-6'>
+                <div className='medium-5 columns medium-offset-5'>
                   {exportModule}
+                </div>
+                <div>
+                  {edit}
                 </div>
               </div>
             </div>

@@ -365,7 +365,6 @@ class CustomChartResource(BaseModelResource):
         try:
             dashboard_id = post_data['dashboard_id']
         except KeyError:
-            print 'KEYERROR HERE\n' * 3
             dashboard_id = CustomDashboard.objects.create(
                 title = chart_json['title'],
                 owner_id = bundle.request.user.id
