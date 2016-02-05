@@ -78,23 +78,23 @@ export default {
     let locationIndex = _.indexBy(data.locationAggregated, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
-    let startDate = chartDef.startDate || moment(data.campaign.start_date).format('YYYY-MM-DD')
-    let endDate = data.endDate
-
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
       location_id__in: _.map(data.locationAggregated, _.property('id')),
-      campaign_start: startDate,
-      campaign_end: endDate,
+      campaign_start: chartDef.startDate,
+      campaign_end: chartDef.endDate,
       chart_type: chartDef.type
     }
+
+    let lower = moment(chartDef.startDate, 'YYYY-MM-DD')
+    let upper = moment(chartDef.endDate, 'YYYY-MM-DD')
 
     return processChartData.init(api.datapoints(query),
       chartDef.type,
       data.indicatorSelected,
       data.locationAggregated,
-      startDate,
-      endDate,
+      lower,
+      upper,
       groups,
       chartDef,
       layout

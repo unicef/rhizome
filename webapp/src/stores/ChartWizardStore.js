@@ -201,12 +201,16 @@ let ChartWizardStore = Reflux.createStore({
         : null
     }
 
-    // if (this.data.indicatorSelected.length > 0) {
-    //   this.filterChartTypeByIndicator()
-    // }
+    // hacky way to find the default the dates //
+    if (!this.data.chartDef.endDate){
+        this.data.chartDef.endDate = '2016-02-01'
+    }
+
+    if (!this.data.chartDef.startDate){
+        this.data.chartDef.startDate = '2015-02-01'
+    }
 
     this.applyChartDef(this.data.chartDef)
-    console.log('chartDef: ', this.data.chartDef)
 
     this.previewChart()
   },
