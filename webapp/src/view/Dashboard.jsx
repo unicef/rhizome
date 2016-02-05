@@ -320,7 +320,7 @@ var Dashboard = React.createClass({
     // if (dashboardDef.owned_by_current_user) {
     // this should be an onClick -- not a link.  see DashboardBuilder.jsx -- this.editChart
     let edit = (
-        <span style={{'display': 'inline', 'text-align': 'right'}}>
+        <span style={{'display': 'inline', 'textAlign': 'right'}}>
           <a className='menu-button fa-stack'
              href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
             <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
