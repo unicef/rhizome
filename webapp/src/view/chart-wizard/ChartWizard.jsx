@@ -108,13 +108,22 @@ let ChartWizard = React.createClass({
       </div>
     )
 
+    let startDate = moment()
+    let endDate = moment()
+
+    if (this.state.data.chartDef) {
+      startDate = moment(this.state.data.chartDef.startDate, 'YYYY-MM-DD').toDate()
+      endDate = moment(this.state.data.chartDef.endDate, 'YYYY-MM-DD').toDate()
+    }
+
     let timePeriodStep = (
       <div>
         <ChartWizardStep title='Time' refer='preview'>
         <DateRangePicker
           sendValue={ChartWizardActions.updateDateRangePicker}
-          start={moment(this.state.data.chartDef.startDate, 'YYYY-MM-DD').toDate()}
-          end={moment(this.state.data.chartDef.endDate, 'YYYY-MM-DD').toDate()}
+          start={startDate}
+          end={endDate}
+          fromComponent='ChartWizard'
         />
         </ChartWizardStep>
     </div>
