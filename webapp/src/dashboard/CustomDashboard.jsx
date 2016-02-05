@@ -154,15 +154,18 @@ var CustomDashboard = React.createClass({
       let options = data[id] && data[id].options || getOptions(chart, campaign)
 
       // Sort the indicators based on the order they were saved into the custom_chart table
-      let sortedArray = []
-      _.forEach(chart.indicators, function (indicator) {
-        options.headers.map(function (header) {
-          if (header.id === indicator) {
-            sortedArray.push(header)
-          }
-        })
-      }, this)
-      options.headers = sortedArray
+      // @Dima plz fix this so we can apply indicator ordering to bar / column / pie / chart
+      if (chart.type === 'TableChart') {
+        let sortedArray = []
+        _.forEach(chart.indicators, function (indicator) {
+          options.headers.map(function (header) {
+            if (header.id === indicator) {
+              sortedArray.push(header)
+            }
+          })
+        }, this)
+        options.headers = sortedArray
+      }
 
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
