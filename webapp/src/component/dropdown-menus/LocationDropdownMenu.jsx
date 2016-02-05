@@ -9,13 +9,13 @@ function filterMenu (items, pattern) {
     return items
   }
 
-  let match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
 
   return _(items).map(match).flatten().value()
 }
 
 function findMatches (item, re) {
-  let matches = []
+  var matches = []
 
   if (re.test(_.get(item, 'title'))) {
     matches.push(_.assign({}, item, {filtered: true}))
@@ -56,7 +56,7 @@ var LocationsDropDownMenu = React.createClass({
       return (<button className={'button ' + this.props.style}><i className='fa fa-spinner fa-spin'></i> Loading Locations...</button>)
     }
 
-    let locations = MenuItem.fromArray(filterMenu(this.props.locations, this.state.locationSearch), this.props.sendValue)
+    var locations = MenuItem.fromArray(filterMenu(this.props.locations, this.state.locationSearch), this.props.sendValue)
 
     return (
       <DropdownMenu

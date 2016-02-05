@@ -4,6 +4,16 @@ import React from 'react'
 import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 
+function filterMenu (items, pattern) {
+  if (_.size(pattern) < 3) {
+    return items
+  }
+
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
+
+  return _(items).map(match).flatten().value()
+}
+
 function findMatches (item, re) {
   var matches = []
 
@@ -18,16 +28,6 @@ function findMatches (item, re) {
   }
 
   return matches
-}
-
-function filterMenu (items, pattern) {
-  if (_.size(pattern) < 3) {
-    return items
-  }
-
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
-
-  return _(items).map(match).flatten().value()
 }
 
 var IndicatorTagDropdownMenu = React.createClass({

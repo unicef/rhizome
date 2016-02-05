@@ -10,8 +10,8 @@ function filterMenu (items, pattern) {
   }
 
   var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
-
   var itemList = _(items).map(match).flatten().value()
+
   return _.uniq(itemList, (item) => { return item.id })
 }
 
