@@ -79,20 +79,20 @@ let ChartWizardStore = Reflux.createStore({
   //   })
   // },
 
-  filterChartTypeByIndicator () {
-    api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
-      let availableCharts = res.objects.map(chart => {
-        return chart.name
-      })
-      this.data.chartTypeFilteredList = builderDefinitions.charts.filter(chart => {
-        return _.includes(availableCharts, chart.name)
-      })
-
-      if (!_.includes(availableCharts, this.data.chartDef.type)) {
-        this.onChangeChart(this.data.chartTypeFilteredList[0].name)
-      }
-    })
-  },
+  // filterChartTypeByIndicator () {
+  //   api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
+  //     let availableCharts = res.objects.map(chart => {
+  //       return chart.name
+  //     })
+  //     this.data.chartTypeFilteredList = builderDefinitions.charts.filter(chart => {
+  //       return _.includes(availableCharts, chart.name)
+  //     })
+  //
+  //     if (!_.includes(availableCharts, this.data.chartDef.type)) {
+  //       this.onChangeChart(this.data.chartTypeFilteredList[0].name)
+  //     }
+  //   })
+  // },
 
   applyChartDef (chartDef) {
     this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
@@ -115,7 +115,6 @@ let ChartWizardStore = Reflux.createStore({
 
   async onInitialize (chartDef) {
     this.data.chartDef = _.clone(chartDef)
-    // console.log('initialize ChartWizard', chartDef)
 
     let locations = await api.locations()
     let campaigns = await api.campaign()
@@ -146,6 +145,11 @@ let ChartWizardStore = Reflux.createStore({
       .map(ancestryString)
       .value()
 
+    // hacky way to set the default location //
+    if (!this.data.chartDef.locationValue){
+      this.data.chartDef.locationValue = locations.objects[0].id
+    }
+
     this.data.location = this.data.chartDef.locationValue
       ? Array.isArray(this.data.chartDef.locationValue)
         ? this.data.chartDef.locationValue.map(location => this.locationIndex[location])
@@ -159,6 +163,11 @@ let ChartWizardStore = Reflux.createStore({
     this.data.indicatorFilteredList = this.indicators // this.filterIndicatorByCountry(this.indicators, this.data.countrySelected)
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
+
+    // hacky way to find the default indicator //
+    if (chartDef.indicators.length === 0){
+        chartDef.indicators.push(this.indicators[0].id)
+    }
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
@@ -192,11 +201,13 @@ let ChartWizardStore = Reflux.createStore({
         : null
     }
 
-    if (this.data.indicatorSelected.length > 0) {
-      this.filterChartTypeByIndicator()
-    }
+    // if (this.data.indicatorSelected.length > 0) {
+    //   this.filterChartTypeByIndicator()
+    // }
 
     this.applyChartDef(this.data.chartDef)
+    console.log('chartDef: ', this.data.chartDef)
+
     this.previewChart()
   },
 
