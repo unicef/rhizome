@@ -3,8 +3,8 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
-import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
+import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'

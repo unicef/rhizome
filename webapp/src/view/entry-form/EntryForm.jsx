@@ -1,7 +1,7 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 
 import EntryFormStore from 'stores/EntryFormStore'

@@ -3,7 +3,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import ButtonMenu from 'component/ButtonMenu.jsx'
+import ButtonMenu from 'component/menus/ButtonMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'

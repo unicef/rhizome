@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import UserGroup from 'component/UserGroup.jsx'
-import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'

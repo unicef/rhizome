@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import moment from 'moment'
 
-import DropdownMenu from 'component/DropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 
 function searchValue (campaign) {

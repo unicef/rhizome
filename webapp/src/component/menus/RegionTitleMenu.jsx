@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import TitleMenu from 'component/TitleMenu.jsx'
+import TitleMenu from 'component/menus/TitleMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 
 var RegionTitleMenu = React.createClass({

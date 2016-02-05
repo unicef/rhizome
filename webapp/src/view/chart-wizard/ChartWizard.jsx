@@ -4,13 +4,13 @@ import moment from 'moment'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationDropdownMenu from 'component/LocationDropdownMenu.jsx'
+import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
 
-import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 

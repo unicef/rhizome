@@ -9,8 +9,8 @@ import DashboardInit from 'data/dashboardInit'
 import builtins from 'dashboard/builtin'
 import randomHash from 'util/randomHash'
 
-import RegionTitleMenu from 'component/RegionTitleMenu'
-import CampaignTitleMenu from 'component/CampaignTitleMenu.jsx'
+import RegionTitleMenu from 'component/menus/RegionTitleMenu'
+import CampaignTitleMenu from 'component/menus/CampaignTitleMenu.jsx'
 import ExportPdf from 'component/ExportPdf.jsx'
 
 import CustomDashboard from 'dashboard/CustomDashboard.jsx'

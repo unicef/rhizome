@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import TitleMenu from 'component/TitleMenu.jsx'
+import TitleMenu from 'component/menus/TitleMenu.jsx'
 import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 
 var CampaignTitleMenu = React.createClass({

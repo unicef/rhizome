@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import RegionTitleMenu from '../RegionTitleMenu'
+import RegionTitleMenu from '../menus/RegionTitleMenu'
 
 describe(__filename, () => {
   context('build up location data', () => {

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownMenu from 'component/DropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
 
 function findMatches (item, re) {

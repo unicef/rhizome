@@ -1,6 +1,6 @@
 import React from 'react'
 
-import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 

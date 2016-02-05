@@ -5,8 +5,8 @@ import Reflux from 'reflux'
 
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
-import IndicatorTagDropdownMenu from 'component/IndicatorTagDropdownMenu.jsx'
-import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
+import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
 
 var SimpleFormComponent = React.createClass({
   propTypes: {

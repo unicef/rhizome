@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
+import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 

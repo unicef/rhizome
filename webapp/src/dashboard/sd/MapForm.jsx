@@ -4,9 +4,9 @@ import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
-import RegionTitleMenu from 'component/RegionTitleMenu'
-import IndicatorDropdownMenu from 'component/IndicatorDropdownMenu.jsx'
-import CampaignDropdownMenu from 'component/CampaignDropdownMenu.jsx'
+import RegionTitleMenu from 'component/menus/RegionTitleMenu'
+import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import CampaignDropdownMenu from 'component/dropdown-menus/CampaignDropdownMenu.jsx'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
 

@@ -1,8 +1,19 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownMenu from 'component/DropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import MenuItem from 'component/MenuItem.jsx'
+
+function filterMenu (items, pattern) {
+  if (_.size(pattern) < 4) {
+    return items
+  }
+
+  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
+
+  var itemList = _(items).map(match).flatten().value()
+  return _.uniq(itemList, (item) => { return item.id })
+}
 
 function findMatches (item, re) {
   var matches = []
@@ -21,17 +32,6 @@ function findMatches (item, re) {
   }
 
   return matches
-}
-
-function filterMenu (items, pattern) {
-  if (_.size(pattern) < 4) {
-    return items
-  }
-
-  var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'))
-
-  var itemList = _(items).map(match).flatten().value()
-  return _.uniq(itemList, (item) => { return item.id })
 }
 
 var IndicatorDropdownMenu = React.createClass({
