@@ -188,9 +188,8 @@ let ChartWizardStore = Reflux.createStore({
       .value()
 
     this.campaignIndex = _.indexBy(this.campaignList, 'id')
-    this.data.locationFilteredList = this.data.locationList // this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
-    this.data.campaignFilteredList = this.campaignList // this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
-    // this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
+    this.data.locationFilteredList = this.data.locationList
+    this.data.campaignFilteredList = this.campaignList
     this.data.chartTypeFilteredList = builderDefinitions.charts
 
     if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
@@ -201,13 +200,12 @@ let ChartWizardStore = Reflux.createStore({
         : null
     }
 
-    // hacky way to find the default the dates //
     if (!this.data.chartDef.endDate){
-        this.data.chartDef.endDate = '2016-02-01'
+        this.data.chartDef.endDate = moment().format('YYYY-MM-DD')
     }
 
     if (!this.data.chartDef.startDate){
-        this.data.chartDef.startDate = '2015-02-01'
+        this.data.chartDef.startDate = moment().subtract(1, 'y').format('YYYY-MM-DD')
     }
 
     this.applyChartDef(this.data.chartDef)
@@ -227,7 +225,6 @@ let ChartWizardStore = Reflux.createStore({
       locationFilteredList: [],
       locationAggregated: [],
       campaignFilteredList: [],
-      // timeRangeFilteredList: [],
       chartTypeFilteredList: [],
       groupByValue: 0,
       locationLevelValue: 0,
