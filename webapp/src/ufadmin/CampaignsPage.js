@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
@@ -80,10 +80,12 @@ var CampaignsPage = React.createClass({
     let topLevelLocationSet = (
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
-        <LocationDropdownMenu
-             locations={this.state.locations}
-             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-             sendValue={CampaignPageActions.setLocation} />
+        <SearchableDropdownMenu
+          items={this.state.locations}
+          sendValue={CampaignPageActions.setLocation}
+          item_plural_name='Locations'
+          text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
+          icon='fa-globe'/>
       </div>
     )
 

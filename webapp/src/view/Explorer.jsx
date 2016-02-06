@@ -5,7 +5,6 @@ import api from 'data/api'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
 import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
@@ -75,11 +74,13 @@ let Explorer = React.createClass({
     let locationStep = (
       <div>
         <label htmlFor='locations'>Locations</label>
-        <LocationDropdownMenu
-          locations={this.state.locations}
-          text='Select Location'
+        <SearchableDropdownMenu
+          items={this.state.locations}
           sendValue={ExplorerActions.addLocations}
-          style='databrowser__button' />
+          item_plural_name='Locations'
+          text='Select Location'
+          style='databrowser__button'
+          icon='fa-globe'/>
         <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
       </div>
     )

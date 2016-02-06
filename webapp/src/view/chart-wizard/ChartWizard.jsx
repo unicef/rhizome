@@ -4,7 +4,6 @@ import moment from 'moment'
 
 import ChartWizardStep from './ChartWizardStep.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
@@ -98,11 +97,13 @@ let ChartWizard = React.createClass({
     let locationStep = (
       <div>
         <ChartWizardStep title='Locations' refer='preview'>
-        <LocationDropdownMenu
-          text='Add Locations'
-          locations={this.state.data.locationFilteredList}
+        <SearchableDropdownMenu
+          items={this.state.data.locationFilteredList}
           sendValue={ChartWizardActions.addLocation}
-          style='databrowser__button' />
+          item_plural_name='Locations'
+          text='Add Location'
+          style='databrowser__button'
+          icon='fa-globe'/>
         <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
         </ChartWizardStep>

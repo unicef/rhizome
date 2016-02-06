@@ -1,7 +1,7 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import List from 'component/list/List.jsx'
 
 import EntryFormStore from 'stores/EntryFormStore'
@@ -54,11 +54,13 @@ let EntryForm = React.createClass({
     let locationSet = (
       <div>
         <label htmlFor='locations'>Locations</label>
-        <LocationDropdownMenu
-          locations={this.state.filterLocations}
-          text='Select Location'
+        <SearchableDropdownMenu
+          items={this.state.filterLocations}
           sendValue={EntryFormActions.addLocations}
-          style='databrowser__button' />
+          text='Select Location'
+          item_plural_name='Locations'
+          style='databrowser__button'
+          icon='fa-globe'/>
         <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
       </div>
     )

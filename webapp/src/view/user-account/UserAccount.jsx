@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import UserGroup from 'component/UserGroup.jsx'
-import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'
@@ -41,10 +41,13 @@ let UserAccount = React.createClass({
            <h4>Responsible For Location: </h4>
          </div>
          <div className='columns small-8 right-box'>
-           <LocationDropdownMenu
-             locations={this.state.locations}
-             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-             sendValue={this._setLocation} />
+          <SearchableDropdownMenu
+            locations={this.state.locations}
+            text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
+            sendValue={this._setLocation} />
+            item_plural_name='Locations'
+            style='databrowser__button'
+            icon='fa-globe'/>
          </div>
       </div>
     )
