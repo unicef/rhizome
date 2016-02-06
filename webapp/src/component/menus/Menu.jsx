@@ -101,9 +101,7 @@ export default React.createClass({
       top: this.props.y
     }
 
-    var search = this.props.searchable
-      ? (<Search onChange={this.props.onSearch} onBlur={this.onBlur} />)
-      : null
+    var search = this.props.searchable ? (<Search onChange={this.props.onSearch} onBlur={this.onBlur} />) : null
 
     return (
       <div className='menu' style={position} tabIndex='-1' onBlur={this.onBlur}>
