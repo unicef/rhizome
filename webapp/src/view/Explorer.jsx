@@ -67,6 +67,7 @@ let Explorer = React.createClass({
           end={this.state.campaign.end}
           sendValue={ExplorerActions.updateDateRangePicker}
           text='to'
+          fromComponent='Explorer'
         />
       </label>
     )

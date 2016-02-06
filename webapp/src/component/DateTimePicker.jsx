@@ -6,20 +6,23 @@ var DateRangePicker = React.createClass({
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
+    fromComponent: React.PropTypes.string.isRequired,
     text: React.PropTypes.string
-  },
-
-  componentWillReceiveProps: function (nextProps) {
-    this.setState({
-      start: this.props.start,
-      end: this.props.end
-    })
   },
 
   getInitialState: function () {
     return {
       start: this.props.start,
       end: this.props.end
+    }
+  },
+
+  componentWillReceiveProps: function (nextProps) {
+    if (nextProps.fromComponent === 'ChartWizard') {
+      this.setState({
+        start: nextProps.start,
+        end: nextProps.end
+      })
     }
   },
 
@@ -39,7 +42,8 @@ var DateRangePicker = React.createClass({
         value={dateValue}
         time={false}
         format={'yyyy-MM-dd'}
-        onChange={self.handleDateChange.bind(this, type)}/>)
+        onChange={self.handleDateChange.bind(this, type)}
+        />)
     }
     return (
         <div>
