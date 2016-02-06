@@ -13,11 +13,20 @@ var SearchableDropdownMenu = React.createClass({
   propTypes: {
     items: React.PropTypes.array.isRequired,
     sendValue: React.PropTypes.func.isRequired,
+    item_plural_name: React.PropTypes.string,
     text: React.PropTypes.string,
     style: React.PropTypes.string,
-    uniqueOnly: React.PropTypes.bool,
     icon: React.PropTypes.string,
-    item_plural_name: React.PropTypes.string
+    uniqueOnly: React.PropTypes.bool,
+    multi: React.PropTypes.bool
+  },
+
+  getDefaultProps: function () {
+    return {
+      icon: 'fa-bars',
+      uniqueOnly: false,
+      multi: false
+    }
   },
 
   render: function () {

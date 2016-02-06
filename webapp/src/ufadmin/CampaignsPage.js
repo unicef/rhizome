@@ -84,7 +84,8 @@ var CampaignsPage = React.createClass({
           sendValue={CampaignPageActions.setLocation}
           item_plural_name='Locations'
           text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-          icon='fa-globe'/>
+          icon='fa-globe'
+          uniqueOnly/>
       </div>
     )
 

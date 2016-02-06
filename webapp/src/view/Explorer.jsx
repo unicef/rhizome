@@ -80,7 +80,8 @@ let Explorer = React.createClass({
           item_plural_name='Locations'
           text='Select Location'
           style='databrowser__button'
-          icon='fa-globe'/>
+          icon='fa-globe'
+          uniqueOnly/>
         <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation} />
       </div>
     )
