@@ -13,7 +13,7 @@ var RegionTitleMenu = React.createClass({
 
   getInitialState: function () {
     return {
-      filter: ''
+      pattern: ''
     }
   },
 
@@ -22,15 +22,13 @@ var RegionTitleMenu = React.createClass({
       nextProps.selected.id !== this.props.selected.id
   },
 
-  _setFilter: function (pattern) {
-    this.setState({
-      filter: pattern
-    })
+  _setPattern: function (value) {
+    this.setState({ pattern: value })
     this.forceUpdate()
   },
 
-  _buildlocations: function (originallocations, filter) {
-    var locations = originallocations.map(r => {
+  _buildLocations: function (original_locations, pattern) {
+    var locations = original_locations.map(r => {
       return {
         title: r.name,
         value: r.id,
@@ -38,9 +36,9 @@ var RegionTitleMenu = React.createClass({
       }
     })
 
-    if (filter.length > 2) {
+    if (pattern.length > 2) {
       locations = locations.filter(r => {
-        return new RegExp(filter, 'i').test(r.title)
+        return new RegExp(pattern, 'i').test(r.title)
       })
     } else {
       var idx = _.indexBy(locations, 'value')
@@ -62,19 +60,17 @@ var RegionTitleMenu = React.createClass({
   },
 
   render: function () {
-    var location = this.props.selected.name
-    var filter = this.state.filter
-    var locations = this._buildlocations(this.props.locations, filter)
-    var items = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue)
+    var locations = this._buildLocations(this.props.locations, this.state.pattern)
+    var menu_item_components = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue)
 
     return (
       <TitleMenu
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={location}
+        text={this.props.selected.name}
         searchable
-        onSearch={this._setFilter}>
-        {items}
+        onSearch={this._setPattern}>
+        {menu_item_components}
       </TitleMenu>
     )
   }
