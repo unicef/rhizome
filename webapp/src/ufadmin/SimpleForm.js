@@ -8,7 +8,7 @@ import _ from 'lodash'
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
 import SimpleFormComponent from './SimpleFormComponent'
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 
 var SimpleForm = React.createClass({
   propTypes: {
@@ -195,7 +195,7 @@ var SimpleForm = React.createClass({
         <div>
           <p>{`Parent Tag: ${selected}`}</p>
           <br />
-          <SearchableDropdownMenu
+          <DropdownMenu
             items={tagTree}
             sendValue={ this.setParentTag }
             item_plural_name='Parent Tags'

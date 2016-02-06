@@ -1,7 +1,7 @@
 import React from 'react'
 
 import List from 'component/list/List.jsx'
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -37,7 +37,7 @@ export default class PieOptions extends React.Component {
           <li>{firstIndicator && firstIndicator.name}</li>
         </ul>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={this.props.indicatorList}
           sendValue={ChartWizardActions.addIndicator}
           item_plural_name='Indicators'

@@ -5,7 +5,7 @@ import api from 'data/api'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
 import DownloadButton from 'component/DownloadButton.jsx'
@@ -74,7 +74,7 @@ let Explorer = React.createClass({
     let locationStep = (
       <div>
         <label htmlFor='locations'>Locations</label>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={this.state.locations}
           sendValue={ExplorerActions.addLocations}
           item_plural_name='Locations'
@@ -89,7 +89,7 @@ let Explorer = React.createClass({
     let indicatorStep = (
       <div>
         <label htmlFor='indicators'>Indicators</label>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={this.state.indicators}
           sendValue={ExplorerActions.addIndicators}
           item_plural_name='Indicators'

@@ -8,7 +8,8 @@ import dom from 'util/dom'
 var MenuControl = {
   getDefaultProps: function () {
     return {
-      searchable: false,
+      style: '',
+      searchable: true,
       onSearch: _.noop
     }
   },
@@ -22,18 +23,15 @@ var MenuControl = {
 
   componentDidUpdate: function () {
     if (this.state.open) {
-      var items = this.props.children
       var offset = dom.documentOffset(React.findDOMNode(this))
-      var props = _.omit(this.props, 'text', 'icon', 'size')
       var x = (offset.right + offset.left) / 2
 
       var menu = (
         <Menu x={x} y={offset.bottom}
           onBlur={this.close}
-          onSearch={this.onSearch}
-          {...props}>
-          {items}
-        </Menu>
+          onSearch={this.props.onSearch}
+          searchable={this.props.searchable}
+          children={this.props.children}/>
       )
 
       if (!this.layer) {
@@ -63,10 +61,6 @@ var MenuControl = {
 
   _toggleMenu: function () {
     this.setState({ open: !this.state.open })
-  },
-
-  _setPattern: function (value) {
-    this.setState({ pattern: value })
   },
 
   filterMenu: function (items, pattern) {

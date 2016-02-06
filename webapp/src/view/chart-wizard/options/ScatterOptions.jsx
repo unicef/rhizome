@@ -1,6 +1,6 @@
 import React from 'react'
 
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 
@@ -40,7 +40,7 @@ export default class ScatterOptions extends React.Component {
           <li>{xIndicator && xIndicator.name}</li>
         </ul>
         <h4>Y Axis</h4>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={this.props.indicatorList}
           sendValue={ChartWizardActions.changeYAxis}
           item_plural_name='Indicators'

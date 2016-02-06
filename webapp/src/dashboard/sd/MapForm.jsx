@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import api from 'data/api'
 
 import RegionTitleMenu from 'component/menus/RegionTitleMenu'
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import CampaignDropdownMenu from 'component/dropdown-menus/CampaignDropdownMenu.jsx'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
@@ -92,7 +92,7 @@ var MapForm = React.createClass({
       if (!this.state.data.indicators) {
         return loadText('Indicators')
       }
-      return <SearchableDropdownMenu
+      return <DropdownMenu
           items={this.state.data.indicators}
           sendValue={this.postMetaMap}
           item_plural_name='Indicators'

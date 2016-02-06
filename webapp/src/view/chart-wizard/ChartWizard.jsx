@@ -9,7 +9,7 @@ import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
 
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 
@@ -83,7 +83,7 @@ let ChartWizard = React.createClass({
     let indicatorStep = (
       <div>
         <ChartWizardStep title='Indicators' refer='preview'>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={availableIndicators}
           sendValue={ChartWizardActions.addIndicator}
           item_plural_name='Indicators'
@@ -97,7 +97,7 @@ let ChartWizard = React.createClass({
     let locationStep = (
       <div>
         <ChartWizardStep title='Locations' refer='preview'>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={this.state.data.locationFilteredList}
           sendValue={ChartWizardActions.addLocation}
           item_plural_name='Locations'

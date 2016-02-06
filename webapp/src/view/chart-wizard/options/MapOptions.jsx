@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
+import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 
@@ -47,14 +47,14 @@ export default class GeneralOptions extends React.Component {
           <li>{colorIndicator && colorIndicator.name}</li>
         </ul>
         <h4>Bubble Axis</h4>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={intIndicators}
           sendValue={ChartWizardActions.changeYAxis}
           item_plural_name='Indicators'
           text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
           icon='fa-plus'/>
         <h4>Gradient Axis</h4>
-        <SearchableDropdownMenu
+        <DropdownMenu
           items={boolIndicators}
           sendValue={ChartWizardActions.changeZAxis}
           item_plural_name='Indicators'
