@@ -1,6 +1,6 @@
 import React from 'react'
 
-import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 
@@ -40,12 +40,12 @@ export default class ScatterOptions extends React.Component {
           <li>{xIndicator && xIndicator.name}</li>
         </ul>
         <h4>Y Axis</h4>
-        <IndicatorDropdownMenu
+        <SearchableDropdownMenu
+          items={this.props.indicatorList}
+          sendValue={ChartWizardActions.changeYAxis}
+          item_plural_name='Indicators'
           text={yIndicator ? yIndicator.name : 'Add Indicators'}
-          icon='fa-plus'
-          indicators={this.props.indicatorList}
-          sendValue={ChartWizardActions.changeYAxis} />
-
+          icon='fa-plus'/>
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         <RadioGroup name='location-level' title='Location Level: '
           value={this.props.locationLevelValue}

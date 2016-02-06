@@ -6,7 +6,7 @@ import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import LocationDropdownMenu from 'component/dropdown-menus/LocationDropdownMenu.jsx'
-import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
 import DownloadButton from 'component/DownloadButton.jsx'
@@ -87,11 +87,12 @@ let Explorer = React.createClass({
     let indicatorStep = (
       <div>
         <label htmlFor='indicators'>Indicators</label>
-        <IndicatorDropdownMenu
-          indicators={this.state.indicators}
-          text='Choose Indicators'
+        <SearchableDropdownMenu
+          items={this.state.indicators}
           sendValue={ExplorerActions.addIndicators}
-          style='databrowser__button' />
+          item_plural_name='Indicators'
+          text='Choose Indicators'
+          style='databrowser__button'/>
         <List items={this.state.indicatorSelected} removeItem={ExplorerActions.removeIndicator} />
       </div>
     )

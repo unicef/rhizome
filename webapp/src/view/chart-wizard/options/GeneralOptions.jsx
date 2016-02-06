@@ -1,7 +1,7 @@
 import React from 'react'
 
 import List from 'component/list/List.jsx'
-import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -37,10 +37,11 @@ export default class GeneralOptions extends React.Component {
           <li>{firstIndicator && firstIndicator.name}</li>
         </ul>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
-        <IndicatorDropdownMenu
+        <SearchableDropdownMenu
           text='Add Indicators'
+          item_plural_name='Indicators'
           icon='fa-plus'
-          indicators={this.props.indicatorList}
+          items={this.props.indicatorList}
           sendValue={ChartWizardActions.addIndicator} />
         <List items={otherIndicator} removeItem={ChartWizardActions.removeIndicator} />
 

@@ -10,7 +10,7 @@ import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
 
-import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 
@@ -84,11 +84,12 @@ let ChartWizard = React.createClass({
     let indicatorStep = (
       <div>
         <ChartWizardStep title='Indicators' refer='preview'>
-        <IndicatorDropdownMenu
-          indicators={availableIndicators}
-          text='Choose Indicators'
+        <SearchableDropdownMenu
+          items={availableIndicators}
           sendValue={ChartWizardActions.addIndicator}
-          style='databrowser__button' />
+          item_plural_name='Indicators'
+          text='Choose Indicators'
+          style='databrowser__button'/>
         <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
         </ChartWizardStep>
       </div>

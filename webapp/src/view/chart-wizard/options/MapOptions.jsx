@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import IndicatorDropdownMenu from 'component/dropdown-menus/IndicatorDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 
@@ -47,18 +47,19 @@ export default class GeneralOptions extends React.Component {
           <li>{colorIndicator && colorIndicator.name}</li>
         </ul>
         <h4>Bubble Axis</h4>
-        <IndicatorDropdownMenu
+        <SearchableDropdownMenu
+          items={intIndicators}
+          sendValue={ChartWizardActions.changeYAxis}
+          item_plural_name='Indicators'
           text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
-          icon='fa-plus'
-          indicators={intIndicators}
-          sendValue={ChartWizardActions.changeYAxis}/>
+          icon='fa-plus'/>
         <h4>Gradient Axis</h4>
-        <IndicatorDropdownMenu
-          text={gradientIndicator ? gradientIndicator.name : 'Add Indicators'}
-          icon='fa-plus'
-          indicators={boolIndicators}
-          sendValue={ChartWizardActions.changeZAxis}/>
-
+        <SearchableDropdownMenu
+          items={boolIndicators}
+          sendValue={ChartWizardActions.changeZAxis}
+          item_plural_name='Indicators'
+          text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
+          icon='fa-plus'/>
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
         <MapAxisChooser colorFormatValue={this.props.xFormatValue}
                         onColorFormatChange={ChartWizardActions.changeXFormatRadio}
