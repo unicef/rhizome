@@ -5,7 +5,6 @@ import Reflux from 'reflux'
 
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
-import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
 import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 
 var SimpleFormComponent = React.createClass({
@@ -103,10 +102,12 @@ var SimpleFormComponent = React.createClass({
     if (contentType === 'indicator_tag') {
       componentForm = (
         <div>
-          <IndicatorTagDropdownMenu
-            tag_tree={dropDownData}
+          <SearchableDropdownMenu
+            items={dropDownData}
+            sendValue={this.props.onClick}
+            item_plural_name='Indicator Tags'
             text='Add Tag'
-            sendValue={this.props.onClick} />
+            icon='fa-tag'/>
         </div>
       )
     } else if (contentType === 'indicator_calc') {

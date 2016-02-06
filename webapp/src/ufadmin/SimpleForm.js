@@ -8,7 +8,7 @@ import _ from 'lodash'
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
 import SimpleFormComponent from './SimpleFormComponent'
-import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
+import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
 
 var SimpleForm = React.createClass({
   propTypes: {
@@ -195,10 +195,12 @@ var SimpleForm = React.createClass({
         <div>
           <p>{`Parent Tag: ${selected}`}</p>
           <br />
-          <IndicatorTagDropdownMenu
-            tag_tree={tagTree}
+          <SearchableDropdownMenu
+            items={tagTree}
+            sendValue={ this.setParentTag }
+            item_plural_name='Parent Tags'
             text='Parent tag'
-            sendValue={ this.setParentTag } />
+            icon='fa-tag'/>
         </div>
       )
     } else if (contentType === 'indicator') {

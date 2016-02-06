@@ -4,7 +4,6 @@ import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import SearchableDropdownMenu from 'component/dropdown-menus/SearchableDropdownMenu.jsx'
-import IndicatorTagDropdownMenu from 'component/dropdown-menus/IndicatorTagDropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
@@ -92,10 +91,12 @@ var CampaignsPage = React.createClass({
     let topLevelIndicatorTagSet = (
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-        <IndicatorTagDropdownMenu
-          tag_tree={this.state.indicatorToTags}
+        <SearchableDropdownMenu
+          items={this.state.indicatorToTags}
+          sendValue={this._setIndicatorTag}
+          item_plural_name='Indicator Tags'
           text={this.state.tagSelected[0] && this.state.tagSelected[0].tag_name || 'Select Tag'}
-          sendValue={this._setIndicatorTag} />
+          icon='fa-tag'/>
       </div>
     )
 
