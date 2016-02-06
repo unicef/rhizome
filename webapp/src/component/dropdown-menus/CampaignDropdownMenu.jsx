@@ -5,42 +5,17 @@ import moment from 'moment'
 import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
 import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 
-function searchValue (campaign) {
-  var m = moment(campaign.start_date)
-
-  // Include several possible date formats for matching against
-  return [
-    m.format('YYYY-MM'),
-    m.format('MM-YYYY'),
-    m.format('YYYY-M'),
-    m.format('M-YYYY'),
-    m.format('MMMM YYYY'),
-    m.format('YYYY/MM'),
-    m.format('MM/YYYY'),
-    m.format('YYYY/M'),
-    m.format('M/YYYY'),
-    m.format('YY-MM'),
-    m.format('MM-YY'),
-    m.format('YY-M'),
-    m.format('M-YY'),
-    m.format('MMMM YY'),
-    m.format('YY/MM'),
-    m.format('MM/YY'),
-    m.format('YY/M'),
-    m.format('M/YY')
-  ].join(' ')
-}
-
 var CampaignDropdownMenu = React.createClass({
+
+  mixins: [
+    require('mixin/SearchableMenu')
+  ],
+
   propTypes: {
     campaigns: React.PropTypes.array.isRequired,
-    sendValue: React.PropTypes.func.isRequired
-  },
-
-  getInitialState: function () {
-    return {
-      pattern: ''
-    }
+    sendValue: React.PropTypes.func.isRequired,
+    style: React.PropTypes.string,
+    text: React.PropTypes.string
   },
 
   render: function () {
@@ -73,16 +48,37 @@ var CampaignDropdownMenu = React.createClass({
         searchable
         onSearch={this._setPattern}
         {...props}>
-
         {campaigns}
-
       </DropdownMenu>
     )
-  },
-
-  _setPattern: function (value) {
-    this.setState({ pattern: value })
   }
 })
 
+function searchValue (campaign) {
+  var m = moment(campaign.start_date)
+
+  // Include several possible date formats for matching against
+  return [
+    m.format('YYYY-MM'),
+    m.format('MM-YYYY'),
+    m.format('YYYY-M'),
+    m.format('M-YYYY'),
+    m.format('MMMM YYYY'),
+    m.format('YYYY/MM'),
+    m.format('MM/YYYY'),
+    m.format('YYYY/M'),
+    m.format('M/YYYY'),
+    m.format('YY-MM'),
+    m.format('MM-YY'),
+    m.format('YY-M'),
+    m.format('M-YY'),
+    m.format('MMMM YY'),
+    m.format('YY/MM'),
+    m.format('MM/YY'),
+    m.format('YY/M'),
+    m.format('M/YY')
+  ].join(' ')
+}
+
 export default CampaignDropdownMenu
+
