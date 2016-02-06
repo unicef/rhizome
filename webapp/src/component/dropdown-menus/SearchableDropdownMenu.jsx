@@ -7,7 +7,7 @@ import MenuItem from 'component/MenuItem.jsx'
 var SearchableDropdownMenu = React.createClass({
 
   mixins: [
-    require('mixin/SearchableMenu')
+    require('mixin/MenuControl')
   ],
 
   propTypes: {
