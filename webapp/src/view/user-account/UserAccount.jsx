@@ -42,10 +42,10 @@ let UserAccount = React.createClass({
          </div>
          <div className='columns small-8 right-box'>
           <SearchableDropdownMenu
-            locations={this.state.locations}
-            text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-            sendValue={this._setLocation} />
+            items={this.state.locations}
+            sendValue={this._setLocation}
             item_plural_name='Locations'
+            text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
             style='databrowser__button'
             icon='fa-globe'/>
          </div>

@@ -121,10 +121,10 @@ var SimpleFormComponent = React.createClass({
             <option value='DENOMINATOR'>DENOMINATOR</option>
           </select>
           <SearchableDropdownMenu
-            text='Add Component'
             items={dropDownData}
+            sendValue={this._onClick}
             item_plural_name='Components'
-            sendValue={this._onClick} />
+            text='Add Component'/>
         </form>
       )
     }

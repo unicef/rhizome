@@ -93,10 +93,10 @@ var MapForm = React.createClass({
         return loadText('Indicators')
       }
       return <SearchableDropdownMenu
-          text='Map Indicator'
           items={this.state.data.indicators}
+          sendValue={this.postMetaMap}
           item_plural_name='Indicators'
-          sendValue={this.postMetaMap} />
+          text='Map Indicator'/>
     }
     if (content_type === 'campaign') {
       if (!this.state.data.campaigns) {

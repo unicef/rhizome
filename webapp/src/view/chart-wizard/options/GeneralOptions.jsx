@@ -38,11 +38,11 @@ export default class GeneralOptions extends React.Component {
         </ul>
         <p className='chart-wizard__para'>You may choose additional indicators now.</p>
         <SearchableDropdownMenu
-          text='Add Indicators'
-          item_plural_name='Indicators'
-          icon='fa-plus'
           items={this.props.indicatorList}
-          sendValue={ChartWizardActions.addIndicator} />
+          sendValue={ChartWizardActions.addIndicator}
+          item_plural_name='Indicators'
+          text='Add Indicators'
+          icon='fa-plus'/>
         <List items={otherIndicator} removeItem={ChartWizardActions.removeIndicator} />
 
         <p className='chart-wizard__para'>You may also change additional chart settings.</p>
