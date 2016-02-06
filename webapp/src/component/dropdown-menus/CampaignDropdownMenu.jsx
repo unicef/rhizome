@@ -8,7 +8,7 @@ import CampaignMenuItem from 'component/CampaignMenuItem.jsx'
 var CampaignDropdownMenu = React.createClass({
 
   mixins: [
-    require('mixin/SearchableMenu')
+    require('mixin/MenuControl')
   ],
 
   propTypes: {
