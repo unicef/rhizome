@@ -103,15 +103,13 @@ var ReviewTable = React.createClass({
           } else if (this.props.doc_tab === 'viewraw') {
             return <SubmissionModal
               source_submission_id={id}
-              key={id}
-              />
+              key={id}/>
           } else if (this.props.doc_tab === 'doc_index') {
             return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
               source_object_map_id={id}
-              onModalClose={this._callApi}
-              />
+              onModalClose={this._callApi}/>
           }
         }
       }
