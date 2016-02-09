@@ -11,12 +11,13 @@ import ReorderableList from 'component/list/ReorderableList.jsx'
 
 import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
-import TitleInput from 'component/TitleInput.jsx'
 
 import ExplorerStore from 'stores/ExplorerStore'
 import ExplorerActions from 'actions/ExplorerActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
+import SimplePreview from './preview/SimplePreview.jsx'
+
 // import options from './options/options'
 // import previews from './preview/previews'
 
@@ -130,6 +131,16 @@ let ChartWizard = React.createClass({
       </ExpandableSection>
     )
 
+    console.log('this.state.data: ', this.state)
+    console.log('palette: ', this.state.data.chartDef.palette)
+
+    let chartTitleAndPalette = <SimplePreview
+      chartTitle={this.props.chartDef.title}
+      onEditTitle={ChartWizardActions.editTitle}
+      palette={this.state.data.chartDef.palette}
+      onChangePalette={ChartWizardActions.onChangePalette}
+      />
+
     if (!this.state.data.chartDef.type) {
       return null
     }
@@ -154,9 +165,8 @@ let ChartWizard = React.createClass({
            </div>
            <div>
              <br></br>
-             <label>Title</label>
-             <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
-           </div>
+             {chartTitleAndPalette}
+         </div>
           </div>
 
     let chartWizardEditor = <div className='row'></div>
