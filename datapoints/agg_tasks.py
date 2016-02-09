@@ -119,7 +119,9 @@ class AggRefresh(object):
         parent_location_id column.
 
         Data stored in the DataPoint table for a location with the same
-        indicator, campaign will always override the aggregated values.
+        indicator, campaign will always override the aggregated values, that is
+        if the indicator is an integer ( summing percents and booleans
+        regionally doesnt make sense.)
 
         Here, we create a tuple_dict in which the unique key of (locaiton,
         indicator, campaign) represents the key, and the cooresponding value
@@ -156,6 +158,10 @@ class AggRefresh(object):
         max_location_lvl_for_indicator_df = DataFrame(joined_location_df\
             .groupby(['indicator_id'])['lvl'].min()) # highest lvl per indicator
         max_location_lvl_for_indicator_df.reset_index(level=0, inplace=True)
+
+        print '===='
+        print max_location_lvl_for_indicator_df[:10]
+        print '===='
 
         ## filter df to keep the data for the highest level per indicator ##
         prepped_for_sum_df = joined_location_df\

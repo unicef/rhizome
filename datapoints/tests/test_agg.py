@@ -229,6 +229,48 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(override_value, override_value_in_agg)
 
+        ###########################################
+        ## ensure that percentages do not aggregate
+        ###########################################
+
+        pct_ind = Indicator.objects.create(
+            name = 'pct missed',
+            short_name = 'pct_missed',
+            description = 'missed pct',
+            data_format = 'pct',
+            source_name = 'my brain',
+        )
+
+        dp_1 = DataPoint.objects.create(
+            indicator_id = pct_ind.id,
+            location_id = location_ids[0],
+            data_date = data_date,
+            value = .2,
+            changed_by_id = self.user.id,
+            source_submission_id = 1
+        )
+
+        dp_2 = DataPoint.objects.create(
+            indicator_id = pct_ind.id,
+            location_id = location_ids[1],
+            data_date = data_date,
+            value = .6,
+            changed_by_id = self.user.id,
+            source_submission_id = 1
+        )
+
+        ar = AggRefresh(self.campaign_id)
+
+        agg_dp_qs = AggDataPoint.objects.filter(
+            location_id = agg_location_id,
+            indicator_id = pct_ind,
+            campaign_id = self.campaign_id,
+        )
+
+        agg_dp_value = agg_dp_qs[0].value
+        self.assertEqual(agg_dp_value, .8)
+        # self.assertEqual(len(agg_dp_qs), 0)
+
 
     def test_raw_data_to_computed(self):
         '''
