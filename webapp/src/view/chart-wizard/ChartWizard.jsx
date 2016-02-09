@@ -131,14 +131,13 @@ let ChartWizard = React.createClass({
       </ExpandableSection>
     )
 
-    console.log('this.state.data: ', this.state)
-    console.log('palette: ', this.state.data.chartDef.palette)
+    let palette = this.state.data.chartDef.palette || 'orange'
 
     let chartTitleAndPalette = <SimplePreview
       chartTitle={this.props.chartDef.title}
       onEditTitle={ChartWizardActions.editTitle}
-      palette={this.state.data.chartDef.palette}
-      onChangePalette={ChartWizardActions.onChangePalette}
+      palette={palette}
+      onChangePalette={ChartWizardActions.changePalette}
       />
 
     if (!this.state.data.chartDef.type) {
