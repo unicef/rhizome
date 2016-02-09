@@ -11,50 +11,6 @@
   display: inline-block;
 }
 
-.chart-wizard__step {
-  list-style: none;
-  // border: 1px solid #ccc;
-  // border-bottom: none;
-
-  // &:last-child {
-  //   border-bottom: 1px solid #ccc;
-  // }
-
-  h2 {
-    background: #fff;
-    padding: 5px 35px 5px 10px;
-    margin: 0;
-    font-size: 16px;
-    cursor: pointer;
-    position: relative;
-
-    .fa {
-      position: absolute;
-      right: 10px;
-      font-size: 20px;
-      line-height: 28px;
-    }
-  }
-
-  .chart-wizard__expandable {
-    display: none;
-    position: relative;
-    min-height: 10px;
-    padding-top: 10px;
-  }
-
-  &.active {
-    h2 {
-      background: #436380;
-      color: #fff;
-    }
-
-    .chart-wizard__expandable {
-      display: block;
-    }
-  }
-}
-
 .small-date-box {
     width: 100px;
     display: inline-block;

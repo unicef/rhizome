@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import ChartWizardStep from './ChartWizardStep.jsx'
+import ExpandableSection from 'component/ExpandableSection.jsx'
 import DateRangePicker from 'component/DateTimePicker.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
@@ -81,8 +81,7 @@ let ChartWizard = React.createClass({
 
     let availableIndicators = this.state.data.indicatorList
     let indicatorStep = (
-      <div>
-        <ChartWizardStep title='Indicators' refer='preview'>
+      <ExpandableSection title='Indicators' refer='preview'>
         <DropdownMenu
           items={availableIndicators}
           sendValue={ChartWizardActions.addIndicator}
@@ -90,13 +89,11 @@ let ChartWizard = React.createClass({
           text='Choose Indicators'
           style='databrowser__button'/>
         <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
-        </ChartWizardStep>
-      </div>
+      </ExpandableSection>
     )
 
     let locationStep = (
-      <div>
-        <ChartWizardStep title='Locations' refer='preview'>
+      <ExpandableSection title='Locations' refer='preview'>
         <DropdownMenu
           items={this.state.data.locationFilteredList}
           sendValue={ChartWizardActions.addLocation}
@@ -106,8 +103,7 @@ let ChartWizard = React.createClass({
           icon='fa-globe'/>
         <List items={this.state.data.location} removeItem={ChartWizardActions.removeLocation} />
         <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-        </ChartWizardStep>
-      </div>
+      </ExpandableSection>
     )
 
     let startDate = moment()
@@ -119,24 +115,19 @@ let ChartWizard = React.createClass({
     }
 
     let timePeriodStep = (
-      <div>
-        <ChartWizardStep title='Time' refer='preview'>
+      <ExpandableSection title='Time' refer='preview'>
         <DateRangePicker
           sendValue={ChartWizardActions.updateDateRangePicker}
           start={startDate}
           end={endDate}
-          fromComponent='ChartWizard'
-        />
-        </ChartWizardStep>
-    </div>
+          fromComponent='ChartWizard' />
+      </ExpandableSection>
     )
     let chartTypeStep = (
-      <div>
-        <ChartWizardStep title='Chart Type' refer='preview'>
+      <ExpandableSection title='Chart Type' refer='preview'>
         <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
           onChange={ChartWizardActions.changeChart}/>
-        </ChartWizardStep>
-      </div>
+      </ExpandableSection>
     )
 
     if (!this.state.data.chartDef.type) {

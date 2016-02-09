@@ -1,0 +1,43 @@
+.expandable-section {
+  list-style: none;
+  // border: 1px solid #ccc;
+  // border-bottom: none;
+
+  // &:last-child {
+  //   border-bottom: 1px solid #ccc;
+  // }
+
+  h2 {
+    background: #fff;
+    padding: 5px 35px 5px 10px;
+    margin: 0;
+    font-size: 16px;
+    cursor: pointer;
+    position: relative;
+
+    .fa {
+      position: absolute;
+      right: 10px;
+      font-size: 20px;
+      line-height: 28px;
+    }
+  }
+
+  .expandable-section__body {
+    display: none;
+    position: relative;
+    min-height: 10px;
+    padding-top: 10px;
+  }
+
+  &.active {
+    h2 {
+      background: #436380;
+      color: #fff;
+    }
+
+    .expandable-section__body {
+      display: block;
+    }
+  }
+}
