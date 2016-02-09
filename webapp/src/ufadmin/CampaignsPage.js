@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
+import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'

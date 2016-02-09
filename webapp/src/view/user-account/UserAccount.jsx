@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import UserGroup from 'component/UserGroup.jsx'
-import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
+import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'

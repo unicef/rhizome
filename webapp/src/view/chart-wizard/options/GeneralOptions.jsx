@@ -1,7 +1,7 @@
 import React from 'react'
 
 import List from 'component/list/List.jsx'
-import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
+import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import RadioGroup from 'component/radio-group/RadioGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'

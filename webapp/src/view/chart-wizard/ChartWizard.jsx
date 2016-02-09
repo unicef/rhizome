@@ -9,7 +9,7 @@ import ChartSelect from './ChartSelect.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
 
-import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
+import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 import TitleInput from 'component/TitleInput.jsx'
 

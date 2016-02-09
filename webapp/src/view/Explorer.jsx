@@ -5,7 +5,7 @@ import api from 'data/api'
 import moment from 'moment'
 
 import DateRangePicker from 'component/DateTimePicker.jsx'
-import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
+import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import DatabrowserTable from 'component/DatabrowserTable.jsx'
 import List from 'component/list/List.jsx'
 import DownloadButton from 'component/DownloadButton.jsx'
