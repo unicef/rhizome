@@ -1,12 +1,9 @@
-import _ from 'lodash'
-import moment from 'moment'
 import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
 import RegionTitleMenu from 'component/menus/RegionTitleMenu'
 import DropdownMenu from 'component/dropdown-menus/DropdownMenu.jsx'
-import CampaignDropdownMenu from 'component/dropdown-menus/CampaignDropdownMenu.jsx'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
 
@@ -97,29 +94,6 @@ var MapForm = React.createClass({
           sendValue={this.postMetaMap}
           item_plural_name='Indicators'
           text='Map Indicator'/>
-    }
-    if (content_type === 'campaign') {
-      if (!this.state.data.campaigns) {
-        return loadText('Campaigns')
-      }
-      var office = {
-        1: 'Nigeria',
-        2: 'Afghanistan',
-        3: 'Pakistan'
-      }
-      var campaigns = this.state.data.campaigns.map(campaign => {
-        return _.assign({}, campaign, {
-          slug: office[campaign.office_id] + ' ' + moment(campaign.start_date).format('MMM YYYY')
-        })
-      })
-
-      campaigns.reverse()
-      return <div>
-        <CampaignDropdownMenu
-          text={defaultSelected}
-          campaigns={campaigns}
-          sendValue={this.postMetaMap} />
-      </div>
     }
   },
 
