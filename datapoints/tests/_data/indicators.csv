@@ -1,4 +1,4 @@
-id,name,description,is_reported,created_at,short_name
-22,Number of children missed due to child not available,Number of children missed due to child not available,t,58:51.9,Child not available
-164,% missed children due to child not available,% missed children due to child not available,f,11:00.3,Child absent
-55,Number of children targeted in high-risk districts,Number of children targeted in high-risk districts,t,00:13.5,Number of children targeted in HRDs
+id,name,description,is_reported,created_at,short_name,data_format
+22,Number of children missed due to child not available,Number of children missed due to child not available,t,58:51.9,Child not available,int
+164,% missed children due to child not available,% missed children due to child not available,f,11:00.3,Child absent,pct
+55,Number of children targeted in high-risk districts,Number of children targeted in high-risk districts,t,00:13.5,Number of children targeted in HRDs,int

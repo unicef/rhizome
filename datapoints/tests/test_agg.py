@@ -192,6 +192,8 @@ class AggRefreshTestCase(TestCase):
             location_id = raw_location_id)\
             .value
 
+        ind_obj = Indicator.objects.get(id = indicator_id)
+
         raw_value_in_agg = AggDataPoint.objects.get(
             # data_date = data_date,
             indicator_id = indicator_id,
@@ -261,15 +263,18 @@ class AggRefreshTestCase(TestCase):
 
         ar = AggRefresh(self.campaign_id)
 
-        agg_dp_qs = AggDataPoint.objects.filter(
-            location_id = agg_location_id,
-            indicator_id = pct_ind,
-            campaign_id = self.campaign_id,
-        )
+        try:
+            agg_dp_qs = AggDataPoint.objects.get(
+                location_id = agg_location_id,
+                indicator_id = pct_ind,
+                campaign_id = self.campaign_id,
+            )
 
-        agg_dp_value = agg_dp_qs[0].value
-        self.assertEqual(agg_dp_value, .8)
-        # self.assertEqual(len(agg_dp_qs), 0)
+            error_ocurred = False
+        except AggDataPoint.DoesNotExist:
+            error_ocurred = True
+
+        self.assertTrue(error_ocurred)
 
 
     def test_raw_data_to_computed(self):

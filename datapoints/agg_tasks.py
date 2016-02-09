@@ -159,9 +159,10 @@ class AggRefresh(object):
             .groupby(['indicator_id'])['lvl'].min()) # highest lvl per indicator
         max_location_lvl_for_indicator_df.reset_index(level=0, inplace=True)
 
-        print '===='
-        print max_location_lvl_for_indicator_df[:10]
-        print '===='
+        integer_indicators = list(Indicator.objects.filter(
+            data_format = 'int',
+            id__in = max_location_lvl_for_indicator_df['indicator_id']
+        ).values_list('id', flat=True))
 
         ## filter df to keep the data for the highest level per indicator ##
         prepped_for_sum_df = joined_location_df\
@@ -172,9 +173,10 @@ class AggRefresh(object):
             .groupby(['parent_location_id', 'indicator_id'])\
             ['value'].sum())
 
-        ## add aggregate values to the tuple dict ##
         for ix, dp in grouped_df.iterrows():
-            tuple_dict[ix] = dp.value
+            ## only aggregate integers ( not boolean or pct )
+            if ix[1] in integer_indicators:
+                tuple_dict[ix] = dp.value
 
         ## now add the raw data to the dict ( overriding agregate if exists )
         for ix, dp in no_nan_dp_df.iterrows():
