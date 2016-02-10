@@ -41,7 +41,6 @@ export default {
       : []
 
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
-    data.locationAggregated = builderDefinitions.locationLevels[locationLevelValue].getAggregated(data.location, locationIndex)
 
     let indicatorIndex = _.indexBy(indicators.objects, 'id')
     data.indicatorSelected = chartDef.indicators.map(id => {
@@ -75,12 +74,12 @@ export default {
   },
 
   fetchChart (chartDef, data, indicatorIndex, layout) {
-    let locationIndex = _.indexBy(data.locationAggregated, 'id')
+    let locationIndex = _.indexBy(data.selected_locations, 'id')
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
-      location_id__in: _.map(data.locationAggregated, _.property('id')),
+      location_id__in: _.map(data.selected_locations, _.property('id')),
       campaign_start: chartDef.startDate,
       campaign_end: chartDef.endDate,
       chart_type: chartDef.type
@@ -92,7 +91,7 @@ export default {
     return processChartData.init(api.datapoints(query),
       chartDef.type,
       data.indicatorSelected,
-      data.locationAggregated,
+      data.selected_locations,
       lower,
       upper,
       groups,
