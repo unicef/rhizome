@@ -3,14 +3,13 @@ import Reflux from 'reflux'
 
 import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 
-const {
-  Datascope, LocalDatascope,
-  SimpleDataTable, SimpleDataTableColumn,
-  Paginator
-} = require('react-datascope')
+const { Datascope, LocalDatascope, SimpleDataTable, SimpleDataTableColumn, Paginator} = require('react-datascope')
 
 let DatabrowserTable = React.createClass({
-  mixins: [Reflux.connect(DataBrowserTableStore)],
+
+  mixins: [
+    Reflux.connect(DataBrowserTableStore)
+  ],
 
   propTypes: {
     updateValue: React.PropTypes.func.isRequired
@@ -30,17 +29,14 @@ let DatabrowserTable = React.createClass({
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
       let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
-      return (<LocalDatascope
-          data={this.state.data}
-          schema={this.state.schema}
-          pageSize={10}>
+      return (
+        <LocalDatascope data={this.state.data} schema={this.state.schema} pageSize={10}>
           <Datascope>
-            <SimpleDataTable>
-              {columns}
-            </SimpleDataTable>
+            <SimpleDataTable>{columns}</SimpleDataTable>
             <Paginator />
           </Datascope>
-        </LocalDatascope>)
+        </LocalDatascope>
+      )
     }
   }
 })

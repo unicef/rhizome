@@ -1,11 +1,11 @@
 import Reflux from 'reflux'
 
 export default Reflux.createActions([
+  'getData',
   'getLocations',
-  'updateDateRangePicker',
   'addLocation',
   'removeLocation',
   'getIndicators',
-  'addIndicators',
-  'removeIndicator'
+  'addIndicator',
+  'removeIndicator',
 ])
