@@ -4,34 +4,32 @@ import Reflux from 'reflux'
 import api from 'data/api'
 import moment from 'moment'
 
-import ExpandableSection from 'component/ExpandableSection.jsx'
-import DateRangePicker from 'component/DateTimePicker.jsx'
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
-import DatabrowserTable from 'component/DatabrowserTable.jsx'
-import List from 'component/list/List.jsx'
-import ReorderableList from 'component/list/ReorderableList.jsx'
-import DownloadButton from 'component/DownloadButton.jsx'
-
-import ExplorerStore from 'stores/ExplorerStore'
+import ExpandableSection from 'component/ExpandableSection'
+import DataFilters from './DataFilters'
+import DateRangePicker from 'component/DateTimePicker'
+import DropdownMenu from 'component/menus/DropdownMenu'
+import DatabrowserTable from 'component/DatabrowserTable'
+import List from 'component/list/List'
+import ReorderableList from 'component/list/ReorderableList'
+import DownloadButton from 'component/DownloadButton'
 
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
-import ExplorerActions from 'actions/ExplorerActions'
 
 let Explorer = React.createClass({
-  mixins: [Reflux.connect(ExplorerStore)],
 
-  componentWillMount: function () {
-    ExplorerActions.getLocations()
-    ExplorerActions.getIndicators()
+
+  getInitialState: function () {
+    return {
+      hasData: false,
+      table_data: null
+    }
   },
 
-  _tableValueUpdate: function (data) {
-    this.setState({hasData: data && data.length > 0})
-  },
-
-  refresh: function () {
-    if (!this.state.couldLoad) return
-    DataBrowserTableActions.getTableData(this.state.campaign, this.state.locationSelected, this.state.indicatorSelected)
+  refresh: function (data) {
+    this.setState( {
+      table_data: data,
+      hasData: data && data.length > 0
+    })
   },
 
   _download: function () {
@@ -57,28 +55,10 @@ let Explorer = React.createClass({
         </div>
         <div className='row'>
           <div className='medium-3 columns'>
-            <from className='inline'>
-              <ExpandableSection title='Locations' refer='preview'>
-                <DropdownMenu items={this.state.locations} sendValue={ExplorerActions.addLocation} item_plural_name='Locations' text='Select Location' style='databrowser__button' icon='fa-globe'/>
-                <List items={this.state.locationSelected} removeItem={ExplorerActions.removeLocation}/>
-              </ExpandableSection>
-
-              <ExpandableSection title='Indicators' refer='preview'>
-                <DropdownMenu items={this.state.indicators} sendValue={ExplorerActions.addIndicators} item_plural_name='Indicators' text='Choose Indicators' style='databrowser__button'/>
-                <ReorderableList items={this.state.indicatorSelected} removeItem={ExplorerActions.removeIndicator} dragItem={ExplorerActions.reorderIndicator}/>
-              </ExpandableSection>
-
-              <ExpandableSection title='Time Period' refer='preview'>
-                <DateRangePicker sendValue={ExplorerActions.updateDateRangePicker} start={this.state.campaign.start} end={this.state.campaign.end} text='to' fromComponent='Explorer'/>
-              </ExpandableSection>
-
-              <a role='button' onClick={this.refresh} className={this.state.couldLoad ? 'button success' : 'button success disabled'} style={{marginTop: '21px'}}>
-                <i className='fa fa-fw fa-refresh'/>&emsp;Load Data
-              </a>
-            </from>
+            <DataFilters processResults={this.refresh}/>
           </div>
           <div className='medium-9 columns'>
-            <DatabrowserTable updateValue={this._tableValueUpdate}/>
+            <DatabrowserTable data={this.state.table_data} />
             <DownloadButton onClick={this._download} enable={this.state.hasData} text='Download All' working='Downloading' cookieName='dataBrowserCsvDownload'/>
           </div>
         </div>

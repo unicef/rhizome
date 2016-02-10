@@ -4,12 +4,11 @@ import d3 from 'd3'
 
 import _ from 'lodash'
 import moment from 'moment'
-import api from 'data/api'
 
 var DataBrowserTableStore = Reflux.createStore({
   listenables: [require('actions/DataBrowserTableActions')],
 
-  data: {
+  table: {
     data: null,
     schema: null,
     fields: null,
@@ -17,7 +16,7 @@ var DataBrowserTableStore = Reflux.createStore({
   },
 
   getInitialState: function () {
-    return this.data
+    return this.table
   },
 
   _format: function (value) {
@@ -36,68 +35,51 @@ var DataBrowserTableStore = Reflux.createStore({
     return schema
   },
 
-  onGetTableData: function (campaign, locations, indicators) {
-    this.data.data = null
-    this.trigger(this.data)
+  _extractItemsFromData: function (data) {
+    return data.objects.map(item => {
+      let result = _.pick(item, 'location')
+      result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
+      item.indicators.forEach(indicator => {
+        result[indicator.indicator] = this._format(indicator.value) // indicator.indicator is the id
+      })
+      return result
+    })
+  },
+
+  _getPickValue: function (items, locations) {
+    let pickValue = []
+    _.forEach(items, item => {
+      _.forEach(locations, location => {
+        if (item.location === location.id) {
+          item.location = location.name
+          pickValue.push(item)
+          return
+        }
+      })
+    })
+
+    return pickValue
+  },
+
+  onGetTableData: function (locations, indicators, data) {
+    this.table = {data: null, schema: null, fields: null, columns: null}
+    this.trigger(this.table)
 
     let fields = {location: {title: 'Location', name: 'location'}, campaign: {title: 'Campaign', name: 'campaign'}}
     let columns = ['location', 'campaign']
-    let options = {indicator__in: []}
-
-    if (locations.length > 0) {
-      options.location_id__in = _.map(locations, 'id')
-    }
-
-    if (campaign.start) {
-      options.campaign_start = moment(campaign.start).format('YYYY-M-D')
-    }
-
-    if (campaign.end) {
-      options.campaign_end = moment(campaign.end).format('YYYY-M-D')
-    }
+    let items = this._extractItemsFromData(data)
 
     indicators.forEach(indicator => {
-      options.indicator__in.push(indicator.id)
       fields[indicator.id] = {title: indicator.name, name: indicator.id}
       columns.push(indicator.id)
     })
 
-    api.datapoints(options, null, {'cache-control': 'no-cache'})
-      .then(response => {
-        if (!response.objects || response.objects.length < 1) {
-          this.data.data = null
-          this.trigger(this.data)
-          return
-        }
+    this.table.data = this._getPickValue(items, locations)
+    this.table.schema = this._buildSchema(parseSchema(data), fields)
+    this.table.fields = fields
+    this.table.columns = columns
 
-        let value = response.objects.map(item => {
-          let result = _.pick(item, 'location')
-          result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
-
-          item.indicators.forEach(indicator => {
-            result[indicator.indicator] = this._format(indicator.value)
-          })
-          return result
-        })
-
-        let pickValue = []
-        _.forEach(value, item => {
-          _.forEach(locations, location => {
-            if (item.location === location.id) {
-              item.location = location.name
-              pickValue.push(item)
-              return
-            }
-          })
-        })
-
-        this.data.data = pickValue
-        this.data.schema = this._buildSchema(parseSchema(response), fields)
-        this.data.fields = fields
-        this.data.columns = columns
-
-        this.trigger(this.data)
-      })
+    this.trigger(this.table)
   }
 })
 

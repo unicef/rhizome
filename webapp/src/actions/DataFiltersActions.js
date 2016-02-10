@@ -8,4 +8,5 @@ export default Reflux.createActions([
   'getIndicators',
   'addIndicator',
   'removeIndicator',
+  'updateDateRangePicker'
 ])
