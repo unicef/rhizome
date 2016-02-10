@@ -97,7 +97,7 @@ var SimpleForm = React.createClass({
   componentWillUpdate: function (nextProps, nextState) {
     if (nextProps.params !== this.props.params) {
       return
-    }
+  }
     if (nextState.store.dataObject !== this.state.store.dataObject) {
       return
     }
@@ -110,8 +110,8 @@ var SimpleForm = React.createClass({
     var errorMessage = {}
     var maxLength = 255
     for (var key in data) {
-      if (!data[key]) {
-        errorMessage[key] = key.toUpperCase() + ' could not be blank.'
+    if (!data[key] && data[key] != 0) {
+        errorMessage[key] = key.toUpperCase() + ' can not be blank.'
       }
       if (data[key].length > maxLength) {
         errorMessage[key] = key.toUpperCase() + ' is too long.'
@@ -121,7 +121,7 @@ var SimpleForm = React.createClass({
     if (!errorMessage['name'] & !this.props.params.id) {
       var result = _.find(indicators, d => { return d === data.name })
       if (result) {
-        errorMessage['name'] = 'The indicator of this NAME already existed.'
+        errorMessage['name'] = 'The indicator of this NAME already exists.'
       }
     }
 
