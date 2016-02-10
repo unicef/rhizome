@@ -151,3 +151,5 @@ API_LIMIT_PER_PAGE = 0
 TASTYPIE_FULL_DEBUG = True
 
 INTERNAL_IPS=('127.0.0.1',)
+
+ABOUT_HTML = "<p> Rhizomes are underground systems that produce stems and roots of plants, allowing them to grow and thrive. They store nutrients that help plants survive and regenerate in the most challenging conditions. Ceaselessly establishing new connections between them, rhizomes constitute resilient, flexible and dynamic systems, rooted in their local environments and primed for long-term sustainability. <p> Rhizome DB supports the polio programme's ritical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.</p>"

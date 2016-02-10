@@ -6,6 +6,7 @@ from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
 from django.template import RequestContext
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from datapoints.models import *
 from datapoints.forms import *
@@ -14,6 +15,14 @@ from datapoints.mixins import PermissionRequiredMixin
 from datapoints.pdf_utils import print_pdf
 from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
+
+def about(request):
+
+    html = '<p>hello</p> <p>world</p>'
+    html = settings.ABOUT_HTML
+
+    return render_to_response('about.html', {'html': html},
+                              context_instance=RequestContext(request))
 
 
 def export_file(request):

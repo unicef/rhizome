@@ -12,7 +12,8 @@ from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.homepage import HomePageResource
 from datapoints.api.meta_data import *
 from datapoints.api.base import api_debug
-from datapoints.views import manage_system
+from datapoints.views import manage_system, about
+
 
 from tastypie.api import Api
 
@@ -83,7 +84,7 @@ urlpatterns = patterns(
     url(r'^manage_system/', manage_system, name='manage_system'),
 
     # ABOUT PAGE
-    url(r'^about$', TemplateView.as_view(template_name="about.html"), name='about'),
+    url(r'^about$', about, name='about'),
 
     # Waffle PATH
     url(r'^', include('waffle.urls')),
