@@ -3,11 +3,16 @@ import React from 'react'
 let ExpandableSection = React.createClass({
   propTypes: {
     title: React.PropTypes.string,
-    children: React.PropTypes.element
+    children: React.PropTypes.element,
+    exanded: React.PropTypes.element
+  },
+
+  getDefaultProps: function () {
+    return { expanded: false };
   },
 
   getInitialState: function () {
-    return { isActive: false }
+    return { isActive: this.props.expanded }
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
@@ -22,7 +27,7 @@ let ExpandableSection = React.createClass({
   render: function () {
     let isActive = this.state.isActive
     return (
-      <li className={'expandable-section ' + (isActive ? 'active' : '')}>
+      <div className={'expandable-section ' + (isActive ? 'active' : '')}>
         <h2 onClick={this.toggleStep}>
           {this.props.title}
           <i className={'fa ' + (isActive ? 'fa-minus' : 'fa-plus')}></i>
@@ -30,7 +35,7 @@ let ExpandableSection = React.createClass({
         <div className='expandable-section__body'>
           {this.props.children}
         </div>
-      </li>
+      </div>
     )
   }
 })
