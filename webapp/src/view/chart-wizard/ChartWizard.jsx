@@ -91,40 +91,41 @@ let ChartWizard = React.createClass({
         options={this.state.data.chartOptions}/>
     )
 
+    let location_options = [
+      { title: 'by Tag', value: this.state.data.location_tags },
+      { title: 'by Country', value: this.state.data.locationFilteredList }
+    ]
     return (
       <div className='chart-wizard'>
         <div className='medium-3 columns'>
           <h1>Chart Builder</h1>
-          <ExpandableSection title='Indicators' refer='preview'>
-            <DropdownMenu
-              items={availableIndicators}
-              sendValue={ChartWizardActions.addIndicator}
-              item_plural_name='Indicators'
-              text='Choose Indicators'
-              style='databrowser__button'/>
-            <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
-          </ExpandableSection>
-
-          <ExpandableSection title='Locations' refer='preview'>
-            <DropdownMenu
-              items={this.state.data.location_tags}
-              sendValue={ChartWizardActions.addLocationsByTag}
-              item_plural_name='Locations Tags'
-              text='Add Locations By Tag'
-              style='databrowser__button'
-              icon='fa-tag'
-              searchable={false}/>
-            <DropdownMenu
-              items={this.state.data.locationFilteredList}
-              sendValue={ChartWizardActions.addLocation}
-              item_plural_name='Locations'
-              text='Add Locations By Name'
-              style='databrowser__button'
-              icon='fa-globe'/>
-            <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
-            <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-          </ExpandableSection>
-
+          <div className='row'>
+            <div className='medium-6 columns'>
+              <ExpandableSection title='Indicators' refer='preview'>
+                <DropdownMenu
+                  items={availableIndicators}
+                  sendValue={ChartWizardActions.addIndicator}
+                  item_plural_name='Indicators'
+                  text='Choose Indicators'
+                  style='databrowser__button'/>
+                <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
+              </ExpandableSection>
+            </div>
+            <div className='medium-6 columns'>
+              <ExpandableSection title='Locations' refer='preview'>
+                 <DropdownMenu
+                  items={location_options}
+                  sendValue={ChartWizardActions.addLocation}
+                  item_plural_name='Locations'
+                  text='Choose Locations'
+                  style='databrowser__button'
+                  icon='fa-globe'
+                  grouped/>
+                <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
+                <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+              </ExpandableSection>
+            </div>
+          </div>
           <ExpandableSection title='Time' refer='preview'>
             <DateRangePicker
               sendValue={ChartWizardActions.updateDateRangePicker}

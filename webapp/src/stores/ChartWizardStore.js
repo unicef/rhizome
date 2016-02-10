@@ -21,17 +21,17 @@ let ChartWizardStore = Reflux.createStore({
     location: [],
     location_tags: [ // Temporarily Hard Coded. Fetch from API in the future
       {
-        value: 1,
+        value: 'tag-1',
         title: 'LPD 1',
         location_ids: [ 3148, 3149, 3143, 3300, 3303, 3304, 3311, 3298, 3214, 3206, 3213, 3200, 3201, 3204, 3400, 3389, 3395, 3401, 3493 ]
       },
       {
-        value: 2,
+        value: 'tag-2',
         title: 'LPD 2',
         location_ids: [ 3142, 3279, 3309, 3302, 3305, 3327, 3184, 3515, 3209, 3211, 3212, 3199, 3207, 3210, 3311, 3203, 3367, 3360, 3363, 3369, 3398, 3404, 3388, 3405, 3409, 3427, 3494, 3508 ]
       },
       {
-        value: 3,
+        value: 'tag-3',
         title: 'LPD 3',
         location_ids: [ 3248, 3249, 3256, 3251, 3273, 3283, 3117, 3291, 3295, 3301, 3308, 3306, 3307, 3343, 3344, 3351, 3355, 3356, 3370, 3371, 3373, 3372, 3361, 3364, 3365, 3187, 3190, 3189, 3191, 3376, 3397, 3391, 3393, 3408, 3419, 3420, 3446, 3447, 3463, 3495, 3492, 3515, 3506, 3507, 3509, 3510, 3505, 3512, 3513]
       }
@@ -290,9 +290,21 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
+  addLocationsByTag: function (index) {
+    let locations_to_add = this.data.location_tags.find( tag => tag.value === index)
+    _.forEach(locations_to_add.location_ids, function (location_id) {
+      if (this.data.selected_locations.map(item => item.id).indexOf(location_id) >= 0) return
+      this.data.selected_locations.push(this.locationIndex[location_id])
+    }, this)
+  },
+
   onAddLocation: function (index) {
     if (this.data.selected_locations.map(item => item.id).indexOf(index) >= 0) return
-    this.data.selected_locations.push(this.locationIndex[index])
+    if (index.indexOf('tag') > -1) {
+      this.addLocationsByTag(index)
+    } else {
+      this.data.selected_locations.push(this.locationIndex[index])
+    }
     this.previewChart()
   },
 

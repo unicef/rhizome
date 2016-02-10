@@ -6,7 +6,7 @@ var MenuItem = React.createClass({
     sendValue: React.PropTypes.func.isRequired,
     title: React.PropTypes.string.isRequired,
     value: React.PropTypes.string.isRequired,
-
+    classes: React.PropTypes.string,
     ancestryString: React.PropTypes.string,
     children: React.PropTypes.array,
     depth: React.PropTypes.number,
@@ -74,7 +74,7 @@ var MenuItem = React.createClass({
     var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
 
     return (
-      <li>
+      <li className={this.props.classes}>
         <a
           role='menuitem'
           onClick={this._handleClick}

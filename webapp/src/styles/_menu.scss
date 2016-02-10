@@ -21,7 +21,19 @@
 			li {
 				padding : 0;
 				margin  : 0;
-
+				&.menu-group-title {
+					a {
+						&:hover {
+							color: #333333;
+							background: none;
+						}
+						font-weight: 800;
+						padding-bottom: .15rem;
+				    margin-left: -15px;
+						border-bottom: 1px solid #CCCCCC;
+						cursor: default;
+					}
+				}
 				.fa {
 					visibility: hidden;
 				}
