@@ -107,10 +107,18 @@ let ChartWizard = React.createClass({
 
           <ExpandableSection title='Locations' refer='preview'>
             <DropdownMenu
+              items={this.state.data.location_tags}
+              sendValue={ChartWizardActions.addLocationsByTag}
+              item_plural_name='Locations Tags'
+              text='Add Locations By Tag'
+              style='databrowser__button'
+              icon='fa-tag'
+              searchable={false}/>
+            <DropdownMenu
               items={this.state.data.locationFilteredList}
               sendValue={ChartWizardActions.addLocation}
               item_plural_name='Locations'
-              text='Add Location'
+              text='Add Locations By Name'
               style='databrowser__button'
               icon='fa-globe'/>
             <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
