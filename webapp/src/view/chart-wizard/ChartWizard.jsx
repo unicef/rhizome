@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import ExpandableSection from 'component/ExpandableSection.jsx'
-import DateRangePicker from 'component/DateTimePicker.jsx'
+import DateRangePicker from 'component/DateRangePicker.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 

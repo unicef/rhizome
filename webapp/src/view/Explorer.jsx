@@ -6,7 +6,7 @@ import moment from 'moment'
 
 import ExpandableSection from 'component/ExpandableSection'
 import DataFilters from './DataFilters'
-import DateRangePicker from 'component/DateTimePicker'
+import DateRangePicker from 'component/DateRangePicker'
 import DropdownMenu from 'component/menus/DropdownMenu'
 import DatabrowserTable from 'component/DatabrowserTable'
 import List from 'component/list/List'

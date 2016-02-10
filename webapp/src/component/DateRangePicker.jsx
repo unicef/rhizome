@@ -46,11 +46,11 @@ var DateRangePicker = React.createClass({
         />)
     }
     return (
-        <div>
+      <div className='row'>
         {dateTimePicker(this.state.start, 'start')}
             <div className='centered'>{this.props.text}</div>
         {dateTimePicker(this.state.end, 'end')}
-        </div>
+      </div>
     )
   }
 })

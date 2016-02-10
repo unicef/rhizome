@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 
 import ExpandableSection from 'component/ExpandableSection'
 import DataFilter from './DataFilter'
-import DateRangePicker from 'component/DateTimePicker'
+import DateRangePicker from 'component/DateRangePicker'
 
 import DataFiltersStore from 'stores/DataFiltersStore'
 import DataFiltersActions from 'actions/DataFiltersActions'

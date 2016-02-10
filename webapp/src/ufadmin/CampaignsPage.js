@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DateRangePicker from 'component/DateTimePicker.jsx'
+import DateRangePicker from 'component/DateRangePicker.jsx'
 import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
