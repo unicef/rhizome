@@ -6,8 +6,7 @@ var DateRangePicker = React.createClass({
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
-    fromComponent: React.PropTypes.string.isRequired,
-    text: React.PropTypes.string
+    fromComponent: React.PropTypes.string.isRequired
   },
 
   getInitialState: function () {
@@ -42,13 +41,12 @@ var DateRangePicker = React.createClass({
         value={dateValue}
         time={false}
         format={'yyyy-MM-dd'}
-        onChange={self.handleDateChange.bind(this, type)}
-        />)
+        onChange={self.handleDateChange.bind(this, type)} />)
     }
     return (
-      <div className='row'>
+      <div className='date-range-picker'>
         {dateTimePicker(this.state.start, 'start')}
-            <div className='centered'>{this.props.text}</div>
+        <span>to</span>
         {dateTimePicker(this.state.end, 'end')}
       </div>
     )

@@ -5,7 +5,7 @@
 
   .rw-btn {
     padding: 0;
-    width: 2.3em;
+    width: 1.15rem;
   }
 
   .rw-select {
@@ -111,6 +111,19 @@
       overflow: hidden;
       text-align: center;
       white-space: normal;
+    }
+  }
+}
+
+.date-range-picker {
+  & > span {
+    padding: .25rem;
+  }
+  .rw-datetimepicker {
+    display: inline-block;
+    width: 45%;
+    i {
+      margin-left: .1rem;
     }
   }
 }

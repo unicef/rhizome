@@ -61,7 +61,7 @@ let DataFilters = React.createClass({
           icon='fa-globe'/>
 
         <ExpandableSection title='Time Period' refer='preview'>
-          <DateRangePicker sendValue={DataFiltersActions.updateDateRangePicker} start={this.state.campaign.start} end={this.state.campaign.end} text='to' fromComponent='Explorer'/>
+          <DateRangePicker sendValue={DataFiltersActions.updateDateRangePicker} start={this.state.campaign.start} end={this.state.campaign.end} fromComponent='Explorer'/>
         </ExpandableSection>
 
         <a role='button' onClick={this.submitQuery} className={this.state.couldLoad ? 'button success' : 'button success disabled'} style={{marginTop: '21px'}}>
