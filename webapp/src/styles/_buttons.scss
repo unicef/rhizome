@@ -7,14 +7,21 @@
   border-style: hidden;
   font-family: adelle;
 	margin: .5rem .5rem .5rem 0;
-  &:not(.disabled):not(.success):hover {
+  &:not(.disabled):not(.success):not(.icon-button):hover {
     background-color: #426281;
     color: $rhz-font-color;
   }
   &:focus {
     outline: none;
   }
+  &.icon-button {
+    background: none;
+    padding: .2rem;
+    font-size: 1.25rem;
+    color: $rhz-body-color;
+  }
 }
+
 
 .search-button {
   background-color: #FAFAFA;
