@@ -180,11 +180,6 @@ let ChartWizardStore = Reflux.createStore({
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
-    // hacky way to find the default indicator //
-    if (chartDef.indicators.length === 0){
-        chartDef.indicators.push(this.indicators[0].id)
-    }
-
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = chartDef.indicators.map(id => {
       return this.indicatorIndex[id]
