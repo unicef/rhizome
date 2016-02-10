@@ -40,6 +40,7 @@ var DataFiltersStore = Reflux.createStore({
           this.data.data = null
         } else {
           this.data.data = response
+          this.data.hasData = true
         }
         this.trigger(this.data)
       })

@@ -48,7 +48,7 @@ let DataFilters = React.createClass({
           addItem={DataFiltersActions.addLocation}
           removeItem={DataFiltersActions.removeLocation}
           item_plural_name='Locations'
-          text='Select Location'
+          text='Select Locations'
           icon='fa-globe'/>
 
         <DataFilter
@@ -57,7 +57,7 @@ let DataFilters = React.createClass({
           addItem={DataFiltersActions.addIndicator}
           removeItem={DataFiltersActions.removeIndicator}
           item_plural_name='Indicators'
-          text='Select Indicator'
+          text='Select Indicators'
           icon='fa-globe'/>
 
         <ExpandableSection title='Time Period' refer='preview'>

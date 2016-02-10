@@ -17,24 +17,21 @@ import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 
 let Explorer = React.createClass({
 
-
-  getInitialState: function () {
+  getInitialState: function() {
     return {
-      hasData: false,
-      table_data: null
-    }
+      data: null,
+      selected_locations: null,
+      selected_indicators: null
+    };
   },
 
-  refresh: function (data) {
-    this.setState( {
-      table_data: data,
-      hasData: data && data.length > 0
-    })
+  refresh: function (results) {
+    this.setState(results)
   },
 
   _download: function () {
-    let locations = _.map(this.state.locationSelected, 'id')
-    let indicators = _.map(this.state.indicatorSelected, 'id')
+    let locations = _.map(this.state.selected_locations, 'id')
+    let indicators = _.map(this.state.selected_indicators, 'id')
     let query = { 'format': 'csv' }
 
     if (indicators.length > 0) query.indicator__in = indicators
@@ -58,7 +55,7 @@ let Explorer = React.createClass({
             <DataFilters processResults={this.refresh}/>
           </div>
           <div className='medium-9 columns'>
-            <DatabrowserTable data={this.state.table_data} />
+            <DatabrowserTable data={this.state.data} selected_locations={this.state.selected_locations} selected_indicators={this.state.selected_indicators} />
             <DownloadButton onClick={this._download} enable={this.state.hasData} text='Download All' working='Downloading' cookieName='dataBrowserCsvDownload'/>
           </div>
         </div>
