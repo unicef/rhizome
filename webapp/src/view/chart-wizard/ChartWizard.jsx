@@ -129,7 +129,7 @@ let ChartWizard = React.createClass({
           <div className='row data-filters'>
             <br/>
             <div className='medium-6 columns'>
-                <h3 class="chart-wizard_section-heading">
+                <h3>
                   Indicators
                   <DropdownMenu
                     items={availableIndicators}
@@ -142,7 +142,7 @@ let ChartWizard = React.createClass({
                 <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
             </div>
             <div className='medium-6 columns'>
-              <h3 class="chart-wizard_section-heading">
+              <h3>
                 Locations
                 <DropdownMenu
                   items={location_options}
