@@ -170,7 +170,7 @@ var CustomDashboard = React.createClass({
       return (
         <div key={key} className={cols} style={{ paddingBottom: '1.5rem' }}>
           <h4 className='custom-dashboard__chart-title'>&nbsp;{title} {controls}</h4>
-          <Chart type={chart.type} data={series} options={options}
+          <Chart type={chart.type} data={series} options={options} campaigns={this.props.campaigns}
             loading={loading} />
         </div>
       )

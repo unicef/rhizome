@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 import ChartFactory from '02-molecules/charts'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
 
 function isEmpty (type, data, options) {
   // Bullet charts get special treatment because they're considered empty if
@@ -26,7 +27,8 @@ export default React.createClass({
     id: React.PropTypes.string,
     loading: React.PropTypes.bool,
     options: React.PropTypes.object,
-    isBulletChart: React.PropTypes.bool
+    isBulletChart: React.PropTypes.bool,
+    campaigns: React.PropTypes.array
   },
 
   getDefaultProps: function () {
@@ -68,8 +70,21 @@ export default React.createClass({
         )
     }
 
+    let campaignDropdown = ''
+    if (this.props.campaigns) {
+      campaignDropdown = <DropdownMenu
+              items={this.props.campaigns}
+              sendValue={_.noop}
+              item_plural_name='Campaigns'
+              text='Select Campagin'
+              title_field='name'
+              value_field='id'
+              uniqueOnly/>
+    }
+
     return (
       <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
+        {campaignDropdown}
         {overlay}
       </div>
     )
