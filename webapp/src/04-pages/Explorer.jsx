@@ -4,14 +4,15 @@ import Reflux from 'reflux'
 import api from 'data/api'
 import moment from 'moment'
 
-import ExpandableSection from 'component/ExpandableSection'
+import ExpandableSection from '02-molecules/ExpandableSection'
+import DatabrowserTable from '02-molecules/DatabrowserTable'
+import DateRangePicker from '02-molecules/DateRangePicker'
+import ReorderableList from '02-molecules/list/ReorderableList'
+import DownloadButton from '02-molecules/DownloadButton'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import List from '02-molecules/list/List'
+
 import DataFilters from '03-organisms/DataFilters'
-import DateRangePicker from 'component/DateRangePicker'
-import DropdownMenu from 'component/menus/DropdownMenu'
-import DatabrowserTable from 'component/DatabrowserTable'
-import List from 'component/list/List'
-import ReorderableList from 'component/list/ReorderableList'
-import DownloadButton from 'component/DownloadButton'
 
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 

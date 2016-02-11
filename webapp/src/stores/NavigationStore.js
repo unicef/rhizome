@@ -3,11 +3,11 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import CampaignStore from 'stores/CampaignStore'
-import Office from 'requests/Office'
+import Office from 'data/requests/Office'
 
 import api from 'data/api'
-import builtins from 'dashboard/builtin'
-import randomHash from 'util/randomHash'
+import builtins from '03-organisms/dashboard/builtin'
+import randomHash from '00-utilities/randomHash'
 
 var NavigationStore = Reflux.createStore({
   init: function () {

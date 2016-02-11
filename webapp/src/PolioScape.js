@@ -1,52 +1,38 @@
 import React from 'react'
 
-import DashboardNav from 'component/DashboardNav.jsx'
-import DashboardList from 'view/dashboard-list/DashboardList.jsx'
-import AdminApp from './ufadmin'
-import CampaignsPage from './ufadmin/CampaignsPage.js'
-import HomepageChartsView from 'view/HomepageChartsView.jsx'
+import AdminApp from '04-pages/AdminApp'
 
-React.render(
-  React.createElement(DashboardNav),
-  document.getElementById('dashboards-nav')
-)
+React.render(React.createElement(require('02-molecules/DashboardNav')), document.getElementById('dashboards-nav'))
 
 export default {
   Explorer: function (el) {
-    React.render(React.createElement(require('04-pages/Explorer.jsx')), el)
+    React.render(React.createElement(require('04-pages/Explorer')), el)
   },
   Dashboard: function (el) {
-    React.render(React.createElement(require('view/Dashboard.jsx')), el)
+    React.render(React.createElement(require('04-pages/Dashboard')), el)
   },
-  DataEntry: function (el) {
-    React.render(React.createElement(require('view/entry-form/EntryForm.jsx')), el)
+  EntryForm: function (el) {
+    React.render(React.createElement(require('04-pages/EntryForm')), el)
   },
   SourceData: function (el) {
-    var SourceData = require('04-pages/SourceData.jsx')
-    React.render(React.createElement(SourceData), el)
+    React.render(React.createElement(require('04-pages/SourceData')), el)
   },
   UserAccount: function (el, userId) {
-    let UserAccount = require('view/user-account/UserAccount.jsx')
-    React.render(React.createElement(UserAccount, {userId: userId}), el)
+    React.render(React.createElement(require('04-pages/UserAccount'), {userId: userId}), el)
   },
   DashboardList: function (el) {
-    React.render(React.createElement(DashboardList), el)
+    React.render(React.createElement(require('04-pages/DashboardList')), el)
   },
   HomepageCharts: function (el) {
-    React.render(React.createElement(HomepageChartsView), el)
+    React.render(React.createElement(require('04-pages/HomepageChartsView')), el)
   },
   DashboardBuilder: function (el, dashboardId) {
-    var DashboardBuilder = require('04-pages/DashboardBuilder.jsx')
-    React.render(React.createElement(DashboardBuilder, { dashboardId: dashboardId }), el)
+    React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboardId: dashboardId }), el)
+  },
+  CampaignsPage: function (el, campaignId) {
+    React.render(React.createElement(require('04-pages/CampaignsPage'), {campaignId: campaignId}), el)
   },
   UFAdmin: function (el) {
     AdminApp.render(document.getElementById('main'))
-  },
-  CampaignsPage: function (el, campaignId) {
-    if (campaignId) {
-      React.render(React.createElement(CampaignsPage, {campaignId: campaignId}), el)
-    } else {
-      React.render(React.createElement(CampaignsPage), el)
-    }
   }
 }

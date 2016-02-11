@@ -1,6 +1,6 @@
 import api from 'data/api'
 import Reflux from 'reflux'
-import parseSchema from 'ufadmin/utils/parseSchema'
+import parseSchema from '03-organisms/ufadmin/utils/parseSchema'
 
 var ReviewTableStore = Reflux.createStore({
   listenables: [require('actions/ReviewTableActions')],

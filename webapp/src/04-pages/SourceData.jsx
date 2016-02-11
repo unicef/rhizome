@@ -4,12 +4,13 @@ import Reflux from 'reflux'
 import page from 'page'
 import moment from 'moment'
 
+import randomHash from '00-utilities/randomHash'
+
+import builtins from '03-organisms/dashboard/builtin'
+import SourceData from '03-organisms/dashboard/SourceDataDashboard'
+
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
-import builtins from 'dashboard/builtin'
-import randomHash from 'util/randomHash'
-
-import SourceData from 'dashboard/SourceDataDashboard.jsx'
 
 import DashboardStore from 'stores/DashboardStore'
 import DataStore from 'stores/DataStore'

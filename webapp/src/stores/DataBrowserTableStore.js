@@ -1,5 +1,5 @@
 import Reflux from 'reflux'
-import parseSchema from 'ufadmin/utils/parseSchema'
+import parseSchema from '03-organisms/ufadmin/utils/parseSchema'
 import d3 from 'd3'
 
 import _ from 'lodash'

@@ -1,0 +1,53 @@
+
+@import "foundation/components/grid";
+
+.layout-options-container {
+  margin-bottom: 10px;
+}
+
+.create-dashboard {
+  width: auto !important;
+}
+
+.layout-option {
+  display: inline-block;
+  text-align: center;
+
+  img {
+    width: 100%;
+    margin-bottom: .5em;
+  }
+  input[type="radio"] {
+    display: none;
+    &+label {
+      margin: 0;
+      width: 100%;
+    }
+  }
+  &.active {
+    .layout-option__img_wrapper {
+      border: 5px solid $rhz-button-bg-color;
+      transition: .5s border;
+    }
+  }
+  &.inactive {
+    .layout-option__img_wrapper {
+      border: 5px solid transparent;
+    }
+  }
+}
+
+@media #{$small-up} {
+  .layout-option {
+    padding: 0 5px;
+    &:nth-last-child(1) { padding: 0 0 0 10px; }
+    &:first-child { padding: 0 10px 0 0; }
+  }
+}
+
+.layout-option--label {
+  margin-bottom: 1em;
+  img{
+    pointer-events: none;
+  }
+}

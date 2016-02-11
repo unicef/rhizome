@@ -1,9 +1,9 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import ExpandableSection from 'component/ExpandableSection'
+import ExpandableSection from '02-molecules/ExpandableSection'
 import DataFilter from '02-molecules/DataFilter'
-import DateRangePicker from 'component/DateRangePicker'
+import DateRangePicker from '02-molecules/DateRangePicker'
 
 import DataFiltersStore from 'stores/DataFiltersStore'
 import DataFiltersActions from 'actions/DataFiltersActions'

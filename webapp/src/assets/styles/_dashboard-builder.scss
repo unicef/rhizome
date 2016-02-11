@@ -1,0 +1,135 @@
+@import "foundation/components/block-grid";
+
+@media #{$small-up} {
+  .dashboard-builder-container {
+    max-width: 70%;
+    margin: 20px auto;
+
+    .description {
+      border: 1px solid #344B61;
+    }
+
+    .cd-title {
+      font-size: 13px;
+      margin-bottom: 4px;
+      padding: 10px 0;
+    }
+
+    .cd-button {
+      margin-bottom: 10em;
+    }
+  }
+}
+
+@media #{$medium-up} {
+  .cd-title-label {
+    position: relative;
+    top: .5em;
+    text-align: right;
+  }
+}
+
+@media #{$large-up} {
+  .cd-footer {
+    .description-text {
+      text-align: right !important;
+    }
+  }
+}
+
+.dropdown-list {
+  background-color: #fff;
+  color: $rhz-background-color;
+  font-size: 0.825rem;
+  position: relative;
+  padding: 10px;
+  cursor: pointer;
+  text-transform: uppercase;
+
+  a {
+  position: absolute;
+  right: 0;
+  top: -10px;
+  color: $rhz-background-color;
+  }
+}
+
+.dashboard-nav__text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.export-file {
+  $export-button-width: 90%;
+  width: $export-button-width;
+  margin-left: 100% - $export-button-width;
+
+  &:not(a) {
+    margin-top: 12px;
+  }
+
+  &.inactive {
+    background-color: $button-disabled-color;
+    pointer-events: none;
+  }
+}
+
+.empty-dashboard-add-container {
+  margin: 215px auto;
+  text-align: center;
+  .new-dashboard-font {
+    font-size: 0.9rem;
+  }
+}
+
+.cd-button {
+  padding: 10px 50px;
+  cursor: pointer;
+  background-color: $rhz-button-bg-color;
+  color: $rhz-font-color;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 0.625rem;
+  width: 100%;
+  font-family: adelle;
+
+  &:hover {
+    color: $rhz-font-color !important;
+    background-color: #426281;
+  }
+}
+
+.cd-footer {
+  padding: 20px 10px 0;
+  background-color: #F3F3F3;
+  position: fixed;
+  bottom: 50px;
+  width: 100%;
+  z-index: 9999;
+
+  .description-text {
+    font-size: 11px;
+    text-transform: uppercase;
+    text-align: left;
+    padding: 10px 0;
+  }
+  .description {
+    border: 1px solid $rhz-button-bg-color;
+  }
+}
+
+.cd-titlebar {
+  background-color: $rhz-background-color;
+  .cd-title-label {
+    font-size: 0.825rem;
+    text-transform: uppercase;
+    color: #FEFEFE;
+    float: right;
+  }
+  .cd-title {
+    border: 1px solid #344B61;
+  }
+  .cd-titlebar-margin {
+    margin: 12px 0;
+  }
+}

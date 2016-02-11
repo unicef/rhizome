@@ -5,7 +5,7 @@ export default {
     `${gulp.config('base.src')}/**/__tests__/*.spec.js{,x}`
   ],
   options: {
-    r: 'src/helpers/jsdom.js',
+    r: 'tasks/helpers/jsdom.js',
     R: 'dot',
     compilers: '.:babel/register',
     istanbul: true

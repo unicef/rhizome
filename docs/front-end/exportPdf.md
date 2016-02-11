@@ -233,8 +233,8 @@ documentRank: 3
   ```
   entry: `${gulp.config('base.src')}/styles/pdf.scss`,
   src: [
-    `${gulp.config('base.src')}/styles/_settings.scss`,
-    `${gulp.config('base.src')}/styles/pdf.scss`
+    `${gulp.config('base.src')}/assets/styles/_settings.scss`,
+    `${gulp.config('base.src')}/assets/styles/pdf.scss`
   ],
   dest: `${gulp.config('base.dist')}/static/css`
   ```

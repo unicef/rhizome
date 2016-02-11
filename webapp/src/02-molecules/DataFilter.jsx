@@ -1,9 +1,9 @@
 import React from 'react'
 
-import ExpandableSection from 'component/ExpandableSection'
-import DropdownMenu from 'component/menus/DropdownMenu'
-import ReorderableList from 'component/list/ReorderableList'
-import List from 'component/list/List'
+import ExpandableSection from '02-molecules/ExpandableSection'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import ReorderableList from '02-molecules/list/ReorderableList'
+import List from '02-molecules/list/List'
 
 let DataFilter = React.createClass({
 

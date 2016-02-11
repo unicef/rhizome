@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 import api from 'data/api'
-import Location from 'requests/Location'
+import Location from 'data/requests/Location'
 
 import MapFormActions from 'actions/MapFormActions'
 import CampaignStore from 'stores/CampaignStore'
