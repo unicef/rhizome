@@ -39,25 +39,31 @@ export default React.createClass({
       .value()
     )
 
+    var customCharts = []
+
     return (
       <ul className='dashboards-nav'>
         <li className='small-4 columns'>
-          <a>View My<br />Dashboards</a>
+          <a href='/datapoints/dashboards/'>Dashboards</a>
           <ul className='dashboard-menu'>
+            <li className='main-item'>
+              <a href='/datapoints/dashboards/edit'>Create a dashboard</a>
+            </li>
             {builtins}
             <li className='separator'>
               <hr />
             </li>
             {customDashboards}
-            <li className='allCustomDashboards'>
-                <a role='menuitem' href='/datapoints/dashboards/' tabIndex='-1'>
-                  See all custom dashboards
-                </a>
-              </li>
           </ul>
         </li>
         <li className='small-4 columns'>
-          <a href='/datapoints/dashboards/edit'>Create a<br />dashboard</a>
+          <a>Charts</a>
+          <ul className='dashboard-menu'>
+            <li className='main-item'>
+              <a href='/datapoints/dashboards/edit'>Create a chart</a>
+            </li>
+            {customCharts}
+          </ul>
         </li>
         <li className='small-4 columns log-out'>
           <a href='/accounts/logout?next=/' title='logout'>

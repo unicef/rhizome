@@ -1,0 +1,82 @@
+ul.dashboards-nav {
+  display: block;
+  position: relative;
+
+  @include clearfix();
+
+  .log-out {
+      text-align: center;
+    }
+
+  > li {
+    margin: 0;
+    padding: 0;
+    display: inline-block;
+    text-align: left;
+    background-color: $rhz-navigation-bg-color;
+    &:hover {
+      background-color: $rhz-navigation-hover-bg-color;
+      .dashboard-menu {
+        display: block;
+      }
+    }
+
+    > a {
+      height: $header-height;
+      opacity: 1;
+      text-transform: uppercase;
+      text-align: left;
+      font-size: 0.8rem;
+      padding: 27px 20px;
+      display: block;
+      line-height: 1.2;
+    }
+  }
+}
+
+.dashboard-menu {
+  display: none;
+  position: absolute;
+  margin: 0;
+  background-color: $rhz-navigation-hover-bg-color;
+  width: 300px; //todo:
+  z-index: 10001;
+
+  > li {
+    display: block;
+    margin: 0;
+    border: none;
+    text-align: left;
+    overflow-x: hidden;
+    &.main-item {
+      background: $primary-color;
+      border-bottom: 1px solid white;
+    }
+    hr {
+      margin: 0.5em 0 0.5em;
+    }
+    a {
+      color: $rhz-font-color;
+      font-size: 1rem;
+      display: block;
+      padding: 5px 10px;
+      opacity: 1;
+      overflow-x: hidden;
+      text-overflow: ellipsis;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      color: $rhz-font-color;
+      &:hover {
+        background-color: $rhz-button-bg-color;
+      }
+    }
+  }
+
+  .allCustomDashboards {
+    text-decoration: underline;
+    a {
+      font-size: 0.6rem;
+      text-transform: lowercase;
+    }
+  }
+}
