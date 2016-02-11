@@ -13,7 +13,7 @@ React.render(
 
 export default {
   Explorer: function (el) {
-    React.render(React.createElement(require('view/Explorer.jsx')), el)
+    React.render(React.createElement(require('04-pages/Explorer.jsx')), el)
   },
   Dashboard: function (el) {
     React.render(React.createElement(require('view/Dashboard.jsx')), el)
@@ -22,7 +22,7 @@ export default {
     React.render(React.createElement(require('view/entry-form/EntryForm.jsx')), el)
   },
   SourceData: function (el) {
-    var SourceData = require('view/SourceData.jsx')
+    var SourceData = require('04-pages/SourceData.jsx')
     React.render(React.createElement(SourceData), el)
   },
   UserAccount: function (el, userId) {
@@ -36,7 +36,7 @@ export default {
     React.render(React.createElement(HomepageChartsView), el)
   },
   DashboardBuilder: function (el, dashboardId) {
-    var DashboardBuilder = require('view/dashboard-builder/DashboardBuilder.jsx')
+    var DashboardBuilder = require('04-pages/DashboardBuilder.jsx')
     React.render(React.createElement(DashboardBuilder, { dashboardId: dashboardId }), el)
   },
   UFAdmin: function (el) {

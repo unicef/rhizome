@@ -5,7 +5,7 @@ import api from 'data/api'
 import moment from 'moment'
 
 import ExpandableSection from 'component/ExpandableSection'
-import DataFilters from './DataFilters'
+import DataFilters from '03-organisms/DataFilters'
 import DateRangePicker from 'component/DateRangePicker'
 import DropdownMenu from 'component/menus/DropdownMenu'
 import DatabrowserTable from 'component/DatabrowserTable'
