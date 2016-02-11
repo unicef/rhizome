@@ -94,12 +94,12 @@ let ChartWizard = React.createClass({
     ]
 
     let clear_locations_button = '';
-    if (this.state.data.selected_locations.length > 5 ) {
+    if (this.state.data.selected_locations.length > 3 ) {
       clear_locations_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedLocations}>Remove All </a>
     }
 
     let clear_indicators_button = '';
-    if (this.state.data.indicatorSelected.length > 5 ) {
+    if (this.state.data.indicatorSelected.length > 3 ) {
       clear_indicators_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedIndicators}>Remove All </a>
     }
     return (
