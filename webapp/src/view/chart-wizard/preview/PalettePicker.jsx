@@ -42,7 +42,6 @@ class PalettePicker extends React.Component {
     })
     return (
       <div className='palette-picker'>
-        <h4>Pick up a palatte</h4>
         {paletteList}
       </div>
     )

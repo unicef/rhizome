@@ -1,12 +1,15 @@
+$rhz-primary-color: #436380;
+
 $rhz-font-color: #FEFEFE;
-$rhz-font-hover-color: #436380;
+$rhz-font-hover-color: $rhz-primary-color;
 $rhz-body-color: #222222;
+$rhz-link-color: $rhz-primary-color;
 
 
-$rhz-background-color: #436380;
+$rhz-background-color: $rhz-primary-color;
 $rhz-dashboard-bg-color: #FFFFFF;
 
-$rhz-tab-active-bg-color: #436380;
+$rhz-tab-active-bg-color: $rhz-primary-color;
 
 $rhz-navigation-bg-color: #000000;
 $rhz-navigation-color: $rhz-font-color;
@@ -14,7 +17,7 @@ $rhz-navigation-hover-bg-color:#6B7A83;
 
 $rhz-navigation-hover-sop-color: #c32027;
 $rhz-navigation-hover-c4d-color: #217985;
-$rhz-navigation-hover-data-color: #436380;
+$rhz-navigation-hover-data-color: $rhz-primary-color;
 
 $rhz-button-bg-color: #344B61;
 $rhz-button-color: $rhz-font-color;

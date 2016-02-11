@@ -300,7 +300,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onAddLocation: function (index) {
     if (this.data.selected_locations.map(item => item.id).indexOf(index) >= 0) return
-    if (index.indexOf('tag') > -1) {
+    if (typeof index === 'string' && index.indexOf('tag') > -1) {
       this.addLocationsByTag(index)
     } else {
       this.data.selected_locations.push(this.locationIndex[index])
@@ -310,6 +310,11 @@ let ChartWizardStore = Reflux.createStore({
 
   onRemoveLocation: function (index) {
     _.remove(this.data.selected_locations, { id: index })
+    this.previewChart()
+  },
+
+  onClearSelectedLocations: function () {
+    this.data.selected_locations = []
     this.previewChart()
   },
 
@@ -332,6 +337,11 @@ let ChartWizardStore = Reflux.createStore({
 
   onRemoveIndicator: function (id) {
     _.remove(this.data.indicatorSelected, {id: id})
+    this.previewChart()
+  },
+
+  onClearSelectedIndicators: function () {
+    this.data.indicatorSelected = []
     this.previewChart()
   },
 

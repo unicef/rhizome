@@ -2,6 +2,17 @@
   // max-width: 1230px;
   width: 100%;
   margin: 20px auto;
+  .data-filters > .medium-6 {
+    padding-left: 0;
+  }
+  .remove-filters-link {
+    text-decoration: underline;
+    color: $rhz-link-color;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    margin-bottom: .4rem;
+  }
 }
 
 .chart-wizard__step-list {
@@ -16,10 +27,12 @@
     display: inline-block;
 }
 
+
 .preview-screen {
-  width: 70%;
+  width: 100%;
   display: inline-block;
-  margin-left: 2%;
+  // margin-left: 2%;
+  margin-right: 2%;
   vertical-align: top;
 
   h1 {
@@ -51,11 +64,6 @@
   padding: 10px;
 }
 
-.chart-wizard__save {
-  width: 85px;
-  padding: 10px;
-}
-
 .chart-wizard__next {
   width: 100px;
   padding: 10px;
@@ -71,11 +79,14 @@
 }
 
 .chart-select {
+  text-align: center;
   .chart-box-wrapper {
     padding: 3px;
     display: inline-block;
     margin: 0;
     margin-right: .5rem;
+    border: 2px solid transparent;
+    width: 100%;
 
     .chart-box {
       border-radius: 2px;
@@ -93,15 +104,14 @@
     }
 
     &.active {
-      background-color: #436380;
-      color: #fff;
+      border-color: #344B61;
       .chart-box {
         opacity: 1.0;
       }
     }
 
     &:hover:not(.active) {
-      background-color: lighten(#436380, 50%);
+      border-color: lighten(#344B61, 50%);
       .chart-box {
         opacity: 1.0;
       }
@@ -110,26 +120,33 @@
 }
 
 .palette-picker__palette-group {
-  margin: 15px 0;
-  padding: 10px 5px;
+  text-align: center;
+  margin: .5rem 0;
   border: 2px solid transparent;
   &.active {
     border-color: #344B61;
   }
-
+  &:hover:not(.active) {
+    border-color: lighten(#344B61, 50%);
+  }
   input[type=radio] {
     display: none;
+  }
+  input[type=checkbox] + label,
+  input[type=radio] + label {
+    margin: 0;
   }
 }
 
 .palette-picker__palette {
   display: block;
-  margin: 0;
   text-align: center;
 }
 
 .palette-picker__color {
   display: inline-block;
   width: 30px;
-  height: 15px;
+  height: 1rem;
+  position: relative;
+  top: .15rem;
 }

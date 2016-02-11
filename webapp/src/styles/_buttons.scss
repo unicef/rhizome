@@ -16,9 +16,13 @@
   }
   &.icon-button {
     background: none;
-    padding: .2rem;
-    font-size: 1.25rem;
+    padding: .1rem;
+    font-size: 1rem;
     color: $rhz-body-color;
+    margin: 0;
+    position: relative;
+    top: -.2rem;
+    left: .25rem;
   }
 }
 

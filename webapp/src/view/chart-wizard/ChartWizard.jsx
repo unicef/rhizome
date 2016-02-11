@@ -6,10 +6,11 @@ import ExpandableSection from 'component/ExpandableSection.jsx'
 import DateRangePicker from 'component/DateRangePicker.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
+import PalettePicker from './preview/PalettePicker.jsx'
 
+import TitleInput from 'component/TitleInput.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
-
 import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 
@@ -67,10 +68,6 @@ let ChartWizard = React.createClass({
     })
   },
 
-  previewData: function (data) {
-    console.log(data)
-  },
-
   render: function () {
     let availableIndicators = this.state.data.indicatorList
     let palette = this.state.data.chartDef.palette || 'orange'
@@ -95,70 +92,84 @@ let ChartWizard = React.createClass({
       { title: 'by Tag', value: this.state.data.location_tags },
       { title: 'by Country', value: this.state.data.locationFilteredList }
     ]
+
+    let clear_locations_button = '';
+    if (this.state.data.selected_locations.length > 5 ) {
+      clear_locations_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedLocations}>Remove All </a>
+    }
+
+    let clear_indicators_button = '';
+    if (this.state.data.indicatorSelected.length > 5 ) {
+      clear_indicators_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedIndicators}>Remove All </a>
+    }
     return (
-      <div className='chart-wizard'>
+      <section className='chart-wizard'>
+        <h1 className='medium-12 columns text-center'>Chart Builder</h1>
+        <div className='medium-1 columns'>
+            <h3>Chart Type</h3>
+            <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
+              onChange={ChartWizardActions.changeChart}/>
+            <br/>
+            <h3>Color Scheme</h3>
+            <PalettePicker value={palette} onChange={ChartWizardActions.changePalette}/>
+        </div>
         <div className='medium-3 columns'>
-          <h1>Chart Builder</h1>
           <div className='row'>
-            <div className='medium-6 columns'>
-              <ExpandableSection title='Indicators' refer='preview'>
-                <DropdownMenu
-                  items={availableIndicators}
-                  sendValue={ChartWizardActions.addIndicator}
-                  item_plural_name='Indicators'
-                  text='Choose Indicators'
-                  style='databrowser__button'/>
-                <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
-              </ExpandableSection>
-            </div>
-            <div className='medium-6 columns'>
-              <ExpandableSection title='Locations' refer='preview'>
-                 <DropdownMenu
-                  items={location_options}
-                  sendValue={ChartWizardActions.addLocation}
-                  item_plural_name='Locations'
-                  text='Choose Locations'
-                  style='databrowser__button'
-                  icon='fa-globe'
-                  grouped/>
-                <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
-                <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-              </ExpandableSection>
-            </div>
-          </div>
-          <ExpandableSection title='Time' refer='preview'>
+            <h3>Chart Title</h3>
+            <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
+            <br/>
+            <h3>Time</h3>
             <DateRangePicker
               sendValue={ChartWizardActions.updateDateRangePicker}
               start={startDate}
               end={endDate}
               fromComponent='ChartWizard' />
-          </ExpandableSection>
-
-          <ExpandableSection title='Chart Type' refer='preview'>
-            <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
-              onChange={ChartWizardActions.changeChart}/>
-          </ExpandableSection>
-
-          <div className='row'>
-            <button className='chart-wizard__save' onClick={this.saveChart}>
-                Save
-            </button>
-            <button className='chart-wizard__cancel' onClick={this.props.cancel}>
-                Cancel
-            </button>
           </div>
-
-          <SimplePreview
-            chartTitle={this.props.chartDef.title}
-            onEditTitle={ChartWizardActions.editTitle}
-            palette={palette}
-            onChangePalette={ChartWizardActions.changePalette} />
+          <div className='row data-filters'>
+            <br/>
+            <div className='medium-6 columns'>
+                <h3 class="chart-wizard_section-heading">
+                  Indicators
+                  <DropdownMenu
+                    items={availableIndicators}
+                    sendValue={ChartWizardActions.addIndicator}
+                    item_plural_name='Indicators'
+                    style='icon-button right'
+                    icon='fa-plus' />
+                </h3>
+                {clear_indicators_button}
+                <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
+            </div>
+            <div className='medium-6 columns'>
+              <h3 class="chart-wizard_section-heading">
+                Locations
+                <DropdownMenu
+                  items={location_options}
+                  sendValue={ChartWizardActions.addLocation}
+                  item_plural_name='Locations'
+                  style='icon-button right'
+                  icon='fa-plus'
+                  grouped/>
+              </h3>
+              {clear_locations_button}
+              <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
+              <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+            </div>
+          </div>
         </div>
-        <PreviewScreen isLoading={this.state.data.isLoading}>
-          {this.state.data.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
-        </PreviewScreen>
-        <div className='row'></div>
-      </div>
+        <div className='medium-8 columns'>
+          <PreviewScreen isLoading={this.state.data.isLoading}>
+            {this.state.data.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
+          </PreviewScreen>
+          <div className='row'>
+            <div className='medium-2 columns right'>
+              <button className='right chart-wizard__save' onClick={this.saveChart}>
+                  Save Chart
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     )
   }
 })

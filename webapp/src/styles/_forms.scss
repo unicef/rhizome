@@ -35,9 +35,8 @@ form {
 input[type="text"],
 input[type="password"],
 .text-field {
-	border-bottom: 2px solid $primary-color;
+	border-bottom: 2px solid lighten($primary-color, 20%);
 	transition: border 300ms ease-in-out;
-
 	&:focus {
 		box-shadow: none;
 		outline: none;
