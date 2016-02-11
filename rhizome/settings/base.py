@@ -140,9 +140,34 @@ USE_L10N = True
 USE_TZ = True
 
 # Template configuration
-TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
-)
+#TEMPLATE_DIRS = (
+#    os.path.join(BASE_DIR, 'templates'),
+#)
+
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            # Our template directory
+            os.path.join(BASE_DIR, 'templates'),
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # context_processors for sending logo's data to the template
+                "rhizome.context_processors.custom_logo",
+
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 ## API SETTINGS ##
 
@@ -152,4 +177,11 @@ TASTYPIE_FULL_DEBUG = True
 
 INTERNAL_IPS=('127.0.0.1',)
 
+
+## Customization SETTINGS ##
 ABOUT_HTML = "<p> Rhizomes are underground systems that produce stems and roots of plants, allowing them to grow and thrive. They store nutrients that help plants survive and regenerate in the most challenging conditions. Ceaselessly establishing new connections between them, rhizomes constitute resilient, flexible and dynamic systems, rooted in their local environments and primed for long-term sustainability. <p> Rhizome DB supports the polio programme's ritical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.</p>"
+# write the name of the logo with its extention (it should be without space)
+# The file must be placed the webapp/src/assests/img folder
+LOGO_NAME = "Rhizome_eoc.jpg"
+# Logo ALT name
+LOGO_ALT = "Afghanistan EOC Dashboard"
