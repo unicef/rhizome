@@ -124,6 +124,7 @@ let ChartWizard = React.createClass({
               start={startDate}
               end={endDate}
               fromComponent='ChartWizard' />
+            <br/>
           </div>
           <div className='row data-filters'>
             <br/>
