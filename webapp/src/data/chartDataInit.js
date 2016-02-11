@@ -34,7 +34,7 @@ export default {
       .map(ancestryString)
       .value()
 
-    data.location = chartDef.locationValue
+    data.selected_locations = chartDef.locationValue
       ? Array.isArray(chartDef.locationValue)
         ? chartDef.locationValue.map(location => locationIndex[location])
         : [locationIndex[chartDef.locationValue]]
@@ -43,7 +43,7 @@ export default {
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
 
     let indicatorIndex = _.indexBy(indicators.objects, 'id')
-    data.indicatorSelected = chartDef.indicators.map(id => {
+    data.selected_indicators = chartDef.indicators.map(id => {
       return indicatorIndex[id]
     })
 
@@ -66,7 +66,7 @@ export default {
       ? campaignIndex[chartDef.campaignValue]
       : campaignList[0]
 
-    if (!data.indicatorSelected.length) {
+    if (!data.selected_indicators.length) {
       return
     }
 
@@ -78,7 +78,7 @@ export default {
     let groups = chartDef.groupBy === 'indicator' ? indicatorIndex : locationIndex
 
     let query = {
-      indicator__in: _.map(data.indicatorSelected, _.property('id')),
+      indicator__in: _.map(data.selected_indicators, _.property('id')),
       location_id__in: _.map(data.selected_locations, _.property('id')),
       campaign_start: chartDef.startDate,
       campaign_end: chartDef.endDate,
@@ -90,7 +90,7 @@ export default {
 
     return processChartData.init(api.datapoints(query),
       chartDef.type,
-      data.indicatorSelected,
+      data.selected_indicators,
       data.selected_locations,
       lower,
       upper,
