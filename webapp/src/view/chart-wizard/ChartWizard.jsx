@@ -1,13 +1,15 @@
 import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
+import api from 'data/api'
 
-import ExpandableSection from 'component/ExpandableSection.jsx'
 import DateRangePicker from 'component/DateRangePicker.jsx'
 import PreviewScreen from './PreviewScreen.jsx'
 import ChartSelect from './ChartSelect.jsx'
 import PalettePicker from './preview/PalettePicker.jsx'
 
+import DownloadButton from 'component/DownloadButton'
+import DatabrowserTable from 'component/DatabrowserTable'
 import TitleInput from 'component/TitleInput.jsx'
 import List from 'component/list/List.jsx'
 import ReorderableList from 'component/list/ReorderableList.jsx'
@@ -15,8 +17,8 @@ import DropdownMenu from 'component/menus/DropdownMenu.jsx'
 import Chart from 'component/Chart.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
+import DataFiltersStore from 'stores/DataFiltersStore'
 import ChartWizardStore from 'stores/ChartWizardStore'
-import SimplePreview from './preview/SimplePreview.jsx'
 
 const defaultChartDef = {
   title: '',
@@ -39,7 +41,7 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
-  mixins: [Reflux.connect(ChartWizardStore, 'data')],
+  mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(DataFiltersStore, 'raw_data')],
 
   componentDidMount () {
     this.chartDef = this.props.chartDef || defaultChartDef
@@ -68,6 +70,19 @@ let ChartWizard = React.createClass({
     })
   },
 
+  _downloadRawData: function () {
+    let locations = this.state.data.selected_locations.map(location => { return location.id })
+    let indicators = this.state.data.indicatorSelected.map(indicator => { return indicator.id })
+    let query = { 'format': 'csv' }
+
+    if (indicators.length > 0) query.indicator__in = indicators
+    if (locations.length > 0) query.location_id__in = locations
+    if (this.state.data.campaign.start_date) query.campaign_start = moment(this.state.data.campaign.start_date).format('YYYY-M-D')
+    if (this.state.data.campaign.end_date) query.campaign_end = moment(this.state.data.campaign.end_date).format('YYYY-M-D')
+
+    return api.datapoints.toString(query)
+  },
+
   render: function () {
     let availableIndicators = this.state.data.indicatorList
     let palette = this.state.data.chartDef.palette || 'orange'
@@ -93,15 +108,31 @@ let ChartWizard = React.createClass({
       { title: 'by Country', value: this.state.data.locationFilteredList }
     ]
 
-    let clear_locations_button = '';
-    if (this.state.data.selected_locations.length > 3 ) {
+    let clear_locations_button = ''
+    if (this.state.data.selected_locations.length > 3) {
       clear_locations_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedLocations}>Remove All </a>
     }
 
-    let clear_indicators_button = '';
-    if (this.state.data.indicatorSelected.length > 3 ) {
+    let clear_indicators_button = ''
+    if (this.state.data.indicatorSelected.length > 3) {
       clear_indicators_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedIndicators}>Remove All </a>
     }
+
+    let call_to_action = <button className='right button success' disabled={!this.state.data.canDisplayChart} onClick={this.saveChart} ><i className='fa fa-save'></i> &nbsp; Save Chart</button>
+    if (this.state.data.chartDef.type === 'RawData') {
+      call_to_action = <DownloadButton onClick={this._downloadRawData} enable={this.state.data.rawData} text='Download Raw Data' working='Downloading' cookieName='dataBrowserCsvDownload'/>
+    }
+
+    let data_output = (
+      <PreviewScreen isLoading={this.state.data.isLoading}>
+        {this.state.data.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
+      </PreviewScreen>
+    )
+
+    if (this.state.data.chartDef.type === 'RawData') {
+      data_output = <DatabrowserTable data={this.state.data.rawData} selected_locations={this.state.data.selected_locations} selected_indicators={this.state.data.indicatorSelected} />
+    }
+
     return (
       <section className='chart-wizard'>
         <h1 className='medium-12 columns text-center'>Chart Builder</h1>
@@ -159,14 +190,10 @@ let ChartWizard = React.createClass({
           </div>
         </div>
         <div className='medium-8 columns'>
-          <PreviewScreen isLoading={this.state.data.isLoading}>
-            {this.state.data.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
-          </PreviewScreen>
+          { data_output }
           <div className='row'>
-            <div className='medium-2 columns right'>
-              <button className='right chart-wizard__save' onClick={this.saveChart}>
-                  Save Chart
-              </button>
+            <div className='medium-3 columns right text-right'>
+              { call_to_action }
             </div>
           </div>
         </div>

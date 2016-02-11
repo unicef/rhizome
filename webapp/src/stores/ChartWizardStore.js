@@ -52,6 +52,7 @@ let ChartWizardStore = Reflux.createStore({
     chartOptions: {},
     chartData: [],
     chartDef: {},
+    rawData: null,
     rawIndicators: null,
     rawTags: null,
     xLabel: null,
@@ -246,6 +247,7 @@ let ChartWizardStore = Reflux.createStore({
       chartOptions: {},
       chartData: [],
       chartDef: {},
+      rawData: null,
       rawIndicators: null,
       rawTags: null,
       xLabel: null,
@@ -442,6 +444,36 @@ let ChartWizardStore = Reflux.createStore({
     )
   },
 
+  _fetchRaData: function (options) {
+    api.datapoints(options, null, {'cache-control': 'no-cache'})
+      .then(response => {
+        if (!response.objects || response.objects.length < 1) {
+
+          this.data.rawData = null
+        } else {
+          this.data.rawData = response
+        }
+        this.trigger(this.data)
+      })
+  },
+
+  _prepRawDataQuery: function (campaign, locations, indicators) {
+    this.data.rawData = null
+    this.trigger(this.data)
+
+    let options = {indicator__in: []}
+
+    if (locations.length > 0) options.location_id__in = _.map(locations, 'id')
+    if (campaign.start) options.campaign_start = moment(campaign.start).format('YYYY-M-D')
+    if (campaign.end) options.campaign_end = moment(campaign.end).format('YYYY-M-D')
+
+    indicators.forEach(indicator => {
+      options.indicator__in.push(indicator.id)
+    })
+
+    return options
+  },
+
   previewChart () {
     // We use the short_name for ordering becuase that is what defines the xDomain in table.js
     this.data.indicatorOrder = this.data.indicatorSelected.map(indicator => {
@@ -452,6 +484,12 @@ let ChartWizardStore = Reflux.createStore({
       this.data.canDisplayChart = false
       this.data.isLoading = false
       this.trigger(this.data)
+      return
+    }
+
+    if (this.data.chartDef.type === 'RawData') {
+      let options = this._prepRawDataQuery(this.data.campaign, this.data.selected_locations, this.data.indicatorSelected)
+      this._fetchRaData(options)
       return
     }
 

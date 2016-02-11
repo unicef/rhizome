@@ -12,6 +12,7 @@ export default React.createClass({
   },
 
   render () {
+    this.props.charts.push({ name: 'RawData' })
     var chartBoxes = this.props.charts.map((chart, index) => {
       return (
         <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === this.props.value ? 'active' : '')}>
