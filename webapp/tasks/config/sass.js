@@ -6,28 +6,28 @@ export default {
   files: [{
     entry: [
       `${gulp.config('base.src')}/**/style.scss`,
-      `${gulp.config('base.src')}/styles/screen.scss`
+      `${gulp.config('base.src')}/assets/styles/screen.scss`
     ],
     src: [
       `${gulp.config('base.src')}/**/style.scss`,
-      `${gulp.config('base.src')}/styles/**/*.{,scss,sass}`
+      `${gulp.config('base.src')}/assets/styles/**/*.{,scss,sass}`
     ],
     dest: cssDir,
     options: {
       filename: 'screen.css'
     }
   }, {
-    entry: `${gulp.config('base.src')}/styles/pdf.scss`,
+    entry: `${gulp.config('base.src')}/assets/styles/pdf.scss`,
     src: [
-      `${gulp.config('base.src')}/styles/_settings.scss`,
-      `${gulp.config('base.src')}/styles/pdf.scss`
+      `${gulp.config('base.src')}/assets/styles/_settings.scss`,
+      `${gulp.config('base.src')}/assets/styles/pdf.scss`
     ],
     dest: cssDir
   }, {
-    entry: `${gulp.config('base.src')}/styles/print-redesign.scss`,
+    entry: `${gulp.config('base.src')}/assets/styles/print-redesign.scss`,
     src: [
-      `${gulp.config('base.src')}/styles/_settings.scss`,
-      `${gulp.config('base.src')}/styles/print-redesign.scss`
+      `${gulp.config('base.src')}/assets/styles/_settings.scss`,
+      `${gulp.config('base.src')}/assets/styles/print-redesign.scss`
     ],
     dest: cssDir
   }],
