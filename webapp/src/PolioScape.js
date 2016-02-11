@@ -16,7 +16,7 @@ export default {
     React.render(React.createElement(require('04-pages/Explorer.jsx')), el)
   },
   Dashboard: function (el) {
-    React.render(React.createElement(require('view/Dashboard.jsx')), el)
+    React.render(React.createElement(require('04-pages/Dashboard.jsx')), el)
   },
   DataEntry: function (el) {
     React.render(React.createElement(require('view/entry-form/EntryForm.jsx')), el)
