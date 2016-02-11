@@ -14,7 +14,7 @@ const {
   Datascope, LocalDatascope
 } = require('react-datascope')
 
-import parseSchema from 'ufadmin/utils/parseSchema'
+import parseSchema from '03-organisms/ufadmin/utils/parseSchema'
 
 var ReviewTable = React.createClass({
   propTypes: {

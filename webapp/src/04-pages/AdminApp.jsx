@@ -1,7 +1,7 @@
 import React from 'react'
 import Router from 'react-router'
 var {Route, RouteHandler, Link} = Router
-import SimpleForm from './SimpleForm'
+import SimpleForm from '03-organisms/ufadmin/SimpleForm'
 import CampaignsPage from '04-pages/CampaignsPage'
 
 var AdminApp = React.createClass({
@@ -32,12 +32,12 @@ var routes = (
     <Route name='app' path='/manage_system/' handler={AdminApp}>
       <Route name='manage' path='/manage_system/manage/:contentType/:id?' handler={SimpleForm}/>
       <Route name='updateCampaign' path='/datapoints/campaign/:id?' handler={CampaignsPage}/>
-      <Route name='users' handler={require('./UsersAdmin')} />
-      <Route name='locations' handler={require('./LocationAdmin')} />
-      <Route name='campaigns' handler={require('./CampaignsAdmin')} />
-      <Route name='indicators' handler={require('./IndicatorsAdmin')} />
-      <Route name='tags' handler={require('./TagsAdmin')} />
-      <Route name='tags-tree' handler={require('./TagsTreeAdmin')} />
+      <Route name='users' handler={require('03-organisms/ufadmin/UsersAdmin')} />
+      <Route name='locations' handler={require('03-organisms/ufadmin/LocationAdmin')} />
+      <Route name='campaigns' handler={require('03-organisms/ufadmin/CampaignsAdmin')} />
+      <Route name='indicators' handler={require('03-organisms/ufadmin/IndicatorsAdmin')} />
+      <Route name='tags' handler={require('03-organisms/ufadmin/TagsAdmin')} />
+      <Route name='tags-tree' handler={require('03-organisms/ufadmin/TagsTreeAdmin')} />
   </Route>
 )
 

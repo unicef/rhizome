@@ -7,7 +7,7 @@ const {
 
 const AdminPage = require('./AdminPage')
 
-const api = require('../data/api')
+const api = require('data/api')
 
 // display rules for datascope fields
 const checkmarkRenderer = (val) => val ? '✓' : ''

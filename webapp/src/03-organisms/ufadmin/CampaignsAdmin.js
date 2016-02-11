@@ -1,5 +1,5 @@
 import React from 'react'
-import api from '../data/api'
+import api from 'data/api'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,

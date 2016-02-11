@@ -1,4 +1,4 @@
-import api from '../../data/api'
+import api from 'data/api'
 import d3 from 'd3'
 
 var duration = 750

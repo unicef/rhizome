@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AdminApp from './ufadmin'
+import AdminApp from '04-pages/AdminApp'
 
 React.render(React.createElement(require('component/DashboardNav')), document.getElementById('dashboards-nav'))
 

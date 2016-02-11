@@ -5,7 +5,7 @@ var {
   SearchBar
 } = require('react-datascope')
 
-import api from '../data/api'
+import api from 'data/api'
 
 import AdminPage from './AdminPage'
 
