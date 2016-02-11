@@ -2,7 +2,7 @@ import React from 'react'
 import Router from 'react-router'
 var {Route, RouteHandler, Link} = Router
 import SimpleForm from './SimpleForm'
-import CampaignsPage from './CampaignsPage'
+import CampaignsPage from '04-pages/CampaignsPage'
 
 var AdminApp = React.createClass({
   contextTypes: {

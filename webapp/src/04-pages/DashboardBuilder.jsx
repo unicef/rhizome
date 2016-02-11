@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux/src'
-import ChartWizard from 'view/chart-wizard/ChartWizard.jsx'
+import ChartWizard from '04-pages/ChartWizard.jsx'
 
 import DataActions from 'actions/DataActions'
 import DataStore from 'stores/DataStore'

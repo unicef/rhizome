@@ -4,9 +4,9 @@ import moment from 'moment'
 import api from 'data/api'
 
 import DateRangePicker from 'component/DateRangePicker.jsx'
-import PreviewScreen from './PreviewScreen.jsx'
-import ChartSelect from './ChartSelect.jsx'
-import PalettePicker from './preview/PalettePicker.jsx'
+import PreviewScreen from '03-organisms/chart-wizard/PreviewScreen.jsx'
+import ChartSelect from '03-organisms/chart-wizard/ChartSelect.jsx'
+import PalettePicker from '03-organisms/chart-wizard/preview/PalettePicker.jsx'
 
 import DownloadButton from 'component/DownloadButton'
 import DatabrowserTable from 'component/DatabrowserTable'
