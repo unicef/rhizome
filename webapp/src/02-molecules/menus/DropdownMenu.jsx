@@ -16,6 +16,8 @@ var DropdownMenu = React.createClass({
     text: React.PropTypes.string,
     style: React.PropTypes.string,
     icon: React.PropTypes.string,
+    value_field: React.PropTypes.string,
+    title_field: React.PropTypes.string,
     uniqueOnly: React.PropTypes.bool,
     multi: React.PropTypes.bool,
     grouped: React.PropTypes.bool
@@ -26,7 +28,9 @@ var DropdownMenu = React.createClass({
       icon: 'fa-bars',
       uniqueOnly: false,
       multi: false,
-      grouped: false
+      grouped: false,
+      value_field: 'value',
+      title_field: 'title'
     }
   },
 
@@ -68,6 +72,15 @@ var DropdownMenu = React.createClass({
   _getMenuItemComponents: function (items, pattern) {
     var filtered_items = this.filterMenu(items, pattern)
     var menu_items = this.props.uniqueOnly ? _.uniq(filtered_items, (item) => { return item.id }) : filtered_items
+    menu_items = menu_items.map(item => {
+      // if (typeof item.title === 'undefined' || item.title !== null ) {
+        item.title = item[this.props.title_field]
+      // }
+      // if (typeof item.value === 'undefined' || item.value !== null ) {
+        item.value = item[this.props.value_field].toString()
+      // }
+      return item
+    })
     return menu_items.map(item => {
       return (<MenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} /> )
     })
