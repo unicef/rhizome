@@ -6,7 +6,7 @@ import CampaignStore from 'stores/CampaignStore'
 import Office from 'requests/Office'
 
 import api from 'data/api'
-import builtins from 'dashboard/builtin'
+import builtins from '03-organisms/dashboard/builtin'
 import randomHash from 'util/randomHash'
 
 var NavigationStore = Reflux.createStore({

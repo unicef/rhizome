@@ -3,7 +3,7 @@ import d3 from 'd3'
 import React from 'react'
 
 import Chart from 'component/Chart.jsx'
-import Monitoring from 'dashboard/nco/Monitoring.jsx'
+import Monitoring from '03-organisms/dashboard/nco/Monitoring.jsx'
 
 var Overview = React.createClass({
   propTypes: {

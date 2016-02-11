@@ -1,7 +1,7 @@
 import React from 'react'
 
-import PolioCasesYTD from 'dashboard/management/PolioCasesYTD.jsx'
-import ImmunityGap from 'dashboard/management/ImmunityGap.jsx'
+import PolioCasesYTD from '03-organisms/dashboard/management/PolioCasesYTD.jsx'
+import ImmunityGap from '03-organisms/dashboard/management/ImmunityGap.jsx'
 
 var Impact = React.createClass({
   propTypes: {

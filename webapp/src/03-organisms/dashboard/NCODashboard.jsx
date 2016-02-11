@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Overview from 'dashboard/nco/Overview.jsx'
-import Breakdown from 'dashboard/nco/Breakdown.jsx'
+import Overview from '03-organisms/dashboard/nco/Overview.jsx'
+import Breakdown from '03-organisms/dashboard/nco/Breakdown.jsx'
 
 var NCODashboard = React.createClass({
   propTypes: {

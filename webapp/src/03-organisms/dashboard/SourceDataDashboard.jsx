@@ -5,9 +5,9 @@ import moment from 'moment'
 import page from 'page'
 import Reflux from 'reflux'
 
-import ReviewTable from 'dashboard/sd/ReviewTable.js'
-import DocOverview from 'dashboard/sd/DocOverview.jsx'
-import DocForm from 'dashboard/sd/DocForm.jsx'
+import ReviewTable from '03-organisms/dashboard/sd/ReviewTable.js'
+import DocOverview from '03-organisms/dashboard/sd/DocOverview.jsx'
+import DocForm from '03-organisms/dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
 import SourceDataDashboardActions from 'actions/SourceDataDashboardActions'
 

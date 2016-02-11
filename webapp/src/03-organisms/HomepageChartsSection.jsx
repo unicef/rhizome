@@ -1,5 +1,5 @@
 import React from 'react'
-import HomepageCharts from 'dashboard/homepage/HomepageCharts.jsx'
+import HomepageCharts from '03-organisms/dashboard/homepage/HomepageCharts.jsx'
 
 var HomepageChartsSection = React.createClass({
   propTypes: {

@@ -2,10 +2,10 @@ import _ from 'lodash'
 import React from 'react'
 import moment from 'moment'
 
-import Impact from 'dashboard/management/Impact.jsx'
-import Performance from 'dashboard/management/Performance.jsx'
-import Access from 'dashboard/management/Access.jsx'
-import SocialData from 'dashboard/management/SocialData.jsx'
+import Impact from '03-organisms/dashboard/management/Impact.jsx'
+import Performance from '03-organisms/dashboard/management/Performance.jsx'
+import Access from '03-organisms/dashboard/management/Access.jsx'
+import SocialData from '03-organisms/dashboard/management/SocialData.jsx'
 import BulletChartSection from './BulletChartSection.jsx'
 
 var ManagementDashboard = React.createClass({

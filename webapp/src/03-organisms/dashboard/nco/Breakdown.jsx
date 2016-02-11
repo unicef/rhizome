@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 import Chart from 'component/Chart.jsx'
-import ToggleableStackedBar from 'dashboard/ToggleableStackedBar.jsx'
+import ToggleableStackedBar from '03-organisms/dashboard/ToggleableStackedBar.jsx'
 
 function prep (data) {
   return _(data)

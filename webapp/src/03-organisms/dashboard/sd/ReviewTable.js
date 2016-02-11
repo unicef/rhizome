@@ -7,8 +7,8 @@ import DashboardStore from 'stores/DashboardStore'
 
 import DashboardActions from 'actions/DashboardActions'
 
-import SubmissionModal from 'dashboard/sd/SubmissionModal.jsx'
-import MapForm from 'dashboard/sd/MapForm.jsx'
+import SubmissionModal from '03-organisms/dashboard/sd/SubmissionModal.jsx'
+import MapForm from '03-organisms/dashboard/sd/MapForm.jsx'
 
 const {
   Datascope, LocalDatascope

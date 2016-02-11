@@ -6,14 +6,14 @@ import moment from 'moment'
 
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
-import builtins from 'dashboard/builtin'
+import builtins from '03-organisms/dashboard/builtin'
 import randomHash from 'util/randomHash'
 
 import RegionTitleMenu from 'component/menus/RegionTitleMenu'
 import CampaignTitleMenu from 'component/menus/CampaignTitleMenu.jsx'
 import ExportPdf from 'component/ExportPdf.jsx'
 
-import CustomDashboard from 'dashboard/CustomDashboard.jsx'
+import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
 
 import Indicator from 'requests/Indicator'
 
@@ -27,10 +27,10 @@ import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
 
 const LAYOUT = {
-  'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
-  'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
-  'District Dashboard': require('dashboard/District.jsx'),
-  'Source Data': require('dashboard/SourceDataDashboard.jsx')
+  'Management Dashboard': require('03-organisms/dashboard/ManagementDashboard.jsx'),
+  'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard.jsx'),
+  'District Dashboard': require('03-organisms/dashboard/District.jsx'),
+  'Source Data': require('03-organisms/dashboard/SourceDataDashboard.jsx')
 }
 
 var Dashboard = React.createClass({
