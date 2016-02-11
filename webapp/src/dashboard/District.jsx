@@ -10,7 +10,7 @@ import Tooltip from 'component/Tooltip.jsx'
 import DashboardActions from 'actions/DashboardActions'
 
 import formatUtil from 'util/format'
-import legend from 'chart/renderer/legend'
+import legend from '02-molecules/charts/renderer/legend'
 
 var District = React.createClass({
   propTypes: {

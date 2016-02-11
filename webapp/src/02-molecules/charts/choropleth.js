@@ -8,7 +8,7 @@ import Tooltip from 'component/Tooltip.jsx'
 import browser from 'util/browser'
 import palettes from 'util/palettes'
 
-import legend from 'chart/renderer/legend'
+import legend from '02-molecules/charts/renderer/legend'
 
 var DEFAULTS = {
   aspect: 1,

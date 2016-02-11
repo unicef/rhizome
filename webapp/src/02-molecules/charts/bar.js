@@ -1,23 +1,28 @@
 import _ from 'lodash'
 import d3 from 'd3'
+import React from 'react'
+import Layer from 'react-layer'
 
 import ColumnChart from './column'
+import Tooltip from 'component/Tooltip.jsx'
 
 import browser from 'util/browser'
 import color from 'util/color'
-import legend from 'chart/renderer/legend'
+import palettes from 'util/palettes'
+import legend from '02-molecules/charts/renderer/legend'
+import axisLabel from '02-molecules/charts/renderer/axis-label'
 
 var defaults = {
   barHeight: 14,
   name: _.partial(_.get, _, 'name', ''),
-  onMouseOut: _.noop,
-  onMouseOver: _.noop,
+  offset: 'zero',
   padding: 0.1,
   values: _.property('values'),
-  x: _.property('x'),
+  color: palettes.blue,
+  x: _.property('value'),
   xFormat: String,
   xScale: d3.scale.linear,
-  y: _.property('y'),
+  y: _.property('location.name'),
   yFormat: String,
 
   margin: {
@@ -38,10 +43,14 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
     options = _.assign(this._options, options)
     var margin = options.margin
 
-    var l = _(data).map(options.values).map('length').max() * data.length
+    var l = _(data).map(options.values).map('length').max()
     var h = Math.max(options.barHeight,
       l * options.barHeight + (l - 1) * options.barHeight * options.padding)
     var w = this._width - margin.left - margin.right
+
+    if (options.chartInDashboard) {
+      h = _.get(options, 'height', this._width / options.aspect)
+    }
 
     var sortIdx = 0
     var sortBy = this.sortBy
@@ -52,14 +61,44 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       })
     }
 
+    let topLegendHeight = 0
+    let legendPaddingTop = 0
+    if (data && data.length && data.length > 1) {
+      legendPaddingTop = 18
+      topLegendHeight = legendPaddingTop + data.length * 13.8
+    }
+
+    // d3.layout.stack stacks the y-value, but we want to stack the x value,
+    // so we swap x and y in the layout definition.
+    var stack = d3.layout.stack()
+      .values(options.values)
+      .offset(options.offset)
+      .order(function (values) {
+        var order = d3.range(values.length)
+
+        if (sortIdx > 0) {
+          order.splice(sortIdx, 1)
+          order.unshift(sortIdx)
+        }
+
+        return order
+      })
+      .x(options.y)
+      .y(options.x)
+      .out(function (d, y0, y) {
+        d.x0 = y0
+        d.x = y
+      })
+
+    var stacked = stack(_.cloneDeep(data))
+
     var range
     if (_.isFunction(options.range)) {
-      range = options.range(data)
+      range = options.range(stacked)
     } else {
-      range = d3.extent(
-        _(data).map(options.values).flatten().value(),
-        options.x
-      )
+      range = d3.extent(_(stacked).map(options.values).flatten().value(), function (d) {
+        return d.x0 + d.x
+      })
 
       // Make sure we always have at least a 0 baseline
       range[0] = Math.min(0, range[0])
@@ -69,14 +108,23 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       .domain(range)
       .range([0, w])
 
-    var width = _.flow(options.x, xScale)
+    var x = function (d) {
+      return xScale(d.x0)
+    }
 
-    var order = _(options.values(data[sortIdx]))
-      .sortBy(options.x)
+    var width = function (d) {
+      var x0 = d.x0
+      var x = d.x
+
+      return xScale(x0 + x) - xScale(x0)
+    }
+
+    var order = _(options.values(stacked[sortIdx]))
+      .sortBy(_.property('x'))
       .map(options.y)
       .value()
 
-    var domain = _(data)
+    var domain = _(stacked)
       .map(options.values)
       .flatten()
       .map(options.y)
@@ -91,12 +139,9 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     var y = _.flow(options.y, yScale)
 
-    var colorScale = color.scale(_.map(data, options.name))
-    var fill = _.flow(options.name, colorScale)
-
     var svg = this._svg
 
-    var canvasH = h + margin.top + margin.bottom
+    var canvasH = h + margin.top + margin.bottom + topLegendHeight
     var canvasW = w + margin.left + margin.right
 
     svg.attr('viewBox', '0 0 ' + canvasW + ' ' + canvasH)
@@ -110,22 +155,20 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
 
     svg.select('.bg')
       .attr({
-        'height': h,
+        'height': h + topLegendHeight,
         'width': w,
         'x': margin.left,
         'y': margin.top
       })
 
     var g = svg.select('.data').datum(data)
-    var series = g.selectAll('.bar').data(data)
+    var series = g.selectAll('.bar').data(stacked)
 
     series.enter().append('g')
       .attr('class', 'bar')
 
-    series.style('fill', fill)
-      .attr('transform', function (d, i) {
-        return 'translate(0, ' + (i * options.barHeight) + ')'
-      })
+    let fill = color.map(data.map(options.name), options.color)
+    series.style('fill', _.flow(options.name, fill))
 
     series.exit()
       .transition()
@@ -142,12 +185,13 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
       .style('fill', 'inherit')
 
     bar
-      .on('mouseover', hover.over)
+      .on('mousemove', hover.over)
       .on('mouseout', hover.out)
       .transition().duration(500)
       .attr({
-        'height': options.barHeight,
-        'width': width
+        'height': yScale.rangeBand(),
+        'width': width,
+        'x': x
       })
       .transition().duration(500)
       .attr('y', y)
@@ -175,30 +219,82 @@ _.extend(BarChart.prototype, ColumnChart.prototype, {
           .ticks(3)
           .scale(yScale))
 
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(w)
+      .height(h)
+      .margin(options.margin))
+    }
+
     if (data.length > 1) {
       // Show the legend if we have at least two series
       svg.select('.legend')
-        .attr('transform', 'translate(' + (w + 4) + ', 0)')
-        .call(legend()
+        .attr('transform', 'translate(0,' + (h + legendPaddingTop) + ')')
+        .call(legend(options)
           .interactive(true)
-          .scale(colorScale)
+          .fontSize(100)
+          .scale(fill)
           .filled(function (d, i) {
             return sortBy ? sortBy === d : i === 0
           })
           .clickHandler(this.setSort.bind(this)))
+
+      g.selectAll('.label').remove()
     } else {
       // Clear the legend if we have fewer than two series
       svg.select('.legend')
         .selectAll('g')
         .remove()
+
+      var label = series.selectAll('.label').data(options.values)
+      label.enter()
+        .append('text')
+        .attr({
+          'class': 'label',
+          'dx': '2',
+          'dy': '.3em'
+        })
+
+      label.attr('transform', d => 'translate(0, ' + (y(d) + yScale.rangeBand() / 2) + ')')
+        .text(d => options.xFormat(options.x(d)))
+
+      label.exit().remove()
     }
 
     hover.on('out', function (d, i) {
-      options.onMouseOut(d, i, this)
+      if (this.layer) {
+        this.layer.destroy()
+        this.layer = null
+      }
     })
 
     hover.on('over', function (d, i) {
-      options.onMouseOver(d, i, this)
+      if (data.length < 2) {
+        return
+      }
+
+      var evt = d3.event
+      var series = d3.select(this.parentNode).datum()
+
+      var render = function () {
+        return (
+          <Tooltip left={evt.pageX} top={evt.pageY}>
+          <div>
+            <h3>{options.name(series)}</h3>
+            {options.y(d)}:&ensp;{options.x(d)}
+          </div>
+          </Tooltip>
+        )
+      }
+
+      if (this.layer) {
+        this.layer._render = render
+      } else {
+        this.layer = new Layer(document.body, render)
+      }
+
+      this.layer.render()
     })
   },
 

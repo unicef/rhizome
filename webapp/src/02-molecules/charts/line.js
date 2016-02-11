@@ -3,9 +3,9 @@ import d3 from 'd3'
 
 import palettes from 'util/palettes'
 import format from 'util/format'
-import hoverLine from 'chart/behavior/hover-line'
-import label from 'chart/renderer/label'
-import axisLabel from 'chart/renderer/axis-label'
+import hoverLine from '02-molecules/charts/behavior/hover-line'
+import label from '02-molecules/charts/renderer/label'
+import axisLabel from '02-molecules/charts/renderer/axis-label'
 
 var DEFAULTS = {
   margin: {

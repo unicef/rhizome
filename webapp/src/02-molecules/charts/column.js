@@ -3,8 +3,8 @@ import d3 from 'd3'
 import moment from 'moment'
 
 import browser from 'util/browser'
-import label from 'chart/renderer/label'
-import axisLabel from 'chart/renderer/axis-label'
+import label from '02-molecules/charts/renderer/label'
+import axisLabel from '02-molecules/charts/renderer/axis-label'
 import color from 'util/color'
 import palettes from 'util/palettes'
 
