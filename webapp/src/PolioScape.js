@@ -29,6 +29,9 @@ export default {
   DashboardBuilder: function (el, dashboardId) {
     React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboardId: dashboardId }), el)
   },
+  ChartBuilder: function (el, chartId) {
+    React.render(React.createElement(require('04-pages/ChartWizard'), { chartId: chartId }), el)
+  },
   CampaignsPage: function (el, campaignId) {
     React.render(React.createElement(require('04-pages/CampaignsPage'), {campaignId: campaignId}), el)
   },

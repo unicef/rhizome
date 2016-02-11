@@ -47,7 +47,7 @@ export default React.createClass({
           <a href='/datapoints/dashboards/'>Dashboards</a>
           <ul className='dashboard-menu'>
             <li className='main-item'>
-              <a href='/datapoints/dashboards/edit'>Create a dashboard</a>
+              <a href='/datapoints/dashboards/create'>Create a dashboard</a>
             </li>
             {builtins}
             <li className='separator'>
@@ -60,7 +60,7 @@ export default React.createClass({
           <a>Charts</a>
           <ul className='dashboard-menu'>
             <li className='main-item'>
-              <a href='/datapoints/dashboards/edit'>Create a chart</a>
+              <a href='/datapoints/charts/create'>Create a chart</a>
             </li>
             {customCharts}
           </ul>
