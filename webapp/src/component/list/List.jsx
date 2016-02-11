@@ -7,7 +7,7 @@ export default React.createClass({
   },
   render: function () {
     var listItems = this.props.items.map(item => {
-      return (<li key={item.id}>{item.name}
+      return (<li className='animated slideInLeft' key={item.id}>{item.name}
             <a
             className='clear-btn'
             onClick={this.props.removeItem.bind(this, item.id)}>
