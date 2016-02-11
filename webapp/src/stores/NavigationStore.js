@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import CampaignStore from 'stores/CampaignStore'
-import Office from 'requests/Office'
+import Office from 'data/requests/Office'
 
 import api from 'data/api'
 import builtins from '03-organisms/dashboard/builtin'

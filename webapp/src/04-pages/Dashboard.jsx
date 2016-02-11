@@ -15,7 +15,7 @@ import ExportPdf from '02-molecules/ExportPdf.jsx'
 
 import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
 
-import Indicator from 'requests/Indicator'
+import Indicator from 'data/requests/Indicator'
 
 import DashboardStore from 'stores/DashboardStore'
 import DataStore from 'stores/DataStore'
