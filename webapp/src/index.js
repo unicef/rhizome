@@ -1,4 +1,4 @@
-require('./polyfill/polyfill.js')
+require('./util/polyfill.js')
 
 if ('ActiveXObject' in window) {
   var body = document.getElementsByTagName('body')[0]
