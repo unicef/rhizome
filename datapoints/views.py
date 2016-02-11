@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.views import generic
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
-from django.template import RequestContext
+from django.template import Template, context, RequestContext
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
@@ -17,10 +17,7 @@ from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
 
 def about(request):
-
-    html = '<p>hello</p> <p>world</p>'
     html = settings.ABOUT_HTML
-
     return render_to_response('about.html', {'html': html},
                               context_instance=RequestContext(request))
 
