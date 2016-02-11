@@ -7,7 +7,7 @@ import moment from 'moment'
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
 import builtins from '03-organisms/dashboard/builtin'
-import randomHash from 'util/randomHash'
+import randomHash from '00-utilities/randomHash'
 
 import RegionTitleMenu from '02-molecules/menus/RegionTitleMenu'
 import CampaignTitleMenu from '02-molecules/menus/CampaignTitleMenu.jsx'

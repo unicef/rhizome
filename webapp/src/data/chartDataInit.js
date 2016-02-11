@@ -8,7 +8,7 @@ import processChartData from 'stores/chartBuilder/processChartData'
 import api from 'data/api'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
-import palettes from 'util/palettes'
+import palettes from '00-utilities/palettes'
 
 export default {
   async getPromises () {

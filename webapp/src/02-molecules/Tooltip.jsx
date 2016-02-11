@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import dom from 'util/dom'
+import dom from '00-utilities/dom'
 
 var Tooltip = React.createClass({
   propTypes: {

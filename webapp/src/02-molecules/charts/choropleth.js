@@ -5,8 +5,8 @@ import Layer from 'react-layer'
 
 import Tooltip from '02-molecules/Tooltip.jsx'
 
-import browser from 'util/browser'
-import palettes from 'util/palettes'
+import browser from '00-utilities/browser'
+import palettes from '00-utilities/palettes'
 
 import legend from '02-molecules/charts/renderer/legend'
 

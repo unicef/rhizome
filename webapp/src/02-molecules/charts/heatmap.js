@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import formatUtil from 'util/format'
+import formatUtil from '00-utilities/format'
 
 function _sortValue (s, sortCol) {
   // jshint validthis: true

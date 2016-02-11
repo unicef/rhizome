@@ -3,7 +3,7 @@ import React from 'react'
 
 import Search from '02-molecules/Search.jsx'
 
-import dom from 'util/dom'
+import dom from '00-utilities/dom'
 
 export default React.createClass({
 

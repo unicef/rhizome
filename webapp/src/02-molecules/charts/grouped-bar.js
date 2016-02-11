@@ -3,8 +3,8 @@ import d3 from 'd3'
 
 import ColumnChart from './column'
 
-import browser from 'util/browser'
-import color from 'util/color'
+import browser from '00-utilities/browser'
+import color from '00-utilities/color'
 import legend from '02-molecules/charts/renderer/legend'
 
 var defaults = {

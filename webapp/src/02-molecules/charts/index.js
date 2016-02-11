@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import browser from 'util/browser'
+import browser from '00-utilities/browser'
 
 var CHARTS = {
   BarChart: require('./bar'),

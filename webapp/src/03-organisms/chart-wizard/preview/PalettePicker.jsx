@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import palettes from 'util/palettes'
+import palettes from '00-utilities/palettes'
 
 class PalettePicker extends React.Component {
   constructor (props) {

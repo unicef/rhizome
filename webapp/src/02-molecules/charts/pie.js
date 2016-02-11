@@ -3,9 +3,9 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 
-import browser from 'util/browser'
-import color from 'util/color'
-import palettes from 'util/palettes'
+import browser from '00-utilities/browser'
+import color from '00-utilities/color'
+import palettes from '00-utilities/palettes'
 import Tooltip from '02-molecules/Tooltip.jsx'
 
 function _domain (data, options) {

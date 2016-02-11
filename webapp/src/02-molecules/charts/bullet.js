@@ -3,7 +3,7 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from '02-molecules/Tooltip.jsx'
-import browser from 'util/browser'
+import browser from '00-utilities/browser'
 
 import qualitativeAxis from './qualitative-axis'
 

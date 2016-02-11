@@ -6,9 +6,9 @@ import Layer from 'react-layer'
 import ColumnChart from './column'
 import Tooltip from '02-molecules/Tooltip.jsx'
 
-import browser from 'util/browser'
-import color from 'util/color'
-import palettes from 'util/palettes'
+import browser from '00-utilities/browser'
+import color from '00-utilities/color'
+import palettes from '00-utilities/palettes'
 import legend from '02-molecules/charts/renderer/legend'
 import axisLabel from '02-molecules/charts/renderer/axis-label'
 

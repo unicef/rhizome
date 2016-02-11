@@ -9,7 +9,7 @@ import Tooltip from '02-molecules/Tooltip.jsx'
 
 import DashboardActions from 'actions/DashboardActions'
 
-import formatUtil from 'util/format'
+import formatUtil from '00-utilities/format'
 import legend from '02-molecules/charts/renderer/legend'
 
 var District = React.createClass({

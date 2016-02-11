@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import format from 'util/format'
+import format from '00-utilities/format'
 import hoverLine from '02-molecules/charts/behavior/hover-line'
 import label from '02-molecules/charts/renderer/label'
 

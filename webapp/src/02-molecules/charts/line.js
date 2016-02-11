@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import palettes from 'util/palettes'
-import format from 'util/format'
+import palettes from '00-utilities/palettes'
+import format from '00-utilities/format'
 import hoverLine from '02-molecules/charts/behavior/hover-line'
 import label from '02-molecules/charts/renderer/label'
 import axisLabel from '02-molecules/charts/renderer/axis-label'

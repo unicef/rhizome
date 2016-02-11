@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux/src'
 
 import api from 'data/api'
-import randomHash from 'util/randomHash'
+import randomHash from '00-utilities/randomHash'
 
 import DashboardActions from 'actions/DashboardActions'
 import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options.js'

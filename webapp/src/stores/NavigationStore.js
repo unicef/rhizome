@@ -7,7 +7,7 @@ import Office from 'data/requests/Office'
 
 import api from 'data/api'
 import builtins from '03-organisms/dashboard/builtin'
-import randomHash from 'util/randomHash'
+import randomHash from '00-utilities/randomHash'
 
 var NavigationStore = Reflux.createStore({
   init: function () {

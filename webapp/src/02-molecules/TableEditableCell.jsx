@@ -6,7 +6,7 @@ import Tooltip from '02-molecules/Tooltip.jsx'
 
 import CellStore from 'stores/CellStore'
 import CellActions from 'actions/CellActions'
-import randomHash from 'util/randomHash'
+import randomHash from '00-utilities/randomHash'
 
 var Cell = React.createClass({
   mixins: [Reflux.connect(CellStore)],

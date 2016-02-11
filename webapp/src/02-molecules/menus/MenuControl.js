@@ -3,7 +3,7 @@ import React from 'react'
 import Layer from 'react-layer'
 
 import Menu from '02-molecules/menus/Menu.jsx'
-import dom from 'util/dom'
+import dom from '00-utilities/dom'
 
 var MenuControl = {
   getDefaultProps: function () {

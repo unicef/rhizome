@@ -31,7 +31,7 @@ function wrap (text, width) {
   })
 }
 */
-// import browser from 'util/browser'
+// import browser from '00-utilities/browser'
 
 function axisLabel () {
   var _width = 1

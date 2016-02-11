@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import browser from 'util/browser'
-import palettes from 'util/palettes'
+import browser from '00-utilities/browser'
+import palettes from '00-utilities/palettes'
 
 import legend from '02-molecules/charts/renderer/legend'
 
