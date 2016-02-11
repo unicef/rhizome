@@ -4,7 +4,7 @@ import api from 'data/api'
 
 import DocOverviewActions from 'actions/DocOverviewActions'
 import DocOverviewStore from 'stores/DocOverviewStore'
-import DownloadButton from 'component/DownloadButton.jsx'
+import DownloadButton from '02-molecules/DownloadButton.jsx'
 
 var DocOverview = React.createClass({
   mixins: [

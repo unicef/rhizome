@@ -13,8 +13,8 @@ import DashboardActions from 'actions/DashboardActions'
 import DashboardStore from 'stores/DashboardStore'
 
 import GeoActions from 'actions/GeoActions'
-// import TitleInput from 'component/TitleInput.jsx'
-// import LayoutOptions from 'component/layout-options/LayoutOptions.jsx'
+// import TitleInput from '02-molecules/TitleInput.jsx'
+// import LayoutOptions from '02-molecules/LayoutOptions.jsx'
 // import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options'
 import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
 

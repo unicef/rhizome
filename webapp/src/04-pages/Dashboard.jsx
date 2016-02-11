@@ -9,9 +9,9 @@ import DashboardInit from 'data/dashboardInit'
 import builtins from '03-organisms/dashboard/builtin'
 import randomHash from 'util/randomHash'
 
-import RegionTitleMenu from 'component/menus/RegionTitleMenu'
-import CampaignTitleMenu from 'component/menus/CampaignTitleMenu.jsx'
-import ExportPdf from 'component/ExportPdf.jsx'
+import RegionTitleMenu from '02-molecules/menus/RegionTitleMenu'
+import CampaignTitleMenu from '02-molecules/menus/CampaignTitleMenu.jsx'
+import ExportPdf from '02-molecules/ExportPdf.jsx'
 
 import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
 

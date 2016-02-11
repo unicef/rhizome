@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import YTDChart from 'component/YTDChart.jsx'
+import YTDChart from '02-molecules/YTDChart.jsx'
 
 export default React.createClass({
   propTypes: {

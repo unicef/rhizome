@@ -4,7 +4,7 @@ import React from 'react'
 import Layer from 'react-layer'
 
 import ColumnChart from './column'
-import Tooltip from 'component/Tooltip.jsx'
+import Tooltip from '02-molecules/Tooltip.jsx'
 
 import browser from 'util/browser'
 import color from 'util/color'

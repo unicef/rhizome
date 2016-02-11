@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import _ from 'lodash'
 import d3 from 'd3'
 
-import Cell from 'component/table-editable/Cell.jsx'
+import Cell from '02-molecules/TableEditableCell.jsx'
 import TableEditableStore from 'stores/TableEditableStore'
 import TableEditableActions from 'actions/TableEditableActions'
 

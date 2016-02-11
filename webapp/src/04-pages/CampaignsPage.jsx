@@ -2,8 +2,8 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DateRangePicker from 'component/DateRangePicker.jsx'
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
+import DateRangePicker from '02-molecules/DateRangePicker.jsx'
+import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'

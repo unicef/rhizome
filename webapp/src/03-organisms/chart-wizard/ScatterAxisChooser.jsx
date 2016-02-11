@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import RadioGroup from '02-molecules/RadioGroup.jsx'
 
 let ScatterAxisChooser = React.createClass({
   propTypes: {

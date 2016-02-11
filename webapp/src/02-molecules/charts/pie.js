@@ -6,7 +6,7 @@ import Layer from 'react-layer'
 import browser from 'util/browser'
 import color from 'util/color'
 import palettes from 'util/palettes'
-import Tooltip from 'component/Tooltip.jsx'
+import Tooltip from '02-molecules/Tooltip.jsx'
 
 function _domain (data, options) {
   return [0, _(data).map(options.value).sum()]

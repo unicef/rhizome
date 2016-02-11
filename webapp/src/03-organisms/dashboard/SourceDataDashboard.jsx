@@ -11,7 +11,7 @@ import DocForm from '03-organisms/dashboard/sd/DocForm.jsx'
 import SourceDataDashboardStore from 'stores/SourceDataDashboardStore'
 import SourceDataDashboardActions from 'actions/SourceDataDashboardActions'
 
-import CSVMenuItem from 'component/CSVMenuItem.jsx'
+import CSVMenuItem from '02-molecules/CSVMenuItem.jsx'
 
 var {
   SimpleDataTable, SimpleDataTableColumn,

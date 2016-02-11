@@ -3,9 +3,9 @@ import React from 'react'
 import Layer from 'react-layer'
 import d3 from 'd3'
 
-import Chart from 'component/Chart.jsx'
-import HeatMapTooltip from 'component/HeatMapTooltip.jsx'
-import Tooltip from 'component/Tooltip.jsx'
+import Chart from '02-molecules/Chart.jsx'
+import HeatMapTooltip from '02-molecules/HeatMapTooltip.jsx'
+import Tooltip from '02-molecules/Tooltip.jsx'
 
 import DashboardActions from 'actions/DashboardActions'
 

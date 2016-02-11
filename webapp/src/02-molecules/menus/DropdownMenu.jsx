@@ -1,12 +1,12 @@
 import _ from 'lodash'
 import React from 'react'
 
-import MenuItem from 'component/MenuItem.jsx'
+import MenuItem from '02-molecules/MenuItem.jsx'
 
 var DropdownMenu = React.createClass({
 
   mixins: [
-    require('mixin/MenuControl')
+    require('02-molecules/menus/MenuControl')
   ],
 
   propTypes: {

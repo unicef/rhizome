@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
+import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 

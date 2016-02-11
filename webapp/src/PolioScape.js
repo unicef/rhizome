@@ -2,7 +2,7 @@ import React from 'react'
 
 import AdminApp from '04-pages/AdminApp'
 
-React.render(React.createElement(require('component/DashboardNav')), document.getElementById('dashboards-nav'))
+React.render(React.createElement(require('02-molecules/DashboardNav')), document.getElementById('dashboards-nav'))
 
 export default {
   Explorer: function (el) {

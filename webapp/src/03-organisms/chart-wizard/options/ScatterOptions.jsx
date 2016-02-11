@@ -1,7 +1,7 @@
 import React from 'react'
 
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
-import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
+import RadioGroup from '02-molecules/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'

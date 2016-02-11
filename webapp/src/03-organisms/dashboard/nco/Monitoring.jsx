@@ -2,8 +2,8 @@ import _ from 'lodash'
 import React from 'react'
 import d3 from 'd3'
 
-import DonutChart from 'component/DonutChart.jsx'
-import Chart from 'component/Chart.jsx'
+import DonutChart from '02-molecules/DonutChart.jsx'
+import Chart from '02-molecules/Chart.jsx'
 
 function donutLabel (data, labelText) {
   var value = _.get(data, '[0].value')

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import Layer from 'react-layer'
-import Tooltip from 'component/Tooltip.jsx'
+import Tooltip from '02-molecules/Tooltip.jsx'
 
 import CellStore from 'stores/CellStore'
 import CellActions from 'actions/CellActions'

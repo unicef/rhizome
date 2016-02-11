@@ -3,7 +3,7 @@ import React from 'react'
 var TitleMenu = React.createClass({
 
   mixins: [
-    require('mixin/MenuControl')
+    require('02-molecules/menus/MenuControl')
   ],
 
   propTypes: {

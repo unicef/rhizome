@@ -6,8 +6,8 @@ import React from 'react'
 import Carousel from 'nuka-carousel'
 import HomepageCarouselDecorators from './HomepageCarouselDecorators.jsx'
 
-import Chart from 'component/Chart.jsx'
-import YTDChart from 'component/YTDChart.jsx'
+import Chart from '02-molecules/Chart.jsx'
+import YTDChart from '02-molecules/YTDChart.jsx'
 
 import ChartUtil from '../utils/ChartUtil.js'
 

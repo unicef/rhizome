@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import Chart from 'component/Chart.jsx'
+import Chart from '02-molecules/Chart.jsx'
 
 var DonutChart = React.createClass({
   propTypes: {

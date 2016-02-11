@@ -1,7 +1,7 @@
 import React from 'react'
 import _ from 'lodash'
 
-import TitleInput from 'component/TitleInput.jsx'
+import TitleInput from '02-molecules/TitleInput.jsx'
 import PalettePicker from './PalettePicker.jsx'
 
 export default class SimplePreview extends React.Component {

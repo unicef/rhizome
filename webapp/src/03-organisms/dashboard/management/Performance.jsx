@@ -3,8 +3,8 @@ import d3 from 'd3'
 import moment from 'moment'
 import React from 'react'
 
-import Chart from 'component/Chart.jsx'
-import PieChartList from 'component/PieChartList.jsx'
+import Chart from '02-molecules/Chart.jsx'
+import PieChartList from '02-molecules/PieChartList.jsx'
 
 import DashboardActions from 'actions/DashboardActions'
 

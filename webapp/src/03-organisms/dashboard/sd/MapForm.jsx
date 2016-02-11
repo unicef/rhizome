@@ -2,8 +2,8 @@ import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
-import RegionTitleMenu from 'component/menus/RegionTitleMenu'
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
+import RegionTitleMenu from '02-molecules/menus/RegionTitleMenu'
+import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
 

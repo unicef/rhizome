@@ -2,13 +2,13 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
-import NavMenuItem from 'component/NavMenuItem.jsx'
+import NavMenuItem from '02-molecules/NavMenuItem.jsx'
 import NavigationStore from 'stores/NavigationStore'
 
 export default React.createClass({
   mixins: [
     Reflux.connect(NavigationStore),
-    require('mixin/MenuControl')
+    require('02-molecules/menus/MenuControl')
   ],
 
   render: function () {

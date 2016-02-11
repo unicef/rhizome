@@ -1,8 +1,8 @@
 import React from 'react'
 
-import List from 'component/list/List.jsx'
-import DropdownMenu from 'component/menus/DropdownMenu.jsx'
-import RadioGroup from 'component/radio-group/RadioGroup.jsx'
+import List from '02-molecules/list/List.jsx'
+import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
+import RadioGroup from '02-molecules/RadioGroup.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'

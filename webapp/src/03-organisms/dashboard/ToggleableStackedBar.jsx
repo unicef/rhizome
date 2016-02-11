@@ -2,7 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import React from 'react'
 
-import Chart from 'component/Chart.jsx'
+import Chart from '02-molecules/Chart.jsx'
 
 var ToggleableStackedBar = React.createClass({
   propTypes: {

@@ -3,7 +3,7 @@ import d3 from 'd3'
 import moment from 'moment'
 import React from 'react'
 
-import Chart from 'component/Chart.jsx'
+import Chart from '02-molecules/Chart.jsx'
 
 export default React.createClass({
   propTypes: {
