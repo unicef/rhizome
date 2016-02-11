@@ -5,13 +5,14 @@ import api from 'data/api'
 import moment from 'moment'
 
 import ExpandableSection from '02-molecules/ExpandableSection'
-import DataFilters from '03-organisms/DataFilters'
-import DateRangePicker from '02-molecules/DateRangePicker'
-import DropdownMenu from '02-molecules/menus/DropdownMenu'
 import DatabrowserTable from '02-molecules/DatabrowserTable'
-import List from '02-molecules/list/List'
+import DateRangePicker from '02-molecules/DateRangePicker'
 import ReorderableList from '02-molecules/list/ReorderableList'
 import DownloadButton from '02-molecules/DownloadButton'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import List from '02-molecules/list/List'
+
+import DataFilters from '03-organisms/DataFilters'
 
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 

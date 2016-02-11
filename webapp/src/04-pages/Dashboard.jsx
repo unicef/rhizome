@@ -4,18 +4,18 @@ import Reflux from 'reflux'
 import page from 'page'
 import moment from 'moment'
 
-import api from 'data/api'
-import DashboardInit from 'data/dashboardInit'
-import builtins from '03-organisms/dashboard/builtin'
 import randomHash from '00-utilities/randomHash'
 
 import RegionTitleMenu from '02-molecules/menus/RegionTitleMenu'
-import CampaignTitleMenu from '02-molecules/menus/CampaignTitleMenu.jsx'
-import ExportPdf from '02-molecules/ExportPdf.jsx'
+import CampaignTitleMenu from '02-molecules/menus/CampaignTitleMenu'
+import ExportPdf from '02-molecules/ExportPdf'
 
-import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
+import builtins from '03-organisms/dashboard/builtin'
+import CustomDashboard from '03-organisms/dashboard/CustomDashboard'
 
 import Indicator from 'data/requests/Indicator'
+import api from 'data/api'
+import DashboardInit from 'data/dashboardInit'
 
 import DashboardStore from 'stores/DashboardStore'
 import DataStore from 'stores/DataStore'
@@ -27,10 +27,10 @@ import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
 
 const LAYOUT = {
-  'Management Dashboard': require('03-organisms/dashboard/ManagementDashboard.jsx'),
-  'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard.jsx'),
-  'District Dashboard': require('03-organisms/dashboard/District.jsx'),
-  'Source Data': require('03-organisms/dashboard/SourceDataDashboard.jsx')
+  'Management Dashboard': require('03-organisms/dashboard/ManagementDashboard'),
+  'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard'),
+  'District Dashboard': require('03-organisms/dashboard/District'),
+  'Source Data': require('03-organisms/dashboard/SourceDataDashboard')
 }
 
 var Dashboard = React.createClass({

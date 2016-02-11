@@ -1,8 +1,8 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import UserGroup from '02-molecules/UserGroup.jsx'
-import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
+import UserGroup from '02-molecules/UserGroup'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'

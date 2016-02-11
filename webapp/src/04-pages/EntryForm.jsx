@@ -1,12 +1,12 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import DropdownMenu from '02-molecules/menus/DropdownMenu.jsx'
-import List from '02-molecules/list/List.jsx'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import TableEditale from '02-molecules/TableEditable'
+import List from '02-molecules/list/List'
 
 import EntryFormStore from 'stores/EntryFormStore'
 import EntryFormActions from 'actions/EntryFormActions'
-import TableEditale from '02-molecules/TableEditable.jsx'
 
 let EntryForm = React.createClass({
   mixins: [Reflux.connect(EntryFormStore)],

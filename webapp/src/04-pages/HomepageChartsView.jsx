@@ -1,9 +1,9 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import HomepageChartsSection from '03-organisms/HomepageChartsSection.jsx'
-import HomepageDashboardsStore from 'stores/HomepageDashboardsStore'
+import HomepageChartsSection from '03-organisms/HomepageChartsSection'
 
+import HomepageDashboardsStore from 'stores/HomepageDashboardsStore'
 import HomepageDashboardsActions from 'actions/HomepageDashboardsActions'
 
 var HomepageChartsView = React.createClass({

@@ -1,22 +1,22 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux/src'
-import ChartWizard from '04-pages/ChartWizard.jsx'
 
-import DataActions from 'actions/DataActions'
-import DataStore from 'stores/DataStore'
+// import TitleInput from '02-molecules/TitleInput'
+// import LayoutOptions from '02-molecules/LayoutOptions'
+
+// import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options'
+import CustomDashboard from '03-organisms/dashboard/CustomDashboard'
+import ChartWizard from '04-pages/ChartWizard'
 
 import DashboardBuilderActions from 'actions/DashboardBuilderActions'
-import DashboardBuilderStore from 'stores/DashboardBuilderStore'
-
 import DashboardActions from 'actions/DashboardActions'
-import DashboardStore from 'stores/DashboardStore'
-
+import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
-// import TitleInput from '02-molecules/TitleInput.jsx'
-// import LayoutOptions from '02-molecules/LayoutOptions.jsx'
-// import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options'
-import CustomDashboard from '03-organisms/dashboard/CustomDashboard.jsx'
+
+import DashboardBuilderStore from 'stores/DashboardBuilderStore'
+import DashboardStore from 'stores/DashboardStore'
+import DataStore from 'stores/DataStore'
 
 window.perf = React.addons.Perf
 
