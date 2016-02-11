@@ -329,9 +329,22 @@ var Dashboard = React.createClass({
       )
 
     let settingFilter = ''
-    let region_title_menu = ''
     if (dashboardDef.builtin === true) {
-      region_title_menu = <RegionTitleMenu locations={this.state.locations} selected={location} sendValue={this._setLocation}/>
+      settingFilter = (<div className='row'>
+      <div className='medium-6 columns'>
+        <RegionTitleMenu
+          locations={this.state.locations}
+          selected={location}
+          sendValue={this._setLocation}/>
+      </div>
+        <div className='medium-6 columns'>
+          <CampaignTitleMenu
+            campaigns={campaigns}
+            selected={campaign}
+            location={location}
+            sendValue={this._setCampaign}/>
+        </div>
+      </div>)
     }
     let exportModule = (<ExportPdf className='export-file' />)
 
@@ -341,18 +354,7 @@ var Dashboard = React.createClass({
         <form className='inline no-print cd-titlebar'>
           <div className='row'>
             <div className='medium-6 columns'>
-              <div className='row'>
-                <div className='medium-6 columns'>
-                  {region_title_menu}
-                </div>
-                <div className='medium-6 columns'>
-                  <CampaignTitleMenu
-                    campaigns={campaigns}
-                    selected={campaign}
-                    location={location}
-                    sendValue={this._setCampaign}/>
-                </div>
-              </div>
+              {settingFilter}
             </div>
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
               <div className='row'>
