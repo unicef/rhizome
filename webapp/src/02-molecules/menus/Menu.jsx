@@ -59,7 +59,7 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return !_.isEqual(nextProps, this.props) // || !_.isEqual(nextState, this.state)
+    return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
   },
 
   _onResize: function () {
@@ -88,7 +88,7 @@ export default React.createClass({
 
     this.setState({
       orientation: orientation,
-      maxHeight: Math.floor(window.innerHeight - y - (menu.height - items.height)),
+      maxHeight: Math.round(Math.floor(window.innerHeight - y - (menu.height - items.height)) / 10) * 10,
       marginLeft: Math.floor(marginLeft)
     })
   },
