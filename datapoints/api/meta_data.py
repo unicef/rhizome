@@ -404,9 +404,12 @@ class CustomChartResource(BaseModelResource):
             pass
 
         try:
-            chart_id_list = list(request.GET['id'])
+            chart_id_list = [request.GET['id']]
         except KeyError:
             pass
+
+        if len(chart_id_list) == 0:
+            return CustomChart.objects.all().values()
 
         return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()
