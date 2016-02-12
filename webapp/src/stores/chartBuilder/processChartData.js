@@ -520,7 +520,8 @@ export default {
         return {
           name: locations_map[d.location].name,
           parent_location_id: locations_map[d.location].parent_location_id,
-          values: values
+          values: values,
+          campaign_id: d.campaign.id
         }
       })
       return { options: chartOptions, data: chartData }

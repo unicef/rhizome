@@ -37,6 +37,10 @@ export default React.createClass({
     }
   },
 
+  setCampaign: function (id) {
+    this.setState({campaign_id: id})
+  },
+
   render: function () {
     var overlay
 
@@ -74,7 +78,7 @@ export default React.createClass({
     if (this.props.campaigns) {
       campaignDropdown = <DropdownMenu
               items={this.props.campaigns}
-              sendValue={_.noop}
+              sendValue={this.setCampaign}
               item_plural_name='Campaigns'
               text='Select Campagin'
               title_field='name'
@@ -91,10 +95,15 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
+    var defaultCampaignId = this.props.campaigns[0].id
+    var chartData = this.props.data.filter(function (d) {
+      return d.campaign_id === defaultCampaignId
+    })
+
     this._chart = ChartFactory(
       this.props.type,
       React.findDOMNode(this),
-      this.props.data,
+      chartData,
       this.props.options)
   },
 
