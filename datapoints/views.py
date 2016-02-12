@@ -57,8 +57,12 @@ def data_browser(request):
     return render_to_response('datapoints/index.html',\
         context_instance=RequestContext(request))
 
-def dashboard_list(request):
+def dashboards(request):
     return render_to_response('dashboard-builder/list.html',
+                              context_instance=RequestContext(request))
+
+def charts(request):
+    return render_to_response('charts/index.html',
                               context_instance=RequestContext(request))
 
 def source_data(request):

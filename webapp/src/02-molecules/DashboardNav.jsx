@@ -57,7 +57,7 @@ export default React.createClass({
           </ul>
         </li>
         <li className='small-4 columns'>
-          <a>Charts</a>
+          <a href='/datapoints/charts/'>Charts</a>
           <ul className='dashboard-menu'>
             <li className='main-item'>
               <a href='/datapoints/charts/create'>Create a chart</a>

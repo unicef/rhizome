@@ -32,6 +32,9 @@ export default {
   ChartBuilder: function (el, chartId) {
     React.render(React.createElement(require('04-pages/ChartWizard'), { chartId: chartId }), el)
   },
+  Charts: function (el) {
+    React.render(React.createElement(require('04-pages/Charts')), el)
+  },
   CampaignsPage: function (el, campaignId) {
     React.render(React.createElement(require('04-pages/CampaignsPage'), {campaignId: campaignId}), el)
   },
