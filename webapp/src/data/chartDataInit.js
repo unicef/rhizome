@@ -79,11 +79,18 @@ export default {
 
     let query = {
       indicator__in: _.map(data.indicatorSelected, _.property('id')),
-      location_id__in: _.map(data.selected_locations, _.property('id')),
       campaign_start: chartDef.startDate,
       campaign_end: chartDef.endDate,
       chart_type: chartDef.type
     }
+
+    // a map should always query for the sub locations of the selected //
+    if ( chartDef.type === 'ChoroplethMap' ){
+      query['parent_location_id__in'] = _.map(data.selected_locations, _.property('id'))
+    } else {
+      query['location_id__in'] = _.map(data.selected_locations, _.property('id'))
+    }
+
 
     let lower = moment(chartDef.startDate, 'YYYY-MM-DD')
     let upper = moment(chartDef.endDate, 'YYYY-MM-DD')
