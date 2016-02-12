@@ -48,16 +48,19 @@ export default React.createClass({
   },
 
   filterData: function () {
-    var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
-    var filteredData = this.props.data.filter(function (d) {
-      return d.campaign_id.toString() === campaignId
-    })
+    if (this.props.type === 'TableChart') {
+      var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
+      var filteredData = this.props.data.filter(function (d) {
+        return d.campaign_id.toString() === campaignId
+      })
+    } else {
+      filteredData = this.props.data
+    }
 
     return filteredData
   },
 
   render: function () {
-    // console.log('render')
     var overlay
 
     if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
