@@ -8,9 +8,6 @@ export default {
   Explorer: function (el) {
     React.render(React.createElement(require('04-pages/Explorer')), el)
   },
-  Dashboard: function (el) {
-    React.render(React.createElement(require('04-pages/Dashboard')), el)
-  },
   EntryForm: function (el) {
     React.render(React.createElement(require('04-pages/EntryForm')), el)
   },
@@ -20,20 +17,26 @@ export default {
   UserAccount: function (el, userId) {
     React.render(React.createElement(require('04-pages/UserAccount'), {userId: userId}), el)
   },
-  DashboardList: function (el) {
-    React.render(React.createElement(require('04-pages/DashboardList')), el)
+  Dashboards: function (el) {
+    React.render(React.createElement(require('04-pages/DashboardsPage')), el)
   },
-  HomepageCharts: function (el) {
-    React.render(React.createElement(require('04-pages/HomepageChartsView')), el)
+  Dashboard: function (el) {
+    React.render(React.createElement(require('04-pages/DashboardPage')), el)
   },
   DashboardBuilder: function (el, dashboardId) {
     React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboardId: dashboardId }), el)
   },
+  Charts: function (el) {
+    React.render(React.createElement(require('04-pages/ChartsPage')), el)
+  },
+  Chart: function (el) {
+    React.render(React.createElement(require('04-pages/ChartPage')), el)
+  },
   ChartBuilder: function (el, chartId) {
     React.render(React.createElement(require('04-pages/ChartWizard'), { chartId: chartId }), el)
   },
-  Charts: function (el) {
-    React.render(React.createElement(require('04-pages/Charts')), el)
+  HomepageCharts: function (el) {
+    React.render(React.createElement(require('04-pages/HomepageChartsView')), el)
   },
   CampaignsPage: function (el, campaignId) {
     React.render(React.createElement(require('04-pages/CampaignsPage'), {campaignId: campaignId}), el)

@@ -52,60 +52,87 @@ def export_file(request):
     response.set_cookie('fileDownloadToken', 'true')
     return response
 
-## OPEN VIEWS ( needs authentication, but no specific permissions )##
-def data_browser(request):
-    return render_to_response('datapoints/index.html',\
-        context_instance=RequestContext(request))
+#############################################################################
+#                                  OPEN VIEWS                               #
+#             ( needs authentication, but no specific permissions )         #
+#############################################################################
 
+
+# RESOURCES
+#---------------------------------------------------------------------------
 def dashboards(request):
-    return render_to_response('dashboard-builder/list.html',
+    return render_to_response('dashboards/index.html',
                               context_instance=RequestContext(request))
-
+def dashboard(request, dashboard_id=None):
+    return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
+                              context_instance=RequestContext(request))
+def builtin_dashboard(request, dashboard_slug=None):
+    return render_to_response('dashboards/show_builtin.html', {'dashboard_slug': dashboard_slug},
+                              context_instance=RequestContext(request))
 def charts(request):
     return render_to_response('charts/index.html',
                               context_instance=RequestContext(request))
+def chart(request, chart_id=None):
+    return render_to_response('charts/show.html', {'chart_id': chart_id},
+                              context_instance=RequestContext(request))
 
+# OTHER
+#----------------------------------------------------------------------------
+def data_browser(request):
+    return render_to_response('datapoints/index.html',
+                              context_instance=RequestContext(request))
 def source_data(request):
     return render_to_response('source-data/index.html',
-        context_instance=RequestContext(request))
-
-### PERMISSION RESTRICTED VIEWS ###
-
-@user_passes_test(lambda u: u.groups.filter(name='data_entry')\
-    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
-def data_entry(request):
-    return render_to_response('data-entry/index.html',
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder')\
-    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
-def dashboard_builder(request, dashboard_id=None):
-    return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id},
+def update_campaign(request):
+    return render_to_response('manage_system.html',
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder')\
-    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
+
+#############################################################################
+#                                                                           #
+#                              RESTRICTED VIEWS                             #
+#                                                                           #
+#############################################################################
+
+
+# RESOURCES
+#---------------------------------------------------------------------------
+@user_passes_test(lambda u: u.groups.filter(name='chart_builder'),
+    login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def chart_builder(request, chart_id=None):
     return render_to_response('charts/create.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='manage_system')\
-    ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
-def manage_system(request):
-    return render_to_response('manage_system.html',\
-        context_instance=RequestContext(request))
-
-def update_campaign(request):
-    return render_to_response('manage_system.html', context_instance=RequestContext(request))
+@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
+    login_url='/datapoints/permissions_needed/', redirect_field_name=None)
+def dashboard_builder(request, dashboard_id=None):
+    return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id},
+                              context_instance=RequestContext(request))
 
 class DashBoardView(generic.ListView):
     paginate_by = 50
-
-    template_name = 'dashboard/index.html'
+    template_name = 'dashboards/index.html'
     context_object_name = 'user_dashboard'
 
     def get_queryset(self): ## not sure why this works. ##
         return DataPoint.objects.all()[:1]
+
+# OTHER
+#----------------------------------------------------------------------------
+@user_passes_test(lambda u: u.groups.filter(name='data_entry'),
+    login_url='/datapoints/permissions_needed/', redirect_field_name=None)
+def data_entry(request):
+    return render_to_response('data-entry/index.html',
+                              context_instance=RequestContext(request))
+
+@user_passes_test(lambda u: u.groups.filter(name='manage_system'),
+    login_url='/datapoints/permissions_needed/', redirect_field_name=None)
+def manage_system(request):
+    return render_to_response('manage_system.html',\
+        context_instance=RequestContext(request))
+
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User

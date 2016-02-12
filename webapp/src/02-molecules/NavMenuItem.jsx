@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 var NavMenuItem = React.createClass({
+
   propTypes: {
     href: React.PropTypes.string.isRequired,
     children: React.PropTypes.string

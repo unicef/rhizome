@@ -14,6 +14,7 @@ var NavigationStore = Reflux.createStore({
     this.campaigns = []
     this.dashboards = []
     this.customDashboards = []
+    this.customCharts = []
     this.loaded = false
 
     Promise.all([
@@ -27,6 +28,7 @@ var NavigationStore = Reflux.createStore({
     return {
       campaigns: this.campaigns,
       dashboards: this.dashboards,
+      customCharts: this.customCharts,
       documents: this.documents,
       loaded: this.loaded
     }
@@ -77,14 +79,9 @@ var NavigationStore = Reflux.createStore({
         //     return moment(c.start_date, 'YYYY-MM-DD').valueOf()
         //   })
 
-        var path = '/'
-
         // Patch the non-comformant API response
         d.charts = d.charts || d.dashboard_json
-
-        return _.assign({}, d, {
-          href: '/datapoints/' + _.kebabCase(d.title) + path
-        })
+        return d
       })
       .reject(_.isNull)
       .value()

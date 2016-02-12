@@ -1,0 +1,9 @@
+{% extends "dashboards/base.html" %}
+
+{% block content %}
+	<uf-dashboard></uf-dashboard>
+{% endblock %}
+
+{% block scripts %}
+	<script>Polio.Dashboard(document.getElementById('main'),'{{dashboard_slug}}');</script>
+{% endblock %}

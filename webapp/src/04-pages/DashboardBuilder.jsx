@@ -3,9 +3,9 @@ import React from 'react'
 import Reflux from 'reflux/src'
 
 // import TitleInput from '02-molecules/TitleInput'
-// import LayoutOptions from '02-molecules/LayoutOptions'
 
-// import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options'
+import LayoutOptions from '02-molecules/LayoutOptions'
+import LayoutDefaultSettings from '03-organisms/dashboard/builtin/layout-options'
 import CustomDashboard from '03-organisms/dashboard/CustomDashboard'
 import ChartWizard from '04-pages/ChartWizard'
 
@@ -149,11 +149,24 @@ export default React.createClass({
 
   render () {
     if (this.state.store.newDashboard) {
-      var chartDef = {'indicators': [], 'type': 'LineChart'}
-      return (<ChartWizard dashboardId={-1}
-                           chartDef={chartDef}
-                           save={this.saveChart}
-                           cancel={this.cancelEditChart}/>)
+      return (
+        <form className='inline no-print dashboard-builder-container' onSubmit={this._handleSubmit}>
+          <h1>Create a New Custom Dashboard</h1>
+          <div className='cd-title small-12'>Dashboard Title</div>
+          <input type='text'
+            className='description small-12'
+            value={this.state.title}
+            onChange={this._updateNewTitle}
+            autoFocus />
+          <div className='cd-title float-none'>Choose a Layout</div>
+          <LayoutOptions values={LayoutDefaultSettings.values}
+            value={this.state.store.layout}
+            onChange={DashboardBuilderActions.changeLayout} />
+          <a href='#'
+            className={'create-dashboard cd-button float-right ' + (this.state.title.length ? '' : 'disabled')}
+            onClick={DashboardBuilderActions.addDashboard}>Next</a>
+        </form>
+      )
     } else if (!(this.state.dashboardStore && this.state.dashboardStore.loaded && this.state.dashboardStore.dashboard) || this.state.dataStore.loading) {
       let style = {fontSize: '2rem', zIndex: 9999}
       return (

@@ -1,0 +1,11 @@
+{% extends "dashboards/base.html" %}
+
+{% block content %}
+{% endblock %}
+
+{% block scripts %}
+	<script>
+		var None = null;
+		Polio.DashboardBuilder(document.getElementById('main'),{{dashboard_id}});
+	</script>
+{% endblock %}

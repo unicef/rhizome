@@ -33,7 +33,7 @@ const LAYOUT = {
   'Source Data': require('03-organisms/dashboard/SourceDataDashboard')
 }
 
-var Dashboard = React.createClass({
+var DashboardPage = React.createClass({
   mixins: [
     Reflux.ListenerMixin,
     Reflux.connect(DataStore)
@@ -65,9 +65,9 @@ var Dashboard = React.createClass({
 
   componentWillMount () {
     // this.getAllDashboards()
-    page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
-    page('/datapoints/:dashboard/:location/:year/:month', this._show)
-    page('/datapoints/:dashboard', this._showDefault)
+    page('/datapoints/dashboards/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
+    page('/datapoints/dashboards/:dashboard/:location/:year/:month', this._show)
+    page('/datapoints/dashboards/:dashboard', this._showDefault)
   },
 
   componentWillUpdate (nextProps, nextState) {
@@ -155,14 +155,18 @@ var Dashboard = React.createClass({
     })
   },
 
-  _setDashboard (slug) {
+  _setDashboard (id) {
     this._navigate({
-      dashboard: slug
+      dashboard: id
     })
   },
 
   _getDashboard (slug) {
     let dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
+
+    if (/^\d+$/.test(slug)) {
+      dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.id) === slug)
+    }
 
     if (dashboard.id <= 0) {
       return new Promise(resolve => {
@@ -322,7 +326,7 @@ var Dashboard = React.createClass({
     let edit = (
         <span style={{'display': 'inline', 'textAlign': 'right'}}>
           <a className='menu-button fa-stack'
-             href={'/datapoints/dashboards/edit/' + dashboardDef.id + '/'}>
+             href={'/datapoints/dashboards/' + dashboardDef.id + '/edit/'}>
             <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
           </a>
         </span>
@@ -374,4 +378,4 @@ var Dashboard = React.createClass({
   }
 })
 
-export default Dashboard
+export default DashboardPage
