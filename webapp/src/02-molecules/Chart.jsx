@@ -27,7 +27,8 @@ export default React.createClass({
     loading: React.PropTypes.bool,
     options: React.PropTypes.object,
     isBulletChart: React.PropTypes.bool,
-    campaigns: React.PropTypes.array
+    campaigns: React.PropTypes.array,
+    defaultCampaign: React.PropTypes.object
   },
 
   getInitialState: function () {
@@ -47,7 +48,7 @@ export default React.createClass({
   },
 
   filterData: function () {
-    var campaignId = this.state.campaign_id || this.props.campaigns[0].id.toString()
+    var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
     var filteredData = this.props.data.filter(function (d) {
       return d.campaign_id.toString() === campaignId
     })
@@ -89,13 +90,19 @@ export default React.createClass({
         )
     }
 
+    let campaignDropdownTitle = this.props.defaultCampaign.name
+    let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+    if (this.state.campaign_id) {
+      campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
+    }
+
     let campaignDropdown = ''
     if (this.props.campaigns) {
       campaignDropdown = <DropdownMenu
               items={this.props.campaigns}
               sendValue={this.setCampaign}
               item_plural_name='Campaigns'
-              text='Select Campagin'
+              text={campaignDropdownTitle}
               title_field='name'
               value_field='id'
               uniqueOnly/>
