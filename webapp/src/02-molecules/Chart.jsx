@@ -13,6 +13,7 @@ function isEmpty (type, data, options) {
   }
 
   var getValue = _.get(options, 'value', _.identity)
+
   // Map the value accessor across the data because data is always passed as
   // multiple series (an array of arrays), even if there is only one series (as
   // will typically be the case for bullet charts).
@@ -30,34 +31,10 @@ export default React.createClass({
     campaigns: React.PropTypes.array
   },
 
-  getInitialState: function () {
-    return {
-      campaign_id: null
-    }
-  },
-
   getDefaultProps: function () {
     return {
       loading: false
     }
-  },
-
-  setCampaign: function (id) {
-    console.log('set campaign for id: ', id)
-    this.setState({campaign_id: id})
-    this.forceUpdate()
-    console.log('updated state: ', this.state)
-  },
-
-  filterData: function () {
-    // console.log('this.state.campaign_id:', this.state.campaign_id)
-    var campaignId = this.state.campaign_id || this.props.campaigns[0].id
-    console.log('filtering data for campaign_id :', campaignId)
-    var filteredData = this.props.data.filter(function (d) {
-      return d.campaign_id === campaignId
-    })
-
-    return filteredData
   },
 
   render: function () {
@@ -97,7 +74,7 @@ export default React.createClass({
     if (this.props.campaigns) {
       campaignDropdown = <DropdownMenu
               items={this.props.campaigns}
-              sendValue={this.setCampaign}
+              sendValue={_.noop}
               item_plural_name='Campaigns'
               text='Select Campagin'
               title_field='name'
@@ -114,20 +91,15 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
-    var chartData = this.filterData()
     this._chart = ChartFactory(
       this.props.type,
       React.findDOMNode(this),
-      chartData,
+      this.props.data,
       this.props.options)
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return (
-       nextProps.data !== this.props.data ||
-       nextProps.loading !== this.props.loading ||
-       this.state.campaign_id !== nextState.campaign_id
-     )
+    return (nextProps.data !== this.props.data || nextProps.loading !== this.props.loading)
   },
 
   componentWillReceiveProps: function (nextProps) {
@@ -142,10 +114,6 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
-    console.log('componentDidUpdate')
-    var chartData = this.filterData
-
-    console.log(chartData[0].campaign_id)
-    this._chart.update(chartData, this.props.options)
+    this._chart.update(this.props.data, this.props.options)
   }
 })
