@@ -17,7 +17,8 @@ let TableEditable = React.createClass({
     indicatorMap: React.PropTypes.object,
     locationMap: React.PropTypes.object,
     locations: React.PropTypes.array,
-    campaignId: React.PropTypes.string
+    campaignId: React.PropTypes.string,
+    indicators: React.PropTypes.array
   },
 
   componentWillReceiveProps: function (nextProps) {
@@ -53,11 +54,7 @@ let TableEditable = React.createClass({
   _buildTable: function () {
     let contentTitle = (
       <div>
-        <h5>
-          Form is <span className={this.completionClass(this.state.total.complete / this.state.total.total)}>
-          {this.percent(this.state.total.complete / this.state.total.total)} </span>
-           complete ({this.state.total.complete} / {this.state.total.total} values entered)
-        </h5>
+        <h5> Data Entry Form </h5>
       </div>
     )
 
@@ -66,16 +63,13 @@ let TableEditable = React.createClass({
 
     if (this.state.table.rows.length > 0) {
       tableHeader = this.state.table.columns.map((column, index) => {
-        let isShowLabel = column.type !== 'value'
-        let className = (isShowLabel ? 'col' : this.completionClass(this.state.byColumn[index].complete / this.state.byColumn[index].total)) + ' completionStatus'
-        let headerContent = isShowLabel ? '' : this.state.byColumn[index].complete + ' / ' + this.state.byColumn[index].total
+        // let isShowLabel = column.type !== 'value'
+        // let className = (isShowLabel ? 'col' : this.completionClass(this.state.byColumn[index].complete / this.state.byColumn[index].total)) + ' completionStatus'
+        // let headerContent = isShowLabel ? '' : this.state.byColumn[index].complete + ' / ' + this.state.byColumn[index].total
         return (
           <th className={column.headerClasses}>
             <div className='th-inner'>
               {column.header}
-              <div className={className}>
-                {headerContent}
-              </div>
             </div>
           </th>
         )

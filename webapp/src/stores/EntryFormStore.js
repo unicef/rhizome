@@ -51,7 +51,6 @@ let EntryFormStore = Reflux.createStore({
             }
           }).value()
 
-      console.log('campaignResult: ', campaignResult)
       self.data.campaigns = campaignResult
 
       // locations

@@ -120,7 +120,8 @@ let EntryForm = React.createClass({
             indicatorMap={this.state.indicatorMap}
             locationMap={this.state.locationMap}
             locations={this.state.locations}
-            campaignId={this.state.campaignSelected}/>
+            campaignId={this.state.campaignSelected}
+            />
         </div>
       </div>
     )

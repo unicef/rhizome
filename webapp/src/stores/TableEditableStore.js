@@ -64,19 +64,37 @@ let TableEditaleStore = Reflux.createStore({
     this.data.processed = false
     this.trigger(this.data)
 
-    // define columns
+    // // define columns
+    // let columns = [{
+    //   header: 'Indicator',
+    //   type: 'label',
+    //   headerClasses: 'medium-3'
+    // }]
+
+    // // add location names as columns
+    // _.forEach(locations, locationId => {
+    //   columns.push({
+    //     header: locationMap[locationId].name,
+    //     type: 'value',
+    //     key: locationId,
+    //     children: null
+    //   })
+    // })
+
     let columns = [{
-      header: 'Indicator',
+      header: 'Locations',
       type: 'label',
       headerClasses: 'medium-3'
     }]
 
+    let indicator_id_list = formDefinition.indicator_id_list
+
     // add location names as columns
-    _.forEach(locations, locationId => {
+    _.forEach(indicator_id_list, indicatorId => {
       columns.push({
-        header: locationMap[locationId].name,
+        header: indicatorMap[indicatorId].name,
         type: 'value',
-        key: locationId,
+        key: indicatorId,
         children: null
       })
     })
@@ -86,17 +104,17 @@ let TableEditaleStore = Reflux.createStore({
       return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
     }
 
-    // arrange datapoints into an object of indicators > locations
-    var byIndicator = {}
+    // arrange datapoints into an object of locatoins > indicators
+    var byLocation = {}
     data.forEach(function (d) {
-      if (!byIndicator[d.indicator_id]) { byIndicator[d.indicator_id] = {} }
-      byIndicator[d.indicator_id][d.location_id] = d
+      if (!byLocation[d.location_id]) { byLocation[d.location_id] = {} }
+      byLocation[d.location_id][d.indicator_id] = d
     })
 
     // assemble data points into rows for table
     var rows = []
 
-    _.each(formDefinition.indicators, rowInfo => {
+    _.each(locations, rowInfo => {
       var row = []
       if (rowInfo.type && rowInfo.type === 'section-header') { // section header row
         row.push({
@@ -106,8 +124,8 @@ let TableEditaleStore = Reflux.createStore({
           class: 'section-header',
           colspan: columns.length
         })
-      } else { // normal indicator row
-        var indicator_id = rowInfo.id
+      } else { // normal location row
+        var location_id = rowInfo.id
         // add columns
         columns.forEach(column => {
           var cell = {
@@ -121,18 +139,18 @@ let TableEditaleStore = Reflux.createStore({
               cell.format = numericFormatter
               cell.classes = 'numeric'
               cell.width = 80
-              if (byIndicator[indicator_id] && byIndicator[indicator_id][column.key]) {
-                cell.datapoint_id = byIndicator[indicator_id][column.key].datapoint_id
-                cell.value = byIndicator[indicator_id][column.key].value
-                cell.note = byIndicator[indicator_id][column.key].note
+              if (byLocation[location_id] && byLocation[location_id][column.key]) {
+                cell.datapoint_id = byLocation[location_id][column.key].datapoint_id
+                cell.value = byLocation[location_id][column.key].value
+                cell.note = byLocation[location_id][column.key].note
               } else {
                 cell.datapoint_id = null
                 cell.value = null
                 cell.note = null
               }
               // tooltip
-              if (locationMap[column.key] && indicatorMap[indicator_id]) {
-                cell.tooltip = indicatorMap[indicator_id].name + ' value for ' + locationMap[column.key].name
+              if (locationMap[location_id] && indicatorMap[column.key]) {
+                cell.tooltip = locationMap[location_id].name + ' value for ' + locationMap[column.key].name
               } else {
                 cell.tooltip = null
               }
@@ -154,8 +172,8 @@ let TableEditaleStore = Reflux.createStore({
                 var upsert_options = {
                   datapoint_id: cell.datapoint_id,
                   campaign_id: parseInt(campaignId, 10),
-                  indicator_id: indicator_id,
-                  location_id: column.key,
+                  indicator_id: column.key,
+                  location_id: location_id,
                   value: parseFloat(newVal)
                 }
                 return api.datapointUpsert(upsert_options)
@@ -177,18 +195,21 @@ let TableEditaleStore = Reflux.createStore({
 
             // indicator name
             case 'label':
-              cell.value = indicatorMap[indicator_id]
-                ? indicatorMap[indicator_id].name
-                : 'Missing info for indicator ' + indicator_id
+              cell.value = indicatorMap[column.key]
+                ? indicatorMap[column.key].name
+                : 'Missing info for indicator ' + column.key
               cell.classes = 'label'
               cell.width = 300
               break
           }
           row.push(cell)
         })
-      } // end normal indicator row
+      } // end normal location row
       rows.push(row)
     })
+
+    console.log('rows: ', rows)
+    console.log('columns: ', columns)
 
     this.data.table.rows = rows
     this.data.table.columns = columns
