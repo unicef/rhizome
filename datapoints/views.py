@@ -108,7 +108,7 @@ def chart_builder(request, chart_id=None):
 @user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def dashboard_builder(request, dashboard_id=None):
-    return render_to_response('dashboard-builder/index.html', {'dashboard_id': dashboard_id},
+    return render_to_response('dashboards/create.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 
 class DashBoardView(generic.ListView):
