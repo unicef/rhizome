@@ -163,14 +163,14 @@ let ChartWizardStore = Reflux.createStore({
       .value()
 
     // hacky way to set the default location //
-    if (!this.data.chartDef.locationValue){
-      this.data.chartDef.locationValue = locations.objects[0].id
+    if (!this.data.chartDef.location_id){
+      this.data.chartDef.location_id = locations.objects[0].id
     }
 
-    this.data.selected_locations = this.data.chartDef.locationValue
-      ? Array.isArray(this.data.chartDef.locationValue)
-        ? this.data.chartDef.locationValue.map(location => this.locationIndex[location])
-        : [this.locationIndex[this.data.chartDef.locationValue]]
+    this.data.selected_locations = this.data.chartDef.location_id
+      ? Array.isArray(this.data.chartDef.location_id)
+        ? this.data.chartDef.location_id.map(location => this.locationIndex[location])
+        : [this.locationIndex[this.data.chartDef.location_id]]
       : []
 
     this.data.rawIndicators = await api.indicators(null, null, { 'cache-control': 'no-cache' })
@@ -432,7 +432,7 @@ let ChartWizardStore = Reflux.createStore({
           groupBy: builderDefinitions.groups[this.data.groupByValue].value,
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
           countries: this.data.countrySelected.map(country => country.id),
-          locationValue: this.data.selected_locations.map(location => location.id),
+          location_ids: this.data.selected_locations.map(location => location.id),
           // campaignValue: this.data.campaign.id,
           // timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,

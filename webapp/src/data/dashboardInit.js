@@ -204,8 +204,8 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     var chartName = _.get(chart, 'id', _.camelCase(chart.title))
     var section = _.get(results, sectionName, {})
 
-    if (chart.locationValue) {
-      var chartLocation = locationsById[chart.locationValue]
+    if (chart.location_ids) {
+      var chartLocation = locationsById[chart.location_ids]
       if (chartLocation) location = chartLocation
     } else {
       location = selectedLocation

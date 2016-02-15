@@ -333,6 +333,7 @@ function tagTree (q) {
 }
 
 export default {
+  endPoint,
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
   datapoints: datapoint,
   submissionDownload: submissionDownload,

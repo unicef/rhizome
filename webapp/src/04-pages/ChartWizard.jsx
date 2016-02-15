@@ -42,11 +42,30 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
+  tempUpdateChart () {
+    var data = {
+      id: this.props.chartId,
+      chart_json: JSON.stringify(this.state.data.chartDef)
+    }
+    api.post_chart(data).then(res => {
+      console.log('Chart successfully updated', res)
+    }, res => {
+      console.log('update chart error,', res)
+    })
+  },
+
   mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(DataFiltersStore, 'raw_data')],
 
   componentDidMount () {
-    this.chartDef = this.props.chartDef || defaultChartDef
-    ChartWizardActions.initialize(this.chartDef)
+    if (this.props.chartId) {
+      ChartAPI.getChart(this.props.chartId).then(function(response){
+        let chart_json = JSON.parse(response.chart_json);
+        ChartWizardActions.initialize(chart_json)
+      })
+    } else {
+      this.chartDef = this.props.chartDef || defaultChartDef
+      ChartWizardActions.initialize(this.chartDef)
+    }
   },
 
   componentWillReceiveProps () {
@@ -54,7 +73,17 @@ let ChartWizard = React.createClass({
   },
 
   saveChart () {
-    ChartWizardActions.saveChart(this.props.save)
+    ChartWizardActions.saveChart(data => {
+      var chart = {
+        dashboard_id: this.dashboardId,
+        chart_json: JSON.stringify(data)
+      }
+      api.post_chart(chart).then(res => {
+        window.location.replace("/datapoints/charts/" + res.objects.id);
+      }, res => {
+        console.log('add chart error,', res)
+      })
+    })
   },
 
   toggleStep (refer) {
@@ -134,9 +163,9 @@ let ChartWizard = React.createClass({
       data_output = <DatabrowserTable data={this.state.data.rawData} selected_locations={this.state.data.selected_locations} selected_indicators={this.state.data.indicatorSelected} />
     }
 
-    let title_input = <h4>To do: create chart title </h4>
-    if (this.props.chartDef) {
-      title_input = <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
+    let title_input = <TitleInput save={ChartWizardActions.editTitle}/>
+    if (this.state.data.chartDef) {
+      title_input = <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
     }
 
     return (

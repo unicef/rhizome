@@ -346,9 +346,22 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
 class CustomChartResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
+        queryset =  CustomChart.objects.all()
         filtering = {
             "id": ALL,
         }
+
+    def dehydrate_chart_json(self, bundle):
+        chart_json = bundle.obj.chart_json
+        bundle.data['chart_json'] = json.dumps(chart_json)
+        return bundle.data['chart_json']
+
+    def obj_get(self, bundle, **kwargs):
+        id = int(kwargs['pk'])
+        try:
+            return CustomChart.objects.get(id=id)
+        except KeyError:
+            raise NotFound("Object not found")
 
     def obj_create(self, bundle, **kwargs):
 

@@ -34,10 +34,10 @@ export default {
       .map(ancestryString)
       .value()
 
-    data.selected_locations = chartDef.locationValue
-      ? Array.isArray(chartDef.locationValue)
-        ? chartDef.locationValue.map(location => locationIndex[location])
-        : [locationIndex[chartDef.locationValue]]
+    data.selected_locations = chartDef.location_ids
+      ? Array.isArray(chartDef.location_ids)
+        ? chartDef.location_ids.map(location => locationIndex[location])
+        : [locationIndex[chartDef.location_ids]]
       : []
 
     let locationLevelValue = _.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations })
