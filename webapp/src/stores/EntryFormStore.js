@@ -112,7 +112,7 @@ let EntryFormStore = Reflux.createStore({
     filtered.indicators = [] // formDefinition.indicators.filter(function (n) { return n > 0 })
 
     // []
-    _.each(formDefinition.indicators, row => {
+    _.each(formDefinition.indicator_id_list, ind_id => {
     //   if (row.type === 'section-header') { // header
     //     // remove previous section header if no indicators are included under it
     //     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
@@ -121,9 +121,9 @@ let EntryFormStore = Reflux.createStore({
     //     filtered.indicators.push(row)
     //   } else { // indicator
     //     // filter out indicators the user cannot edit
-      if (row.id && this.data.indicatorMap[row.id] !== undefined) {
+      if (ind_id && this.data.indicatorMap[ind_id] !== undefined) {
     //       row.name = this.data.indicatorMap[row.id].name
-        filtered.indicators.push(row)
+        filtered.indicators.push(this.data.indicatorMap[ind_id])
     //     }
       }
     })
@@ -220,10 +220,7 @@ let EntryFormStore = Reflux.createStore({
     this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
     console.log('this.data.formDefinition: ', this.data.formDefinition)
 
-    options.indicator__in = _(this.data.formDefinition.indicators)
-                  // .filter(function (d) { return d.id })
-                  .map(function (d) { return d.id })
-                  .value()
+    options.indicator__in = this.data.formDefinition.indicator_id_list
 
     console.log('options.indicator__in: ', options.indicator__in)
 
