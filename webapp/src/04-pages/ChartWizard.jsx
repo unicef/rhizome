@@ -19,6 +19,7 @@ import PalettePicker from '03-organisms/chart-wizard/preview/PalettePicker'
 import ChartWizardActions from 'actions/ChartWizardActions'
 import DataFiltersStore from 'stores/DataFiltersStore'
 import ChartWizardStore from 'stores/ChartWizardStore'
+import ChartAPI from 'data/requests/ChartAPI'
 
 const defaultChartDef = {
   title: '',

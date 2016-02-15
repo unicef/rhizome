@@ -4,7 +4,7 @@ import Reflux from 'reflux'
 
 import NavMenuItem from '02-molecules/NavMenuItem.jsx'
 import NavigationStore from 'stores/NavigationStore'
-import ChartAPI from 'data/requests/Chart'
+import ChartAPI from 'data/requests/ChartAPI'
 
 export default React.createClass({
 

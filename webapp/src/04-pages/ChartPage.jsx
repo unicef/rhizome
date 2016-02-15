@@ -3,7 +3,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import page from 'page'
 
-import ChartAPI from 'data/requests/Chart'
+import ChartAPI from 'data/requests/ChartAPI'
 
 var ChartPage = React.createClass({
 
