@@ -13,7 +13,6 @@ function isEmpty (type, data, options) {
   }
 
   var getValue = _.get(options, 'value', _.identity)
-
   // Map the value accessor across the data because data is always passed as
   // multiple series (an array of arrays), even if there is only one series (as
   // will typically be the case for bullet charts).
@@ -28,13 +27,37 @@ export default React.createClass({
     loading: React.PropTypes.bool,
     options: React.PropTypes.object,
     isBulletChart: React.PropTypes.bool,
-    campaigns: React.PropTypes.array
+    campaigns: React.PropTypes.array,
+    defaultCampaign: React.PropTypes.object
+  },
+
+  getInitialState: function () {
+    return {
+      campaign_id: null
+    }
   },
 
   getDefaultProps: function () {
     return {
       loading: false
     }
+  },
+
+  setCampaign: function (id) {
+    this.setState({campaign_id: id})
+  },
+
+  filterData: function () {
+    if (this.props.type === 'TableChart') {
+      var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
+      var filteredData = this.props.data.filter(function (d) {
+        return d.campaign_id.toString() === campaignId
+      })
+    } else {
+      filteredData = this.props.data
+    }
+
+    return filteredData
   },
 
   render: function () {
@@ -70,13 +93,19 @@ export default React.createClass({
         )
     }
 
+    let campaignDropdownTitle = this.props.defaultCampaign.name
+    let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+    if (this.state.campaign_id) {
+      campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
+    }
+
     let campaignDropdown = ''
     if (this.props.campaigns) {
       campaignDropdown = <DropdownMenu
               items={this.props.campaigns}
-              sendValue={_.noop}
+              sendValue={this.setCampaign}
               item_plural_name='Campaigns'
-              text='Select Campagin'
+              text={campaignDropdownTitle}
               title_field='name'
               value_field='id'
               uniqueOnly/>
@@ -91,15 +120,20 @@ export default React.createClass({
   },
 
   componentDidMount: function () {
+    var chartData = this.filterData()
     this._chart = ChartFactory(
       this.props.type,
       React.findDOMNode(this),
-      this.props.data,
+      chartData,
       this.props.options)
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return (nextProps.data !== this.props.data || nextProps.loading !== this.props.loading)
+    return (
+       nextProps.data !== this.props.data ||
+       nextProps.loading !== this.props.loading ||
+       this.state.campaign_id !== nextState.campaign_id
+     )
   },
 
   componentWillReceiveProps: function (nextProps) {
@@ -114,6 +148,7 @@ export default React.createClass({
   },
 
   componentDidUpdate: function () {
-    this._chart.update(this.props.data, this.props.options)
+    var chartData = this.filterData()
+    this._chart.update(chartData, this.props.options)
   }
 })

@@ -125,9 +125,16 @@ let ChartWizard = React.createClass({
       return null
     }
 
+    console.log('this.state.data.campaignFilteredList: ', this.state.data.campaignFilteredList)
     let chart = (
-      <Chart id='custom-chart' type={this.state.data.chartDef.type} data={this.state.data.chartData}
-        options={this.state.data.chartOptions}/>
+      <Chart
+          id='custom-chart'
+          type={this.state.data.chartDef.type}
+          data={this.state.data.chartData}
+          options={this.state.data.chartOptions}
+          campaings={this.state.data.campaignFilteredList}
+          defaultCampaign={this.state.data.campaign}
+          />
     )
 
     let location_options = [
