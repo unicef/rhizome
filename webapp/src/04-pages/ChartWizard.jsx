@@ -133,6 +133,11 @@ let ChartWizard = React.createClass({
       data_output = <DatabrowserTable data={this.state.data.rawData} selected_locations={this.state.data.selected_locations} selected_indicators={this.state.data.indicatorSelected} />
     }
 
+    let title_input = <h4>To do: create chart title </h4>
+    if (this.props.chartDef) {
+      title_input = <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
+    }
+
     return (
       <section className='chart-wizard'>
         <h1 className='medium-12 columns text-center'>Chart Builder</h1>
@@ -147,7 +152,7 @@ let ChartWizard = React.createClass({
         <div className='medium-3 columns'>
           <div className='row'>
             <h3>Chart Title</h3>
-            <TitleInput initialText={this.props.chartDef.title} save={ChartWizardActions.editTitle}/>
+            {title_input}
             <br/>
             <h3>Time</h3>
             <DateRangePicker

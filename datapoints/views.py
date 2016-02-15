@@ -99,10 +99,16 @@ def update_campaign(request):
 
 # RESOURCES
 #---------------------------------------------------------------------------
-@user_passes_test(lambda u: u.groups.filter(name='chart_builder'),
+@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
-def chart_builder(request, chart_id=None):
-    return render_to_response('charts/create.html', {'chart_id': chart_id},
+def chart_builder(request):
+    return render_to_response('charts/create.html',
+                              context_instance=RequestContext(request))
+
+@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
+    login_url='/datapoints/permissions_needed/', redirect_field_name=None)
+def chart_edit(request, chart_id=None):
+    return render_to_response('charts/edit.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
 @user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
