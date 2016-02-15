@@ -545,7 +545,6 @@ class CustomChart(models.Model):
     '''
     '''
 
-    dashboard = models.ForeignKey(CustomDashboard)
     chart_json = JSONField()
 
     class Meta:

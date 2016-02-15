@@ -351,17 +351,28 @@ class CustomChartResource(BaseModelResource):
             "id": ALL,
         }
 
-    def dehydrate_chart_json(self, bundle):
-        chart_json = bundle.obj.chart_json
-        bundle.data['chart_json'] = json.dumps(chart_json)
-        return bundle.data['chart_json']
+    # def dehydrate_chart_json(self, bundle):
+    #     chart_json = bundle.obj.chart_json
+    #     pprint.pprint(chart_json)
+    #     bundle.data['chart_json'] = json.dumps(chart_json)
+    #     return bundle.data['chart_json']
 
-    def obj_get(self, bundle, **kwargs):
-        id = int(kwargs['pk'])
-        try:
-            return CustomChart.objects.get(id=id)
-        except KeyError:
-            raise NotFound("Object not found")
+
+
+    def get_detail(self, request, **kwargs):
+        """
+        Returns a single serialized resource.
+
+        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
+        set and serializes it.
+
+        Should return a HttpResponse (200 OK).
+        """
+
+        bundle = self.build_bundle(request=request)
+        bundle.data = CustomChart.objects.get(id=kwargs['pk']).__dict__
+
+        return self.create_response(request, bundle)
 
     def obj_create(self, bundle, **kwargs):
 
@@ -371,20 +382,10 @@ class CustomChartResource(BaseModelResource):
 
         try:
             chart_id = int(post_data['id'])
-            dashboard_id = CustomChart.objects.get(id=chart_id).dashboard_id
         except KeyError:
             pass
 
-        try:
-            dashboard_id = post_data['dashboard_id']
-        except KeyError:
-            dashboard_id = CustomDashboard.objects.create(
-                title = chart_json['title'],
-                owner_id = bundle.request.user.id
-            ).id
-
         defaults = {
-            'dashboard_id': dashboard_id,
             'chart_json': chart_json
         }
 

@@ -47,7 +47,7 @@ let ChartWizard = React.createClass({
   componentDidMount () {
     if (this.props.chart_id) {
       ChartAPI.getChart(this.props.chart_id).then(function(response){
-        let chart_json = JSON.parse(response.chart_json)
+        let chart_json = response.chart_json
         ChartWizardActions.initialize(chart_json)
       })
     } else {
@@ -64,20 +64,20 @@ let ChartWizard = React.createClass({
     ChartWizardActions.saveChart(data => {
       var chart = {
         id: this.props.chart_id,
-        dashboard_id: this.dashboard_id,
         chart_json: JSON.stringify(this.state.data.chartDef)
       }
       if (this.props.chart_id) {
         api.post_chart(chart).then(res => {
-          window.location.replace("/datapoints/charts/" + res.objects.id);
-        }, res => {
-          console.log('add chart error,', res)
-        })
-      } else {
-        api.post_chart(chart).then(res => {
           console.log('Chart successfully updated', res)
         }, res => {
           console.log('update chart error,', res)
+        })
+      } else {
+        console.log('chart', chart)
+        api.post_chart(chart).then(res => {
+          window.location.replace("/datapoints/charts/" + res.objects.id);
+        }, res => {
+          console.log('add chart error,', res)
         })
       }
     })
