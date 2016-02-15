@@ -60,7 +60,7 @@ let TableEditaleStore = Reflux.createStore({
     return this.data
   },
 
-  onInit: function (data, indicatorSet, indicatorMap, locationMap, locations, campaignId) {
+  onInit: function (data, formDefinition, indicatorMap, locationMap, locations, campaignId) {
     this.data.processed = false
     this.trigger(this.data)
 
@@ -96,7 +96,7 @@ let TableEditaleStore = Reflux.createStore({
     // assemble data points into rows for table
     var rows = []
 
-    _.each(indicatorSet.indicators, rowInfo => {
+    _.each(formDefinition.indicators, rowInfo => {
       var row = []
       if (rowInfo.type && rowInfo.type === 'section-header') { // section header row
         row.push({

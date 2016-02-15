@@ -13,7 +13,7 @@ let TableEditable = React.createClass({
   propTypes: {
     data: React.PropTypes.array,
     loaded: React.PropTypes.bool,
-    indicatorSet: React.PropTypes.object,
+    formDefinition: React.PropTypes.object,
     indicatorMap: React.PropTypes.object,
     locationMap: React.PropTypes.object,
     locations: React.PropTypes.array,
@@ -22,7 +22,7 @@ let TableEditable = React.createClass({
 
   componentWillReceiveProps: function (nextProps) {
     if (!this.props.loaded && nextProps.loaded) {
-      TableEditableActions.init(nextProps.data, nextProps.indicatorSet,
+      TableEditableActions.init(nextProps.data, nextProps.formDefinition,
         nextProps.indicatorMap, nextProps.locationMap,
         nextProps.locations, nextProps.campaignId)
     }
@@ -125,7 +125,7 @@ let TableEditable = React.createClass({
   render: function () {
     if (!this.props.loaded || !this.state.processed) {
       return (<div className='empty'>Use the options above to load a data entry form.</div>)
-    } else if (this.props.indicatorSet.indicators.length < 1) {
+    } else if (this.props.formDefinition.indicators.length < 1) {
       return (<div className='empty'>Use the options above to load a data entry form.</div>)
     } else {
       return this._buildTable()

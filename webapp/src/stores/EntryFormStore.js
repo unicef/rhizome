@@ -105,32 +105,34 @@ let EntryFormStore = Reflux.createStore({
   // },
 
   _filterFormDefinition: function (indicatorSetId) {
-    var formDefinition = _.find(this.data.EntryFormDefinition, function (d) { return d.id === parseInt(indicatorSetId, 10) })
+    var formDefinition = this.data.entryFormDefinitions[0] // _.find(this.data.entryFormDefinitions, function (d) { return d.id ===
     if (!formDefinition) return null
-
+    //
     var filtered = _.clone(formDefinition)
-    filtered.indicators = []
+    filtered.indicators = [] // formDefinition.indicators.filter(function (n) { return n > 0 })
+
+    // []
     _.each(formDefinition.indicators, row => {
-      if (row.type === 'section-header') { // header
-        // remove previous section header if no indicators are included under it
-        if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-          filtered.indicators.splice(filtered.indicators.length - 1, 1)
-        }
+    //   if (row.type === 'section-header') { // header
+    //     // remove previous section header if no indicators are included under it
+    //     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+    //       filtered.indicators.splice(filtered.indicators.length - 1, 1)
+    //     }
+    //     filtered.indicators.push(row)
+    //   } else { // indicator
+    //     // filter out indicators the user cannot edit
+      if (row.id && this.data.indicatorMap[row.id] !== undefined) {
+    //       row.name = this.data.indicatorMap[row.id].name
         filtered.indicators.push(row)
-      } else { // indicator
-        // filter out indicators the user cannot edit
-        if (row.id && this.data.indicatorMap[row.id] !== undefined) {
-          row.name = this.data.indicatorMap[row.id].name
-          filtered.indicators.push(row)
-        }
+    //     }
       }
     })
-
-    // remove last row if empty section header
-    if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-      filtered.indicators.pop()
-    }
-
+    //
+    // // remove last row if empty section header
+    // if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+    //   filtered.indicators.pop()
+    // }
+    //
     return filtered
   },
 
@@ -219,9 +221,11 @@ let EntryFormStore = Reflux.createStore({
     console.log('this.data.formDefinition: ', this.data.formDefinition)
 
     options.indicator__in = _(this.data.formDefinition.indicators)
-                  .filter(function (d) { return d.id })
+                  // .filter(function (d) { return d.id })
                   .map(function (d) { return d.id })
                   .value()
+
+    console.log('options.indicator__in: ', options.indicator__in)
 
     _.defaults(options, this.data.pagination)
 
