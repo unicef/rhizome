@@ -97,7 +97,7 @@ export default React.createClass({
       DashboardBuilderActions.updateChart(chartDef, this.state.chartBuilderindex)
     } else {
       DashboardBuilderActions.addChart(chartDef)
-      DataActions.fetchForChart(this.state.store.dashboard)
+      DataActions.fetchForDashboard(this.state.store.dashboard)
     }
     this.setState({chartBuilderindex: null, chartBuilderActive: false})
   },
@@ -122,7 +122,7 @@ export default React.createClass({
         if (state.dashboard.builtin) {
           DataActions.fetch(this.state.dashboardStore.campaign, this.state.dashboardStore.location, q)
         } else {
-          DataActions.fetchForChart(this.state.store.dashboard)
+          DataActions.fetchForDashboard(this.state.store.dashboard)
         }
       }
       this.state.dashboardStore.hasMap && GeoActions.fetch(this.state.dashboardStore.location)

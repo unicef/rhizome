@@ -59,7 +59,7 @@ let ChartWizard = React.createClass({
   componentDidMount () {
     if (this.props.chart_id) {
       ChartAPI.getChart(this.props.chart_id).then(function(response){
-        let chart_json = JSON.parse(response.chart_json);
+        let chart_json = JSON.parse(response.chart_json)
         ChartWizardActions.initialize(chart_json)
       })
     } else {
