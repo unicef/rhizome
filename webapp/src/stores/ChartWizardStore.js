@@ -444,7 +444,7 @@ let ChartWizardStore = Reflux.createStore({
     )
   },
 
-  _fetchRaData: function (options) {
+  _fetchRawData: function (options) {
     api.datapoints(options, null, {'cache-control': 'no-cache'})
       .then(response => {
         if (!response.objects || response.objects.length < 1) {
@@ -489,7 +489,7 @@ let ChartWizardStore = Reflux.createStore({
 
     if (this.data.chartDef.type === 'RawData') {
       let options = this._prepRawDataQuery(this.data.campaign, this.data.selected_locations, this.data.indicatorSelected)
-      this._fetchRaData(options)
+      this._fetchRawData(options)
       return
     }
 
