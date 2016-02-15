@@ -37,31 +37,25 @@ let EntryFormStore = Reflux.createStore({
 
   onInitData: function () {
     let self = this
-    Promise.all([api.campaign(null, null, {'cache-control': 'no-cache'}),
+    Promise.all([
+      api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
-      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})]).then(_.spread(function (campaigns, locations, indicators) {
+      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})])
+    .then(_.spread(function (campaigns, locations, indicators) {
         // campains
-        let campainResult
-        if (!campaigns.objects) {
-          campainResult = null
-        } else {
-          campainResult = campaigns.objects.sort(function (a, b) {
-            if (a.office === b.office) {
-              return a.start_date > b.start_data ? -1 : 1
+      let campaignResult = _(campaigns.objects)
+          .map(campaign => {
+            return {
+              'id': campaign.id,
+              'name': campaign.name
             }
-            return a.office - b.office
-          })
-          .map(function (d) {
-            d.name = d.name
-            d.value = d.id
-            return d
-          })
-        }
-        self.data.campaigns = campainResult
-        self.data.campaignSelected = campainResult[0].value
+          }).value()
 
-        // locations
-        let locationResult = _(locations.objects)
+      console.log('campaignResult: ', campaignResult)
+      self.data.campaigns = campaignResult
+
+      // locations
+      let locationResult = _(locations.objects)
           .map(location => {
             return {
               'title': location.name,
@@ -75,15 +69,15 @@ let EntryFormStore = Reflux.createStore({
           .map(ancestryString)
           .value()
 
-        self.locationList = locationResult
-        self.data.filterLocations = locationResult
-        self.data.locationMap = _.indexBy(locations.objects, 'id')
+      self.locationList = locationResult
+      self.data.filterLocations = locationResult
+      self.data.locationMap = _.indexBy(locations.objects, 'id')
 
         // Indicators
-        self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
+      self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
         // self._filterLocationsByCampaign()
-        self.trigger(self.data)
-      })
+      self.trigger(self.data)
+    })
     )
   },
 
@@ -154,14 +148,11 @@ let EntryFormStore = Reflux.createStore({
   },
 
   onSetForm: function (formId) {
-    console.log('formId:', formId)
     this.data.formIdSelected = formId
-
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
-    console.log('campaignId: ', campaignId)
     this.data.campaignSelected = campaignId
     // this._filterLocationsByCampaign()
     this.trigger(this.data)
@@ -216,14 +207,8 @@ let EntryFormStore = Reflux.createStore({
       this.data.locations = options.location_id__in
     }
 
-    console.log('this.data.formIdSelected')
     this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
-    console.log('this.data.formDefinition: ', this.data.formDefinition)
-
     options.indicator__in = this.data.formDefinition.indicator_id_list
-
-    console.log('options.indicator__in: ', options.indicator__in)
-
     _.defaults(options, this.data.pagination)
 
     this.data.loaded = false

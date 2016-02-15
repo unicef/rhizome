@@ -261,7 +261,7 @@ $valueColumnWidth: 80px;
 
     /* cell status */
     &.missing .displayValue {
-      background-color: rgb(255, 235, 134);
+      background-color: #A9A9A9// #FFEB86// rgb(255, 235, 134);
     }
 
     &.error {

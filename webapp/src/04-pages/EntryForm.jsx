@@ -26,7 +26,7 @@ let EntryForm = React.createClass({
     let formName = 'Select a Form'
     if (formIdSelected) {
       formName = _.find(this.state.entryFormDefinitions,
-        function (d) { return d.form_id.toString() === formIdSelected }).form_name
+        function (d) { return d.form_id.toString() === formIdSelected }).title
     }
     let formDropDown = (
       <div>
@@ -36,8 +36,6 @@ let EntryForm = React.createClass({
           sendValue={EntryFormActions.setForm}
           item_plural_name='Forms'
           text={formName}
-          title_field='form_name'
-          value_field='form_id'
           uniqueOnly/>
       </div>
     )
