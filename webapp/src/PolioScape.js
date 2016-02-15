@@ -23,17 +23,17 @@ export default {
   Dashboard: function (el) {
     React.render(React.createElement(require('04-pages/DashboardPage')), el)
   },
-  DashboardBuilder: function (el, dashboardId) {
-    React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboardId: dashboardId }), el)
+  DashboardBuilder: function (el, dashboard_id) {
+    React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboard_id: dashboard_id }), el)
   },
   Charts: function (el) {
     React.render(React.createElement(require('04-pages/ChartsPage')), el)
   },
-  Chart: function (el) {
-    React.render(React.createElement(require('04-pages/ChartPage')), el)
+  Chart: function (el, chart_id) {
+    React.render(React.createElement(require('04-pages/ChartPage'), { chart_id: chart_id }), el)
   },
-  ChartBuilder: function (el, chartId) {
-    React.render(React.createElement(require('04-pages/ChartWizard'), { chartId: chartId }), el)
+  ChartBuilder: function (el, chart_id) {
+    React.render(React.createElement(require('04-pages/ChartWizard'), { chart_id: chart_id }), el)
   },
   HomepageCharts: function (el) {
     React.render(React.createElement(require('04-pages/HomepageChartsView')), el)

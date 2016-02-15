@@ -23,7 +23,7 @@ var HomepageChartsSection = React.createClass({
 
   render: function () {
     var dashboard = React.createElement(HomepageCharts, this.props.data)
-    var chartId = `${this.props.location.toLowerCase()}-chart`
+    var chart_id = `${this.props.location.toLowerCase()}-chart`
 
     var controls
     if (this.props.location === 'Nigeria') {
@@ -55,7 +55,7 @@ var HomepageChartsSection = React.createClass({
 
     return (
       <div>
-        <div className='large-4 columns chart-container' id={chartId}>
+        <div className='large-4 columns chart-container' id={chart_id}>
           <div className='chart'>
             <h5>{this.props.location}</h5>
             {dashboard}

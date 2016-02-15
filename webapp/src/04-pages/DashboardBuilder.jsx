@@ -22,7 +22,7 @@ window.perf = React.addons.Perf
 
 export default React.createClass({
   propTypes: {
-    dashboardId: React.PropTypes.number
+    dashboard_id: React.PropTypes.number
   },
 
   mixins: [
@@ -42,7 +42,7 @@ export default React.createClass({
   },
 
   componentDidMount () {
-    DashboardBuilderActions.initialize(this.props.dashboardId)
+    DashboardBuilderActions.initialize(this.props.dashboard_id)
     this.listenTo(DashboardStore, this._onDataLoaded)
     this.listenTo(DashboardStore, this._onDashboardChange)
   },
@@ -103,7 +103,7 @@ export default React.createClass({
   },
 
   _onDataLoaded () {
-    if (this.props.dashboardId && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
+    if (this.props.dashboard_id && this.state.store && this.state.dashboardStore && this.state.store.loaded && this.state.dashboardStore.loaded && !this.state.dashboardStore.dashboard) {
       DashboardActions.setDashboard({ dashboard: this.state.store.dashboard })
       this.setState({
         title: this.state.store.dashboard.title,
@@ -225,7 +225,7 @@ export default React.createClass({
       let chartDef = _.isNull(this.state.chartBuilderindex)
         ? null
         : this.state.store.dashboard.charts[this.state.chartBuilderindex]
-      return (<ChartWizard dashboardId={this.props.dashboardId}
+      return (<ChartWizard dashboard_id={this.props.dashboard_id}
                            chartDef={chartDef}
                            save={this.saveChart}
                            cancel={this.cancelEditChart}/>)

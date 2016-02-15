@@ -44,7 +44,7 @@ let ChartWizard = React.createClass({
 
   tempUpdateChart () {
     var data = {
-      id: this.props.chartId,
+      id: this.props.chart_id,
       chart_json: JSON.stringify(this.state.data.chartDef)
     }
     api.post_chart(data).then(res => {
@@ -57,8 +57,8 @@ let ChartWizard = React.createClass({
   mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(DataFiltersStore, 'raw_data')],
 
   componentDidMount () {
-    if (this.props.chartId) {
-      ChartAPI.getChart(this.props.chartId).then(function(response){
+    if (this.props.chart_id) {
+      ChartAPI.getChart(this.props.chart_id).then(function(response){
         let chart_json = JSON.parse(response.chart_json);
         ChartWizardActions.initialize(chart_json)
       })
@@ -75,7 +75,7 @@ let ChartWizard = React.createClass({
   saveChart () {
     ChartWizardActions.saveChart(data => {
       var chart = {
-        dashboard_id: this.dashboardId,
+        dashboard_id: this.dashboard_id,
         chart_json: JSON.stringify(data)
       }
       api.post_chart(chart).then(res => {

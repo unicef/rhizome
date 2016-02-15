@@ -23,7 +23,7 @@ var DashboardBuilderStore = Reflux.createStore({
   },
 
   onInitialize (id) {
-    this.dashboardId = id
+    this.dashboard_id = id
     if (_.isNull(id)) {
       this.data.newDashboard = true
       this.data.loaded = true
@@ -68,7 +68,7 @@ var DashboardBuilderStore = Reflux.createStore({
 
     // just save the chart.
     var data = {
-      dashboard_id: this.dashboardId,
+      dashboard_id: this.dashboard_id,
       chart_json: JSON.stringify(chartDef)
     }
 
