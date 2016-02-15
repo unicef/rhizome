@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -15,21 +16,18 @@ let EntryForm = React.createClass({
     EntryFormActions.initData()
   },
 
-  _setForm: function (event) {
-    EntryFormActions.setForm(event.target.value)
-  },
-
-  _setCampaign: function (event) {
-    EntryFormActions.setCampaign(event.target.value)
-  },
-
   refresh: function () {
     if (!this.state.couldLoad) return
     EntryFormActions.getTableData()
   },
 
   render () {
-    let formName = this.state.formSelected ? this.state.formSelected.form_name : 'Select a Form'
+    let formIdSelected = this.state.formIdSelected
+    let formName = 'Select a Form'
+    if (formIdSelected) {
+      formName = _.find(this.state.entryFormDefinitions,
+        function (d) { return d.form_id.toString() === formIdSelected }).form_name
+    }
     let formDropDown = (
       <div>
         <label htmlFor='forms'>Forms</label>
@@ -43,15 +41,28 @@ let EntryForm = React.createClass({
           uniqueOnly/>
       </div>
     )
+
+    let campaignIdSelected = this.state.campaignSelected
+    let campaignName = 'Select a Campaign'
+    if (campaignIdSelected) {
+      var campaignObj = _.find(this.state.campaigns,
+        function (c) { return c.id.toString() === campaignIdSelected })
+    }
+
+    if (campaignObj) {
+      campaignName = campaignObj.name
+    }
+
     let campaignDropdown = (
       <div>
         <label htmlFor='campaigns'>Campaigns</label>
         <DropdownMenu
           items={this.state.campaigns}
-          sendValue={this._setCampaign}
+          sendValue={EntryFormActions.setCampaign}
           item_plural_name='Campaign'
-          text={this.state.campaignSelected}
+          text={campaignName}
           title_field='name'
+          value_field='id'
           icon='fa-globe'
           uniqueOnly/>
       </div>

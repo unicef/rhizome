@@ -14,11 +14,12 @@ let EntryFormStore = Reflux.createStore({
     entryFormDefinitions: require('./EntryFormDefinitions'),
     indicatorMap: null,
     indicatorSet: null,
-    formSelected: null,
+    formIdSelected: null,
     data: null,
     loaded: false,
     campaigns: [],
     campaignSelected: null,
+    campaignNameSelected: null,
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -80,7 +81,7 @@ let EntryFormStore = Reflux.createStore({
 
         // Indicators
         self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
-        self._filterLocationsByCampaign()
+        // self._filterLocationsByCampaign()
         self.trigger(self.data)
       })
     )
@@ -90,18 +91,18 @@ let EntryFormStore = Reflux.createStore({
     this.data.couldLoad = this.data.locationSelected.length > 0
   },
 
-  _filterLocationsByCampaign: function () {
-    let campaign = _(this.data.campaigns).find(campaign => {
-      return campaign.id === parseInt(this.data.campaignSelected, 10)
-    })
-
-    this.data.filterLocations = this.locationList.filter(location => {
-      return location.value === campaign.office_id
-    })
-
-    this.data.locationSelected = []
-    this._setCouldLoad()
-  },
+  // _filterLocationsByCampaign: function () {
+  //   let campaign = _(this.data.campaigns).find(campaign => {
+  //     return campaign.id === parseInt(this.data.campaignSelected, 10)
+  //   })
+  //
+  //   this.data.filterLocations = this.locationList.filter(location => {
+  //     return location.value === campaign.office_id
+  //   })
+  //
+  //   this.data.locationSelected = []
+  //   this._setCouldLoad()
+  // },
 
   _filterFormDefinition: function (indicatorSetId) {
     var formDefinition = _.find(this.data.EntryFormDefinition, function (d) { return d.id === parseInt(indicatorSetId, 10) })
@@ -151,14 +152,16 @@ let EntryFormStore = Reflux.createStore({
   },
 
   onSetForm: function (formId) {
-    console.log('indicatorid: ', formId)
-    this.data.formSelected = formId
+    console.log('formId:', formId)
+    this.data.formIdSelected = formId
+
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
+    console.log('campaignId: ', campaignId)
     this.data.campaignSelected = campaignId
-    this._filterLocationsByCampaign()
+    // this._filterLocationsByCampaign()
     this.trigger(this.data)
   },
 
@@ -211,7 +214,9 @@ let EntryFormStore = Reflux.createStore({
       this.data.locations = options.location_id__in
     }
 
-    this.data.formDefinition = this._filterFormDefinition(this.data.formSelected)
+    console.log('this.data.formIdSelected')
+    this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
+    console.log('this.data.formDefinition: ', this.data.formDefinition)
 
     options.indicator__in = _(this.data.formDefinition.indicators)
                   .filter(function (d) { return d.id })

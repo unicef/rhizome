@@ -1,6 +1,6 @@
 export default [
   {
-    'form_id': 1,
+    'form_id': 0,
     'form_name': 'Management Dashboard: Provincial Indicators',
     'location_level': 1,
     'indicators': [
