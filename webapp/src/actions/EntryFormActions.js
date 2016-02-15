@@ -2,7 +2,7 @@ import Reflux from 'reflux'
 
 export default Reflux.createActions([
   'initData',
-  'setIndicator',
+  'setForm',
   'setCampaign',
   'addLocations',
   'removeLocation',

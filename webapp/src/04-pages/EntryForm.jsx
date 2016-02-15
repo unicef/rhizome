@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -15,43 +16,57 @@ let EntryForm = React.createClass({
     EntryFormActions.initData()
   },
 
-  _setIndicator: function (event) {
-    EntryFormActions.setIndicator(event.target.value)
-  },
-
-  _setCampaign: function (event) {
-    EntryFormActions.setCampaign(event.target.value)
-  },
-
   refresh: function () {
     if (!this.state.couldLoad) return
     EntryFormActions.getTableData()
   },
 
   render () {
-    let indicatorSet = (
+    let formIdSelected = this.state.formIdSelected
+    let formName = 'Select a Form'
+    if (formIdSelected) {
+      formName = _.find(this.state.entryFormDefinitions,
+        function (d) { return d.form_id.toString() === formIdSelected }).title
+    }
+    let formDropDown = (
       <div>
-        <label htmlFor='sets'>Indicator Set</label>
-        <select value={this.state.indicatorSelected} onChange={this._setIndicator}>
-          {this.state.indicatorSets.map(data => {
-            return (<option value={data.id}>{data.title}</option>)
-          })}
-        </select>
+        <label htmlFor='forms'>Forms</label>
+        <DropdownMenu
+          items={this.state.entryFormDefinitions}
+          sendValue={EntryFormActions.setForm}
+          item_plural_name='Forms'
+          text={formName}
+          uniqueOnly/>
       </div>
     )
 
-    let campaignSet = (
+    let campaignIdSelected = this.state.campaignSelected
+    let campaignName = 'Select a Campaign'
+    if (campaignIdSelected) {
+      var campaignObj = _.find(this.state.campaigns,
+        function (c) { return c.id.toString() === campaignIdSelected })
+    }
+
+    if (campaignObj) {
+      campaignName = campaignObj.name
+    }
+
+    let campaignDropdown = (
       <div>
-        <label htmlFor='campaigns'>Campaign</label>
-        <select value={this.state.campaignSelected} onChange={this._setCampaign}>
-          {this.state.campaigns.map(campaign => {
-            return (<option value={campaign.value}>{campaign.text}</option>)
-          })}
-        </select>
+        <label htmlFor='campaigns'>Campaigns</label>
+        <DropdownMenu
+          items={this.state.campaigns}
+          sendValue={EntryFormActions.setCampaign}
+          item_plural_name='Campaign'
+          text={campaignName}
+          title_field='name'
+          value_field='id'
+          icon='fa-globe'
+          uniqueOnly/>
       </div>
     )
 
-    let locationSet = (
+    let locationDropDown = (
       <div>
         <label htmlFor='locations'>Locations</label>
         <DropdownMenu
@@ -59,7 +74,6 @@ let EntryForm = React.createClass({
           sendValue={EntryFormActions.addLocations}
           item_plural_name='Locations'
           text='Select Location'
-          style='databrowser__button'
           icon='fa-globe'
           uniqueOnly/>
         <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
@@ -92,9 +106,9 @@ let EntryForm = React.createClass({
       <div className='row'>
         <form>
           <div className='medium-2 columns'>
-            {indicatorSet}
-            {campaignSet}
-            {locationSet}
+            {formDropDown}
+            {campaignDropdown}
+            {locationDropDown}
             {includeSublocations}
             {loadEntryForm}
           </div>
@@ -102,11 +116,12 @@ let EntryForm = React.createClass({
         <div className='medium-10 columns'>
           <TableEditale data={this.state.data}
             loaded={this.state.loaded}
-            indicatorSet={this.state.indicatorSet}
+            formDefinition={this.state.formDefinition}
             indicatorMap={this.state.indicatorMap}
             locationMap={this.state.locationMap}
             locations={this.state.locations}
-            campaignId={this.state.campaignSelected}/>
+            campaignId={this.state.campaignSelected}
+            />
         </div>
       </div>
     )
