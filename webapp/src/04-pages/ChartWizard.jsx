@@ -42,18 +42,6 @@ let ChartWizard = React.createClass({
     cancel: React.PropTypes.func
   },
 
-  tempUpdateChart () {
-    var data = {
-      id: this.props.chart_id,
-      chart_json: JSON.stringify(this.state.data.chartDef)
-    }
-    api.post_chart(data).then(res => {
-      console.log('Chart successfully updated', res)
-    }, res => {
-      console.log('update chart error,', res)
-    })
-  },
-
   mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(DataFiltersStore, 'raw_data')],
 
   componentDidMount () {
@@ -75,14 +63,23 @@ let ChartWizard = React.createClass({
   saveChart () {
     ChartWizardActions.saveChart(data => {
       var chart = {
+        id: this.props.chart_id,
         dashboard_id: this.dashboard_id,
-        chart_json: JSON.stringify(data)
+        chart_json: JSON.stringify(this.state.data.chartDef)
       }
-      api.post_chart(chart).then(res => {
-        window.location.replace("/datapoints/charts/" + res.objects.id);
-      }, res => {
-        console.log('add chart error,', res)
-      })
+      if (this.props.chart_id) {
+        api.post_chart(chart).then(res => {
+          window.location.replace("/datapoints/charts/" + res.objects.id);
+        }, res => {
+          console.log('add chart error,', res)
+        })
+      } else {
+        api.post_chart(chart).then(res => {
+          console.log('Chart successfully updated', res)
+        }, res => {
+          console.log('update chart error,', res)
+        })
+      }
     })
   },
 
