@@ -15,8 +15,8 @@ let EntryForm = React.createClass({
     EntryFormActions.initData()
   },
 
-  _setIndicator: function (event) {
-    EntryFormActions.setIndicator(event.target.value)
+  _setForm: function (event) {
+    EntryFormActions.setForm(event.target.value)
   },
 
   _setCampaign: function (event) {
@@ -29,29 +29,35 @@ let EntryForm = React.createClass({
   },
 
   render () {
-    let indicatorSet = (
+    let formName = this.state.formSelected ? this.state.formSelected.form_name : 'Select a Form'
+    let formDropDown = (
       <div>
-        <label htmlFor='sets'>Indicator Set</label>
-        <select value={this.state.indicatorSelected} onChange={this._setIndicator}>
-          {this.state.indicatorSets.map(data => {
-            return (<option value={data.id}>{data.title}</option>)
-          })}
-        </select>
+        <label htmlFor='forms'>Forms</label>
+        <DropdownMenu
+          items={this.state.entryFormDefinitions}
+          sendValue={EntryFormActions.setForm}
+          item_plural_name='Forms'
+          text={formName}
+          title_field='form_name'
+          value_field='form_id'
+          uniqueOnly/>
+      </div>
+    )
+    let campaignDropdown = (
+      <div>
+        <label htmlFor='campaigns'>Campaigns</label>
+        <DropdownMenu
+          items={this.state.campaigns}
+          sendValue={this._setCampaign}
+          item_plural_name='Campaign'
+          text={this.state.campaignSelected}
+          title_field='name'
+          icon='fa-globe'
+          uniqueOnly/>
       </div>
     )
 
-    let campaignSet = (
-      <div>
-        <label htmlFor='campaigns'>Campaign</label>
-        <select value={this.state.campaignSelected} onChange={this._setCampaign}>
-          {this.state.campaigns.map(campaign => {
-            return (<option value={campaign.value}>{campaign.text}</option>)
-          })}
-        </select>
-      </div>
-    )
-
-    let locationSet = (
+    let locationDropDown = (
       <div>
         <label htmlFor='locations'>Locations</label>
         <DropdownMenu
@@ -59,7 +65,6 @@ let EntryForm = React.createClass({
           sendValue={EntryFormActions.addLocations}
           item_plural_name='Locations'
           text='Select Location'
-          style='databrowser__button'
           icon='fa-globe'
           uniqueOnly/>
         <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
@@ -92,9 +97,9 @@ let EntryForm = React.createClass({
       <div className='row'>
         <form>
           <div className='medium-2 columns'>
-            {indicatorSet}
-            {campaignSet}
-            {locationSet}
+            {formDropDown}
+            {campaignDropdown}
+            {locationDropDown}
             {includeSublocations}
             {loadEntryForm}
           </div>

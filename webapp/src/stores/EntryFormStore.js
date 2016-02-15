@@ -11,10 +11,10 @@ let EntryFormStore = Reflux.createStore({
   locationList: [],
 
   data: {
-    indicatorSets: require('./IndicatorSets'),
+    entryFormDefinitions: require('./EntryFormDefinitions'),
     indicatorMap: null,
     indicatorSet: null,
-    indicatorSelected: '2',
+    formSelected: null,
     data: null,
     loaded: false,
     campaigns: [],
@@ -51,7 +51,7 @@ let EntryFormStore = Reflux.createStore({
             return a.office - b.office
           })
           .map(function (d) {
-            d.text = d.name
+            d.name = d.name
             d.value = d.id
             return d
           })
@@ -103,13 +103,13 @@ let EntryFormStore = Reflux.createStore({
     this._setCouldLoad()
   },
 
-  _filteredIndicatorSet: function (indicatorSetId) {
-    var indicatorSet = _.find(this.data.indicatorSets, function (d) { return d.id === parseInt(indicatorSetId, 10) })
-    if (!indicatorSet) return null
+  _filterFormDefinition: function (indicatorSetId) {
+    var formDefinition = _.find(this.data.EntryFormDefinition, function (d) { return d.id === parseInt(indicatorSetId, 10) })
+    if (!formDefinition) return null
 
-    var filtered = _.clone(indicatorSet)
+    var filtered = _.clone(formDefinition)
     filtered.indicators = []
-    _.each(indicatorSet.indicators, row => {
+    _.each(formDefinition.indicators, row => {
       if (row.type === 'section-header') { // header
         // remove previous section header if no indicators are included under it
         if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
@@ -150,8 +150,9 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
 
-  onSetIndicator: function (indicatorId) {
-    this.data.indicatorSelected = indicatorId
+  onSetForm: function (formId) {
+    console.log('indicatorid: ', formId)
+    this.data.formSelected = formId
     this.trigger(this.data)
   },
 
@@ -210,9 +211,9 @@ let EntryFormStore = Reflux.createStore({
       this.data.locations = options.location_id__in
     }
 
-    this.data.indicatorSet = this._filteredIndicatorSet(this.data.indicatorSelected)
+    this.data.formDefinition = this._filterFormDefinition(this.data.formSelected)
 
-    options.indicator__in = _(this.data.indicatorSet.indicators)
+    options.indicator__in = _(this.data.formDefinition.indicators)
                   .filter(function (d) { return d.id })
                   .map(function (d) { return d.id })
                   .value()
