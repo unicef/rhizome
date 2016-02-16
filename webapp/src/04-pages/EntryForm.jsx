@@ -40,8 +40,7 @@ let EntryForm = React.createClass({
           items={this.state.entryFormDefinitions}
           sendValue={EntryFormActions.setForm}
           item_plural_name='Forms'
-          text={formName}
-          uniqueOnly/>
+          text={formName}/>
       </div>
     )
 
