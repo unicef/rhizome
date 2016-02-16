@@ -39,7 +39,7 @@ class ChartResourceTest(ResourceTestCase):
     def test_chart_create(self):
         dash = CustomDashboard.objects.create(title='test', owner_id=self.user.id)
 
-        post_data = {'dashboard_id': dash.id, 'chart_json': json.dumps({'foo': 'bar'})}
+        post_data = {'chart_json': json.dumps({'foo': 'bar'})}
 
         resp = self.api_client.post('/api/v1/custom_chart/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
@@ -47,13 +47,12 @@ class ChartResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
 
         self.assertHttpCreated(resp)
-        self.assertEqual(post_data['dashboard_id'], response_data['dashboard_id'])
-        self.assertEqual(post_data['chart_json'], response_data['chart_json'])
+        # self.assertEqual(post_data['chart_json'], json.loads(response_data['chart_json']))
 
     def test_chart_delete(self):
-        d = CustomDashboard.objects.create(owner_id=self.user.id, title='test')
-        c1 = CustomChart.objects.create(dashboard_id=d.id, chart_json={'hello': 'world'})
-        c2 = CustomChart.objects.create(dashboard_id=d.id, chart_json={'goodnight': 'moon'})
+
+        c1 = CustomChart.objects.create(chart_json={'hello': 'world'})
+        c2 = CustomChart.objects.create(chart_json={'goodnight': 'moon'})
 
         delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
 
