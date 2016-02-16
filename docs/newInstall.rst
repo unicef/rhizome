@@ -54,6 +54,14 @@ Security Groups and Firewall
 Base System Packages
 ~~~~~~~
 
+Basic Linux Packages
+=====================
+
+unzip -- `sudo apt-get install unzip`
+pip -- `sudo apt-get install python-pip`
+python-dev -- sudo apt-get install python-dev
+  -> used by pandas installer
+
 Apache
 ======
 
@@ -93,6 +101,12 @@ then enter the psql shell by running:
 `psql postgres`
 
 now you should be able to create datases and roles.
+
+Adding additional Linux Helper Packages
++++++++++++++++++++++++++++++++++++++
+
+`sudo apt-get install python-psycopg2`
+`sudo apt-get install libpq-dev`
 
 
 Setting up Users and Creating the DB
@@ -134,14 +148,52 @@ https://help.ubuntu.com/community/PostgreSQL
 
 CREATE DATABASE afg_eoc WITH OWNER djangoapp;
 
-Folow the prompt and make sure you remember your usrname and password
+now make sure you can login to the database with:
 
-
-
-
-
+psql afg_eoc -U djangoapp
 
 
 NOTE:
 - the config for postgres is /etc/postgresql/9.3/main
 - the data for postgres is /var/lib/postgresql/9.3/main
+
+
+3. create all of the necessary application files and diretories.
+Create App Directory and File System
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you look at fabfile.py at the root of the directory, it relies on a few directories to be in place in order to deploy and serve up the applicaion.
+
+remote_work_path = '~/deploy/rhizome-work'
+remote_backend_path = '/var/www/apps/rhizome/'
+remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
+
+
+Give ownership to the user that deploys your system.. so if your ssh config for the new remote server is
+
+myUser
+
+execute on your machine:
+
+`sudo chown -R myUser /var/www/apps/rhizome/`
+
+To make sure that you are able to create and access the above directores.
+
+Finally create the "venv" path which is where we store all of the packages of application.
+
+`mkdir /var/www/apps/rhizome/venv`
+
+
+
+
+4. push up the code using the fabfile.
+
+If you have the .ssh/config set up like above you can deploy by
+
+1. entering the virtualenv with:
+  source/venv/bin/activate
+
+2. fab -H mySshConfig deploy
+
+
+Check for failiures.. the execution should tell you at the bottom exactly what line failed.. so ssh into the server, run that command and see if you can track down the issue.
