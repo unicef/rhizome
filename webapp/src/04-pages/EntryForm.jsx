@@ -40,7 +40,7 @@ let EntryForm = React.createClass({
       </div>
     )
 
-    let campaignIdSelected = this.state.campaignSelected
+    let campaignIdSelected = this.state.campaignIdSelected
     let campaignName = 'Select a Campaign'
     if (campaignIdSelected) {
       var campaignObj = _.find(this.state.campaigns,
@@ -73,7 +73,7 @@ let EntryForm = React.createClass({
           items={this.state.filterLocations}
           sendValue={EntryFormActions.addLocations}
           item_plural_name='Locations'
-          text='Select Location'
+          text='Select Locations'
           icon='fa-globe'
           uniqueOnly/>
         <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />

@@ -18,8 +18,7 @@ let EntryFormStore = Reflux.createStore({
     data: null,
     loaded: false,
     campaigns: [],
-    campaignSelected: null,
-    campaignNameSelected: null,
+    campaignIdSelected: null,
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -37,6 +36,10 @@ let EntryFormStore = Reflux.createStore({
 
   onInitData: function () {
     let self = this
+
+    // self.data.entryFormDefinitions = self.entryFormDefinitions
+    // self.data.formIdSelected = self.entryFormDefinitions[0]
+
     Promise.all([
       api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
@@ -52,6 +55,7 @@ let EntryFormStore = Reflux.createStore({
           }).value()
 
       self.data.campaigns = campaignResult
+      self.data.campaignIdSelected = campaignResult[0].id
 
       // locations
       let locationResult = _(locations.objects)
@@ -152,7 +156,7 @@ let EntryFormStore = Reflux.createStore({
   },
 
   onSetCampaign: function (campaignId) {
-    this.data.campaignSelected = campaignId
+    this.data.campaignIdSelected = campaignId
     // this._filterLocationsByCampaign()
     this.trigger(this.data)
   },
@@ -171,7 +175,7 @@ let EntryFormStore = Reflux.createStore({
 
   onGetTableData: function () {
     let options = {
-      campaign__in: parseInt(this.data.campaignSelected, 10),
+      campaign__in: parseInt(this.data.campaignIdSelected, 10),
       indicator__in: [],
       location_id__in: []
     }

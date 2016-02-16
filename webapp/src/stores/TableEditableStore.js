@@ -81,12 +81,7 @@ let TableEditaleStore = Reflux.createStore({
     //   })
     // })
 
-    let columns = [{
-      header: 'Locations',
-      type: 'label',
-      headerClasses: 'medium-3'
-    }]
-
+    let columns = []
     let indicator_id_list = formDefinition.indicator_id_list
 
     // add location names as columns
@@ -194,13 +189,13 @@ let TableEditaleStore = Reflux.createStore({
               break
 
             // indicator name
-            case 'label':
-              cell.value = indicatorMap[column.key]
-                ? indicatorMap[column.key].name
-                : 'Missing info for indicator ' + column.key
-              cell.classes = 'label'
-              cell.width = 300
-              break
+            // case 'label':
+            //   cell.value = indicatorMap[column.key]
+            //     ? indicatorMap[column.key].name
+            //     : 'Missing info for indicator ' + column.key
+            //   cell.classes = 'label'
+            //   cell.width = 300
+            //   break
           }
           row.push(cell)
         })
