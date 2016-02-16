@@ -2,6 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import d3 from 'd3'
 import api from 'data/api'
+import DatabrowserTable from '02-molecules/DatabrowserTable'
 
 let newCounter = function () {
   return {
@@ -101,7 +102,7 @@ let TableEditaleStore = Reflux.createStore({
 
     // arrange datapoints into an object of locatoins > indicators
     var byLocation = {}
-    data.forEach(function (d) {
+    data.data.forEach(function (d) {
       if (!byLocation[d.location_id]) { byLocation[d.location_id] = {} }
       byLocation[d.location_id][d.indicator_id] = d
     })

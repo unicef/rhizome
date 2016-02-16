@@ -14,6 +14,9 @@ export default [
     'value': 2,
     'indicator_tag_id': 103,
     'title': 'Intra Campaign',
+    'form_frequency': 'daily',
+    'start_date': '2016-01-01',
+    'end_date': '2016-01-04',
     // 'location_level': 1,
     'indicator_id_list': [749, 750, 746, 732, 731, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 747, 748]
   },
