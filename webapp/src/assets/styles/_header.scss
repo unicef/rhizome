@@ -31,7 +31,7 @@ header {
   }
 
   .navigation-bar {
-    height: $header-height;
+    // height: $header-height;
     font-family: proxima, Arial, Helvetica, sans-serif;
     font-weight: bold;
   }
@@ -88,6 +88,6 @@ header {
 }
 
 .image-style {
-  width: 280px;
+  width: 220px;
   height: auto;
 }

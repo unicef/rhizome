@@ -1,10 +1,7 @@
 .chart-wizard {
-  // max-width: 1230px;
   width: 100%;
   margin: 20px auto;
-  .data-filters > .medium-6 {
-    padding-left: 0;
-  }
+  padding-bottom: 3.5rem;
   .remove-filters-link {
     text-decoration: underline;
     color: $rhz-link-color;
@@ -12,6 +9,27 @@
     text-align: center;
     width: 100%;
     margin-bottom: .4rem;
+  }
+  > footer {
+    position: fixed;
+    background: #252525;
+    width: 100%;
+    bottom: 3.1rem;
+    padding-bottom: .5rem;
+    z-index: 9997;
+    min-width: 100%;
+    p {
+      color: white;
+    }
+    button.success, a.button.success {
+      font-size: .8rem;
+      margin-top: 1.3rem;
+      background: $rhz-navigation-hover-c4d-color;
+    }
+    h3 {
+      color: white;
+      margin-bottom: .25rem;
+    }
   }
 }
 
@@ -79,19 +97,18 @@
 }
 
 .chart-select {
-  text-align: center;
   .chart-box-wrapper {
     padding: 3px;
     display: inline-block;
     margin: 0;
     margin-right: .5rem;
     border: 2px solid transparent;
-    width: 100%;
+    // width: 100%;
 
     .chart-box {
       border-radius: 2px;
       text-align: center;
-      padding: 2px 3px;
+      // padding: 2px 3px;
       cursor: pointer;
       opacity: 0.6;
     }
@@ -123,6 +140,8 @@
   text-align: center;
   margin: .5rem 0;
   border: 2px solid transparent;
+  width: 8rem;
+  display: inline-block;
   &.active {
     border-color: #344B61;
   }
@@ -141,6 +160,7 @@
 .palette-picker__palette {
   display: block;
   text-align: center;
+  width: 7rem;
 }
 
 .palette-picker__color {

@@ -162,70 +162,77 @@ let ChartWizard = React.createClass({
       title_input = <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
     }
 
+
     return (
       <section className='chart-wizard'>
-        <h1 className='medium-12 columns text-center'>Chart Builder</h1>
-        <div className='medium-1 columns'>
+        <h1 className='medium-12 columns text-center'>Explore Data</h1>
+        <div className='row'>
+          <div className='medium-3 columns'>
+            <div>
+              <h3>Time</h3>
+              <DateRangePicker
+                sendValue={ChartWizardActions.updateDateRangePicker}
+                start={startDate}
+                end={endDate}
+                fromComponent='ChartWizard' />
+              <br/>
+            </div>
+            <div className='row data-filters'>
+              <br/>
+              <div className='medium-6 columns'>
+                  <h3>
+                    Indicators
+                    <DropdownMenu
+                      items={availableIndicators}
+                      sendValue={ChartWizardActions.addIndicator}
+                      item_plural_name='Indicators'
+                      style='icon-button right'
+                      icon='fa-plus' />
+                  </h3>
+                  {clear_indicators_button}
+                  <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
+              </div>
+              <div className='medium-6 columns'>
+                <h3>
+                  Locations
+                  <DropdownMenu
+                    items={location_options}
+                    sendValue={ChartWizardActions.addLocation}
+                    item_plural_name='Locations'
+                    style='icon-button right'
+                    icon='fa-plus'
+                    grouped/>
+                </h3>
+                {clear_locations_button}
+                <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
+                <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+              </div>
+            </div>
+          </div>
+          <div className='medium-9 columns'>
+              { data_output }
+          </div>
+        </div>
+        <footer className='row'>
+          <div className='medium-4 columns'>
             <h3>Chart Type</h3>
             <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
-              onChange={ChartWizardActions.changeChart}/>
-            <br/>
+                onChange={ChartWizardActions.changeChart}/>
+          </div>
+          <div className='medium-4 columns'>
             <h3>Color Scheme</h3>
             <PalettePicker value={palette} onChange={ChartWizardActions.changePalette}/>
-        </div>
-        <div className='medium-3 columns'>
-          <div className='row'>
-            <h3>Chart Title</h3>
-            {title_input}
-            <br/>
-            <h3>Time</h3>
-            <DateRangePicker
-              sendValue={ChartWizardActions.updateDateRangePicker}
-              start={startDate}
-              end={endDate}
-              fromComponent='ChartWizard' />
-            <br/>
           </div>
-          <div className='row data-filters'>
-            <br/>
-            <div className='medium-6 columns'>
-                <h3>
-                  Indicators
-                  <DropdownMenu
-                    items={availableIndicators}
-                    sendValue={ChartWizardActions.addIndicator}
-                    item_plural_name='Indicators'
-                    style='icon-button right'
-                    icon='fa-plus' />
-                </h3>
-                {clear_indicators_button}
-                <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
+          <div className='medium-4 columns'>
+            <div className='medium-8 columns'>
+              <h3>Chart Title</h3>
+              { title_input }
             </div>
-            <div className='medium-6 columns'>
-              <h3>
-                Locations
-                <DropdownMenu
-                  items={location_options}
-                  sendValue={ChartWizardActions.addLocation}
-                  item_plural_name='Locations'
-                  style='icon-button right'
-                  icon='fa-plus'
-                  grouped/>
-              </h3>
-              {clear_locations_button}
-              <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
-              <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-            </div>
-          </div>
-        </div>
-        <div className='medium-8 columns'>
-          { data_output }
-          <div className='row'>
-            <div className='medium-3 columns right text-right'>
+            <div className='medium-4 columns'>
               { call_to_action }
             </div>
           </div>
-        </div>
+        </footer>
       </section>
     )
   }

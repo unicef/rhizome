@@ -1,4 +1,4 @@
-footer {
+footer.main-footer {
 
   background-color: $rhz-navigation-bg-color;
   position: fixed;
@@ -6,7 +6,12 @@ footer {
   bottom: 0;
   z-index: 9997;
   min-width: 100%;
-
+  nav.actions ul {
+    text-align: left;
+  }
+  nav.static-links ul {
+    text-align: right;
+  }
   @include respond-to(medium-screens) {
     nav {
       text-align: center !important;

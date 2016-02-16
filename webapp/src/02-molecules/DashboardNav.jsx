@@ -47,31 +47,23 @@ export default React.createClass({
 
     return (
       <ul className='dashboards-nav'>
-        <li className='small-4 columns'>
-          <a href='/datapoints/dashboards/'>Dashboards</a>
+        <li className='medium-4 columns'>
+          <a href='/datapoints/explore'>Explore Data</a>
+        </li>
+        <li className='medium-4 columns'>
+          <a href='/datapoints/charts/'>View Charts</a>
           <ul className='dashboard-menu'>
-            <li className='main-item'>
-              <a href='/datapoints/dashboards/create'>Create a dashboard</a>
-            </li>
             {builtins}
             <li className='separator'>
               <hr />
             </li>
-            {customDashboards}
-          </ul>
-        </li>
-        <li className='small-4 columns'>
-          <a href='/datapoints/charts/'>Charts</a>
-          <ul className='dashboard-menu'>
-            <li className='main-item'>
-              <a href='/datapoints/charts/create'>Create a chart</a>
-            </li>
             {customCharts}
           </ul>
         </li>
-        <li className='small-4 columns log-out'>
+        <li className='medium-4 columns log-out'>
           <a href='/accounts/logout?next=/' title='logout'>
-            <i className='fa fa-lg fa-sign-out'/><br />log out
+          log out &nbsp;
+            <i className='fa fa-lg fa-sign-out'/>
           </a>
         </li>
       </ul>

@@ -12,6 +12,7 @@ urlpatterns = [
     ## CHARTS ##
     url(r'^charts/$', views.charts, name='charts'),
     url(r'^charts/create$', views.chart_builder, name='chart_create'),
+    url(r'^explore$', views.chart_builder, name='chart_create'),
     url(r'^charts/(?P<chart_id>[0-9]+)/$', views.chart, name='chart'),
     url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
     url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder, name='chart_builder'),
