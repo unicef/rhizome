@@ -7,6 +7,7 @@ import DataStore from 'stores/DataStore'
 import DataActions from 'actions/DataActions'
 
 import ChartAPI from 'data/requests/ChartAPI'
+import CampaignAPI from 'data/requests/CampaignAPI'
 
 var ChartPage = React.createClass({
 
@@ -18,13 +19,10 @@ var ChartPage = React.createClass({
       chart_id: React.PropTypes.number
   },
 
-  getInitialState () {
-    return {
-      chart: null
-    }
-  },
-
   componentWillMount () {
+    CampaignAPI.getCampaigns().then(response => {
+      this.setState({ campaigns: response })
+    })
     ChartAPI.getChart(this.props.chart_id).then(response => {
       let chartDef = response.chart_json
       this.setState({
@@ -43,7 +41,7 @@ var ChartPage = React.createClass({
             Edit Chart
           </a>
           <Chart id='custom-chart' type={this.state.chart.type} data={this.state.data.data}
-        options={this.state.data.options}/>
+        options={this.state.data.options} campaigns={this.state.campaigns} defaultCampaign={this.state.campaigns[0]}/>
         </div>
       )
     } else {

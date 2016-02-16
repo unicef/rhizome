@@ -125,7 +125,6 @@ let ChartWizard = React.createClass({
       return null
     }
 
-    console.log('this.state.data.campaignFilteredList: ', this.state.data.campaignFilteredList)
     let chart = (
       <Chart
           id='custom-chart'
