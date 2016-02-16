@@ -193,7 +193,6 @@ var Cell = React.createClass({
     let error = this.hasError ? 'error ' : ''
     let className = isEditable + isEditing + missing + saving + error + this.props.item.class
     let icon = this.props.item.isEditable ? (<i className='fa fa-spinner fa-spin saving-icon'></i>) : ''
-
     return (
       <td className={className} colSpan={this.props.item.colspan}>
         {icon}

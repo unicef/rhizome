@@ -3,7 +3,8 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DropdownMenu from '02-molecules/menus/DropdownMenu'
-import TableEditale from '02-molecules/TableEditable'
+// import TableEditable from '02-molecules/TableEditable'
+import DatabrowserTable from '02-molecules/DatabrowserTable'
 import List from '02-molecules/list/List'
 
 import EntryFormStore from 'stores/EntryFormStore'
@@ -24,10 +25,14 @@ let EntryForm = React.createClass({
   render () {
     let formIdSelected = this.state.formIdSelected
     let formName = 'Select a Form'
+    let indicatorSelected = []
     if (formIdSelected) {
-      formName = _.find(this.state.entryFormDefinitions,
-        function (d) { return d.form_id.toString() === formIdSelected }).title
+      let formDef = _.find(this.state.entryFormDefinitions,
+        function (d) { return d.form_id.toString() === formIdSelected })
+      formName = formDef.title
+      indicatorSelected = formDef.indicator_id_list
     }
+
     let formDropDown = (
       <div>
         <label htmlFor='forms'>Forms</label>
@@ -35,8 +40,7 @@ let EntryForm = React.createClass({
           items={this.state.entryFormDefinitions}
           sendValue={EntryFormActions.setForm}
           item_plural_name='Forms'
-          text={formName}
-          uniqueOnly/>
+          text={formName}/>
       </div>
     )
 
@@ -114,18 +118,26 @@ let EntryForm = React.createClass({
           </div>
         </form>
         <div className='medium-10 columns'>
-          <TableEditale data={this.state.data}
-            loaded={this.state.loaded}
-            formDefinition={this.state.formDefinition}
-            indicatorMap={this.state.indicatorMap}
-            locationMap={this.state.locationMap}
-            locations={this.state.locations}
-            campaignId={this.state.campaignSelected}
-            />
+          <DatabrowserTable
+            data={this.state.apiResponseData}
+            selected_locations={this.state.locationSelected}
+            selected_indicators={indicatorSelected}
+        />
         </div>
       </div>
     )
   }
 })
+
+//   <TableEditable data={this.state.apiResponseData}
+//     loaded={this.state.loaded}
+//     formDefinition={this.state.formDefinition}
+//     indicatorMap={this.state.indicatorMap}
+//     locationMap={this.state.locationMap}
+//     locations={this.state.locations}
+//     campaignId={this.state.campaignSelected}
+//     locationSelected={this.state.locationSelected}
+//     indicatorSelected={indicatorSelected}
+//     />
 
 export default EntryForm

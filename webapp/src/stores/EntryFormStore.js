@@ -217,9 +217,11 @@ let EntryFormStore = Reflux.createStore({
     this.data.loaded = false
     this.trigger(this.data)
 
-    api.datapointsRaw(options, null, {'cache-control': 'no-cache'}).then(response => {
+    api.datapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
-      this.data.data = response.objects
+      this.data.apiResponseData = response
+      // this.data.apiResponseData.meta = response.meta
+      // this.data.data.objects
       this.trigger(this.data)
     }, function (err) {
       console.error(err)
