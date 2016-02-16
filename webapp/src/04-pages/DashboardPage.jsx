@@ -191,7 +191,7 @@ var DashboardPage = React.createClass({
   _navigate (params) {
     let slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
     if (params.dashboard) {
-      window.location.pathname = '/datapoints/' + slug
+      window.location.pathname = '/datapoints/dashboards/' + slug
     }
 
     let location = _.get(params, 'location', this.state.location.name)
@@ -204,7 +204,7 @@ var DashboardPage = React.createClass({
       campaign_dates = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
     }
 
-    page('/datapoints/' + [slug, location, campaign_dates].join('/'))
+    page('/datapoints/dashboards/' + [slug, location, campaign_dates].join('/'))
   },
 
   _showDefault (ctx) {
