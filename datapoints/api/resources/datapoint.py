@@ -13,7 +13,9 @@ from datapoints.api.serialize import CustomSerializer
 from datapoints.api.resources.base_non_model import BaseNonModelResource
 from datapoints.api.functions import get_locations_to_return_from_url
 
-from datapoints.models import DataPointComputed, Campaign, Location, LocationPermission
+from datapoints.models import DataPointComputed, Campaign, Location,\
+    LocationPermission
+
 
 class ResultObject(object):
     '''
@@ -24,6 +26,7 @@ class ResultObject(object):
     location = None
     campaign = None
     indicators = list()
+
 
 class DatapointResource(BaseNonModelResource):
     '''
@@ -42,15 +45,15 @@ class DatapointResource(BaseNonModelResource):
         that will represent the data returned to the applicaton.  In this case
         as specified by the ResultObject the fields in our response will be
         location_id, campaign_id, indcator_json.
-        The resource name is datapoint, which means this resource is accessed by
-        /api/v1/datapoint/.
+        The resource name is datapoint, which means this resource is accessed
+        by /api/v1/datapoint/.
         The data is serialized by the CustomSerializer which uses the default
         handler for JSON responses and transforms the data to csv when the
         user clicks the "download data" button on the data explorer.
         note - authentication inherited from parent class
         '''
 
-        object_class = ResultObject  # use the class above to devine the response
+        object_class = ResultObject  # use the class above to define response
         resource_name = 'datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
@@ -63,7 +66,8 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
-    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
+    def create_response(self, request, data, response_class=HttpResponse,
+                        **response_kwargs):
         """
         THis is overridden from tastypie.  The point here is to be able to
         Set the content-disposition header for csv downloads.  That is the only
@@ -75,8 +79,8 @@ class DatapointResource(BaseNonModelResource):
         desired_format = self.determine_format(request)
         serialized = self.serialize(request, data, desired_format)
 
-        response = response_class(
-            content=serialized, content_type=build_content_type(desired_format), **response_kwargs)
+        response = response_class(content=serialized,
+            content_type=build_content_type(desired_format),**response_kwargs)
 
         if desired_format == 'text/csv':
             response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
@@ -245,6 +249,7 @@ class DatapointResource(BaseNonModelResource):
 
         if campaign_in_param:
             campaign_ids = campaign_in_param.split(',')
+            self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
 
         else:
             campaign_ids = self.get_campaign_list(
@@ -263,21 +268,20 @@ class DatapointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back !
-            self.campaign_qs = Campaign.objects.filter(
+        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back
+            campaign_qs = Campaign.objects.filter(
                 start_date__gte=campaign_start,
                 start_date__lte=campaign_end
                 # top_lvl_location_id=self.top_lvl_location_id
             )
 
         else:
-            self.campaign_qs = Campaign.objects.filter(
+            campaign_qs = Campaign.objects.filter(
                 start_date__gte=campaign_start,
                 start_date__lte=campaign_end,
                 top_lvl_location_id=self.top_lvl_location_id
             )
 
-        campaign__in = [c.id for c in self.campaign_qs]
+        campaign__in = [c.id for c in campaign_qs]
 
         return campaign__in
-
