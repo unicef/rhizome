@@ -20,7 +20,9 @@ let DatabrowserTable = React.createClass({
   },
 
   componentWillReceiveProps: function (nextProps) {
-    DataBrowserTableActions.getTableData(nextProps.selected_locations, nextProps.selected_indicators, nextProps.data)
+    if (nextProps.data) {
+      DataBrowserTableActions.getTableData(nextProps.selected_locations, nextProps.selected_indicators, nextProps.data)
+    }
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
