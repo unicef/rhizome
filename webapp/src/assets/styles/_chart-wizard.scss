@@ -138,9 +138,8 @@
 
 .palette-picker__palette-group {
   text-align: center;
-  margin: .5rem 0;
   border: 2px solid transparent;
-  width: 8rem;
+  width: 100%;
   display: inline-block;
   &.active {
     border-color: #344B61;
@@ -160,7 +159,7 @@
 .palette-picker__palette {
   display: block;
   text-align: center;
-  width: 7rem;
+  width: 100%;
 }
 
 .palette-picker__color {

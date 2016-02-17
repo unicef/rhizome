@@ -23,7 +23,7 @@ import ChartAPI from 'data/requests/ChartAPI'
 
 const defaultChartDef = {
   title: '',
-  type: 'LineChart',
+  type: 'RawData',
   indicators: [],
   countries: [],
   groupBy: 'indicator',
@@ -142,7 +142,7 @@ let ChartWizard = React.createClass({
       clear_indicators_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedIndicators}>Remove All </a>
     }
 
-    let call_to_action = <button className='right button success' disabled={!this.state.data.canDisplayChart} onClick={this.saveChart} ><i className='fa fa-save'></i> &nbsp; Save Chart</button>
+    let call_to_action = <button className='right button success' disabled={!this.state.data.canDisplayChart} onClick={this.saveChart} ><i className='fa fa-save'></i> Save Chart</button>
     if (this.state.data.chartDef.type === 'RawData') {
       call_to_action = <DownloadButton onClick={this._downloadRawData} enable={this.state.data.rawData} text='Download Raw Data' working='Downloading' cookieName='dataBrowserCsvDownload'/>
     }
@@ -214,12 +214,12 @@ let ChartWizard = React.createClass({
           </div>
         </div>
         <footer className='row'>
-          <div className='medium-4 columns'>
+          <div className='medium-6 columns'>
             <h3>Chart Type</h3>
             <ChartSelect charts={this.state.data.chartTypeFilteredList} value={this.state.data.chartDef.type}
                 onChange={ChartWizardActions.changeChart}/>
           </div>
-          <div className='medium-4 columns'>
+          <div className='medium-2 columns'>
             <h3>Color Scheme</h3>
             <PalettePicker value={palette} onChange={ChartWizardActions.changePalette}/>
           </div>
