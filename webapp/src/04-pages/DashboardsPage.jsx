@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DashboardAPI from 'data/requests/Dashboard'
+import DashboardAPI from 'data/requests/DashboardAPI'
 
 export default React.createClass({
 

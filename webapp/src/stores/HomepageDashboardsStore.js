@@ -5,9 +5,9 @@ import moment from 'moment'
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
 
-import Indicator from 'data/requests/Indicator'
-import Location from 'data/requests/Location'
-import Office from 'data/requests/Office'
+import Indicator from 'data/requests/IndicatorAPI'
+import Location from 'data/requests/LocationAPI'
+import Office from 'data/requests/OfficeAPI'
 
 import CampaignStore from 'stores/CampaignStore'
 

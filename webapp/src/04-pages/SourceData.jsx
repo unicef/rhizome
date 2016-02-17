@@ -10,6 +10,7 @@ import builtins from '03-organisms/dashboard/builtin'
 import SourceData from '03-organisms/dashboard/SourceDataDashboard'
 
 import api from 'data/api'
+import DashboardAPI from 'data/requests/DashboardAPI'
 import DashboardInit from 'data/dashboardInit'
 
 import DashboardStore from 'stores/DashboardStore'

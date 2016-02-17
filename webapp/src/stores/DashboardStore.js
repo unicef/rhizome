@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import Location from 'data/requests/Location'
+import Location from 'data/requests/LocationAPI'
 import CampaignStore from 'stores/CampaignStore'
 
 var DashboardStore = Reflux.createStore({
