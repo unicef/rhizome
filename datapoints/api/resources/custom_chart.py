@@ -44,6 +44,10 @@ class CustomChartResource(BaseModelResource):
 
         return bundle
 
+    def obj_delete(self, bundle, **kwargs):
+        CustomChart.objects.get(id=kwargs['pk']).delete()
+
+
     def obj_delete_list(self, bundle, **kwargs):
         """
         """

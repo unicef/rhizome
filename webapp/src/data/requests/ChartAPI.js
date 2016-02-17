@@ -15,5 +15,14 @@ export default {
         fulfill(chart.objects)
       })
     })
+  },
+
+  deleteChart (id) {
+    let fetch = api.endPoint('/custom_chart/' + id, 'delete', 1)
+    return new Promise(function (fulfill, reject) {
+      fetch(null, null, {'cache-control': 'no-cache'}).then(function (chart) {
+        fulfill(chart)
+      })
+    })
   }
 }

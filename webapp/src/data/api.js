@@ -125,6 +125,8 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
             msg: res.body ? res.body.error : '',
             code: res.body ? res.body.code : -1
           })
+        } else if (!res.body) {
+          fulfill(res)
         } else {
           fulfill({
             meta: res.body.meta || {},
