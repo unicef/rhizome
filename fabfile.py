@@ -99,7 +99,7 @@ def _push_to_remote():
         run("python manage.py migrate --settings=settings")
 
         # add environment variables
-        run("source env_var/environment_seed.env")
+        run("source environment_seed.env")
 
         # echo "== COLLECT STATIC =="
         run("python manage.py collectstatic --noinput --settings=settings")
