@@ -61,13 +61,13 @@ var DataBrowserTableStore = Reflux.createStore({
     return pickValue
   },
 
-  onGetTableData: function (locations, indicators, data) {
+  onGetTableData: function (locations, indicators, apiResponseData) {
     this.table = {data: null, schema: null, fields: null, columns: null}
     this.trigger(this.table)
 
     let fields = {location: {title: 'Location', name: 'location'}, campaign: {title: 'Campaign', name: 'campaign'}}
     let columns = ['location', 'campaign']
-    let items = this._extractItemsFromData(data)
+    let items = this._extractItemsFromData(apiResponseData)
 
     indicators.forEach(indicator => {
       fields[indicator.id] = {title: indicator.name, name: indicator.id}
@@ -75,7 +75,7 @@ var DataBrowserTableStore = Reflux.createStore({
     })
 
     this.table.data = this._getPickValue(items, locations)
-    this.table.schema = this._buildSchema(parseSchema(data), fields)
+    this.table.schema = this._buildSchema(parseSchema(apiResponseData), fields)
     this.table.fields = fields
     this.table.columns = columns
 

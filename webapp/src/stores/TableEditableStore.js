@@ -2,7 +2,6 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import d3 from 'd3'
 import api from 'data/api'
-import DatabrowserTable from '02-molecules/DatabrowserTable'
 
 let newCounter = function () {
   return {

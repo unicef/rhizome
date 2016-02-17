@@ -3,7 +3,6 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DropdownMenu from '02-molecules/menus/DropdownMenu'
-// import TableEditable from '02-molecules/TableEditable'
 import DatabrowserTable from '02-molecules/DatabrowserTable'
 import List from '02-molecules/list/List'
 
@@ -30,7 +29,9 @@ let EntryForm = React.createClass({
       let formDef = _.find(this.state.entryFormDefinitions,
         function (d) { return d.form_id.toString() === formIdSelected })
       formName = formDef.title
-      indicatorSelected = formDef.indicator_id_list
+      formDef.indicator_id_list.forEach(indicator_id => {
+        indicatorSelected.push(this.state.indicatorMap[indicator_id])
+      })
     }
 
     let formDropDown = (
@@ -128,16 +129,5 @@ let EntryForm = React.createClass({
     )
   }
 })
-
-//   <TableEditable data={this.state.apiResponseData}
-//     loaded={this.state.loaded}
-//     formDefinition={this.state.formDefinition}
-//     indicatorMap={this.state.indicatorMap}
-//     locationMap={this.state.locationMap}
-//     locations={this.state.locations}
-//     campaignId={this.state.campaignSelected}
-//     locationSelected={this.state.locationSelected}
-//     indicatorSelected={indicatorSelected}
-//     />
 
 export default EntryForm
