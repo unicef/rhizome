@@ -1,8 +1,8 @@
 import json
 
 from datapoints.models import MinGeo, Location
-from datapoints.api.base import BaseNonModelResource, \
-    get_locations_to_return_from_url
+from datapoints.api.resources.base_non_model import BaseNonModelResource
+from datapoints.api.functions import get_locations_to_return_from_url
 from tastypie import fields
 from tastypie.resources import ALL
 

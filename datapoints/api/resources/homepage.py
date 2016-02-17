@@ -1,9 +1,9 @@
 from tastypie.resources import ALL
 from tastypie import fields
 
-from datapoints.api.base import BaseModelResource, BaseNonModelResource
+from datapoints.api.resources.base_non_model import BaseNonModelResource
+from datapoints.api.resources.base_model import BaseModelResource
 from datapoints.models import Campaign, Location, LocationPermission, Office
-
 
 class HomePageResult(object):
     id = int()
