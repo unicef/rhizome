@@ -137,7 +137,7 @@ rhizome
        |- ufadmin
        |- view
        |- ....
-       |_ PolioScape.js
+       |_ Rhizome.js
        |_ ....
 ```
 
@@ -148,11 +148,11 @@ Base on the architecture of Reflux, there is some target folders: `actions` `sto
 And base on business requirement, we have `chart` `dashboard` `ufadmin` folders, `chart` is all chart render component, `dashboard` is all dashboard component, `ufadmin` is all Manage System page functionality.  
 
 ## Program Entry Point
-PolioScape.js is the javascript entry point. rhizome/templates/base.html includes the vendor.js and main.js. The vendor.js is for all script package javascript, the main.js is for all source javascript. There are some major page javascript classes: `Explorer` `Dashboard` `DataEntry` `SourceData` `UserAccount` `Dashboards` `HomepageCharts` `DashboardBuilder` `UFAdmin` in PolioScape.js
+Rhizome.js is the javascript entry point. rhizome/templates/base.html includes the vendor.js and main.js. The vendor.js is for all script package javascript, the main.js is for all source javascript. There are some major page javascript classes: `Explorer` `Dashboard` `DataEntry` `SourceData` `UserAccount` `Dashboards` `HomepageCharts` `DashboardBuilder` `UFAdmin` in Rhizome.js
 
-The server side page routing rule is defined in rhizome/urls.py, So the default empty site root address is routed to homepage.html, homepage.html call Polio.HomepageCharts, then the homepage is rendered. Other pages are similar as the homepage. 
+The server side page routing rule is defined in rhizome/urls.py, So the default empty site root address is routed to homepage.html, homepage.html call Rhizome.HomepageCharts, then the homepage is rendered. Other pages are similar as the homepage. 
 
-The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call PolioScape target page class to render the whole page.
+The server side rhizome/urls.py define the routing rule, every html page define the DOM container element, and then call Rhizome target page class to render the whole page.
 
 ## Dashboard
 There is two kinds dashboard, one is the built-in dashboard, one is the custom dashboard. Built-in dashboards are shown in 4 places:

@@ -5,4 +5,4 @@ if ('ActiveXObject' in window) {
   body.classList.add('ie')
 }
 
-window.Polio = require('./PolioScape')
+window.Rhizome = require('./Rhizome')
