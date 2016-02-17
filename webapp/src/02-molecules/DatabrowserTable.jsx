@@ -3,8 +3,9 @@ import Reflux from 'reflux'
 
 import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
+import SimpleDataTable from '02-molecules/SimpleDataTable.jsx'
 
-const { Datascope, LocalDatascope, SimpleDataTable, SimpleDataTableColumn, Paginator} = require('react-datascope')
+const {Datascope, LocalDatascope, SimpleDataTableColumn, Paginator} = require('react-datascope')
 
 let DatabrowserTable = React.createClass({
 

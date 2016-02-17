@@ -1,33 +1,70 @@
 'use strict'
 
-var _ = require('lodash')
-var React = require('react/addons')
-var cx = require('classnames')
-var moment = require('moment')
-var numeral = require('numeral')
+import _ from 'lodash'
+import React from 'react'
+import cx from 'classnames'
+// var moment = require('moment')
+// var numeral = require('numeral')
 var PropTypes = React.PropTypes
-var InterfaceMixin = require('./../InterfaceMixin')
-var SimpleDataTableColumn = require('./SimpleDataTableColumn')
+// var InterfaceMixin = require('../external/react-datascope/lib/InterfaceMixin.js')
+// var SimpleDataTableColumn = require('./SimpleDataTableColumn')
+import Cell from '02-molecules/TableEditableCell.jsx'
 
-var SimpleDataTableCell = React.createClass({
-  displayName: 'SimpleDataTableCell',
+// No Idea what this does below //
 
+Object.defineProperty(exports, '__esModule', {
+  value: true
+})
+exports['default'] = InterfaceMixin
+
+function InterfaceMixin () {
+  for (var _len = arguments.length, interfaces = Array(_len), _key = 0; _key < _len; _key++) {
+    interfaces[_key] = arguments[_key]
+  }
+
+  return {
+    statics: {
+      implementsInterface: function implementsInterface (name) {
+        return interfaces.indexOf(name) >= 0
+      }
+    }
+  }
+}
+// No Idea what that does above //
+
+var SimpleDataTableColumn = React.createClass({
+  displayName: 'SimpleDataTableColumn',
+
+  mixins: [InterfaceMixin('DataTableColumn')],
   propTypes: {
-    name: PropTypes.string,
-    schema: PropTypes.object, // schema for this field
-    field: PropTypes.object, // schema for this field
-    row: PropTypes.object // the current data row which contains this cell
+    name: PropTypes.string, // field key
+    title: PropTypes.string, // human-readable field name (to override schema)
+    schema: PropTypes.object // schema for this column only (passed implicitly by SimpleDataTable)
   },
-
   render: function render () {
-    var field = this.props.field
-    return React.createElement(
-            'td',
-            { className: 'ds-data-table-cell' },
-            field.renderer(this.props.row[field.key], field, { moment: moment, numeral: numeral })
-        )
+    throw new Error('SimpleDataTableColumn should never be rendered!')
   }
 })
+
+// var SimpleDataTableCell = React.createClass({
+//   displayName: 'SimpleDataTableCell',
+//
+//   propTypes: {
+//     name: PropTypes.string,
+//     schema: PropTypes.object, // schema for this field
+//     field: PropTypes.object, // schema for this field
+//     row: PropTypes.object // the current data row which contains this cell
+//   },
+//
+//   render: function render () {
+//     var field = this.props.field
+//     return React.createElement(
+//             'td',
+//             { className: 'ds-data-table-cell' },
+//             field.renderer(this.props.row[field.key], field, { moment: moment, numeral: numeral })
+//         )
+//   }
+// })
 
 var TableHeaderCell = React.createClass({
   displayName: 'TableHeaderCell',
@@ -195,11 +232,14 @@ var SimpleDataTable = React.createClass({
             'tr',
             null,
             React.Children.map(columns, function (column) {
-              return React.createElement(SimpleDataTableCell, {
-                name: column.props.name,
-                schema: _this.props.schema.items.properties[column.props.name],
-                field: _this.props.fields[column.props.name],
-                row: row
+              return React.createElement(Cell, {
+                item: {
+                  name: column.props.name,
+                  schema: _this.props.schema.items.properties[column.props.name],
+                  field: _this.props.fields[column.props.name],
+                  row: row,
+                  value: row[column.props.name]
+                }
               })
             })
         )

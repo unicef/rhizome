@@ -3,7 +3,6 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DropdownMenu from '02-molecules/menus/DropdownMenu'
-// import TableEditable from '02-molecules/TableEditable'
 import DatabrowserTable from '02-molecules/DatabrowserTable'
 import List from '02-molecules/list/List'
 
@@ -130,16 +129,5 @@ let EntryForm = React.createClass({
     )
   }
 })
-
-//   <TableEditable data={this.state.apiResponseData}
-//     loaded={this.state.loaded}
-//     formDefinition={this.state.formDefinition}
-//     indicatorMap={this.state.indicatorMap}
-//     locationMap={this.state.locationMap}
-//     locations={this.state.locations}
-//     campaignId={this.state.campaignSelected}
-//     locationSelected={this.state.locationSelected}
-//     indicatorSelected={indicatorSelected}
-//     />
 
 export default EntryForm
