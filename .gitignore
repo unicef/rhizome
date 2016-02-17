@@ -32,3 +32,4 @@ rhizome/settings/private.py
 settings.py
 dev
 webapp/coverage
+templates/base.html
