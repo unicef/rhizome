@@ -37,6 +37,7 @@ urlpatterns = [
 
     ## DATA SOURCE DATA
     url(r'^source-data/$', views.source_data, name='source_data'),
+    url(r'^source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', views.source_data, name='source_data'),
 
     ## ADMIN FUNCTINALITY THAT NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
     url(r'^campaign/', views.update_campaign, name='update_campaign'),
