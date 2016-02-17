@@ -8,17 +8,17 @@ var HomepageChartsSection = React.createClass({
   },
   getManagementDashboardUrl: function () {
     var [year, month] = this.props.data.campaign.start_date.split('-')
-    return `/datapoints/management-dashboard/${this.props.location}/${year}/${month}`
+    return `/datapoints/dashboards/management-dashboard/${this.props.location}/${year}/${month}`
   },
 
   getDistrictSummaryUrl: function () {
     var [year, month] = this.props.data.campaign.start_date.split('-')
-    return `/datapoints/district-dashboard/${this.props.location}/${year}/${month}`
+    return `/datapoints/dashboards/district-dashboard/${this.props.location}/${year}/${month}`
   },
 
   getNGACampaignMonitoringUrl: function () {
     var [year, month] = this.props.data.campaign.start_date.split('-')
-    return `/datapoints/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
+    return `/datapoints/dashboards/nga-campaign-monitoring/${this.props.location}/${year}/${month}`
   },
 
   render: function () {
