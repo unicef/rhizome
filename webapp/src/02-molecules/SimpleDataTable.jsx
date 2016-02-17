@@ -1,8 +1,10 @@
 'use strict'
 
+import api from 'data/api'
 import _ from 'lodash'
 import React from 'react'
 import cx from 'classnames'
+import d3 from 'd3'
 // var moment = require('moment')
 // var numeral = require('numeral')
 var PropTypes = React.PropTypes
@@ -45,26 +47,6 @@ var SimpleDataTableColumn = React.createClass({
     throw new Error('SimpleDataTableColumn should never be rendered!')
   }
 })
-
-// var SimpleDataTableCell = React.createClass({
-//   displayName: 'SimpleDataTableCell',
-//
-//   propTypes: {
-//     name: PropTypes.string,
-//     schema: PropTypes.object, // schema for this field
-//     field: PropTypes.object, // schema for this field
-//     row: PropTypes.object // the current data row which contains this cell
-//   },
-//
-//   render: function render () {
-//     var field = this.props.field
-//     return React.createElement(
-//             'td',
-//             { className: 'ds-data-table-cell' },
-//             field.renderer(this.props.row[field.key], field, { moment: moment, numeral: numeral })
-//         )
-//   }
-// })
 
 var TableHeaderCell = React.createClass({
   displayName: 'TableHeaderCell',
@@ -238,12 +220,65 @@ var SimpleDataTable = React.createClass({
                   schema: _this.props.schema.items.properties[column.props.name],
                   field: _this.props.fields[column.props.name],
                   row: row,
-                  value: row[column.props.name]
+                  value: row[column.props.name],
+                  isEditable: true,
+                  validateValue: _this._validateValue,
+                  buildSubmitPromise: _this._buildSubmitPromise,
+                  classes: 'numeric',
+                  format: _this._numericFormatter,
+                  tooltip: 'this is gonna work bro!!!!',
+                  type: 'value',
+                  withError: _this._withError,
+                  withResponse: _this._withResponse
                 }
               })
             })
         )
-  }
-})
+  },
 
+  _withResponse: function (error) {
+      var self = this
+      console.log(error)
+      if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
+      self.hasError = true
+    },
+
+  _withError: function (error) {
+      var self = this
+      console.log(error)
+      if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
+      self.hasError = true
+    },
+
+  _numericFormatter: function (v) {
+    return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
+  },
+
+  _validateValue: function (newVal) {
+    console.log('VALIDATING VALUEE!!!!!')
+    var value, passed
+    if (_.isNull(newVal)) {
+      value = null
+      passed = true
+    } else {
+      value = parseFloat(newVal)
+      passed = !_.isNaN(value)
+    }
+    return { 'value': value, 'passed': passed }
+  },
+
+  _buildSubmitPromise: function (newVal) {
+    console.log('Build Submit PRomise')
+    var self = this
+    var upsert_options = {
+      datapoint_id: self.datapoint_id,
+      campaign_id: 307, // parseInt(campaignId, 10),
+      indicator_id: 22, // self.indicator_id,
+      location_id: self.location_id,
+      value: parseFloat(newVal)
+    }
+    return api.datapointUpsert(upsert_options)
+  }
+
+})
 module.exports = SimpleDataTable

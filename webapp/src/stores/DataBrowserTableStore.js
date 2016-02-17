@@ -62,7 +62,6 @@ var DataBrowserTableStore = Reflux.createStore({
   },
 
   onGetTableData: function (locations, indicators, apiResponseData) {
-    console.log('apiResponseData: ', apiResponseData)
     this.table = {data: null, schema: null, fields: null, columns: null}
     this.trigger(this.table)
 
