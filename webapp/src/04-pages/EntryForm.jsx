@@ -30,7 +30,9 @@ let EntryForm = React.createClass({
       let formDef = _.find(this.state.entryFormDefinitions,
         function (d) { return d.form_id.toString() === formIdSelected })
       formName = formDef.title
-      indicatorSelected = formDef.indicator_id_list
+      formDef.indicator_id_list.forEach(indicator_id => {
+        indicatorSelected.push(this.state.indicatorMap[indicator_id])
+      })
     }
 
     let formDropDown = (

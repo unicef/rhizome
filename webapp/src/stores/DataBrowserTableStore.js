@@ -70,6 +70,7 @@ var DataBrowserTableStore = Reflux.createStore({
     let items = this._extractItemsFromData(data)
 
     indicators.forEach(indicator => {
+      console.log('store: ', indicator)
       fields[indicator.id] = {title: indicator.name, name: indicator.id}
       columns.push(indicator.id)
     })
