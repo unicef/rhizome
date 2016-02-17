@@ -13,8 +13,8 @@ var NavigationStore = Reflux.createStore({
   init: function () {
     this.campaigns = []
     this.dashboards = []
-    this.customDashboards = []
-    this.customCharts = []
+    this.custom_dashboards = []
+    this.custom_charts = []
     this.loaded = false
 
     Promise.all([
@@ -28,13 +28,14 @@ var NavigationStore = Reflux.createStore({
     return {
       campaigns: this.campaigns,
       dashboards: this.dashboards,
-      customCharts: this.customCharts,
+      custom_charts: this.custom_charts,
       documents: this.documents,
       loaded: this.loaded
     }
   },
 
-  // API
+  // This function is seemingly used only to call the SourceData builtin dashboard.
+  // Where can we move it or refactor it out?
   getDashboard: function (slug) {
     var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug)
 

@@ -12,6 +12,7 @@ let EntryFormStore = Reflux.createStore({
 
   data: {
     entryFormDefinitions: require('./EntryFormDefinitions'),
+    apiResponseData: null,
     indicatorMap: null,
     indicatorSet: null,
     formIdSelected: null,

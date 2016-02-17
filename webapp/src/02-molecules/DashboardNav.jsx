@@ -6,7 +6,7 @@ import NavMenuItem from '02-molecules/NavMenuItem.jsx'
 import NavigationStore from 'stores/NavigationStore'
 import ChartAPI from 'data/requests/ChartAPI'
 
-export default React.createClass({
+let DashboadrNav = React.createClass({
 
   mixins: [
     Reflux.connect(NavigationStore),
@@ -15,14 +15,14 @@ export default React.createClass({
 
   componentWillMount () {
     ChartAPI.getCharts().then(response => {
-      this.setState({customCharts: response})
+      this.setState({ custom_charts: response })
     })
   },
 
   render: function () {
-    var dashboards = this.state.dashboards
-    var customDashboards = []
-    var builtins = []
+    let dashboards = this.state.dashboards
+    let custom_dashboards = []
+    let premade_dashboards = []
 
     if (!_.isUndefined(dashboards)) {
       if (dashboards.length > 14) {
@@ -30,21 +30,32 @@ export default React.createClass({
       }
     }
 
-    _.forEach(dashboards, function(dashboard) {
+    // Dashboard Menu Items
+    // ---------------------------------------------------------------------------
+    _.forEach(dashboards, function (dashboard) {
       if (dashboard.builtin && dashboard.id !== -4 && dashboard.title.indexOf('Homepage') === -1) {
-        builtins.push(
-          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>{dashboard.title}</NavMenuItem>
-        )
-      } else if (!dashboard.builtin)
-        customDashboards.push(
-          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' + dashboard.id}>{dashboard.title}</NavMenuItem>
-        )
+        premade_dashboards.push(
+          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>
+            {dashboard.title}
+          </NavMenuItem>)
+      } else if (!dashboard.builtin) {
+        custom_dashboards.push(
+          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' + dashboard.id}>
+            {dashboard.title}
+          </NavMenuItem>)
+      }
     }, this)
 
-    let customCharts = this.state.customCharts.map(chart => {
-      return <NavMenuItem key={chart.chart_json.id} href={'/datapoints/charts/' + chart.id}>{chart.chart_json.title}</NavMenuItem>
+    // Chart Menu Items
+    // ---------------------------------------------------------------------------
+    let custom_charts = this.state.custom_charts.map(chart => {
+      return <NavMenuItem key={chart.chart_json.id} href={'/datapoints/charts/' + chart.id}>
+        { chart.chart_json.title }
+      </NavMenuItem>
     })
 
+    // Chart Menu Items
+    // ---------------------------------------------------------------------------
     return (
       <ul className='dashboards-nav'>
         <li className='medium-4 columns'>
@@ -52,17 +63,17 @@ export default React.createClass({
         </li>
         <li className='medium-4 columns'>
           <a href='/datapoints/charts/'>View Charts</a>
-          <ul className='dashboard-menu'>
-            {builtins}
+          <ul className='dashboard-menu animated slideDown'>
+            { premade_dashboards }
             <li className='separator'>
               <hr />
             </li>
-            {customCharts}
+            { custom_charts }
           </ul>
         </li>
         <li className='medium-4 columns log-out'>
           <a href='/accounts/logout?next=/' title='logout'>
-          log out &nbsp;
+            Log Out &nbsp;
             <i className='fa fa-lg fa-sign-out'/>
           </a>
         </li>
@@ -70,3 +81,5 @@ export default React.createClass({
     )
   }
 })
+
+export default DashboadrNav

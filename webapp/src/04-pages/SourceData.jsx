@@ -94,57 +94,36 @@ var Dashboard = React.createClass({
         }
       }
 
-      if (this.state.hasMap) {
-        GeoActions.fetch(this.state.location)
-      }
+      if (this.state.hasMap) { GeoActions.fetch(this.state.location) }
     } else if (NavigationStore.loaded) {
-      page({
-        click: false
-      })
+      page({ click: false })
     }
   },
 
   _onNavigationChange (nav) {
     if (NavigationStore.loaded) {
-      page({
-        click: false
-      })
+      page({ click: false })
     }
   },
 
   _setCampaign (id) {
     let campaign = _.find(this.state.campaigns, c => c.id === id)
-
-    if (!campaign) {
-      return
-    }
-
-    this._navigate({
-      campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
-    })
+    if (!campaign) { return }
+    this._navigate({ campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') })
   },
 
   _setLocation (id) {
     let location = _.find(this.state.locations, r => r.id === id)
-
-    if (!location) {
-      return
-    }
-
-    this._navigate({
-      location: location.name
-    })
+    if (!location) { return }
+    this._navigate({ location: location.name })
   },
 
   _setDashboard (slug) {
-    this._navigate({
-      dashboard: slug
-    })
+    this._navigate({ dashboard: slug })
   },
 
   _getDashboard (slug) {
     let dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
-
     if (dashboard.id <= 0) {
       return new Promise(resolve => {
         resolve(dashboard)
