@@ -442,8 +442,8 @@ let ChartWizardStore = Reflux.createStore({
     let options = {indicator__in: []}
 
     if (locations.length > 0) options.location_id__in = _.map(locations, 'id')
-    if (campaign.start) options.campaign_start = moment(campaign.start).format('YYYY-M-D')
-    if (campaign.end) options.campaign_end = moment(campaign.end).format('YYYY-M-D')
+    if (this.data.startDate) options.campaign_start = moment(this.data.startDate).format('YYYY-M-D')
+    if (this.data.endDate) options.campaign_end = moment(this.data.endDate).format('YYYY-M-D')
 
     indicators.forEach(indicator => {
       options.indicator__in.push(indicator.id)
