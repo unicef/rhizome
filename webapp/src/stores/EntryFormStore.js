@@ -5,6 +5,7 @@ import ancestryString from 'data/transform/ancestryString'
 import treeify from 'data/transform/treeify'
 import flattenChildren from 'data/transform/flattenChildren'
 import api from 'data/api'
+import DatapointAPI from 'data/requests/DatapointAPI'
 
 let EntryFormStore = Reflux.createStore({
   listenables: [require('actions/EntryFormActions')],
@@ -218,7 +219,7 @@ let EntryFormStore = Reflux.createStore({
     this.data.loaded = false
     this.trigger(this.data)
 
-    api.datapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
+    DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.apiResponseData = response
       // this.data.apiResponseData.meta = response.meta

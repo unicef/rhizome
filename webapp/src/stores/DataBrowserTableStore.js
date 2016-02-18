@@ -39,6 +39,8 @@ var DataBrowserTableStore = Reflux.createStore({
     return data.objects.map(item => {
       let result = _.pick(item, 'location')
       result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
+      result.location_id = item.location
+      result.campaign_id = item.campaign
       item.indicators.forEach(indicator => {
         result[indicator.indicator] = this._format(indicator.value) // indicator.indicator is the id
       })

@@ -43,11 +43,19 @@ let EditableTableCell = React.createClass({
         this.setState({ editMode: false, hasError: true })
       } else {
         this.isSaving = true
-        let promise = EditableTableCellActions.saveCellValue(event.target.value, this.props.field.key)
+        let query_params = {
+          location_id: this.props.row.location_id,
+          campaign_id: this.props.row.campaign_id,
+          indicator_id: this.props.field.key,
+          new_value: event.target.value
+        }
+        let promise = EditableTableCellActions.saveCellValue(query_params)
         promise.then(response => {
           this.isSaving = false
           this.hasError = false
           this.setState({editMode: false})
+          console.log(response)
+          console.log('SUCCESS')
         })
       }
       this.display_value = event.target.value
