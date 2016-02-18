@@ -1,5 +1,4 @@
 import numpy as np
-import pprint
 import sys
 from pandas import DataFrame, pivot_table, notnull
 
@@ -128,12 +127,16 @@ class DatapointResource(BaseNonModelResource):
         try:
             p_table = pivot_table(
                 dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-        except KeyError:
-            return results
+            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+            pivoted_data = no_nan_pivoted_df.to_dict()
+        except KeyError: ## there is no data
+            if len(self.parsed_params['campaign__in']) > 1: ## implicit way to only do this for data entry
+                return
 
-        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-
-        pivoted_data = no_nan_pivoted_df.to_dict()
+            pivoted_data = {}
+            for location_id in self.location_ids:
+                tupl = (location_id, self.parsed_params['campaign__in'][0])
+                pivoted_data[tupl] = {}
 
         for row, indicator_dict in pivoted_data.iteritems():
 
@@ -220,6 +223,8 @@ class DatapointResource(BaseNonModelResource):
         '''
         parsed_params = {}
 
+        required_params = {'indicator__in': None}
+
         # try to find optional parameters in the dictionary. If they are not
         # there return the default values ( given in the dict below)
         optional_params = {
@@ -233,29 +238,27 @@ class DatapointResource(BaseNonModelResource):
             except KeyError:
                 parsed_params[k] = v
 
-        # find the Required Parameters and if they
-        # dont exists return an error to the response
-        required_params = {'indicator__in': None}
-
         for k, v in required_params.iteritems():
 
             try:
                 parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
             except KeyError as err:
+
                 err_msg = '%s is a required parameter!' % err
                 return err_msg, None
 
         campaign_in_param = parsed_params['campaign__in']
 
         if campaign_in_param:
-            campaign_ids = campaign_in_param.split(',')
-            self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
+            campaign_ids = [int(c_id) for c_id in campaign_in_param.split(',')]
+
 
         else:
             campaign_ids = self.get_campaign_list(
                 parsed_params['campaign_start'], parsed_params['campaign_end']
             )
 
+        self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
         parsed_params['campaign__in'] = campaign_ids
 
         self.parsed_params = parsed_params
