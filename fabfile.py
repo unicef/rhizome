@@ -1,14 +1,22 @@
 # example invocation
 # $ fab -H ubuntu@xx.x.xxx.xx deploy -i ~/.ssh/some.key
+# Fabfile to automate the installation process!
 
-from fabric.api import local, run, cd, put, env
+from fabric.api import local, run, cd, put, env, sudo
+from fabtools import require
+
+# database, username and password
+env.database = 'afg_polio'
+env.username = 'djangoapp'
+env.password = 'anythinghere'
+
 
 env.use_ssh_config = True
 # this can be set by passing venv_path arg to deploy() target
 local_venv_path = None
 
 # /var/www/clients.seedscientific.com/uf/UF04
-remote_work_path = '~/deploy/rhizome-work'
+remote_work_path = 'deploy/rhizome-work'
 remote_backend_path = '/var/www/apps/rhizome/'
 remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
 remote_manage_path = remote_backend_path + "manage.py"
@@ -19,21 +27,63 @@ def deploy(venv_path=None):
     global local_venv_path
     local_venv_path = venv_path;
 
-    # on local machine
-    _build_dependencies()
-    run_tests()
+    # Local machine
 
-    # on target machine
-    stop_apache()
+    # Remote machine
+    update_remote()
+    instal_basic_packages()
+    install_postgres()
+    configure_psql()
+    install_apache()
+    create_dirs()
+
+# setup is doing test and pushing it to the remote
+def setup():
+    #run_tests()
+    #_build_dependencies()
     _push_to_remote()
-    start_apache()
+
+# update the remote server
+def update_remote():
+    sudo('apt-get update')
+# install basic packages such as unzip, python-dev, pip, build-essential.
+def instal_basic_packages():
+    sudo('apt-get install -y unzip python-pip python-dev build-essential python-psycopg2 libpq-dev')
+# install postgresql
+def install_postgres():
+    sudo('apt-get install -y postgresql postgresql-contrib')
+# create postgresql user and Database
+def configure_psql():
+    require.postgres.user('djangoapp', password='testpass', superuser=True, createdb=True, createrole=True, connection_limit=20)
+    require.postgres.database('afg_polio', owner='djangoapp')
+    # for restart: sudo('service postgresql restart')
+# install apache
+def install_apache():
+    #sudo('apt-get install -y apache2')
+    sudo('apt-get install -y libapache2-mod-wsgi')
+# install virtualenv and virtualenvwrapper
+def install_virtualenv():
+    sudo('pip install virtualenv virtualenvwrapper')
+
+# create directories structure
+def create_dirs():
+    require.directory(remote_work_path, owner='www-data', use_sudo=True)
+    require.directory(remote_backend_path, owner='www-data', use_sudo=True)
+    require.directory(remote_frontend_path, owner='www-data', use_sudo=True)
+    # set the read_write permission on the directory www to normal users as well
+    run('sudo chmod -R ugo+rw /var/www/')
+    restart_apache()
 
 # apache controls
 def stop_apache():
-    run("sudo /etc/init.d/apache2 stop")
+    run("sudo service apache2 stop")
 
 def start_apache():
-    run("sudo /etc/init.d/apache2 start")
+    run("sudo service apache2 start")
+
+def restart_apache():
+    run("sudo service apache2 restart")
+
 
 def run_tests():
 
@@ -66,13 +116,13 @@ def _push_to_remote():
     ### on target machine ###
 
     # make folder if it doesn't exist #
-    run ("mkdir -p %s" % remote_work_path)
+    #run ("mkdir -p %s" % remote_work_path)
 
     # push to remote server #
-    put ('dist/rhizome.zip', remote_work_path)
+    #put ('dist/rhizome.zip', remote_work_path, use_sudo=True)
 
     # unzip stuff #
-    with cd(remote_work_path):
+    #with cd(remote_work_path):
 
         # Delete all Python, HTML, and SQL files. We don't delete the entire
         # directory because that will catch the media/ directory which will
@@ -85,7 +135,7 @@ def _push_to_remote():
         # when the unzip fe files will be included
 
         ## dont think this is avtually overwriting
-        run("unzip -o rhizome.zip -d %s" % remote_backend_path)
+        #run("unzip -o rhizome.zip -d %s" % remote_backend_path)
 
     # in server path -
     with cd(remote_backend_path):
@@ -93,7 +143,7 @@ def _push_to_remote():
         run('sudo rm -rf `find . -name "*.pyc*"`')
 
         # install python dependencies
-        # run("pip install -r requirements.txt")
+        sudo("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
