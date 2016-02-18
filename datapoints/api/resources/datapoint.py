@@ -128,12 +128,16 @@ class DatapointResource(BaseNonModelResource):
         try:
             p_table = pivot_table(
                 dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-        except KeyError:
-            return results
+            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+            pivoted_data = no_nan_pivoted_df.to_dict()
+        except KeyError: ## there is no data
+            if len(self.parsed_params['campaign__in']) > 1: ## implicit way to only do this for data entry
+                return
 
-        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-
-        pivoted_data = no_nan_pivoted_df.to_dict()
+            pivoted_data = {}
+            for location_id in self.location_ids:
+                tupl = (location_id, self.parsed_params['campaign__in'][0])
+                pivoted_data[tupl] = {}
 
         for row, indicator_dict in pivoted_data.iteritems():
 
@@ -245,17 +249,18 @@ class DatapointResource(BaseNonModelResource):
                 err_msg = '%s is a required parameter!' % err
                 return err_msg, None
 
+        print '=== made it here ==='
         campaign_in_param = parsed_params['campaign__in']
 
         if campaign_in_param:
             campaign_ids = campaign_in_param.split(',')
-            self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
 
         else:
             campaign_ids = self.get_campaign_list(
                 parsed_params['campaign_start'], parsed_params['campaign_end']
             )
 
+        self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
         parsed_params['campaign__in'] = campaign_ids
 
         self.parsed_params = parsed_params

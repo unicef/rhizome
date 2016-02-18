@@ -5,8 +5,9 @@ from tastypie.resources import Resource
 from datapoints.api.serialize import CustomSerializer
 from datapoints.api.custom_session_authentication import CustomSessionAuthentication
 from datapoints.api.custom_cache import CustomCache
+from datapoints.api.resources.base import BaseResource
 
-class BaseNonModelResource(Resource):
+class BaseNonModelResource(BaseResource):
     '''
     NOTE: This applies to only the V1 API.  This is only used for the
     /api/v1/datapoint endpoint.
@@ -29,3 +30,9 @@ class BaseNonModelResource(Resource):
     def dehydrate(self, bundle):
         bundle.data.pop("resource_uri", None)
         return bundle
+
+    def dispatch(self, request_type, request, **kwargs):
+        '''
+        '''
+
+        return super(BaseNonModelResource, self).dispatch(request_type, request, **kwargs)

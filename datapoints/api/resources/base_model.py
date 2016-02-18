@@ -1,5 +1,4 @@
 import json
-import traceback
 
 from django.http import HttpResponse
 
@@ -13,8 +12,9 @@ from datapoints.api.serialize import CustomSerializer
 from datapoints.api.custom_session_authentication import CustomSessionAuthentication
 from datapoints.api.custom_cache import CustomCache
 from datapoints.api.exceptions import DatapointsException
+from datapoints.api.resources.base import BaseResource
 
-class BaseModelResource(ModelResource):
+class BaseModelResource(ModelResource, BaseResource):
     '''
     This applies to only the V1 API.  This method inherits from Tastypie's
     model resource.
@@ -41,62 +41,10 @@ class BaseModelResource(ModelResource):
         serializer = CustomSerializer()
 
     def dispatch(self, request_type, request, **kwargs):
-        """
-        Overrides Tastypie and calls get_list.
-        """
+        '''
+        '''
 
-        self.top_lvl_location_id = LocationPermission.objects.get(
-            user_id = request.user.id).top_lvl_location_id
-
-        allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
-        #
-        if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
-            request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
-
-        request_method = self.method_check(request, allowed=allowed_methods)
-        method = getattr(self, "%s_%s" % (request_method, request_type), None)
-
-        # if method is None:
-        #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
-
-        self.is_authenticated(request)
-        self.throttle_check(request)
-        # All clear. Process the request.
-
-        # If what comes back isn't a ``HttpResponse``, assume that the
-        # request was accepted and that some action occurred. This also
-        # prevents Django from freaking out.
-
-        # request = convert_post_to_put(request)
-
-        try:
-            response = method(request, **kwargs)
-
-        except Exception as error:
-
-            error_code = DatapointsException.defaultCode
-            error_message = DatapointsException.defaultMessage
-
-            if isinstance(error, DatapointsException):
-                error_code = error.code
-                error_message = error.message
-
-            data = {
-                'traceback': traceback.format_exc(),
-                'error': error_message,
-                'code': error_code
-            }
-
-            return self.error_response(
-                request,
-                data,
-                response_class=http.HttpApplicationError
-            )
-
-        if not isinstance(response, HttpResponse):
-            return http.HttpNoContent()
-
-        return response
+        return super(BaseModelResource, self).dispatch(request_type, request, **kwargs)
 
     def get_list(self, request, **kwargs):
         """
