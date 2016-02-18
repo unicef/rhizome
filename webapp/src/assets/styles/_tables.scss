@@ -15,14 +15,6 @@ table {
       }
     }
   }
-
-  td {
-    background-color: white;
-    cursor: default;
-    font-size: 9pt;
-    padding: 3pt 0;
-  }
-
   tbody {
     tr:not(.empty):hover {
       td {
@@ -30,6 +22,27 @@ table {
       }
     }
   }
+
+  td {
+    background-color: white;
+    cursor: default;
+    font-size: .6875rem;
+    padding: 3pt 0;
+    input[type=text] {
+      font-size: .85rem;
+      text-align: left;
+      margin: 0;
+    }
+    &.editable {
+      &.in-edit-mode {
+        padding: 0;
+      }
+      &:hover {
+        background: #DDDDDD;
+      }
+    }
+  }
+
 
   tfoot {
     td {
@@ -62,6 +75,9 @@ table {
   }
 
   .numeric {
+    input[type=text] {
+      text-align: right;
+    }
     text-align: right;
   }
 
@@ -201,6 +217,7 @@ table {
 
 $valueColumnWidth: 80px;
 
+
 .fixed-table-container table {
 
   border-collapse: collapse;
@@ -214,9 +231,8 @@ $valueColumnWidth: 80px;
     width: $valueColumnWidth;
     padding: 2px;
 
-    .displayValue,
-    .editControl
-    {
+
+    .displayValue, .editControl {
       width: 100%;
       height: 100%;
       padding: 4px 6px;
@@ -228,20 +244,28 @@ $valueColumnWidth: 80px;
     }
 
     .editControl {
-
       display: none;
       border: 1px solid #aaa;
       font-size: inherit;
       min-width: 50px;
-
       &:focus {
         outline: 0;
       }
     }
 
-    &.editing .displayValue,
-    &.saving .displayValue
-    {
+    input {
+      display: none;
+    }
+
+    &.editing {
+      input {
+        display: inline-block;
+      }
+      .displayValue {
+        display: none;
+      }
+    }
+    &.editing .displayValue, &.saving .displayValue {
       display: none;
     }
 

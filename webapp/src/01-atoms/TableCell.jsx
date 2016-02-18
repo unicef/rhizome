@@ -1,6 +1,6 @@
 import React from 'react'
 import Layer from 'react-layer'
-import Tooltip from '02-molecules/Tooltip.jsx'
+import Tooltip from '02-molecules/Tooltip'
 
 var TableCell = React.createClass({
 
@@ -9,19 +9,25 @@ var TableCell = React.createClass({
     value: React.PropTypes.string,
     classes: React.PropTypes.string,
     formatValue: React.PropTypes.func,
+    onClick: React.PropTypes.func,
     tooltip: React.PropTypes.string,
+    hideValue: React.PropTypes.bool,
     children: React.PropTypes.array
   },
 
   getInitialState () {
     return {
-      display_value: this.props.value,
       tooltip: null
     }
   },
 
+  handleClick: function (event) {
+    this.hideTooltip()
+    return this.props.onClick(event)
+  },
+
   showTooltip: function (event) {
-    if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null) return
+     if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null || this.props.hideValue) return
 
     let render = () => {
       return <Tooltip left={event.pageX} top={event.pageY}>{this.props.tooltip}</Tooltip>
@@ -33,21 +39,30 @@ var TableCell = React.createClass({
   hideTooltip: function () {
     if (this.state.tooltip) {
       this.state.tooltip.destroy()
-      this.setState({ tooltip: null })
+      this.state.tooltip = null
     }
   },
 
   render: function () {
-    let display_value = this.state.display_value
-    if (typeof display_value === 'undefined' || display_value === null) {
-      display_value = ''
-    } else if (this.props.formatValue) {
-      display_value = this.props.formatValue(this.display_value)
+    let value = this.props.value
+    let shouldDisplayValue = (typeof value !== 'undefined' || value !== null) && !this.props.hideValue
+
+    let value_component = ''
+
+    if (shouldDisplayValue) {
+      if (this.props.formatValue) {
+        value_component = <span className='display-value'>{this.props.formatValue(value)}</span>
+      } else {
+        value_component = <span className='display-value'>{value}</span>
+      }
     }
 
     return (
-      <td className={this.props.classes} onMouseOver={this.showTooltip} onMouseOut={this.hideTooltip}>
-        { display_value }
+      <td onClick={this.handleClick}
+        onMouseOver={this.showTooltip}
+        onMouseOut={this.hideTooltip}
+        className={this.props.classes}>
+        { value_component }
         { this.props.children }
       </td>
     )
