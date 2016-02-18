@@ -1,5 +1,4 @@
 import numpy as np
-import pprint
 import sys
 from pandas import DataFrame, pivot_table, notnull
 
@@ -224,6 +223,8 @@ class DatapointResource(BaseNonModelResource):
         '''
         parsed_params = {}
 
+        required_params = {'indicator__in': None}
+
         # try to find optional parameters in the dictionary. If they are not
         # there return the default values ( given in the dict below)
         optional_params = {
@@ -237,23 +238,20 @@ class DatapointResource(BaseNonModelResource):
             except KeyError:
                 parsed_params[k] = v
 
-        # find the Required Parameters and if they
-        # dont exists return an error to the response
-        required_params = {'indicator__in': None}
-
         for k, v in required_params.iteritems():
 
             try:
                 parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
             except KeyError as err:
+
                 err_msg = '%s is a required parameter!' % err
                 return err_msg, None
 
-        print '=== made it here ==='
         campaign_in_param = parsed_params['campaign__in']
 
         if campaign_in_param:
-            campaign_ids = campaign_in_param.split(',')
+            campaign_ids = [int(c_id) for c_id in campaign_in_param.split(',')]
+
 
         else:
             campaign_ids = self.get_campaign_list(
