@@ -90,28 +90,6 @@ let ChartWizardStore = Reflux.createStore({
     })
   },
 
-  // filterTimeRangeByChartType (timeRanges, chartType) {
-  //   let expectTimes = _.find(builderDefinitions.charts, { name: chartType }).timeRadios
-  //   return timeRanges.filter(time => {
-  //     return _.includes(expectTimes, time.value)
-  //   })
-  // },
-
-  // filterChartTypeByIndicator () {
-  //   api.chartType({ primary_indicator_id: this.data.indicatorSelected[0].id }, null, {'cache-control': 'no-cache'}).then(res => {
-  //     let availableCharts = res.objects.map(chart => {
-  //       return chart.name
-  //     })
-  //     this.data.chartTypeFilteredList = builderDefinitions.charts.filter(chart => {
-  //       return _.includes(availableCharts, chart.name)
-  //     })
-  //
-  //     if (!_.includes(availableCharts, this.data.chartDef.type)) {
-  //       this.onChangeChart(this.data.chartTypeFilteredList[0].name)
-  //     }
-  //   })
-  // },
-
   applyChartDef (chartDef) {
     this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
     this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
@@ -167,11 +145,17 @@ let ChartWizardStore = Reflux.createStore({
       this.data.chartDef.location_id = locations.objects[0].id
     }
 
-    this.data.selected_locations = this.data.chartDef.location_id
-      ? Array.isArray(this.data.chartDef.location_id)
-        ? this.data.chartDef.location_id.map(location => this.locationIndex[location])
-        : [this.locationIndex[this.data.chartDef.location_id]]
-      : []
+    let selected_location_ids = this.data.chartDef.location_ids
+
+    if (selected_location_ids) {
+      if (Array.isArray(selected_location_ids)) {
+        this.data.selected_locations  = selected_location_ids.map(location => this.locationIndex[location])
+      } else {
+        this.data.selected_locations = [this.locationIndex[this.data.chartDef.location_id]]
+      }
+    } else {
+      this.data.selected_locations = []
+    }
 
     this.data.rawIndicators = await api.indicators(null, null, { 'cache-control': 'no-cache' })
     this.data.rawTags = await api.get_indicator_tag(null, null, { 'cache-control': 'no-cache' })
@@ -276,7 +260,6 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
     this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
-
     this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
     this.data.selected_locations = this.filterLocationByCountry(this.data.selected_locations, this.data.countrySelected)
     this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
@@ -354,9 +337,6 @@ let ChartWizardStore = Reflux.createStore({
 
   onChangeChart: function (value) {
     this.data.chartDef.type = value
-    // this.data.timeRangeFilteredList = this.filterTimeRangeByChartType(builderDefinitions.times, this.data.chartDef.type)
-    // this.data.timeValue = Math.min(this.data.timeValue, this.data.timeRangeFilteredList.length - 1)
-    // this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
 
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
@@ -433,8 +413,6 @@ let ChartWizardStore = Reflux.createStore({
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
           countries: this.data.countrySelected.map(country => country.id),
           location_ids: this.data.selected_locations.map(location => location.id),
-          // campaignValue: this.data.campaign.id,
-          // timeRange: this.data.timeRangeFilteredList[this.data.timeValue].json,
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
           xFormat: builderDefinitions.formats[this.data.xFormatValue].value
         }, (source, override) => {
