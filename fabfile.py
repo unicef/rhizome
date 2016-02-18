@@ -23,7 +23,8 @@ remote_manage_path = remote_backend_path + "manage.py"
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
-def deploy(venv_path=None):
+
+def new_machine(venv_path=None):
     global local_venv_path
     local_venv_path = venv_path;
 
@@ -38,9 +39,11 @@ def deploy(venv_path=None):
     create_dirs()
 
 # setup is doing test and pushing it to the remote
-def setup():
-    #run_tests()
-    #_build_dependencies()
+def deploy():
+    '''
+    '''
+    # run_tests()
+    # _build_dependencies()
     _push_to_remote()
 
 # update the remote server
@@ -140,19 +143,22 @@ def _push_to_remote():
     # in server path -
     with cd(remote_backend_path):
         # remove both compiled files
-        run('sudo rm -rf `find . -name "*.pyc*"`')
-
-        # install python dependencies
-        sudo("pip install -r requirements.txt")
+        # run('sudo rm -rf `find . -name "*.pyc*"`')
+        #
+        # # install python dependencies
+        # sudo("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py migrate --settings=settings")
 
+        # run("bash setEnvi.b")
         # add environment variables
-        run("source env_var/environment_seed.env")
+        # run("source env_var/environment_seed.env")
+
+        # run("export DB_PASSWORD=myPassword")
+        run("source env_var/environment_seed.env && python manage.py migrate --settings=rhizome.settings.production")
 
         # echo "== COLLECT STATIC =="
-        run("python manage.py collectstatic --noinput --settings=settings")
+        run("source env_var/environment_seed.env && python manage.py collectstatic --noinput --settings=rhizome.settings.production")
 
         # add waffle_switch pdf for exporting pdf
         # run("./manage.py waffle_switch pdf on --create --settings=settings")
