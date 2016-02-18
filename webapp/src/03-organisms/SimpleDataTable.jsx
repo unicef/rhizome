@@ -11,7 +11,6 @@ import TableHeaderCell from '01-atoms/TableHeaderCell.jsx'
 import SimpleDataTableColumn from '02-molecules/tables/SimpleDataTableColumn'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
-import SimpleDataTableActions from 'actions/SimpleDataTableActions'
 
 let SimpleDataTable = React.createClass({
 
@@ -62,6 +61,10 @@ let SimpleDataTable = React.createClass({
     return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
   },
 
+  saveCellValue: function() {
+
+  },
+
   sortColumns: function (dataKey) {
     let isSortedOnColumn = dataKey === this.props.sortKey
     let isSortAscending = (this.props.sortOrder || '').toLowerCase().indexOf('asc') === 0
@@ -75,10 +78,10 @@ let SimpleDataTable = React.createClass({
 
   renderRow: function (columns, row) {
     let table_cells = React.Children.map(columns, column => {
-      return <EditableTableCell key={column.props.name}
+      return <EditableTableCell
+              key={column.props.name}
               value={row[column.props.name]}
-              validateValue={SimpleDataTableActions.validateCellValue}
-              onSave={SimpleDataTableActions.updateCell}
+              onSave={this.saveCellValue}
               formatValue={this._numberFormatter}
               tooltip={column.props.name + 'BROW!'}
               classes={'numeric'} />
