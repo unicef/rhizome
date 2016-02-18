@@ -126,28 +126,37 @@ class DatapointResource(BaseNonModelResource):
 
         try:
             p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id', 'id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+                dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
             no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
             pivoted_data = no_nan_pivoted_df.to_dict()
+
+            #### we need two dictionaries, one that has the value of the datapoint_computed object and one with the id ##
+
+            p_table_for_id = pivot_table(
+                dwc_df, values='id', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), None)
+            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
+
         except KeyError: ## there is no data
             if len(self.parsed_params['campaign__in']) > 1: ## implicit way to only do this for data entry
                 return
 
-            pivoted_data = {}
+            pivoted_data, pivoted_data_for_id = {}, {}
             for location_id in self.location_ids:
                 tupl = (location_id, self.parsed_params['campaign__in'][0])
                 pivoted_data[tupl] = {}
+                pivoted_data_for_id[tupl] = {}
 
         for row, indicator_dict in pivoted_data.iteritems():
 
-            indicator_objects = [{'indicator': unicode(k[0]), 'computed': unicode(k[1]), 'value': v} for k, v in indicator_dict.iteritems()]
+            indicator_objects = [{
+                'indicator': unicode(k),
+                'computed': pivoted_data_for_id[row][k],
+                'value': v
+            } for k, v in indicator_dict.iteritems()]
 
-            avail_indicators = set([x for x,y in indicator_dict.keys()])
-
-            missing_indicators = list(set(self.parsed_params['indicator__in']) - avail_indicators)
-
-
-
+            # avail_indicators = set([x for x,y in indicator_dict.keys()])
+            missing_indicators = list(set(self.parsed_params['indicator__in']))
             for ind in missing_indicators:
                 indicator_objects.append({'indicator': ind, 'value': None, 'computed_id': None})
 
