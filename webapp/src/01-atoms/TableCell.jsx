@@ -1,11 +1,16 @@
 import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from '02-molecules/Tooltip'
+import moment from 'moment'
+import numeral from 'numeral'
 
 var TableCell = React.createClass({
 
   propTypes: {
-    key: React.PropTypes.string,
+    name: React.PropTypes.string,
+    schema: React.PropTypes.object,
+    field: React.PropTypes.object,
+    row: React.PropTypes.object,
     value: React.PropTypes.string,
     classes: React.PropTypes.string,
     formatValue: React.PropTypes.func,
@@ -50,11 +55,11 @@ var TableCell = React.createClass({
     let value_component = ''
 
     if (shouldDisplayValue) {
-      if (this.props.formatValue) {
-        value_component = <span className='display-value'>{this.props.formatValue(value)}</span>
-      } else {
-        value_component = <span className='display-value'>{value}</span>
-      }
+      value_component = this.props.field.renderer(
+        this.props.row[this.props.field.key],
+        this.props.field,
+        { moment: moment, numeral: numeral }
+      )
     }
 
     return (

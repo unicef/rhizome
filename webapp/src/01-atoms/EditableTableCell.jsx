@@ -13,6 +13,8 @@ let EditableTableCell = React.createClass({
 
   propTypes: {
     key: React.PropTypes.string,
+    schema: React.PropTypes.object,
+    fields: React.PropTypes.object,
     value: React.PropTypes.string,
     formatValue: React.PropTypes.func,
     validateValue: React.PropTypes.func,
@@ -23,12 +25,10 @@ let EditableTableCell = React.createClass({
   },
 
   cell_id: 'edit_id_' + randomHash(),
-  cell_key: null,
   display_value: null,
 
   componentWillMount() {
-    this.display_value = this.props.value,
-    this.cell_key = this.props.key
+    this.display_value = this.props.value
   },
 
   enterEditMode: function (event) {
@@ -38,17 +38,13 @@ let EditableTableCell = React.createClass({
 
   updateCell: function (event) {
     if (event.type === 'blur' || event.keyCode === 13 ) { // Keycode for 'Enter' key
-    console.log('this.props', this.props)
-    console.log('event', event)
       let validation = EditableTableCellActions.validateValue(event.target.value)
       if (!validation) {
         this.setState({ editMode: false, hasError: true })
       } else {
-        console.log('this props', this.props)
         this.isSaving = true
-        let promise = EditableTableCellActions.saveCellValue(event.target.value, this.cell_key)
+        let promise = EditableTableCellActions.saveCellValue(event.target.value, this.props.field.key)
         promise.then(response => {
-          console.log(response)
           this.isSaving = false
           this.hasError = false
           this.setState({editMode: false})
@@ -79,6 +75,8 @@ let EditableTableCell = React.createClass({
 
     return (
       <TableCell key={this.props.key}
+        field={this.props.field}
+        row={this.props.row}
         value={this.display_value}
         formatValue={this.props.formatValue}
         tooltip={this.props.tooltip}

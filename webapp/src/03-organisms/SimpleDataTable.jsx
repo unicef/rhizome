@@ -22,15 +22,15 @@ let SimpleDataTable = React.createClass({
     data: React.PropTypes.array,                    // data displayed on the table, from Datascope
     schema: React.PropTypes.object,                 // data schema, from Datascope
     fields: React.PropTypes.object,                 // fields (display rules)
+    orderedFields: React.PropTypes.array,
     query: React.PropTypes.object,                  // query (search, sort, filter)
     sortable: React.PropTypes.bool,                 // if true, can sort table by clicking header
+    sortKey: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]), // key for the column on which the data is sorted (eg. 'age')
     sortOrder: React.PropTypes.string,              // order for the sort ('ascending' or 'descending')
     onChangeSort: React.PropTypes.func,             // callback to call when user changes sort, passed implicitly by Datascope
     emptyContent: React.PropTypes.node,             // if null, table will hide on no data // content to show in the table if there is no data
     isEmptyContentInTable: React.PropTypes.bool,    // if true, puts emptyContent inside the tbody, otherwise shown instead of the table
     sortIndicatorAscending: React.PropTypes.string, // sort up and down arrows
-    sortKey: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]), // key for the column on which the data is sorted (eg. 'age')
-    orderedFields: React.PropTypes.array,
     sortIndicatorDescending: React.PropTypes.string,
     children: React.PropTypes.array
   },
@@ -78,12 +78,16 @@ let SimpleDataTable = React.createClass({
 
   renderRow: function (columns, row) {
     let table_cells = React.Children.map(columns, column => {
+      let cell_key = column.props.name
       return <EditableTableCell
-              key={column.props.name}
-              value={row[column.props.name]}
+              schema={this.props.schema.items.properties[cell_key]}
+              field={this.props.fields[cell_key]}
+              row={row}
+              key={cell_key}
+              value={row[cell_key]}
               onSave={this.saveCellValue}
               formatValue={this._numberFormatter}
-              tooltip={column.props.name + 'BROW!'}
+              tooltip={row[cell_key]}
               classes={'numeric'} />
     })
     return <tr>{ table_cells }</tr>
@@ -91,9 +95,9 @@ let SimpleDataTable = React.createClass({
 
   renderColumnHeader: function (column) {
     let propsToPass = _.assign({}, _.clone(column.props), { // todo _.omit or _.pick
-      onClick: this.props.sortable ? this.sortColumns.bind(this, column.props.name) : null,
       field: this.props.fields[column.props.name],
       schema: this.props.schema.items.properties[column.props.name],
+      onClick: this.props.sortable ? this.sortColumns.bind(this, column.props.name) : null,
       isSortedBy: column.props.name === this.props.sortKey,
       sortOrder: this.props.sortOrder,
       sortIndicatorAscending: this.props.sortIndicatorAscending,
@@ -103,11 +107,13 @@ let SimpleDataTable = React.createClass({
   },
 
   render: function () {
-    console.log('this.state render', this.state)
     // if no data, and no "empty" message to show, hide table entirely
     let hasData = this.props.data && this.props.data.length
     if (!hasData && _.isNull(this.props.emptyContent)) return null
 
+
+    let children = this.props.children
+    children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children]
     let hasColumns = false
     let columns = React.Children.map(this.props.children, function (child) {
       let isColumn = _.isFunction(child.type.implementsInterface) && child.type.implementsInterface('DataTableColumn')
@@ -119,9 +125,6 @@ let SimpleDataTable = React.createClass({
         return React.createElement(SimpleDataTableColumn, { name: field.key })
       })
     }
-
-    let children = this.props.children
-    children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children]
 
     let renderRow = _.partial(this.renderRow, columns)
 

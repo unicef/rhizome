@@ -36,13 +36,12 @@ let EditableTableCellStore = Reflux.createStore({
     return this.data
   },
 
+  // Cant figure out a way to get location_id and campaign_id to this function
   onSaveCellValue: function (value, cell_key) {
-    console.log(this.cell_key)
     let upsert_options = {
-      datapoint_id: 756, // hard coded for now
+      location_id: 2, // hard coded for now
       campaign_id: 307, // parseInt(campaignId, 10),
       indicator_id: cell_key,
-      location_id: 2, // hard coded for now
       value: value
     }
     return api.datapointUpsert(upsert_options)
