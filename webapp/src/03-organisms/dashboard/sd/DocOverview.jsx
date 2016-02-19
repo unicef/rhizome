@@ -109,16 +109,15 @@ var DocOverview = React.createClass({
     }
 
     var button_row = (
-      <div className='button-row small-12 columns'>
-        <a disabled={this.state.isProcessing} className='button button-refresh large-3 medium-3 small-12 columns'
+      <div>
+        <a disabled={this.state.isProcessing} className='button button-refresh'
            onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
         </a>
-        <a disabled={this.state.isRefreshing} className='button button-refresh large-3 medium-3 small-12 columns'
-           onClick={this.refreshMaster}> { this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
+        <a disabled={this.state.isRefreshing} className='button button-refresh'
+           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
         </a>
         <DownloadButton
           onClick={this._download}
-          classes="large-3 medium-3 small-12 columns"
           enable='true'
           text='Download Raw'
           working='Downloading'
@@ -127,10 +126,13 @@ var DocOverview = React.createClass({
       </div>
     )
 
-    return <div className='row csv-upload__message'>
-      {rows}
-      {button_row}
-    </div>
+    return (
+      <div className='row csv-upload__message'>
+        {rows}
+        <div className='clearfix'></div>
+        {button_row}
+      </div>
+    )
   }
 })
 

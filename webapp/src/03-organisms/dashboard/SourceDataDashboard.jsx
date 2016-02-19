@@ -112,13 +112,7 @@ var SourceDataDashboard = React.createClass({
     }
 
     var search_fields = table_definition[doc_tab]['search_fields']
-    var datascopeFilters =
-      (<div>
-        <SearchBar
-          fieldNames={search_fields}
-          placeholder='Search for uploaded data'
-          />
-      </div>)
+    var datascopeFilters = <SearchBar fieldNames={search_fields} placeholder='Search for uploaded data' />
 
     var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
 
@@ -156,9 +150,6 @@ var SourceDataDashboard = React.createClass({
       </div>
     )
 
-    let tableMarginStyle = {
-      marginTop: '50px'
-    }
 
     var reviewData = (
       <div>
@@ -175,7 +166,7 @@ var SourceDataDashboard = React.createClass({
             doc_id={doc_id}
             doc_title={doc_obj.doc_title}/>
         </div>
-        <div className='large-6 medium-12 small-12 columns csv-upload__title' style={tableMarginStyle}>
+        <div className='large-6 medium-12 small-12 columns csv-upload__title'>
           {doc_tabs}
         </div>
         <hr />

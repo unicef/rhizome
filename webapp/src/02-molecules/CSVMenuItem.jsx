@@ -44,7 +44,7 @@ var CSVMenuItem = React.createClass({
 
   render: function () {
     return (
-      <div onClick={this._handleClick} className='small-2 columns cd-button csv-upload__button'>
+      <div onClick={this._handleClick} className='button csv-upload__button'>
         {this.props.title}
       </div>
     )
