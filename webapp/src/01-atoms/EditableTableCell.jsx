@@ -15,7 +15,6 @@ let EditableTableCell = React.createClass({
 
   propTypes: {
     key: React.PropTypes.string,
-    schema: React.PropTypes.object,
     fields: React.PropTypes.object,
     value: React.PropTypes.string,
     formatValue: React.PropTypes.func,
@@ -97,7 +96,7 @@ let EditableTableCell = React.createClass({
       spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
 
     return (
-      <TableCell key={this.props.key}
+      <TableCell
         field={this.props.field}
         row={this.props.row}
         value={this.display_value}

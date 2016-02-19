@@ -15,6 +15,7 @@ let DatabrowserTable = React.createClass({
 
   propTypes: {
     data: React.PropTypes.object.isRequired,
+    editable: React.PropTypes.bool,
     selected_locations: React.PropTypes.array.isRequired,
     selected_indicators: React.PropTypes.array.isRequired
   },
@@ -35,10 +36,17 @@ let DatabrowserTable = React.createClass({
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
       let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
+      let table = ''
+      if (this.props.editable) {
+        table = <SimpleDataTable editable>{columns}</SimpleDataTable>
+      } else {
+        table = <SimpleDataTable>{columns}</SimpleDataTable>
+      }
+
       return (
         <LocalDatascope data={this.state.data} schema={this.state.schema} pageSize={10}>
           <Datascope>
-            <SimpleDataTable>{columns}</SimpleDataTable>
+            { table }
             <Paginator />
           </Datascope>
         </LocalDatascope>

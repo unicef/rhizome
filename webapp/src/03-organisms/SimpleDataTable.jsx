@@ -6,6 +6,7 @@ import cx from 'classnames'
 import d3 from 'd3'
 
 import InterfaceMixin from '00-utilities/tech_debt/InterfaceMixin'
+import TableCell from '01-atoms/TableCell'
 import EditableTableCell from '01-atoms/EditableTableCell.jsx'
 import TableHeaderCell from '01-atoms/TableHeaderCell.jsx'
 import SimpleDataTableColumn from '02-molecules/tables/SimpleDataTableColumn'
@@ -25,6 +26,7 @@ let SimpleDataTable = React.createClass({
     orderedFields: React.PropTypes.array,
     query: React.PropTypes.object,                  // query (search, sort, filter)
     sortable: React.PropTypes.bool,                 // if true, can sort table by clicking header
+    editable: React.PropTypes.bool,                 // if true, clicking on cells allows you to change the values
     sortKey: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]), // key for the column on which the data is sorted (eg. 'age')
     sortOrder: React.PropTypes.string,              // order for the sort ('ascending' or 'descending')
     onChangeSort: React.PropTypes.func,             // callback to call when user changes sort, passed implicitly by Datascope
@@ -38,6 +40,7 @@ let SimpleDataTable = React.createClass({
   getDefaultProps: function () {
     return {
       sortable: true,
+      editable: false,
       emptyContent: <div className="ds-data-table-empty">No results found</div>,
       isEmptyContentInTable: false,
       sortIndicatorAscending: ' ▲',
@@ -79,16 +82,24 @@ let SimpleDataTable = React.createClass({
   renderRow: function (columns, row) {
     let table_cells = React.Children.map(columns, column => {
       let cell_key = column.props.name
-      return <EditableTableCell
-              schema={this.props.schema.items.properties[cell_key]}
-              field={this.props.fields[cell_key]}
-              row={row}
-              key={cell_key}
-              value={row[cell_key].value}
-              onSave={this.saveCellValue}
-              formatValue={this._numberFormatter}
-              tooltip={row[cell_key]}
-              classes={'numeric'} />
+      if (this.props.editable) {
+        return <EditableTableCell
+          field={this.props.fields[cell_key]}
+          row={row}
+          value={row[cell_key].value}
+          onSave={this.saveCellValue}
+          formatValue={this._numberFormatter}
+          tooltip={row[cell_key]}
+          classes={'numeric'} />
+      } else {
+        return <TableCell
+          field={this.props.fields[cell_key]}
+          row={row}
+          value={row[cell_key].value}
+          formatValue={this._numberFormatter}
+          tooltip={row[cell_key]}
+          classes={'numeric'} />
+      }
     })
     return <tr>{ table_cells }</tr>
   },

@@ -95,7 +95,8 @@ let EntryForm = React.createClass({
           <DatabrowserTable
             data={this.state.apiResponseData}
             selected_locations={this.state.locationSelected}
-            selected_indicators={indicatorSelected} />
+            selected_indicators={indicatorSelected}
+            editable />
         </div>
       </div>
     )

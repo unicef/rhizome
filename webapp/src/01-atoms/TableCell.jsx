@@ -7,8 +7,6 @@ import numeral from 'numeral'
 var TableCell = React.createClass({
 
   propTypes: {
-    name: React.PropTypes.string,
-    schema: React.PropTypes.object,
     field: React.PropTypes.object,
     row: React.PropTypes.object,
     value: React.PropTypes.string,
@@ -28,6 +26,7 @@ var TableCell = React.createClass({
 
   handleClick: function (event) {
     this.hideTooltip()
+    if (!this.props.onClick) return
     return this.props.onClick(event)
   },
 
