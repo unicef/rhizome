@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
-import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
 
 let EditableTableCellStore = Reflux.createStore({
 
@@ -34,16 +33,6 @@ let EditableTableCellStore = Reflux.createStore({
 
     this.trigger(this.data)
     return this.data
-  },
-
-  onSaveCellValue: function (query_params) {
-    let upsert_options = {
-      location_id: query_params.location_id,
-      campaign_id: query_params.campaign_id,
-      indicator_id: query_params.indicator_id,
-      value: query_params.new_value
-    }
-    return ComputedDatapointAPI.putComputedDatapoint(query_params)
   }
 })
 

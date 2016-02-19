@@ -55,8 +55,10 @@ var TableCell = React.createClass({
     let value_component = ''
 
     if (shouldDisplayValue) {
+      let value = this.props.row[this.props.field.key]
+      let display_value = typeof value !== 'object' ? value : value.value
       value_component = this.props.field.renderer(
-        this.props.row[this.props.field.key],
+        display_value,
         this.props.field,
         { moment: moment, numeral: numeral }
       )

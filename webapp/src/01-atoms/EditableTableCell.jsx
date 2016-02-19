@@ -2,10 +2,12 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
+import randomHash from '00-utilities/randomHash'
 import TableCell from '01-atoms/TableCell'
+
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
-import randomHash from '00-utilities/randomHash'
+import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
 
 let EditableTableCell = React.createClass({
 
@@ -47,15 +49,19 @@ let EditableTableCell = React.createClass({
           location_id: this.props.row.location_id,
           campaign_id: this.props.row.campaign_id,
           indicator_id: this.props.field.key,
-          new_value: event.target.value
+          computed_id: this.props.row[this.props.field.key].computed,
+          value: event.target.value
         }
-        let promise = EditableTableCellActions.saveCellValue(query_params)
+        if (query_params.computed_id) {
+          let promise = ComputedDatapointAPI.putComputedDatapoint(query_params)
+        } else {
+          let promise = ComputedDatapointAPI.postComputedDatapoint(query_params)
+        }
         promise.then(response => {
+          console.log('response',response)
           this.isSaving = false
           this.hasError = false
           this.setState({editMode: false})
-          console.log(response)
-          console.log('SUCCESS')
         })
       }
       this.display_value = event.target.value

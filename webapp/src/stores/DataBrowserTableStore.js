@@ -42,7 +42,11 @@ var DataBrowserTableStore = Reflux.createStore({
       result.location_id = item.location
       result.campaign_id = item.campaign
       item.indicators.forEach(indicator => {
-        result[indicator.indicator] = this._format(indicator.value) // indicator.indicator is the id
+        // result[indicator.indicator] = this._format(indicator.value) // indicator.indicator is the id
+        result[indicator.indicator] = {
+          value: this._format(indicator.value), // indicator.indicator is the id
+          computed: indicator.computed
+        }
       })
       return result
     })
@@ -59,7 +63,6 @@ var DataBrowserTableStore = Reflux.createStore({
         }
       })
     })
-
     return pickValue
   },
 
@@ -72,7 +75,7 @@ var DataBrowserTableStore = Reflux.createStore({
     let items = this._extractItemsFromData(apiResponseData)
 
     indicators.forEach(indicator => {
-      fields[indicator.id] = {title: indicator.name, name: indicator.id}
+      fields[indicator.id] = {title: indicator.name, name: indicator.id, 'computed': indicator.computed}
       columns.push(indicator.id)
     })
 

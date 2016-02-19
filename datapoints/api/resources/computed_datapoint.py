@@ -5,6 +5,7 @@ from source_data.models import SourceObjectMap, DocumentSourceObjectMap
 class ComputedDataPointResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'computed_datapoint'
+        queryset =  DataPointComputed.objects.all()
 
     def get_object_list(self, request):
 

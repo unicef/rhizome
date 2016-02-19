@@ -36,7 +36,7 @@ class BaseModelResource(ModelResource, BaseResource):
         authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
         authorization = Authorization()
         always_return_data = True
-        allowed_methods = ['get', 'post', 'delete']
+        allowed_methods = ['get', 'post', 'delete', 'patch']
         cache = CustomCache()
         serializer = CustomSerializer()
 

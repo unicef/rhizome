@@ -20,7 +20,7 @@ class BaseResource(Resource):
     '''
     class Meta:
         authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
-        allowed_methods = ['get', 'post']
+        allowed_methods = ['get', 'post', 'patch']
         authorization = Authorization()
         always_return_data = True
         cache = CustomCache()
