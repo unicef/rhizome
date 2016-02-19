@@ -69,7 +69,7 @@ var SourceDataDashboard = React.createClass({
     }
 
     var doc_tabs = CSVMenuItem.fromArray(
-      _.map(['viewraw', 'mapping', 'validate', 'results', 'doc_index'], d => {
+      _.map(['viewraw', 'mapping', 'doc_index'], d => {
         return {
           title: d,
           value: d
@@ -96,22 +96,23 @@ var SourceDataDashboard = React.createClass({
         'fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'header': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name']
-      },
-      'validate': {
-        'data_fn': api.docDatapoint,
-        'fields': ['location__name', 'indicator__short_name', 'data_date', 'value', 'edit_link'],
-        'header': ['location', 'indicator', 'data_date', 'value', 'is valid'],
-        'search_fields': ['location', 'indicator', 'data_date', 'value']
-      },
-      'results': {
-        'data_fn': api.docResults,
-        'fields': ['indicator_id', 'indicator__short_name', 'value'],
-        'header': ['indicator_id', 'indicator__short_name', 'value'],
-        'search_fields': ['indicator_id', 'indicator__short_name', 'value']
       }
+      // 'validate': {
+      //   'data_fn': api.docDatapoint,
+      //   'fields': ['location__name', 'indicator__short_name', 'data_date', 'value', 'edit_link'],
+      //   'header': ['location', 'indicator', 'data_date', 'value', 'is valid'],
+      //   'search_fields': ['location', 'indicator', 'data_date', 'value']
+      // },
+      // 'results': {
+      //   'data_fn': api.docResults,
+      //   'fields': ['indicator_id', 'indicator__short_name', 'value'],
+      //   'header': ['indicator_id', 'indicator__short_name', 'value'],
+      //   'search_fields': ['indicator_id', 'indicator__short_name', 'value']
+      // }
     }
 
     var search_fields = table_definition[doc_tab]['search_fields']
+
     var datascopeFilters = <SearchBar fieldNames={search_fields} placeholder='Search for uploaded data' />
 
     var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
@@ -150,7 +151,6 @@ var SourceDataDashboard = React.createClass({
       </div>
     )
 
-
     var reviewData = (
       <div>
         <div className='medium-12 columns upload__csv--load'>
@@ -160,11 +160,7 @@ var SourceDataDashboard = React.createClass({
           You can review raw data, map indicators, validate data and view results.
         </div>
         <div>
-          <DocOverview
-            key={table_key + 'breakdown'}
-            loading={loading}
-            doc_id={doc_id}
-            doc_title={doc_obj.doc_title}/>
+          <DocOverview key={table_key + 'breakdown'} loading={loading} doc_id={doc_id} doc_title={doc_obj.doc_title}/>
         </div>
         <div className='large-6 medium-12 small-12 columns csv-upload__title'>
           {doc_tabs}
