@@ -49,13 +49,11 @@ var TableCell = React.createClass({
   },
 
   render: function () {
-    let value = this.props.value
+    let value = this.props.value ? this.props.value : this.props.row[this.props.field.key]
     let shouldDisplayValue = (typeof value !== 'undefined' || value !== null) && !this.props.hideValue
-
     let value_component = ''
 
     if (shouldDisplayValue) {
-      let value = this.props.row[this.props.field.key]
       let display_value = typeof value !== 'object' ? value : value.value
       value_component = this.props.field.renderer(
         display_value,

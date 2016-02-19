@@ -52,15 +52,23 @@ let EditableTableCell = React.createClass({
           computed_id: this.props.row[this.props.field.key].computed,
           value: event.target.value
         }
+        let api_response = {}
         if (query_params.computed_id) {
-          let promise = ComputedDatapointAPI.putComputedDatapoint(query_params)
+          api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
         } else {
-          let promise = ComputedDatapointAPI.postComputedDatapoint(query_params)
+          api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
         }
-        promise.then(response => {
+        api_response.then(response => {
           console.log('response',response)
+          this.display_value = query_params.value
           this.isSaving = false
           this.hasError = false
+          this.setState({editMode: false})
+        }, reject => {
+          console.log('reject',reject)
+          this.display_value = query_params.value
+          this.isSaving = false
+          this.hasError = true
           this.setState({editMode: false})
         })
       }
@@ -68,11 +76,12 @@ let EditableTableCell = React.createClass({
     }
   },
 
+
   render: function () {
     let classes = this.props.classes + ' editable'
-    classes += this.state.editMode ? 'editing ' : ''
-    classes += this.state.isSaving ? 'saving ' : ''
-    classes += this.state.hasError ? 'error ' : ''
+    classes += this.state.editMode ? ' editing ' : ''
+    classes += this.isSaving ? ' saving ' : ''
+    classes += this.hasError ? ' error ' : ''
     // classes += this.state.missing() ? 'missing ' : ''
 
     let hideValue = this.state.editMode || this.isSaving

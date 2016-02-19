@@ -7,6 +7,20 @@ class ComputedDataPointResource(BaseModelResource):
         resource_name = 'computed_datapoint'
         queryset =  DataPointComputed.objects.all()
 
+    def obj_create(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_create``.
+        """
+        bundle.obj = self._meta.object_class()
+
+        # for key, value in kwargs.items():
+        for key, value in bundle.data.iteritems():
+              setattr(bundle.obj, key, value)
+
+        bundle = self.full_hydrate(bundle)
+
+        return self.save(bundle)
+
     def get_object_list(self, request):
 
         try:
