@@ -1,5 +1,9 @@
+nav.dashboard-control {
+  display: inline-block;
+  float: right;
+}
 ul.dashboards-nav {
-  display: block;
+  display: inline-block;
   position: relative;
 
   @include clearfix();
@@ -26,9 +30,9 @@ ul.dashboards-nav {
       opacity: 1;
       text-transform: uppercase;
       text-align: left;
-      font-size: 0.8rem;
-      padding: 27px 20px;
+      font-size: 1rem;
       display: block;
+      padding: 2rem;
     }
   }
 }

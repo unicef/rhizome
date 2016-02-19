@@ -3,7 +3,11 @@ header {
   color: $rhz-navigation-color;
   text-transform: uppercase;
   z-index: 10000;
-
+  .logo {
+    position: relative;
+    top: .5rem;
+    margin-left: 2rem;
+  }
   @include respond-to(medium-screens) {
     nav {
       text-align: center !important;
@@ -31,9 +35,9 @@ header {
   }
 
   .navigation-bar {
-    // height: $header-height;
     font-family: proxima, Arial, Helvetica, sans-serif;
     font-weight: bold;
+    height: $header-height;
   }
 
   .channels {

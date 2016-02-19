@@ -58,11 +58,11 @@ let DashboadrNav = React.createClass({
     // ---------------------------------------------------------------------------
     return (
       <ul className='dashboards-nav'>
-        <li className='medium-4 columns'>
-          <a href='/datapoints/explore'>Explore Data</a>
+        <li>
+          <a href='/datapoints/explore'>Data</a>
         </li>
-        <li className='medium-4 columns'>
-          <a href='/datapoints/charts/'>View Charts</a>
+        <li>
+          <a href='/datapoints/charts/'>Charts</a>
           <ul className='dashboard-menu animated slideDown'>
             { premade_dashboards }
             <li className='separator'>
@@ -71,7 +71,7 @@ let DashboadrNav = React.createClass({
             { custom_charts }
           </ul>
         </li>
-        <li className='medium-4 columns log-out'>
+        <li className='log-out'>
           <a href='/accounts/logout?next=/' title='logout'>
             Log Out &nbsp;
             <i className='fa fa-lg fa-sign-out'/>
