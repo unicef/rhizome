@@ -55,16 +55,10 @@ var DropdownMenu = React.createClass({
 
     _.forEach(items, function (item) {
       let menu_item_components = this._getMenuItemComponents(item.value, pattern)
+      let group_name_component = <MenuItem key={item.title} depth={0} sendValue={_.noop} title={item.title} classes='menu-group-title' />
+      menu_item_components.splice(0, 0, group_name_component)
       grouped_menu_item_components = grouped_menu_item_components.concat(menu_item_components)
     }, this )
-
-    let total_items = grouped_menu_item_components.length
-
-    _.forEach(items, function (item, index) {
-      let group_name_component = <MenuItem key={item.title} depth={0} sendValue={_.noop} title={item.title} classes='menu-group-title' />
-      let position_in_list = index * (item.value.length + 1)
-      grouped_menu_item_components.splice(position_in_list, 0 , group_name_component)
-    }, this)
 
     return grouped_menu_item_components
   },
