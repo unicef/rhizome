@@ -79,8 +79,8 @@ class BaseModelResource(ModelResource, BaseResource):
         bundle = self.alter_detail_data_to_serialize(request, bundle)
 
         # Now update the bundle in-place.
-        # deserialized = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
-        # self.update_in_place(request, bundle, deserialized)
+        deserialized = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        self.update_in_place(request, bundle, deserialized)
 
         if not self._meta.always_return_data:
             return http.HttpAccepted()
