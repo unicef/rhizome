@@ -27,9 +27,11 @@ let EditableTableCell = React.createClass({
 
   cell_id: 'edit_id_' + randomHash(),
   display_value: null,
+  tooltip: null,
 
   componentWillMount() {
     this.display_value = this.props.value
+    this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
 
   enterEditMode: function (event) {
@@ -37,59 +39,66 @@ let EditableTableCell = React.createClass({
     EditableTableCellActions.focusInput(this.cell_id, this.props.value)
   },
 
-  updateCell: function (event) {
+  exitEditMode: function (event) {
     if (event.type === 'blur' || event.keyCode === 13 ) { // Keycode for 'Enter' key
-      let validation = EditableTableCellActions.validateValue(event.target.value)
-      if (!validation) {
-        this.setState({ editMode: false, hasError: true })
-      } else {
-        this.isSaving = true
-        let query_params = {
-          location_id: this.props.row.location_id,
-          campaign_id: this.props.row.campaign_id,
-          indicator_id: this.props.field.key,
-          computed_id: this.props.row[this.props.field.key].computed,
-          value: event.target.value
-        }
-        let api_response = {}
-        if (query_params.computed_id) {
-          api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
-        } else {
-          api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
-        }
-        api_response.then(response => {
-          console.log('response',response)
-          this.display_value = query_params.value
-          this.isSaving = false
-          this.hasError = false
-          this.setState({editMode: false})
-        }, reject => {
-          console.log('reject',reject)
-          this.display_value = query_params.value
-          this.isSaving = false
-          this.hasError = true
-          this.setState({editMode: false})
-        })
+      if (event.target.value !== this.display_value ) {
+        this.updateCellValue(event.target.value)
       }
-      this.display_value = event.target.value
+      this.setState({editMode: false})
     }
   },
 
+  updateCellValue: function (new_value) {
+    let validation = EditableTableCellActions.validateValue(new_value)
+    if (!validation) {
+      this.setState({ editMode: false, hasError: true })
+    } else {
+      this.isSaving = true
+      let query_params = {
+        location_id: this.props.row.location_id,
+        campaign_id: this.props.row.campaign_id,
+        indicator_id: this.props.field.key,
+        computed_id: this.props.row[this.props.field.key].computed,
+        value: new_value
+      }
+      let api_response = {}
+      if (query_params.computed_id) {
+        api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
+      } else {
+        api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
+      }
+      api_response.then(response => {
+        console.log('response',response)
+        this.props.row[this.props.field.key].computed = response.objects.id
+        this.props.value = response.objects.value
+        this.display_value = query_params.value
+        this.isSaving = false
+        this.hasError = false
+        this.setState({editMode: false})
+      }, reject => {
+        console.log('reject',reject)
+        this.display_value = query_params.value
+        this.isSaving = false
+        this.hasError = true
+        this.setState({editMode: false})
+      })
+    }
+    this.display_value = new_value
+  },
 
   render: function () {
-    let classes = this.props.classes + ' editable'
-    classes += this.state.editMode ? ' editing ' : ''
+    let classes = this.props.classes + ' editable '
+    classes += this.state.editMode ? ' in-edit-mode' : ''
     classes += this.isSaving ? ' saving ' : ''
     classes += this.hasError ? ' error ' : ''
-    // classes += this.state.missing() ? 'missing ' : ''
+    classes += this.display_value === '' ? ' missing ' : ''
 
     let hideValue = this.state.editMode || this.isSaving
     let input_field = ''
     let spinner = ''
 
     if (this.state.editMode) {
-      classes += ' in-edit-mode'
-      input_field = <input type='text' onBlur={this.updateCell} onKeyUp={this.updateCell} id={this.cell_id}/>
+      input_field = <input type='text' onBlur={this.exitEditMode} onKeyUp={this.exitEditMode} id={this.cell_id}/>
     }
 
     if (this.isSaving)
@@ -101,7 +110,7 @@ let EditableTableCell = React.createClass({
         row={this.props.row}
         value={this.display_value}
         formatValue={this.props.formatValue}
-        tooltip={this.props.tooltip}
+        tooltip={this.tooltip}
         classes={classes}
         onClick={this.enterEditMode}
         hideValue={hideValue}>
