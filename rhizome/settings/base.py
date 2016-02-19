@@ -185,3 +185,8 @@ ABOUT_HTML = "<p> Rhizomes are underground systems that produce stems and roots 
 LOGO_NAME = "Rhizome_eoc.jpg"
 # Logo ALT name
 LOGO_ALT = "Afghanistan EOC Dashboard"
+
+# Flags for the Menu (SOP, C4D, Data)
+FLAG_SOP = True
+FLAG_C4D = False
+FLAG_DATA = True

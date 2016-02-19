@@ -20,7 +20,7 @@ function revCompile (config) {
 
   return gulp.src(config.templates + '/base.hbs')
         .pipe(handlebars(manifestFile, handlebarOpts))
-        .pipe(rename('base.html'))
+        .pipe(rename('base2.html'))
         .pipe(gulp.dest(config.templates))
 }
 

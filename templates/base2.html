@@ -7,8 +7,8 @@
   <title>{% block title %}{% endblock %}RhizomeDB</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <link rel="stylesheet" href="{% static "{{ assetPath "css/screen.css" }}" %}">
-  <link rel="stylesheet" href="{% static "{{ assetPath "css/print-redesign.css" }}" %}" media="print">
+  <link rel="stylesheet" href="{% static "css/screen.css" %}">
+  <link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
@@ -38,7 +38,7 @@
 
       <div class="large-6 medium-4 small-4 columns logo">
         <a href="/">
-            <img class="image-style" src="{% static 'img/' %}{{LOGO_NAME}}" alt="{{LOGO_ALT}}">
+            <img class="image-style" src="{% static 'img/' %}" alt="">
         </a>
       </div>
 
@@ -87,8 +87,8 @@
 
   </footer>
 
-  <script src="{% static "{{ assetPath "js/vendor.js" }}" %}"></script>
-  <script src="{% static "{{ assetPath "js/main.js" }}" %}"></script>
+  <script src="{% static "js/vendor.js" %}"></script>
+  <script src="{% static "js/main.js" %}"></script>
 
   {% block scripts %}{% endblock %}
 
