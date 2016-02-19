@@ -158,7 +158,8 @@ class DatapointResource(BaseNonModelResource):
             # avail_indicators = set([x for x,y in indicator_dict.keys()])
             missing_indicators = list(set(self.parsed_params['indicator__in']))
             for ind in missing_indicators:
-                indicator_objects.append({'indicator': ind, 'value': None, 'computed_id': None})
+                if ind not in indicator_dict.keys():
+                    indicator_objects.append({'indicator': ind, 'value': None, 'computed_id': None})
 
             r = ResultObject()
             r.location = row[0]
