@@ -92,11 +92,12 @@ let ChartWizard = React.createClass({
     let locations = this.state.data.selected_locations.map(location => { return location.id })
     let indicators = this.state.data.indicatorSelected.map(indicator => { return indicator.id })
     let query = { 'format': 'csv' }
+    console.log('this.state',this.state)
 
     if (indicators.length > 0) query.indicator__in = indicators
     if (locations.length > 0) query.location_id__in = locations
-    if (this.state.data.campaign.start_date) query.campaign_start = moment(this.state.data.campaign.start_date).format('YYYY-M-D')
-    if (this.state.data.campaign.end_date) query.campaign_end = moment(this.state.data.campaign.end_date).format('YYYY-M-D')
+    if (this.state.data.chartDef.startDate) query.campaign_start = moment(this.state.data.chartDef.startDate).format('YYYY-M-D')
+    if (this.state.data.chartDef.endDate) query.campaign_end = moment(this.state.data.chartDef.endDate).format('YYYY-M-D')
 
     return api.datapoints.toString(query)
   },
