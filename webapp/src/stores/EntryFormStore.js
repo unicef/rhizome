@@ -88,6 +88,9 @@ let EntryFormStore = Reflux.createStore({
 
   _setCouldLoad: function () {
     this.data.couldLoad = this.data.locationSelected.length > 0
+    if (this.data.couldLoad) {
+      this.onGetTableData()
+    }
   },
 
   // _filterLocationsByCampaign: function () {

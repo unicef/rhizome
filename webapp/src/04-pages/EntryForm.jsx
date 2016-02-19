@@ -16,14 +16,10 @@ let EntryForm = React.createClass({
     EntryFormActions.initData()
   },
 
-  refresh: function () {
-    if (!this.state.couldLoad) return
-    EntryFormActions.getTableData()
-  },
 
   render () {
     let formIdSelected = this.state.formIdSelected
-    let formName = 'Select a Form'
+    let formName = 'Select Form'
     let indicatorSelected = []
     if (formIdSelected) {
       let formDef = _.find(this.state.entryFormDefinitions,
@@ -35,7 +31,7 @@ let EntryForm = React.createClass({
     }
 
     let campaignIdSelected = this.state.campaignIdSelected
-    let campaignName = 'Select a Campaign'
+    let campaignName = 'Select Campaign'
     if (campaignIdSelected) {
       var campaignObj = _.find(this.state.campaigns,
         function (c) { return c.id.toString() === campaignIdSelected })
@@ -50,14 +46,15 @@ let EntryForm = React.createClass({
         <form>
           <div className='medium-2 columns'>
             <br />
-            <label htmlFor='forms'><h3>Forms</h3></label>
+            <label htmlFor='forms'><h3>Form</h3></label>
             <DropdownMenu
               items={this.state.entryFormDefinitions}
               sendValue={EntryFormActions.setForm}
               item_plural_name='Forms'
-              text={formName}/>
-
-            <label htmlFor='campaigns'><h3>Campaigns</h3></label>
+              text={formName}
+              icon=''/>
+            <br /><br />
+            <label htmlFor='campaigns'><h3>Campaign</h3></label>
             <DropdownMenu
               items={this.state.campaigns}
               sendValue={EntryFormActions.setCampaign}
@@ -65,30 +62,26 @@ let EntryForm = React.createClass({
               text={campaignName}
               title_field='name'
               value_field='id'
-              icon='fa-globe'
+              icon=''
               uniqueOnly/>
 
+            <br /><br />
             <label htmlFor='locations'><h3>Locations</h3></label>
             <DropdownMenu
               items={this.state.filterLocations}
               sendValue={EntryFormActions.addLocations}
               item_plural_name='Locations'
               text='Select Locations'
-              icon='fa-globe'
+              icon=''
               uniqueOnly/>
             <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
 
-            <br />
+            <br /><br />
             <label className={this.state.couldLoad ? '' : 'disabled'}>
               <input type='checkbox' onClick={EntryFormActions.changeSelect}
                 checked={this.state.includeSublocations && this.state.couldLoad}/>
               Include Sublocations
             </label>
-
-            <br />
-            <a role='button' onClick={this.refresh} className={'button success'} disabled={!this.state.couldLoad}>
-              <i className='fa fa-fw fa-refresh' />Load Entry Form
-            </a>
           </div>
         </form>
         <div className='medium-10 columns'>
