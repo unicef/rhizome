@@ -43,8 +43,76 @@ class BaseModelResource(ModelResource, BaseResource):
     def dispatch(self, request_type, request, **kwargs):
         '''
         '''
-
         return super(BaseModelResource, self).dispatch(request_type, request, **kwargs)
+
+    def convert_post_to_patch(request):
+        '''
+        '''
+        return super(BaseModelResource, self).convert_post_to_patch(request)
+
+    def patch_detail(self, request, **kwargs):
+        """
+        Updates a resource in-place.
+        Calls ``obj_update``.
+        If the resource is updated, return ``HttpAccepted`` (202 Accepted).
+        If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
+        """
+        # request = self.convert_post_to_patch(request)
+        basic_bundle = self.build_bundle(request=request)
+
+        # We want to be able to validate the update, but we can't just pass
+        # the partial data into the validator since all data needs to be
+        # present. Instead, we basically simulate a PUT by pulling out the
+        # original data and updating it in-place.
+        # So first pull out the original object. This is essentially
+        # ``get_detail``.
+
+        try:
+            obj = self._meta.object_class.objects.get(id=kwargs['pk'])
+        except ObjectDoesNotExist:
+            return http.HttpNotFound()
+        except MultipleObjectsReturned:
+            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+
+        bundle = self.build_bundle(obj=obj, request=request)
+        bundle = self.full_dehydrate(bundle)
+        bundle = self.alter_detail_data_to_serialize(request, bundle)
+
+        # Now update the bundle in-place.
+        deserialized = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        self.update_in_place(request, bundle, deserialized)
+
+        if not self._meta.always_return_data:
+            return http.HttpAccepted()
+        else:
+            # Invalidate prefetched_objects_cache for bundled object
+            # because we might have changed a prefetched field
+            bundle.obj._prefetched_objects_cache = {}
+            bundle = self.full_dehydrate(bundle)
+            bundle = self.alter_detail_data_to_serialize(request, bundle)
+            return self.create_response(request, bundle, response_class=http.HttpAccepted)
+
+
+    def get_detail(self, request, **kwargs):
+        """
+        Returns a single serialized resource.
+        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
+        set and serializes it.
+        Should return a HttpResponse (200 OK).
+        """
+
+
+        try:
+            obj = self._meta.object_class.objects.get(id=kwargs['pk'])
+        except ObjectDoesNotExist:
+            return http.HttpNotFound()
+        except MultipleObjectsReturned:
+            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+
+        bundle = self.build_bundle(obj=obj, request=request)
+        bundle = self.full_dehydrate(bundle)
+        bundle = self.alter_detail_data_to_serialize(request, bundle)
+        return self.create_response(request, bundle)
 
     def get_list(self, request, **kwargs):
         """

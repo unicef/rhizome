@@ -53,7 +53,7 @@ function emptyResponsePoint (path, mode, defaultVersion, useDefaults) {
       req.query(q)
         .set(headers)
         .send()
-    } else if (mode === 'POST') {
+    } else if (mode === 'POST' || mode === 'PATCH') {
       var csrftoken = getCookie('csrftoken')
       req.query(defaults)
         .set('X-CSRFToken', csrftoken)
@@ -109,7 +109,7 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
       req.query(q)
         .set(headers)
         .send()
-    } else if (mode === 'POST') {
+    } else if (mode === 'POST' || mode === 'PATCH') {
       var csrftoken = getCookie('csrftoken')
       req.query(defaults)
         .set('X-CSRFToken', csrftoken)
