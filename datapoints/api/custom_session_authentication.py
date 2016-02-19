@@ -10,7 +10,8 @@ class CustomSessionAuthentication(SessionAuthentication):
 
         # this is the line i have to override in order to get
         # POST request to successfully authenticate ##
-        if request.method in ('GET', 'POST', 'DELETE'):
+        if request.method in ['GET','POST','PATCH','DELETE']:
+            print 'THIS IS WHERE I AM'
             return request.user.is_authenticated()
 
         if getattr(request, '_dont_enforce_csrf_checks', False):
@@ -35,4 +36,3 @@ class CustomSessionAuthentication(SessionAuthentication):
             return False
 
         return request.user.is_authenticated()
-
