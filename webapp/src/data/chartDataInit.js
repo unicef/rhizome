@@ -91,7 +91,6 @@ export default {
       query['location_id__in'] = _.map(data.selected_locations, _.property('id'))
     }
 
-
     let lower = moment(chartDef.startDate, 'YYYY-MM-DD')
     let upper = moment(chartDef.endDate, 'YYYY-MM-DD')
 
@@ -109,6 +108,7 @@ export default {
         return { data: [], options: null }
       }
       let newOptions = _.clone(chart.options)
+      newOptions.indicatorsSelected = data.indicatorSelected
       if (chart.options && !chart.options.yFormat) {
         newOptions.yFormat = d3.format(chartDef.yFormat)
       }

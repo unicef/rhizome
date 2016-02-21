@@ -85,7 +85,14 @@ _.extend(TableChart.prototype, {
       })
       .datum(data)
 
-    var xDomain = typeof (options.xDomain) !== 'undefined' ? options.xDomain : _.map(options.headers, options.headerText)
+    var xDomain = typeof (options.xDomain) !== 'undefined' ? options.xDomain : []
+
+    if (xDomain.length === 0) {
+      let headerIndex = _.indexBy(options.headers, 'id')
+      xDomain = options.indicatorsSelected.map(ind => {
+        return headerIndex[ind.id].short_name
+      })
+    }
 
     var xScale = d3.scale.ordinal()
         .domain(xDomain)
