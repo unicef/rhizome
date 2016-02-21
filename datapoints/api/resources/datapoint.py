@@ -200,7 +200,7 @@ class DatapointResource(BaseNonModelResource):
         if chart_type == 'TableChart':
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
-                .values('name','parent_location__name')
+                .values('name','parent_location__name').order_by('parent_location__name')
 
             data['meta']['parent_location_list'] = [l for l in p_loc_qs]
             data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
