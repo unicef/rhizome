@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie.exceptions import ImmediateHttpResponse
+from tastypie.utils import is_valid_jsonp_callback_value, dict_strip_unicode_keys
 
 from datapoints.api.resources.base_model import BaseModelResource
 from datapoints.models import Indicator
@@ -61,11 +62,16 @@ class IndicatorResource(BaseModelResource):
             ind_id = None
 
         try:
+            data_format = post_data['data_format']
+        except KeyError:
+            data_format = 'int'
+
+        try:
             defaults = {
                 'name': post_data['name'],
                 'short_name': post_data['short_name'],
                 'description': post_data['description'],
-                'data_format': post_data['data_format'],
+                'data_format': data_format,
                 'high_bound': post_data['high_bound'],
                 'low_bound': post_data['low_bound'],
                 'source_name': post_data['source_name']
