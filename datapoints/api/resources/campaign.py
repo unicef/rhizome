@@ -1,3 +1,4 @@
+from datetime import datetime
 from datapoints.api.resources.base_model import BaseModelResource
 from datapoints.api.exceptions import DatapointsException
 from datapoints.models import Campaign
@@ -50,6 +51,7 @@ class CampaignResource(BaseModelResource):
                 'pct_complete': post_data['pct_complete']
             }
         except Exception as error:
+            print 'Please provide "{0}" for the campaign.'.format(error)
             raise DatapointsException('Please provide "{0}" for the campaign.'.format(error))
 
         try:
