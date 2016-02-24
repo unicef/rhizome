@@ -17,6 +17,7 @@ include
 /build
 /dist
 node_modules
+environment_seed.env
 *.swp
 .sass-cache
 *.sublime-*
