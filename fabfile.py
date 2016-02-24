@@ -98,8 +98,8 @@ def _push_to_remote():
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py migrate --settings=settings")
 
-        # add environment variables
-        run("source environment_seed.env")
+        # add environment variables - Keep this file right above the project root
+        run("source ../environment_seed.env")
 
         # echo "== COLLECT STATIC =="
         run("python manage.py collectstatic --noinput --settings=settings")
