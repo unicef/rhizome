@@ -117,12 +117,13 @@ class DatapointResource(BaseNonModelResource):
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id', 'value']
-        dwc_df = DataFrame(
-            list(DataPointComputed.objects.filter(
+
+        computed_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
-                .values_list(*df_columns)), columns=df_columns)
+
+        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)), columns=df_columns)
 
         try:
             p_table = pivot_table(
