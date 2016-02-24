@@ -1,56 +1,48 @@
 {% load staticfiles %}
+{% load settings_value %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-
-    <title>{% block title %}{% endblock %}RhizomeDB</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <link rel="stylesheet" href="{% static "css/screen.css" %}">
-    <link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{% endblock %}RhizomeDB</title>
+  <link rel="stylesheet" href="{% static "css/screen.css" %}">
+  <link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
-
-<header class="no-print">
+  <header class="no-print">
     <div class="row navigation-bar">
-<!--         <nav class="large-3 medium-4 small-4 columns">
-            <ul class="channels raw">
 
-                <li class="small-4 columns">
-                    <a href="http://69.28.84.217:8080/web/guest/sop" class="tab">
-                        <i class="fa fa-plus"></i><span>SOP</span>
-                    </a>
-                </li>
+<!--       <nav class="large-3 medium-4 small-4 columns">
+        <ul class="channels raw">
+          <li class="small-4 columns">
+            <a href="http://69.28.84.217:8080/web/guest/sop" class="tab"><i class="fa fa-plus"></i>SOP</a>
+          </li>
+          <li class="small-4 columns">
+            <a href="http://69.28.84.217:8080/web/guest/c4d" class="tab"><i class="fa fa-plus"></i>C4D</a>
+          </li>
+          <li class="small-4 columns tab active"><a href="/"><i class="fa fa-plus"></i>Data</a></li>
+        </ul>
+      </nav> -->
 
-                <li class="small-4 columns">
-                    <a href="http://69.28.84.217:8080/web/guest/c4d" class="tab">
-                        <i class="fa fa-plus"></i><span>C4D</span>
-                    </a>
-                </li>
-                <li class="small-4 columns tab active">
-                    <a href="/">
-                        <i class="fa fa-plus"></i><span>Data</span>
-                    </a>
-                </li>
-            </ul>
-        </nav> -->
-        <a href="/" class="logo">
-            <img class="image-style" src="{% static 'img/' %}{{LOGO_FILENAME}}" alt="{{LOGO_ALT}}">
-        </a>
+      <a href="/" class="logo">
+        <img
+          class="image-style"
+          src="{% static 'img/' %}{% settings_value "LOGO_FILENAME" %}"
+          alt="{% settings_value "LOGO_ALT" %}">
+      </a>
 
-        <nav class="dashboard-control">
-            <div id="dashboards-nav"></div>
-        </nav>
+      <nav class="dashboard-control">
+        <div id="dashboards-nav"></div>
+      </nav>
     </div>
+  </header>
 
-</header>
-
-<div id="main" role="main">
+  <div id="main" role="main">
     {% block nav %}{% endblock %}
     {% block content %}{% endblock %}
-</div>
+  </div>
 
   <footer class="row main-footer">
     <nav>
@@ -71,7 +63,6 @@
 
   <script src="{% static "js/vendor.js" %}"></script>
   <script src="{% static "js/main.js" %}"></script>
-
   {% block scripts %}{% endblock %}
 
 </body>
