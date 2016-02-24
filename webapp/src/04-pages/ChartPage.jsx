@@ -9,6 +9,7 @@ import DataActions from 'actions/DataActions'
 import ChartAPI from 'data/requests/ChartAPI'
 import CampaignAPI from 'data/requests/CampaignAPI'
 import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import ExportPdf from '02-molecules/ExportPdf'
 
 var ChartPage = React.createClass({
 
@@ -45,6 +46,7 @@ var ChartPage = React.createClass({
               <i className='fa fa-pencil'></i>
                Edit Chart
             </a>
+            <ExportPdf className='export-file button expand small' />
           </div>
           <div className='medium-10 columns'>
             <Chart id='custom-chart' type={this.state.chart.type} data={this.state.data.data}
