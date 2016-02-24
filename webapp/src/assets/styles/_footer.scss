@@ -1,124 +1,36 @@
 footer.main-footer {
-
   background-color: $rhz-navigation-bg-color;
   position: fixed;
   width: 100%;
   bottom: 0;
   z-index: 9997;
   min-width: 100%;
-  nav.actions ul {
-    text-align: left;
-  }
-  nav.static-links ul {
-    text-align: right;
-  }
-  @include respond-to(medium-screens) {
-    nav {
-      text-align: center !important;
-      padding: 0 !important;
-    }
-
-    ul > li {
-      margin: 0 !important;
-    }
-    ul > li > a {
-      height: 36px !important;
-      line-height: 35px !important;
-    }
-    .menu {
-      bottom: 36px !important;
-    }
-    .menu > li {
-      padding: 0 10px !important;
-    }
-  }
-
-
-  .menu {
-    display: none;
-    position: absolute;
-    bottom: 50px;
-    margin-left: 0;
-    background-color: $rhz-navigation-hover-bg-color;
-    text-transform: uppercase;
-    border: 1px solid #fff;
-    > li {
-      margin: 0;
-      padding: 5px 10px;
-      display: block;
-      float: none;
-
-      &:hover {
-        background-color: $rhz-button-bg-color;
-        color: $rhz-navigation-color;
-      }
+  > nav ul {
+    margin-bottom: 0;
+    li {
+      margin-left: 0;
     }
     a {
-      padding: 0;
       display: block;
       font-size: 0.8rem;
       color: $rhz-navigation-color;
-      &:hover {
-        color: $rhz-navigation-color;
-      }
-    }
-  }
-
-  .actions > ul, .static-links > ul {
-    margin-left: 0;
-    position: relative;
-    display: block;
-    > li {
-      padding: 0;
-      margin: 0 12px;
-      border: none;
-      display: inline-block;
-
-      &.sub-nav {
-        display: inline-block;
-        padding: 0;
-        margin: 0 12px;
-        overflow: inherit;
-        &:hover .menu {
-          display: block;
-        }
-      }
-    }
-  }
-
-  .static-links {
-    text-align: left;
-    // span {
-      font-weight: 600;
-      font-family: proxima-bold;
-    // }
-  }
-
-  .action {
-    display: block;
-    font-size: 0.8rem;
-    color: $rhz-navigation-color;
-    opacity: 1;
-
-    &:hover {
-      color: $rhz-background-color !important;
-      cursor: pointer;
-    }
-
-    // span {
+      opacity: 1;
       text-transform: uppercase;
-      margin: 15px;
-    // }
+      padding: 15px;
+      &:hover {
+        color: $rhz-background-color;
+      }
+    }
+    &.actions {
+      text-align: left;
+      margin-left: 0;
+    }
+    &.static-links {
+      text-align: right;
+    }
   }
-
   .fa {
     margin-right: 5px;
   }
-
 }
 
-@media only screen and (min-width: 64.0625em) {
-  footer .static-links {
-    text-align: right;
-  }
-}
