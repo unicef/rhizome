@@ -36,7 +36,7 @@ var ChartPage = React.createClass({
   render () {
     if (this.state.data.data) {
       return (
-        <div className='row'>
+        <div className='row layout-basic'>
           <div className='medium-12 columns text-center'>
             <h1>{ this.state.chart.title }</h1>
           </div>
