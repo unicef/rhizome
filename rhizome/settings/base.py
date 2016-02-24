@@ -29,7 +29,7 @@ LOGIN_REDIRECT_URL = '/datapoints'
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f'
+SECRET_KEY =  os.getenv('SECRET_KEY', '7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -102,12 +102,12 @@ WSGI_APPLICATION = 'rhizome.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'rhizome',
-        'USER': 'djangoapp',
-        'PASSWORD': 'w3b@p01i0',
-        # 'PASSWORD': '3r@d1c@tep0l!0',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': os.getenv('DB_NAME', 'rhizome'),
+        'USER': os.getenv('DB_USER', 'djangoapp'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'w3b@p01i0'),
+        'HOST': os.getenv('DB_HOST', '127.0.0.1'),
+        'PORT': os.getenv('DB_PORT', 2345),
+        # 'PORT': '5432',
     }
 }
 
@@ -182,9 +182,9 @@ INTERNAL_IPS=('127.0.0.1',)
 ABOUT_HTML = "<p> Rhizomes are underground systems that produce stems and roots of plants, allowing them to grow and thrive. They store nutrients that help plants survive and regenerate in the most challenging conditions. Ceaselessly establishing new connections between them, rhizomes constitute resilient, flexible and dynamic systems, rooted in their local environments and primed for long-term sustainability. <p> Rhizome DB supports the polio programme's ritical need to adapt, evolve and reach the unreached. Rhizome DB connects staff, managers and policy makers to the evidence they need to drive local solutions. Maximize your impact to eradicate polio.</p>"
 # write the name of the logo with its extention (it should be without space)
 # The file must be placed the webapp/src/assests/img folder
-LOGO_NAME = "Rhizome_eoc.jpg"
+LOGO_FILENAME = os.getenv('LOGO_FILENAME', 'layout_set_logo.png')
 # Logo ALT name
-LOGO_ALT = "Afghanistan EOC Dashboard"
+LOGO_ALT = os.getenv('LOGO_ALT', 'Rhizome')
 
 # Flags for the Menu (SOP, C4D, Data)
 FLAG_SOP = True
