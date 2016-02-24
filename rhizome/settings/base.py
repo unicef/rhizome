@@ -153,9 +153,6 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
-                # context_processors for sending logo's data to the template
-                "rhizome.context_processors.custom_logo",
-
                 'django.contrib.auth.context_processors.auth',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.i18n',
