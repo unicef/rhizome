@@ -46,7 +46,7 @@ var ChartPage = React.createClass({
               <i className='fa fa-pencil'></i>
                Edit Chart
             </a>
-            <ExportPdf className='export-file button expand small' />
+            <ExportPdf className='button expand small' />
           </div>
           <div className='medium-10 columns'>
             <Chart id='custom-chart' type={this.state.chart.type} data={this.state.data.data}
