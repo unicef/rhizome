@@ -176,7 +176,11 @@ class DatapointResource(BaseNonModelResource):
         could be a point at which additional build_agg_rc_dfing may be applied
         '''
 
-        return self.get_object_list(bundle.request)
+        objects = self.get_object_list(bundle.request)
+        if not objects:
+            objects = []
+
+        return objects
 
     def obj_get(self, bundle, **kwargs):
         # get one object from data source
