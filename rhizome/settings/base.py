@@ -102,7 +102,7 @@ WSGI_APPLICATION = 'rhizome.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('DB_NAME', 'old_rhizome'),
+        'NAME': os.getenv('DB_NAME', 'rhizome'),
         'USER': os.getenv('DB_USER', 'djangoapp'),
         'PASSWORD': os.getenv('DB_PASSWORD', 'w3b@p01i0'),
         'HOST': os.getenv('DB_HOST', '127.0.0.1'),

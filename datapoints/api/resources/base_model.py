@@ -7,7 +7,6 @@ from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
 from tastypie.resources import ModelResource
 from tastypie import http
 
-from datapoints.models import LocationPermission
 from datapoints.api.serialize import CustomSerializer
 from datapoints.api.custom_session_authentication import CustomSessionAuthentication
 from datapoints.api.custom_cache import CustomCache

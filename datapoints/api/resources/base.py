@@ -12,7 +12,7 @@ from datapoints.api.custom_session_authentication import CustomSessionAuthentica
 from datapoints.api.custom_cache import CustomCache
 from datapoints.api.exceptions import DatapointsException
 
-from datapoints.models import LocationPermission
+from datapoints.models import LocationPermission, Location, LocationTree
 from django.http import HttpResponse
 
 class BaseResource(Resource):
@@ -26,13 +26,55 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
+    def get_locations_to_return_from_url(self, request):
+        '''
+        This method is used in both the /geo and /datapoint endpoints.  Based
+        on the values parsed from the URL parameters find the locations needed
+        to fulfill the request based on the four rules below.
+
+        1. location_id__in =
+        2. parent_location_id__in =
+
+        right now -- this only filters if there is no param.. i should get the
+        permitted locations first then do an intersection with the params..
+        '''
+
+        try:
+            location_ids = request.GET['location_id__in'].split(',')
+            return location_ids
+        except KeyError:
+            pass
+
+        try:
+            pl_id_list = request.GET['parent_location_id__in'].split(',')
+            location_ids = list(Location.objects\
+                        .filter(parent_location_id__in=pl_id_list)
+                        .values_list('id',flat=True))
+            location_ids.extend(pl_id_list)
+            return location_ids
+        except KeyError:
+            pass
+
+        location_qs = (
+            LocationTree.objects
+            .filter(parent_location_id=self.top_lvl_location_id)
+            .values_list('location_id', flat=True)
+        )
+
+        return location_qs
+
+
     def dispatch(self, request_type, request, **kwargs):
         """
         Overrides Tastypie and calls get_list.
         """
 
-        self.top_lvl_location_id = LocationPermission.objects.get(
-            user_id = request.user.id).top_lvl_location_id
+        try:
+            self.top_lvl_location_id = LocationPermission.objects.get(
+                user_id = request.user.id).top_lvl_location_id
+        except LocationPermission.DoesNotExist:
+            self.top_lvl_location_id = Location.objects\
+                .filter(parent_location_id = None)[0].id
 
         allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
         #

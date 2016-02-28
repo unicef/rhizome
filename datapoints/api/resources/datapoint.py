@@ -10,7 +10,6 @@ from tastypie.exceptions import NotFound
 
 from datapoints.api.serialize import CustomSerializer
 from datapoints.api.resources.base_non_model import BaseNonModelResource
-from datapoints.api.functions import get_locations_to_return_from_url
 
 from datapoints.models import DataPointComputed, Campaign, Location,\
     LocationPermission
@@ -100,9 +99,6 @@ class DatapointResource(BaseNonModelResource):
         response.
         '''
         self.error = None
-        ## put this in base class ##
-        self.top_lvl_location_id = LocationPermission.objects.get(
-            user_id = request.user.id).top_lvl_location_id
 
         results = []
 
@@ -112,7 +108,7 @@ class DatapointResource(BaseNonModelResource):
             self.error = err
             return []
 
-        self.location_ids = get_locations_to_return_from_url(request)
+        self.location_ids = self.get_locations_to_return_from_url(request)
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##

@@ -2,7 +2,6 @@ import json
 
 from datapoints.models import MinGeo, Location
 from datapoints.api.resources.base_non_model import BaseNonModelResource
-from datapoints.api.functions import get_locations_to_return_from_url
 from tastypie import fields
 from tastypie.resources import ALL
 
@@ -41,7 +40,7 @@ class GeoResource(BaseNonModelResource):
 
         features = []
 
-        location_ids_to_return = get_locations_to_return_from_url(request)
+        location_ids_to_return = self.get_locations_to_return_from_url(request)
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
             location_ids_to_return)
 
