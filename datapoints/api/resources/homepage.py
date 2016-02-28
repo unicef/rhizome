@@ -4,6 +4,7 @@ from tastypie import fields
 from datapoints.api.resources.base_non_model import BaseNonModelResource
 from datapoints.api.resources.base_model import BaseModelResource
 from datapoints.models import Campaign, Location, LocationPermission, Office
+from django.core.exceptions import ObjectDoesNotExist
 
 class HomePageResult(object):
     id = int()
@@ -89,9 +90,6 @@ class HomePageResource(BaseNonModelResource):
         in the cache_meta process.
         '''
 
-        top_lvl_location_id = LocationPermission.objects.get(user_id = \
-            request.user.id).top_lvl_location.id
-
         homepage_lookup = {
             # top_lvl_location_id {[campagn_id,sub_loc]...}
             1: [[296, 7],[296, 8],[296, 12]],
@@ -100,24 +98,33 @@ class HomePageResource(BaseNonModelResource):
             4721: [[296, 1],[302, 2],[45, 3]]
         }
 
-        hp_config = homepage_lookup[top_lvl_location_id]
+        hp_config = homepage_lookup[self.top_lvl_location_id]
         qs = []
 
         for campaign_id, location_id in hp_config:
 
-            campaign_obj = Campaign.objects.get(id = campaign_id)
-            location_obj = Location.objects.get(id = location_id)
-
-            hp_obj = HomePageResult()
-            hp_obj.campaign = campaign_obj.__dict__
-            hp_obj.location = location_obj.__dict__
-            hp_obj.dashboard = self.build_dashboard_for_loc(location_obj\
-                ,campaign_obj)
-            hp_obj.charts = hp_obj.dashboard['charts']
-
-            hp_obj.campaign.pop('_state', None)
-            hp_obj.location.pop('_state', None)
+            try:
+                hp_obj = self.build_home_page_object(campaign_id,location_id)
+            except ObjectDoesNotExist:
+                hp_obj = HomePageResult()
 
             qs.append(hp_obj)
 
         return qs
+
+    def build_home_page_object(self,campaign_id,location_id):
+
+        campaign_obj = Campaign.objects.get(id = campaign_id)
+        location_obj = Location.objects.get(id = location_id)
+
+        hp_obj = HomePageResult()
+        hp_obj.campaign = campaign_obj.__dict__
+        hp_obj.location = location_obj.__dict__
+        hp_obj.dashboard = self.build_dashboard_for_loc(location_obj\
+            ,campaign_obj)
+        hp_obj.charts = hp_obj.dashboard['charts']
+
+        hp_obj.campaign.pop('_state', None)
+        hp_obj.location.pop('_state', None)
+
+        return hp_obj
