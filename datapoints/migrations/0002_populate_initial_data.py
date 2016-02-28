@@ -11,21 +11,39 @@ from datapoints.models import IndicatorTag
 from django.db.models import get_app, get_models
 
 def populate_initial_data(apps, schema_editor):
+    '''
+    Here, we take an excel file that has the same schema as the database
+    we lookup the approriate model and bulk insert.
+
+    We need to ingest the data itself in the same order as the excel
+    sheet otherwise we will have foreign key constraint issues.
+    '''
 
     xl = pd.ExcelFile('initial_data.xlsx')
     all_sheets = xl.sheet_names
 
     datapoints_app = get_app('datapoints')
 
-    for model in get_models(datapoints_app):
+    models_to_process = {}
 
-        print model._meta.db_table
-        print all_sheets
+    for model in get_models(datapoints_app):
+        ## iterate through the models in the datapoints app and create a lookup
+        ## for {'sheet_name': Model} .. for instance -> {'indicator': Indicator}
 
         if model._meta.db_table in all_sheets:
+            models_to_process[model._meta.db_table] = model
 
-            model_df = xl.parse(model._meta.db_table)
+    for sheet in all_sheets:
+        ## if the sheet has a cooresponding model, create a data frame out of
+        ## the sheet anf bulk insert the data using the model_df_to_data fn
+
+        try:
+            model = models_to_process[sheet]
+            print 'processing sheet ' + sheet
+            model_df = xl.parse(sheet)
             model_ids = model_df_to_data(model_df,model)
+        except KeyError:
+            pass
 
 
 def model_df_to_data(model_df,model):
