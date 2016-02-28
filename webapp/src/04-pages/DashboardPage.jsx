@@ -30,7 +30,8 @@ const LAYOUT = {
   'Management Dashboard': require('03-organisms/dashboard/ManagementDashboard'),
   'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard'),
   'District Dashboard': require('03-organisms/dashboard/District'),
-  'Source Data': require('03-organisms/dashboard/SourceDataDashboard')
+  'Source Data': require('03-organisms/dashboard/SourceDataDashboard'),
+  'EOC Pre Campaign' : require('03-organisms/dashboard/EocPreCampaign')
 }
 
 var DashboardPage = React.createClass({
@@ -280,7 +281,7 @@ var DashboardPage = React.createClass({
     }
 
     let dashboard
-    if (Object.keys(LAYOUT).indexOf(dashboardName) >= 0) {
+    if (dashboardDef.id < 0) {
       let data = DashboardInit.dashboardInit(
         dashboardDef,
         this.state.data,
@@ -301,6 +302,7 @@ var DashboardPage = React.createClass({
         doc_tab: doc_tab,
         doc_id: doc_id
       }
+
       dashboard = React.createElement(LAYOUT[dashboardName], dashboardProps)
     } else {
       let customDashboardProps = {

@@ -1,6 +1,6 @@
 export default {
   'id': -9,
-  'title': 'eoc-pre-campaign',
+  'title': 'EOC Pre Campaign',
   'builtin': true,
   'charts': [
     {
