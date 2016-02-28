@@ -33,3 +33,4 @@ rhizome/settings/private.py
 settings.py
 dev
 webapp/coverage
+~$initial_data.xlsx
