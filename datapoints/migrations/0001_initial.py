@@ -149,7 +149,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
-                ('is_valid', models.BooleanField()),
                 ('agg_on_location', models.BooleanField()),
                 ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('document', models.ForeignKey(to='source_data.Document')),
@@ -188,6 +187,12 @@ class Migration(migrations.Migration):
                 ('is_reported', models.BooleanField(default=True)),
                 ('data_format', models.CharField(max_length=10)),
                 ('created_at', models.DateTimeField(auto_now=True)),
+                ('bound_json', jsonfield.fields.JSONField(default=[])),
+                ('tag_json', jsonfield.fields.JSONField(default=[])),
+                ('office_id', jsonfield.fields.JSONField(default=[])),
+                ('high_bound', models.FloatField(null=True)),
+                ('low_bound', models.FloatField(null=True)),
+                ('source_name', models.CharField(max_length=25)),
             ],
             options={
                 'ordering': ('name',),
@@ -407,11 +412,6 @@ class Migration(migrations.Migration):
             model_name='customdashboard',
             name='owner',
             field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='customchart',
-            name='dashboard',
-            field=models.ForeignKey(to='datapoints.CustomDashboard'),
         ),
         migrations.AddField(
             model_name='campaigntoindicator',
