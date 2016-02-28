@@ -5,5 +5,6 @@ export default [
   require('./sourcedata'),
   require('./homepage-afghanistan'),
   require('./homepage-pakistan'),
-  require('./homepage-nigeria')
+  require('./homepage-nigeria'),
+  require('./eoc-pre-campaign')
 ]

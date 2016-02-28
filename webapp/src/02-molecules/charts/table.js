@@ -155,7 +155,7 @@ _.extend(TableChart.prototype, {
 
     var scale = d3.scale.ordinal()
       .domain(['bad', 'ok', 'good'])
-      .range(['#DB5344', '#79909F', '#2FB0D3'])
+      .range(['#FF0000', '#79909F', '#04B404'])
 
     var fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
 
@@ -173,7 +173,9 @@ _.extend(TableChart.prototype, {
           'class': 'row',
           'transform': transform
         })
-
+    row.on('click', function(d, i) {
+      self._onRowClick([d, i])
+    })
     row.exit()
       .transition().duration(300)
       .style('opacity', 0)
@@ -376,11 +378,14 @@ _.extend(TableChart.prototype, {
     var seriesName = this._options.seriesName
     this._svg.selectAll('.row')
       .transition().duration(300)
+      .style('cursor', 'pointer')
       .style('opacity', function (e) {
         return (seriesName(e) === d[0].name) ? 1 : 0.4
       })
   },
-
+  _onRowClick: function (d) {
+    console.log('row clicked', d)
+  },
   _onRowOut: function () {
     this._svg.selectAll('.row')
       .transition().duration(300)

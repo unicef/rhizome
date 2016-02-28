@@ -33,17 +33,25 @@ let DashboadrNav = React.createClass({
     // Dashboard Menu Items
     // ---------------------------------------------------------------------------
     _.forEach(dashboards, function (dashboard) {
-      if (dashboard.builtin && dashboard.id !== -4 && dashboard.title.indexOf('Homepage') === -1) {
+      //console.log('dashboard: ', dashboard)
+      if(dashboard.builtin && dashboard.id == -9) {
         premade_dashboards.push(
           <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>
             {dashboard.title}
           </NavMenuItem>)
-      } else if (!dashboard.builtin) {
-        custom_dashboards.push(
-          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' + dashboard.id}>
-            {dashboard.title}
-          </NavMenuItem>)
       }
+
+      // if (dashboard.builtin && dashboard.id !== -4 && dashboard.title.indexOf('Homepage') === -1) {
+      //   premade_dashboards.push(
+      //     <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>
+      //       {dashboard.title}
+      //     </NavMenuItem>)
+      // } else if (!dashboard.builtin) {
+      //   custom_dashboards.push(
+      //     <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' + dashboard.id}>
+      //       {dashboard.title}
+      //     </NavMenuItem>)
+      // }
     }, this)
 
     // Chart Menu Items
