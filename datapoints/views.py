@@ -99,21 +99,21 @@ def update_campaign(request):
 
 # RESOURCES
 #---------------------------------------------------------------------------
-@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
+@user_passes_test(lambda u: u.groups.filter(name='chart_builder') or u.is_superuser,
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def chart_builder(request):
     return render_to_response('charts/create.html',
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
+@user_passes_test(lambda u: u.groups.filter(name='chart_edit') or u.is_superuser,
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def chart_edit(request, chart_id=None):
     return render_to_response('charts/edit.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='dashboard_builder'),
+@user_passes_test(lambda u: u.groups.filter(name='explore_data') or u.is_superuser,
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
-def dashboard_builder(request, dashboard_id=None):
+def explore_data(request, dashboard_id=None):
     return render_to_response('dashboards/create.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 
@@ -127,13 +127,13 @@ class DashBoardView(generic.ListView):
 
 # OTHER
 #----------------------------------------------------------------------------
-@user_passes_test(lambda u: u.groups.filter(name='data_entry'),
+@user_passes_test(lambda u: u.groups.filter(name='data_entry') or u.is_superuser,
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def data_entry(request):
     return render_to_response('data-entry/index.html',
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='manage_system'),
+@user_passes_test(lambda u: u.groups.filter(name='manage_system') or u.is_superuser,
     login_url='/datapoints/permissions_needed/', redirect_field_name=None)
 def manage_system(request):
     return render_to_response('manage_system.html',\

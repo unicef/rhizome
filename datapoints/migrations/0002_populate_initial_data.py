@@ -23,10 +23,17 @@ def populate_initial_data(apps, schema_editor):
     all_sheets = xl.sheet_names
 
     datapoints_app = get_app('datapoints')
+    auth_app = get_app('auth')
 
     models_to_process = {}
 
-    for model in get_models(datapoints_app):
+    all_models = get_models(datapoints_app) + get_models(auth_app)
+    print '===\n' * 5
+    print type(all_models)
+    print all_models
+    print '===\n' * 5
+
+    for model in all_models:
         ## iterate through the models in the datapoints app and create a lookup
         ## for {'sheet_name': Model} .. for instance -> {'indicator': Indicator}
 
