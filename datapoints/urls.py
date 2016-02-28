@@ -22,12 +22,11 @@ urlpatterns = [
 
     ## DASHBOARDS ##
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
-    url(r'^dashboards/create$', views.dashboard_builder, name='dashboard_create'),
+    url(r'^dashboards/create$', views.explore_data, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[\w-]+)$', views.builtin_dashboard, name='builtin_dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[\w-]+/[-a-zA-Z]+/[0-9]+/[0-9]+)$', views.builtin_dashboard, name='builtin_dashboard'),
-    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/edit/$', views.dashboard_builder, name='dashboard_edit'),
-
+    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/edit/$', views.explore_data, name='dashboard_edit'),
 
     ## DATA BROWSERe ##
     url(r'^data_browser/$', views.data_browser, name='data_browser'),

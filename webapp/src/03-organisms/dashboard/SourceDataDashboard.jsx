@@ -60,9 +60,9 @@ var SourceDataDashboard = React.createClass({
 
     var doc_obj = this.state.doc_obj
 
-    if (!doc_obj) {
-      return <div className='admin-loading'> Source Dashboard Loading...</div>
-    }
+    // if (!doc_obj) {
+    //   return <div className='admin-loading'> Source Dashboard Loading...</div>
+    // }
 
     if (!doc_tab) {
       doc_tab = 'doc_index'
@@ -146,7 +146,7 @@ var SourceDataDashboard = React.createClass({
         <DocForm
           campaign={this.props.campaign}
           location={this.props.location}
-          doc_title = {doc_obj.doc_title}
+          doc_title = 'something'
           reviewTable={review_table}/>
       </div>
     )
@@ -160,7 +160,7 @@ var SourceDataDashboard = React.createClass({
           You can review raw data, map indicators, validate data and view results.
         </div>
         <div>
-          <DocOverview key={table_key + 'breakdown'} loading={loading} doc_id={doc_id} doc_title={doc_obj.doc_title}/>
+          <DocOverview key={table_key + 'breakdown'} loading={loading} doc_id={doc_id} doc_title='something'/>
         </div>
         <div className='large-6 medium-12 small-12 columns csv-upload__title'>
           {doc_tabs}

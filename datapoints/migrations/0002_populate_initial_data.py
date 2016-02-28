@@ -24,14 +24,12 @@ def populate_initial_data(apps, schema_editor):
 
     datapoints_app = get_app('datapoints')
     auth_app = get_app('auth')
+    source_data_app = get_app('source_data')
 
     models_to_process = {}
 
-    all_models = get_models(datapoints_app) + get_models(auth_app)
-    print '===\n' * 5
-    print type(all_models)
-    print all_models
-    print '===\n' * 5
+    all_models = get_models(datapoints_app) + get_models(auth_app) + \
+        get_models(source_data_app)
 
     for model in all_models:
         ## iterate through the models in the datapoints app and create a lookup
