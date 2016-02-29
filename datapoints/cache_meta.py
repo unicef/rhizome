@@ -1,3 +1,5 @@
+import json
+
 from pandas import read_csv, notnull, DataFrame, concat
 from numpy import sqrt, log
 
@@ -191,17 +193,18 @@ def minify_geo_json():
     for shp in LocationPolygon.objects.all():
 
         new_polygon_list = []
-        polygon = shp.geo_json['geometry']['coordinates']
+        geo_json = json.loads(shp.geo_json)
+        polygon = geo_json['geometry']['coordinates']
 
-        if shp.geo_json['geometry']['type'] == 'Polygon': # MultiPolygons trip me up ##
+        if geo_json['geometry']['type'] == 'Polygon': # MultiPolygons trip me up ##
 
             min_polygon = minify_polygon(polygon)
             new_polygon_list.append(min_polygon)
 
-            shp.geo_json['geometry']['coordinates'] = new_polygon_list
+            geo_json['geometry']['coordinates'] = new_polygon_list
 
         shp_obj = \
-            MinGeo(**{'location_id':shp.location_id,'geo_json':shp.geo_json})
+            MinGeo(**{'location_id':shp.location_id,'geo_json':geo_json})
         min_geo_batch.append(shp_obj)
 
     MinGeo.objects.all().delete()
@@ -218,7 +221,7 @@ def minify_polygon(polygon):
     shape_df = DataFrame(polygon[0], columns=['lat','lon'])
 
     shape_df['index_col'] = shape_df.index
-    shape_df['to_take'] = shape_df['index_col'].map(lambda x: x % 5)
+    shape_df['to_take'] = 0 ## shape_df['index_col'].map(lambda x: x % 5)
     filtered_df = shape_df[shape_df['to_take'] == 0][['lat','lon']]
 
     return filtered_df.values.tolist()
@@ -235,4 +238,3 @@ def cache_all_meta():
     source_object_cache = update_source_object_names()
 
     # minify_geo_json()
-

@@ -9,6 +9,7 @@ from django.conf import settings
 import pandas as pd
 from datapoints.models import Location, LocationPolygon
 from django.db.models import get_app, get_models
+from datapoints.cache_meta import minify_geo_json, LocationTreeCache
 
 def populate_initial_data(apps, schema_editor):
     '''
@@ -56,6 +57,11 @@ def process_meta_data():
         except KeyError:
             pass
 
+    ## once the locations are all created we need to ##
+    ## cache them in the locaiton_tree table ##
+    ltc = LocationTreeCache()
+    ltc.main()
+
 def process_geo_json():
 
     try:
@@ -68,6 +74,8 @@ def process_geo_json():
         .values_list('id','location_code')),columns=['location_id','location_code'])
     merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
     model_df_to_data(merged_df, LocationPolygon)
+
+    minify_geo_json()
 
 def process_initial_source_data():
     pass
