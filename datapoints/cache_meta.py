@@ -221,7 +221,7 @@ def minify_polygon(polygon):
     shape_df = DataFrame(polygon[0], columns=['lat','lon'])
 
     shape_df['index_col'] = shape_df.index
-    shape_df['to_take'] = shape_df['index_col'].map(lambda x: x % 5)
+    shape_df['to_take'] = 0 ## shape_df['index_col'].map(lambda x: x % 5)
     filtered_df = shape_df[shape_df['to_take'] == 0][['lat','lon']]
 
     return filtered_df.values.tolist()
