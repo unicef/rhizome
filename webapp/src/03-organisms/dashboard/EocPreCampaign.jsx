@@ -1,7 +1,8 @@
-// import _ from 'lodash'
+import _ from 'lodash'
 import React from 'react'
 // import moment from 'moment'
 import Chart from '02-molecules/Chart.jsx'
+import DashboardActions from 'actions/DashboardActions'
 
 var EocPreCampaign = React.createClass({
 
@@ -23,7 +24,6 @@ var EocPreCampaign = React.createClass({
   },
 
   render: function () {
-    console.log('somethign should be loading')
     // var campaign = this.props.campaign
     // var printDate = moment(campaign.start_date).format('MMM ‘YY')
     var data = this.props.data
@@ -42,7 +42,15 @@ var EocPreCampaign = React.createClass({
     var mapChart = <Chart type='ChoroplethMap'
              data={data.missedChildrenByProvince}
              loading={loading}
-        />
+             options={{
+               aspect: 0.6,
+               domain: _.constant([0, 0.1]),
+               value: _.property('properties[475]'),
+              //  bubbleValue: _.property('properties[177]'),
+              //  stripeValue: _.property('properties[203]'),
+              //  xFormat: d3.format(',.1%'),
+               onClick: d => { DashboardActions.navigate({ location: d }) }
+             }}/>
 
     var trendChart = <Chart type='LineChart'
              data={data.polioCasesYtd}
