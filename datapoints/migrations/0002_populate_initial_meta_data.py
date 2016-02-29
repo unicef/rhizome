@@ -22,7 +22,6 @@ def populate_initial_data(apps, schema_editor):
 
     process_meta_data()
     process_geo_json()
-    process_initial_source_data()
 
 def process_meta_data():
 
@@ -76,9 +75,6 @@ def process_geo_json():
     model_df_to_data(merged_df, LocationPolygon)
 
     minify_geo_json()
-
-def process_initial_source_data():
-    pass
 
 def model_df_to_data(model_df,model):
 
