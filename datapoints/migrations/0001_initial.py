@@ -99,7 +99,7 @@ class Migration(migrations.Migration):
             name='CustomChart',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('chart_title', models.CharField(max_length=55)),
+                ('title', models.CharField(max_length=55)),
                 ('chart_json', jsonfield.fields.JSONField()),
             ],
             options={

@@ -13,6 +13,7 @@ import ancestryString from 'data/transform/ancestryString'
 let ChartWizardStore = Reflux.createStore({
   listenables: ChartWizardActions,
   data: {
+    title: '',
     indicatorList: [],
     indicatorSelected: [],
     indicatorFilteredList: [],
@@ -108,8 +109,9 @@ let ChartWizardStore = Reflux.createStore({
     return this.data
   },
 
-  async onInitialize (chartDef) {
-    this.data.chartDef = _.clone(chartDef)
+  async onInitialize (chart) {
+    this.data.chartDef = chart.chart_json ? _.clone(chart.chart_json) : chart
+    this.data.title = chart.title
 
     let locations = await api.locations()
     let campaigns = await api.campaign()
@@ -123,6 +125,7 @@ let ChartWizardStore = Reflux.createStore({
       country.index = index
     })
     let countryIndex = _.indexBy(this.data.countries, _.property('id'))
+    console.log('this.data', this.data)
     this.data.countrySelected = (this.data.chartDef.countries || []).map(country => {
       return countryIndex[country]
     })
@@ -166,7 +169,7 @@ let ChartWizardStore = Reflux.createStore({
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-    this.data.indicatorSelected = chartDef.indicators.map(id => {
+    this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
       return this.indicatorIndex[id]
     })
 
@@ -188,8 +191,8 @@ let ChartWizardStore = Reflux.createStore({
     this.data.campaignFilteredList = this.campaignList
     this.data.chartTypeFilteredList = builderDefinitions.charts
 
-    if (this.data.chartDef.campaignValue && this.campaignIndex[chartDef.campaignValue]) {
-      this.data.campaign = this.campaignIndex[chartDef.campaignValue]
+    if (this.data.chartDef.campaignValue && this.campaignIndex[this.data.chartDef.campaignValue]) {
+      this.data.campaign = this.campaignIndex[this.data.chartDef.campaignValue]
     } else {
       this.data.campaign = this.data.campaignFilteredList.length > 0
         ? this.data.campaignFilteredList[0]
@@ -211,6 +214,7 @@ let ChartWizardStore = Reflux.createStore({
 
   onClear () {
     this.data = {
+      title: '',
       indicatorList: [],
       indicatorSelected: [],
       indicatorFilteredList: [],
@@ -247,7 +251,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onEditTitle: function (value) {
-    this.data.chartDef.title = value
+    this.data.title = value
   },
 
   onChangeCountry: function (index) {
@@ -397,7 +401,7 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onSaveChart: function (callback) {
-    if (!this.data.chartDef.title){
+    if (!this.data.title){
       window.alert('Please add a Title to your chart')
       return
     }

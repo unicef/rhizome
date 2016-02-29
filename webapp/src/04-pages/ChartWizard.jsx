@@ -22,7 +22,6 @@ import ChartWizardStore from 'stores/ChartWizardStore'
 import ChartAPI from 'data/requests/ChartAPI'
 
 const defaultChartDef = {
-  title: '',
   type: 'RawData',
   indicators: [],
   countries: [],
@@ -47,11 +46,11 @@ let ChartWizard = React.createClass({
   componentDidMount () {
     if (this.props.chart_id) {
       ChartAPI.getChart(this.props.chart_id).then(function(response){
-        let chart_json = response.chart_json
-        ChartWizardActions.initialize(chart_json)
+        ChartWizardActions.initialize(response)
       })
     } else {
       this.chartDef = this.props.chartDef || defaultChartDef
+      console.log('im runnin', this.chartDef)
       ChartWizardActions.initialize(this.chartDef)
     }
   },
@@ -64,6 +63,7 @@ let ChartWizard = React.createClass({
     ChartWizardActions.saveChart(data => {
       var chart = {
         id: this.props.chart_id,
+        title: this.state.data.title,
         chart_json: JSON.stringify(this.state.data.chartDef)
       }
       api.post_chart(chart).then(res => {
@@ -159,8 +159,9 @@ let ChartWizard = React.createClass({
     }
 
     let title_input = <TitleInput save={ChartWizardActions.editTitle}/>
-    if (this.state.data.chartDef) {
-      title_input = <TitleInput initialText={this.state.data.chartDef.title} save={ChartWizardActions.editTitle}/>
+      console.log('this.state.data', this.state.data)
+    if (this.state.data.title) {
+      title_input = <TitleInput initialText={this.state.data.title} save={ChartWizardActions.editTitle}/>
     }
 
 
