@@ -13,7 +13,7 @@ class Document(models.Model):
     docfile = models.FileField(upload_to='documents/%Y/%m/%d', null=True)
     doc_title = models.TextField(unique=True)
     file_header = JSONField(null=True)
-    created_by = models.ForeignKey(User)
+    created_by = models.ForeignKey(User, null=True)
     guid = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 

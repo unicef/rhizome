@@ -6,7 +6,6 @@ import django.db.models.deletion
 from django.db import models, migrations
 from django.conf import settings
 from django.db.models import get_app, get_models
-from django.conf import settings
 
 import pandas as pd
 
@@ -14,6 +13,8 @@ from datapoints.cache_meta import minify_geo_json, LocationTreeCache
 from datapoints.models import Location, LocationPolygon
 from source_data.models import Document, DocumentDetail, DocDetailType
 from source_data.etl_tasks.transform_upload import DocTransform
+from source_data.etl_tasks.refresh_master import MasterRefresh
+from datapoints.agg_tasks import AggRefresh
 
 def populate_source_data(apps, schema_editor):
     '''
@@ -34,23 +35,31 @@ def populate_source_data(apps, schema_editor):
 
 def process_source_sheet(source_sheet_df, sheet_name):
 
-    user_id = 1 ## sketchy but will work so long as developer creates a
-                ## superuser when spinning up a new app
+    user_id = -1
 
-    file_loc = settings.MEDIA_ROOT + sheet_name
-    print 'SAVING: ' + file_loc
-    source_sheet_df.to_csv(file_loc)
+    # file_loc = settings.MEDIA_ROOT + sheet_name
+    saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
+    source_sheet_df.to_csv(saved_csv_file_location)
+    doc_file_text = sheet_name + '.csv'
 
     new_doc = Document.objects.create(
-        doc_title = sheet_name,
-        created_by_id = user_id,
+        doc_title = doc_file_text,
         guid = 'test',
-        docfile=file_loc
+        docfile=doc_file_text
     )
 
     create_doc_details(new_doc.id)
 
-    DocTransform(user_id, new_doc.id)
+    ## document -> source_submissions ##
+    dt = DocTransform(user_id, new_doc.id)
+    dt.main()
+
+    ## source_submissions -> datapoints ##
+    mr = MasterRefresh(user_id, new_doc.id)
+    mr.main()
+
+    ## datapoints -> computed datapoints ##
+    ar = AggRefresh()
 
 def create_doc_details(doc_id):
 
@@ -67,7 +76,7 @@ def create_doc_details(doc_id):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0002_populate_initial_data'),
+        ('datapoints', '0002_populate_initial_meta_data'),
     ]
 
     operations = [

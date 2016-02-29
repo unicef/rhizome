@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('file_header', jsonfield.fields.JSONField(null=True)),
                 ('guid', models.CharField(max_length=255)),
                 ('created_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL,null=True)),
             ],
             options={
                 'ordering': ('-created_at',),
