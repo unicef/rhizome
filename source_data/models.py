@@ -30,13 +30,15 @@ class Document(models.Model):
 
 class SourceObjectMap(models.Model):
     # FIXME -> need to check what would be foreign keys
-    # so region_maps / campaign_maps are vlide
+    # so region_maps / campaign_maps are valid
 
     master_object_id = models.IntegerField()  # need to think about to FK this.
     master_object_name = models.CharField(max_length=255, null=True)
     source_object_code = models.CharField(max_length=255)
     content_type = models.CharField(max_length=20)
-    mapped_by = models.ForeignKey(User)
+    mapped_by = models.ForeignKey(User, null=True)
+    ## mapped_by is only null so that i can initialize the database with ##
+    ## mappings without a user_id created ##
 
     class Meta:
         db_table = 'source_object_map'
