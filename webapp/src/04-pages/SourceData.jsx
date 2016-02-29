@@ -50,9 +50,9 @@ var Dashboard = React.createClass({
 
   componentWillMount () {
     this.getallDashboards()
-    page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
-    page('/datapoints/:dashboard/:location/:year/:month', this._show)
-    page('/datapoints/:dashboard', this._showDefault)
+    page('/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
+    page('/:dashboard/:location/:year/:month', this._show)
+    page('/:dashboard', this._showDefault)
   },
 
   componentWillUpdate (nextProps, nextState) {
@@ -147,7 +147,7 @@ var Dashboard = React.createClass({
   _navigate (params) {
     let slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
     if (params.dashboard) {
-      window.location.pathname = '/datapoints/' + slug
+      window.location.pathname = '/' + slug
     }
 
     let location = _.get(params, 'location', this.state.location.name)
@@ -155,7 +155,7 @@ var Dashboard = React.createClass({
     if (_.isNumber(location)) {
       location = _.find(this.state.locations, r => r.id === location).name
     }
-    page('/datapoints/' + [slug, location, campaign].join('/'))
+    page('/' + [slug, location, campaign].join('/'))
   },
 
   _showDefault (ctx) {

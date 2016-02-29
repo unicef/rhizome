@@ -43,7 +43,7 @@ var ChartPage = React.createClass({
             <h1>{ this.state.chart.title }</h1>
           </div>
           <div className='medium-2 columns'>
-            <a href={'/datapoints/charts/' + this.props.chart_id + '/edit'} className='button expand small'>
+            <a href={'/charts/' + this.props.chart_id + '/edit'} className='button expand small'>
               <i className='fa fa-pencil'></i>
                Edit Chart
             </a>

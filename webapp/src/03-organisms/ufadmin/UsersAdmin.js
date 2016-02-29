@@ -15,7 +15,7 @@ const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
-    renderer: (id) => <a href={`/datapoints/users/update/${id}`}>Edit User</a>
+    renderer: (id) => <a href={`/users/update/${id}`}>Edit User</a>
   },
   is_active: { title: 'active?', renderer: checkmarkRenderer },
   is_staff: { title: 'staff?', renderer: checkmarkRenderer },

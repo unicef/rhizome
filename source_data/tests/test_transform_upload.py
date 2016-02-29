@@ -5,7 +5,7 @@ from pandas import read_csv, notnull, to_datetime
 
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.models import *
-from datapoints.models import *
+from rhizome.models import *
 
 class TransformUploadTestCase(TestCase):
 
@@ -101,16 +101,16 @@ class TransformUploadTestCase(TestCase):
 
         top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
 
-        campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
-        location_df= read_csv('datapoints/tests/_data/locations.csv')
-        indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
+        location_df= read_csv('rhizome/tests/_data/locations.csv')
+        indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
-            ('datapoints/tests/_data/calculated_indicator_component.csv')
+            ('rhizome/tests/_data/calculated_indicator_component.csv')
 
         user_id = User.objects.create_user('test','test@test.com', 'test').id
         office_id = Office.objects.create(id=1,name='test').id

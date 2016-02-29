@@ -32,7 +32,7 @@ var AdminApp = React.createClass({
 var routes = (
     <Route name='app' path='/manage_system/' handler={AdminApp}>
       <Route name='manage' path='/manage_system/manage/:contentType/:id?' handler={SimpleForm}/>
-      <Route name='updateCampaign' path='/datapoints/campaign/:id?' handler={CampaignsPage}/>
+      <Route name='updateCampaign' path='/campaign/:id?' handler={CampaignsPage}/>
       <Route name='users' handler={require('03-organisms/ufadmin/UsersAdmin')} />
       <Route name='locations' handler={require('03-organisms/ufadmin/LocationAdmin')} />
       <Route name='campaigns' handler={require('03-organisms/ufadmin/CampaignsAdmin')} />

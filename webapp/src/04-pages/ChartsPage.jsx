@@ -45,14 +45,14 @@ var ChartsPage = React.createClass({
         return (
           <tr>
             <td>
-              <a href={'/datapoints/charts/' + chart.id + '/'}>
+              <a href={'/charts/' + chart.id + '/'}>
               <strong>  {chart.title}</strong> </a>
             </td>
             <td>{chart.chart_json.type}</td>
             <td>{chart.chart_json.startDate}</td>
             <td>{chart.chart_json.endDate}</td>
             <td>
-              <a href={'/datapoints/charts/' + chart.id + '/edit'}>
+              <a href={'/charts/' + chart.id + '/edit'}>
                 <i className='fa fa-pencil'></i> Edit
               </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <a onClick={ this.deleteChart.bind(this, chart.id) }>

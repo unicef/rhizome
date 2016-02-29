@@ -10,9 +10,9 @@ from django.views.generic import TemplateView
 from decorator_include import decorator_include
 from tastypie.api import Api
 
-from datapoints.api.resources import *
-from datapoints.api.decorators import api_debug
-from datapoints.views import manage_system, about
+from rhizome.api.resources import *
+from rhizome.api.decorators import api_debug
+from rhizome import views
 
 admin.autodiscover()
 
@@ -53,38 +53,51 @@ v1_api.register(sync_odk.SyncOdkResource())
 v1_api.register(user_group.UserGroupResource())
 v1_api.register(user.UserResource())
 
+
+protected_patterns = [
+    url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
+    url(r'^manage_system/', views.manage_system, name='manage_system'),
+    url(r'^data_browser/$', views.data_browser, name='data_browser'),
+    url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
+    url(r'^explore$', views.chart_builder, name='chart_create'),
+    url(r'^entry/$', views.data_entry, name='datapoint_entry'),
+
+    url(r'^users/create/$', views.UserCreateView.as_view(), name='create_user'),
+    url(r'^users/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(), name='user_update'),
+
+    url(r'^source-data/$', views.source_data, name='source_data'),
+    url(r'^source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/', views.source_data, name='source_data'),
+
+    url(r'^charts/$', views.charts, name='charts'),
+    url(r'^charts/create$', views.chart_builder, name='chart_create'),
+    url(r'^charts/(?P<chart_id>[0-9]+)/$', views.chart, name='chart'),
+    url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
+    url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder, name='chart_builder'),
+
+    url(r'^dashboards/$', views.dashboards, name='dashboards'),
+    url(r'^dashboards/export_file/?$', views.export_file, name='export_file'),
+    url(r'^dashboards/create$', views.explore_data, name='dashboard_create'),
+    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
+    url(r'^dashboards/(?P<dashboard_slug>[\w-]+)$', views.builtin_dashboard, name='builtin_dashboard'),
+    url(r'^dashboards/(?P<dashboard_slug>[\w-]+/[-a-zA-Z]+/[0-9]+/[0-9]+)$', views.builtin_dashboard, name='builtin_dashboard'),
+    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/edit/$', views.explore_data, name='dashboard_edit'),
+    # url(r'^dashboards/[-a-zA-Z0-9]+/$',
+    #     decorator_include(login_required, 'rhizome.urls', namespace='datapoints')),
+]
+
 urlpatterns = patterns(
     '',
 
-    # TASTYPIE API
     (r'^api/', include(v1_api.urls)),
 
-    # HOME PAGE
-    url(r'^$', login_required(RedirectView.as_view(url='/datapoints/dashboards/eoc-pre-campaign')), name='homepage'),
     # url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
+    url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-pre-campaign')), name='homepage'),
 
-
-    # BASE DATPOINT FUNCTIONALITY ( see datapoints/urls )
-    url(r'^datapoints/', decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-
-    # DASHBOARD WITH URL PARAMS
-    url(r'^datapoints/dashboards/[-a-zA-Z0-9]+/$',
-        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-    url(r'^datapoints/dashboards/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$',
-        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-    url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/',
-        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-
-    # ADMIN, LOG IN AND LOGOUT
+    url(r'^about$', views.about, name='about'),
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-
-    # MANAGE SYSTEM
-    url(r'^manage_system/', manage_system, name='manage_system'),
-
-    # ABOUT PAGE
-    url(r'^about$', about, name='about'),
+    url(r'^', decorator_include(login_required, protected_patterns, namespace='datapoints')),
 
     # Waffle PATH
     url(r'^', include('waffle.urls')),

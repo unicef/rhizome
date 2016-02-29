@@ -202,7 +202,7 @@ var SourceDataDashboard = React.createClass({
       location = _.find(this.state.locations, r => r.id === location).name
     }
 
-    page('/datapoints/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id)
+    page('/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id)
   }
 })
 

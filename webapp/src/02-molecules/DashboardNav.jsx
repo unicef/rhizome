@@ -36,19 +36,19 @@ let DashboadrNav = React.createClass({
       //console.log('dashboard: ', dashboard)
       if(dashboard.builtin && dashboard.id == -9) {
         premade_dashboards.push(
-          <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>
+          <NavMenuItem key={dashboard.id} href={'/dashboards/' +  _.kebabCase(dashboard.title)}>
             {dashboard.title}
           </NavMenuItem>)
       }
 
       // if (dashboard.builtin && dashboard.id !== -4 && dashboard.title.indexOf('Homepage') === -1) {
       //   premade_dashboards.push(
-      //     <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' +  _.kebabCase(dashboard.title)}>
+      //     <NavMenuItem key={dashboard.id} href={'/dashboards/' +  _.kebabCase(dashboard.title)}>
       //       {dashboard.title}
       //     </NavMenuItem>)
       // } else if (!dashboard.builtin) {
       //   custom_dashboards.push(
-      //     <NavMenuItem key={dashboard.id} href={'/datapoints/dashboards/' + dashboard.id}>
+      //     <NavMenuItem key={dashboard.id} href={'/dashboards/' + dashboard.id}>
       //       {dashboard.title}
       //     </NavMenuItem>)
       // }
@@ -57,7 +57,7 @@ let DashboadrNav = React.createClass({
     // Chart Menu Items
     // ---------------------------------------------------------------------------
     let custom_charts = this.state.custom_charts.map(chart => {
-      return <NavMenuItem key={chart.chart_json.id} href={'/datapoints/charts/' + chart.id}>
+      return <NavMenuItem key={chart.chart_json.id} href={'/charts/' + chart.id}>
         { chart.title }
       </NavMenuItem>
     })
@@ -67,10 +67,10 @@ let DashboadrNav = React.createClass({
     return (
       <ul className='dashboards-nav'>
         <li>
-          <a href='/datapoints/explore'>Data</a>
+          <a href='/explore'>Data</a>
         </li>
         <li>
-          <a href='/datapoints/charts/'>Charts</a>
+          <a href='/charts/'>Charts</a>
           <ul className='dashboard-menu animated slideDown'>
             { premade_dashboards }
             <li className='separator'>

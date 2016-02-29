@@ -67,7 +67,7 @@ let ChartWizard = React.createClass({
         chart_json: JSON.stringify(this.state.data.chartDef)
       }
       api.post_chart(chart).then(res => {
-        window.location.replace("/datapoints/charts/" + res.objects.id);
+        window.location.replace("/charts/" + res.objects.id);
       }, res => {
         console.log('update chart error,', res)
       })
