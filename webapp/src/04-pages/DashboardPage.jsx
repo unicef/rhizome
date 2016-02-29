@@ -31,7 +31,7 @@ const LAYOUT = {
   'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard'),
   'District Dashboard': require('03-organisms/dashboard/District'),
   'Source Data': require('03-organisms/dashboard/SourceDataDashboard'),
-  'EOC Pre Campaign' : require('03-organisms/dashboard/EocPreCampaign')
+  'EOC Pre Campaign': require('03-organisms/dashboard/EocPreCampaign')
 }
 
 var DashboardPage = React.createClass({
@@ -325,14 +325,14 @@ var DashboardPage = React.createClass({
 
     // if (dashboardDef.owned_by_current_user) {
     // this should be an onClick -- not a link.  see DashboardBuilder.jsx -- this.editChart
-    let edit = (
-        <span style={{'display': 'inline', 'textAlign': 'right'}}>
-          <a className='menu-button fa-stack'
-             href={'/datapoints/dashboards/' + dashboardDef.id + '/edit/'}>
-            <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
-          </a>
-        </span>
-      )
+    // let edit = (
+    //     <span style={{'display': 'inline', 'textAlign': 'right'}}>
+    //       <a className='menu-button fa-stack'
+    //          href={'/datapoints/dashboards/' + dashboardDef.id + '/edit/'}>
+    //         <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
+    //       </a>
+    //     </span>
+    //   )
 
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
@@ -364,11 +364,8 @@ var DashboardPage = React.createClass({
             </div>
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
               <div className='row'>
-                <div className='medium-5 columns medium-offset-5'>
+                <div className='medium-6 columns medium-offset-6'>
                   {exportModule}
-                </div>
-                <div>
-                  {edit}
                 </div>
               </div>
             </div>
