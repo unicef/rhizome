@@ -1,0 +1,70 @@
+import _ from 'lodash'
+import React from 'react'
+import Reflux from 'reflux'
+import Chart from '02-molecules/Chart'
+
+import DataStore from 'stores/DataStore'
+import DataActions from 'actions/DataActions'
+
+import ChartAPI from 'data/requests/ChartAPI'
+import CampaignAPI from 'data/requests/CampaignAPI'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import ExportPdf from '02-molecules/ExportPdf'
+
+var DashboardPage = React.createClass({
+
+  mixins: [
+    Reflux.connect(DataStore)
+  ],
+
+  propTypes: {
+    campaign: React.PropTypes.object,
+    charts: React.PropTypes.array
+  },
+
+  componentWillMount () {
+    CampaignAPI.getCampaigns().then(response => {
+      this.setState({ campaigns: response })
+    })
+    ChartAPI.getChart(5).then(response => {
+      let chartDef = response.chart_json
+      chartDef.title = response.title
+      this.setState({
+        chart: chartDef,
+        data: DataActions.fetchForChart(chartDef)
+      })
+    })
+  },
+
+  render () {
+    if (this.state.data.data) {
+      return (
+        <div className='row layout-basic'>
+          <div className='medium-12 columns text-center'>
+            <h1>{ this.state.chart.title }</h1>
+          </div>
+          <div className='medium-2 columns'>
+            <a href={'/charts/' + 5 + '/edit'} className='button expand small'>
+              <i className='fa fa-pencil'></i>
+               Edit Chart
+            </a>
+            <ExportPdf className='button expand small' />
+          </div>
+          <div className='medium-10 columns'>
+            <Chart id='custom-chart' type={this.state.chart.type} data={this.state.data.data}
+          options={this.state.data.options} campaigns={this.state.campaigns} defaultCampaign={this.state.campaigns[0]}/>
+          </div>
+        </div>
+      )
+    } else {
+      return  (
+        <div className='loading'>
+          <i className='fa fa-spinner fa-spin fa-5x'></i>
+          <div>Loading</div>
+        </div>
+      )
+    }
+  }
+})
+
+export default DashboardPage

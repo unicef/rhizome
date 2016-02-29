@@ -20,8 +20,11 @@ export default {
   Dashboards: function (el) {
     React.render(React.createElement(require('04-pages/DashboardsPage')), el)
   },
-  Dashboard: function (el) {
-    React.render(React.createElement(require('04-pages/BuiltinDashboardPage')), el)
+  Dashboard: function (el, dashboard_id) {
+    React.render(React.createElement(require('04-pages/DashboardPage'), { dashboard_id: dashboard_id }), el)
+  },
+  BuiltinDashboard: function (el, dashboard_slug) {
+    React.render(React.createElement(require('04-pages/BuiltinDashboardPage'), { dashboard_slug: dashboard_slug }), el)
   },
   DashboardBuilder: function (el, dashboard_id) {
     React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboard_id: dashboard_id }), el)
