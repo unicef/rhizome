@@ -125,7 +125,6 @@ class Migration(migrations.Migration):
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('cache_job', models.ForeignKey(default=-1, to='datapoints.CacheJob')),
-                ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'db_table': 'datapoint',
@@ -150,7 +149,6 @@ class Migration(migrations.Migration):
                 ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('agg_on_location', models.BooleanField()),
-                ('changed_by', models.ForeignKey(to=settings.AUTH_USER_MODEL)),
                 ('document', models.ForeignKey(to='source_data.Document')),
             ],
             options={
@@ -419,11 +417,6 @@ class Migration(migrations.Migration):
             model_name='customdashboard',
             name='default_office',
             field=models.ForeignKey(to='datapoints.Office', null=True),
-        ),
-        migrations.AddField(
-            model_name='customdashboard',
-            name='owner',
-            field=models.ForeignKey(to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='campaigntoindicator',

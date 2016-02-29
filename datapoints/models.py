@@ -432,7 +432,6 @@ class DataPoint(models.Model):
     location = models.ForeignKey(Location)
     data_date = models.DateTimeField()
     value = models.FloatField(null=True)
-    changed_by = models.ForeignKey('auth.User')
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     cache_job = models.ForeignKey(CacheJob, default=-1)
@@ -454,7 +453,6 @@ class DocDataPoint(models.Model):
     location = models.ForeignKey(Location)
     data_date = models.DateTimeField()
     value = models.FloatField(null=True)
-    changed_by = models.ForeignKey('auth.User')
     source_submission = models.ForeignKey('source_data.SourceSubmission')
     agg_on_location = models.BooleanField()
 
@@ -541,7 +539,6 @@ class CustomDashboard(models.Model):
 
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=1000)
-    owner = models.ForeignKey('auth.User')
     default_office = models.ForeignKey(Office, null=True)
     layout = models.IntegerField(default=0, null=True)
 

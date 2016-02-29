@@ -159,14 +159,18 @@ class DocTransform(object):
         Create new metadata if not exists
         Add a record tying this document to the newly inserted metadata
         '''
-
+        ## this is sketchy, but since there is no user when we do the initial
+        ## data migration, we have to set mapped_by_id = None
+        upload_user_id = None
+        if self.user_id > 0:
+            upload_user_id = self.user_id
 
         sm_obj, created = SourceObjectMap.objects.get_or_create(\
             content_type = content_type\
            ,source_object_code = str(source_object_code)\
            ,defaults = {
             'master_object_id':-1,
-            'mapped_by_id':self.user_id
+            'mapped_by_id':upload_user_id
             })
 
         sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\

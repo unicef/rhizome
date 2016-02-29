@@ -299,7 +299,6 @@ class MasterRefresh(object):
                     'location_id' : row.location_id,
                     'data_date' : row.data_date,
                     'value' : row.value,
-                    'changed_by_id' : self.user_id,
                     'source_submission_id' : row.source_submission_id,
                 }))
 
@@ -351,7 +350,6 @@ class MasterRefresh(object):
                 'data_date': data_date,
                 'document_id': self.document_id,
                 'source_submission_id': ss_id,
-                'changed_by_id': self.user_id,
                 'agg_on_location': True,
             })
 
