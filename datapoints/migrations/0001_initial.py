@@ -252,23 +252,12 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=255)),
                 ('location_code', models.CharField(unique=True, max_length=255)),
                 ('latitude', models.FloatField(null=True, blank=True)),
+                ('lpd_status', models.FloatField(null=True, blank=True)),
                 ('longitude', models.FloatField(null=True, blank=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'db_table': 'location',
-            },
-        ),
-        migrations.CreateModel(
-            name='LocationAttribute',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('location_attribute_type', models.CharField(max_length=255)),
-                ('location_attribute_value', models.CharField(max_length=255)),
-                ('location', models.ForeignKey(to='datapoints.Location')),
-            ],
-            options={
-                'db_table': 'location_attribute',
             },
         ),
         migrations.CreateModel(
