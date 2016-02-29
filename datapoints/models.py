@@ -550,6 +550,7 @@ class CustomChart(models.Model):
     '''
     '''
 
+    chart_title = models.CharField(max_length=255, unique=True)
     chart_json = JSONField()
 
     class Meta:

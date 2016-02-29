@@ -99,7 +99,6 @@ class CampaignTest(MasterModelTestCase):
             indicator_id = self.ind_0.id,\
             value=2,
             data_date = data_date,
-            changed_by_id = self.u.id,
             source_submission_id = ss.id,
             cache_job_id=-2
         )
@@ -128,7 +127,6 @@ class CampaignTest(MasterModelTestCase):
             indicator_id = self.ind_0.id,\
             value=2,
             data_date = self.d,
-            changed_by_id = self.u.id,
             source_submission_id = ss.id,
             cache_job_id=-1
         )
@@ -137,7 +135,6 @@ class CampaignTest(MasterModelTestCase):
             indicator_id = self.ind_1.id,\
             value = 3,\
             data_date = self.d, \
-            changed_by_id = self.u.id,\
             source_submission_id = ss.id,\
             cache_job_id = -1
         )
@@ -200,7 +197,7 @@ class DataPointTest(MasterModelTestCase):
             guid = 'test')
 
     def create_datapoint(self, note="test", indicator_id=99, location_id = 99,
-        value=100.01, changed_by_id = 1):
+        value=100.01):
 
         self.set_up()
 
@@ -216,7 +213,6 @@ class DataPointTest(MasterModelTestCase):
             location_id = location_id,
             data_date='2016-01-01',
             value = value,
-            changed_by_id=changed_by_id,
             source_submission_id = source_submission.id
             )
 

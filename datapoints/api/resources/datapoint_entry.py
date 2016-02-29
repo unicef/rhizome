@@ -122,9 +122,7 @@ class DatapointEntryResource(BaseModelResource):
 
             # throw error if can't get a real user id
             user_id = self.get_user_id(bundle)
-            if user_id is not None:
-                bundle.data['changed_by_id'] = user_id
-            else:
+            if user_id is None:
                 raise InputException(0, 'Could not get User ID from cookie')
 
             existing_datapoint = self.get_existing_datapoint(bundle.data)
@@ -259,7 +257,6 @@ class DatapointEntryResource(BaseModelResource):
 
         bundle.obj.cache_job_id = -1
         bundle.obj.source_submission_id = -1
-        bundle.obj.changed_by_id = bundle.data['changed_by_id']
 
         return bundle
 
@@ -341,4 +338,3 @@ class DatapointEntryResource(BaseModelResource):
         if hasattr(error, 'data'):
             response['error']['data'] = error.data
         return response
-

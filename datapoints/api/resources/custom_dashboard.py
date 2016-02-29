@@ -40,7 +40,6 @@ class CustomDashboardResource(BaseModelResource):
             'id': dash_id,
             'title': title,
             'description': description,
-            'owner_id': user_id,
             'default_office_id': default_office_id,
             'layout': layout
         }
@@ -71,4 +70,3 @@ class CustomDashboardResource(BaseModelResource):
             return CustomDashboard.objects.filter(id=dash_id).values()
         except KeyError:
             return CustomDashboard.objects.all().values()
-

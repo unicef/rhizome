@@ -37,9 +37,10 @@ class ChartResourceTest(ResourceTestCase):
         return result
 
     def test_chart_create(self):
-        dash = CustomDashboard.objects.create(title='test', owner_id=self.user.id)
+        dash = CustomDashboard.objects.create(title='test')
 
-        post_data = {'chart_json': json.dumps({'foo': 'bar'})}
+        post_data = {'chart_title': 'Afghanistan',\
+            'chart_json': json.dumps({'foo': 'bar'})}
 
         resp = self.api_client.post('/api/v1/custom_chart/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
@@ -51,8 +52,8 @@ class ChartResourceTest(ResourceTestCase):
 
     def test_chart_delete(self):
 
-        c1 = CustomChart.objects.create(chart_json={'hello': 'world'})
-        c2 = CustomChart.objects.create(chart_json={'goodnight': 'moon'})
+        c1 = CustomChart.objects.create(chart_title='L.O.X', chart_json={'hello': 'world'})
+        c2 = CustomChart.objects.create(chart_title='J to the Muah',chart_json={'goodnight': 'moon'})
 
         delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
 

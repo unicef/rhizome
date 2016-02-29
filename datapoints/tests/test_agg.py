@@ -127,7 +127,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             indicator_id = indicator_id,
             value = value,
-            changed_by_id = self.user.id,
             cache_job_id = -1,
             source_submission_id = ss_id
         )
@@ -248,7 +247,6 @@ class AggRefreshTestCase(TestCase):
             location_id = location_ids[0],
             data_date = data_date,
             value = .2,
-            changed_by_id = self.user.id,
             source_submission_id = 1
         )
 
@@ -257,7 +255,6 @@ class AggRefreshTestCase(TestCase):
             location_id = location_ids[1],
             data_date = data_date,
             value = .6,
-            changed_by_id = self.user.id,
             source_submission_id = 1
         )
 
@@ -424,7 +421,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             location_id = location_id,
             value = val_1,
-            changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )
@@ -433,7 +429,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             location_id = location_id,
             value = val_2,
-            changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )
@@ -442,7 +437,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             location_id = location_id,
             value = val_3,
-            changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )
@@ -528,7 +522,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             location_id = location_id,
             value = x,
-            changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )
@@ -537,7 +530,6 @@ class AggRefreshTestCase(TestCase):
             data_date = data_date,
             location_id = location_id,
             value = y,
-            changed_by_id = self.user.id,
             source_submission_id = 1,
             cache_job_id = -1,
         )

@@ -112,7 +112,6 @@ class RefreshMasterTestCase(TestCase):
             'indicator_id': indicator_obj.id,
             'value': 100,
             'source_submission_id': source_submission_obj.id,
-            'changed_by_id' : self.user.id
         }
 
         ## create dictionaries for the two datapoints ##
@@ -179,7 +178,6 @@ class RefreshMasterTestCase(TestCase):
             'indicator_id' : test_ind_id,
             'location_id' : test_loc_id,
             'data_date' : data_date,
-            'changed_by_id' : self.user.id,
             'agg_on_location': True,
         }
 
