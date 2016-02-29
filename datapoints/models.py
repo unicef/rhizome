@@ -236,6 +236,14 @@ class Location(models.Model):
     class Meta:
         db_table = 'location'
 
+class LocationAttribute(models.Model):
+
+    location = models.ForeignKey(Location)
+    location_attribute_type = models.CharField(max_length=255)
+    location_attribute_value = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'location_attribute'
 
 class LocationTree(models.Model):
     '''

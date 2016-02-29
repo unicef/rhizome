@@ -261,6 +261,18 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='LocationAttribute',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('location_attribute_type', models.CharField(max_length=255)),
+                ('location_attribute_value', models.CharField(max_length=255)),
+                ('location', models.ForeignKey(to='datapoints.Location')),
+            ],
+            options={
+                'db_table': 'location_attribute',
+            },
+        ),
+        migrations.CreateModel(
             name='LocationPermission',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
