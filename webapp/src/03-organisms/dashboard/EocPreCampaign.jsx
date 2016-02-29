@@ -59,7 +59,7 @@ var EocPreCampaign = React.createClass({
 
     return (
     <div id='eoc-dashboard-dashboard'>
-      <div className='row'>
+      <div className='row homepage-charts'>
         <div className='medium-8 columns end cd-chart-size'>
           <h2>Table Chart</h2>
           {tableChart}

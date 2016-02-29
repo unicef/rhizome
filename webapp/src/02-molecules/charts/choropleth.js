@@ -221,15 +221,36 @@ _.extend(ChoroplethMap.prototype, {
     var path = d3.geo.path().projection(projection)
 
     var domain = options.domain(features)
-
+    // calculate the bounds upon which to color the map based on the
+    // scale of the cooresponding data.
     if (!_.isArray(domain)) {
       domain = d3.extent(features, options.value)
       domain[0] = Math.min(domain[0], 0)
     }
+    console.log('domain: ', domain)
 
     var colorScale = d3.scale.quantize()
       .domain(domain.concat().reverse())
-      .range(options.color.concat().reverse().slice(0, 6))
+      .range(options.color.concat().reverse().slice(0, 3))
+
+    console.log('colorScale: ', colorScale)
+
+    // table.js --> THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
+    // var targets = _(options.headers)
+    //   .indexBy('id')
+    //   .mapValues(ind => {
+    //     var extents = [ ind.low_bound, ind.high_bound ]
+    //     var names = ['bad', 'ok', 'good']
+    //
+    //     if (ind.low_bound > ind.high_bound) {
+    //       names = ['good', 'ok', 'bad']
+    //     }
+    //
+    //     return d3.scale.threshold()
+    //       .domain(extents)
+    //       .range(names)
+    //   })
+    //   .value()
 
     var location = g.selectAll('.location')
       .data(features, function (d, i) {
@@ -267,7 +288,7 @@ _.extend(ChoroplethMap.prototype, {
       colorScale.range(),
         c => _.map(colorScale.invertExtent(c), options.xFormat).join('—')
     )
-
+    console.log('ticks', ticks);
     if (!options.homepage && options.chartInDashboard) {
       if (_.every(colorScale.domain(), _.isNaN)) {
         svg.select('.legend').selectAll('*').remove()
