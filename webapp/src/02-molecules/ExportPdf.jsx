@@ -11,7 +11,7 @@ var ExportPdf = React.createClass({
   defaults: {
     label: 'Export',
     isFetching: false,
-    url: '/dashboards/export_file/?',
+    url: '/export_file/?',
     interval: 1000,
     cookieName: 'fileDownloadToken'
   },

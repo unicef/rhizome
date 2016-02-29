@@ -59,6 +59,7 @@ protected_patterns = [
     url(r'^manage_system/', views.manage_system, name='manage_system'),
     url(r'^data_browser/$', views.data_browser, name='data_browser'),
     url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
+    url(r'^export_file/?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_builder, name='chart_create'),
     url(r'^entry/$', views.data_entry, name='datapoint_entry'),
 
@@ -75,7 +76,6 @@ protected_patterns = [
     url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder, name='chart_builder'),
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
-    url(r'^dashboards/export_file/?$', views.export_file, name='export_file'),
     url(r'^dashboards/create$', views.explore_data, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[\w-]+)$', views.builtin_dashboard, name='builtin_dashboard'),
