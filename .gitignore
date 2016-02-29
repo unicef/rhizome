@@ -35,3 +35,4 @@ dev
 webapp/coverage
 ~$initial_data.xlsx
 rhizome.conf
+geo_json.txt

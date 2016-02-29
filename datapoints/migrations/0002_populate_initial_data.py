@@ -7,7 +7,7 @@ import django.db.models.deletion
 from django.conf import settings
 
 import pandas as pd
-from datapoints.models import IndicatorTag
+from datapoints.models import Location, LocationPolygon
 from django.db.models import get_app, get_models
 
 def populate_initial_data(apps, schema_editor):
@@ -18,6 +18,12 @@ def populate_initial_data(apps, schema_editor):
     We need to ingest the data itself in the same order as the excel
     sheet otherwise we will have foreign key constraint issues.
     '''
+
+    process_meta_data()
+    process_geo_json()
+    process_initial_source_data()
+
+def process_meta_data():
 
     xl = pd.ExcelFile('initial_data.xlsx')
     all_sheets = xl.sheet_names
@@ -50,6 +56,21 @@ def populate_initial_data(apps, schema_editor):
         except KeyError:
             pass
 
+def process_geo_json():
+
+    try:
+        geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
+    except IOError:
+        return
+
+    geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
+    location_df = pd.DataFrame(list(Location.objects.all()\
+        .values_list('id','location_code')),columns=['location_id','location_code'])
+    merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
+    model_df_to_data(merged_df, LocationPolygon)
+
+def process_initial_source_data():
+    pass
 
 def model_df_to_data(model_df,model):
 
