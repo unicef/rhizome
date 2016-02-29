@@ -57,7 +57,6 @@ v1_api.register(user.UserResource())
 protected_patterns = [
     url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system/', views.manage_system, name='manage_system'),
-    url(r'^data_browser/$', views.data_browser, name='data_browser'),
     url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
     url(r'^export_file/?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_builder, name='chart_create'),

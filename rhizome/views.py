@@ -78,9 +78,6 @@ def chart(request, chart_id=None):
 
 # OTHER
 #----------------------------------------------------------------------------
-def data_browser(request):
-    return render_to_response('index.html',
-                              context_instance=RequestContext(request))
 def source_data(request):
     return render_to_response('source-data/index.html',
                               context_instance=RequestContext(request))
@@ -142,7 +139,7 @@ def manage_system(request):
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User
-    template_name = 'user_create.html'
+    template_name = 'users/create.html'
     form_class = UserCreateForm
 
     def get_success_url(self):
@@ -153,7 +150,7 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
-    template_name = 'user_edit.html'
+    template_name = 'users/edit.html'
     form_class = UserEditForm
 
     def dispatch(self, *args, **kwargs):
