@@ -129,7 +129,7 @@ let ChartWizard = React.createClass({
     )
 
     let location_options = [
-      { title: 'by Tag', value: this.state.data.location_tags },
+      { title: 'by Status', value: this.state.data.location_lpd_statuses },
       { title: 'by Country', value: this.state.data.locationFilteredList }
     ]
 

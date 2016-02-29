@@ -20,22 +20,10 @@ let ChartWizardStore = Reflux.createStore({
     countries: [],
     countrySelected: [],
     location: [],
-    location_tags: [ // Temporarily Hard Coded. Fetch from API in the future
-      {
-        value: 'tag-1',
-        title: 'LPD 1',
-        location_ids: [ 3148, 3149, 3143, 3300, 3303, 3304, 3311, 3298, 3214, 3206, 3213, 3200, 3201, 3204, 3400, 3389, 3395, 3401, 3493 ]
-      },
-      {
-        value: 'tag-2',
-        title: 'LPD 2',
-        location_ids: [ 3142, 3279, 3309, 3302, 3305, 3327, 3184, 3515, 3209, 3211, 3212, 3199, 3207, 3210, 3311, 3203, 3367, 3360, 3363, 3369, 3398, 3404, 3388, 3405, 3409, 3427, 3494, 3508 ]
-      },
-      {
-        value: 'tag-3',
-        title: 'LPD 3',
-        location_ids: [ 3248, 3249, 3256, 3251, 3273, 3283, 3117, 3291, 3295, 3301, 3308, 3306, 3307, 3343, 3344, 3351, 3355, 3356, 3370, 3371, 3373, 3372, 3361, 3364, 3365, 3187, 3190, 3189, 3191, 3376, 3397, 3391, 3393, 3408, 3419, 3420, 3446, 3447, 3463, 3495, 3492, 3515, 3506, 3507, 3509, 3510, 3505, 3512, 3513]
-      }
+    location_lpd_statuses: [
+      {value: 'lpd-1', 'title': 'LPD 1', location_ids: []},
+      {value: 'lpd-2', 'title': 'LPD 2', location_ids: []},
+      {value: 'lpd-3', 'title': 'LPD 3', location_ids: []}
     ],
     locationList: [],
     locationFilteredList: [],
@@ -160,6 +148,8 @@ let ChartWizardStore = Reflux.createStore({
       this.data.selected_locations = []
     }
 
+    this.data.lpds = this.getLocationLpdStatuses(_.toArray(this.locationIndex))
+
     this.data.rawIndicators = await api.indicators(null, null, { 'cache-control': 'no-cache' })
     this.data.rawTags = await api.get_indicator_tag(null, null, { 'cache-control': 'no-cache' })
     this.indicators = this.data.rawIndicators.objects
@@ -270,27 +260,31 @@ let ChartWizardStore = Reflux.createStore({
     this.previewChart()
   },
 
-  onAddLocationsByTag: function (index) {
-    let locations_to_add = this.data.location_tags.find( tag => tag.value === index)
-    _.forEach(locations_to_add.location_ids, function (location_id) {
-      if (this.data.selected_locations.map(item => item.id).indexOf(location_id) >= 0) return
-      this.data.selected_locations.push(this.locationIndex[location_id])
-    }, this)
-    this.previewChart()
+  getLocationLpdStatuses: function (locationIndex) {
+    locationIndex.forEach(location => {
+      if (location.lpd_status === 1) {
+        this.data.location_lpd_statuses[0].location_ids.push(location.id)
+      } else if (location.lpd_status === 2) {
+        this.data.location_lpd_statuses[1].location_ids.push(location.id)
+      } else if (location.lpd_status === 3) {
+        this.data.location_lpd_statuses[2].location_ids.push(location.id)
+      }
+    })
   },
 
-  addLocationsByTag: function (index) {
-    let locations_to_add = this.data.location_tags.find( tag => tag.value === index)
-    _.forEach(locations_to_add.location_ids, function (location_id) {
+  addLocationsByLpdStatus: function (index) {
+    let locations_to_add = this.data.location_lpd_statuses.find( lpd_status => lpd_status.value === index)
+    _.forEach(locations_to_add.location_ids, location_id => {
       if (this.data.selected_locations.map(item => item.id).indexOf(location_id) >= 0) return
       this.data.selected_locations.push(this.locationIndex[location_id])
-    }, this)
+    })
+    this.previewChart()
   },
 
   onAddLocation: function (index) {
     if (this.data.selected_locations.map(item => item.id).indexOf(index) >= 0) return
-    if (typeof index === 'string' && index.indexOf('tag') > -1) {
-      this.addLocationsByTag(index)
+    if (typeof index === 'string' && index.indexOf('lpd') > -1) {
+      this.addLocationsByLpdStatus(index)
     } else {
       this.data.selected_locations.push(this.locationIndex[index])
     }
