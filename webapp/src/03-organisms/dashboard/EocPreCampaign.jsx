@@ -52,17 +52,23 @@ var EocPreCampaign = React.createClass({
     return (
     <div id='eoc-dashboard-dashboard'>
       <div className='row'>
-        <div className='medium-4 columns end cd-chart-size'>
+        <div className='medium-8 columns end cd-chart-size'>
           <h2>Table Chart</h2>
           {tableChart}
         </div>
-        <div className='medium-4 columns end cd-chart-size'>
-          <h2>Map Chart</h2>
-          {mapChart}
-        </div>
-        <div className='medium-4 columns end cd-chart-size'>
-          <h2>Trend Chart</h2>
-          {trendChart}
+        <div className="medium-4 columns end">
+          <div className='row'>
+            <div className='medium-12 columns end cd-chart-size'>
+              <h2>Map Chart</h2>
+              {mapChart}
+            </div>
+          </div>
+          <div className='row'>
+            <div className='medium-12 columns end cd-chart-size'>
+              <h2>Trend Chart</h2>
+              {trendChart}
+            </div>
+          </div>
         </div>
       </div>
     </div>
