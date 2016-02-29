@@ -34,7 +34,7 @@ const LAYOUT = {
   'EOC Pre Campaign': require('03-organisms/dashboard/EocPreCampaign')
 }
 
-var DashboardPage = React.createClass({
+var BuiltinDashboardPage = React.createClass({
   mixins: [
     Reflux.ListenerMixin,
     Reflux.connect(DataStore)
@@ -52,10 +52,6 @@ var DashboardPage = React.createClass({
     }
   },
 
-  editChart (index) {
-    this.setState({chartBuilderindex: index, chartBuilderActive: true})
-  },
-
   getAllDashboards () {
     api.get_dashboard().then(res => {
       let customDashboards = _(res.objects).sortBy('id').reverse().value()
@@ -65,7 +61,7 @@ var DashboardPage = React.createClass({
   },
 
   componentWillMount () {
-    // this.getAllDashboards()
+    this.getAllDashboards()
     page('/datapoints/dashboards/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/dashboards/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/dashboards/:dashboard', this._showDefault)
@@ -76,13 +72,7 @@ var DashboardPage = React.createClass({
       return
     }
     let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
-    let title = [
-      nextState.dashboard.title,
-      [nextState.location.name, campaign].join(' '),
-      'RhizomeDB'
-    ].join(' - ')
-
-    document.title = title
+    document.title = [nextState.dashboard.title, [nextState.location.name, campaign].join(' '), 'RhizomeDB'].join(' - ')
   },
 
   componentDidMount () {
@@ -126,40 +116,24 @@ var DashboardPage = React.createClass({
 
   _onNavigationChange (nav) {
     if (NavigationStore.loaded) {
-      page({
-        click: false
-      })
+      page({ click: false })
     }
   },
 
   _setCampaign (id) {
     let campaign = _.find(this.state.campaigns, c => c.id === id)
-
-    if (!campaign) {
-      return
-    }
-
-    this._navigate({
-      campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM')
-    })
+    if (!campaign) return
+    this._navigate({ campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') })
   },
 
   _setLocation (id) {
     let location = _.find(this.state.locations, r => r.id === id)
-
-    if (!location) {
-      return
-    }
-
-    this._navigate({
-      location: location.name
-    })
+    if (!location) return
+    this._navigate({ location: location.name })
   },
 
   _setDashboard (id) {
-    this._navigate({
-      dashboard: id
-    })
+    this._navigate({ dashboard: id })
   },
 
   _getDashboard (slug) {
@@ -323,17 +297,6 @@ var DashboardPage = React.createClass({
     .reverse()
     .value()
 
-    // if (dashboardDef.owned_by_current_user) {
-    // this should be an onClick -- not a link.  see DashboardBuilder.jsx -- this.editChart
-    // let edit = (
-    //     <span style={{'display': 'inline', 'textAlign': 'right'}}>
-    //       <a className='menu-button fa-stack'
-    //          href={'/datapoints/dashboards/' + dashboardDef.id + '/edit/'}>
-    //         <i className='fa fa-stack-1x fa-pencil' style={{ display: 'inline-block' }}></i>
-    //       </a>
-    //     </span>
-    //   )
-
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
@@ -377,4 +340,4 @@ var DashboardPage = React.createClass({
   }
 })
 
-export default DashboardPage
+export default BuiltinDashboardPage
