@@ -1,6 +1,10 @@
 import React from 'react'
-
+import Reflux from 'reflux'
+import RefluxPromise from 'reflux-promise'
+import Router from 'react-router'
 import AdminApp from '04-pages/AdminApp'
+
+Reflux.use(RefluxPromise(window.Promise))
 
 React.render(React.createElement(require('02-molecules/DashboardNav')), document.getElementById('dashboards-nav'))
 
