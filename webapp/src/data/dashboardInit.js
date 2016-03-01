@@ -2,9 +2,13 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
+import api from 'data/api'
+// import DatapointTableAPI from 'data/requests/DatapointTableAPI'
+import processTableChart from '00-utilities/chart_builder/TableChart'
+
 /**
  * Return the facet value for a datum given a path.
- */
+**/
 export function getFacet (datum, path) {
   var facet = _.get(datum, path)
 
@@ -220,14 +224,25 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 
     var datumInChart = _.partial(inChart, chart, campaign, location)
     var chartData = _.filter(data, datumInChart)
-
-    section[chartName] = _.get(process, chart.type, _.constant(chartData))(
+    var processedChart = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
       campaign,
       features
     )
 
+    // if (chart.type === 'TableChart') {
+    //   let query = { 'indicator__in': '21', 'location_id__in': 2 }
+    //
+    //   let dataPromise = api.datapoints(query, null, {'cache-control': 'no-cache'})
+    //
+    //   processedChart = processTableChart([dataPromise, chart.locations, chart.indicators, chart])
+    // }
+
+    // console.log('chart: ', chart)
+    // console.log('processedChart: ', processedChart)
+    // console.log('chartName: ', chartName)
+    section[chartName] = processedChart
     results[sectionName] = section
   })
 

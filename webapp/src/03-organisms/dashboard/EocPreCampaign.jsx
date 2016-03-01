@@ -38,11 +38,10 @@ var EocPreCampaign = React.createClass({
     //   margin: { top: 40, right: 40, bottom: 40, left: 40 },
     //   indicatorsSelected: this.props.indicators
     // }
-    // var tableChart = <Chart type='TableChart'
-    //          data={data.tableData}
-    //          options = {tableChartOptions}
-    //          loading={loading}
-    //     />
+    var tableChart = <Chart type='TableChart'
+             data={data.tableData}
+             loading={loading}
+        />
 
     var mapChart = <Chart type='ChoroplethMap'
              data={data.mapData}
