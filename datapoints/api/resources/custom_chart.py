@@ -23,7 +23,7 @@ class CustomChartResource(BaseModelResource):
 
         post_data = bundle.data
         chart_json = json.loads(post_data['chart_json'])
-        title = post_data['title']
+        title = chart_json['title']
         chart_id = None
 
         try:
@@ -78,4 +78,3 @@ class CustomChartResource(BaseModelResource):
 
         return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()
-
