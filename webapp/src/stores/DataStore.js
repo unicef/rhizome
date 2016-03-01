@@ -111,7 +111,7 @@ var DataStore = Reflux.createStore({
   onFetchForDashboard: async function (dashboard) {
     let responses = await ChartDataInit.getPromises()
     let promises = dashboard.charts.map(async chart => {
-      return await ChartDataInit.prepareData(chart, dashboard.layout || 0, responses)
+      return await ChartDataInit.fetchChart(chart, dashboard.layout || 0, responses)
     })
     Promise.all(promises).then(values => {
       let data = _(dashboard.charts).map(chart => chart.id).zipObject(values).value()
@@ -133,7 +133,7 @@ var DataStore = Reflux.createStore({
   onFetchForChart: async function (chart) {
     let responses = await ChartDataInit.getPromises()
     let dashboard_layout = 1 // Hard Coded - figure out programatic way
-    let promises = await ChartDataInit.prepareData(chart, dashboard_layout || 0, responses)
+    let promises = await ChartDataInit.fetchChart(chart, dashboard_layout || 0, responses)
 
     Promise.resolve(promises).then(values => {
       this.trigger({
