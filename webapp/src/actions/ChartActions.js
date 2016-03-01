@@ -18,9 +18,9 @@ ChartActions.fetchChart.listen(chart_id => {
   ChartActions.fetchChart.promise(ChartAPI.getChart(chart_id))
 })
 
-ChartActions.fetchChartDatapoints.listen((chartDef) => {
+ChartActions.fetchChartDatapoints.listen(chartDef => {
   const query = _prepDatapointsQuery(chartDef)
-  ChartActions.fetchChart.promise(api.datapoints(query))
+  ChartActions.fetchChartDatapoints.promise(api.datapoints(query))
 })
 
 // ACTION HELPERS
