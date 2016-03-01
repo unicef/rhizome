@@ -17,7 +17,7 @@ documentRank: 3
 
 * Wkhtmltopdf Version
 
-* Use `--quiet` option 
+* Use `--quiet` option
 
 
 ## Docker
@@ -25,13 +25,13 @@ documentRank: 3
 * Dockerfile
 
 	1. Wkhtmltopdf Version
-	
+
 	2. xvfb-run
-	
+
 	3. xfonts-75dpi
-	
+
 	4. Server -> Manually Install
-	
+
 
 			# The version for local Debian env
 			RUN sudo apt-get install -y xfonts-75dpi
@@ -45,7 +45,7 @@ documentRank: 3
 			RUN sudo dpkg -i wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 			RUN rm wkhtmltox-0.12.2.1_linux-trusty-amd64.deb
 
-		
+
 ## Backend
 * URL
 
@@ -55,7 +55,7 @@ documentRank: 3
 * View
 
 ```
-		from datapoints.pdf_utils import print_pdf
+		from rhizome.pdf_utils import print_pdf
 		from rhizome.settings.base import STATICFILES_DIRS
 
 		def export_file(request):
@@ -95,7 +95,7 @@ documentRank: 3
 ```
   // pdf_utils.py
   class Configuration(object):
-  
+
   def print_pdf(type, url, output_path, options=None, cookie=None, css_file=None):
     if 'pdf' in type:
       // print pdf
@@ -103,7 +103,7 @@ documentRank: 3
     else:
       // print image
       wk_command = configuration.wkhtmltoimage.decode('utf-8')
-  
+
   def to_pdf(args, path=None):
 ```
 
@@ -113,15 +113,15 @@ documentRank: 3
 
   i. Command Line
 		[Django-waffle](http://waffle.readthedocs.org/en/v0.11/usage/cli.html)
-		
+
 		```
 		./manage.py waffle_switch pdf on --create
 		```
-		
+
   ii. [Django-admin](http://localhost:8000/admin)
-  
+
   iii. [Using Waffle](http://waffle.readthedocs.org/en/v0.11/usage/index.html)		  	       		        		
- 
+
   ```
   from waffle.decorators import waffle_switch
 
@@ -132,7 +132,7 @@ documentRank: 3
   iv. Requirementst.txt
 
   ```
-  django-waffle==0.11 
+  django-waffle==0.11
   ```
 
 
@@ -159,20 +159,20 @@ documentRank: 3
 
 * Using waffle in JS
 
-  1. Django 
+  1. Django
     ```
     # Waffle PATH
       url(r'^', include('waffle.urls')),
     ```
-    			
+
   2. JS
-    
+
   ```
   let exportPdf = ((waffle.switch_is_active('pdf')) && dashboardName === 'Management Dashboard')
       ? (<ExportPdf className='cd-titlebar-margin' />)
       : ''
   ```
-      			
+
 * package.json
 
   ```
@@ -192,7 +192,7 @@ documentRank: 3
 * svg
 
 	1. **viewbox**
-	
+
 	2. **bullet chart**
 
 * IsWkhtmlToPdf
@@ -200,7 +200,7 @@ documentRank: 3
   ```
   // Polyfill.js
   global.IsWkhtmlToPdf = global.IsWkhtmlToPdf || (typeof Function.prototype.bind !== 'function')
-  
+
   // browser.js
   export default {
       isIE: function () {
@@ -211,16 +211,16 @@ documentRank: 3
       }
   }
   ```
-		
+
 * Button pop up after downloading
 
 	Cookie
-		
+
 	Python -> Set cookit in response
-		
+
 	JS -> Set Interval -> Check cookie -> Clear Interval -> Delete cookie
 
-		
+
 
 ## CSS
 
@@ -238,19 +238,19 @@ documentRank: 3
   ],
   dest: `${gulp.config('base.dist')}/static/css`
   ```
-  
+
 4. wkhtmltopdf
 
   ```
   from rhizome.settings.base import STATICFILES_DIRS
-  
+
   css_file = 'file://' + STATICFILES_DIRS[0] + '/css/pdf.css'
     ...
   pdf_content = print_pdf(url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
   ```
 
  5. css file path
-				
+
   ```
   from rhizome.settings.base import STATICFILES_DIRS\
   ```

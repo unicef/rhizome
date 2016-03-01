@@ -244,15 +244,18 @@ var BuiltinDashboardPage = React.createClass({
       campaign = campaigns.first()
     };
 
-    let indicators
-    if (this.indicators) {
-      indicators = _(_.get(dashboardDef, 'charts', []))
-        .pluck('indicators')
-        .flatten()
-        .uniq()
-        .map(id => this.indicators[id])
-        .value()
-    }
+    console.log('dashboarDef:', dashboardDef)
+    console.log('this.indicators: ', this.indicators)
+
+    let indicators = this.indicators // pass all indicators to dashboard, not just those in the charts.
+    // if (this.indicators) {
+    //   indicators = _(_.get(dashboardDef, 'charts', []))
+    //     .pluck('indicators')
+    //     .flatten()
+    //     .uniq()
+    //     .map(id => this.indicators[id])
+    //     .value()
+    // }
 
     let dashboard
     if (dashboardDef.id < 0) {

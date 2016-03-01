@@ -6,7 +6,7 @@ export default {
     {
       'title': 'Polio Cases YTD',
       'type': 'LineChart',
-      'indicators': [168],
+      'indicators': [21, 20],
       'startOf': 'year',
       'timeRange': {
         years: 2
@@ -14,7 +14,7 @@ export default {
     }, {
       'title': 'Missed Children',
       'type': 'LineChart',
-      'indicators': [475],
+      'indicators': [21],
       'timeRange': {
         months: 12
       }
@@ -23,7 +23,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [475]
+      'indicators': [21]
     }
   ]
 }

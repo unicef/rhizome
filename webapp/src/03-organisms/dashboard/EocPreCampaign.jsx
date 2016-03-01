@@ -44,8 +44,9 @@ var EocPreCampaign = React.createClass({
              loading={loading}
              options={{
                aspect: 0.6,
+
                domain: _.constant([0, 0.1]),
-               value: _.property('properties[475]'),
+               value: _.property('properties[21]'),
               //  bubbleValue: _.property('properties[177]'),
               //  stripeValue: _.property('properties[203]'),
               //  xFormat: d3.format(',.1%'),
@@ -64,7 +65,7 @@ var EocPreCampaign = React.createClass({
           <h2>Table Chart</h2>
           {tableChart}
         </div>
-        <div className="medium-4 columns end">
+        <div className='medium-4 columns end'>
           <div className='row'>
             <div className='medium-12 columns end cd-chart-size'>
               <h2>Map Chart</h2>
