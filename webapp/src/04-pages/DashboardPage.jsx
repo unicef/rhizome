@@ -1,59 +1,75 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import StateMixin from 'reflux-state-mixin'
+
 import Chart from '02-molecules/Chart'
-
-import DataStore from 'stores/DataStore'
-import DataActions from 'actions/DataActions'
-
-import ChartAPI from 'data/requests/ChartAPI'
-import CampaignAPI from 'data/requests/CampaignAPI'
-import DropdownMenu from '02-molecules/menus/DropdownMenu'
 import ExportPdf from '02-molecules/ExportPdf'
+import DropdownMenu from '02-molecules/menus/DropdownMenu'
+
+import IndicatorActions from 'actions/IndicatorActions'
+import CampaignActions from 'actions/CampaignActions'
+import LocationActions from 'actions/LocationActions'
+import OfficeActions from 'actions/OfficeActions'
+import ChartActions from 'actions/ChartActions'
+
+import RootStore from 'stores/RootStore'
+import DashboardPageStore from 'stores/DashboardPageStore'
 
 var DashboardPage = React.createClass({
 
   mixins: [
-    Reflux.connect(DataStore)
+    StateMixin.connect(RootStore),
+    StateMixin.connect(DashboardPageStore)
   ],
 
-  propTypes: {
+   propTypes: {
     campaign: React.PropTypes.object,
-    charts: React.PropTypes.array
+    charts_ids: React.PropTypes.array
   },
 
-  componentWillMount () {
-    CampaignAPI.getCampaigns().then(response => {
-      this.setState({ campaigns: response })
-    })
-    ChartAPI.getChart(5).then(response => {
-      let chartDef = response.chart_json
-      chartDef.title = response.title
-      this.setState({
-        chart: chartDef,
-        data: DataActions.fetchForChart(chartDef)
-      })
-    })
+  getDefaultProps () {
+    return {
+      chart_ids: [5, 3],
+    }
+  },
+
+  componentDidMount () {
+    ChartActions.fetchCharts()
+    CampaignActions.fetchCampaigns()
+    IndicatorActions.fetchIndicators()
+    LocationActions.fetchLocations()
+    OfficeActions.fetchOffices()
+  },
+
+  dataIsReady () {
+    return this.state.chartIndex.length > 0
+      &&  this.state.campaignIndex.length > 0
+      &&  this.state.locationIndex.length > 0
+      &&  this.state.indicatorIndex.length > 0
+      &&  this.state.officeIndex.length > 0
   },
 
   render () {
-    if (this.state.data.data) {
+    if (this.dataIsReady()) {
+      console.log('COMPONENT - state.chartIndex', this.state.chartIndex)
+      const dashboard_charts = this.props.chart_ids.map( id => {
+        return (
+          <Chart
+            id='custom-chart'
+            type={this.state.chart.type}
+            data={this.state.chartIndex[id]}
+            options={this.state.data.options}
+            campaigns={this.state.campaigns}
+            defaultCampaign={this.state.campaigns[0]} />
+        )
+
+        this.state.chartIndex[id]
+      })
+      console.log('dashboard_charts', dashboard_charts)
       return (
         <div className='row layout-basic'>
-          <div className='medium-12 columns text-center'>
-            <h1>{ this.state.chart.title }</h1>
-          </div>
-          <div className='medium-2 columns'>
-            <a href={'/charts/' + 5 + '/edit'} className='button expand small'>
-              <i className='fa fa-pencil'></i>
-               Edit Chart
-            </a>
-            <ExportPdf className='button expand small' />
-          </div>
-          <div className='medium-10 columns'>
-            <Chart id='custom-chart' type={this.state.chart.type} data={this.state.data.data}
-          options={this.state.data.options} campaigns={this.state.campaigns} defaultCampaign={this.state.campaigns[0]}/>
-          </div>
+          <h1>we need a chart</h1>
         </div>
       )
     } else {
