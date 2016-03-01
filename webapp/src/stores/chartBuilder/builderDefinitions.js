@@ -3,13 +3,13 @@ import _ from 'lodash'
 export default {
   charts: [
     { name: 'RawData', groupBy: true, locationLevel: true },
-    { name: 'LineChart', groupBy: true, locationLevel: true, timeRadios: ['all', '1year', '3month'] },
     { name: 'TableChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
     { name: 'ChoroplethMap', groupBy: false, locationLevel: false, timeRadios: ['1month'] },
+    { name: 'LineChart', groupBy: true, locationLevel: true, timeRadios: ['all', '1year', '3month'] },
     { name: 'ColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
-    { name: 'ScatterChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
-    { name: 'BarChart', groupBy: true, locationLevel: true, timeRadios: ['1month'] },
-    { name: 'PieChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] }
+    { name: 'BarChart', groupBy: true, locationLevel: true, timeRadios: ['1month'] }
+    // { name: 'ScatterChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
+    // { name: 'PieChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] }
   ],
   groups: [
     { value: 'indicator', title: 'Indicators' },

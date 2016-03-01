@@ -78,4 +78,3 @@ class CustomChartResource(BaseModelResource):
 
         return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()
-
