@@ -23,6 +23,7 @@ class CustomChartResource(BaseModelResource):
 
         post_data = bundle.data
         chart_json = json.loads(post_data['chart_json'])
+        title = post_data['title']
         chart_id = None
 
         try:
@@ -31,7 +32,8 @@ class CustomChartResource(BaseModelResource):
             pass
 
         defaults = {
-            'chart_json': chart_json
+            'chart_json': chart_json,
+            'title': title
         }
 
         chart, created = CustomChart.objects.update_or_create(

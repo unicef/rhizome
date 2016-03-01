@@ -27,6 +27,7 @@ var ChartPage = React.createClass({
     })
     ChartAPI.getChart(this.props.chart_id).then(response => {
       let chartDef = response.chart_json
+      chartDef.title = response.title
       this.setState({
         chart: chartDef,
         data: DataActions.fetchForChart(chartDef)

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls import patterns, url
 from django.conf.urls.static import static
 from django.contrib.auth.decorators import login_required
+from django.views.generic import RedirectView
 from django.views.generic import TemplateView
 from decorator_include import decorator_include
 from tastypie.api import Api
@@ -59,7 +60,9 @@ urlpatterns = patterns(
     (r'^api/', include(v1_api.urls)),
 
     # HOME PAGE
-    url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
+    url(r'^$', login_required(RedirectView.as_view(url='/datapoints/dashboards/eoc-pre-campaign')), name='homepage'),
+    # url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
+
 
     # BASE DATPOINT FUNCTIONALITY ( see datapoints/urls )
     url(r'^datapoints/', decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),

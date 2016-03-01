@@ -46,7 +46,7 @@ var ChartsPage = React.createClass({
           <tr>
             <td>
               <a href={'/datapoints/charts/' + chart.id + '/'}>
-              <strong>  {chart.chart_json.title}</strong> </a>
+              <strong>  {chart.title}</strong> </a>
             </td>
             <td>{chart.chart_json.type}</td>
             <td>{chart.chart_json.startDate}</td>

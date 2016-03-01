@@ -227,6 +227,7 @@ class Location(models.Model):
     office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
+    lpd_status = models.IntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now=True)
     parent_location = models.ForeignKey("self", null=True)
 
@@ -235,15 +236,6 @@ class Location(models.Model):
 
     class Meta:
         db_table = 'location'
-
-class LocationAttribute(models.Model):
-
-    location = models.ForeignKey(Location)
-    location_attribute_type = models.CharField(max_length=255)
-    location_attribute_value = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'location_attribute'
 
 class LocationTree(models.Model):
     '''
@@ -550,7 +542,7 @@ class CustomChart(models.Model):
     '''
     '''
 
-    chart_title = models.CharField(max_length=255, unique=True)
+    title = models.CharField(max_length=255, unique=True)
     chart_json = JSONField()
 
     class Meta:

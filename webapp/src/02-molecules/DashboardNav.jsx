@@ -58,7 +58,7 @@ let DashboadrNav = React.createClass({
     // ---------------------------------------------------------------------------
     let custom_charts = this.state.custom_charts.map(chart => {
       return <NavMenuItem key={chart.chart_json.id} href={'/datapoints/charts/' + chart.id}>
-        { chart.chart_json.title }
+        { chart.title }
       </NavMenuItem>
     })
 

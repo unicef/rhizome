@@ -57,7 +57,7 @@ _.extend(TableChart.prototype, {
     g.append('g').attr('class', 'source-footer')
     g.append('g').attr('class', 'legend')
 
-    this.update(data)
+    this.update(data, options)
   },
 
   update: function (data, options) {
@@ -88,9 +88,8 @@ _.extend(TableChart.prototype, {
     var xDomain = typeof (options.xDomain) !== 'undefined' ? options.xDomain : []
 
     if (xDomain.length === 0) {
-      let headerIndex = _.indexBy(options.headers, 'id')
       xDomain = options.indicatorsSelected.map(ind => {
-        return headerIndex[ind.id].short_name
+        return ind.short_name
       })
     }
 
