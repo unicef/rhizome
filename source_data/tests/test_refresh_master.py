@@ -7,7 +7,7 @@ from pandas import read_csv, notnull, to_datetime
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import *
-from datapoints.models import *
+from rhizome.models import *
 
 class RefreshMasterTestCase(TestCase):
 
@@ -252,7 +252,7 @@ class RefreshMasterTestCase(TestCase):
         indicator_code = raw_indicator_list[-1]
 
         ## SIMULATED USER MAPPING ##
-        ## see: datapoints/source-data/Nigeria/2015/06/mapping/2
+        ## see: source-data/Nigeria/2015/06/mapping/2
 
         ## choose meta data values for the source_map update ##
         map_location_id = Location.objects.all()[0].id
@@ -330,13 +330,13 @@ class RefreshMasterTestCase(TestCase):
         '''
 
         top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
-        campaign_df = read_csv('datapoints/tests/_data/campaigns.csv')
+        campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
-        location_df= read_csv('datapoints/tests/_data/locations.csv')
-        indicator_df = read_csv('datapoints/tests/_data/indicators.csv')
+        location_df= read_csv('rhizome/tests/_data/locations.csv')
+        indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
-            ('datapoints/tests/_data/calculated_indicator_component.csv')
+            ('rhizome/tests/_data/calculated_indicator_component.csv')
 
         user_id = User.objects.create_user('test','john@john.com', 'test').id
         office_id = Office.objects.create(id=1,name='test').id

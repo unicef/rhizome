@@ -15,7 +15,7 @@ let ChartWizardStore = Reflux.createStore({
   data: {
     title: '',
     indicatorList: [],
-    indicatorSelected: [],
+    selectedIndicators: [],
     indicatorFilteredList: [],
     countries: [],
     countrySelected: [],
@@ -27,7 +27,7 @@ let ChartWizardStore = Reflux.createStore({
     ],
     locationList: [],
     locationFilteredList: [],
-    selected_locations: [],
+    selectedLocations: [],
     campaignFilteredList: [],
     // timeRangeFilteredList: [],
     chartTypeFilteredList: [],
@@ -80,13 +80,13 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   applyChartDef (chartDef) {
-    this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.locations }), 0)
+    this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.location_depth }), 0)
     this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
     this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
     this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
     this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
 
-    this.data.chartDef.locations = builderDefinitions.locationLevels[this.data.locationLevelValue].value
+    this.data.chartDef.location_depth = builderDefinitions.locationLevels[this.data.locationLevelValue].value
     this.data.chartDef.groupBy = builderDefinitions.groups[this.data.groupByValue].value
     // this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
     this.data.chartDef.yFormat = builderDefinitions.formats[this.data.yFormatValue].value
@@ -113,7 +113,6 @@ let ChartWizardStore = Reflux.createStore({
       country.index = index
     })
     let countryIndex = _.indexBy(this.data.countries, _.property('id'))
-    console.log('this.data', this.data)
     this.data.countrySelected = (this.data.chartDef.countries || []).map(country => {
       return countryIndex[country]
     })
@@ -140,12 +139,12 @@ let ChartWizardStore = Reflux.createStore({
 
     if (selected_location_ids) {
       if (Array.isArray(selected_location_ids)) {
-        this.data.selected_locations  = selected_location_ids.map(location => this.locationIndex[location])
+        this.data.selectedLocations  = selected_location_ids.map(location => this.locationIndex[location])
       } else {
-        this.data.selected_locations = [this.locationIndex[this.data.chartDef.location_id]]
+        this.data.selectedLocations = [this.locationIndex[this.data.chartDef.location_id]]
       }
     } else {
-      this.data.selected_locations = []
+      this.data.selectedLocations = []
     }
 
     this.data.lpds = this.getLocationLpdStatuses(_.toArray(this.locationIndex))
@@ -159,7 +158,7 @@ let ChartWizardStore = Reflux.createStore({
     this.indicatorIndex = _.indexBy(this.indicators, 'id')
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-    this.data.indicatorSelected = this.data.chartDef.indicators.map(id => {
+    this.data.selectedIndicators = this.data.chartDef.indicator_ids.map(id => {
       return this.indicatorIndex[id]
     })
 
@@ -206,7 +205,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data = {
       title: '',
       indicatorList: [],
-      indicatorSelected: [],
+      selectedIndicators: [],
       indicatorFilteredList: [],
       countries: [],
       countrySelected: [],
@@ -253,9 +252,9 @@ let ChartWizardStore = Reflux.createStore({
     let indicatorTree = api.buildIndicatorsTree(this.data.indicatorFilteredList, this.data.rawTags.objects, true, true)
 
     this.data.indicatorList = _.sortBy(indicatorTree, 'title')
-    this.data.indicatorSelected = this.filterIndicatorByCountry(this.data.indicatorSelected, this.data.countrySelected)
+    this.data.selectedIndicators = this.filterIndicatorByCountry(this.data.selectedIndicators, this.data.countrySelected)
     this.data.locationFilteredList = this.filterLocationByCountry(this.data.locationList, this.data.countrySelected)
-    this.data.selected_locations = this.filterLocationByCountry(this.data.selected_locations, this.data.countrySelected)
+    this.data.selectedLocations = this.filterLocationByCountry(this.data.selectedLocations, this.data.countrySelected)
     this.data.campaignFilteredList = this.filterCampaignByCountry(this.campaignList, this.data.countrySelected)
     this.previewChart()
   },
@@ -275,56 +274,56 @@ let ChartWizardStore = Reflux.createStore({
   addLocationsByLpdStatus: function (index) {
     let locations_to_add = this.data.location_lpd_statuses.find( lpd_status => lpd_status.value === index)
     _.forEach(locations_to_add.location_ids, location_id => {
-      if (this.data.selected_locations.map(item => item.id).indexOf(location_id) >= 0) return
-      this.data.selected_locations.push(this.locationIndex[location_id])
+      if (this.data.selectedLocations.map(item => item.id).indexOf(location_id) >= 0) return
+      this.data.selectedLocations.push(this.locationIndex[location_id])
     })
     this.previewChart()
   },
 
   onAddLocation: function (index) {
-    if (this.data.selected_locations.map(item => item.id).indexOf(index) >= 0) return
+    if (this.data.selectedLocations.map(item => item.id).indexOf(index) >= 0) return
     if (typeof index === 'string' && index.indexOf('lpd') > -1) {
       this.addLocationsByLpdStatus(index)
     } else {
-      this.data.selected_locations.push(this.locationIndex[index])
+      this.data.selectedLocations.push(this.locationIndex[index])
     }
     this.previewChart()
   },
 
   onRemoveLocation: function (index) {
-    _.remove(this.data.selected_locations, { id: index })
+    _.remove(this.data.selectedLocations, { id: index })
     this.previewChart()
   },
 
   onClearSelectedLocations: function () {
-    this.data.selected_locations = []
+    this.data.selectedLocations = []
     this.previewChart()
   },
 
   onAddFirstIndicator: function (index) {
-    this.data.indicatorSelected[0] = this.indicatorIndex[index]
+    this.data.selectedIndicators[0] = this.indicatorIndex[index]
     this.previewChart()
   },
 
   onAddIndicator: function (index) {
-    if (this.data.indicatorSelected.map(indicator => indicator.id).indexOf(index) >= 0) return
-    this.data.indicatorSelected.push(this.indicatorIndex[index])
+    if (this.data.selectedIndicators.map(indicator => indicator.id).indexOf(index) >= 0) return
+    this.data.selectedIndicators.push(this.indicatorIndex[index])
     this.data.chartDef.y = index
     this.previewChart()
   },
 
   onReorderIndicator: function (reorderedIndicators) {
-    this.data.indicatorSelected = reorderedIndicators
+    this.data.selectedIndicators = reorderedIndicators
     this.previewChart()
   },
 
   onRemoveIndicator: function (id) {
-    _.remove(this.data.indicatorSelected, {id: id})
+    _.remove(this.data.selectedIndicators, {id: id})
     this.previewChart()
   },
 
   onClearSelectedIndicators: function () {
-    this.data.indicatorSelected = []
+    this.data.selectedIndicators = []
     this.previewChart()
   },
 
@@ -339,9 +338,9 @@ let ChartWizardStore = Reflux.createStore({
     if (value === 'ChoroplethMap') {
       this.data.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
     }
-    this.data.chartDef.x = this.data.indicatorSelected[0].id
-    this.data.chartDef.y = this.data.indicatorSelected[1] ? this.data.indicatorSelected[1].id : 0
-    this.data.chartDef.z = this.data.indicatorSelected[2] ? this.data.indicatorSelected[2].id : 0
+    this.data.chartDef.x = this.data.selectedIndicators[0].id
+    this.data.chartDef.y = this.data.selectedIndicators[1] ? this.data.selectedIndicators[1].id : 0
+    this.data.chartDef.z = this.data.selectedIndicators[2] ? this.data.selectedIndicators[2].id : 0
 
     this.data.chartData = []
 
@@ -372,13 +371,13 @@ let ChartWizardStore = Reflux.createStore({
   },
 
   onChangeYAxis: function (value) {
-    this.data.indicatorSelected[1] = this.indicatorIndex[value]
+    this.data.selectedIndicators[1] = this.indicatorIndex[value]
     this.data.chartDef.y = value
     this.previewChart()
   },
 
   onChangeZAxis: function (value) {
-    this.data.indicatorSelected[2] = this.indicatorIndex[value]
+    this.data.selectedIndicators[2] = this.indicatorIndex[value]
     this.data.chartDef.z = value
     this.previewChart()
   },
@@ -404,13 +403,13 @@ let ChartWizardStore = Reflux.createStore({
       _.merge(
         this.data.chartDef,
         {
-          indicators: this.data.indicatorSelected.map(item => {
+          indicators_ids: this.data.selectedIndicators.map(item => {
             return item.id
           }),
           groupBy: builderDefinitions.groups[this.data.groupByValue].value,
           locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
           countries: this.data.countrySelected.map(country => country.id),
-          location_ids: this.data.selected_locations.map(location => location.id),
+          location_ids: this.data.selectedLocations.map(location => location.id),
           yFormat: builderDefinitions.formats[this.data.yFormatValue].value,
           xFormat: builderDefinitions.formats[this.data.xFormatValue].value
         }, (source, override) => {
@@ -449,13 +448,13 @@ let ChartWizardStore = Reflux.createStore({
     return options
   },
 
-  previewChart () {
+  async previewChart  () {
     // We use the short_name for ordering becuase that is what defines the xDomain in table.js
-    this.data.indicatorOrder = this.data.indicatorSelected.map(indicator => {
+    this.data.indicatorOrder = this.data.selectedIndicators.map(indicator => {
       return indicator.short_name
     })
 
-    if (!(this.data.indicatorSelected.length && this.data.campaign && this.data.selected_locations.length)) {
+    if (!(this.data.selectedIndicators.length && this.data.campaign && this.data.selectedLocations.length)) {
       this.data.canDisplayChart = false
       this.data.isLoading = false
       this.trigger(this.data)
@@ -463,7 +462,7 @@ let ChartWizardStore = Reflux.createStore({
     }
 
     if (this.data.chartDef.type === 'RawData') {
-      let options = this._prepRawDataQuery(this.data.campaign, this.data.selected_locations, this.data.indicatorSelected)
+      let options = this._prepRawDataQuery(this.data.campaign, this.data.selectedLocations, this.data.selectedIndicators)
       this._fetchRawData(options)
       return
     }
@@ -471,7 +470,11 @@ let ChartWizardStore = Reflux.createStore({
     this.data.isLoading = true
     this.trigger(this.data)
 
-    ChartDataInit.fetchChart(this.data.chartDef, this.data, this.indicatorIndex, this.LAYOUT_PREVIEW).then(chart => {
+    this.data.chartDef.location_ids = this.data.selectedLocations.map(location => { return location.id })
+    this.data.chartDef.indicator_ids = this.data.selectedIndicators.map(indicator => { return indicator.id })
+    let responses = await ChartDataInit.getPromises()
+    ChartDataInit.fetchChart(this.data.chartDef, this.LAYOUT_PREVIEW, responses).then(chart => {
+      console.log('chart after fetching', chart)
       this.data.canDisplayChart = true
       this.data.isLoading = false
       this.data.chartOptions = chart.options

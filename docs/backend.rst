@@ -139,7 +139,7 @@ The Cache is refresh by instatiating the AggRefresh Object.
 For example:
   .. code-block:: python
 
-    from datapoints.agg_tasks import AggRefresh
+    from rhizome.agg_tasks import AggRefresh
 
     ## refresh the cache with the default behavior
     cr = AggRefresh()
@@ -150,8 +150,8 @@ For example:
 Or In the case where you want to refresh the cache for a list of datapoint_ids:
   .. code-block:: python
 
-    from datapoints.agg_tasks import AggRefresh
-    from datapoints.models import DataPoint
+    from rhizome.agg_tasks import AggRefresh
+    from rhizome.models import DataPoint
 
     ## get a List of DataPoint IDs for the location Arghestan ##
     dp_ids = DataPoint.objects.filter(location_id = 13317).values_list('id',flat=True)

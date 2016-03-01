@@ -9,7 +9,7 @@ class DisableMigrations(object):
         return "notmigrations"
 
 MIGRATION_MODULES =  DisableMigrations()
-MEDIA_ROOT = 'datapoints/tests/_data/'
+MEDIA_ROOT = 'rhizome/tests/_data/'
 
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
 DATABASES['default']['NAME'] = 'rhizome'

@@ -48,16 +48,16 @@ export default React.createClass({
   },
 
   filterData: function () {
-    if (this.props.type === 'TableChart') {
-      var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
-      var filteredData = this.props.data.filter(function (d) {
-        return d.campaign_id.toString() === campaignId
-      })
-    } else {
-      filteredData = this.props.data
-    }
+    // if (this.props.type === 'TableChart') {
+    //   var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
+    //   var filteredData = this.props.data.filter(function (d) {
+    //     return d.campaign_id.toString() === campaignId
+    //   })
+    // } else {
+    //   filteredData = this.props.data
+    // }
 
-    return filteredData
+    return this.props.data
   },
 
   render: function () {
@@ -92,7 +92,6 @@ export default React.createClass({
             </div>
         )
     }
-
 
     let campaignDropdown = ''
     if (this.props.campaigns) {

@@ -23,7 +23,8 @@ import ChartAPI from 'data/requests/ChartAPI'
 
 const defaultChartDef = {
   type: 'RawData',
-  indicators: [],
+  indicator_ids: [],
+  location_ids: [],
   countries: [],
   groupBy: 'indicator',
   timeRange: null,
@@ -67,7 +68,7 @@ let ChartWizard = React.createClass({
         chart_json: JSON.stringify(this.state.data.chartDef)
       }
       api.post_chart(chart).then(res => {
-        window.location.replace("/datapoints/charts/" + res.objects.id);
+        window.location.replace("/charts/" + res.objects.id);
       }, res => {
         console.log('update chart error,', res)
       })
@@ -89,10 +90,9 @@ let ChartWizard = React.createClass({
   },
 
   _downloadRawData: function () {
-    let locations = this.state.data.selected_locations.map(location => { return location.id })
-    let indicators = this.state.data.indicatorSelected.map(indicator => { return indicator.id })
+    let locations = this.state.data.selectedLocations.map(location => { return location.id })
+    let indicators = this.state.data.selectedIndicators.map(indicator => { return indicator.id })
     let query = { 'format': 'csv' }
-    console.log('this.state',this.state)
 
     if (indicators.length > 0) query.indicator__in = indicators
     if (locations.length > 0) query.location_id__in = locations
@@ -134,12 +134,12 @@ let ChartWizard = React.createClass({
     ]
 
     let clear_locations_button = ''
-    if (this.state.data.selected_locations.length > 3) {
+    if (this.state.data.selectedLocations.length > 3) {
       clear_locations_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedLocations}>Remove All </a>
     }
 
     let clear_indicators_button = ''
-    if (this.state.data.indicatorSelected.length > 3) {
+    if (this.state.data.selectedIndicators.length > 3) {
       clear_indicators_button = <a className='remove-filters-link' onClick={ChartWizardActions.clearSelectedIndicators}>Remove All </a>
     }
 
@@ -155,12 +155,12 @@ let ChartWizard = React.createClass({
     )
 
     if (this.state.data.chartDef.type === 'RawData') {
-      data_output = <DatabrowserTable data={this.state.data.rawData} selected_locations={this.state.data.selected_locations} selected_indicators={this.state.data.indicatorSelected} />
+      data_output = <DatabrowserTable data={this.state.data.rawData} selectedLocations={this.state.data.selectedLocations} selected_indicators={this.state.data.selectedIndicators} />
     }
 
     let title_input = <TitleInput save={ChartWizardActions.editTitle}/>
-      console.log('this.state.data', this.state.data)
     if (this.state.data.title) {
+      console.log('this.state.data', this.state.data)
       title_input = <TitleInput initialText={this.state.data.title} save={ChartWizardActions.editTitle}/>
     }
 
@@ -192,7 +192,7 @@ let ChartWizard = React.createClass({
                       icon='fa-plus' />
                   </h3>
                   {clear_indicators_button}
-                  <ReorderableList items={this.state.data.indicatorSelected} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
+                  <ReorderableList items={this.state.data.selectedIndicators} removeItem={ChartWizardActions.removeIndicator} dragItem={ChartWizardActions.reorderIndicator} />
               </div>
               <div className='medium-6 columns'>
                 <h3>
@@ -206,7 +206,7 @@ let ChartWizard = React.createClass({
                     grouped/>
                 </h3>
                 {clear_locations_button}
-                <List items={this.state.data.selected_locations} removeItem={ChartWizardActions.removeLocation} />
+                <List items={this.state.data.selectedLocations} removeItem={ChartWizardActions.removeLocation} />
                 <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
               </div>
             </div>

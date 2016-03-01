@@ -14,7 +14,7 @@ const fields = {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/datapoints/locations/update/${id}`}>Edit location</a>
+      return <a href={`/locations/update/${id}`}>Edit location</a>
     }
   },
   id: { title: 'ID', name: 'id' },

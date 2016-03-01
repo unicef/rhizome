@@ -96,6 +96,7 @@ def _push_to_remote():
         # run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
+        run("python manage.py syncdb --settings=settings")
         run("python manage.py migrate --settings=settings")
 
         # add environment variables - Keep this file right above the project root
@@ -112,4 +113,4 @@ def _push_to_remote():
         # run("cd docs/ && make clean && make html")
 
         # echo "== RUNNING TESTS =="
-        # run("python manage.py test datapoints.tests.test_api --settings=rhizome.settings.test")
+        # run("python manage.py test rhizome.tests.test_api --settings=rhizome.settings.test")

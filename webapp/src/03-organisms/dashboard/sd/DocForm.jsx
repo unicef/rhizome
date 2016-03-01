@@ -151,7 +151,7 @@ var DocForm = React.createClass({
       )
 
       if (this.state.uq_id_column && this.state.location_column && this.state.date_column) {
-        let nextLink = '/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+        let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
         let [docName, docRevision] = this.props.doc_title.split('-')
         uploadButton = this.state.doc_is_refreshed
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>

@@ -7,7 +7,7 @@ from pandas import DataFrame, concat
 from bulk_update.helper import bulk_update
 
 from source_data.models import *
-from datapoints.models import *
+from rhizome.models import *
 
 class MasterRefresh(object):
     '''

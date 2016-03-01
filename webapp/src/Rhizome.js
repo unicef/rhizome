@@ -1,6 +1,10 @@
 import React from 'react'
-
+import Reflux from 'reflux'
+import RefluxPromise from 'reflux-promise'
+import Router from 'react-router'
 import AdminApp from '04-pages/AdminApp'
+
+Reflux.use(RefluxPromise(window.Promise))
 
 React.render(React.createElement(require('02-molecules/DashboardNav')), document.getElementById('dashboards-nav'))
 
@@ -20,8 +24,11 @@ export default {
   Dashboards: function (el) {
     React.render(React.createElement(require('04-pages/DashboardsPage')), el)
   },
-  Dashboard: function (el) {
-    React.render(React.createElement(require('04-pages/BuiltinDashboardPage')), el)
+  Dashboard: function (el, dashboard_id) {
+    React.render(React.createElement(require('04-pages/DashboardPage'), { dashboard_id: dashboard_id }), el)
+  },
+  BuiltinDashboard: function (el, dashboard_slug) {
+    React.render(React.createElement(require('04-pages/BuiltinDashboardPage'), { dashboard_slug: dashboard_slug }), el)
   },
   DashboardBuilder: function (el, dashboard_id) {
     React.render(React.createElement(require('04-pages/DashboardBuilder'), { dashboard_id: dashboard_id }), el)

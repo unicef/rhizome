@@ -105,7 +105,7 @@ var ReviewTable = React.createClass({
               source_submission_id={id}
               key={id}/>
           } else if (this.props.doc_tab === 'doc_index') {
-            return <a href={'/datapoints/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
+            return <a href={'/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'mapping') {
             return <MapForm
               source_object_map_id={id}

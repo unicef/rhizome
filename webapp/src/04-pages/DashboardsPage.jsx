@@ -27,8 +27,8 @@ export default React.createClass({
         return (
           <tr>
             <td>
-              <a href={'/datapoints/dashboards/' + dashboard.id + '/'}>{dashboard.title} </a>
-              <a href={'/datapoints/dashboards/' + dashboard.id + '/edit/'}> edit</a>
+              <a href={'/dashboards/' + dashboard.id + '/'}>{dashboard.title} </a>
+              <a href={'/dashboards/' + dashboard.id + '/edit/'}> edit</a>
             </td>
             <td>{dashboard.description}</td>
             <td>{dashboard.owner_username}</td>

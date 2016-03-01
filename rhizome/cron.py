@@ -1,7 +1,7 @@
 from django_cron import CronJobBase, Schedule
 from django.contrib.auth.models import User
 
-from datapoints.agg_tasks import AggRefresh
+from rhizome.agg_tasks import AggRefresh
 
 from source_data.etl_tasks.refresh_master import MasterRefresh
 from source_data.models import SourceSubmission

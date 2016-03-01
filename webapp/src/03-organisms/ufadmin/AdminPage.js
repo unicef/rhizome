@@ -8,9 +8,9 @@ const {
 import parseSchema from './utils/parseSchema'
 
 const urlMap = {
-  'Users': '/datapoints/users/create/',
-  'Campaigns': '/datapoints/campaign/',
-  'Locations': '/datapoints/locations/create/',
+  'Users': '/users/create/',
+  'Campaigns': '/campaign/',
+  'Locations': '/locations/create/',
   'Indicators': '/manage_system/manage/indicator/',
   'Tags': '/manage_system/manage/indicator_tag/'
 }

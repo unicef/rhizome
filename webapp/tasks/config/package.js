@@ -7,7 +7,8 @@ export default {
     'docs*/_build/**/*.*',
     'manage.py',
     'requirements.txt',
-    'settings.py'
+    'settings.py',
+    'initial_data.xlsx'
   ].map(file => {
     return path.join(process.cwd(), '..') + '/' + file
   }),

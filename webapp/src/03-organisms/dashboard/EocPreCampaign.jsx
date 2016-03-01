@@ -34,18 +34,23 @@ var EocPreCampaign = React.createClass({
 
     // var charts = this.props.dashboard.charts
 
-    var tableChart = <Chart type='LineChart'
-             data={data.missedChildren}
+    // var tableChartOptions = {
+    //   margin: { top: 40, right: 40, bottom: 40, left: 40 },
+    //   indicatorsSelected: this.props.indicators
+    // }
+    var tableChart = <Chart type='TableChart'
+             data={data.tableData}
              loading={loading}
         />
 
     var mapChart = <Chart type='ChoroplethMap'
-             data={data.missedChildrenByProvince}
+             data={data.mapData}
              loading={loading}
              options={{
                aspect: 0.6,
+
                domain: _.constant([0, 0.1]),
-               value: _.property('properties[475]'),
+               value: _.property('properties[21]'),
               //  bubbleValue: _.property('properties[177]'),
               //  stripeValue: _.property('properties[203]'),
               //  xFormat: d3.format(',.1%'),
@@ -53,7 +58,7 @@ var EocPreCampaign = React.createClass({
              }}/>
 
     var trendChart = <Chart type='LineChart'
-             data={data.polioCasesYtd}
+             data={data.trendData}
              loading={loading}
         />
 
@@ -62,9 +67,9 @@ var EocPreCampaign = React.createClass({
       <div className='row homepage-charts'>
         <div className='medium-8 columns end cd-chart-size'>
           <h2>Table Chart</h2>
-          {tableChart}
+          {mapChart}
         </div>
-        <div className="medium-4 columns end">
+        <div className='medium-4 columns end'>
           <div className='row'>
             <div className='medium-12 columns end cd-chart-size'>
               <h2>Map Chart</h2>
