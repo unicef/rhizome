@@ -10,12 +10,12 @@ from django.db.models import get_app, get_models
 from pandas import DataFrame
 from random import randint, random
 
-from datapoints.cache_meta import minify_geo_json, LocationTreeCache
-from datapoints.models import Location, Indicator, Campaign, DataPointComputed
+from rhizome.cache_meta import minify_geo_json, LocationTreeCache
+from rhizome.models import Location, Indicator, Campaign, DataPointComputed
 from source_data.models import Document, DocumentDetail, DocDetailType
 from source_data.etl_tasks.transform_upload import DocTransform
 from source_data.etl_tasks.refresh_master import MasterRefresh
-from datapoints.agg_tasks import AggRefresh
+from rhizome.agg_tasks import AggRefresh
 
 def populate_fake_dwc_data(apps, schema_editor):
     '''
@@ -91,7 +91,7 @@ def upsert_df_data(df):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('datapoints', '0003_populate_initial_source_data'),
+        ('rhizome', '0003_populate_initial_source_data'),
     ]
 
     operations = [
