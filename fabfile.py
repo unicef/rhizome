@@ -96,6 +96,7 @@ def _push_to_remote():
         # run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
+        run("python manage.py syncdb --settings=settings")
         run("python manage.py migrate --settings=settings")
 
         # add environment variables - Keep this file right above the project root

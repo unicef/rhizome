@@ -46,7 +46,7 @@ class Indicator(models.Model):
     office_id = JSONField(default = [])
     high_bound = models.FloatField(null=True)
     low_bound = models.FloatField(null=True)
-    source_name = models.CharField(max_length=25) ## to do: make this a FK
+    source_name = models.CharField(max_length=55) ## to do: make this a FK
 
     def __unicode__(self):
         return unicode(self.name)
