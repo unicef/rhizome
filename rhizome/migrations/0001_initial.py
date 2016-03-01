@@ -191,7 +191,7 @@ class Migration(migrations.Migration):
                 ('office_id', jsonfield.fields.JSONField(default=[])),
                 ('high_bound', models.FloatField(null=True)),
                 ('low_bound', models.FloatField(null=True)),
-                ('source_name', models.CharField(max_length=25)),
+                ('source_name', models.CharField(max_length=55)),
             ],
             options={
                 'ordering': ('name',),

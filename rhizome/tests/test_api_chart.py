@@ -40,7 +40,7 @@ class ChartResourceTest(ResourceTestCase):
         dash = CustomDashboard.objects.create(title='test')
 
         post_data = {'title': 'Afghanistan',\
-            'chart_json': json.dumps({'foo': 'bar'})}
+            'chart_json': json.dumps({'foo': 'bar','title':'sometitle'})}
 
         resp = self.api_client.post('/api/v1/custom_chart/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
