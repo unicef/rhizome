@@ -28,6 +28,8 @@
     "react-router": "^0.13.3",
     "react-widgets": "^2.8.2",
     "reflux": "^0.2.12",
+    "reflux-promise": "^1.0.4",
+    "reflux-state-mixin": "^0.7.0",
     "superagent": "1.4.0",
     "superagent-prefix": "0.0.2"
   },
