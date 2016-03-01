@@ -244,10 +244,11 @@ var BuiltinDashboardPage = React.createClass({
       campaign = campaigns.first()
     };
 
-    console.log('dashboarDef:', dashboardDef)
-    console.log('this.indicators: ', this.indicators)
+    let indicators = this.indicators
+    // FIXME: here we pass all indicators to dashboard, not just those in the charts.
+    // This code below is supposed to build the indicators that exists in
+    // dashboard's charts, however it is returnint objects for the wrong IDs.
 
-    let indicators = this.indicators // pass all indicators to dashboard, not just those in the charts.
     // if (this.indicators) {
     //   indicators = _(_.get(dashboardDef, 'charts', []))
     //     .pluck('indicators')

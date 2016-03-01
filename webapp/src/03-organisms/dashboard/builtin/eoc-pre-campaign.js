@@ -4,22 +4,22 @@ export default {
   'builtin': true,
   'charts': [
     {
-      'title': 'Polio Cases YTD',
-      'type': 'LineChart',
+      'title': 'tableData',
+      'type': 'TableChart',
       'indicators': [21, 20],
       'startOf': 'year',
       'timeRange': {
         years: 2
       }
     }, {
-      'title': 'Missed Children',
+      'title': 'trendData',
       'type': 'LineChart',
       'indicators': [21],
       'timeRange': {
         months: 12
       }
     }, {
-      'title': 'Missed Children by Province',
+      'title': 'mapData',
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,

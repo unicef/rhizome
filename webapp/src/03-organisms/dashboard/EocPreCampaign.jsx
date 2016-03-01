@@ -34,13 +34,18 @@ var EocPreCampaign = React.createClass({
 
     // var charts = this.props.dashboard.charts
 
-    var tableChart = <Chart type='LineChart'
-             data={data.missedChildren}
-             loading={loading}
-        />
+    // var tableChartOptions = {
+    //   margin: { top: 40, right: 40, bottom: 40, left: 40 },
+    //   indicatorsSelected: this.props.indicators
+    // }
+    // var tableChart = <Chart type='TableChart'
+    //          data={data.tableData}
+    //          options = {tableChartOptions}
+    //          loading={loading}
+    //     />
 
     var mapChart = <Chart type='ChoroplethMap'
-             data={data.missedChildrenByProvince}
+             data={data.mapData}
              loading={loading}
              options={{
                aspect: 0.6,
@@ -54,7 +59,7 @@ var EocPreCampaign = React.createClass({
              }}/>
 
     var trendChart = <Chart type='LineChart'
-             data={data.polioCasesYtd}
+             data={data.trendData}
              loading={loading}
         />
 
@@ -63,7 +68,7 @@ var EocPreCampaign = React.createClass({
       <div className='row'>
         <div className='medium-8 columns end cd-chart-size'>
           <h2>Table Chart</h2>
-          {tableChart}
+          {mapChart}
         </div>
         <div className='medium-4 columns end'>
           <div className='row'>
