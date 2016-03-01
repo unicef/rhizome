@@ -11,3 +11,6 @@ before_script:
 script:
   - python manage.py test --settings=rhizome.settings.test
   - cd webapp && gulp build && gulp mocha && cd ..
+
+notifications:
+  slack: rhisome:h0h50gjD2A72P1fEAjF3IMjK
