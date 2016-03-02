@@ -56,66 +56,7 @@ export default React.createClass({
     // } else {
     //   filteredData = this.props.data
     // }
-
     return this.props.data
-  },
-
-  render: function () {
-    var overlay
-
-    if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
-      var position = {
-        top: 19,
-        right: 0,
-        bottom: 0,
-        left: 0,
-        zIndex: 9997
-      }
-
-      var message = (this.props.loading)
-        ? (<span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>)
-        : (<span className='empty'>No data</span>)
-
-      overlay = (this.props.isBulletChart)
-        ? (
-            <div style={position} className='overlay chart__bullet--overlay'>
-              <div>
-                <div className='chart__bullet--noData'>{message}</div>
-              </div>
-            </div>
-          )
-        : (
-            <div style={position} className='overlay'>
-              <div>
-                <div>{message}</div>
-              </div>
-            </div>
-        )
-    }
-
-    let campaignDropdown = ''
-    if (this.props.campaigns) {
-      let campaignDropdownTitle = this.props.defaultCampaign.name
-      let campaignIndex = _.indexBy(this.props.campaigns, 'id')
-      if (this.state.campaign_id) {
-        campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
-      }
-      campaignDropdown = <DropdownMenu
-              items={this.props.campaigns}
-              sendValue={this.setCampaign}
-              item_plural_name='Campaigns'
-              text={campaignDropdownTitle}
-              title_field='name'
-              value_field='id'
-              uniqueOnly/>
-    }
-
-    return (
-      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
-        {campaignDropdown}
-        {overlay}
-      </div>
-    )
   },
 
   componentDidMount: function () {
@@ -128,8 +69,7 @@ export default React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    return (
-       nextProps.data !== this.props.data ||
+    return ( nextProps.data !== this.props.data ||
        nextProps.loading !== this.props.loading ||
        this.state.campaign_id !== nextState.campaign_id
      )
@@ -138,16 +78,67 @@ export default React.createClass({
   componentWillReceiveProps: function (nextProps) {
     if (nextProps.type !== this.props.type) {
       React.findDOMNode(this).innerHTML = ''
-      this._chart = ChartFactory(
-        nextProps.type,
-        React.findDOMNode(this),
-        nextProps.data,
-        nextProps.options)
+      this._chart = ChartFactory( nextProps.type, React.findDOMNode(this), nextProps.data, nextProps.options)
     }
   },
 
   componentDidUpdate: function () {
     var chartData = this.filterData()
     this._chart.update(chartData, this.props.options)
+  },
+
+  render: function () {
+    let overlay
+    let message
+    let campaignDropdown
+
+    if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
+      const position = { top: 19, right: 0, bottom: 0,left: 0, zIndex: 9997 }
+
+      if (this.props.loading) {
+        message = <span><i className='fa fa-spinner fa-spin'></i>&nbsp;Loading</span>
+      } else {
+        message = <span className='empty'>No data</span>
+      }
+
+      if (this.props.isBulletChart) {
+        overlay = (
+          <div style={position} className='overlay chart__bullet--overlay'>
+            <div className='chart__bullet--noData'>{message}</div>
+          </div>
+        )
+      } else {
+        overlay = (
+          <div style={position} className='overlay'>
+            <div>{message}</div>
+          </div>
+        )
+      }
+
+      if (this.props.campaigns) {
+        let campaignDropdownTitle = this.props.defaultCampaign.name
+        let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+        if (this.state.campaign_id) {
+          campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
+        }
+        campaignDropdown = (
+          <DropdownMenu
+            items={this.props.campaigns}
+            sendValue={this.setCampaign}
+            item_plural_name='Campaigns'
+            text={campaignDropdownTitle}
+            title_field='name'
+            value_field='id'
+            uniqueOnly/>
+        )
+      }
+    }
+
+    return (
+      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
+        {campaignDropdown}
+        {overlay}
+      </div>
+    )
   }
 })
