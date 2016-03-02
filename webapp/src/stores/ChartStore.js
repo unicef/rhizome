@@ -3,8 +3,6 @@ import StateMixin from'reflux-state-mixin'
 import RootStore from 'stores/RootStore'
 import ChartActions from 'actions/ChartActions'
 
-require('reflux-waitfor').install(Reflux)
-
 var ChartStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
