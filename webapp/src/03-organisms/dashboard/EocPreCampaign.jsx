@@ -1,19 +1,14 @@
 import _ from 'lodash'
 import React from 'react'
-import Reflux from 'reflux'
-// import moment from 'moment'
 import StateMixin from'reflux-state-mixin'
 import Chart from '02-molecules/Chart.jsx'
 import IndicatorStore from 'stores/IndicatorStore'
-import IndicatorActions from 'actions/IndicatorActions'
 import DashboardActions from 'actions/DashboardActions'
-import api from 'data/api'
-import ChartFactory from '02-molecules/charts'
 
 var EocPreCampaign = React.createClass({
 
- mixins: [
-    StateMixin.connect(IndicatorStore),
+  mixins: [
+    StateMixin.connect(IndicatorStore)
   ],
 
   propTypes: {
@@ -32,20 +27,13 @@ var EocPreCampaign = React.createClass({
     }
   },
 
-  getInitialState() {
-    return {
-      tableData: null
-    }
-  },
-
-render () {
-
+  render () {
     const data = this.props.data
     const loading = this.props.loading
-    const tableOptions = null
     let tableChart = ''
 
-    if (data.tableData) {
+    if (data.tableData.options) {
+      console.log('tableData: ', data.tableData)
       tableChart = <Chart type='TableChart' data={data.tableData} options={data.tableData.options} loading={loading} />
     }
 
@@ -55,14 +43,11 @@ render () {
         data={data.mapData}
         loading={loading}
         options={{
-        aspect: 0.6,
-        domain: _.constant([0, 0.1]),
-        value: _.property('properties[21]'),
-        //  bubbleValue: _.property('properties[177]'),
-        //  stripeValue: _.property('properties[203]'),
-        //  xFormat: d3.format(',.1%'),
-        onClick: d => { DashboardActions.navigate({ location: d }) }
-      }}/>
+          aspect: 0.6,
+          domain: _.constant([0, 0.1]),
+          value: _.property('properties[21]'),
+          onClick: d => { DashboardActions.navigate({ location: d }) }
+        }}/>
     )
 
     return (

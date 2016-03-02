@@ -50,7 +50,7 @@ _.extend(TableChart.prototype, {
 
     var g = svg.append('g').attr('class', 'margin')
 
-    g.append('g').attr('class', 'z axis')
+    // g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
     g.append('g').attr('class', 'x axis')
     g.append('g').attr('class', 'data')
@@ -61,6 +61,8 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
+    console.log('tableUpdate with data: ', data)
+    console.log('tableUpdate with options: ', options)
     options = _.extend(this._options, options)
     var margin = options.margin
 
@@ -260,22 +262,22 @@ _.extend(TableChart.prototype, {
     svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
 
     // the z axis shows the parent location//
-    svg.select('.z.axis')
-      .transition().duration(500)
-      .attr({'transform': 'translate(0,10)'})
-      .call(d3.svg.axis()
-        .scale(yScale)
-        .tickFormat(function (d) {
-          return parentLocationMap[d].parent_location__name
-        })
-        .orient('left')
-        .outerTickSize(0))
+    // svg.select('.z.axis')
+    //   .transition().duration(500)
+    //   .attr({'transform': 'translate(0,10)'})
+    //   .call(d3.svg.axis()
+    //     .scale(yScale)
+    //     .tickFormat(function (d) {
+    //       return parentLocationMap[d].parent_location__name
+    //     })
+    //     .orient('left')
+    //     .outerTickSize(0))
 
-    svg.selectAll('.z.axis text')
-      .style('font-size', options.fontSize)
-      .on('click', function (d, i) {
-        options.onRowClick(d, i, this)
-      })
+    // svg.selectAll('.z.axis text')
+    //   .style('font-size', options.fontSize)
+    //   .on('click', function (d, i) {
+    //     options.onRowClick(d, i, this)
+    //   })
 
     svg.select('.y.axis')
       .transition().duration(500)

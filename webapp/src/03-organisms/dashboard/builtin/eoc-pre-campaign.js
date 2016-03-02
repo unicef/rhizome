@@ -4,12 +4,13 @@ export default {
   'builtin': true,
   'charts': [
     {
+      'title': 'tableData',
       'type': 'TableChart',
-      'location_ids': [33,424,1,432,428,429,40,37,351,431,47,50,422,415,45,414,420,426],
+      'location_ids': [1,2],
       'startDate': '2015-01-01',
       'endDate': '2016-01-01',
-      'indicators': [20, 21],
-      'indicator_ids': [20, 21],
+      'indicators': [27],
+      'indicator_ids': [27],
       'yFormat': ',.0f',
       'groupBy': 'indicator',
       'xFormat': ',.0f'

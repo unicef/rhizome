@@ -159,15 +159,15 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-function table (chart, data, campaign, features, locationList, indicators) {
-  console.log('data: ', data)
 
-  if (data.length > 0) {
-    return prepChartData(chart, data, locationList, indicators)
-  }
-  // chartDef --> chart json
-  // datapoints --> chart data.
-  // return processChartData['TableChart']
+function table (chart, data, campaign, features, locationList, indicators) {
+  let indicatorIx = _.indexBy(indicators, 'id')
+
+  let selectedIndicators = []
+  selectedIndicators.push(indicatorIx[27])
+  console.log('data: ', data)
+  // selectedIndicators =
+  return prepChartData(chart, data, locationList, selectedIndicators)
 }
 
 var process = {
@@ -244,7 +244,6 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
       indicators
     )
 
-    console.log('processedChart: ', processedChart)
     section[chartName] = processedChart
     results[sectionName] = section
   })
