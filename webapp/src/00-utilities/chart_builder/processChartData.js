@@ -12,21 +12,15 @@ import palettes from '00-utilities/palettes'
 import moment from 'moment'
 
 const prepChartData = (chartDef, datapoints, selectedLocations, selectedIndicators) => {
-
   const selectedLocationIndex = _.indexBy(selectedLocations, 'id')
-  const selectedIndicatorsIndex = _.indexBy(selectedIndicators, 'id')
-  const groups = chartDef.groupBy === 'indicator' ? selectedIndicatorsIndex : selectedLocationIndex
+  const selectedIndicatorIndex = _.indexBy(selectedIndicators, 'id')
+  const indicatorOrder = selectedIndicators.map(indicator => { return indicator.short_name })
+  const groups = chartDef.groupBy === 'indicator' ? selectedIndicatorIndex : selectedLocationIndex
   const lower = moment(chartDef.startDate, 'YYYY-MM-DD')
   const upper = moment(chartDef.endDate, 'YYYY-MM-DD')
   const layout = 1 // hard coded for now
 
-  let indicatorOrder = null
-  let chart = {}
-  if (selectedIndicators) {
-    indicatorOrder = selectedIndicators.map(indicator => { return indicator.short_name })
-    chart = processChartData.init(datapoints, chartDef, selectedIndicators, selectedLocations, lower, upper, groups, layout)
-  }
-
+  const chart = processChartData.init(datapoints, chartDef, selectedIndicators, selectedLocations, lower, upper, groups, layout)
   if (!chart.data) {
     return { data: [], options: null }
   }
