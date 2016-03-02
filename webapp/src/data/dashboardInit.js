@@ -2,8 +2,6 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
-import api from 'data/api'
-// import DatapointTableAPI from 'data/requests/DatapointTableAPI'
 import prepChartData from '00-utilities/chart_builder/processChartData'
 
 /**
@@ -159,15 +157,15 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-
-function table (chart, data, campaign, features, locationList, indicators) {
-  let indicatorIx = _.indexBy(indicators, 'id')
-
-  let selectedIndicators = []
-  selectedIndicators.push(indicatorIx[27])
+function table (chart, data) {
   console.log('data: ', data)
+  let selectedLocations = data.map(item => item.location)
+  let selectedIndicators = data.map(item => item.indicator)
+
+  console.log('selectedLocations: ', selectedLocations)
+  console.log('selectedIndicators: ', selectedIndicators)
   // selectedIndicators =
-  return prepChartData(chart, data, locationList, selectedIndicators)
+  return prepChartData(chart, data, selectedLocations, selectedIndicators)
 }
 
 var process = {
@@ -235,13 +233,19 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 
     var datumInChart = _.partial(inChart, chart, campaign, location)
     var chartData = _.filter(data, datumInChart)
+
+    if (chart.type === 'TableChart') {
+      // console.log('data.length: ', data.length)
+      // console.log('campaign: ', campaign)
+      // console.log('chartData.length: ', chartData.length)
+      // console.log('location: ', location)
+    }
+
     var processedChart = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
       campaign,
-      features,
-      locationList,
-      indicators
+      features
     )
 
     section[chartName] = processedChart

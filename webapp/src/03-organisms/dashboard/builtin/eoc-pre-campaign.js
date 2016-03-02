@@ -6,8 +6,9 @@ export default {
     {
       'title': 'tableData',
       'type': 'TableChart',
-      'location_ids': [1,2],
-      'startDate': '2015-01-01',
+      // 'location_ids': [1, 2],
+      // 'locations': 'sublocations',
+      'startDate': '2016-01-01',
       'endDate': '2016-01-01',
       'indicators': [27],
       'indicator_ids': [27],

@@ -1,7 +1,8 @@
 // import _ from 'lodash'
 
 const processTableChart = (datapoints, locations, indicators, chartDef, layout) => {
-  let defaultSortOrder = ['Afghanistan'] // datapoints.forEach(item => item.location.id)
+  let defaultSortOrder = locations.map(item => item.name)
+  // console.log('locations: ', locations)
   console.log('defaultSortOrder: ', defaultSortOrder)
   // defaultSortOrder: datapoints.meta.default_sort_order
 
