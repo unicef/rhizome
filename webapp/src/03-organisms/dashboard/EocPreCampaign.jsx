@@ -27,7 +27,8 @@ var EocPreCampaign = React.createClass({
     let tableChart = ''
 
     if (data.tableData && data.tableData.options) {
-      tableChart = <Chart type='TableChart' data={data.tableData} options={data.tableData.options} loading={loading} />
+      console.log('tableData: ', data.tableData)
+      tableChart = <Chart type='TableChart' data={data.tableData.data} options={data.tableData.options} loading={loading} />
     }
 
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />

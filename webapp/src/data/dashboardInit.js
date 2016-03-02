@@ -158,17 +158,14 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-function table (chart, data) {
+function table (chart, data, campaign, features, indicators, locations) {
   console.log('table function  -- data: ', data)
-
-  let selectedLocations = [] // data.map(item => item.location)
-  let selectedIndicators = [] // data.map(item => item.indicator)
 
   // console.log('selectedLocations: ', selectedLocations)
   // console.log('selectedIndicators: ', selectedIndicators)
   // selectedIndicators =
-  if (data.meta) {
-    return prepChartData(chart, data, selectedLocations, selectedIndicators)
+  if (data.length > 0) {
+    return prepChartData(chart, data[0], locations, indicators)
   }
 }
 
@@ -248,14 +245,15 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 
     if (chart.type === 'TableChart') {
       chartData = tableChartResponse
-      console.log('tableChartResponse:', tableChartResponse);
     }
 
     var processedChart = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
       campaign,
-      features
+      features,
+      indicators,
+      locationList
     )
 
     section[chartName] = processedChart

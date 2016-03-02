@@ -11,7 +11,6 @@ import CampaignTitleMenu from '02-molecules/menus/CampaignTitleMenu'
 import ExportPdf from '02-molecules/ExportPdf'
 
 import builtins from '03-organisms/dashboard/builtin'
-import CustomDashboard from '03-organisms/dashboard/CustomDashboard'
 
 import Indicator from 'data/requests/IndicatorAPI'
 import api from 'data/api'
@@ -281,16 +280,7 @@ var BuiltinDashboardPage = React.createClass({
         doc_tab: doc_tab,
         doc_id: doc_id
       }
-
       dashboard = React.createElement(LAYOUT[dashboardName], dashboardProps)
-    } else {
-      let customDashboardProps = {
-        campaigns: this.state.allCampaigns,
-        dashboard: dashboardDef,
-        data: Array.isArray(this.state.data) ? {} : this.state.data,
-        loading: loading
-      }
-      dashboard = React.createElement(CustomDashboard, customDashboardProps)
     }
 
     campaigns = campaigns.map(campaign => {
