@@ -38,15 +38,18 @@ def populate_fake_dwc_data(apps, schema_editor):
     campaign_df = DataFrame(list(Campaign.objects.all()\
         .values_list('id','name')),columns = ['campaign_id','campaign_name'])
 
-    country_and_province_ids = Location.objects\
-        .filter(location_type_id__in=[1,2])\
-        .values_list('id',flat=True)
+    country_id_list = list(Location.objects\
+        .filter(location_type_id = 1)\
+        .values_list('id',flat=True))
 
-    lpd_ids = Location.objects\
+    lpd_id_qs = list(Location.objects\
         .filter(lpd_status__in=[1,2])\
-        .values_list('id',flat=True)
+        .values_list('id','parent_location_id'))
 
-    location_ids = list(country_and_province_ids) + list(lpd_ids)
+    province_id_list = [y for x, y in lpd_id_qs]
+    lpd_id_list = [x for x, y in lpd_id_qs]
+
+    location_ids = country_id_list + province_id_list + lpd_id_list
 
     location_df = DataFrame(list(Location.objects\
         .filter(id__in=location_ids)\

@@ -231,8 +231,6 @@ _.extend(ChoroplethMap.prototype, {
       .domain(domain.concat().reverse())
       .range(options.color.concat().reverse().slice(0, 3))
 
-    console.log('colorScale: ', colorScale(.2))
-
     var location = g.selectAll('.location')
       .data(features, function (d, i) {
         return _.get(d, 'properties.location_id', i)
