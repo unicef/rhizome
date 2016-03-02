@@ -12,10 +12,6 @@ import palettes from '00-utilities/palettes'
 import moment from 'moment'
 
 const prepChartData = (chartDef, datapoints, selectedLocations, selectedIndicators) => {
-  // console.log('prepChartData -- chartDef: ', chartDef)
-  // console.log('prepChartData -- datapoints: ', datapoints)
-  // console.log('prepChartData -- selectedLocations: ', selectedLocations)
-  // console.log('prepChartData -- selectedIndicators: ', selectedIndicators)
 
   const selectedLocationIndex = _.indexBy(selectedLocations, 'id')
   const selectedIndicatorsIndex = _.indexBy(selectedIndicators, 'id')

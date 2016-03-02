@@ -1,6 +1,7 @@
 import _ from 'lodash'
 
 const processTableChart = (datapoints, locations, indicators, chartDef, layout) => {
+
   const indicators_map = _.indexBy(indicators, 'id')
   const locations_map = _.indexBy(locations, 'id')
 
