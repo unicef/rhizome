@@ -4,39 +4,37 @@ import chartOptionsHelpers from '00-utilities/chart_builder/chartOptionsHelpers'
 import util from '00-utilities/data'
 import path from '00-utilities/parsers/path'
 
-const processBarChart = (dataPromise, locations, indicators, chartDef, layout) => {
-  return dataPromise.then(data => {
-    if (!data || data.length === 0) {
-      return { options: null, data: null }
-    }
-    const indicatorsIndex = _.indexBy(indicators, 'id')
-    const locationsIndex = _.indexBy(locations, 'id')
-    const datapoints = _(data)
-      .thru(util.unpivot)
-      .forEach(d => {
-        d.indicator = indicatorsIndex[d.indicator]
-        d.location = locationsIndex[d.location]
-      })
-      .groupBy(d => {
-        return d.indicator.id
-      }).value()
+const processBarChart = (data, locations, indicators, chartDef, layout) => {
+  if (!data || data.length === 0) {
+    return { options: null, data: null }
+  }
+  const indicatorsIndex = _.indexBy(indicators, 'id')
+  const locationsIndex = _.indexBy(locations, 'id')
+  const datapoints = _(data)
+    .thru(util.unpivot)
+    .forEach(d => {
+      d.indicator = indicatorsIndex[d.indicator]
+      d.location = locationsIndex[d.location]
+    })
+    .groupBy(d => {
+      return d.indicator.id
+    }).value()
 
-    const locationMapping = {
-      'value': 'x',
-      'location.name': 'y'
-    }
+  const locationMapping = {
+    'value': 'x',
+    'location.name': 'y'
+  }
 
-    let chartOptions = {
-      aspect: aspects[layout].barChart,
-      offset: 'zero',
-      yFormat: String,
-      xLabel: chartDef.xLabel,
-      yLabel: chartDef.yLabel
-    }
-    chartOptions = chartOptionsHelpers.generateMarginForAxisLabel(chartOptions)
-    const chartData = barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
-    return { options: chartOptions, data: chartData }
-  })
+  let chartOptions = {
+    aspect: aspects[layout].barChart,
+    offset: 'zero',
+    yFormat: String,
+    xLabel: chartDef.xLabel,
+    yLabel: chartDef.yLabel
+  }
+  chartOptions = chartOptionsHelpers.generateMarginForAxisLabel(chartOptions)
+  const chartData = barData(datapoints, _.pluck(indicators, 'id'), locationMapping, _getIndicator)
+  return { options: chartOptions, data: chartData }
 }
 
 const barData = (datapoints, indicators, properties, series) => {

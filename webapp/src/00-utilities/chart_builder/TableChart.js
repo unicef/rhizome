@@ -1,15 +1,12 @@
 import _ from 'lodash'
 
-const processTableChart = (dataPromise, locations, indicators, chartDef, layout) => {
+const processTableChart = (datapoints, locations, indicators, chartDef, layout) => {
   const indicators_map = _.indexBy(indicators, 'id')
   const locations_map = _.indexBy(locations, 'id')
 
-  return dataPromise.then(data => {
-    if (!data || data.length === 0) {
-      return { options: null, data: null }
-    }
-    return data
-  }).then(datapoints => {
+  if (!datapoints || datapoints.length === 0) {
+    return { options: null, data: null }
+  } else {
     const chartOptions = {
       cellSize: 36,
       fontSize: 14,
@@ -59,7 +56,7 @@ const processTableChart = (dataPromise, locations, indicators, chartDef, layout)
       }
     })
     return { options: chartOptions, data: chartData }
-  })
+  }
 }
 
 export default processTableChart

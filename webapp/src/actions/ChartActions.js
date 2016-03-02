@@ -5,7 +5,10 @@ import api from 'data/api'
 const ChartActions = Reflux.createActions({
   'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
-  'fetchChartDatapoints': { children: ['completed', 'failed'], asyncResult: true }
+  'fetchChartDatapoints': { children: ['completed', 'failed'], asyncResult: true },
+  'setSelectedLocations': 'setSelectedLocations',
+  'setSelectedIndicators': 'setSelectedIndicators',
+  'setSelectedCampaign': 'setSelectedCampaign'
 })
 
 // API CALLS

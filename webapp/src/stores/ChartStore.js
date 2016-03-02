@@ -1,7 +1,9 @@
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
-
+import RootStore from 'stores/RootStore'
 import ChartActions from 'actions/ChartActions'
+
+require('reflux-waitfor').install(Reflux)
 
 var ChartStore = Reflux.createStore({
 
@@ -9,12 +11,57 @@ var ChartStore = Reflux.createStore({
 
   listenables: ChartActions,
 
+  init () {
+    this.listenTo(RootStore, this.onRootStore)
+  },
+
   getInitialState () {
     return {
       selectedLocations: [],
+      selectedIndicators: [],
+      selectedCampaign: null,
       chart: null,
-      chart_data: null,
+      chartDef: null,
+      datapoints: null,
       loading: false
+    }
+  },
+
+  onRootStore (store) {
+    this.campaignIndex = store.campaignIndex
+    this.chartIndex = store.chartIndex
+    this.locationIndex = store.locationIndex
+    this.indicatorIndex = store.indicatorIndex
+    this.officeIndex = store.officeIndex
+    this.rootDataIsReady = store.dataIsReady
+  },
+
+  // =========================================================================== //
+  //                                 BASIC ACTIONS                               //
+  // =========================================================================== //
+  onSetSelectedLocations (location_ids, locationIndex) {
+    if (location_ids && locationIndex.length) {
+      if (Array.isArray(location_ids)) {
+        this.setState({ selectedLocations: location_ids.map(id => locationIndex[id]) })
+      } else {
+        this.setState({ selectedLocations: [locationIndex[location_ids]] })
+      }
+    }
+  },
+  onSetSelectedIndicators (indicator_ids, indicatorIndex) {
+    if (indicator_ids && indicatorIndex.length) {
+      if (Array.isArray(indicator_ids)) {
+        this.setState({ selectedIndicators: indicator_ids.map(id => indicatorIndex[id]) })
+      } else {
+        this.setState({ selectedIndicators: [indicatorIndex[indicator_ids]] })
+      }
+    }
+  },
+  onSetSelectedCampaign (campaign_id) {
+    if (campaign_id && this.campaignIndex[campaign_id]) {
+      this.setState({ selectedCampaign: this.campaignIndex[campaign_id] })
+    } else {
+      this.setState({ selectedCampaign: this.campaignIndex[0] })
     }
   },
 
@@ -27,40 +74,30 @@ var ChartStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onFetchChartCompleted (response) {
-    const chart = response.chart_json
-    chart.id = response.id
-    chart.title = response.title
-    ChartActions.fetchChartDatapoints(chart)
-    this.setState({ chart: chart, loading: false })
+    const chartDef = response.chart_json
+    chartDef.id = response.id
+    chartDef.title = response.title
+    this.setState({ chartDef: chartDef, loading: false })
+    this.joinLeading(RootStore, (RootStore) => {
+      ChartActions.fetchChartDatapoints(chartDef)
+      ChartActions.setSelectedIndicators(chartDef.indicator_ids, this.indicatorIndex)
+      ChartActions.setSelectedLocations(chartDef.location_ids, this.locationIndex)
+    })
   },
   onFetchChartFailed (error) {
-    this.setState({ chart: error, loading: false })
+    this.setState({ chartDef: error, loading: false })
   },
 
-  // ===============================  Fetch Charts  ============================= //
-  onFetchCharts () {
-    this.setState({ loading: true })
-  },
-  onFetchChartsCompleted (response) {
-    const charts = []
-    response.forEach(chart => { charts[chart.id] = chart })
-    this.setState({ charts: charts, loading: false })
-  },
-  onFetchChartsFailed (error) {
-    this.setState({ charts: error, loading: false })
-  },
-
-  // ===========================  Fetch Chart Datapoints  ========================= //
+  // ==========================  Fetch Chart Datapoints  ======================== //
   onFetchChartDatapoints () {
     this.setState({ loading: true })
   },
   onFetchChartDatapointsCompleted (response) {
-    this.setState({ chart_data: response, loading: false })
+    this.setState({ datapoints: response, loading: false })
   },
   onFetchChartDatapointsFailed (error) {
-    this.setState({ chart_data: error, loading: false })
+    this.setState({ datapoints: error, loading: false })
   }
-
 })
 
 export default ChartStore
