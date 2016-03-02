@@ -11,10 +11,12 @@ import d3 from 'd3'
 import palettes from '00-utilities/palettes'
 import moment from 'moment'
 
-const prepChartData = (chartDef, datapoints, selectedLocations, selectedIndicators, indicatorIndex) => {
+const prepChartData = (chartDef, datapoints, selectedLocations, selectedIndicators) => {
+
   const selectedLocationIndex = _.indexBy(selectedLocations, 'id')
+  const selectedIndicatorsIndex = _.indexBy(selectedIndicators, 'id')
   const indicatorOrder = selectedIndicators.map(indicator => { return indicator.short_name })
-  const groups = chartDef.groupBy === 'indicator' ? indicatorIndex : selectedLocationIndex
+  const groups = chartDef.groupBy === 'indicator' ? selectedIndicatorsIndex : selectedLocationIndex
   const lower = moment(chartDef.startDate, 'YYYY-MM-DD')
   const upper = moment(chartDef.endDate, 'YYYY-MM-DD')
   const layout = 1 // hard coded for now

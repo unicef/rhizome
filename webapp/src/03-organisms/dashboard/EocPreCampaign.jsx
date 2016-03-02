@@ -38,54 +38,17 @@ var EocPreCampaign = React.createClass({
     }
   },
 
-  componentWillMount() {
-    const indicator_ids = this.props.dashboard.charts[0].indicators
-    let query = {
-      indicator__in: this.props.dashboard.charts[0].indicators,
-      campaign_start: '2016-01-01',
-      campaign_end: '2016-02-01',
-      location_id__in: this.props.location_id,
-      chart_type: 'TableChart'
-    }
-
-    api.datapoints(query).then(response => {
-      console.log('response', response)
-      this.setState({tableData: response.objects})
-    })
-  },
-
-  render () {
-    let tableChart = ''
-    if (this.state.tableData && this.state.indicatorIndex.length > 0) {
-      console.log('we got a table!')
-      console.log('this.state', this.state)
-      const indicator_ids = this.props.dashboard.charts[0].indicators
-      const tableIndicators = indicator_ids.map(id => {
-        return this.state.indicatorIndex[id]
-      })
-      console.log('tableIndicators', tableIndicators)
-      const chart_options = {
-        cellFontSize: 14,
-        cellSize: 36,
-        chartInDashboard: true,
-        color: null,
-        defaultSortOrder: [this.props.location.name],
-        fontSize: 14,
-        headers: tableIndicators,
-        indicatorsSelected: tableIndicators,
-        margin: {bottom: 40, left: 40, right: 40, top: 40},
-        // parentLocationMap: Object
-        xDomain: tableIndicators.map(indicator => { return indicator.short_name }),
-        xFormat: ",.0f",
-        yFormat: ",.0f"
-      }
-      tableChart = ChartFactory('TableChart', React.findDOMNode(this), this.state.tableData, chart_options)
-      console.log('tableChart', tableChart)
-      // tableChart = <Chart type='TableChart' data={this.state.tableData} options={chart_options} loading={loading} />
-    }
+render () {
 
     const data = this.props.data
     const loading = this.props.loading
+    const tableOptions = null
+    let tableChart = ''
+
+    if (data.tableData) {
+      tableChart = <Chart type='TableChart' data={data.tableData} options={data.tableData.options} loading={loading} />
+    }
+
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
     const mapChart = (
       <Chart type='ChoroplethMap'

@@ -4,7 +4,7 @@ import moment from 'moment'
 
 import api from 'data/api'
 // import DatapointTableAPI from 'data/requests/DatapointTableAPI'
-import processTableChart from '00-utilities/chart_builder/TableChart'
+import prepChartData from '00-utilities/chart_builder/processChartData'
 
 /**
  * Return the facet value for a datum given a path.
@@ -159,6 +159,17 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
+function table (chart, data, campaign, features, locationList, indicators) {
+  console.log('data: ', data)
+
+  if (data.length > 0) {
+    return prepChartData(chart, data, locationList, indicators)
+  }
+  // chartDef --> chart json
+  // datapoints --> chart data.
+  // return processChartData['TableChart']
+}
+
 var process = {
   'BarChart': stackedData,
   'ChoroplethMap': choropleth,
@@ -166,7 +177,7 @@ var process = {
   'HeatMapChart': series,
   'LineChart': series,
   'ScatterChart': scatter,
-  'TableChart': series
+  'TableChart': table
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
@@ -228,20 +239,12 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
       chart,
       chartData,
       campaign,
-      features
+      features,
+      locationList,
+      indicators
     )
 
-    // if (chart.type === 'TableChart') {
-    //   let query = { 'indicator__in': '21', 'location_id__in': 2 }
-    //
-    //   let dataPromise = api.datapoints(query, null, {'cache-control': 'no-cache'})
-    //
-    //   processedChart = processTableChart([dataPromise, chart.locations, chart.indicators, chart])
-    // }
-
-    // console.log('chart: ', chart)
-    // console.log('processedChart: ', processedChart)
-    // console.log('chartName: ', chartName)
+    console.log('processedChart: ', processedChart)
     section[chartName] = processedChart
     results[sectionName] = section
   })
