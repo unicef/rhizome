@@ -22,13 +22,21 @@ var EocPreCampaign = React.createClass({
   },
 
   render () {
+    const colorScale = ['#FF0000', '#79909F', '#04B404']
     const data = this.props.data
     const loading = this.props.loading
     let tableChart = ''
 
     if (data.tableData && data.tableData.options) {
-      console.log('tableData: ', data.tableData)
-      tableChart = <Chart type='TableChart' data={data.tableData.data} options={data.tableData.options} loading={loading} />
+      let tableOptions = data.tableData.options
+      tableOptions['color'] = colorScale
+      tableOptions['onRowClick'] = d => { DashboardActions.navigate({ location: d }) }
+
+      tableChart = (<Chart type='TableChart'
+          data={data.tableData.data}
+          options={tableOptions}
+          loading={loading}
+        />)
     }
 
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
@@ -40,7 +48,7 @@ var EocPreCampaign = React.createClass({
           aspect: 0.6,
           domain: _.constant([0, 0.1]),
           value: _.property('properties[21]'),
-          color: ['#FF0000', '#79909F', '#04B404'],
+          color: colorScale,
           onClick: d => { DashboardActions.navigate({ location: d }) }
         }}/>
     )

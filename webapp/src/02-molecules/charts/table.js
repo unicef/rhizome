@@ -156,7 +156,7 @@ _.extend(TableChart.prototype, {
 
     var scale = d3.scale.ordinal()
       .domain(['bad', 'ok', 'good'])
-      .range(['#FF0000', '#79909F', '#04B404'])
+      .range(options.color)
 
     var fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
 
