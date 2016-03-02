@@ -160,7 +160,7 @@ function scatter (chart, data, campaign) {
 
 function table (chart, data, campaign, features, indicators, locations) {
   var indIx = _.indexBy(indicators, 'id')
-  var locIx = _.indexBy(locations, 'id')
+  // var locIx = _.indexBy(locations, 'id')
 
   if (data.length > 0) {
     let tableChartData = data[0] // not sure why i have to get ix = 0 here.

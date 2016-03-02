@@ -229,7 +229,9 @@ _.extend(ChoroplethMap.prototype, {
 
     var colorScale = d3.scale.quantize()
       .domain(domain.concat().reverse())
-      .range(options.color.concat().reverse().slice(0, 6))
+      .range(options.color.concat().reverse().slice(0, 3))
+
+    console.log('colorScale: ', colorScale(.2))
 
     var location = g.selectAll('.location')
       .data(features, function (d, i) {

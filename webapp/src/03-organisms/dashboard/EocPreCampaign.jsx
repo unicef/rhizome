@@ -40,6 +40,7 @@ var EocPreCampaign = React.createClass({
           aspect: 0.6,
           domain: _.constant([0, 0.1]),
           value: _.property('properties[21]'),
+          color: ['#FF0000', '#79909F', '#04B404'],
           onClick: d => { DashboardActions.navigate({ location: d }) }
         }}/>
     )

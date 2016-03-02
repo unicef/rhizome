@@ -8,7 +8,7 @@ export default {
       'type': 'TableChart',
       // 'location_ids': [1, 2],
       // 'locations': 'sublocations',
-      'indicators': [25, 24, 23],
+      'indicators': [1, 2, 5, 6, 11, 12, 18, 22, 24, 25, 26],
       'groupBy': 'indicator',
       'timeRange': {
         months: 0
