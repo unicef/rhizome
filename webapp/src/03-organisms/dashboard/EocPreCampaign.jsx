@@ -1,15 +1,9 @@
 import _ from 'lodash'
 import React from 'react'
-import StateMixin from'reflux-state-mixin'
 import Chart from '02-molecules/Chart.jsx'
-import IndicatorStore from 'stores/IndicatorStore'
 import DashboardActions from 'actions/DashboardActions'
 
 var EocPreCampaign = React.createClass({
-
-  mixins: [
-    StateMixin.connect(IndicatorStore)
-  ],
 
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
@@ -32,8 +26,7 @@ var EocPreCampaign = React.createClass({
     const loading = this.props.loading
     let tableChart = ''
 
-    if (data.tableData.options) {
-      console.log('tableData: ', data.tableData)
+    if (data.tableData && data.tableData.options) {
       tableChart = <Chart type='TableChart' data={data.tableData} options={data.tableData.options} loading={loading} />
     }
 

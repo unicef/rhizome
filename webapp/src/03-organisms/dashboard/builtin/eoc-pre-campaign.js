@@ -8,13 +8,13 @@ export default {
       'type': 'TableChart',
       // 'location_ids': [1, 2],
       // 'locations': 'sublocations',
-      'startDate': '2016-01-01',
-      'endDate': '2016-01-01',
-      'indicators': [27],
-      'indicator_ids': [27],
-      'yFormat': ',.0f',
+      'indicators': [25, 24, 23],
       'groupBy': 'indicator',
-      'xFormat': ',.0f'
+      'timeRange': {
+        months: 0
+      }
+      // 'yFormat': ',.0f',
+      // 'xFormat': ',.0f'
     }, {
       'title': 'trendData',
       'type': 'LineChart',

@@ -61,15 +61,15 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    console.log('tableUpdate with data: ', data)
-    console.log('tableUpdate with options: ', options)
+    // console.log('tableUpdate with data: ', data)
+    // console.log('tableUpdate with options: ', options)
     options = _.extend(this._options, options)
     var margin = options.margin
 
     var self = this
     var parentLocationMap = options.parentLocationMap
     var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(options.defaultSortOrder.length * options.cellSize, 0)
+    var h = Math.max(data.length * options.cellSize, 0)
     var z = 160 //  extra margin space needed to add the "z" (parent) axis"
 
     // hacky way to sclae the view box.. this shoudl be done by taking into

@@ -48,7 +48,8 @@ var DataStore = Reflux.createStore({
     var promises = _.map(charts, function (def) {
       var q = {
         indicator__in: def.indicators,
-        campaign_end: end
+        campaign_end: end,
+        chart_type: def.type
       }
 
       // If no timeRange or startOf property is provided, the chart should fetch
@@ -94,9 +95,12 @@ var DataStore = Reflux.createStore({
         .flatten()
         .value()
 
+      this.responses = responses
+
       this.trigger({
         loading: false,
-        data: this.data
+        data: this.data,
+        responses: this.responses
       })
     }.bind(this))
 
@@ -104,7 +108,8 @@ var DataStore = Reflux.createStore({
 
     this.trigger({
       loading: true,
-      data: []
+      data: [],
+      responses: []
     })
   },
 

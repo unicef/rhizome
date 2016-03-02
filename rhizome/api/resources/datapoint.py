@@ -195,6 +195,7 @@ class DatapointResource(BaseNonModelResource):
 
         try:
             chart_type = request.GET['chart_type']
+            data['meta']['chart_type'] = chart_type
         except KeyError:
             chart_type = None
 

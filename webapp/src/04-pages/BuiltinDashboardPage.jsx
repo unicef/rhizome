@@ -268,7 +268,8 @@ var BuiltinDashboardPage = React.createClass({
         this.state.locations,
         this.state.allCampaigns,
         indicators,
-        GeoStore.features
+        GeoStore.features,
+        this.state.responses
       )
       let dashboardProps = {
         campaign: campaign,

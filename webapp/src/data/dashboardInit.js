@@ -71,6 +71,7 @@ export function inChart (chart, campaign, location, datum) {
 export function choropleth (chart, data, campaign, features) {
   // Make sure we only get data for the current campaign maps can't
   // display historical data. Index by location for quick lookup.
+
   var dataIdx = _(data)
     .filter(d => d.campaign.id === campaign.id)
     .indexBy('location.id')
@@ -158,14 +159,17 @@ function scatter (chart, data, campaign) {
 }
 
 function table (chart, data) {
-  console.log('data: ', data)
-  let selectedLocations = data.map(item => item.location)
-  let selectedIndicators = data.map(item => item.indicator)
+  console.log('table function  -- data: ', data)
 
-  console.log('selectedLocations: ', selectedLocations)
-  console.log('selectedIndicators: ', selectedIndicators)
+  let selectedLocations = [] // data.map(item => item.location)
+  let selectedIndicators = [] // data.map(item => item.indicator)
+
+  // console.log('selectedLocations: ', selectedLocations)
+  // console.log('selectedIndicators: ', selectedIndicators)
   // selectedIndicators =
-  return prepChartData(chart, data, selectedLocations, selectedIndicators)
+  if (data.meta) {
+    return prepChartData(chart, data, selectedLocations, selectedIndicators)
+  }
 }
 
 var process = {
@@ -178,7 +182,7 @@ var process = {
   'TableChart': table
 }
 
-function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
+function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features, responses) {
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
@@ -212,6 +216,14 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
   // corresponse to a section in the dashboard. Each section is an object where
   // each property corresponds to a chart. Each chart is an array of the data
   // that can be used by that chart
+
+  var tableChartResponse = {}
+  if (responses) {
+    tableChartResponse = responses.filter(r => {
+      return r.meta.chart_type === 'TableChart'
+    })
+  }
+
   _.each(dashboard.charts, (chart, i) => {
     var sectionName = _.get(chart, 'section', '__none__')
     var chartName = _.get(chart, 'id', _.camelCase(chart.title))
@@ -235,10 +247,8 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     var chartData = _.filter(data, datumInChart)
 
     if (chart.type === 'TableChart') {
-      // console.log('data.length: ', data.length)
-      // console.log('campaign: ', campaign)
-      // console.log('chartData.length: ', chartData.length)
-      // console.log('location: ', location)
+      chartData = tableChartResponse
+      console.log('tableChartResponse:', tableChartResponse);
     }
 
     var processedChart = _.get(process, chart.type, _.constant(chartData))(
