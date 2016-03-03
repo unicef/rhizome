@@ -1,18 +1,6 @@
 import _ from 'lodash'
 import d3 from 'd3'
-
 import formatUtil from '00-utilities/format'
-
-function _sortValue (s, sortCol) {
-  // jshint validthis: true
-  var options = this._options
-
-  var val = (sortCol === null)
-    ? options.seriesName(s)
-    : options.value(_.find(options.values(s), d => options.column(d) === sortCol))
-
-  return val
-}
 
 var DEFAULTS = {
   cellSize: 16,
@@ -43,14 +31,9 @@ _.extend(TableChart.prototype, {
 
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
-
-    var svg = this._svg = d3.select(el)
-        .append('svg')
-        .attr('class', 'heatmap sortable')
-
-    var g = svg.append('g').attr('class', 'margin')
-
-    // g.append('g').attr('class', 'z axis')
+    const svg = this._svg = d3.select(el).append('svg').attr('class', 'heatmap sortable')
+    const g = svg.append('g').attr('class', 'margin')
+    g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
     g.append('g').attr('class', 'x axis')
     g.append('g').attr('class', 'data')
@@ -61,25 +44,42 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    // console.log('tableUpdate with data: ', data)
-    // console.log('tableUpdate with options: ', options)
+    console.log('tableUpdate with data: ', data)
+    console.log('tableUpdate with options: ', options)
+
     options = _.extend(this._options, options)
-    var margin = options.margin
 
-    var self = this
-    var parentLocationMap = options.parentLocationMap
-    var w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    var h = Math.max(data.length * options.cellSize, 0)
-    var z = 160 //  extra margin space needed to add the "z" (parent) axis"
+    // hacky way to scale the view box.. this should be done by taking into account the user's screen size
+    const calculatedHeightScale = 1 + (options.headers.length - 8) / 10
+    const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
+    const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
+    const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => { return ind.short_name })
+    const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
+    const sourceFlow = _.flow(options.sourceColumn, xScale)
+    const x = _.flow(options.column, xScale)
+    const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
+    const h = Math.max(data.length * options.cellSize, 0)
+    const z = 160 //  extra margin space needed to add the "z" (parent) axis"
+    const margin = options.margin
+    const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
+    const scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.color)
+    const domain = this._getDomain(data, options)
+    const yScale = d3.scale.ordinal().domain(domain).rangeBands([0, h], 0.1)
+    const y = _.flow(options.seriesName, yScale)
+    const transform = (d, i) => (`translate(${z}, ${y(d) + 10})`)
 
-    // hacky way to sclae the view box.. this shoudl be done by taking into
-    // account the user's screen size... needs some time to get 100% right.. //
-    var viewBoxHeightScale = 1 + (options.headers.length - 8) / 10
-    if (viewBoxHeightScale < 1) {
-      viewBoxHeightScale = 1
-    }
-    var viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
-    var svg = this._svg
+    // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
+    const targets = _(options.headers)
+      .indexBy('id')
+      .mapValues(ind => {
+        const extents = [ ind.bad_bound, ind.good_bound ]
+        const boundsReversed = ind.bad_bound > ind.good_bound
+        const names = boundsReversed ? ['good', 'ok', 'bad'] : ['bad', 'ok', 'good']
+        return d3.scale.threshold().domain(extents).range(names)
+      })
+      .value()
+
+    const svg = this._svg
       .attr({
         'viewBox': viewBox,
         'width': (w + margin.left + margin.right),
@@ -87,22 +87,137 @@ _.extend(TableChart.prototype, {
       })
       .datum(data)
 
-    var xDomain = typeof (options.xDomain) !== 'undefined' ? options.xDomain : []
+    svg.select('.margin').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
 
-    if (xDomain.length === 0) {
-      xDomain = options.indicatorsSelected.map(ind => {
-        return ind.short_name
+    const g = svg.select('.data')
+    g.on('mouseout', () => { this._onRowOut.apply(this) })
+
+    const row = g.selectAll('.row').data(data)
+    row.enter().append('g').attr({'class': 'row', 'transform': transform})
+    row.exit().transition().duration(300).style('opacity', 0).remove()
+    row.on('click', (d, i) => { this._onRowClick([d, i]) })
+    row.on('mouseover', (d, i) => { this._onRowOver([d, i]) }).transition().duration(750).attr('transform', transform)
+
+    const fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
+    const cell = row.selectAll('.cell').data(options.values)
+    cell.exit().transition().duration(300).style('opacity', 0).remove()
+    cell.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
+    cell.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
+    cell.on('mousemove', options.onMouseMove)
+    cell.on('mouseout', options.onMouseOut)
+    cell.on('click', options.onClick)
+    cell.transition().duration(500).style('fill', fill)
+      .attr({
+        'height': yScale.rangeBand(),
+        'width': xScale.rangeBand(),
+        'x': x
       })
+
+    const cg = cell.enter().append('g')
+    cg.append('rect')
+      .attr({
+        'class': 'cell',
+        'height': yScale.rangeBand(),
+        'x': x,
+        'width': xScale.rangeBand()
+      })
+      .style({ 'opacity': 0, 'fill': fill })
+      .transition().duration(500)
+      .style('opacity', 1)
+
+    cg.append('text')
+      .attr({
+        'height': yScale.rangeBand(),
+        'x': d => { return x(d) + xScale.rangeBand() / 2 },
+        'y': options.cellSize / 2,
+        'width': xScale.rangeBand(),
+        'dominant-baseline': 'central',
+        'text-anchor': 'middle',
+        'font-weight': 'bold'
+      })
+      .style({'font-size': options.cellFontSize})
+      .text(d => { return d.displayValue })
+      .transition().duration(500)
+
+    svg.select('.x.axis')
+      .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',0)'})
+      .call(d3.svg.axis().scale(xScale).orient('top').outerTickSize(0))
+    svg.selectAll('.x.axis text').on('click', (d, i) => { this._setSort(d, i) })
+    svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
+
+    svg.select('.y.axis')
+      .transition().duration(500)
+      .attr({'transform': 'translate(' + z + ',10)'})
+      .call(d3.svg.axis().scale(yScale).orient('left').outerTickSize(0))
+    svg.selectAll('.y.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', (d, i) => { options.onRowClick(d, i, this) })
+
+    // the z axis shows the parent location//
+    // svg.select('.z.axis')
+    //   .transition().duration(500)
+    //   .attr({'transform': 'translate(0,10)'})
+    //   .call(d3.svg.axis()
+    //     .scale(yScale)
+    //     .tickFormat(d => { return options.parentLocationMap[d].parent_location__name })
+    //     .orient('left')
+    //     .outerTickSize(0))
+    // svg.selectAll('.z.axis text')
+    //   .style('font-size', options.fontSize)
+    //   .on('click', (d, i) => { options.onRowClick(d, i, this) })
+
+    // BEGIN SOURCE FOOTER //
+
+    var singleRowIndicators = options.headers // chartData[0].values
+    var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
+    var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
+    var sourceG = sourceCell.enter().append('g')
+
+    sourceG.append('rect')
+      .attr({
+        'class': 'cell',
+        'height': yScale.rangeBand() * 1.5,
+        'transform': 'translate(' + z + ',' + h + ')',
+        'x': sourceFlow,
+        'width': xScale.rangeBand()
+      })
+      .style({ 'opacity': 0, 'fill': '#F1F1F1' })
+      .transition().duration(500)
+      .style('opacity', 1)
+
+    sourceG.append('text')
+      .attr({
+        'height': yScale.rangeBand(),
+        'transform': 'translate(' + z + ',' + h + ')',
+        'x': d => { return sourceFlow(d) + 45 },
+        'y': options.cellSize / 2,
+        'width': xScale.rangeBand(),
+        'dominant-baseline': 'central',
+        'text-anchor': 'middle',
+        'font-weight': 'bold'
+      })
+      .text(d => { return d.source_name })
+      .transition().duration(500)
+      .call(this._wrap, xScale.rangeBand())
+
+    // END SOURCE FOOTER //
+
+    if (options.legend) {
+      svg.select('.legend')
+        .call(options.legend)
+        .attr('transform', () => {
+          const bbox = this.getBoundingClientRect()
+          const dx = w + margin.right - bbox.width
+          return `translate(${dx}, 0)`
+        })
+    } else {
+      svg.select('.legend').selectAll('*').remove()
     }
+  },
 
-    var xScale = d3.scale.ordinal()
-        .domain(xDomain)
-        .rangeBands([0, w], 0.1)
-
-    var x = _.flow(options.column, xScale)
-    var sourceFlow = _.flow(options.sourceColumn, xScale)
-
-    // if there is a sortCol set, order the data that way. //
+  _getDomain: function (data, options) {
+    // if there is a sortCol set, order the data that way.
     if (this.sortCol) {
       let sortValue = _.partial(options.sortValue.bind(this), _, this.sortCol)
       var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
@@ -120,233 +235,11 @@ _.extend(TableChart.prototype, {
     // otherwise the domain will be less ( and different the ) the yScale //
     // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
     if (domain.length < options.defaultSortOrder.length) {
-      var diff = options.defaultSortOrder.filter(function (x) {
-        return domain.indexOf(x) < 0
-      })
+      const diff = options.defaultSortOrder.filter(x => { return domain.indexOf(x) < 0 })
       domain = domain.concat(diff)
     }
 
-    var yScale = d3.scale.ordinal()
-      .domain(domain)
-      .rangeBands([0, h], 0.1)
-
-    var y = _.flow(options.seriesName, yScale)
-
-    var transform = function (d, i) {
-      var yVal = y(d) + 10
-      return 'translate(' + z + ' , ' + yVal + ')'
-    }
-
-    // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
-    var targets = _(options.headers)
-      .indexBy('id')
-      .mapValues(ind => {
-        var extents = [ ind.bad_bound, ind.good_bound ]
-        var names = ['bad', 'ok', 'good']
-
-        if (ind.bad_bound > ind.good_bound) {
-          names = ['good', 'ok', 'bad']
-        }
-
-        return d3.scale.threshold()
-          .domain(extents)
-          .range(names)
-      })
-      .value()
-
-    var scale = d3.scale.ordinal()
-      .domain(['bad', 'ok', 'good'])
-      .range(options.color)
-
-    var fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
-
-    svg.select('.margin')
-        .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
-
-    var g = svg.select('.data')
-
-    g.on('mouseout', function () { self._onRowOut.apply(self) })
-
-    var row = g.selectAll('.row').data(data)
-
-    row.enter().append('g')
-        .attr({
-          'class': 'row',
-          'transform': transform
-        })
-    row.on('click', function(d, i) {
-      self._onRowClick([d, i])
-    })
-    row.exit()
-      .transition().duration(300)
-      .style('opacity', 0)
-      .remove()
-
-    row.on('mouseover', function (d, i) {
-      self._onRowOver([d, i])
-    })
-    .transition()
-    .duration(750)
-    .attr('transform', transform)
-
-    // Add cells to each row
-    var cell = row.selectAll('.cell').data(options.values)
-
-    cell.transition()
-      .duration(500)
-      .style('fill', fill)
-      .attr({
-        'height': yScale.rangeBand(),
-        'width': xScale.rangeBand(),
-        'x': x
-      })
-
-    var cg = cell.enter().append('g')
-
-    cg.append('rect')
-        .attr({
-          'class': 'cell',
-          'height': yScale.rangeBand(),
-          'x': x,
-          'width': xScale.rangeBand()
-        })
-        .style({
-          'opacity': 0,
-          'fill': fill
-        })
-        .transition()
-        .duration(500)
-        .style('opacity', 1)
-
-    cg.append('text')
-          .attr({
-            'height': yScale.rangeBand(),
-            'x': function (d) { return x(d) + xScale.rangeBand() / 2 },
-            'y': options.cellSize / 2,
-            'width': xScale.rangeBand(),
-            'dominant-baseline': 'central',
-            'text-anchor': 'middle',
-            'font-weight': 'bold'
-          })
-          .style({'font-size': options.cellFontSize})
-          .text(function (d) { return d.displayValue })
-          .transition()
-          .duration(500)
-
-    cell.exit()
-      .transition()
-      .duration(300)
-      .style('opacity', 0)
-      .remove()
-
-    cell
-      .attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
-        .style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
-        .on('mousemove', options.onMouseMove)
-        .on('mouseout', options.onMouseOut)
-        .on('click', options.onClick)
-
-    // Begin X Axis //
-
-    svg.select('.x.axis')
-      .transition().duration(500)
-      .attr({'transform': 'translate(' + z + ',0)'})
-      .call(d3.svg.axis()
-        .scale(xScale)
-        .orient('top')
-        .outerTickSize(0))
-
-    svg.selectAll('.x.axis text')
-      .on('click', function (d, i) { self._setSort(d, i) })
-
-    svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
-
-    // the z axis shows the parent location//
-    // svg.select('.z.axis')
-    //   .transition().duration(500)
-    //   .attr({'transform': 'translate(0,10)'})
-    //   .call(d3.svg.axis()
-    //     .scale(yScale)
-    //     .tickFormat(function (d) {
-    //       return parentLocationMap[d].parent_location__name
-    //     })
-    //     .orient('left')
-    //     .outerTickSize(0))
-
-    // svg.selectAll('.z.axis text')
-    //   .style('font-size', options.fontSize)
-    //   .on('click', function (d, i) {
-    //     options.onRowClick(d, i, this)
-    //   })
-
-    svg.select('.y.axis')
-      .transition().duration(500)
-      .attr({'transform': 'translate(' + z + ',10)'})
-      .call(d3.svg.axis()
-        .scale(yScale)
-        .orient('left')
-        .outerTickSize(0))
-
-    svg.selectAll('.y.axis text')
-      .style('font-size', options.fontSize)
-      .on('click', function (d, i) {
-        options.onRowClick(d, i, this)
-      })
-
-    // BEGIN SOURCE FOOTER //
-
-    var singleRowIndicators = options.headers // chartData[0].values
-    var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
-    var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
-    var sourceG = sourceCell.enter().append('g')
-
-    sourceG.append('rect')
-        .attr({
-          'class': 'cell',
-          'height': yScale.rangeBand() * 1.5,
-          'transform': 'translate(' + z + ',' + h + ')',
-          'x': sourceFlow,
-          'width': xScale.rangeBand()
-        })
-        .style({
-          'opacity': 0,
-          'fill': '#F1F1F1'
-        })
-        .transition()
-        .duration(500)
-      .style('opacity', 1)
-
-    sourceG.append('text')
-            .attr({
-              'height': yScale.rangeBand(),
-              'transform': 'translate(' + z + ',' + h + ')',
-              'x': function (d) { return sourceFlow(d) + 45 },
-              'y': options.cellSize / 2,
-              'width': xScale.rangeBand(),
-              'dominant-baseline': 'central',
-              'text-anchor': 'middle',
-              'font-weight': 'bold'
-            })
-            .text(function (d) { return d.source_name })
-              .transition()
-              .duration(500)
-              .call(this._wrap, xScale.rangeBand())
-
-    // END SOURCE FOOTER //
-
-    if (options.legend) {
-      svg.select('.legend')
-        .call(options.legend)
-        .attr('transform', function () {
-          var bbox = this.getBoundingClientRect()
-          var dx = w + margin.right - bbox.width
-          var dy = 0
-
-          return 'translate(' + dx + ', ' + dy + ')'
-        })
-    } else {
-      svg.select('.legend').selectAll('*').remove()
-    }
+    return domain
   },
 
   _wrap: function (text, width) {
@@ -408,5 +301,13 @@ _.extend(TableChart.prototype, {
     this.update(this._svg.selectAll('.row').data())
   }
 })
+
+function _sortValue (s, sortCol) {
+  const options = this._options
+  if (sortCol === null) {
+    return options.seriesName(s)
+  }
+  return options.value(_.find(options.values(s), d => options.column(d) === sortCol))
+}
 
 export default TableChart
