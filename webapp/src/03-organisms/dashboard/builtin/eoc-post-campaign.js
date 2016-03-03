@@ -8,7 +8,7 @@ export default {
       'title': 'tableData',
       'type': 'TableChart',
       // 'locations': 'sublocations',
-      'indicators': [3, 13, 14, 15, 16, 17, 20],
+      'indicators': [3, 13, 14, 15, 16, 17, 20, 28],
       'groupBy': 'indicator',
       'timeRange': {
         months: 0
