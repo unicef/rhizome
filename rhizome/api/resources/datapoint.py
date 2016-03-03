@@ -118,12 +118,19 @@ class DatapointResource(BaseNonModelResource):
             pass
 
         if chart_type == 'TableChart':
-            sub_locations = list(Location.objects\
+            sub_location_ids = list(Location.objects\
                 .filter(parent_location_id__in = self.location_ids,
                     lpd_status__in=[1,2])\
                 .values_list('id',flat=True))
 
-            self.location_ids.extend(sub_locations)
+            if len(sub_location_ids) == 0:
+            ## means the country is requested and we get all provinces for
+            ## which there are LPDs.
+                sub_location_ids = list(Location.objects\
+                    .filter(lpd_status__in=[1,2])\
+                    .values_list('parent_location_id',flat=True).distinct())
+
+            self.location_ids.extend(sub_location_ids)
 
 
         # Pivot the data on request instead of caching ##
@@ -227,11 +234,11 @@ class DatapointResource(BaseNonModelResource):
         if chart_type == 'TableChart':
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
-                .values('name','parent_location__name')\
-                .order_by('parent_location__name')
+                .values_list('name',flat=True)\
+                .order_by('name')
 
-            data['meta']['parent_location_list'] = [l for l in p_loc_qs]
-            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
+            # data['meta']['parent_location_list'] = [l for l in p_loc_qs]
+            data['meta']['default_sort_order'] = list(p_loc_qs)
 
         data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 

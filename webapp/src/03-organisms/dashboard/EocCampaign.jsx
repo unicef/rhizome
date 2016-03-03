@@ -22,7 +22,8 @@ var EocCampaign = React.createClass({
   },
 
   render () {
-    const colorScale = ['#FF0000', '#79909F', '#04B404']
+    const colorScale = ['#f9152f', '#FFFF00	', '#27e833']
+    // const colorScale = ['#FF0000', '#FFFF00	', '#04B404']// red, ylw, grn
     const data = this.props.data
     const loading = this.props.loading
     let tableChart = ''
@@ -39,7 +40,13 @@ var EocCampaign = React.createClass({
         />)
     }
 
-    const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
+    const trendChart = (
+        <Chart type='LineChart'
+          data={data.trendData}
+          loading={loading}
+          options={{color: ['#000000']
+        }} />
+    )
     const mapChart = (
       <Chart type='ChoroplethMap'
         data={data.mapData}
