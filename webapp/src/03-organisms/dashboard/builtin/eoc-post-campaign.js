@@ -1,6 +1,6 @@
 export default {
-  'id': -9,
-  'title': 'EOC Pre Campaign',
+  'id': -11,
+  'title': 'EOC Post Campaign',
   'dashboardType': 'EocCampaign',
   'builtin': true,
   'charts': [
@@ -8,7 +8,7 @@ export default {
       'title': 'tableData',
       'type': 'TableChart',
       // 'locations': 'sublocations',
-      'indicators': [1, 2, 5, 6, 11, 12, 18, 22, 24, 25, 26],
+      'indicators': [3, 13, 14, 15, 16, 17, 20],
       'groupBy': 'indicator',
       'timeRange': {
         months: 0
