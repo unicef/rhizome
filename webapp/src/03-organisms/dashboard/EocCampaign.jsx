@@ -57,7 +57,7 @@ var EocPreCampaign = React.createClass({
     let tableChart = ''
     if (this.state.tableData && this.state.indicatorIndex.length > 0) {
       const indicator_ids = this.props.dashboard.charts[0].indicators
-      const tableIndicators = indicator_ids.map(id => { return this.state.indicatorIndex[id] })
+      const tableIndicators = indicator_ids.map(id => { return this.state.indicatorIndex[id-1] })
       const chart_options = {
         cellFontSize: 14,
         cellSize: 36,
