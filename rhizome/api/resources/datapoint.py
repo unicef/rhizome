@@ -108,34 +108,58 @@ class DatapointResource(BaseNonModelResource):
             self.error = err
             return []
 
+
         self.location_ids = self.get_locations_to_return_from_url(request)
+
+        chart_type = 'rawData' ## make this the default
+        try:
+            chart_type = request.GET['chart_type']
+        except KeyError:
+            pass
+
+        if chart_type == 'TableChart':
+            sub_locations = list(Location.objects\
+                .filter(parent_location_id__in = self.location_ids,
+                    lpd_status__in=[1,2])\
+                .values_list('id',flat=True))
+
+            self.location_ids.extend(sub_locations)
+
 
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id', 'value']
+        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+            'value']
 
         computed_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
 
-        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)), columns=df_columns)
+        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
+            columns=df_columns)
 
         try:
             p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+                dwc_df, values='value', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+
             no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
             pivoted_data = no_nan_pivoted_df.to_dict()
 
-            #### we need two dictionaries, one that has the value of the datapoint_computed object and one with the id ##
+            ## we need two dictionaries, one that has the value of the
+            ## datapoint_computed object and one with the id ##
 
             p_table_for_id = pivot_table(
-                dwc_df, values='id', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), None)
+                dwc_df, values='id', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
+                None)
             pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
 
         except KeyError: ## there is no data
-            if len(self.parsed_params['campaign__in']) > 1: ## implicit way to only do this for data entry
+            if len(self.parsed_params['campaign__in']) > 1:
+                ## implicit way to only do this for data entry - i.e. a hack.
                 return
 
             pivoted_data, pivoted_data_for_id = {}, {}
@@ -156,7 +180,8 @@ class DatapointResource(BaseNonModelResource):
             missing_indicators = list(set(self.parsed_params['indicator__in']))
             for ind in missing_indicators:
                 if ind not in indicator_dict.keys():
-                    indicator_objects.append({'indicator': ind, 'value': None, 'computed_id': None})
+                    indicator_objects.append({'indicator': ind, 'value': None,\
+                    'computed_id': None})
 
             r = ResultObject()
             r.location = row[0]
@@ -202,7 +227,8 @@ class DatapointResource(BaseNonModelResource):
         if chart_type == 'TableChart':
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
-                .values('name','parent_location__name').order_by('parent_location__name')
+                .values('name','parent_location__name')\
+                .order_by('parent_location__name')
 
             data['meta']['parent_location_list'] = [l for l in p_loc_qs]
             data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]

@@ -30,9 +30,9 @@ const LAYOUT = {
   'NGA Campaign Monitoring': require('03-organisms/dashboard/NCODashboard'),
   'District Dashboard': require('03-organisms/dashboard/District'),
   'Source Data': require('03-organisms/dashboard/SourceDataDashboard'),
-  'EOC Pre Campaign': require('03-organisms/dashboard/EocCampaign'),
-  'EOC Intra Campaign': require('03-organisms/dashboard/EocCampaign'),
-  'EOC Post Campaign': require('03-organisms/dashboard/EocCampaign')
+  'EOC Pre Campaign': require('03-organisms/dashboard/EocCampaign')
+  // 'EOC Intra Campaign': require('03-organisms/dashboard/EocCampaign'),
+  // 'EOC Post Campaign': require('03-organisms/dashboard/EocCampaign')
 }
 
 var BuiltinDashboardPage = React.createClass({
