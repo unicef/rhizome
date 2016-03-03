@@ -3,7 +3,7 @@ import React from 'react'
 import Chart from '02-molecules/Chart.jsx'
 import DashboardActions from 'actions/DashboardActions'
 
-var EocPreCampaign = React.createClass({
+var EocCampaign = React.createClass({
 
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
@@ -80,4 +80,4 @@ var EocPreCampaign = React.createClass({
   }
 })
 
-export default EocPreCampaign
+export default EocCampaign
