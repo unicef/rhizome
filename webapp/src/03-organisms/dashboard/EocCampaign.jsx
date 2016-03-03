@@ -8,7 +8,7 @@ import IndicatorStore from 'stores/IndicatorStore'
 import IndicatorActions from 'actions/IndicatorActions'
 import DashboardActions from 'actions/DashboardActions'
 import api from 'data/api'
-import ChartFactory from '02-molecules/charts'
+import ChartFactory from '02-molecules/charts_d3/ChartFactory'
 
 var EocPreCampaign = React.createClass({
 

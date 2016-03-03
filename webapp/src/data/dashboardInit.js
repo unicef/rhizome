@@ -2,7 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
-import prepChartData from '00-utilities/chart_builder/processChartData'
+import ChartInfo from '02-molecules/charts_d3/ChartInfo'
 
 /**
  * Return the facet value for a datum given a path.
@@ -167,7 +167,7 @@ function table (chart, data, campaign, features, indicators, locations) {
     let tableChartIndicators = tableChartData.objects[0].indicators.map(item => indIx[item.indicator])
     // console.log('tableChartData: ', tableChartData.objects)
     // let selectedLocations = locationsById[tableChartData.objects[0].location]
-    return prepChartData(chart, tableChartData, locations, tableChartIndicators)
+    return ChartInfo.getChartInfo(chart, tableChartData, locations, tableChartIndicators)
   }
 }
 
