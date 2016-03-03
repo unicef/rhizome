@@ -141,10 +141,10 @@ _.extend(TableChart.prototype, {
     var targets = _(options.headers)
       .indexBy('id')
       .mapValues(ind => {
-        var extents = [ ind.low_bound, ind.high_bound ]
+        var extents = [ ind.bad_bound, ind.good_bound ]
         var names = ['bad', 'ok', 'good']
 
-        if (ind.low_bound > ind.high_bound) {
+        if (ind.bad_bound > ind.good_bound) {
           names = ['good', 'ok', 'bad']
         }
 

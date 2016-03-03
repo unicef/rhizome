@@ -33,8 +33,8 @@ var SimpleFormStore = Reflux.createStore({
         'data_format': '',
         'description': '',
         'source_name': '',
-        'low_bound': '',
-        'high_bound': ''
+        'bad_bound': '',
+        'good_bound': ''
       },
       'indicator_tag': {'tag_name': ''}
     }
@@ -83,8 +83,8 @@ var SimpleFormStore = Reflux.createStore({
         'data_format': '',
         'description': '',
         'source_name': '',
-        'low_bound': '',
-        'high_bound': ''
+        'bad_bound': '',
+        'good_bound': ''
       },
       'indicator_tag': {'tag_name': ''}
     }
@@ -99,8 +99,8 @@ var SimpleFormStore = Reflux.createStore({
           'name': {type: 'string'},
           'short_name': {type: 'string'},
           'source_name': {type: 'string'},
-          'low_bound': {type: 'string'},
-          'high_bound': {type: 'string'},
+          'bad_bound': {type: 'string'},
+          'good_bound': {type: 'string'},
           'data_format': {
             type: 'select',
             settings: {options: [

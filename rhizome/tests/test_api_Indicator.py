@@ -161,8 +161,8 @@ class IndicatorResourceTest(ResourceTestCase):
             'data_format':'int', \
             'id': -1,\
             'description':'test',\
-            'low_bound': 1,
-            'high_bound': 10,
+            'bad_bound': 1,
+            'good_bound': 10,
             'source_name': 'RHIZOME'
             }
 

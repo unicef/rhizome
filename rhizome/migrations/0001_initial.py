@@ -189,8 +189,8 @@ class Migration(migrations.Migration):
                 ('bound_json', jsonfield.fields.JSONField(default=[])),
                 ('tag_json', jsonfield.fields.JSONField(default=[])),
                 ('office_id', jsonfield.fields.JSONField(default=[])),
-                ('high_bound', models.FloatField(null=True)),
-                ('low_bound', models.FloatField(null=True)),
+                ('good_bound', models.FloatField(null=True)),
+                ('bad_bound', models.FloatField(null=True)),
                 ('source_name', models.CharField(max_length=55)),
             ],
             options={
