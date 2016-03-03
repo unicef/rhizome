@@ -63,12 +63,15 @@ _.extend(TableChart.prototype, {
     const margin = options.margin
     const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     const scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.color)
+
     const domain = this._getDomain(data, options)
     const yScale = d3.scale.ordinal().domain(domain).rangeBands([0, h], 0.1)
+
     const y = _.flow(options.seriesName, yScale)
     const transform = (d, i) => (`translate(${z}, ${y(d) + 10})`)
 
-    // THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
+    // COLORS - Move from here once the user can set a pallette
+    // ---------------------------------------------------------------------------
     const targets = _(options.headers)
       .indexBy('id')
       .mapValues(ind => {
@@ -79,6 +82,8 @@ _.extend(TableChart.prototype, {
       })
       .value()
 
+    // CONTAINER
+    // ---------------------------------------------------------------------------
     const svg = this._svg
       .attr({
         'viewBox': viewBox,
@@ -92,28 +97,33 @@ _.extend(TableChart.prototype, {
     const g = svg.select('.data')
     g.on('mouseout', () => { this._onRowOut.apply(this) })
 
-    const row = g.selectAll('.row').data(data)
-    row.enter().append('g').attr({'class': 'row', 'transform': transform})
-    row.exit().transition().duration(300).style('opacity', 0).remove()
-    row.on('click', (d, i) => { this._onRowClick([d, i]) })
-    row.on('mouseover', (d, i) => { this._onRowOver([d, i]) }).transition().duration(750).attr('transform', transform)
+    // ROWS
+    // ---------------------------------------------------------------------------
+    const rows = g.selectAll('.row').data(data)
+    rows.enter().append('g').attr({'class': 'row', 'transform': transform})
+    rows.exit().transition().duration(300).style('opacity', 0).remove()
+    rows.on('click', (d, i) => { this._onRowClick([d, i]) })
+    rows.on('mouseover', (d, i) => { this._onRowOver([d, i]) }).transition().duration(750).attr('transform', transform)
 
+    // CELLS
+    // ---------------------------------------------------------------------------
     const fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
-    const cell = row.selectAll('.cell').data(options.values)
-    cell.exit().transition().duration(300).style('opacity', 0).remove()
-    cell.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
-    cell.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
-    cell.on('mousemove', options.onMouseMove)
-    cell.on('mouseout', options.onMouseOut)
-    cell.on('click', options.onClick)
-    cell.transition().duration(500).style('fill', fill)
+    console.log('options.values', options.values)
+    const cells = rows.selectAll('.cell').data(options.values)
+    cells.exit().transition().duration(300).style('opacity', 0).remove()
+    cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
+    cells.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
+    cells.on('mousemove', options.onMouseMove)
+    cells.on('mouseout', options.onMouseOut)
+    cells.on('click', options.onClick)
+    cells.transition().duration(500).style('fill', fill)
       .attr({
         'height': yScale.rangeBand(),
         'width': xScale.rangeBand(),
         'x': x
       })
 
-    const cg = cell.enter().append('g')
+    const cg = cells.enter().append('g')
     cg.append('rect')
       .attr({
         'class': 'cell',
@@ -139,6 +149,8 @@ _.extend(TableChart.prototype, {
       .text(d => { return d.displayValue })
       .transition().duration(500)
 
+    // X AXIS
+    // ---------------------------------------------------------------------------
     svg.select('.x.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(' + z + ',0)'})
@@ -146,6 +158,8 @@ _.extend(TableChart.prototype, {
     svg.selectAll('.x.axis text').on('click', (d, i) => { this._setSort(d, i) })
     svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
 
+    // Y AXIS
+    // ---------------------------------------------------------------------------
     svg.select('.y.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(' + z + ',10)'})
@@ -154,6 +168,8 @@ _.extend(TableChart.prototype, {
       .style('font-size', options.fontSize)
       .on('click', (d, i) => { options.onRowClick(d, i, this) })
 
+    // Z AXIS
+    // ---------------------------------------------------------------------------
     // the z axis shows the parent location//
     // svg.select('.z.axis')
     //   .transition().duration(500)
@@ -167,8 +183,8 @@ _.extend(TableChart.prototype, {
     //   .style('font-size', options.fontSize)
     //   .on('click', (d, i) => { options.onRowClick(d, i, this) })
 
-    // BEGIN SOURCE FOOTER //
-
+    // FOOTER
+    // ---------------------------------------------------------------------------
     var singleRowIndicators = options.headers // chartData[0].values
     var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
     var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
@@ -201,8 +217,8 @@ _.extend(TableChart.prototype, {
       .transition().duration(500)
       .call(this._wrap, xScale.rangeBand())
 
-    // END SOURCE FOOTER //
-
+    // LEGEND
+    // ---------------------------------------------------------------------------
     if (options.legend) {
       svg.select('.legend')
         .call(options.legend)
