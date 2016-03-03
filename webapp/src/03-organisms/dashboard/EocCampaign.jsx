@@ -22,8 +22,7 @@ var EocCampaign = React.createClass({
   },
 
   render () {
-    const colorScale = ['#f9152f', '#FFFF00	', '#27e833']
-    // const colorScale = ['#FF0000', '#FFFF00	', '#04B404']// red, ylw, grn
+    const colorScale = ['#F9152F', '#FDFD5B', '#27E833']
     const data = this.props.data
     const loading = this.props.loading
     let tableChart = ''
