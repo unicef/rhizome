@@ -130,7 +130,7 @@ class DatapointResource(BaseNonModelResource):
                     .filter(lpd_status__in=[1,2])\
                     .values_list('parent_location_id',flat=True).distinct())
 
-            self.location_ids.extend(sub_location_ids)
+                self.location_ids.extend(sub_location_ids)
 
 
         # Pivot the data on request instead of caching ##
