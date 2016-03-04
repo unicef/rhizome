@@ -49,7 +49,13 @@ export function inChart (chart, campaign, location, datum) {
 
   switch (chart.locations) {
     case 'sublocations':
-      inlocation = childOf(location, datum.location)
+
+      console.log('chart: ', chart)
+      inlocation = childOf(location, datum.location) || datum.location.location_type_id === 3
+      // FIXME --> this ( || datum.location.location_type_id === 3 )
+      // should read something like ... || there exist no shapes below this...
+      // however since we have only district level shape data.. this works
+      // for now.
 
       if (!_.isEmpty(chart.level)) {
         inlocation = inlocation && chart.level === datum.location.location_type
