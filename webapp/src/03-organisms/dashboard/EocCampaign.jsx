@@ -89,6 +89,7 @@ var EocPreCampaign = React.createClass({
         data={data.mapData}
         loading={loading}
         options={{
+          color: colorScale,
           aspect: 3.5,
           xFormat: d3.format(',.1%'),
           domain: _.constant([0, 0.1]),
