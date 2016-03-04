@@ -221,9 +221,7 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 
   var tableChartResponse = {}
   if (responses) {
-    tableChartResponse = responses.filter(r => {
-      return r.meta.chart_type === 'TableChart'
-    })
+    tableChartResponse = responses.filter(r => r.meta.chart_type === 'TableChart')
   }
 
   _.each(dashboard.charts, (chart, i) => {

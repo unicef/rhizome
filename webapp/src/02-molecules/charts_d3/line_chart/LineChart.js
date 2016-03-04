@@ -1,11 +1,13 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import palettes from '02-molecules/charts_d3/utils/palettes'
-import format from '02-molecules/charts_d3/utils/format'
 import hoverLine from '02-molecules/charts_d3/line_chart/hover-line'
+
 import label from '02-molecules/charts_d3/renderer/label'
 import axisLabel from '02-molecules/charts_d3/renderer/axis-label'
+
+import palettes from '02-molecules/charts_d3/utils/palettes'
+import format from '02-molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
   margin: {
@@ -38,13 +40,14 @@ _.extend(LineChart.prototype, {
 
     options = _.assign(this._options, options)
 
-    var margin = options.margin
-    var height = (options.height > 2) ? options.height : 2
-    var svg = this._svg
-    var width = this._width - margin.left - margin.right
-    var height = ((height == '2')?this._height:height) - margin.top - margin.bottom
+    const margin = options.margin
+    const height = (options.height <= 2 ? this._height : options.height) - margin.top - margin.bottom
+    const width = this._width - margin.left - margin.right
+    const svg = this._svg
 
-    let dataColorScale = d3.scale.ordinal()
+    // CHART COLORS
+    // ---------------------------------------------------------------------------
+    const dataColorScale = d3.scale.ordinal()
       .domain(_(series)
         .map(options.seriesName)
         .uniq()
@@ -52,9 +55,9 @@ _.extend(LineChart.prototype, {
         .value())
       .range(options.color)
 
-    let dataColor = _.flow(options.seriesName, dataColorScale)
+    const dataColor = _.flow(options.seriesName, dataColorScale)
 
-    var domain = _.isFunction(options.domain)
+    const domain = _.isFunction(options.domain)
       ? options.domain(series)
       : d3.extent(_(series)
       .map(options.values)
@@ -62,11 +65,7 @@ _.extend(LineChart.prototype, {
       .map(options.x)
       .value())
 
-    var dataXScale = d3.time.scale()
-      .domain(domain)
-      .range([30, width])
-
-    var range = _.isFunction(options.range)
+    let range = _.isFunction(options.range)
       ? options.range(series)
       : d3.extent(_(series)
       .map(options.values)
@@ -76,46 +75,27 @@ _.extend(LineChart.prototype, {
 
     range[0] = Math.min(range[0], 0)
 
-    var yScale = options.scale()
-      .domain(range)
-      .range([0.9 * height, 0])
+    const dataXScale = d3.time.scale().domain(domain).range([30, width])
+    const yScale = options.scale().domain(range).range([0.9 * height, 0])
 
-    var x = _.flow(options.x, dataXScale)
-    var y = _.flow(options.y, yScale)
+    const x = _.flow(options.x, dataXScale)
+    const y = _.flow(options.y, yScale)
 
-    var g = svg.select('.data')
-      .selectAll('.series')
-      .data(series, options.seriesName)
-
-    g.enter()
-      .append('g')
-      .attr('class', 'series')
-
-    g.style({
-      'fill': dataColor,
-      'stroke': dataColor
-    })
-
+    const g = svg.select('.data').selectAll('.series').data(series, options.seriesName)
+    g.enter().append('g').attr('class', 'series')
+    g.style({ 'fill': dataColor, 'stroke': dataColor })
     g.exit().remove()
 
-    var path = g.selectAll('path')
-      .data(function (d) {
-        return [options.values(d)]
-      })
-
+    const path = g.selectAll('path').data(d => [options.values(d)])
     path.enter().append('path')
-
-    path.transition()
-      .duration(500)
-      .attr('d', d3.svg.line().x(x).y(y))
+    path.transition().duration(500).attr('d', d3.svg.line().x(x).y(y))
 
     g.selectAll('line').data(options.values)
 
-    var labels = _(series)
-      .map(function (d) {
-        var last = _.max(options.values(d), options.x)
-        var v = options.y(last)
-
+    const labels = _(series)
+      .map(d => {
+        const last = _.max(options.values(d), options.x)
+        const v = options.y(last)
         return {
           text: options.seriesName(d) + ' ' + options.yFormat(v),
           x: x(last),
@@ -127,19 +107,14 @@ _.extend(LineChart.prototype, {
       .sortBy('y')
       .value()
 
-    var legendColorScale = d3.scale.ordinal()
-      .domain(_(labels)
-        .map(function (d) {
-          return d.text
-        })
-        .uniq()
-        .sortBy()
-        .value())
+    const legendColorScale = d3.scale.ordinal()
+      .domain(_(labels).map(d => {
+        console.log('d', d)
+        return d.text
+      }).uniq().sortBy().value())
       .range(options.color)
 
-    var legendColor = _.flow(function (d) {
-      return d.text
-    }, legendColorScale)
+    const legendColor = _.flow(d => d.text, legendColorScale)
 
     svg.select('.annotation').selectAll('.series.label')
       .data(labels)
@@ -165,11 +140,11 @@ _.extend(LineChart.prototype, {
         .seriesName(_.property('seriesName'))
         .sort(true)
         .colorRange(options.color)
-        .datapoints(_(series).map(function (s) {
+        .datapoints(_(series).map(s => {
           return _.map(options.values(s), _.partial(_.set, _, 'seriesName', options.seriesName(s)))
         })
-          .flatten()
-          .value()
+        .flatten()
+        .value()
       )
     )
 
@@ -180,24 +155,17 @@ _.extend(LineChart.prototype, {
         .ticks(3)
         .scale(dataXScale)
         .orient('bottom'))
+    svg.select('.x.axis').selectAll('.domain').data([0]).attr('d', `M0,0V0H${width}V0`)
 
-    svg.select('.x.axis').selectAll('.domain').data([0])
-      .attr('d', 'M' + 0 + ',' + 0 + 'V0H' + width + 'V' + 0)
-
-    var gy = svg.select('.y.axis')
+    const gy = svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(options.yFormat)
         .tickSize(width)
         .ticks(3)
         .scale(yScale)
         .orient('right'))
-
-    gy.selectAll('text')
-      .attr({
-        'x': 4,
-        'dy': 10
-      })
-
+    gy.selectAll('text').attr({'x': 4, 'dy': 10})
+    gy.selectAll('g').classed('minor', d => d !== range[0])
     d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
 
     if (options.xLabel || options.yLabel) {
@@ -207,10 +175,6 @@ _.extend(LineChart.prototype, {
       .height(height)
       .margin(options.margin))
     }
-
-    gy.selectAll('g').classed('minor', function (d) {
-      return d !== range[0]
-    })
   }
 })
 

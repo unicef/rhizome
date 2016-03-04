@@ -58,8 +58,12 @@ var EocPreCampaign = React.createClass({
         <Chart type='LineChart'
           data={data.trendData}
           loading={loading}
-          options={{color: ['#000000'], height: '300'
-        }} />
+          options={{
+            color: ['#000000'],
+            height: '300',
+            hasDots: true
+          }}
+        />
     )
 
     const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
