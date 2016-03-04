@@ -9,7 +9,7 @@ var MenuControl = {
   getDefaultProps: function () {
     return {
       style: '',
-      searchable: true,
+      searchable: false,
       onSearch: _.noop
     }
   },
