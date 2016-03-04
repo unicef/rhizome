@@ -32,7 +32,6 @@ var EocPreCampaign = React.createClass({
     if (this.props.data.tableData) {
       const tableIndicators = this.props.data.tableData.options.indicatorsSelected
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
-
       const chart_options = {
         color: colorScale,
         cellFontSize: 14,
@@ -52,8 +51,9 @@ var EocPreCampaign = React.createClass({
       )
     }
 
-    const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
-    const mapIndicatorId = hardCodedMapData[0].indicators[0]
+    const hardCodedTrendData = this.props.dashboard.charts.filter(chart => chart.type === 'LineChart')
+    const trendIndicatorId = hardCodedTrendData[0].indicators[0]
+    const trendIndicator = this.props.indicators.filter(indicator => { return indicator.id === trendIndicatorId })
     const trendChart = (
         <Chart type='LineChart'
           data={data.trendData}
@@ -62,6 +62,10 @@ var EocPreCampaign = React.createClass({
         }} />
     )
 
+    const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
+    const mapIndicatorId = hardCodedMapData[0].indicators[0]
+    const mapIndicator = this.props.indicators.filter(indicator => { return indicator.id === mapIndicatorId })
+    console.log('mapIndicator', mapIndicator)
     const mapChart = (
       <Chart type='ChoroplethMap'
         data={data.mapData}
@@ -105,11 +109,11 @@ var EocPreCampaign = React.createClass({
         </div>
         <div className='row'>
           <div className='medium-5 columns cd-chart-size' id='mapChart'>
-            <h3>Trend Chart</h3>
+            <h3>{trendIndicator[0].short_name}</h3>
             {trendChart}
           </div>
           <div className='medium-3 columns cd-chart-size'>
-            <h3>Map Chart</h3>
+            <h3>{mapIndicator[0].short_name}</h3>
             {mapChart}
             {mapLegend}
           </div>
