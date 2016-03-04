@@ -124,9 +124,8 @@ class DatapointResource(BaseNonModelResource):
                     lpd_status__in=[1,2])\
                 .values_list('id',flat=True))
 
-            if len(sub_location_ids) == 0:
-            ## means the country is requested and we get all provinces for
-            ## which there are LPDs.
+            if self.location_ids == [u'1']:
+            ## hack alert -- FIXME ##
                 sub_location_ids = list(Location.objects\
                     .filter(lpd_status__in=[1,2])\
                     .values_list('parent_location_id',flat=True).distinct())
