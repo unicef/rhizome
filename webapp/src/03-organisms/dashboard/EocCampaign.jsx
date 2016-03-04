@@ -91,7 +91,7 @@ var EocPreCampaign = React.createClass({
         options={{
           color: colorScale,
           aspect: 3.5,
-          yFormat: d3.format(',.%'),
+          yFormat: d3.format(',.1%'),
           domain: _.constant([0, 0.1]),
           value: _.property(`properties[${mapIndicatorId}]`),
           margin: {
