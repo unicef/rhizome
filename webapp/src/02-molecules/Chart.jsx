@@ -91,7 +91,6 @@ export default React.createClass({
     let overlay
     let message
     let campaignDropdown
-
     if (this.props.loading || isEmpty(this.props.type, this.props.data, this.props.options)) {
       const position = { top: 19, right: 0, bottom: 0,left: 0, zIndex: 9997 }
 
