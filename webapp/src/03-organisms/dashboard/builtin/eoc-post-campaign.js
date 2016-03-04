@@ -27,7 +27,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [21]
+      'indicators': [21] // Percent missed children outside sample
     }
   ]
 }
