@@ -158,11 +158,13 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-function table (chart, data, campaign, features, indicators, locations) {
+function table (chart, data, campaign, features, indicators, locations, dashboard) {
+  const chart_data = dashboard.charts.filter(chart => chart.type === 'TableChart')
+  const indicator_ids = chart_data[0].indicators
   const indIx = _.indexBy(indicators, 'id')
   if (data.length > 0) {
     const tableChartData = data[0]
-    const tableChartIndicators = tableChartData.objects[0].indicators.map(item => indIx[item.indicator])
+    const tableChartIndicators = indicator_ids.map(id => indIx[id])
     return ChartInfo.getChartInfo(chart, tableChartData, locations, tableChartIndicators)
   }
 }
@@ -251,7 +253,8 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
       campaign,
       features,
       indicators,
-      locationList
+      locationList,
+      dashboard
     )
 
     section[chartName] = processedChart

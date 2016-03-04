@@ -4,17 +4,11 @@ import Reflux from 'reflux'
 // import moment from 'moment'
 import StateMixin from'reflux-state-mixin'
 import Chart from '02-molecules/Chart.jsx'
-import IndicatorStore from 'stores/IndicatorStore'
-import IndicatorActions from 'actions/IndicatorActions'
 import DashboardActions from 'actions/DashboardActions'
 import api from 'data/api'
 import ChartFactory from '02-molecules/charts_d3/ChartFactory'
 
 var EocPreCampaign = React.createClass({
-
- mixins: [
-    StateMixin.connect(IndicatorStore),
-  ],
 
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
@@ -39,7 +33,7 @@ var EocPreCampaign = React.createClass({
     let tableChart = ''
 
     if (this.props.data.tableData) {
-      const tableIndicators = this.props.data.tableData.data[0].values.map(item => item.indicator)
+      const tableIndicators = this.props.data.tableData.options.indicatorsSelected
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
       const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
       const chart_options = {
@@ -48,7 +42,6 @@ var EocPreCampaign = React.createClass({
         cellSize: 36,
         onRowClick: d => { DashboardActions.navigate({ location: d }) },
         headers: tableIndicators,
-        indicatorsSelected: tableIndicators,
         xDomain: tableIndicatorNames,
         defaultSortOrder: tableLocationNames,
         margin: {bottom: 40, left: 40, right: 40, top: 40},
