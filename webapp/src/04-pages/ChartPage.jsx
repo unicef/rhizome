@@ -9,7 +9,6 @@ import ExportPdf from '02-molecules/ExportPdf'
 import ChartFactory from '02-molecules/charts_d3/ChartFactory'
 import ChartInfo from '02-molecules/charts_d3/ChartInfo'
 
-
 import ChartStore from 'stores/ChartStore'
 import RootStore from 'stores/RootStore'
 
