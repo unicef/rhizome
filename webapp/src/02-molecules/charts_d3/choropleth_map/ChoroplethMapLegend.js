@@ -58,17 +58,16 @@ _.extend(MapLegend.prototype, {
     g.append('g').attr('class', 'legend')
     svg.append('g').attr('class', 'bubbles')
     svg.select('.bubbles').append('g').attr('class', 'legend')
-
     svg.append('g').attr('class', 'stripes')
     svg.select('.stripes').append('g').attr('class', 'legend')
 
-    var lineWidth = 10
-    var lineHeight = 10
-    var lineInterval = 5
+    const lineWidth = 10
+    const lineHeight = 10
+    const lineInterval = 5
 
-    var defs = svg.append('defs')
+    const defs = svg.append('defs')
 
-    var pattern = defs.append('pattern')
+    const pattern = defs.append('pattern')
       .attr({
         'id': 'stripe',
         'patternUnits': 'userSpaceOnUse',
@@ -76,37 +75,12 @@ _.extend(MapLegend.prototype, {
         'height': lineHeight
       })
 
-    pattern.append('line')
-      .attr({
-        'x1': 0,
-        'y1': 0,
-        'x2': -lineInterval,
-        'y2': lineHeight
-      })
-
-    pattern.append('line')
-      .attr({
-        'x1': lineInterval,
-        'y1': 0,
-        'x2': 0,
-        'y2': lineHeight
-      })
-
-    pattern.append('line')
-      .attr({
-        'x1': 2 * lineInterval,
-        'y1': 0,
-        'x2': lineInterval,
-        'y2': lineHeight
-      })
-
+    pattern.append('line').attr({'x1': 0, 'y1': 0, 'x2': -lineInterval, 'y2': lineHeight})
+    pattern.append('line').attr({'x1': lineInterval, 'y1': 0, 'x2': 0, 'y2': lineHeight})
+    pattern.append('line').attr({'x1': 2 * lineInterval, 'y1': 0, 'x2': lineInterval, 'y2': lineHeight})
     pattern.selectAll('line')
       .style('stroke', '#cccccc')
-      .attr({
-        'stroke-linecap': 'square',
-        'stroke-linejoin': 'miter',
-        'stroke-width': 1
-      })
+      .attr({'stroke-linecap': 'square', 'stroke-linejoin': 'miter', 'stroke-width': 1})
 
     this.update(data)
   },
@@ -114,41 +88,44 @@ _.extend(MapLegend.prototype, {
   update: function (data, options) {
     options = _.assign(this._options, options)
 
-    var svg = this._svg
+    const svg = this._svg
 
+    // MAP COLOR LEGEND
+    // ---------------------------------------------------------------------------
     if (options.value) {
-      var features = _.reject(data, 'properties.isBorder')
-
-      var domain = options.domain(features)
+      const features = _.reject(data, 'properties.isBorder')
+      let domain = options.domain(features)
 
       if (!_.isArray(domain)) {
         domain = d3.extent(features, options.value)
         domain[0] = Math.min(domain[0], 0)
       }
 
-      var colorScale = d3.scale.quantize()
+      const colorScale = d3.scale.quantize()
         .domain(domain.concat().reverse())
         .range(options.color.concat().reverse())
 
-      var ticks = _.map(colorScale.range(), c => _.map(colorScale.invertExtent(c), options.yFormat).join('—'))
+      const ticks = _.map(colorScale.range(), c => {
+        console.log('c', c)
+        return _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+      })
+
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal().domain(ticks).range(colorScale.range())))
-      .attr('transform', function () { return 'translate(' + 2 + ', ' + 0 + ')' })
+      .attr('transform', () => 'translate(2, 0)')
     }
 
+    // MAP STRIPES LEGEND
+    // ---------------------------------------------------------------------------
     if (options.stripeValue) {
-      var stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
-      var stripeLegendText = options.stripeLegendText
-      var stripeLegend = svg.select('.stripes').select('.legend')
-        .attr('transform', function () {
-          return 'translate(' + 2 + ', ' + 0 + ')'
-        })
+      const stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
+      const stripeLegendText = options.stripeLegendText
+      const stripeLegend = svg.select('.stripes').select('.legend')
+        .attr('transform', () => 'translate(' + 2 + ', ' + 0 + ')')
         .selectAll('.series').data(stripeLegendText)
         .enter().append('g')
         .attr('class', 'series')
-        .attr('transform', function (d, i) {
-          return 'translate(' + 0 + ', ' + i * 15 + ')'
-        })
+        .attr('transform', (d, i) => `translate(0, ${i * 15})`)
 
       stripeLegend.append('rect')
         .attr('width', 11)
@@ -160,64 +137,39 @@ _.extend(MapLegend.prototype, {
         })
 
       stripeLegend.append('text')
-        .attr({
-          'x': 16,
-          'y': 3.5,
-          'dy': 6
-        })
-        .style({
-          'text-anchor': 'start',
-          'font-size': 12
-        })
-        .text(function (d) { return d })
+        .attr({'x': 16, 'y': 3.5, 'dy': 6})
+        .style({'text-anchor': 'start', 'font-size': 12})
+        .text(d => d)
     }
 
+    // MAP BUBBLES LEGEND
+    // ---------------------------------------------------------------------------
     if (options.bubbleValue) {
-      var radius = d3.scale.sqrt()
-        .domain([0, options.maxBubbleValue])
-        .range([0, options.maxBubbleRadius])
-
-      var bubbleLegendText = _.map(options.bubbleLegendRatio, d => {
-        return Math.ceil(d * options.maxBubbleValue, -1)
-      })
-
-      var bubbleLegend = svg.select('.bubbles').select('.legend')
-        .attr('transform', function () {
-          return 'translate(' + 2 + ', ' + 0 + ')'
-        })
+      const radius = d3.scale.sqrt().domain([0, options.maxBubbleValue]).range([0, options.maxBubbleRadius])
+      const bubbleLegendText = _.map(options.bubbleLegendRatio, d => Math.ceil(d * options.maxBubbleValue, -1))
+      const bubbleLegend = svg.select('.bubbles').select('.legend')
+        .attr('transform', () => 'translate(2, 0)')
         .selectAll('.series').data(bubbleLegendText)
         .enter().append('g')
         .attr('class', 'series')
 
       let cx = 2.5 * options.maxBubbleRadius
-      let cy = d => { return 2.5 * options.maxBubbleRadius - radius(d) }
-      var lineY = d => { return (cy(d) - radius(d)) }
+      let cy = d => 2.5 * options.maxBubbleRadius - radius(d)
+      const lineY = d => cy(d) - radius(d)
 
       bubbleLegend.append('circle')
-        .attr('r', d => { return radius(d) })
-        .attr({
-          'cx': cx,
-          'cy': cy
-        })
-        .style({
-          'opacity': 0.5,
-          'fill': 'transparent',
-          'stroke': '#AAAAAA'
-        })
+        .attr('r', d => radius(d))
+        .attr({ 'cx': cx, 'cy': cy })
+        .style({'opacity': 0.5, 'fill': 'transparent', 'stroke': '#AAAAAA'})
 
       bubbleLegend.append('line')
-        .attr({
-          x1: 0,
-          y1: lineY,
-          x2: cx,
-          y2: lineY
-        })
+        .attr({ x1: 0, y1: lineY, x2: cx, y2: lineY })
         .style('stroke', '#AAAAAA')
 
       bubbleLegend.append('text')
         .attr('dx', 0)
         .attr('dy', lineY)
-        .text(d => { return d })
+        .text(d => d)
         .style('fill', '#AAAAAA')
     }
   }
