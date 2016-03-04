@@ -26,7 +26,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [28]
+      'indicators': [7] // 7 | Percent of volunteers attended training sessions
     }
   ]
 }

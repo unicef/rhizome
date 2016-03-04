@@ -26,7 +26,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [21]
+      'indicators': [9] // 9 | Percent vaccination teams trained
     }
   ]
 }

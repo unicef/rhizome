@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Chart from '02-molecules/Chart.jsx'
 import DashboardActions from 'actions/DashboardActions'
+import d3 from 'd3'
 
 var EocPreCampaign = React.createClass({
 
@@ -49,7 +50,7 @@ var EocPreCampaign = React.createClass({
             options={chart_options}
             loading={loading} />
       )
-  }
+    }
 
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
 
@@ -60,15 +61,13 @@ var EocPreCampaign = React.createClass({
         data={data.mapData}
         loading={loading}
         options={{
-        aspect: 0.6,
-        domain: _.constant([0, 0.1]),
-        value: _.property(`properties[${mapIndicatorId}]`),
-        color: colorScale,
-        //  bubbleValue: _.property('properties[177]'),
-        //  stripeValue: _.property('properties[203]'),
-        //  xFormat: d3.format(',.1%'),
-        onClick: d => { DashboardActions.navigate({ location: d }) }
-      }}/>
+          aspect: 0.6,
+          domain: _.constant([0, 0.1]),
+          value: _.property(`properties[${mapIndicatorId}]`),
+          color: colorScale,
+          xFormat: d3.format(',.1%'),
+          onClick: d => { DashboardActions.navigate({ location: d }) }
+        }}/>
     )
 
     const mapLegend = (
@@ -77,6 +76,7 @@ var EocPreCampaign = React.createClass({
         loading={loading}
         options={{
           aspect: 3.5,
+          xFormat: d3.format(',.1%'),
           domain: _.constant([0, 0.1]),
           value: _.property(`properties[${mapIndicatorId}]`),
           margin: {
