@@ -25,32 +25,33 @@ var EocPreCampaign = React.createClass({
   render () {
     const data = this.props.data
     const loading = this.props.loading
-    const colorScale = ['#F9152F', '#FDFD5B', '#27E833']
+    const colorScale = ['#FF9489', '#FFED89', '#83F5A2']
 
+    // TABLE CHART
+    // ----------------------------------------------------------------------------------------------
     let tableChart = ''
-
-    if (this.props.data.tableData) {
-      const tableIndicators = this.props.data.tableData.options.indicatorsSelected
+    if (data.tableData) {
+      const tableIndicators = data.tableData.options.indicatorsSelected
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
-      const chart_options = {
-        color: colorScale,
-        cellFontSize: 14,
-        cellSize: 36,
-        onRowClick: d => { DashboardActions.navigate({ location: d }) },
-        headers: tableIndicators,
-        xDomain: tableIndicatorNames,
-        defaultSortOrder: this.props.data.tableData.options.defaultSortOrder,
-        margin: {bottom: 40, left: 40, right: 40, top: 40}
-      }
-
       tableChart = (
           <Chart type='TableChart'
-            data={this.props.data.tableData.data}
-            options={chart_options}
+            data={data.tableData.data}
+            options={{
+              color: colorScale,
+              cellFontSize: 14,
+              cellSize: 36,
+              onRowClick: d => { DashboardActions.navigate({ location: d }) },
+              headers: tableIndicators,
+              xDomain: tableIndicatorNames,
+              defaultSortOrder: data.tableData.options.defaultSortOrder,
+              margin: {bottom: 40, left: 40, right: 40, top: 40}
+            }}
             loading={loading} />
       )
     }
 
+    // LINE CHART
+    // ----------------------------------------------------------------------------------------------
     const hardCodedTrendData = this.props.dashboard.charts.filter(chart => chart.type === 'LineChart')
     const trendIndicatorId = hardCodedTrendData[0].indicators[0]
     const trendIndicator = this.props.indicators.filter(indicator => { return indicator.id === trendIndicatorId })
@@ -66,6 +67,8 @@ var EocPreCampaign = React.createClass({
         />
     )
 
+    // CHOROPLETH MAP
+    // ----------------------------------------------------------------------------------------------
     const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
     const mapIndicatorId = hardCodedMapData[0].indicators[0]
     const mapIndicator = this.props.indicators.filter(indicator => { return indicator.id === mapIndicatorId })
@@ -83,7 +86,6 @@ var EocPreCampaign = React.createClass({
           onClick: d => { DashboardActions.navigate({ location: d }) }
         }}/>
     )
-
     const mapLegend = (
       <Chart type='ChoroplethMapLegend'
         data={data.mapData}
