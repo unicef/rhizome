@@ -69,6 +69,24 @@ var EocPreCampaign = React.createClass({
       }}/>
     )
 
+    const mapLegend = (
+      <Chart type='ChoroplethMapLegend'
+        data={data.mapData}
+        loading={loading}
+        options={{
+          aspect: 3.5,
+          domain: _.constant([0, 0.1]),
+          value: _.property(`properties[${mapIndicatorId}]`),
+          margin: {
+            top: 5,
+            bottom: 0,
+            left: 1,
+            right: 0
+          }
+        }}
+      />
+    )
+
     return (
       <div id='eoc-dashboard-dashboard'>
         <div className='row'>
@@ -81,6 +99,7 @@ var EocPreCampaign = React.createClass({
               <div className='medium-12 columns end cd-chart-size'>
                 <h2>Map Chart</h2>
                 {mapChart}
+                {mapLegend}
               </div>
             </div>
             <div className='row'>
