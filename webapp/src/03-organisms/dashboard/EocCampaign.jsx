@@ -52,6 +52,8 @@ var EocPreCampaign = React.createClass({
 
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
 
+    const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
+    const mapIndicatorId = hardCodedMapData[0].indicators[0]
     const mapChart = (
       <Chart type='ChoroplethMap'
         data={data.mapData}
@@ -59,7 +61,7 @@ var EocPreCampaign = React.createClass({
         options={{
         aspect: 0.6,
         domain: _.constant([0, 0.1]),
-        value: _.property('properties[21]'),
+        value: _.property(`properties[${mapIndicatorId}]`),
         //  bubbleValue: _.property('properties[177]'),
         //  stripeValue: _.property('properties[203]'),
         //  xFormat: d3.format(',.1%'),
