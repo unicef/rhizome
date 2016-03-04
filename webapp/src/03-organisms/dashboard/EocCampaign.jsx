@@ -32,7 +32,7 @@ var EocPreCampaign = React.createClass({
     if (this.props.data.tableData) {
       const tableIndicators = this.props.data.tableData.options.indicatorsSelected
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
-      // const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
+
       const chart_options = {
         color: colorScale,
         cellFontSize: 14,
@@ -52,10 +52,16 @@ var EocPreCampaign = React.createClass({
       )
     }
 
-    const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
-
     const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
     const mapIndicatorId = hardCodedMapData[0].indicators[0]
+    const trendChart = (
+        <Chart type='LineChart'
+          data={data.trendData}
+          loading={loading}
+          options={{color: ['#000000'], height: '300'
+        }} />
+    )
+
     const mapChart = (
       <Chart type='ChoroplethMap'
         data={data.mapData}
@@ -90,26 +96,22 @@ var EocPreCampaign = React.createClass({
     )
 
     return (
-      <div id='eoc-dashboard-dashboard'>
+      <div id='management-dashboard'>
         <div className='row'>
-          <div className='medium-8 columns end cd-chart-size'>
-            <h2>Table Chart</h2>
+          <div className='medium-8 columns' style={{'margin-bottom': -10 + 'px !important'}}>
+            <h3>Table Chart</h3>
             {tableChart}
           </div>
-          <div className='medium-4 columns end'>
-            <div className='row'>
-              <div className='medium-12 columns end cd-chart-size'>
-                <h2>Map Chart</h2>
-                {mapChart}
-                {mapLegend}
-              </div>
-            </div>
-            <div className='row'>
-              <div className='medium-12 columns end cd-chart-size'>
-                <h2>Trend Chart</h2>
-                {trendChart}
-              </div>
-            </div>
+        </div>
+        <div className='row'>
+          <div className='medium-5 columns cd-chart-size' id='mapChart'>
+            <h3>Trend Chart</h3>
+            {trendChart}
+          </div>
+          <div className='medium-3 columns cd-chart-size'>
+            <h3>Map Chart</h3>
+            {mapChart}
+            {mapLegend}
           </div>
         </div>
       </div>

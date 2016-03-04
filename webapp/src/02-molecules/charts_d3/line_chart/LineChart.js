@@ -39,10 +39,10 @@ _.extend(LineChart.prototype, {
     options = _.assign(this._options, options)
 
     var margin = options.margin
-
+    var height = (options.height > 2) ? options.height : 2
     var svg = this._svg
     var width = this._width - margin.left - margin.right
-    var height = this._height - margin.top - margin.bottom
+    var height = ((height == '2')?this._height:height) - margin.top - margin.bottom
 
     let dataColorScale = d3.scale.ordinal()
       .domain(_(series)
