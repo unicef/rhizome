@@ -159,14 +159,10 @@ function scatter (chart, data, campaign) {
 }
 
 function table (chart, data, campaign, features, indicators, locations) {
-  var indIx = _.indexBy(indicators, 'id')
-  // var locIx = _.indexBy(locations, 'id')
-
+  const indIx = _.indexBy(indicators, 'id')
   if (data.length > 0) {
-    let tableChartData = data[0] // not sure why i have to get ix = 0 here.
-    let tableChartIndicators = tableChartData.objects[0].indicators.map(item => indIx[item.indicator])
-    // console.log('tableChartData: ', tableChartData.objects)
-    // let selectedLocations = locationsById[tableChartData.objects[0].location]
+    const tableChartData = data[0]
+    const tableChartIndicators = tableChartData.objects[0].indicators.map(item => indIx[item.indicator])
     return ChartInfo.getChartInfo(chart, tableChartData, locations, tableChartIndicators)
   }
 }

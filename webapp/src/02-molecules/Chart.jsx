@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
 
-import ChartFactory from '02-molecules/charts'
 import DropdownMenu from '02-molecules/menus/DropdownMenu'
+import ChartFactory from '02-molecules/charts_d3/ChartFactory'
 
 function isEmpty (type, data, options) {
   // Bullet charts get special treatment because they're considered empty if

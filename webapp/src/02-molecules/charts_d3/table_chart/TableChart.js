@@ -32,8 +32,6 @@ _.extend(TableChart.prototype, {
   sortCol: null,
 
   initialize: function (el, data, options) {
-    console.log('INIT - data', data)
-    console.log('INIT - options', options)
     options = this._options = _.defaults({}, options, DEFAULTS)
     const svg = this._svg = d3.select(el).append('svg').attr('class', 'heatmap sortable')
     const g = svg.append('g').attr('class', 'margin')
@@ -58,12 +56,6 @@ _.extend(TableChart.prototype, {
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
     const sourceFlow = _.flow(options.sourceColumn, xScale)
     const x = _.flow(options.column, xScale)
-    console.log('x', x)
-    console.log('w', w)
-    console.log('xScale', xScale)
-    console.log('xScale.rangeBand()', xScale.rangeBand())
-    console.log('xDomain', xDomain)
-    console.log('options.headers', options.headers)
     const margin = options.margin
     const scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.color)
 
@@ -145,28 +137,7 @@ _.extend(TableChart.prototype, {
     cg.append('text')
       .attr({
         'height': yScale.rangeBand(),
-        // 'x': d => {
-        //   const columnResult = options.column(d)
-        //   const xScaleResult = xScale(columnResult)
-        //   // const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
-        //   if (!xScaleResult) {
-        //     console.log('Something went wrong!!!!')
-        //     console.log('d', d)
-        //     console.log('w', w)
-        //     console.log('columnResult', columnResult)
-        //     console.log('d3.scale.ordinal(columnResult)', d3.scale.ordinal(columnResult))
-        //     console.log('d3.scale.ordinal().domain(xDomain)', d3.scale.ordinal(columnResult).domain(xDomain))
-        //     console.log('d3.scale.ordinal().domain(xDomain).rangeBands()', d3.scale.ordinal().domain(columnResult).rangeBands([0, 1296], 0.1))
-        //     console.log('xScaleResult', xScaleResult)
-        //   } else {
-        //     console.log('something went right')
-        //   }
-
-        //   // console.log('x(d)', x(d))
-        //   // return x(d) + xScale.rangeBand() / 2
-        //   return 700
-        // },
-        'x': x + xScale.rangeBand() / 2,
+        'x': d => x(d) + xScale.rangeBand() / 2,
         'y': options.cellSize / 2,
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',

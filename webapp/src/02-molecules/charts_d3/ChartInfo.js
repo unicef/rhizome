@@ -31,7 +31,6 @@ const ChartInfo = {
       newOptions.xDomain = !chartInfo.options.xDomain ? indicatorOrder : null
     }
 
-    console.log('ChartInfo - data', chartInfo.data)
     return { data: chartInfo.data, options: newOptions }
   },
 
