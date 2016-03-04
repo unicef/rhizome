@@ -59,10 +59,7 @@ let DashboadrNav = React.createClass({
     return (
       <ul className='dashboards-nav'>
         <li>
-          <a href='/explore'>Data</a>
-        </li>
-        <li>
-          <a href='/charts/'>Dashboards</a>
+          <a href='#'>Dashboards</a>
           <ul className='dashboard-menu animated slideDown'>
             { premade_dashboards }
         </ul>
