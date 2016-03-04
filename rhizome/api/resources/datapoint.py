@@ -235,7 +235,7 @@ class DatapointResource(BaseNonModelResource):
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
                 .values_list('name',flat=True)\
-                .order_by('name')
+                .order_by('location_type_id','name')
 
             # data['meta']['parent_location_list'] = [l for l in p_loc_qs]
             data['meta']['default_sort_order'] = list(p_loc_qs)
