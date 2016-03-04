@@ -32,7 +32,7 @@ var EocPreCampaign = React.createClass({
     if (this.props.data.tableData) {
       const tableIndicators = this.props.data.tableData.options.indicatorsSelected
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
-      const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
+      // const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
       const chart_options = {
         color: colorScale,
         cellFontSize: 14,
@@ -40,7 +40,7 @@ var EocPreCampaign = React.createClass({
         onRowClick: d => { DashboardActions.navigate({ location: d }) },
         headers: tableIndicators,
         xDomain: tableIndicatorNames,
-        defaultSortOrder: tableLocationNames,
+        defaultSortOrder: this.props.data.tableData.options.defaultSortOrder,
         margin: {bottom: 40, left: 40, right: 40, top: 40}
       }
 
