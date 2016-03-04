@@ -1,12 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
-import Reflux from 'reflux'
-// import moment from 'moment'
-import StateMixin from'reflux-state-mixin'
 import Chart from '02-molecules/Chart.jsx'
 import DashboardActions from 'actions/DashboardActions'
-import api from 'data/api'
-import ChartFactory from '02-molecules/charts_d3/ChartFactory'
 
 var EocPreCampaign = React.createClass({
 
@@ -29,6 +24,7 @@ var EocPreCampaign = React.createClass({
   render () {
     const data = this.props.data
     const loading = this.props.loading
+    const colorScale = ['#F9152F', '#FDFD5B', '#27E833']
 
     let tableChart = ''
 
@@ -37,18 +33,23 @@ var EocPreCampaign = React.createClass({
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
       const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
       const chart_options = {
-        color: ['#EA2D19', '#EACE19', '#13B13D'],
+        color: colorScale,
         cellFontSize: 14,
         cellSize: 36,
         onRowClick: d => { DashboardActions.navigate({ location: d }) },
         headers: tableIndicators,
         xDomain: tableIndicatorNames,
         defaultSortOrder: tableLocationNames,
-        margin: {bottom: 40, left: 40, right: 40, top: 40},
+        margin: {bottom: 40, left: 40, right: 40, top: 40}
       }
 
-      tableChart = <Chart type='TableChart' data={this.props.data.tableData.data} options={chart_options} loading={loading} />
-    }
+      tableChart = (
+          <Chart type='TableChart'
+            data={this.props.data.tableData.data}
+            options={chart_options}
+            loading={loading} />
+      )
+  }
 
     const trendChart = <Chart type='LineChart' data={data.trendData} loading={loading} />
 
@@ -62,6 +63,7 @@ var EocPreCampaign = React.createClass({
         aspect: 0.6,
         domain: _.constant([0, 0.1]),
         value: _.property(`properties[${mapIndicatorId}]`),
+        color: colorScale,
         //  bubbleValue: _.property('properties[177]'),
         //  stripeValue: _.property('properties[203]'),
         //  xFormat: d3.format(',.1%'),
