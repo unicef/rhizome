@@ -47,7 +47,7 @@ var RootStore = Reflux.createStore({
       locations.forEach(location => { locationIndex[location.id] = location })
       charts.forEach(chart => { chartIndex[chart.id] = chart })
 
-      this.setState({
+      this.trigger({
         officeIndex: officeIndex,
         campaignIndex: campaignIndex,
         indicatorIndex: indicatorIndex,
