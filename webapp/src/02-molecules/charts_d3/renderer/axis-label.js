@@ -31,7 +31,7 @@ function wrap (text, width) {
   })
 }
 */
-// import browser from '00-utilities/browser'
+// import browser from '02-molecules/charts_d3/utils/browser'
 
 function axisLabel () {
   var _width = 1

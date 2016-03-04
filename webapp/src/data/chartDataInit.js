@@ -3,12 +3,12 @@ import moment from 'moment'
 import d3 from 'd3'
 
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
-import processChartData from '00-utilities/chart_builder/processChartData'
+import ChartInfo from '02-molecules/charts_d3/ChartInfo'
 
 import api from 'data/api'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
-import palettes from '00-utilities/palettes'
+import palettes from '02-molecules/charts_d3/utils/palettes'
 
 const getSelectedLocations = (location_ids, locationIndex) => {
   if (location_ids) {
@@ -117,14 +117,10 @@ export default {
 
     console.log('this', this)
 
-    return processChartData.init(api.datapoints(query),
+    return ChartInfo.getChartInfo(api.datapoints(query),
       chartDef.type,
       selectedIndicators,
       selectedLocations,
-      lower,
-      upper,
-      groups,
-      chartDef,
       layout
     ).then(chart => {
       if (!chart.data) {

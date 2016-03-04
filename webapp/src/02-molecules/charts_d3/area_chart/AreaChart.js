@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import format from '00-utilities/format'
-import hoverLine from '02-molecules/charts/behavior/hover-line'
-import label from '02-molecules/charts/renderer/label'
+import format from '02-molecules/charts_d3/utils/format'
+import hoverLine from '02-molecules/charts_d3/line_chart/hover-line'
+import label from '02-molecules/charts_d3/renderer/label'
 
 var DEFAULTS = {
   margin: {

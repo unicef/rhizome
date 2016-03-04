@@ -5,10 +5,10 @@ import Layer from 'react-layer'
 
 import Tooltip from '02-molecules/Tooltip.jsx'
 
-import browser from '00-utilities/browser'
-import palettes from '00-utilities/palettes'
+import browser from '02-molecules/charts_d3/utils/browser'
+import palettes from '02-molecules/charts_d3/utils/palettes'
 
-import legend from '02-molecules/charts/renderer/legend'
+import legend from '02-molecules/charts_d3/renderer/legend'
 
 var DEFAULTS = {
   aspect: 1,

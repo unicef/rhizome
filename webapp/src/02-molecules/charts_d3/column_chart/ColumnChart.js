@@ -2,11 +2,11 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
-import browser from '00-utilities/browser'
-import label from '02-molecules/charts/renderer/label'
-import axisLabel from '02-molecules/charts/renderer/axis-label'
-import color from '00-utilities/color'
-import palettes from '00-utilities/palettes'
+import browser from '02-molecules/charts_d3/utils/browser'
+import label from '02-molecules/charts_d3/renderer/label'
+import axisLabel from '02-molecules/charts_d3/renderer/axis-label'
+import color from '02-molecules/charts_d3/utils/color'
+import palettes from '02-molecules/charts_d3/utils/palettes'
 
 var defaults = {
   margin: {

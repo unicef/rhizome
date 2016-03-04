@@ -3,12 +3,13 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 
-import ColumnChart from '02-molecules/charts_d3/column_chart/ColumnChart'
 import Tooltip from '02-molecules/Tooltip.jsx'
+import ColumnChart from '02-molecules/charts_d3/column_chart/ColumnChart'
 
 import browser from '02-molecules/charts_d3/utils/browser'
 import color from '02-molecules/charts_d3/utils/color'
 import palettes from '02-molecules/charts_d3/utils/palettes'
+
 import legend from '02-molecules/charts_d3/renderer/legend'
 import axisLabel from '02-molecules/charts_d3/renderer/axis-label'
 

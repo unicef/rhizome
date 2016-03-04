@@ -4,7 +4,7 @@ import d3 from 'd3'
 import React from 'react'
 import Layer from 'react-layer'
 import Tooltip from '02-molecules/Tooltip.jsx'
-import axisLabel from '02-molecules/charts/renderer/axis-label'
+import axisLabel from '02-molecules/charts_d3/renderer/axis-label'
 
 var defaults = {
   hoverRadius: 5,

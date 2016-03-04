@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import label from '../renderer/label'
+import label from '02-molecules/charts_d3/renderer/label'
 
 function hoverLine () {
   var datapoints = []

@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import palettes from '00-utilities/palettes'
+import palettes from '02-molecules/charts_d3/utils/palettes'
 import formatUtil from '02-molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
