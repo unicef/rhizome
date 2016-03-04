@@ -255,9 +255,7 @@ _.extend(ChoroplethMap.prototype, {
         var v = options.value(d)
         return _.isFinite(v) ? colorScale(v) : '#fff'
       })
-      .on('click', function (d) {
-        options.onClick(_.get(d, 'properties.location_id'))
-      })
+      .on('click', d => { this._onClick(d, options) })
       .on('mousemove', _.partial(this._onMouseMove, _, options, data))
       .on('mouseout', this._onMouseOut)
 
@@ -319,7 +317,7 @@ _.extend(ChoroplethMap.prototype, {
           var v = options.stripeValue(d)
           return _.isFinite(v) && v > 0 ? 1 : 0
         })
-        .on('click', d => { options.onClick(_.get(d, 'properties.location_id')) })
+        .on('click', d => { this._onClick(d, options) })
         .on('mousemove', _.partial(this._onMouseMove, _, options, data))
         .on('mouseout', this._onMouseOut)
 
@@ -484,6 +482,11 @@ _.extend(ChoroplethMap.prototype, {
       this.layer.destroy()
       this.layer = null
     }
+  },
+
+  _onClick: function (d, options) {
+    this._onMouseOut()
+    return options.onClick(_.get(d, 'properties.location_id'))
   }
 })
 
