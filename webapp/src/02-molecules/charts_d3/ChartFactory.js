@@ -1,22 +1,22 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-import browser from '00-utilities/browser'
+import browser from '02-molecules/charts_d3/utils/browser'
 
 var CHARTS = {
-  // BarChart: require('./bar'),
-  // BulletChart: require('./bullet'),
-  // ChoroplethMap: require('./choropleth'),
-  // ColumnChart: require('./column'),
-  // GroupedBarChart: require('./grouped-bar'),
-  // HeatMapChart: require('./heatmap'),
-  // Histogram: require('./histogram'),
-  // LineChart: require('./line'),
-  // AreaChart: require('./area'),
-  // PieChart: require('./pie'),
-  // ScatterChart: require('./scatter'),
-  // MapLegend: require('./mapLegend'),
-  TableChart: require('02-molecules/charts_d3/table_chart/TableChartFactory')
+  BarChart: require('02-molecules/charts_d3/bar_chart/BarChart'),
+  BulletChart: require('02-molecules/charts_d3/bullet_chart/BulletChart'),
+  ChoroplethMap: require('02-molecules/charts_d3/choropleth_map/ChoroplethMap'),
+  ChoroplethMapLegend: require('02-molecules/charts_d3/choropleth_map/ChoroplethMapLegend'),
+  ColumnChart: require('02-molecules/charts_d3/column_chart/ColumnChart'),
+  GroupedBarChart: require('02-molecules/charts_d3/grouped_bar_chart/GroupedBarChart'),
+  HeatmapChart: require('02-molecules/charts_d3/heatmap/Heatmap'),
+  Histogram: require('02-molecules/charts_d3/histogram/Histogram'),
+  LineChart: require('02-molecules/charts_d3/line_chart/LineChart'),
+  AreaChart: require('02-molecules/charts_d3/area_chart/AreaChart'),
+  PieChart: require('02-molecules/charts_d3/pie_chart/PieChart'),
+  ScatterChart: require('02-molecules/charts_d3/scatter_chart/ScatterChart'),
+  TableChart: require('02-molecules/charts_d3/table_chart/TableChart')
 }
 
 var DEFAULTS = {

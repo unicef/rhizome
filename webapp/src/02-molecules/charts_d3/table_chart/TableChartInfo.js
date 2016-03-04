@@ -5,7 +5,6 @@ const TableChartInfo = {
     if (!datapoints || datapoints.length === 0) {
       return { options: null, data: null }
     } else {
-      console.log(this)
       const chartOptions = this.getChartOptions(datapoints)
       const chartData = this.getChartData(datapoints, locations, indicators, chartOptions)
       return { options: chartOptions, data: chartData }
@@ -59,6 +58,7 @@ const TableChartInfo = {
         }
       })
 
+      // console.log('values', values)
       return {
         name: locations_map[d.location].name,
         parent_location_id: locations_map[d.location].parent_location_id,

@@ -3,12 +3,12 @@ import d3 from 'd3'
 import moment from 'moment'
 
 import palettes from '02-molecules/charts_d3/utils/palettes'
-// import processLineChart from '00-molecules/charts_d3/line_chart'
-// import processPieChart from '00-molecules/charts_d3/pie_chart'
-// import processChoroplethMap from '00-molecules/charts_d3/choropleth_map'
-// import processColumnChart from '00-molecules/charts_d3/column_chart'
-// import processScatterChart from '00-molecules/charts_d3/scatter_chart'
-// import processBarChart from '00-molecules/charts_d3/bar_chart'
+import LineChartInfo from '02-molecules/charts_d3/line_chart/LineChartInfo'
+import PieChartInfo from '02-molecules/charts_d3/pie_chart/PieChartInfo'
+import ChoroplethMapInfo from '02-molecules/charts_d3/choropleth_map/ChoroplethMapInfo'
+import ColumnChartInfo from '02-molecules/charts_d3/column_chart/ColumnChartInfo'
+import ScatterChartInfo from '02-molecules/charts_d3/scatter_chart/ScatterChartInfo'
+import BarChartInfo from '02-molecules/charts_d3/bar_chart/BarChartInfo'
 import TableChartInfo from '02-molecules/charts_d3/table_chart/TableChartInfo'
 
 const ChartInfo = {
@@ -16,7 +16,7 @@ const ChartInfo = {
   getChartInfo: function (chartDef, datapoints, selectedLocations, selectedIndicators, layout) {
     const indicatorOrder = selectedIndicators.map(indicator => { return indicator.short_name })
 
-    const chartInfo = this.processChartInfo(chartDef, datapoints, selectedLocations, selectedIndicators, layout)
+    const chartInfo = this.getInfoForChartType(chartDef, datapoints, selectedLocations, selectedIndicators, layout)
 
     if (!chartInfo.data) {
       return { data: [], options: null }
@@ -31,10 +31,11 @@ const ChartInfo = {
       newOptions.xDomain = !chartInfo.options.xDomain ? indicatorOrder : null
     }
 
+    console.log('ChartInfo - data', chartInfo.data)
     return { data: chartInfo.data, options: newOptions }
   },
 
-  processChartInfo: function (chartDef, datapoints, selectedLocations, selectedIndicators) {
+  getInfoForChartType: function (chartDef, datapoints, selectedLocations, selectedIndicators) {
     const selectedLocationIndex = _.indexBy(selectedLocations, 'id')
     const selectedIndicatorIndex = _.indexBy(selectedIndicators, 'id')
     const groups = chartDef.groupBy === 'indicator' ? selectedIndicatorIndex : selectedLocationIndex
@@ -46,17 +47,17 @@ const ChartInfo = {
 
     switch (chartDef.type) {
       case 'LineChart':
-      //   return LineChartInfo.getChartInfo(meltPromise, lower, upper, groups, chartDef, layout)
-      // case 'PieChart':
-      //   return PieChartInfo.getChartInfo(meltPromise, selectedIndicators, layout)
-      // case 'ChoroplethMap':
-      //   return ChoroplethMapInfo.getChartInfo(meltPromise, selectedLocations, selectedIndicators, chartDef, layout)
-      // case 'ColumnChart':
-      //   return ColumnChartInfo.getChartInfo(meltPromise, lower, upper, groups, chartDef, layout)
-      // case 'ScatterChart':
-      //   return ScatterChartInfo.getChartInfo(datapoints, selectedLocations, selectedIndicators, chartDef, layout)
-      // case 'BarChart':
-      //   return BarChartInfo.getChartInfo(datapoints, selectedLocations, selectedIndicators, chartDef, layout)
+        return LineChartInfo.getChartInfo(meltPromise, lower, upper, groups, chartDef, layout)
+      case 'PieChart':
+        return PieChartInfo.getChartInfo(meltPromise, selectedIndicators, layout)
+      case 'ChoroplethMap':
+        return ChoroplethMapInfo.getChartInfo(meltPromise, selectedLocations, selectedIndicators, chartDef, layout)
+      case 'ColumnChart':
+        return ColumnChartInfo.getChartInfo(meltPromise, lower, upper, groups, chartDef, layout)
+      case 'ScatterChart':
+        return ScatterChartInfo.getChartInfo(datapoints, selectedLocations, selectedIndicators, chartDef, layout)
+      case 'BarChart':
+        return BarChartInfo.getChartInfo(datapoints, selectedLocations, selectedIndicators, chartDef, layout)
       case 'TableChart':
         return TableChartInfo.getChartInfo(datapoints, selectedLocations, selectedIndicators, chartDef, layout)
       default:

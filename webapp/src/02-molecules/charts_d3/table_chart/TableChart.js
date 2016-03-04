@@ -1,10 +1,12 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import formatUtil from '00-utilities/format'
+import palettes from '00-utilities/palettes'
+import formatUtil from '02-molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
   cellSize: 16,
   column: _.property('indicator.short_name'),
+  color: palettes.blue,
   sourceColumn: _.property('short_name'),
   fontSize: 12,
   format: formatUtil.general,
@@ -30,6 +32,8 @@ _.extend(TableChart.prototype, {
   sortCol: null,
 
   initialize: function (el, data, options) {
+    console.log('INIT - data', data)
+    console.log('INIT - options', options)
     options = this._options = _.defaults({}, options, DEFAULTS)
     const svg = this._svg = d3.select(el).append('svg').attr('class', 'heatmap sortable')
     const g = svg.append('g').attr('class', 'margin')
@@ -44,29 +48,27 @@ _.extend(TableChart.prototype, {
   },
 
   update: function (data, options) {
-    console.log('tableUpdate with data: ', data)
-    console.log('tableUpdate with options: ', options)
-
     options = _.extend(this._options, options)
 
-    // hacky way to scale the view box.. this should be done by taking into account the user's screen size
-    const calculatedHeightScale = 1 + (options.headers.length - 8) / 10
-    const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
+    const h = Math.max(data.length * options.cellSize, 0)
+    const z = 160 //  extra margin space needed to add the "z" (parent) axis"
+    const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
     const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => { return ind.short_name })
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
     const sourceFlow = _.flow(options.sourceColumn, xScale)
     const x = _.flow(options.column, xScale)
-    const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
-    const h = Math.max(data.length * options.cellSize, 0)
-    const z = 160 //  extra margin space needed to add the "z" (parent) axis"
+    console.log('x', x)
+    console.log('w', w)
+    console.log('xScale', xScale)
+    console.log('xScale.rangeBand()', xScale.rangeBand())
+    console.log('xDomain', xDomain)
+    console.log('options.headers', options.headers)
     const margin = options.margin
-    const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     const scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.color)
 
     const domain = this._getDomain(data, options)
     const yScale = d3.scale.ordinal().domain(domain).rangeBands([0, h], 0.1)
-
     const y = _.flow(options.seriesName, yScale)
     const transform = (d, i) => (`translate(${z}, ${y(d) + 10})`)
 
@@ -84,6 +86,10 @@ _.extend(TableChart.prototype, {
 
     // CONTAINER
     // ---------------------------------------------------------------------------
+    // hacky way to scale the view box.. this should be done by taking into account the user's screen size
+    const calculatedHeightScale = 1 + (options.headers.length - 8) / 10
+    const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
+    const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     const svg = this._svg
       .attr({
         'viewBox': viewBox,
@@ -107,8 +113,8 @@ _.extend(TableChart.prototype, {
 
     // CELLS
     // ---------------------------------------------------------------------------
+
     const fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
-    console.log('options.values', options.values)
     const cells = rows.selectAll('.cell').data(options.values)
     cells.exit().transition().duration(300).style('opacity', 0).remove()
     cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
@@ -124,6 +130,7 @@ _.extend(TableChart.prototype, {
       })
 
     const cg = cells.enter().append('g')
+    // console.log('x', x)
     cg.append('rect')
       .attr({
         'class': 'cell',
@@ -138,7 +145,28 @@ _.extend(TableChart.prototype, {
     cg.append('text')
       .attr({
         'height': yScale.rangeBand(),
-        'x': d => { return x(d) + xScale.rangeBand() / 2 },
+        // 'x': d => {
+        //   const columnResult = options.column(d)
+        //   const xScaleResult = xScale(columnResult)
+        //   // const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
+        //   if (!xScaleResult) {
+        //     console.log('Something went wrong!!!!')
+        //     console.log('d', d)
+        //     console.log('w', w)
+        //     console.log('columnResult', columnResult)
+        //     console.log('d3.scale.ordinal(columnResult)', d3.scale.ordinal(columnResult))
+        //     console.log('d3.scale.ordinal().domain(xDomain)', d3.scale.ordinal(columnResult).domain(xDomain))
+        //     console.log('d3.scale.ordinal().domain(xDomain).rangeBands()', d3.scale.ordinal().domain(columnResult).rangeBands([0, 1296], 0.1))
+        //     console.log('xScaleResult', xScaleResult)
+        //   } else {
+        //     console.log('something went right')
+        //   }
+
+        //   // console.log('x(d)', x(d))
+        //   // return x(d) + xScale.rangeBand() / 2
+        //   return 700
+        // },
+        'x': x + xScale.rangeBand() / 2,
         'y': options.cellSize / 2,
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
