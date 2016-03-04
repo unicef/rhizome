@@ -43,6 +43,7 @@ var EocPreCampaign = React.createClass({
       const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
       const tableLocationNames = this.props.data.tableData.data.map(d => (d.name))
       const chart_options = {
+        color: ['#EA2D19', '#EACE19', '#13B13D'],
         cellFontSize: 14,
         cellSize: 36,
         headers: tableIndicators,
