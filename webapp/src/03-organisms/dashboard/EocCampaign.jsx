@@ -106,8 +106,12 @@ var EocPreCampaign = React.createClass({
     return (
       <div id='management-dashboard'>
         <div className='row'>
+          <div className='medium-12 columns'>
+            <h1>{this.props.dashboard.title}</h1>
+          </div>
+        </div>
+        <div className='row'>
           <div className='medium-8 columns' style={{'margin-bottom': -10 + 'px !important'}}>
-            <h3>Table Chart</h3>
             {tableChart}
           </div>
         </div>
