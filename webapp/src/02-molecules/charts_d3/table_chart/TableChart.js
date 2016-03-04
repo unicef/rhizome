@@ -90,7 +90,8 @@ _.extend(TableChart.prototype, {
       })
       .datum(data)
 
-    svg.select('.margin').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+    // svg.select('.margin').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
+    svg.select('.margin').attr('transform', 'translate(-75, ' + margin.top + ')')
 
     const g = svg.select('.data')
     g.on('mouseout', () => { this._onRowOut.apply(this) })
