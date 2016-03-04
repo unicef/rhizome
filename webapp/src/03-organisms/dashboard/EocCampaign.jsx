@@ -72,7 +72,6 @@ var EocPreCampaign = React.createClass({
     const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
     const mapIndicatorId = hardCodedMapData[0].indicators[0]
     const mapIndicator = this.props.indicators.filter(indicator => { return indicator.id === mapIndicatorId })
-    console.log('mapIndicator', mapIndicator)
     const mapChart = (
       <Chart type='ChoroplethMap'
         data={data.mapData}

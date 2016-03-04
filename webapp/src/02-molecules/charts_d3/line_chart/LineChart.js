@@ -108,10 +108,7 @@ _.extend(LineChart.prototype, {
       .value()
 
     const legendColorScale = d3.scale.ordinal()
-      .domain(_(labels).map(d => {
-        console.log('d', d)
-        return d.text
-      }).uniq().sortBy().value())
+      .domain(_(labels).map(d => d.text).uniq().sortBy().value())
       .range(options.color)
 
     const legendColor = _.flow(d => d.text, legendColorScale)

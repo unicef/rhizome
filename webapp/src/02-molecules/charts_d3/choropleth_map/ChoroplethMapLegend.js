@@ -106,7 +106,6 @@ _.extend(MapLegend.prototype, {
         .range(options.color.concat().reverse())
 
       const ticks = _.map(colorScale.range(), c => {
-        console.log('c', c)
         return _.map(colorScale.invertExtent(c), options.yFormat).join('—')
       })
 
