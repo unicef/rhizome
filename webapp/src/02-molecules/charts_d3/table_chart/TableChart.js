@@ -6,7 +6,7 @@ import formatUtil from '02-molecules/charts_d3/utils/format'
 var DEFAULTS = {
   cellSize: 16,
   column: _.property('indicator.short_name'),
-  color: palettes.blue,
+  // color: palettes.rainbow,
   sourceColumn: _.property('short_name'),
   fontSize: 12,
   format: formatUtil.general,
