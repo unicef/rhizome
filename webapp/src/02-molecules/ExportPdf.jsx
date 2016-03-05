@@ -74,6 +74,7 @@ var ExportPdf = React.createClass({
         <TitleMenu
           className={'font-weight-600 ' + this.props.className + (this.state.isFetching ? ' inactive' : '')}
           icon='fa-chevron-down'
+          searchable={false}
           text={this.state.label}>
           {items}
         </TitleMenu>
