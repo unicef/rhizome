@@ -415,3 +415,19 @@ svg {
   margin-left: -15%;
 }
 
+.table-chart {
+  .x.axis {
+    line {
+      display: none;
+    }
+  }
+  .y.axis {
+    line {
+      display: none;
+    }
+    text {
+      font-family: proxima-bold;
+    }
+  }
+}
+

@@ -43,7 +43,7 @@ var EocPreCampaign = React.createClass({
           options={{
             color: colorScale,
             cellFontSize: 14,
-            cellSize: 36,
+            cellSize: 40,
             onRowClick: d => { DashboardActions.navigate({ location: d }) },
             headers: tableIndicators,
             xDomain: _.map(tableIndicators, 'short_name'),

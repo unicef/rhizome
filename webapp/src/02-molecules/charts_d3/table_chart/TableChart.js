@@ -1,12 +1,10 @@
 import _ from 'lodash'
 import d3 from 'd3'
-import palettes from '02-molecules/charts_d3/utils/palettes'
 import formatUtil from '02-molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
   cellSize: 16,
   column: _.property('indicator.short_name'),
-  // color: palettes.rainbow,
   sourceColumn: _.property('short_name'),
   fontSize: 12,
   format: formatUtil.general,
@@ -139,7 +137,7 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'x': d => x(d) + xScale.rangeBand() / 2,
-        'y': options.cellSize / 2,
+        'y': (options.cellSize / 2) - (options.cellFontSize / 4.3),
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
         'text-anchor': 'middle',
@@ -165,8 +163,8 @@ _.extend(TableChart.prototype, {
       .attr({'transform': 'translate(' + z + ',10)'})
       .call(d3.svg.axis().scale(yScale).orient('left').outerTickSize(0))
     svg.selectAll('.y.axis text')
-      .style('font-size', options.fontSize)
-      .on('click', (d, i) => { options.onRowClick(d, i, this) })
+      .style('font-size', options.fontSize + 2)
+      .on('click', (d, i) => options.onRowClick(d, i, this))
 
     // Z AXIS
     // ---------------------------------------------------------------------------
@@ -206,7 +204,7 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'transform': 'translate(' + z + ',' + h + ')',
-        'x': d => { return sourceFlow(d) + 45 },
+        'x': d => sourceFlow(d) + options.cellSize * 1.33,
         'y': options.cellSize / 2,
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
@@ -289,9 +287,7 @@ _.extend(TableChart.prototype, {
     this._svg.selectAll('.row')
       .transition().duration(300)
       .style('cursor', 'pointer')
-      .style('opacity', function (e) {
-        return (seriesName(e) === d[0].name) ? 1 : 0.4
-      })
+      .style('opacity', e => seriesName(e) === d[0].name ? 1 : 0.3)
   },
   _onRowClick: function (d) {
     console.log('row clicked', d)

@@ -150,7 +150,7 @@ var Performance = React.createClass({
 
         <div className='medium-1 column missed__children--position'>
           <div>
-            <h4 className='font-bold'>Missed Children</h4>
+            <h4>Missed Children</h4>
           </div>
           <Chart type='MapLegend'
                data={missedChildrenMap}
@@ -178,7 +178,7 @@ var Performance = React.createClass({
                  stripeLegendText: ['No data collected', 'Access challenged area']
                }}/>
           <div className='transit-points'>
-            <h4 className='font-bold'>Transit Points</h4>
+            <h4>Transit Points</h4>
             {vaccinated}
             <PieChartList loading={loading}
                           keyPrefix='transit-points'
