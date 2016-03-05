@@ -24,11 +24,6 @@ def populate_lpd_status(apps, schema_editor):
     ind = Indicator.objects.get(name = 'LPD Status')
     lpds = list(Location.objects.filter(lpd_status__in = [1,2])\
         .values_list('id','lpd_status'))
-    low_performing_procinves = [[33,1],[5,1],[29,1],[19,1],[25,1],[17,2],\
-        [15,2],[32,2],[8,2],[26,2],[30,2],[6,2]]
-    ## fix this to take the top half of districts where lpds exist ##
-
-    lpds.extend(low_performing_procinves)
 
     dwc_batch = []
     for location_id, lpd_status in lpds:
