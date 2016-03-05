@@ -97,7 +97,7 @@ var EocPreCampaign = React.createClass({
               margin: {
                 top: 5,
                 bottom: 0,
-                left: 1,
+                left: 20,
                 right: 0
               }
             }}

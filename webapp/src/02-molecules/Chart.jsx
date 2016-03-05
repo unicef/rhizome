@@ -28,6 +28,7 @@ export default React.createClass({
     options: React.PropTypes.object,
     isBulletChart: React.PropTypes.bool,
     campaigns: React.PropTypes.array,
+    style: React.PropTypes.object,
     defaultCampaign: React.PropTypes.object
   },
 
@@ -134,7 +135,7 @@ export default React.createClass({
     }
 
     return (
-      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)}>
+      <div id={this.props.id} className={'chart ' + _.kebabCase(this.props.type)} style={this.props.style}>
         {campaignDropdown}
         {overlay}
       </div>
