@@ -3,12 +3,12 @@ import moment from 'moment'
 import d3 from 'd3'
 
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
-import ChartInfo from '02-molecules/charts_d3/ChartInfo'
+import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
 import api from 'data/api'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
-import palettes from '02-molecules/charts_d3/utils/palettes'
+import palettes from 'components/molecules/charts_d3/utils/palettes'
 
 const getSelectedLocations = (location_ids, locationIndex) => {
   if (location_ids) {

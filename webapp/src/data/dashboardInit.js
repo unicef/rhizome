@@ -2,7 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
-import ChartInfo from '02-molecules/charts_d3/ChartInfo'
+import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
 /**
  * Return the facet value for a datum given a path.
