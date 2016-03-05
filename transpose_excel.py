@@ -48,14 +48,13 @@ class xlsProcessor(object):
 
     def process_row(self, l, d, k, v):
 
-        if v == 'Yes':
+        if v.lower() == 'Yes':
             v = 1
-        if v == 'No':
+        if v.lower() == 'No':
             v = 0
 
         if k not in self.dont_process and v:
             self.result_list.append([l, d, k, v])
-
 
 if __name__ == '__main__':
     x = xlsProcessor()

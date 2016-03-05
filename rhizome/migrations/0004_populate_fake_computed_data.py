@@ -17,6 +17,9 @@ from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+def pass_fn(apps, schema_editor):
+    pass
+
 def populate_fake_dwc_data(apps, schema_editor):
     '''
     This migration will be removed, and we will prefer the "initial_meta_data"
@@ -98,5 +101,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_fake_dwc_data),
+        migrations.RunPython(pass_fn),
+        # migrations.RunPython(populate_fake_dwc_data),
     ]
