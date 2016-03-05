@@ -24,9 +24,9 @@ class CampaignResource(BaseModelResource):
 
         try:
             requested_ids = request.GET['id__in'].split(",")
-            return qs.filter(id__in = requested_ids).values()
+            return qs.filter(id__in = requested_ids).values().order_by('-start_date')
         except:
-            return qs.values()
+            return qs.values().order_by('-start_date')
 
     def obj_create(self, bundle, **kwargs):
 
