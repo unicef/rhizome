@@ -16,6 +16,7 @@ var DEFAULTS = {
     bottom: 20,
     left: 0
   },
+  annotated: false,
   scale: d3.scale.linear,
   seriesName: _.property('name'),
   values: _.property('values'),
@@ -45,7 +46,7 @@ _.extend(LineChart.prototype, {
     const width = this._width - margin.left - margin.right
     const svg = this._svg
 
-    // CHART COLORS
+    // COLORS
     // ---------------------------------------------------------------------------
     const dataColorScale = d3.scale.ordinal()
       .domain(_(series)
@@ -57,6 +58,14 @@ _.extend(LineChart.prototype, {
 
     const dataColor = _.flow(options.seriesName, dataColorScale)
 
+    const legendColorScale = d3.scale.ordinal()
+      .domain(_(labels).map(d => d.text).uniq().sortBy().value())
+      .range(options.color)
+
+    const legendColor = _.flow(d => d.text, legendColorScale)
+
+    // DOMAIN & RANGE
+    // ---------------------------------------------------------------------------
     const domain = _.isFunction(options.domain)
       ? options.domain(series)
       : d3.extent(_(series)
@@ -75,12 +84,12 @@ _.extend(LineChart.prototype, {
 
     range[0] = Math.min(range[0], 0)
 
+    // BODY
+    // ---------------------------------------------------------------------------
     const dataXScale = d3.time.scale().domain(domain).range([30, width])
     const yScale = options.scale().domain(range).range([0.9 * height, 0])
-
     const x = _.flow(options.x, dataXScale)
     const y = _.flow(options.y, yScale)
-
     const g = svg.select('.data').selectAll('.series').data(series, options.seriesName)
     g.enter().append('g').attr('class', 'series')
     g.style({ 'fill': dataColor, 'stroke': dataColor })
@@ -92,6 +101,8 @@ _.extend(LineChart.prototype, {
 
     g.selectAll('line').data(options.values)
 
+    // LABELS
+    // ---------------------------------------------------------------------------
     const labels = _(series)
       .map(d => {
         const last = _.max(options.values(d), options.x)
@@ -107,22 +118,45 @@ _.extend(LineChart.prototype, {
       .sortBy('y')
       .value()
 
-    const legendColorScale = d3.scale.ordinal()
-      .domain(_(labels).map(d => d.text).uniq().sortBy().value())
-      .range(options.color)
+    if (options.xLabel || options.yLabel) {
+      svg.call(axisLabel()
+      .data(options.xLabel, options.yLabel)
+      .width(width)
+      .height(height)
+      .margin(options.margin))
+    }
 
-    const legendColor = _.flow(d => d.text, legendColorScale)
+    // X AXIS
+    // ---------------------------------------------------------------------------
+    svg.select('.x.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.xFormat)
+        .outerTickSize(0)
+        .ticks(3)
+        .scale(dataXScale)
+        .orient('bottom'))
+    svg.select('.x.axis')
+      .attr('transform', `translate(0, ${height - (options.margin.bottom + options.margin.top)})`)
+      .selectAll('.domain').data([0]).attr('d', `M0,0V0H${width}V0`)
 
-    svg.select('.annotation').selectAll('.series.label')
-      .data(labels)
-      .call(label()
-        .addClass('series')
-        .width(width)
-        .height(height)
-        .align(false)
-        .scale(legendColor)
-        .dots(options.hasDots))
+    // Y AXIS
+    // ---------------------------------------------------------------------------
+    const gy = svg.select('.y.axis')
+      .call(d3.svg.axis()
+        .tickFormat(options.yFormat)
+        .tickSize(width - 25)
+        .tickPadding(30)
+        .ticks(4)
+        .scale(yScale)
+        .orient('right'))
+    gy.selectAll('line').attr('transform', 'translate(25, 0)')
+    gy.selectAll('text').attr({'x': -6, 'y': -5, 'dy': 10})
+    gy.selectAll('g').classed('minor', d => d !== range[0])
+    d3.select(gy.selectAll('line')[0][0]).attr('visibility', 'hidden') // Hide lowest tick line
+    d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden') // Hide lowest tick (usually 0)
 
+    // HOVERLINE
+    // ---------------------------------------------------------------------------
     svg.attr('class', 'line')
       .call(hoverLine()
         .width(width)
@@ -145,32 +179,18 @@ _.extend(LineChart.prototype, {
       )
     )
 
-    svg.select('.x.axis')
-      .call(d3.svg.axis()
-        .tickFormat(options.xFormat)
-        .outerTickSize(0)
-        .ticks(3)
-        .scale(dataXScale)
-        .orient('bottom'))
-    svg.select('.x.axis').selectAll('.domain').data([0]).attr('d', `M0,0V0H${width}V0`)
-
-    const gy = svg.select('.y.axis')
-      .call(d3.svg.axis()
-        .tickFormat(options.yFormat)
-        .tickSize(width)
-        .ticks(3)
-        .scale(yScale)
-        .orient('right'))
-    gy.selectAll('text').attr({'x': 4, 'dy': 10})
-    gy.selectAll('g').classed('minor', d => d !== range[0])
-    d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden')
-
-    if (options.xLabel || options.yLabel) {
-      svg.call(axisLabel()
-      .data(options.xLabel, options.yLabel)
-      .width(width)
-      .height(height)
-      .margin(options.margin))
+    // ANNOTATIONS
+    // ---------------------------------------------------------------------------
+    if (options.annotated) {
+      svg.select('.annotation').selectAll('.series.label')
+        .data(labels)
+        .call(label()
+          .addClass('series')
+          .width(width)
+          .height(height)
+          .align(false)
+          .scale(legendColor)
+          .dots(options.hasDots))
     }
   }
 })
