@@ -118,6 +118,22 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
+            name='Document',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('docfile', models.FileField(null=True, upload_to=b'documents/%Y/%m/%d')),
+                ('doc_title', models.TextField(unique=True)),
+                ('file_header', jsonfield.fields.JSONField(null=True)),
+                ('guid', models.CharField(max_length=255)),
+                ('created_at', models.DateTimeField(auto_now=True)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL,null=True)),
+            ],
+            options={
+                'ordering': ('-created_at',),
+                'db_table': 'source_doc',
+            },
+        ),
+        migrations.CreateModel(
             name='DataPoint',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -335,22 +351,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'doc_detail_type',
-            },
-        ),
-        migrations.CreateModel(
-            name='Document',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('docfile', models.FileField(null=True, upload_to=b'documents/%Y/%m/%d')),
-                ('doc_title', models.TextField(unique=True)),
-                ('file_header', jsonfield.fields.JSONField(null=True)),
-                ('guid', models.CharField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL,null=True)),
-            ],
-            options={
-                'ordering': ('-created_at',),
-                'db_table': 'source_doc',
             },
         ),
         migrations.CreateModel(
