@@ -63,7 +63,8 @@ var EocPreCampaign = React.createClass({
           options={{
             color: ['#000000'],
             height: '300',
-            hasDots: true
+            hasDots: true,
+            yFormat: d3.format(',.1%')
           }}
         />
       : ''

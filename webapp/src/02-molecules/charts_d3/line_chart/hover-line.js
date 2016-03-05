@@ -4,23 +4,17 @@ import d3 from 'd3'
 import label from '02-molecules/charts_d3/renderer/label'
 
 function hoverLine () {
+  var diff = (a, b) => a - b
+  var x = d => d.x
+  var y = d => d.y
   var datapoints = []
-  var diff = function (a, b) {
-    return a - b
-  }
-  var height = 1
   var seriesName = null
   var _sort = false
   var top = 0
+  var height = 1
   var width = 1
-  var x = function (d) {
-    return d.x
-  }
   var xFormat = String
   var xScale = d3.scale.linear()
-  var y = function (d) {
-    return d.y
-  }
   var yFormat = String
   var yScale = d3.scale.linear()
   var _value = _.property('value')
@@ -77,7 +71,6 @@ function hoverLine () {
     if (!arguments.length) {
       return seriesName
     }
-
     seriesName = value
     return chart
   }
@@ -218,84 +211,40 @@ function hoverLine () {
     _currentTarget = data[0]
 
     var svg = d3.select(this)
-    var line = svg.select('.annotation').selectAll('line')
-      .data(data)
+    svg.selectAll('.x.axis text').transition().duration(300).style('opacity', data.length ? 0 : 1)
 
-    line.enter()
-      .append('line')
-      .style({
-        'opacity': 0,
-        'stroke': '#495356'
-      })
-
-    line
-      .attr({
-        'y1': top,
-        'y2': height
-      })
-      .transition()
-      .duration(300)
-      .attr({
-        'x1': Number,
-        'x2': Number
-      })
+    // LINE
+    // ---------------------------------------------------------------------------
+    const line = svg.select('.annotation').selectAll('line').data(data)
+    line.enter().append('line').style({'opacity': 0, 'stroke': '#495356'})
+    line.attr({'y1': top, 'y2': height})
+      .transition().duration(300)
+      .attr({'x1': Number, 'x2': Number})
       .style('opacity', 1)
+    line.exit().transition().duration(300).style('opacity', 0).remove()
 
-    line.exit()
-      .transition()
-      .duration(300)
-      .style('opacity', 0)
-      .remove()
-
-    svg.selectAll('.x.axis text')
-      .transition()
-      .duration(300)
-      .style('opacity', data.length ? 0 : 1)
-
-    // X-axis label
-    var xLabel = svg
-      .select('.annotation')
-      .selectAll('.axis')
-      .data(data)
-
+    // LINE LABEL
+    // ---------------------------------------------------------------------------
+    const xLabel = svg.select('.annotation').selectAll('.axis').data(data)
     xLabel.enter()
       .append('text')
-      .style({
-        'text-anchor': 'middle',
-        'opacity': 0
-      })
-      .attr({
-        'dy': '9',
-        'class': 'axis',
-        'transform': axisTranslate
-      })
-
+      .style({'text-anchor': 'middle', 'opacity': 0})
+      .attr({'dy': '9', 'class': 'axis', 'transform': axisTranslate})
     xLabel
-      .text(function (d) {
-        return xFormat(xScale.invert(d))
-      })
-      .transition()
-      .duration(300)
+      .text(d => xFormat(xScale.invert(d)))
+      .transition().duration(300)
       .attr('transform', axisTranslate)
-      .attr({
-        'dy': '.71em',
-        'y': '9'
-      })
+      .attr({'dy': '.71em', 'y': '9'})
       .style('opacity', 1)
-
     xLabel.exit()
-      .transition()
-      .duration(300)
+      .transition().duration(300)
       .style('opacity', 0)
       .remove()
 
     var labelData = _(datapoints)
-      .filter(function (d) {
-        return xScale(x(d)) === data[0]
-      })
-      .map(function (d) {
-        var name = seriesName ? seriesName(d) + ' ' : ''
-
+      .filter(d => xScale(x(d)) === data[0])
+      .map(d => {
+        const name = d.seriesName !== 'undefined' ? seriesName(d) + ' ' : ''
         return {
           x: xScale(x(d)),
           y: yScale(y(d)),
@@ -309,16 +258,12 @@ function hoverLine () {
       labelData.unshift({
         x: width,
         y: 0,
-        text: 'TOTAL ' + yFormat(_.sum(labelData, function (d) {
-          return d.value
-        }))
+        text: 'TOTAL ' + yFormat(_.sum(labelData, d => d.value))
       })
     }
 
     if (_sort) {
-      labelData.sort(function (a, b) {
-        return a.y - b.y
-      })
+      labelData.sort((a, b) => a.y - b.y)
     } else {
       labelData.reverse()
       colorRange.reverse()
@@ -326,32 +271,22 @@ function hoverLine () {
 
     // Use a g element to position the labels horizontally at the same
     // position based on the width of the longest label
-    var labelGroup = svg.select('.annotation')
-      .selectAll('.label-group')
-      .data([labelData])
+    var labelGroup = svg.select('.annotation').selectAll('.label-group').data([labelData])
 
-    labelGroup.enter()
-      .append('g')
-      .attr('class', 'label-group')
+    labelGroup.enter().append('g').attr('class', 'label-group')
 
     var colorScale = d3.scale.ordinal()
       .domain(_(labelData)
-        .map(function (d) {
-          return d.text
-        })
+        .map(d => d.text)
         .uniq()
         .sortBy()
         .value())
       .range(colorRange)
 
-    var color = _.flow(function (d) {
-      return d.text
-    }, colorScale)
+    var color = _.flow(d => d.text, colorScale)
 
     labelGroup.selectAll('.hover.label')
-      .data(function (d) {
-        return d
-      })
+      .data(d => d)
       .call(label().addClass('hover').width(width).height(height).scale(color))
 
     // Determine the label orientation based on the bounding box. We prefer
