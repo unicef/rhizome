@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 from rhizome.agg_tasks import AggRefresh
 
-from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.models import SourceSubmission
+from rhizome.etl_tasks.refresh_master import MasterRefresh
+from rhizome.models import SourceSubmission
 
 class AggAndComputeDataPoint(CronJobBase):
     RUN_EVERY_MINS = 1

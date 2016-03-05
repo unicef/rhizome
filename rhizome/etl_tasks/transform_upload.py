@@ -6,7 +6,7 @@ import json
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from source_data.models import *
+from rhizome.models import *
 
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"

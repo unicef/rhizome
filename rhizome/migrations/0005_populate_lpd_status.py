@@ -12,9 +12,9 @@ from random import randint, random
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, Indicator, Campaign, DataPointComputed
-from source_data.models import Document, DocumentDetail, DocDetailType
-from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from rhizome.models import Document, DocumentDetail, DocDetailType
+from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
 def populate_lpd_status(apps, schema_editor):

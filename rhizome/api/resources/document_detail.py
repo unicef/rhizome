@@ -1,7 +1,7 @@
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from source_data.models import DocumentDetail
+from rhizome.models import DocumentDetail
 
 class DocumentDetailResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

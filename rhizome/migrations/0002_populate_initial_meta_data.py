@@ -30,12 +30,10 @@ def process_meta_data():
 
     rhizome_app = get_app('rhizome')
     auth_app = get_app('auth')
-    source_data_app = get_app('source_data')
 
     models_to_process = {}
 
-    all_models = get_models(rhizome_app) + get_models(auth_app) + \
-        get_models(source_data_app)
+    all_models = get_models(rhizome_app) + get_models(auth_app)
 
     for model in all_models:
         ## iterate through the models in the rhizome app and create a lookup

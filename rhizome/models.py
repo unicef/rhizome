@@ -1,8 +1,12 @@
-from django.db import models
+import hashlib
+import random
 
+from django.db import models
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
+from pandas import DataFrame
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
-from pandas import DataFrame
 
 
 class CacheJob(models.Model):
@@ -21,136 +25,22 @@ class CacheJob(models.Model):
         db_table = 'cache_job'
         ordering = ('-date_attempted',)
 
-
-class Indicator(models.Model):
+class UserGroup(models.Model):
     '''
-    The type of data that we are tracing, for instance
-     - Number of children missed due to religious locations
-     - Number of vaccinators paid on time
-     - Number of iVDPV cases
-     - Percentage of children missed due to religious locations.
+    auth_user_groups is how django handels user group membership by default.
+    This class simply allows me to interface with that table without going
+    through the djanog admin api.
 
-    Note that both calculated and raw indicators are stored in this table.  For
-    more information on how indicicators are used to calculated data for more
-    indicators take a look at the CalculatedIndicatorComponent model.
+    Notice the managed=False... this means that django will not try to create
+    a migration if this class is created or altered.
     '''
 
-    short_name = models.CharField(max_length=255, unique=True)
-    name = models.CharField(max_length=255, unique=True)
-    description = models.CharField(max_length=255)
-    is_reported = models.BooleanField(default=True)
-    data_format = models.CharField(max_length=10)
-    created_at = models.DateTimeField(auto_now=True)
-    bound_json = JSONField(default = [])
-    tag_json = JSONField(default = [])
-    office_id = JSONField(default = [])
-    good_bound = models.FloatField(null=True)
-    bad_bound = models.FloatField(null=True)
-    source_name = models.CharField(max_length=55) ## to do: make this a FK
-
-    def __unicode__(self):
-        return unicode(self.name)
+    user = models.ForeignKey('auth.User')
+    group = models.ForeignKey('auth.Group')
 
     class Meta:
-        db_table = 'indicator'
-        ordering = ('name',)
-
-
-class CalculatedIndicatorComponent(models.Model):
-    '''
-    The indicator is for example "pct missed due to refusal," the component
-    "total missed" and calculation is "denominator"
-
-    A dba can create new calculations by inserting rows here.  The cache_refresh
-    job that happens every minute will take these new indicator definitions and
-    use these values to calucate data for the new calculated indicators.
-
-    Notice however that calculations are multi layered, for instance certain
-    percentage calculations, use an indicator that is calculated from the sum
-    of a set of other indicators as it's denominator.  This means, that the
-    order in which we calculated datapoints matters.  For more on how this works
-    check out the fn_calc_datapoint() stored procedure.
-    '''
-
-    indicator = models.ForeignKey(Indicator, related_name='indicator_master')
-    indicator_component = models.ForeignKey(Indicator, related_name='indicator_component')
-    calculation = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now=True)
-
-    def __unicode__(self):
-        return unicode(self.indicator.name)
-
-    class Meta:
-        db_table = 'calculated_indicator_component'
-
-
-class IndicatorBound(models.Model):
-    '''
-    If a Low / High reporesents an error, or a particular grouping of values
-    i.e. (good, ok, bad) we have how ever many rows for an indicator as their
-    are groupings for that indicator's values.
-    '''
-
-    indicator = models.ForeignKey(Indicator)
-    mn_val = models.FloatField(null=True)
-    mx_val = models.FloatField(null=True)
-    bound_name = models.CharField(max_length=255)
-    direction = models.IntegerField(default=1)
-
-    def __unicode__(self):
-        return unicode(self.bound_name)
-
-    class Meta:
-        db_table = 'indicator_bound'
-
-
-class IndicatorTag(models.Model):
-    '''
-    The list of tags that can be associated to an indicator.  For instance:
-        - ODK indicators
-        - WHO independent monitoring
-        - Management Dashbaord Indicators
-
-    These are stored in a heirarchy so we can build a tree on the indicator drop
-    down which gives the user a nicer, more organized breakdown of the
-    indicators available to the system.
-    '''
-
-    tag_name = models.CharField(max_length=255)
-    parent_tag = models.ForeignKey("self", null=True)
-
-    def __unicode__(self):
-        return unicode(self.tag_name)
-
-    class Meta:
-        db_table = 'indicator_tag'
-
-    def get_indicator_ids_for_tag(self):
-
-        df_cols = ['id','parent_tag_id']
-
-        tag_list = list(IndicatorTag.objects.filter(parent_tag_id = self.id)\
-            .values_list(*df_cols))
-
-        tag_list.append((self.id, None))
-
-        ind_df = DataFrame(tag_list,columns=df_cols)
-        return Indicator.objects.all().values_list('id',flat=True)
-
-
-class IndicatorToTag(models.Model):
-    '''
-    Tagging an indicator. One indicator can have many tags.
-    '''
-
-    indicator = models.ForeignKey(Indicator)
-    indicator_tag = models.ForeignKey(IndicatorTag)
-
-    class Meta:
-        db_table = 'indicator_to_tag'
-        unique_together = ('indicator', 'indicator_tag')
-        ordering = ('-id',)
-
+        db_table = 'auth_user_groups'
+        managed = False
 
 class Office(models.Model):
     '''
@@ -178,20 +68,9 @@ class Office(models.Model):
         )
 
 
-class IndicatorToOffice(models.Model):
-    '''
-    Way to filter indicators in the API without querying the entire DB.  used
-    to filter indicators in the chart wizard API so user does not see Indicators
-    for which there is no data.
-    '''
-
-    indicator = models.ForeignKey(Indicator)
-    office = models.ForeignKey(Office)
-
-    class Meta:
-        db_table = 'indicator_to_office'
-
-
+#===========================================================================#
+#                                 LOCATION MODELS                           #
+#===========================================================================#
 class LocationType(models.Model):
     '''
     Country, Province, District, Sub-District, Settlement.
@@ -212,7 +91,6 @@ class LocationType(models.Model):
 
     class Meta:
         db_table = 'location_type'
-
 
 class Location(models.Model):
     '''
@@ -253,7 +131,6 @@ class LocationTree(models.Model):
         db_table = 'location_tree'
         unique_together = ('parent_location', 'location')
 
-
 class LocationPolygon(models.Model):
     '''
     A shape file when avaiable for a location.
@@ -264,6 +141,18 @@ class LocationPolygon(models.Model):
 
     class Meta:
         db_table = 'location_polygon'
+
+class LocationPermission(models.Model):
+    '''
+    This controls what the user sees.  If you have Nigeria as the top lvl
+    Location for a user
+    '''
+
+    user = models.OneToOneField('auth.User')
+    top_lvl_location = models.ForeignKey(Location)
+
+    class Meta:
+        db_table = 'location_permission'
 
 class MinGeo(models.Model):
     '''
@@ -281,6 +170,152 @@ class MinGeo(models.Model):
     class Meta:
         db_table = 'min_polygon'
 
+
+#===========================================================================#
+#                                INDICATORS MODELS                          #
+#===========================================================================#
+class Indicator(models.Model):
+    '''
+    The type of data that we are tracing, for instance
+     - Number of children missed due to religious locations
+     - Number of vaccinators paid on time
+     - Number of iVDPV cases
+     - Percentage of children missed due to religious locations.
+
+    Note that both calculated and raw indicators are stored in this table.  For
+    more information on how indicicators are used to calculated data for more
+    indicators take a look at the CalculatedIndicatorComponent model.
+    '''
+
+    short_name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True)
+    description = models.CharField(max_length=255)
+    is_reported = models.BooleanField(default=True)
+    data_format = models.CharField(max_length=10)
+    created_at = models.DateTimeField(auto_now=True)
+    bound_json = JSONField(default = [])
+    tag_json = JSONField(default = [])
+    office_id = JSONField(default = [])
+    good_bound = models.FloatField(null=True)
+    bad_bound = models.FloatField(null=True)
+    source_name = models.CharField(max_length=55) ## to do: make this a FK
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+    class Meta:
+        db_table = 'indicator'
+        ordering = ('name',)
+
+class CalculatedIndicatorComponent(models.Model):
+    '''
+    The indicator is for example "pct missed due to refusal," the component
+    "total missed" and calculation is "denominator"
+
+    A dba can create new calculations by inserting rows here.  The cache_refresh
+    job that happens every minute will take these new indicator definitions and
+    use these values to calucate data for the new calculated indicators.
+
+    Notice however that calculations are multi layered, for instance certain
+    percentage calculations, use an indicator that is calculated from the sum
+    of a set of other indicators as it's denominator.  This means, that the
+    order in which we calculated datapoints matters.  For more on how this works
+    check out the fn_calc_datapoint() stored procedure.
+    '''
+
+    indicator = models.ForeignKey(Indicator, related_name='indicator_master')
+    indicator_component = models.ForeignKey(Indicator, related_name='indicator_component')
+    calculation = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return unicode(self.indicator.name)
+
+    class Meta:
+        db_table = 'calculated_indicator_component'
+
+class IndicatorBound(models.Model):
+    '''
+    If a Low / High reporesents an error, or a particular grouping of values
+    i.e. (good, ok, bad) we have how ever many rows for an indicator as their
+    are groupings for that indicator's values.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    mn_val = models.FloatField(null=True)
+    mx_val = models.FloatField(null=True)
+    bound_name = models.CharField(max_length=255)
+    direction = models.IntegerField(default=1)
+
+    def __unicode__(self):
+        return unicode(self.bound_name)
+
+    class Meta:
+        db_table = 'indicator_bound'
+
+class IndicatorTag(models.Model):
+    '''
+    The list of tags that can be associated to an indicator.  For instance:
+        - ODK indicators
+        - WHO independent monitoring
+        - Management Dashbaord Indicators
+
+    These are stored in a heirarchy so we can build a tree on the indicator drop
+    down which gives the user a nicer, more organized breakdown of the
+    indicators available to the system.
+    '''
+
+    tag_name = models.CharField(max_length=255)
+    parent_tag = models.ForeignKey("self", null=True)
+
+    def __unicode__(self):
+        return unicode(self.tag_name)
+
+    class Meta:
+        db_table = 'indicator_tag'
+
+    def get_indicator_ids_for_tag(self):
+
+        df_cols = ['id','parent_tag_id']
+
+        tag_list = list(IndicatorTag.objects.filter(parent_tag_id = self.id)\
+            .values_list(*df_cols))
+
+        tag_list.append((self.id, None))
+
+        ind_df = DataFrame(tag_list,columns=df_cols)
+        return Indicator.objects.all().values_list('id',flat=True)
+
+class IndicatorToTag(models.Model):
+    '''
+    Tagging an indicator. One indicator can have many tags.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    indicator_tag = models.ForeignKey(IndicatorTag)
+
+    class Meta:
+        db_table = 'indicator_to_tag'
+        unique_together = ('indicator', 'indicator_tag')
+        ordering = ('-id',)
+
+class IndicatorToOffice(models.Model):
+    '''
+    Way to filter indicators in the API without querying the entire DB.  used
+    to filter indicators in the chart wizard API so user does not see Indicators
+    for which there is no data.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    office = models.ForeignKey(Office)
+
+    class Meta:
+        db_table = 'indicator_to_office'
+
+
+#===========================================================================#
+#                                CAMPAIGN MODELS                            #
+#===========================================================================#
 class CampaignType(models.Model):
     '''
     Each campaign must have a campaign_type_id.
@@ -296,7 +331,6 @@ class CampaignType(models.Model):
 
     class Meta:
         db_table = 'campaign_type'
-
 
 class Campaign(models.Model):
     '''
@@ -393,7 +427,6 @@ class Campaign(models.Model):
         ordering = ('-start_date',)
         unique_together = ('office', 'start_date')
 
-
 class CampaignToIndicator(models.Model):
 
     indicator = models.ForeignKey(Indicator)
@@ -403,6 +436,136 @@ class CampaignToIndicator(models.Model):
         db_table = 'campaign_to_indicator'
         unique_together = ('indicator', 'campaign')
 
+
+
+#===========================================================================#
+#                              CHARTS & DASHBOARDS                          #
+#===========================================================================#
+class CustomChart(models.Model):
+    '''
+    '''
+
+    title = models.CharField(max_length=255, unique=True)
+    chart_json = JSONField()
+
+    class Meta:
+        db_table = 'custom_chart'
+
+class CustomDashboard(models.Model):
+    '''
+    A table containing all of the custom dashboards in the system.  The data
+    in teh dashboard_json field is how the FE is able to draw and render the
+    specific vizulaizations.  If inserted via POST the application will
+    validate the json, but if you insert directly in the table it will not.
+    '''
+
+    title = models.CharField(max_length=255, unique=True)
+    description = models.CharField(max_length=1000)
+    default_office = models.ForeignKey(Office, null=True)
+    layout = models.IntegerField(default=0, null=True)
+
+    class Meta:
+        db_table = 'custom_dashboard'
+
+
+#===========================================================================#
+#                              SOURCE DATA MODELS                           #
+#===========================================================================#
+class Document(models.Model):
+
+    docfile = models.FileField(upload_to='documents/%Y/%m/%d', null=True)
+    doc_title = models.TextField(unique=True)
+    file_header = JSONField(null=True)
+    created_by = models.ForeignKey(User, null=True)
+    guid = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        db_table = 'source_doc'
+        ordering = ('-created_at',)
+
+    def save(self, *args, **kwargs):
+        if not self.guid:
+            self.guid = hashlib.sha1(str(random.random())).hexdigest()
+
+        super(Document, self).save(*args, **kwargs)
+
+class SourceObjectMap(models.Model):
+    # FIXME -> need to check what would be foreign keys
+    # so region_maps / campaign_maps are valid
+
+    master_object_id = models.IntegerField()  # need to think about to FK this.
+    master_object_name = models.CharField(max_length=255, null=True)
+    source_object_code = models.CharField(max_length=255)
+    content_type = models.CharField(max_length=20)
+    mapped_by = models.ForeignKey(User, null=True)
+    ## mapped_by is only null so that i can initialize the database with ##
+    ## mappings without a user_id created ##
+
+    class Meta:
+        db_table = 'source_object_map'
+        unique_together = (('content_type', 'source_object_code'))
+
+class DocumentSourceObjectMap(models.Model):
+
+    document = models.ForeignKey(Document)
+    source_object_map = models.ForeignKey(SourceObjectMap)
+
+    class Meta:
+
+        unique_together = (('document', 'source_object_map'))
+        db_table = 'doc_object_map'
+
+class DocDetailType(models.Model):
+    '''
+    '''
+    name = models.CharField(max_length=255, unique=True)
+
+    class Meta:
+        db_table = 'doc_detail_type'
+
+class DocumentDetail(models.Model):
+    '''
+    '''
+
+    document = models.ForeignKey(Document)
+    doc_detail_type = models.ForeignKey(DocDetailType)
+    doc_detail_value = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'doc_detail'
+        unique_together = (('document', 'doc_detail_type'))
+
+class SourceSubmission(models.Model):
+
+    document = models.ForeignKey(Document)
+    instance_guid = models.CharField(max_length=255)
+    row_number = models.IntegerField()
+    data_date = models.DateTimeField()
+    location_code = models.CharField(max_length=1000)
+    location_display = models.CharField(max_length=1000)
+    submission_json = JSONField()
+    created_at = models.DateTimeField(auto_now=True)
+    process_status = models.CharField(max_length=25)  # should be a FK
+
+    class Meta:
+        db_table = 'source_submission'
+        unique_together = (('document', 'instance_guid'))
+
+    def get_location_id(self):
+
+        try:
+            loc_id = SourceObjectMap.objects.get(content_type = 'location',\
+                source_object_code = self.location_code).master_object_id
+        except ObjectDoesNotExist:
+            loc_id = None
+
+        return loc_id
+
+
+#===========================================================================#
+#                               DATAPOINT MODELS                            #
+#===========================================================================#
 class DataPoint(models.Model):
     '''
     The core table of the application.  This is where the raw data is stored
@@ -425,7 +588,7 @@ class DataPoint(models.Model):
     data_date = models.DateTimeField()
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
-    source_submission = models.ForeignKey('source_data.SourceSubmission')
+    source_submission = models.ForeignKey(SourceSubmission)
     cache_job = models.ForeignKey(CacheJob, default=-1)
 
     def get_val(self):
@@ -434,23 +597,21 @@ class DataPoint(models.Model):
     class Meta:
         db_table = 'datapoint'
 
-
 class DocDataPoint(models.Model):
     '''
     For Validation of upload rhizome.
     '''
 
-    document = models.ForeignKey('source_data.Document')  # redundant
+    document = models.ForeignKey(Document)  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     data_date = models.DateTimeField()
     value = models.FloatField(null=True)
-    source_submission = models.ForeignKey('source_data.SourceSubmission')
+    source_submission = models.ForeignKey(SourceSubmission)
     agg_on_location = models.BooleanField()
 
     class Meta:
         db_table = 'doc_datapoint'
-
 
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
@@ -463,7 +624,6 @@ class DataPointEntry(DataPoint):
     class Meta:
         proxy = True
 
-
 class DataPointComputed(models.Model):
 
     value = models.FloatField()
@@ -475,7 +635,6 @@ class DataPointComputed(models.Model):
     class Meta:
         db_table = 'datapoint_with_computed'
         unique_together = ('location', 'campaign', 'indicator')
-
 
 class AggDataPoint(models.Model):
 
@@ -490,60 +649,5 @@ class AggDataPoint(models.Model):
         unique_together = ('location', 'campaign', 'indicator')
 
 
-class LocationPermission(models.Model):
-    '''
-    This controls what the user sees.  If you have Nigeria as the top lvl
-    Location for a user
-    '''
-
-    user = models.OneToOneField('auth.User')
-    top_lvl_location = models.ForeignKey(Location)
-
-    class Meta:
-        db_table = 'location_permission'
 
 
-class UserGroup(models.Model):
-    '''
-    auth_user_groups is how django handels user group membership by default.
-    This class simply allows me to interface with that table without going
-    through the djanog admin api.
-
-    Notice the managed=False... this means that django will not try to create
-    a migration if this class is created or altered.
-    '''
-
-    user = models.ForeignKey('auth.User')
-    group = models.ForeignKey('auth.Group')
-
-    class Meta:
-        db_table = 'auth_user_groups'
-        managed = False
-
-
-class CustomDashboard(models.Model):
-    '''
-    A table containing all of the custom dashboards in the system.  The data
-    in teh dashboard_json field is how the FE is able to draw and render the
-    specific vizulaizations.  If inserted via POST the application will
-    validate the json, but if you insert directly in the table it will not.
-    '''
-
-    title = models.CharField(max_length=255, unique=True)
-    description = models.CharField(max_length=1000)
-    default_office = models.ForeignKey(Office, null=True)
-    layout = models.IntegerField(default=0, null=True)
-
-    class Meta:
-        db_table = 'custom_dashboard'
-
-
-class CustomChart(models.Model):
-    '''
-    '''
-
-    title = models.CharField(max_length=255, unique=True)
-    chart_json = JSONField()
-
-    class Meta:
-        db_table = 'custom_chart'

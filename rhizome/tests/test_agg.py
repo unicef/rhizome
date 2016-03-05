@@ -1,10 +1,9 @@
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull
-from numpy import nan,isnan
+from numpy import nan, isnan
 from django.test import TestCase
 
 from rhizome.models import *
-from source_data.models import Document, SourceSubmission
 
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache

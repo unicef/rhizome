@@ -7,7 +7,7 @@ from tastypie import fields
 from django.core.files.base import ContentFile
 
 from rhizome.api.resources.base_model import BaseModelResource
-from source_data.models import Document
+from rhizome.models import Document
 
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)

@@ -2,8 +2,8 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DocDataPoint, DataPoint
 from rhizome.agg_tasks import AggRefresh
 
-from source_data.models import DocumentDetail, DocDetailType, SourceSubmission
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from rhizome.models import DocumentDetail, DocDetailType, SourceSubmission
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 
 class RefreshMasterResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

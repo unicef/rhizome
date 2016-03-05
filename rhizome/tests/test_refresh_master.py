@@ -4,9 +4,8 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
-from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
-from source_data.models import *
+from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 
 class RefreshMasterTestCase(TestCase):
@@ -79,7 +78,7 @@ class RefreshMasterTestCase(TestCase):
         there is data in the recent upload that needs to have an associated
         campaign.
 
-        python manage.py test source_data.tests.test_refresh_master\
+        python manage.py test rhizome.tests.test_refresh_master\
         .RefreshMasterTestCase.test_data_that_needs_campaign \
         --settings=rhizome.settings.test
         '''

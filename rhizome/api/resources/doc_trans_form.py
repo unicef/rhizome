@@ -1,6 +1,6 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from source_data.models import Document
-from source_data.etl_tasks.transform_upload import DocTransform
+from rhizome.models import Document
+from rhizome.etl_tasks.transform_upload import DocTransform
 
 class DocTransFormResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

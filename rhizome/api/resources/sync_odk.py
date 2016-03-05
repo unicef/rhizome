@@ -1,9 +1,9 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
 
-from source_data.models import DocumentDetail, Document
-from source_data.etl_tasks.sync_odk import OdkSync
-from source_data.etl_tasks.sync_odk import OdkJarFileException
+from rhizome.models import DocumentDetail, Document
+from rhizome.etl_tasks.sync_odk import OdkSync
+from rhizome.etl_tasks.sync_odk import OdkJarFileException
 
 
 

@@ -2,7 +2,6 @@ from django.test import TestCase
 from rhizome.models import *
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
-from source_data.models import *
 from datetime import datetime
 from datetime import date, timedelta
 

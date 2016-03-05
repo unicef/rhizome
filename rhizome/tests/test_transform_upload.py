@@ -3,8 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
-from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.models import *
+from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.models import *
 
 class TransformUploadTestCase(TestCase):

@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from source_data.models import SourceSubmission, DocumentDetail
+from rhizome.models import SourceSubmission, DocumentDetail
 
 
 class QueueProcessResource(BaseModelResource):

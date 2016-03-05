@@ -13,8 +13,8 @@ from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from source_data.models import Document, DocDetailType, DocumentDetail
-from source_data.etl_tasks.transform_upload import DocTransform
+from rhizome.models import Document, DocDetailType, DocumentDetail
+from rhizome.etl_tasks.transform_upload import DocTransform
 
 class OdkJarFileException(Exception):
     # defaultMessage = "Sorry, this request could not be processed."
