@@ -21,13 +21,12 @@ var CampaignTitleMenu = React.createClass({
     })
     let campaignItems = CampaignMenuItem.fromArray(campaigns, this.props.sendValue)
 
-    var startDate = moment(this.props.selected.start_date, 'YYYY-MM-DD').format('MMMM YYYY')
-
+    var selectedCampaignName = this.props.selected.name
     return (
       <TitleMenu
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={startDate}>
+        text={selectedCampaignName}>
         {campaignItems}
       </TitleMenu>
     )

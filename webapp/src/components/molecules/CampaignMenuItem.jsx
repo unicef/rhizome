@@ -23,7 +23,7 @@ var CampaignMenuItem = React.createClass({
     return (
       <li key={'campaign-' + this.props.campaign.id} className='campaign'>
         <a role='menuitem' onClick={this._onClick}>
-          {this.props.campaign.slug}
+          {this.props.campaign.name}
         </a>
       </li>
     )

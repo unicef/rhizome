@@ -124,12 +124,6 @@ class DatapointResource(BaseNonModelResource):
                     lpd_status__in=[1,2])\
                 .values_list('id',flat=True))
 
-            if self.location_ids == [u'1']:
-            ## hack alert -- FIXME ##
-                sub_location_ids = list(Location.objects\
-                    .filter(lpd_status__in=[1,2])\
-                    .values_list('parent_location_id',flat=True).distinct())
-
             self.location_ids.extend(sub_location_ids)
 
 
