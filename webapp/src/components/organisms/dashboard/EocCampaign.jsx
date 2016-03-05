@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
-import Chart from 'components/molecules/Chart.jsx'
+import Chart from 'components/molecules/Chart'
+import TableChart from 'components/organisms/charts/TableChart'
 import DashboardActions from 'actions/DashboardActions'
 import d3 from 'd3'
 
@@ -36,22 +37,14 @@ var EocPreCampaign = React.createClass({
     // TABLE CHART
     // ----------------------------------------------------------------------------------------------
     const tableIndicators = this.getHardCodedChartByType('TableChart').indicators.map(id => indicatorIndex[id])
-    const tableChart = data.tableData
-      ? <Chart type='TableChart'
-          data={data.tableData.data}
-          loading={loading}
-          options={{
-            color: colorScale,
-            cellFontSize: 14,
-            cellSize: 40,
-            onRowClick: d => { DashboardActions.navigate({ location: d }) },
-            headers: tableIndicators,
-            xDomain: _.map(tableIndicators, 'short_name'),
-            defaultSortOrder: data.tableData.options.defaultSortOrder,
-            margin: {bottom: 40, left: 40, right: 40, top: 40}
-          }}
-        />
-      : ''
+    const tableChart = (
+      <TableChart
+        data={data.tableData.data}
+        indicators={tableIndicators}
+        defaultSortOrder={data.tableData.options.defaultSortOrder}
+        onRowClick={ d => { DashboardActions.navigate({ location: d }) }}
+      />
+    )
 
     // LINE CHART
     // ----------------------------------------------------------------------------------------------
@@ -104,6 +97,7 @@ var EocPreCampaign = React.createClass({
           />
         </div>
       : ''
+
 
     // LAYOUT
     // ----------------------------------------------------------------------------------------------

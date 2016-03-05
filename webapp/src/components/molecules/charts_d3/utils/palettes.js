@@ -7,6 +7,9 @@ export default {
   ],
   rainbow: [
     'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue'
+  ],
+  traffic_light: [
+    '#FF9489', '#FFED89', '#83F5A2'
   ]
   // rainbow: [
   //   'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue', 'darkviolet'
