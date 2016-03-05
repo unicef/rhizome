@@ -8,7 +8,7 @@ var EocPreCampaign = React.createClass({
 
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
-    indicators: React.PropTypes.object.isRequired,
+    indicators: React.PropTypes.array.isRequired,
     campaign: React.PropTypes.object,
     data: React.PropTypes.object,
     loading: React.PropTypes.bool,
@@ -22,41 +22,42 @@ var EocPreCampaign = React.createClass({
     }
   },
 
+  getHardCodedChartByType (type) {
+    const chart = this.props.dashboard.charts.filter(chart => chart.type === type)
+    return chart[0]
+  },
+
   render () {
     const data = this.props.data
     const loading = this.props.loading
     const colorScale = ['#FF9489', '#FFED89', '#83F5A2']
+    const indicatorIndex = _.indexBy(this.props.indicators, 'id')
 
     // TABLE CHART
     // ----------------------------------------------------------------------------------------------
-    let tableChart = ''
-    if (data.tableData) {
-      const tableIndicators = data.tableData.options.indicatorsSelected
-      const tableIndicatorNames = tableIndicators.map(indicator => { return indicator.short_name })
-      tableChart = (
-          <Chart type='TableChart'
-            data={data.tableData.data}
-            options={{
-              color: colorScale,
-              cellFontSize: 14,
-              cellSize: 36,
-              onRowClick: d => { DashboardActions.navigate({ location: d }) },
-              headers: tableIndicators,
-              xDomain: tableIndicatorNames,
-              defaultSortOrder: data.tableData.options.defaultSortOrder,
-              margin: {bottom: 40, left: 40, right: 40, top: 40}
-            }}
-            loading={loading} />
-      )
-    }
+    const tableIndicators = this.getHardCodedChartByType('TableChart').indicators.map(id => indicatorIndex[id])
+    const tableChart = data.tableData
+      ? <Chart type='TableChart'
+          data={data.tableData.data}
+          loading={loading}
+          options={{
+            color: colorScale,
+            cellFontSize: 14,
+            cellSize: 36,
+            onRowClick: d => { DashboardActions.navigate({ location: d }) },
+            headers: tableIndicators,
+            xDomain: _.map(tableIndicators, 'short_name'),
+            defaultSortOrder: data.tableData.options.defaultSortOrder,
+            margin: {bottom: 40, left: 40, right: 40, top: 40}
+          }}
+        />
+      : ''
 
     // LINE CHART
     // ----------------------------------------------------------------------------------------------
-    const hardCodedTrendData = this.props.dashboard.charts.filter(chart => chart.type === 'LineChart')
-    const trendIndicatorId = hardCodedTrendData[0].indicators[0]
-    const trendIndicator = this.props.indicators.filter(indicator => { return indicator.id === trendIndicatorId })
-    const trendChart = (
-        <Chart type='LineChart'
+    const trendIndicator = indicatorIndex[this.getHardCodedChartByType('LineChart').indicators[0]]
+    const trendChart = data.trendData
+      ? <Chart type='LineChart'
           data={data.trendData}
           loading={loading}
           options={{
@@ -65,46 +66,47 @@ var EocPreCampaign = React.createClass({
             hasDots: true
           }}
         />
-    )
+      : ''
 
     // CHOROPLETH MAP
     // ----------------------------------------------------------------------------------------------
-    const hardCodedMapData = this.props.dashboard.charts.filter(chart => chart.type === 'ChoroplethMap')
-    const mapIndicatorId = hardCodedMapData[0].indicators[0]
-    const mapIndicator = this.props.indicators.filter(indicator => { return indicator.id === mapIndicatorId })
-    const mapChart = (
-      <Chart type='ChoroplethMap'
-        data={data.mapData}
-        loading={loading}
-        options={{
-          aspect: 0.6,
-          domain: _.constant([0, 0.1]),
-          value: _.property(`properties[${mapIndicatorId}]`),
-          color: colorScale,
-          xFormat: d3.format(',.1%'),
-          onClick: d => { DashboardActions.navigate({ location: d }) }
-        }}/>
-    )
-    const mapLegend = (
-      <Chart type='ChoroplethMapLegend'
-        data={data.mapData}
-        loading={loading}
-        options={{
-          color: colorScale,
-          aspect: 3.5,
-          yFormat: d3.format(',.1%'),
-          domain: _.constant([0, 0.1]),
-          value: _.property(`properties[${mapIndicatorId}]`),
-          margin: {
-            top: 5,
-            bottom: 0,
-            left: 1,
-            right: 0
-          }
-        }}
-      />
-    )
+    const mapIndicator = indicatorIndex[this.getHardCodedChartByType('ChoroplethMap').indicators[0]]
+    const mapChart = data.mapData
+      ? <div>
+          <Chart type='ChoroplethMap'
+            data={data.mapData}
+            loading={loading}
+            options={{
+              aspect: 0.6,
+              domain: _.constant([0, 0.1]),
+              value: _.property(`properties[${mapIndicator.id}]`),
+              color: colorScale,
+              xFormat: d3.format(',.1%'),
+              onClick: d => { DashboardActions.navigate({ location: d }) }
+            }}
+          />
+          <Chart type='ChoroplethMapLegend'
+            data={data.mapData}
+            loading={loading}
+            options={{
+              color: colorScale,
+              aspect: 3.5,
+              yFormat: d3.format(',.1%'),
+              domain: _.constant([0, 0.1]),
+              value: _.property(`properties[${mapIndicator.id}]`),
+              margin: {
+                top: 5,
+                bottom: 0,
+                left: 1,
+                right: 0
+              }
+            }}
+          />
+        </div>
+      : ''
 
+    // LAYOUT
+    // ----------------------------------------------------------------------------------------------
     return (
       <div id='management-dashboard'>
         <div className='row'>
@@ -113,19 +115,18 @@ var EocPreCampaign = React.createClass({
           </div>
         </div>
         <div className='row'>
-          <div className='medium-8 columns' style={{'margin-bottom': -10 + 'px !important'}}>
+          <div className='medium-8 columns' style={{'marginBottom': '-10px'}}>
             {tableChart}
           </div>
         </div>
         <div className='row'>
           <div className='medium-5 columns cd-chart-size' id='mapChart'>
-            <h3>{trendIndicator[0].short_name}</h3>
+            <h3>{trendIndicator.short_name}</h3>
             {trendChart}
           </div>
           <div className='medium-3 columns cd-chart-size'>
-            <h3>{mapIndicator[0].short_name}</h3>
+            <h3>{mapIndicator.short_name}</h3>
             {mapChart}
-            {mapLegend}
           </div>
         </div>
       </div>

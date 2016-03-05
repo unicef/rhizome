@@ -164,14 +164,9 @@ function scatter (chart, data, campaign) {
 }
 
 function table (chart, data, campaign, features, indicators, locations, dashboard) {
-  const chart_data = dashboard.charts.filter(chart => chart.type === 'TableChart')
-  const indicator_ids = chart_data[0].indicators
-  const indIx = _.indexBy(indicators, 'id')
-  if (data.length > 0) {
-    const tableChartData = data[0]
-    const tableChartIndicators = indicator_ids.map(id => indIx[id])
-    return ChartInfo.getChartInfo(chart, tableChartData, locations, tableChartIndicators)
-  }
+  const indicatorIndex = _.indexBy(indicators, 'id')
+  const tableChartIndicators = chart.indicators.map(id => indicatorIndex[id])
+  return ChartInfo.getChartInfo(chart, data[0], locations, tableChartIndicators)
 }
 
 var process = {

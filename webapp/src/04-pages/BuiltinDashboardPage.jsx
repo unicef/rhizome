@@ -260,7 +260,7 @@ var BuiltinDashboardPage = React.createClass({
     // }
 
     let dashboard
-    if (dashboardDef.id < 0) {
+    if (dashboardDef.id < 0 && this.state.data.length > 0) {
       let data = DashboardInit.dashboardInit(
         dashboardDef,
         this.state.data,
