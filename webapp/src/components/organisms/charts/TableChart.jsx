@@ -48,7 +48,7 @@ TableChart.defaultProps = {
 }
 
 TableChart.propTypes = {
-  data: PropTypes.object,
+  data: PropTypes.array,
   indicators: PropTypes.arrayOf(PropTypes.object).isRequired,
   defaultSortOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
   onRowClick: PropTypes.func,
