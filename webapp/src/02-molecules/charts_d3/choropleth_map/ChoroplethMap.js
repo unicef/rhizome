@@ -255,7 +255,7 @@ _.extend(ChoroplethMap.prototype, {
         var v = options.value(d)
         return _.isFinite(v) ? colorScale(v) : '#fff'
       })
-      .on('click', d => { this._onClick(d, options) })
+      .on('click', _.partial(this._onClick, _, options, data))
       .on('mousemove', _.partial(this._onMouseMove, _, options, data))
       .on('mouseout', this._onMouseOut)
 
@@ -456,24 +456,10 @@ _.extend(ChoroplethMap.prototype, {
   },
 
   _onMouseMove: function (d, options, data) {
-    var evt = d3.event
-
-    var locationValue = options.name(d) + ': ' + options.xFormat(_valueForLocation(data, options, d) || 0)
-
-    var render = function () {
-      return React.createElement(
-        Tooltip,
-        {left: evt.pageX + 2, top: evt.pageY + 2},
-        locationValue
-      )
-    }
-
-    if (this.layer) {
-      this.layer._render = render
-    } else {
-      this.layer = new Layer(document.body, render)
-    }
-
+    const evt = d3.event
+    const locationValue = options.name(d) + ': ' + options.xFormat(_valueForLocation(data, options, d) || 0)
+    const render = () => <Tooltip left={evt.pageX + 2} top={ evt.pageY + 2}>{locationValue}</Tooltip>
+    this.layer ? this.layer._render = render : this.layer = new Layer(document.body, render)
     this.layer.render()
   },
 
@@ -484,9 +470,12 @@ _.extend(ChoroplethMap.prototype, {
     }
   },
 
-  _onClick: function (d, options) {
-    this._onMouseOut()
-    return options.onClick(_.get(d, 'properties.location_id'))
+  _onClick: function (d, options, data) {
+    if (this.layer) {
+      this.layer.destroy()
+      this.layer = null
+    }
+    options.onClick(_.get(d, 'properties.location_id'))
   }
 })
 
