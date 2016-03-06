@@ -8,7 +8,7 @@ export default {
       'title': 'tableData',
       'type': 'TableChart',
       // 'locations': 'sublocations',
-      'indicators': [28, 34, 21, 31, 33, 32, 30, 15],
+      'indicators': [28, 29, 21, 34, 31, 33, 32, 30, 15],
       'groupBy': 'indicator',
       'timeRange': {
         months: 0
@@ -18,7 +18,7 @@ export default {
     }, {
       'title': 'trendData',
       'type': 'LineChart',
-      'indicators': [21],
+      'indicators': [34],
       'timeRange': {
         months: 12
       }
@@ -27,7 +27,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [21] // Percent missed children outside sample
+      'indicators': [34] // Percent missed children outside sample
     }
   ]
 }
