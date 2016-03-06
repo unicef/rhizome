@@ -1,6 +1,6 @@
 from rhizome.api.resources.base_model import BaseModelResource
 
-from source_data.models import SourceSubmission
+from rhizome.models import SourceSubmission
 
 class SourceSubmissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):

@@ -6,7 +6,7 @@ from pandas import notnull
 
 from rhizome.models import *
 from rhizome.cache_meta import IndicatorCache
-from source_data.models import SourceSubmission
+from rhizome.models import SourceSubmission
 
 class AggRefresh(object):
     '''

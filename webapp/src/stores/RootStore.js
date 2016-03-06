@@ -11,7 +11,9 @@ var RootStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
 
-  listenables: [ChartActions, CampaignActions, IndicatorActions, LocationActions, OfficeActions],
+  init () {
+    this.getInitialData()
+  },
 
   getInitialState () {
     return {
@@ -19,81 +21,40 @@ var RootStore = Reflux.createStore({
       campaignIndex: [],
       indicatorIndex: [],
       locationIndex: [],
-      officeIndex: [],
-      loading: false
+      officeIndex: []
     }
   },
 
-  // CHARTS
-  // -------------------------------------------------------------------------
-  onFetchCharts () {
-    this.setState({ loading: true })
-  },
+  getInitialData () {
+    const promises = [
+      OfficeActions.fetchOffices(),
+      CampaignActions.fetchCampaigns(),
+      IndicatorActions.fetchIndicators(),
+      LocationActions.fetchLocations(),
+      ChartActions.fetchCharts()
+    ]
+    Promise.all(promises).then(values => {
+      const [offices, campaigns, indicators, locations, charts] = values
+      const officeIndex = []
+      const campaignIndex = []
+      const indicatorIndex = []
+      const locationIndex = []
+      const chartIndex = []
 
-  onFetchChartsCompleted (response) {
-    const charts = []
-    response.forEach(chart => { charts[chart.id] = chart })
-    this.setState({ chartIndex: charts, loading: false })
-  },
+      offices.forEach(office => { officeIndex[office.id] = office })
+      campaigns.forEach(campaign => { campaignIndex[campaign.id] = campaign })
+      indicators.forEach(indicator => { indicatorIndex[indicator.id] = indicator })
+      locations.forEach(location => { locationIndex[location.id] = location })
+      charts.forEach(chart => { chartIndex[chart.id] = chart })
 
-  onFetchChartsFailed (error) {
-    this.setState({ chartIndex: error, loading: false })
-  },
-
-  // CAMPAIGNS
-  // -------------------------------------------------------------------------
-  onFetchCampaigns () {
-    this.setState({ loading: true })
-  },
-  onFetchCampaignsCompleted (response) {
-    const campaigns = []
-    response.forEach(campaign => { campaigns[campaign.id] = campaign })
-    this.setState({ campaignIndex: campaigns, loading: false })
-  },
-  onFetchCampaignsFailed (error) {
-    this.setState({ campaignIndex: error, loading: false })
-  },
-
-  // INDICATORS
-  // -------------------------------------------------------------------------
-  onFetchIndicators () {
-    this.setState({ loading: true })
-  },
-  onFetchIndicatorsCompleted (response) {
-    const indicators = []
-    response.forEach(indicator => { indicators[indicator.id] = indicator })
-    this.setState({ indicatorIndex: indicators, loading: false })
-  },
-  onFetchIndicatorsFailed (error) {
-    this.setState({ indicatorIndex: error, loading: false })
-  },
-
-  // LOCATIONS
-  // -------------------------------------------------------------------------
-  onFetchLocations () {
-    this.setState({ loading: true })
-  },
-  onFetchLocationsCompleted (response) {
-    const locations = []
-    response.forEach(location => { locations[location.id] = location })
-    this.setState({ locationIndex: locations, loading: false })
-  },
-  onFetchLocationsFailed (error) {
-    this.setState({ locationIndex: error, loading: false })
-  },
-
-  // OFFICES
-  // -------------------------------------------------------------------------
-  onFetchOffices () {
-    this.setState({ loading: true })
-  },
-  onFetchOfficesCompleted (response) {
-    const offices = []
-    response.forEach(office => { offices[office.id] = office })
-    this.setState({ officeIndex: offices, loading: false })
-  },
-  onFetchOfficesFailed (error) {
-    this.setState({ officeIndex: error, loading: false })
+      this.trigger({
+        officeIndex: officeIndex,
+        campaignIndex: campaignIndex,
+        indicatorIndex: indicatorIndex,
+        locationIndex: locationIndex,
+        chartIndex: chartIndex
+      })
+    })
   }
 
 })

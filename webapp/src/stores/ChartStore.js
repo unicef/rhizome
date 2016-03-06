@@ -1,8 +1,7 @@
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
-
+import RootStore from 'stores/RootStore'
 import ChartActions from 'actions/ChartActions'
-import prepareChartData from 'data/chartData'
 
 var ChartStore = Reflux.createStore({
 
@@ -10,47 +9,56 @@ var ChartStore = Reflux.createStore({
 
   listenables: ChartActions,
 
+  init () {
+    this.listenTo(RootStore, this.onRootStore)
+  },
+
   getInitialState () {
     return {
-      selectedLocations: [],
+      chart: null,
+      chartDef: null,
+      datapoints: null,
       loading: false
     }
   },
 
-  onFetchCharts () {
+  onRootStore (store) {
+    this.campaignIndex = store.campaignIndex
+    this.chartIndex = store.chartIndex
+    this.locationIndex = store.locationIndex
+    this.indicatorIndex = store.indicatorIndex
+    this.officeIndex = store.officeIndex
+  },
+
+  // =========================================================================== //
+  //                              API CALL HANDLERS                              //
+  // =========================================================================== //
+
+  // ===============================  Fetch Chart  ============================= //
+  onFetchChart () {
     this.setState({ loading: true })
   },
-
-  onFetchChartsCompleted (response) {
-    const charts = []
-    response.forEach(chart => { charts[chart.id] = chart })
-    this.setState({ charts: charts, loading: false })
+  onFetchChartCompleted (response) {
+    const chartDef = response.chart_json
+    chartDef.id = response.id
+    chartDef.title = response.title
+    ChartActions.fetchChartDatapoints(chartDef)
+    this.setState({ chartDef: chartDef, loading: false })
+  },
+  onFetchChartFailed (error) {
+    this.setState({ chartDef: error, loading: false })
   },
 
-  onFetchChartsFailed (error) {
-    this.setState({ charts: error, loading: false })
+  // ==========================  Fetch Chart Datapoints  ======================== //
+  onFetchChartDatapoints () {
+    this.setState({ loading: true })
   },
-
-  onPrepChartData (chart) {
-    console.log('STORE - onPrepChartData')
-    console.log('chart', chart)
-    prepareChartData(chart)
-    console.log('STORE - AFTER PREP')
+  onFetchChartDatapointsCompleted (response) {
+    this.setState({ datapoints: response, loading: false })
+  },
+  onFetchChartDatapointsFailed (error) {
+    this.setState({ datapoints: error, loading: false })
   }
-
-  // onFetchForChartData: chart => {
-  //   const dashboard_layout = 1 // Hard Coded - figure out programatic way
-  //   let responses = [
-  //     api.locations(),
-  //     api.campaign(),
-  //     api.office(),
-  //     api.indicators(null, null, { 'cache-control': 'no-cache' })
-  //   ]
-  //   let promise = ChartDataInit.prepareData(chart, dashboard_layout || 0, responses)
-  //   // this.setState(chart: ChartDataInit.prepareData(
-  //   //   chart, dashboard_layout || 0, responses)
-  //   // )
-  // }
 })
 
 export default ChartStore

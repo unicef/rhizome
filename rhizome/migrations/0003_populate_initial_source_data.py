@@ -11,9 +11,9 @@ import pandas as pd
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, LocationPolygon
-from source_data.models import Document, DocumentDetail, DocDetailType
-from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from rhizome.models import Document, DocumentDetail, DocDetailType
+from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
 def populate_source_data(apps, schema_editor):
@@ -24,14 +24,15 @@ def populate_source_data(apps, schema_editor):
     We need to ingest the data itself in the same order as the excel
     sheet otherwise we will have foreign key constraint issues.
     '''
+    pass
 
-    xl = pd.ExcelFile('initial_data.xlsx')
-    all_sheets = xl.sheet_names
-    source_data_sheets = [s for s in all_sheets if s.startswith('source-data_')]
-
-    for s in source_data_sheets:
-        source_sheet_df = xl.parse(s)
-        process_source_sheet(source_sheet_df, s)
+    # xl = pd.ExcelFile('initial_data.xlsx')
+    # all_sheets = xl.sheet_names
+    # source_data_sheets = [s for s in all_sheets if s.startswith('source-data_')]
+    #
+    # for s in source_data_sheets:
+    #     source_sheet_df = xl.parse(s)
+    #     process_source_sheet(source_sheet_df, s)
 
 def process_source_sheet(source_sheet_df, sheet_name):
 

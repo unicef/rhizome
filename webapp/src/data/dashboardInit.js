@@ -2,9 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import moment from 'moment'
 
-import api from 'data/api'
-// import DatapointTableAPI from 'data/requests/DatapointTableAPI'
-import processTableChart from '00-utilities/chart_builder/TableChart'
+import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
 /**
  * Return the facet value for a datum given a path.
@@ -51,7 +49,12 @@ export function inChart (chart, campaign, location, datum) {
 
   switch (chart.locations) {
     case 'sublocations':
-      inlocation = childOf(location, datum.location)
+
+      inlocation = childOf(location, datum.location) || datum.location.location_type_id === 3
+      // FIXME --> this ( || datum.location.location_type_id === 3 )
+      // should read something like ... || there exist no shapes below this...
+      // however since we have only district level shape data.. this works
+      // for now.
 
       if (!_.isEmpty(chart.level)) {
         inlocation = inlocation && chart.level === datum.location.location_type
@@ -73,6 +76,7 @@ export function inChart (chart, campaign, location, datum) {
 export function choropleth (chart, data, campaign, features) {
   // Make sure we only get data for the current campaign maps can't
   // display historical data. Index by location for quick lookup.
+
   var dataIdx = _(data)
     .filter(d => d.campaign.id === campaign.id)
     .indexBy('location.id')
@@ -159,6 +163,12 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
+function table (chart, data, campaign, features, indicators, locations, dashboard) {
+  const indicatorIndex = _.indexBy(indicators, 'id')
+  const tableChartIndicators = chart.indicators.map(id => indicatorIndex[id])
+  return ChartInfo.getChartInfo(chart, data[0], locations, tableChartIndicators)
+}
+
 var process = {
   'BarChart': stackedData,
   'ChoroplethMap': choropleth,
@@ -166,10 +176,10 @@ var process = {
   'HeatMapChart': series,
   'LineChart': series,
   'ScatterChart': scatter,
-  'TableChart': series
+  'TableChart': table
 }
 
-function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features) {
+function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features, responses) {
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
@@ -203,6 +213,12 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
   // corresponse to a section in the dashboard. Each section is an object where
   // each property corresponds to a chart. Each chart is an array of the data
   // that can be used by that chart
+
+  var tableChartResponse = {}
+  if (responses) {
+    tableChartResponse = responses.filter(r => r.meta.chart_type === 'TableChart')
+  }
+
   _.each(dashboard.charts, (chart, i) => {
     var sectionName = _.get(chart, 'section', '__none__')
     var chartName = _.get(chart, 'id', _.camelCase(chart.title))
@@ -224,24 +240,21 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
 
     var datumInChart = _.partial(inChart, chart, campaign, location)
     var chartData = _.filter(data, datumInChart)
+
+    if (chart.type === 'TableChart') {
+      chartData = tableChartResponse
+    }
+
     var processedChart = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
       campaign,
-      features
+      features,
+      indicators,
+      locationList,
+      dashboard
     )
 
-    // if (chart.type === 'TableChart') {
-    //   let query = { 'indicator__in': '21', 'location_id__in': 2 }
-    //
-    //   let dataPromise = api.datapoints(query, null, {'cache-control': 'no-cache'})
-    //
-    //   processedChart = processTableChart([dataPromise, chart.locations, chart.indicators, chart])
-    // }
-
-    // console.log('chart: ', chart)
-    // console.log('processedChart: ', processedChart)
-    // console.log('chartName: ', chartName)
     section[chartName] = processedChart
     results[sectionName] = section
   })

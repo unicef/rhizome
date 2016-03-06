@@ -2,7 +2,7 @@ import path from 'path'
 
 export default {
   src: [
-    '{bin,rhizome,datapoints,source_data,templates,env_var}/**/*.*',
+    '{bin,rhizome,datapoints,templates,env_var}/**/*.*',
     'webapp*/public*/**/*.*',
     'docs*/_build/**/*.*',
     'manage.py',

@@ -12,10 +12,13 @@ from random import randint, random
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, Indicator, Campaign, DataPointComputed
-from source_data.models import Document, DocumentDetail, DocDetailType
-from source_data.etl_tasks.transform_upload import DocTransform
-from source_data.etl_tasks.refresh_master import MasterRefresh
+from rhizome.models import Document, DocumentDetail, DocDetailType
+from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
+
+def pass_fn(apps, schema_editor):
+    pass
 
 def populate_fake_dwc_data(apps, schema_editor):
     '''
@@ -38,15 +41,18 @@ def populate_fake_dwc_data(apps, schema_editor):
     campaign_df = DataFrame(list(Campaign.objects.all()\
         .values_list('id','name')),columns = ['campaign_id','campaign_name'])
 
-    country_and_province_ids = Location.objects\
-        .filter(location_type_id__in=[1,2])\
-        .values_list('id',flat=True)
+    country_id_list = list(Location.objects\
+        .filter(location_type_id = 1)\
+        .values_list('id',flat=True))
 
-    lpd_ids = Location.objects\
+    lpd_id_qs = list(Location.objects\
         .filter(lpd_status__in=[1,2])\
-        .values_list('id',flat=True)
+        .values_list('id','parent_location_id'))
 
-    location_ids = list(country_and_province_ids) + list(lpd_ids)
+    province_id_list = [y for x, y in lpd_id_qs]
+    lpd_id_list = [x for x, y in lpd_id_qs]
+
+    location_ids = country_id_list + province_id_list + lpd_id_list
 
     location_df = DataFrame(list(Location.objects\
         .filter(id__in=location_ids)\
@@ -95,5 +101,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_fake_dwc_data),
+        migrations.RunPython(pass_fn),
+        # migrations.RunPython(populate_fake_dwc_data),
     ]

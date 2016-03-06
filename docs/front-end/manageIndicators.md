@@ -52,8 +52,8 @@ var form_settings = {
       'name': {type: 'string'},
       'short_name': {type: 'string'},
       'source_name': {type: 'string'},
-      'low_bound': {type: 'string'},
-      'high_bound': {type: 'string'},
+      'bad_bound': {type: 'string'},
+      'good_bound': {type: 'string'},
       'data_format': {
         type: 'select',
         settings: {options: [

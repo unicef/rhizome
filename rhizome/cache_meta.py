@@ -4,7 +4,7 @@ from pandas import read_csv, notnull, DataFrame, concat
 from numpy import sqrt, log
 
 from rhizome.models import *
-from source_data.models import SourceObjectMap
+from rhizome.models import SourceObjectMap
 
 
 
