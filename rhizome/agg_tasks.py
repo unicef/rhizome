@@ -63,9 +63,7 @@ class AggRefresh(object):
         DataPoint.objects.filter(id__in = dp_ids_to_process)\
             .update(cache_job_id = self.cache_job.id)
 
-        one_submission_id = DataPoint.objects.filter(cache_job_id = \
-            self.cache_job_id)[0].source_submission_id
-        self.document_id = SourceSubmission.objects.get(id=one_submission_id).id
+        self.document_id = SourceSubmission.objects.all()[0].document_id
         ## this is sketchy -- for aggregation we need to figure out how to
         ## appropriately set the document id of data.. what if for example
         ## there are two uploads, one for Kandahar, one for Nangahar

@@ -2,8 +2,9 @@ from django.test import TestCase
 from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
-from rhizome.models import CacheJob, Office, Indicator, Location, LocationType, \
-    DataPointComputed, CampaignType, Campaign, IndicatorTag, LocationPermission
+from rhizome.models import CacheJob, Office, Indicator, Location,\
+    LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
+    LocationPermission, Document
 
 class DataPointResourceTest(ResourceTestCase):
     def setUp(self):
@@ -69,9 +70,10 @@ class DataPointResourceTest(ResourceTestCase):
 
         # 5. Create Test DataPointComputed
         value = 1.57
+        document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
         datapoint = DataPointComputed.objects.create(value=value,\
             cache_job=cache_job,indicator=indicator, location=location,\
-            campaign=campaign)
+            campaign=campaign, document=document)
 
         # 6 Request To The API
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\
