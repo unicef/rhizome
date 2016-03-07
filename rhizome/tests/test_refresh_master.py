@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 
@@ -24,7 +24,7 @@ class RefreshMasterTestCase(TestCase):
         Location, Campaign, User .. all of the main models that you can see
         initialized in the first migrations in the datapoints application.
 
-        The set up method also runs the DocTransform method which simulates
+        The set up method also runs the ComplexDocTransform method which simulates
         the upload of a csv or processing of an ODK submission.  Ideally this
         test will run independently of this module, but for now this is how
         we initialize data in the system via the .csv below.
@@ -38,7 +38,7 @@ class RefreshMasterTestCase(TestCase):
         self.document.docfile = self.test_file_location
         self.document.save()
 
-        dt = DocTransform(self.user.id, self.document.id)
+        dt = ComplexDocTransform(self.user.id, self.document.id)
         dt.main()
 
     def test_refresh_master_init(self):
@@ -214,7 +214,7 @@ class RefreshMasterTestCase(TestCase):
         This simulates the following use case:
 
         As a user journey we can describe this test case as:
-            - user uploads file ( see how set_up method calls DocTransform )
+            - user uploads file ( see how set_up method calls ComplexDocTransform )
             - user maps metadata
             - user clicks " refresh master "
                 -> user checks to see if data is correct

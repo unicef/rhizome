@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
 
 class TransformUploadTestCase(TestCase):
@@ -50,7 +50,7 @@ class TransformUploadTestCase(TestCase):
 
         self.set_up()
 
-        dt = DocTransform(self.user.id, self.document.id)
+        dt = ComplexDocTransform(self.user.id, self.document.id)
 
         source_submissions = dt.process_file()
 

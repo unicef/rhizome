@@ -94,8 +94,7 @@ class DocTransform(object):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'campaign_code': submission_data[self.campaign_column],
-            # 'data_date': submission_data['data_date'],
+            'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
@@ -113,7 +112,7 @@ class ComplexDocTransform(DocTransform):
 
     def __init__(self,user_id,document_id):
 
-        return super(ComplexDocTransform, self).__init__(user_id, document_id)
+        super(ComplexDocTransform, self).__init__(user_id, document_id)
 
         self.uq_id_column = DocumentDetail.objects.get(
             document_id = self.document.id,
@@ -137,7 +136,6 @@ class ComplexDocTransform(DocTransform):
 
         self.process_file()
         self.upsert_source_object_map()
-        self.source_submissions_to_dwc()
 
     def process_date_column(self, doc_df):
 
