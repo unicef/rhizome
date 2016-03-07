@@ -77,6 +77,29 @@ class SimpleDocTransform(DocTransform):
 
             self.process_source_submission(row)
 
+    def process_raw_source_submission(self, submission):
+
+        submission_ix, submission_data = submission[0], submission[1:]
+
+        submission_data = dict(zip(self.file_header,submission_data))
+        instance_guid = submission_data[self.uq_id_column]
+
+        if instance_guid == '' or instance_guid in self.existing_submission_keys:
+            return None, None
+
+        submission_dict = {
+            'submission_json': submission_data,
+            'document_id': self.document.id,
+            'row_number': submission_ix,
+            'location_code': submission_data[self.location_column],
+            'campaign_code': submission_data[self.campaign_column],
+            'instance_guid': submission_data[self.uq_id_column],
+            'process_status': 'TO_PROCESS',
+        }
+
+        return submission_dict, instance_guid
+
+
     def process_source_submission(self,row):
 
         dwc_batch = []
@@ -99,7 +122,8 @@ class SimpleDocTransform(DocTransform):
                         'indicator_id' : indicator_id,
                         'campaign_id': campaign_id,
                         'value': v,
-                        'cache_job_id': -1
+                        'cache_job_id': -1,
+                        'document_id': self.document.id
                     })
                 dwc_batch.append(dwc_obj)
 

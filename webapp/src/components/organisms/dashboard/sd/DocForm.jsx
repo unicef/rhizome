@@ -3,7 +3,6 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import ButtonMenu from 'components/molecules/menus/ButtonMenu.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'
@@ -124,24 +123,9 @@ var DocForm = React.createClass({
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
           : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
     }
-    var stepMessage = (
-        <div>
-          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the
-          <br />
-          <div className='medium-12 columns upload__csv--step'>
-            or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
-          </div>
-          <div className='error'>{this.state.errorMessage}</div>
-        </div>
+    var errorMessage = (
+        <div className='error'>{this.state.errorMessage}</div>
       )
-
-    if (this.state.is_odk_config_form) {
-      stepMessage = (
-        <div>
-          <span>Please Enter the form_id of the ODK form you would like to configure..</span>
-        </div>
-      )
-    }
 
     var divZoneStyle = {
       border: '3px solid #426281'
@@ -211,7 +195,7 @@ var DocForm = React.createClass({
     return (
       <div>
         <div className='medium-12 columns upload__csv--step'>
-          {stepMessage}
+          {errorMessage}
         </div>
         {formComponent}
       </div>

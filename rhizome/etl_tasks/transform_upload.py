@@ -79,26 +79,6 @@ class DocTransform(object):
         for content_type, source_object_code in all_codes:
             self.source_submission_meta_upsert(content_type, source_object_code)
 
-    def process_raw_source_submission(self, submission):
-
-        submission_ix, submission_data = submission[0], submission[1:]
-
-        submission_data = dict(zip(self.file_header,submission_data))
-        instance_guid = submission_data[self.uq_id_column]
-
-        if instance_guid == '' or instance_guid in self.existing_submission_keys:
-            return None, None
-
-        submission_dict = {
-            'submission_json': submission_data,
-            'document_id': self.document.id,
-            'row_number': submission_ix,
-            'location_code': submission_data[self.location_column],
-            'data_date': submission_data['data_date'],
-            'instance_guid': submission_data[self.uq_id_column],
-            'process_status': 'TO_PROCESS',
-        }
-        return submission_dict, instance_guid
 
 
 class ComplexDocTransform(DocTransform):
@@ -136,6 +116,27 @@ class ComplexDocTransform(DocTransform):
 
         self.process_file()
         self.upsert_source_object_map()
+
+    def process_raw_source_submission(self, submission):
+
+        submission_ix, submission_data = submission[0], submission[1:]
+
+        submission_data = dict(zip(self.file_header,submission_data))
+        instance_guid = submission_data[self.uq_id_column]
+
+        if instance_guid == '' or instance_guid in self.existing_submission_keys:
+            return None, None
+
+        submission_dict = {
+            'submission_json': submission_data,
+            'document_id': self.document.id,
+            'row_number': submission_ix,
+            'location_code': submission_data[self.location_column],
+            'data_date': submission_data['data_date'],
+            'instance_guid': submission_data[self.uq_id_column],
+            'process_status': 'TO_PROCESS',
+        }
+        return submission_dict, instance_guid
 
     def process_date_column(self, doc_df):
 
