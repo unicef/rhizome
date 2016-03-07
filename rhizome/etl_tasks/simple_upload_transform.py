@@ -102,8 +102,9 @@ class SimpleDocTransform(DocTransform):
 
     def process_source_submission(self,row):
 
-        dwc_batch = []
+        dwc_batch, dwc_list_of_lists = [], []
         submission  = row.submission_json
+
 
         location_id = self.meta_lookup['location'][row.location_code]
         campaign_id = self.meta_lookup['campaign'][row.campaign_code]
@@ -126,9 +127,34 @@ class SimpleDocTransform(DocTransform):
                         'document_id': self.document.id
                     })
                 dwc_batch.append(dwc_obj)
+                dwc_list_of_lists.append([location_id,indicator_id,campaign_id])
 
-        # DataPointComputed.objects.filter(source_submission_id=row.id).delete()
+        dwc_ids_to_delete = self.get_dwc_ids_to_delete(dwc_list_of_lists)
+        DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
         DataPointComputed.objects.bulk_create(dwc_batch)
+
+    def get_dwc_ids_to_delete(self, dwc_list_of_lists):
+
+        df = DataFrame(dwc_list_of_lists, columns=['location_id', \
+            'indicator_id', 'campaign_id'])
+
+        uq_location_id_list = list(df['location_id'].unique())
+        uq_indicator_id_list = list(df['indicator_id'].unique())
+        uq_campaign_id_list = list(df['campaign_id'].unique())
+
+        dwc_location_ids = DataPointComputed.objects.filter(location_id__in=
+            uq_location_id_list).values_list('id',flat=True)
+
+        dwc_indicator_ids = DataPointComputed.objects.filter(indicator_id__in=
+            uq_indicator_id_list).values_list('id',flat=True)
+
+        dwc_campaign_ids = DataPointComputed.objects.filter(campaign_id__in=
+            uq_campaign_id_list).values_list('id',flat=True)
+
+        ids_to_delete = set.intersection(*map(set,\
+            [dwc_location_ids,dwc_indicator_ids,dwc_campaign_ids]))
+
+        return ids_to_delete
 
     def file_to_source_submissions(self):
 

@@ -109,13 +109,7 @@ var DocOverview = React.createClass({
 
     var button_row = (
       <div>
-        <a disabled={this.state.isProcessing} className='button button-refresh'
-           onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
-        </a>
-        <a disabled={this.state.isRefreshing} className='button button-refresh'
-           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
-        </a>
-        <DownloadButton
+          <DownloadButton
           onClick={this._download}
           enable='true'
           text='Download Raw'

@@ -107,21 +107,24 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function () {
-    var uqHeaderList = this.buildHeaderList('uq_id_column')
-    var rgHeaderList = this.buildHeaderList('location_column')
-    var cpHeaderList = this.buildHeaderList('date_column')
+    // var uqHeaderList = this.buildHeaderList('uq_id_column')
+    // var rgHeaderList = this.buildHeaderList('location_column')
+    // var cpHeaderList = this.buildHeaderList('date_column')
     var location = _.get(this.props.location, 'location', this.props.location.name)
     var campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
 
     var fileConfigForm = ''
-    var uploadButton = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
+    var syncUploadButton = <a disabled={this.state.isRefreshing} className='button button-refresh'
+       onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Syncing Data' : 'Sync Data'}
+    </a>
 
+    let uploadButton = ''
     if (this.state.created_doc_id) {
-        let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-        let [docName, docRevision] = this.props.doc_title.split('-')
-        uploadButton = this.state.doc_is_refreshed
+      let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+      // let docName = this.props.doc_title
+      uploadButton = this.state.doc_is_refreshed
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
-          : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
+          : syncUploadButton
     }
     var errorMessage = (
         <div className='error'>{this.state.errorMessage}</div>
