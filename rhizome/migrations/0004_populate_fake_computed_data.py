@@ -35,6 +35,8 @@ def populate_fake_dwc_data(apps, schema_editor):
     Maybe somethign like.. if SETTINGS.debug = True, then ingest fake data.
     '''
 
+    document = Document.objects.create(doc_title = 'Evelyn Champagne King')
+
     ind_df = DataFrame(list(Indicator.objects.all()\
         .values_list('id','short_name','data_format')),columns = ['indicator_id','short_name','data_format'])
 
@@ -45,17 +47,8 @@ def populate_fake_dwc_data(apps, schema_editor):
         .filter(location_type_id = 1)\
         .values_list('id',flat=True))
 
-    lpd_id_qs = list(Location.objects\
-        .filter(lpd_status__in=[1,2])\
-        .values_list('id','parent_location_id'))
-
-    province_id_list = [y for x, y in lpd_id_qs]
-    lpd_id_list = [x for x, y in lpd_id_qs]
-
-    location_ids = country_id_list + province_id_list + lpd_id_list
-
     location_df = DataFrame(list(Location.objects\
-        .filter(id__in=location_ids)\
+        .filter(location_type_id__lte = 2)\
         .values_list('id','name')),columns = ['location_id','name'])
 
     ind_df['join_col'] = 1
@@ -65,9 +58,15 @@ def populate_fake_dwc_data(apps, schema_editor):
     first_merged_df = ind_df.merge(campaign_df,on='join_col')
     final_merged_df = first_merged_df.merge(location_df, on='join_col')
 
-    upsert_df_data(final_merged_df)
 
-def upsert_df_data(df):
+    print '=---='
+    print len(final_merged_df)
+    print final_merged_df[:10]
+    print '=---='
+
+    upsert_df_data(final_merged_df, document.id)
+
+def upsert_df_data(df, document_id):
 
     dwc_batch = []
     for ix, row in df.iterrows():
@@ -86,6 +85,7 @@ def upsert_df_data(df):
             'campaign_id':row.campaign_id,
             'location_id':row.location_id,
             'cache_job_id':-1,
+            'document_id': document_id,
             'value':rand_val
         })
 
@@ -101,6 +101,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(pass_fn),
-        # migrations.RunPython(populate_fake_dwc_data),
+        migrations.RunPython(populate_fake_dwc_data),
     ]

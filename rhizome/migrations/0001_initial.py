@@ -477,6 +477,11 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='rhizome.Location'),
         ),
         migrations.AddField(
+            model_name='datapointcomputed',
+            name='document',
+            field=models.ForeignKey(to='rhizome.Document'),
+        ),
+        migrations.AddField(
             model_name='datapoint',
             name='indicator',
             field=models.ForeignKey(to='rhizome.Indicator'),
