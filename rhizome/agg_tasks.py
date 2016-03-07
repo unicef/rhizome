@@ -63,6 +63,19 @@ class AggRefresh(object):
         DataPoint.objects.filter(id__in = dp_ids_to_process)\
             .update(cache_job_id = self.cache_job.id)
 
+        one_submission_id = DataPoint.objects.filter(cache_job_id = \
+            self.cache_job_id)[0].source_submission_id
+        self.document_id = SourceSubmission.objects.get(id=one_submission_id).id
+        ## this is sketchy -- for aggregation we need to figure out how to
+        ## appropriately set the document id of data.. what if for example
+        ## there are two uploads, one for Kandahar, one for Nangahar
+        ## for missed children, and we need to generate one number for the
+        ## afghanistan total missed children number.. we would have two
+        ## document_ids that we would need to attribute here.  For now..
+        ## we don't do any aggregation, so this solution works will have to
+        ## due until we bring back the aggregation / cacluclation framework.
+
+
         response_msg = self.main()
 
         ## mark job as completed and save
@@ -424,7 +437,8 @@ class AggRefresh(object):
                 'indicator_id': uq_tuple[1],
                 'campaign_id': self.campaign.id,
                 'value': val,
-                'cache_job_id': self.cache_job.id
+                'cache_job_id': self.cache_job.id,
+                'document_id': self.document_id
             }
 
             self.dwc_batch.append(DataPointComputed(**dwc_dict))

@@ -58,12 +58,6 @@ def populate_fake_dwc_data(apps, schema_editor):
     first_merged_df = ind_df.merge(campaign_df,on='join_col')
     final_merged_df = first_merged_df.merge(location_df, on='join_col')
 
-
-    print '=---='
-    print len(final_merged_df)
-    print final_merged_df[:10]
-    print '=---='
-
     upsert_df_data(final_merged_df, document.id)
 
 def upsert_df_data(df, document_id):
