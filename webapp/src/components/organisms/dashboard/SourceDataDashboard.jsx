@@ -59,17 +59,16 @@ var SourceDataDashboard = React.createClass({
     var doc_tab = this.props.doc_tab
 
     var doc_obj = this.state.doc_obj
-
-    // if (!doc_obj) {
-    //   return <div className='admin-loading'> Source Dashboard Loading...</div>
-    // }
+    if (!doc_obj) {
+      return <div className='admin-loading'> Source Dashboard Loading...</div>
+    }
 
     if (!doc_tab) {
       doc_tab = 'doc_index'
     }
 
     var doc_tabs = CSVMenuItem.fromArray(
-      _.map(['viewraw', 'mapping', 'doc_index'], d => {
+      _.map(['viewraw', 'mapping', 'results', 'doc_index'], d => {
         return {
           title: d,
           value: d
@@ -97,18 +96,19 @@ var SourceDataDashboard = React.createClass({
         'header': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name']
       }
+      // 'results': {
+      //   'data_fn': api.docResults,
+      //   'fields': ['indicator__short_name', 'value'],
+      //   'header': ['indicator__short_name', 'value'],
+      //   'search_fields': ['indicator_id', 'indicator__short_name', 'value']
+      // }
       // 'validate': {
       //   'data_fn': api.docDatapoint,
       //   'fields': ['location__name', 'indicator__short_name', 'data_date', 'value', 'edit_link'],
       //   'header': ['location', 'indicator', 'data_date', 'value', 'is valid'],
       //   'search_fields': ['location', 'indicator', 'data_date', 'value']
       // },
-      // 'results': {
-      //   'data_fn': api.docResults,
-      //   'fields': ['indicator_id', 'indicator__short_name', 'value'],
-      //   'header': ['indicator_id', 'indicator__short_name', 'value'],
-      //   'search_fields': ['indicator_id', 'indicator__short_name', 'value']
-      // }
+
     }
 
     var search_fields = table_definition[doc_tab]['search_fields']
@@ -162,7 +162,7 @@ var SourceDataDashboard = React.createClass({
         <div>
           <DocOverview key={table_key + 'breakdown'} loading={loading} doc_id={doc_id} doc_title='something'/>
         </div>
-        <div className='large-6 medium-12 small-12 columns csv-upload__title'>
+        <div className='large-8 medium-12 small-12 columns csv-upload__title'>
           {doc_tabs}
         </div>
         <hr />
