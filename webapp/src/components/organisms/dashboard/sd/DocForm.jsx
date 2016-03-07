@@ -3,7 +3,6 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import ButtonMenu from 'components/molecules/menus/ButtonMenu.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'
@@ -108,94 +107,28 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function () {
-    var uqHeaderList = this.buildHeaderList('uq_id_column')
-    var rgHeaderList = this.buildHeaderList('location_column')
-    var cpHeaderList = this.buildHeaderList('date_column')
+    // var uqHeaderList = this.buildHeaderList('uq_id_column')
+    // var rgHeaderList = this.buildHeaderList('location_column')
+    // var cpHeaderList = this.buildHeaderList('date_column')
     var location = _.get(this.props.location, 'location', this.props.location.name)
     var campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
 
     var fileConfigForm = ''
-    var uploadButton = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
+    var syncUploadButton = <a disabled={this.state.isRefreshing} className='button button-refresh'
+       onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Syncing Data' : 'Sync Data'}
+    </a>
 
+    let uploadButton = ''
     if (this.state.created_doc_id) {
-      fileConfigForm = (
-        <ul>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Unique ID: (To be selected) {this.state.uq_id_column}
-            </div>
-            <ButtonMenu text={this.state.uq_id_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {uqHeaderList}
-            </ButtonMenu>
-          </li>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              location: (To be selected) {this.state.location_column}
-            </div>
-            <ButtonMenu text={this.state.location_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {rgHeaderList}
-            </ButtonMenu>
-          </li>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Date Column: (To be selected) {this.state.date_column}
-            </div>
-            <ButtonMenu text={this.state.date_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {cpHeaderList}
-            </ButtonMenu>
-          </li>
-        </ul>
-      )
-
-      if (this.state.uq_id_column && this.state.location_column && this.state.date_column) {
-        let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
-        let [docName, docRevision] = this.props.doc_title.split('-')
-        uploadButton = this.state.doc_is_refreshed
+      let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
+      // let docName = this.props.doc_title
+      uploadButton = this.state.doc_is_refreshed
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
-          : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
-
-        fileConfigForm = this.state.doc_is_refreshed
-          ? (
-            <div>
-              <div className='csv-upload__tags'>
-                <span>File Name: </span>{docName}
-              </div>
-              <div className='csv-upload__tags'>
-                <span>Revision: </span>{docRevision}
-              </div>
-            </div>
-          )
-          : fileConfigForm
-      }
+          : syncUploadButton
     }
-
-    var stepMessage = this.state.created_doc_id
-      ? (
-        <div>
-          <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
-        </div>
+    var errorMessage = (
+        <div className='error'>{this.state.errorMessage}</div>
       )
-      : (
-        <div>
-          <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the
-          <br />
-          <div className='medium-12 columns upload__csv--step'>
-            or <a href='#' onClick={this.setOdkConfig}><b> click here to configure an ODK form.</b></a>
-          </div>
-          <div className='error'>{this.state.errorMessage}</div>
-        </div>
-      )
-
-    if (this.state.is_odk_config_form) {
-      stepMessage = (
-        <div>
-          <span>Please Enter the form_id of the ODK form you would like to configure..</span>
-        </div>
-      )
-    }
 
     var divZoneStyle = {
       border: '3px solid #426281'
@@ -265,7 +198,7 @@ var DocForm = React.createClass({
     return (
       <div>
         <div className='medium-12 columns upload__csv--step'>
-          {stepMessage}
+          {errorMessage}
         </div>
         {formComponent}
       </div>

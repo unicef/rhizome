@@ -77,16 +77,15 @@ var DocOverview = React.createClass({
 
     if (!doc_deets) return this.renderLoading()
 
-    var [doc_name, doc_revision] = this.props.doc_title.split('-')
+    // var doc_name = this.props.doc_title
+    //
+    // var rows = [
+    //   <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
+    //     <span className='csv-upload__tags--span'>File_name: </span>{doc_name}
+    //   </div>
+    // ]
 
-    var rows = [
-      <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
-        <span className='csv-upload__tags--span'>File_name: </span>{doc_name}
-      </div>,
-      <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
-        <span className='csv-upload__tags--span'>Revision: </span>{doc_revision}
-      </div>
-    ]
+    var rows = []
 
     var odkRefreshBtn = <span>&nbsp;</span>
 
@@ -110,13 +109,7 @@ var DocOverview = React.createClass({
 
     var button_row = (
       <div>
-        <a disabled={this.state.isProcessing} className='button button-refresh'
-           onClick={this.queueReprocess}> { this.state.isProcessing ? 'Refreshing' : 'Queue For Reprocessing'}
-        </a>
-        <a disabled={this.state.isRefreshing} className='button button-refresh'
-           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
-        </a>
-        <DownloadButton
+          <DownloadButton
           onClick={this._download}
           enable='true'
           text='Download Raw'

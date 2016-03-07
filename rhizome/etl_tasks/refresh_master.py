@@ -310,7 +310,6 @@ class MasterRefresh(object):
 
     def process_source_submission(self,row):
 
-
         doc_dp_batch = []
         submission  = row.submission_json
 

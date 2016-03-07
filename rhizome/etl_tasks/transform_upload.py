@@ -15,17 +15,84 @@ class BadFileHeaderException(Exception):
 
 class DocTransform(object):
 
-    def __init__(self,user_id,document_id):
+    def __init__(self, user_id, document_id):
 
+        self.file_delimiter = ','
+        self.document = Document.objects.get(id=document_id)
         self.source_datapoints = []
         self.user_id = user_id
-        self.document = Document.objects.get(id=document_id)
 
-        ## SHOULD BE USER INPUT AND STORED IN DOC_DETAIL ##
-        self.file_delimiter = ','
+        self.existing_submission_keys = SourceSubmission.objects.filter(
+            document_id = self.document.id).values_list('instance_guid',flat=True)
 
-        self.file_path = str(Document.objects.get(id=self.document.id).\
-            docfile)
+        self.file_path = str(self.document.docfile)
+
+    def source_submission_meta_upsert(self, content_type, source_object_code):
+        '''
+        Create new metadata if not exists
+        Add a record tying this document to the newly inserted metadata
+        '''
+        ## this is sketchy, but since there is no user when we do the initial
+        ## data migration, we have to set mapped_by_id = None
+        upload_user_id = None
+        if self.user_id > 0:
+            upload_user_id = self.user_id
+
+        sm_obj, created = SourceObjectMap.objects.get_or_create(\
+            content_type = content_type\
+           ,source_object_code = str(source_object_code)\
+           ,defaults = {
+            'master_object_id':-1,
+            'mapped_by_id':upload_user_id
+            })
+
+        sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
+            (document_id = self.document.id,source_object_map_id = sm_obj.id)
+
+        return sm_obj.id
+
+    def upsert_source_object_map(self):
+        '''
+        TODO: save the source_strings so i dont have to iterate through
+        the source_submission json.
+
+        endpoint: api/v2/doc_mapping/?document=66
+        '''
+
+        source_dp_json = SourceSubmission.objects.filter(
+            document_id = self.document.id).values_list('submission_json')
+
+        if len(source_dp_json) == 0:
+            return
+
+        all_codes = [('indicator',k) for k,v in json.loads(source_dp_json[0][0]).iteritems()]
+        rg_codes, cp_codes = [],[]
+
+        for row in source_dp_json:
+            row_dict = json.loads(row[0])
+
+            rg_codes.append(row_dict[self.location_column])
+
+        for r in list(set(rg_codes)):
+            all_codes.append(('location',r))
+
+        for content_type, source_object_code in all_codes:
+            self.source_submission_meta_upsert(content_type, source_object_code)
+
+
+
+class ComplexDocTransform(DocTransform):
+    '''
+    This type of transformation handles abstract data for which :
+        date_column - refers to the date of the collected data
+        location_column - refers to the location code f the collected data
+        indicators - indicators are columns.
+    '''
+
+
+    def __init__(self,user_id,document_id):
+
+        super(ComplexDocTransform, self).__init__(user_id, document_id)
 
         self.uq_id_column = DocumentDetail.objects.get(
             document_id = self.document.id,
@@ -45,14 +112,31 @@ class DocTransform(object):
                 .objects.get(name='date_column').id,
         ).doc_detail_value)
 
-        self.existing_submission_keys = SourceSubmission.objects.filter(
-            document_id = self.document.id
-        ).values_list('instance_guid',flat=True)
-
     def main(self):
 
         self.process_file()
         self.upsert_source_object_map()
+
+    def process_raw_source_submission(self, submission):
+
+        submission_ix, submission_data = submission[0], submission[1:]
+
+        submission_data = dict(zip(self.file_header,submission_data))
+        instance_guid = submission_data[self.uq_id_column]
+
+        if instance_guid == '' or instance_guid in self.existing_submission_keys:
+            return None, None
+
+        submission_dict = {
+            'submission_json': submission_data,
+            'document_id': self.document.id,
+            'row_number': submission_ix,
+            'location_code': submission_data[self.location_column],
+            'data_date': submission_data['data_date'],
+            'instance_guid': submission_data[self.uq_id_column],
+            'process_status': 'TO_PROCESS',
+        }
+        return submission_dict, instance_guid
 
     def process_date_column(self, doc_df):
 
@@ -125,77 +209,3 @@ class DocTransform(object):
         ss = SourceSubmission.objects.bulk_create(object_list)
 
         return [x.id for x in ss]
-
-    def upsert_source_object_map(self):
-        '''
-        TODO: save the source_strings so i dont have to iterate through
-        the source_submission json.
-
-        endpoint: api/v2/doc_mapping/?document=66
-        '''
-
-        source_dp_json = SourceSubmission.objects.filter(
-            document_id = self.document.id).values_list('submission_json')
-
-        if len(source_dp_json) == 0:
-            return
-
-        all_codes = [('indicator',k) for k,v in json.loads(source_dp_json[0][0]).iteritems()]
-        rg_codes, cp_codes = [],[]
-
-        for row in source_dp_json:
-            row_dict = json.loads(row[0])
-
-            rg_codes.append(row_dict[self.location_column])
-
-        for r in list(set(rg_codes)):
-            all_codes.append(('location',r))
-
-        for content_type, source_object_code in all_codes:
-            self.source_submission_meta_upsert(content_type, source_object_code)
-
-    def source_submission_meta_upsert(self, content_type, source_object_code):
-        '''
-        Create new metadata if not exists
-        Add a record tying this document to the newly inserted metadata
-        '''
-        ## this is sketchy, but since there is no user when we do the initial
-        ## data migration, we have to set mapped_by_id = None
-        upload_user_id = None
-        if self.user_id > 0:
-            upload_user_id = self.user_id
-
-        sm_obj, created = SourceObjectMap.objects.get_or_create(\
-            content_type = content_type\
-           ,source_object_code = str(source_object_code)\
-           ,defaults = {
-            'master_object_id':-1,
-            'mapped_by_id':upload_user_id
-            })
-
-        sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
-            (document_id = self.document.id,source_object_map_id = sm_obj.id)
-
-        return sm_obj.id
-
-
-    def process_raw_source_submission(self, submission):
-
-        submission_ix, submission_data = submission[0], submission[1:]
-
-        submission_data = dict(zip(self.file_header,submission_data))
-        instance_guid = submission_data[self.uq_id_column]
-
-        if instance_guid == '' or instance_guid in self.existing_submission_keys:
-            return None, None
-
-        submission_dict = {
-            'submission_json': submission_data,
-            'document_id': self.document.id,
-            'row_number': submission_ix,
-            'location_code': submission_data[self.location_column],
-            'data_date': submission_data['data_date'],
-            'instance_guid': submission_data[self.uq_id_column],
-            'process_status': 'TO_PROCESS',
-        }
-        return submission_dict, instance_guid
