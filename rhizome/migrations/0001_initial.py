@@ -98,7 +98,7 @@ class Migration(migrations.Migration):
             name='CustomChart',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('title', models.CharField(max_length=55)),
+                ('title', models.CharField(unique=True, max_length=255)),
                 ('chart_json', jsonfield.fields.JSONField()),
             ],
             options={
@@ -115,22 +115,6 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'custom_dashboard',
-            },
-        ),
-        migrations.CreateModel(
-            name='Document',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('docfile', models.FileField(null=True, upload_to=b'documents/%Y/%m/%d')),
-                ('doc_title', models.TextField(unique=True)),
-                ('file_header', jsonfield.fields.JSONField(null=True)),
-                ('guid', models.CharField(max_length=255)),
-                ('created_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL,null=True)),
-            ],
-            options={
-                'ordering': ('-created_at',),
-                'db_table': 'source_doc',
             },
         ),
         migrations.CreateModel(
@@ -165,10 +149,57 @@ class Migration(migrations.Migration):
                 ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('agg_on_location', models.BooleanField()),
-                ('document', models.ForeignKey(to='rhizome.Document')),
             ],
             options={
                 'db_table': 'doc_datapoint',
+            },
+        ),
+        migrations.CreateModel(
+            name='DocDetailType',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('name', models.CharField(unique=True, max_length=255)),
+            ],
+            options={
+                'db_table': 'doc_detail_type',
+            },
+        ),
+        migrations.CreateModel(
+            name='Document',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('docfile', models.FileField(null=True, upload_to=b'documents/%Y/%m/%d')),
+                ('doc_title', models.TextField(unique=True)),
+                ('file_header', jsonfield.fields.JSONField(null=True)),
+                ('guid', models.CharField(max_length=255)),
+                ('created_at', models.DateTimeField(auto_now=True)),
+                ('created_by', models.ForeignKey(to=settings.AUTH_USER_MODEL, null=True)),
+            ],
+            options={
+                'ordering': ('-created_at',),
+                'db_table': 'source_doc',
+            },
+        ),
+        migrations.CreateModel(
+            name='DocumentDetail',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('doc_detail_value', models.CharField(max_length=255)),
+                ('doc_detail_type', models.ForeignKey(to='rhizome.DocDetailType')),
+                ('document', models.ForeignKey(to='rhizome.Document')),
+            ],
+            options={
+                'db_table': 'doc_detail',
+            },
+        ),
+        migrations.CreateModel(
+            name='DocumentSourceObjectMap',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('document', models.ForeignKey(to='rhizome.Document')),
+            ],
+            options={
+                'db_table': 'doc_object_map',
             },
         ),
         migrations.CreateModel(
@@ -182,7 +213,6 @@ class Migration(migrations.Migration):
                 ('history_date', models.DateTimeField()),
                 ('history_type', models.CharField(max_length=1, choices=[('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')])),
                 ('cache_job', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='rhizome.CacheJob', null=True)),
-                ('changed_by', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to=settings.AUTH_USER_MODEL, null=True)),
                 ('history_user', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
             ],
             options={
@@ -267,8 +297,8 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(unique=True, max_length=255)),
                 ('location_code', models.CharField(unique=True, max_length=255)),
                 ('latitude', models.FloatField(null=True, blank=True)),
-                ('lpd_status', models.FloatField(null=True, blank=True)),
                 ('longitude', models.FloatField(null=True, blank=True)),
+                ('lpd_status', models.IntegerField(null=True, blank=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
@@ -344,38 +374,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='DocDetailType',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(unique=True, max_length=255)),
-            ],
-            options={
-                'db_table': 'doc_detail_type',
-            },
-        ),
-        migrations.CreateModel(
-            name='DocumentDetail',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('doc_detail_value', models.CharField(max_length=255)),
-                ('doc_detail_type', models.ForeignKey(to='rhizome.DocDetailType')),
-                ('document', models.ForeignKey(to='rhizome.Document')),
-            ],
-            options={
-                'db_table': 'doc_detail',
-            },
-        ),
-        migrations.CreateModel(
-            name='DocumentSourceObjectMap',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('document', models.ForeignKey(to='rhizome.Document')),
-            ],
-            options={
-                'db_table': 'doc_object_map',
-            },
-        ),
-        migrations.CreateModel(
             name='SourceObjectMap',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -395,8 +393,9 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('instance_guid', models.CharField(max_length=255)),
                 ('row_number', models.IntegerField()),
-                ('data_date', models.DateTimeField()),
+                ('data_date', models.DateTimeField(null=True)),
                 ('location_code', models.CharField(max_length=1000)),
+                ('campaign_code', models.CharField(max_length=1000)),
                 ('location_display', models.CharField(max_length=1000)),
                 ('submission_json', jsonfield.fields.JSONField()),
                 ('created_at', models.DateTimeField(auto_now=True)),
@@ -406,11 +405,6 @@ class Migration(migrations.Migration):
             options={
                 'db_table': 'source_submission',
             },
-        ),
-        migrations.AddField(
-            model_name='documentsourceobjectmap',
-            name='source_object_map',
-            field=models.ForeignKey(to='rhizome.SourceObjectMap'),
         ),
         migrations.AddField(
             model_name='location',
@@ -448,6 +442,16 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='rhizome.SourceSubmission', null=True),
         ),
         migrations.AddField(
+            model_name='documentsourceobjectmap',
+            name='source_object_map',
+            field=models.ForeignKey(to='rhizome.SourceObjectMap'),
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='document',
+            field=models.ForeignKey(to='rhizome.Document'),
+        ),
+        migrations.AddField(
             model_name='docdatapoint',
             name='indicator',
             field=models.ForeignKey(to='rhizome.Indicator'),
@@ -471,6 +475,11 @@ class Migration(migrations.Migration):
             model_name='datapointcomputed',
             name='location',
             field=models.ForeignKey(to='rhizome.Location'),
+        ),
+        migrations.AddField(
+            model_name='datapointcomputed',
+            name='document',
+            field=models.ForeignKey(to='rhizome.Document'),
         ),
         migrations.AddField(
             model_name='datapoint',
@@ -557,12 +566,28 @@ class Migration(migrations.Migration):
             bases=('rhizome.datapoint',),
         ),
         migrations.AlterUniqueTogether(
+            name='sourcesubmission',
+            unique_together=set([('document', 'instance_guid')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='sourceobjectmap',
+            unique_together=set([('content_type', 'source_object_code')]),
+        ),
+        migrations.AlterUniqueTogether(
             name='locationtree',
             unique_together=set([('parent_location', 'location')]),
         ),
         migrations.AlterUniqueTogether(
             name='indicatortotag',
             unique_together=set([('indicator', 'indicator_tag')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='documentsourceobjectmap',
+            unique_together=set([('document', 'source_object_map')]),
+        ),
+        migrations.AlterUniqueTogether(
+            name='documentdetail',
+            unique_together=set([('document', 'doc_detail_type')]),
         ),
         migrations.AlterUniqueTogether(
             name='datapointcomputed',
@@ -579,21 +604,5 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='aggdatapoint',
             unique_together=set([('location', 'campaign', 'indicator')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='sourcesubmission',
-            unique_together=set([('document', 'instance_guid')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='sourceobjectmap',
-            unique_together=set([('content_type', 'source_object_code')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='documentsourceobjectmap',
-            unique_together=set([('document', 'source_object_map')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='documentdetail',
-            unique_together=set([('document', 'doc_detail_type')]),
         ),
     ]

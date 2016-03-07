@@ -90,7 +90,7 @@ urlpatterns = patterns(
     (r'^api/', include(v1_api.urls)),
 
     # url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
-    url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-pre-campaign')), name='homepage'),
+    url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-pre-campaign/Afghanistan/2016/01')), name='homepage'),
 
     url(r'^about$', views.about, name='about'),
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
@@ -111,4 +111,3 @@ if settings.DEBUG:
         '',
         url(r'^api_debug/', api_debug),
     )
-

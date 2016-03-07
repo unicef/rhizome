@@ -541,8 +541,9 @@ class SourceSubmission(models.Model):
     document = models.ForeignKey(Document)
     instance_guid = models.CharField(max_length=255)
     row_number = models.IntegerField()
-    data_date = models.DateTimeField()
+    data_date = models.DateTimeField(null=True)
     location_code = models.CharField(max_length=1000)
+    campaign_code = models.CharField(max_length=1000)
     location_display = models.CharField(max_length=1000)
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)
@@ -631,6 +632,7 @@ class DataPointComputed(models.Model):
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
+    document = models.ForeignKey(Document)
 
     class Meta:
         db_table = 'datapoint_with_computed'
@@ -647,7 +649,3 @@ class AggDataPoint(models.Model):
     class Meta:
         db_table = 'agg_datapoint'
         unique_together = ('location', 'campaign', 'indicator')
-
-
-
-

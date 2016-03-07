@@ -11,7 +11,7 @@ class xlsProcessor(object):
             'not_indicators':[]
         }
 
-        self.xl = pd.ExcelFile('/Users/john/Desktop/Real.Data-DWC.xlsx')
+        self.xl = pd.ExcelFile('/Users/john/Desktop/Real.Data.Province.xlsx')
         self.output_file = '/Users/john/Desktop/RealDataCleaned.csv'
         self.location_code_column, self.date_column = 'geocode', 'date'
 
@@ -48,10 +48,13 @@ class xlsProcessor(object):
 
     def process_row(self, l, d, k, v):
 
-        if v.lower() == 'Yes':
-            v = 1
-        if v.lower() == 'No':
-            v = 0
+        try:
+            if v.lower() == 'Yes':
+                v = 1
+            if v.lower() == 'No':
+                v = 0
+        except AttributeError:
+            pass
 
         if k not in self.dont_process and v:
             self.result_list.append([l, d, k, v])

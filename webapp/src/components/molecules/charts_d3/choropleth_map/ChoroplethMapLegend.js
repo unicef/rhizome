@@ -42,7 +42,7 @@ _.extend(MapLegend.prototype, {
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'class': 'reds',
-        'viewBox': '0 0 ' + this._width + ' ' + this._height
+        'viewBox': '-300 80 ' + this._width + ' ' + this._height
       })
 
     if (browser.isIE() || browser.isWkhtmlToPdf()) {
