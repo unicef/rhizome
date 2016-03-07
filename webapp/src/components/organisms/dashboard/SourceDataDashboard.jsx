@@ -68,7 +68,8 @@ var SourceDataDashboard = React.createClass({
     }
 
     var doc_tabs = CSVMenuItem.fromArray(
-      _.map(['viewraw', 'mapping', 'results', 'doc_index'], d => {
+      // _.map(['viewraw', 'results', 'doc_index'], d => {
+      _.map(['viewraw', 'results', 'doc_index'], d => {
         return {
           title: d,
           value: d
@@ -95,13 +96,13 @@ var SourceDataDashboard = React.createClass({
         'fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'header': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name', 'edit_link'],
         'search_fields': ['id', 'content_type', 'source_object_code', 'master_object_id', 'master_object_name']
+      },
+      'results': {
+        'data_fn': api.docResults,
+        'fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
+        'header': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
+        'search_fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name']
       }
-      // 'results': {
-      //   'data_fn': api.docResults,
-      //   'fields': ['indicator__short_name', 'value'],
-      //   'header': ['indicator__short_name', 'value'],
-      //   'search_fields': ['indicator_id', 'indicator__short_name', 'value']
-      // }
       // 'validate': {
       //   'data_fn': api.docDatapoint,
       //   'fields': ['location__name', 'indicator__short_name', 'data_date', 'value', 'edit_link'],
