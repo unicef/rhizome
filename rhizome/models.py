@@ -586,6 +586,7 @@ class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
+    document_id = models.ForeignKey(Document)
     data_date = models.DateTimeField()
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
@@ -632,6 +633,7 @@ class DataPointComputed(models.Model):
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
+    document = models.ForeignKey(Document)
 
     class Meta:
         db_table = 'datapoint_with_computed'
