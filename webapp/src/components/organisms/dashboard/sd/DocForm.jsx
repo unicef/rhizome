@@ -118,67 +118,13 @@ var DocForm = React.createClass({
     var uploadButton = <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
 
     if (this.state.created_doc_id) {
-      fileConfigForm = (
-        <ul>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Unique ID: (To be selected) {this.state.uq_id_column}
-            </div>
-            <ButtonMenu text={this.state.uq_id_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {uqHeaderList}
-            </ButtonMenu>
-          </li>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              location: (To be selected) {this.state.location_column}
-            </div>
-            <ButtonMenu text={this.state.location_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {rgHeaderList}
-            </ButtonMenu>
-          </li>
-          <li>
-            <div className='large-8 medium-8 small-12 columns csv-upload__file--message'>
-              Date Column: (To be selected) {this.state.date_column}
-            </div>
-            <ButtonMenu text={this.state.date_column}
-              style='large-4 medium-4 small-12 columns csv-upload__button-style'>
-              {cpHeaderList}
-            </ButtonMenu>
-          </li>
-        </ul>
-      )
-
-      if (this.state.uq_id_column && this.state.location_column && this.state.date_column) {
         let nextLink = '/source-data/' + [location, campaign].join('/') + '/viewraw/' + this.state.created_doc_id
         let [docName, docRevision] = this.props.doc_title.split('-')
         uploadButton = this.state.doc_is_refreshed
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
           : <span className='cd-button refresh__button--margin' onClick={this.syncDocData}>Next</span>
-
-        fileConfigForm = this.state.doc_is_refreshed
-          ? (
-            <div>
-              <div className='csv-upload__tags'>
-                <span>File Name: </span>{docName}
-              </div>
-              <div className='csv-upload__tags'>
-                <span>Revision: </span>{docRevision}
-              </div>
-            </div>
-          )
-          : fileConfigForm
-      }
     }
-
-    var stepMessage = this.state.created_doc_id
-      ? (
-        <div>
-          <span>STEP 2 </span>Please choose which columns in your uploaded data are ID, Location and Campaign.
-        </div>
-      )
-      : (
+    var stepMessage = (
         <div>
           <span>STEP 1 </span>Click the button upload a CSV file, or please drag and drop the file into the
           <br />

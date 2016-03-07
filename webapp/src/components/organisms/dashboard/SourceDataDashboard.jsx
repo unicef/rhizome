@@ -81,9 +81,9 @@ var SourceDataDashboard = React.createClass({
       'viewraw': {
         'meta_fn': api.submissionMeta,
         'data_fn': api.submission,
-        'fields': ['id', 'location_code', 'data_date', 'edit_link'],
-        'header': ['id', 'location_code', 'data_date', 'edit_link'],
-        'search_fields': ['id', 'location_code', 'data_date']
+        'fields': ['id', 'location_code', 'campaign_code', 'edit_link'],
+        'header': ['id', 'location_code', 'campaign_code', 'edit_link'],
+        'search_fields': ['id', 'location_code', 'campaign_code']
       },
       'doc_index': {
         'data_fn': api.source_doc,
