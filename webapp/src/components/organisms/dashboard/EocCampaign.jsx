@@ -23,7 +23,7 @@ var EocPreCampaign = React.createClass({
     }
   },
 
-  getHardCodedChartByType (type) {
+  getChartDefFromDashboard (type) {
     const chart = this.props.dashboard.charts.filter(chart => chart.type === type)
     return chart[0]
   },
@@ -36,7 +36,7 @@ var EocPreCampaign = React.createClass({
 
     // TABLE CHART
     // ----------------------------------------------------------------------------------------------
-    const tableIndicators = this.getHardCodedChartByType('TableChart').indicators.map(id => indicatorIndex[id])
+    const tableIndicators = this.getChartDefFromDashboard('TableChart').indicators.map(id => indicatorIndex[id])
     const tableChart = (
       <TableChart
         data={data.tableData.data}
@@ -48,7 +48,7 @@ var EocPreCampaign = React.createClass({
 
     // LINE CHART
     // ----------------------------------------------------------------------------------------------
-    const trendIndicator = indicatorIndex[this.getHardCodedChartByType('LineChart').indicators[0]]
+    const trendIndicator = indicatorIndex[this.getChartDefFromDashboard('LineChart').indicators[0]]
     const trendChart = data.trendData
       ? <Chart type='LineChart'
           data={data.trendData}
@@ -63,7 +63,7 @@ var EocPreCampaign = React.createClass({
 
     // CHOROPLETH MAP
     // ----------------------------------------------------------------------------------------------
-    const mapIndicator = indicatorIndex[this.getHardCodedChartByType('ChoroplethMap').indicators[0]]
+    const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
