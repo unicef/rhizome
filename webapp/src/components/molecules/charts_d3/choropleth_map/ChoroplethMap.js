@@ -227,15 +227,11 @@ _.extend(ChoroplethMap.prototype, {
       domain = d3.extent(features, options.value)
       domain[0] = Math.min(domain[0], 0)
     }
-    console.log('domain: ', domain)
 
     var colorScale = d3.scale.quantize()
       .domain(domain.concat().reverse())
       .range(options.color.concat().reverse().slice(0, 3))
 //<<<<<<< HEAD:webapp/src/02-molecules/charts/choropleth.js
-
-    console.log('colorScale: ', colorScale)
-
     // table.js --> THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
     // var targets = _(options.headers)
     //   .indexBy('id')
@@ -289,7 +285,6 @@ _.extend(ChoroplethMap.prototype, {
       colorScale.range(),
         c => _.map(colorScale.invertExtent(c), options.xFormat).join('—')
     )
-    console.log('ticks', ticks);
     if (!options.homepage && options.chartInDashboard) {
       if (_.every(colorScale.domain(), _.isNaN)) {
         svg.select('.legend').selectAll('*').remove()
