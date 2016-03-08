@@ -163,7 +163,7 @@ function scatter (chart, data, campaign) {
     .value()
 }
 
-function table (chart, data, campaign, features, indicators, locations, dashboard) {
+function table (chart, data, campaign, features, indicators, locations) {
   const indicatorIndex = _.indexBy(indicators, 'id')
   const tableChartIndicators = chart.indicators.map(id => indicatorIndex[id])
   return ChartInfo.getChartInfo(chart, data[0], locations, tableChartIndicators)
@@ -180,6 +180,7 @@ var process = {
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features, responses) {
+
   var results = {}
 
   var indicatorsById = _.indexBy(indicators, 'id')
