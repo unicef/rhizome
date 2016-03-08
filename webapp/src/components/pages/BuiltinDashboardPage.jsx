@@ -4,15 +4,17 @@ import Reflux from 'reflux'
 import page from 'page'
 import moment from 'moment'
 
+import getParamFromQueryString from 'utilities/parsers/path'
 import randomHash from 'utilities/randomHash'
 
+import IndicatorTitleMenu from 'components/molecules/menus/IndicatorTitleMenu'
 import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
 import CampaignTitleMenu from 'components/molecules/menus/CampaignTitleMenu'
 import ExportPdf from 'components/molecules/ExportPdf'
 
 import builtins from 'components/organisms/dashboard/builtin'
 
-import Indicator from 'data/requests/IndicatorAPI'
+import IndicatorAPI from 'data/requests/IndicatorAPI'
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
 
@@ -82,9 +84,12 @@ var BuiltinDashboardPage = React.createClass({
     this.listenTo(DashboardActions.navigate, this._navigate)
     this.listenTo(GeoStore, () => this.forceUpdate())
 
-    Indicator.getIndicators().then(indicators => {
-      this.indicators = indicators
-      this.forceUpdate()
+    const indicator_id = getParamFromQueryString('indicator_id')
+    IndicatorAPI.getIndicators().then(indicators => {
+      this.setState({
+        indicators: indicators,
+        indicator: indicator_id ? indicators[indicator_id] : indicators[0]
+      })
     })
   },
 
@@ -131,6 +136,10 @@ var BuiltinDashboardPage = React.createClass({
     let location = _.find(this.state.locations, r => r.id === id)
     if (!location) return
     this._navigate({ location: location.name })
+  },
+
+  _setIndicator (id) {
+    this._navigate({ indicator_id: id })
   },
 
   _setDashboard (id) {
@@ -180,7 +189,11 @@ var BuiltinDashboardPage = React.createClass({
       campaign_dates = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
     }
 
-    page('/dashboards/' + [slug, location, campaign_dates].join('/'))
+    if (params.indicator_id) {
+      page('/dashboards/' + [slug, location, campaign_dates].join('/') + '?indicator_id=' + params.indicator_id)
+    } else {
+      page('/dashboards/' + [slug, location, campaign_dates].join('/'))
+    }
   },
 
   _showDefault (ctx) {
@@ -192,6 +205,12 @@ var BuiltinDashboardPage = React.createClass({
 
   _show (ctx) {
     NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
+      const selected_indicator_id = parseInt(getParamFromQueryString('indicator_id'))
+      dashboard.charts.forEach(chart => {
+        if (chart.indicators.length === 1 && selected_indicator_id) {
+          chart.indicators = [selected_indicator_id]
+        }
+      })
       DashboardActions.setDashboard({
         dashboard,
         location: ctx.params.location,
@@ -245,17 +264,17 @@ var BuiltinDashboardPage = React.createClass({
       campaign = campaigns.first()
     };
 
-    let indicators = this.indicators
+
     // FIXME: here we pass all indicators to dashboard, not just those in the charts.
     // This code below is supposed to build the indicators that exists in
     // dashboard's charts, however it is returnint objects for the wrong IDs.
 
-    // if (this.indicators) {
+    // if (this.state.indicators) {
     //   indicators = _(_.get(dashboardDef, 'charts', []))
     //     .pluck('indicators')
     //     .flatten()
     //     .uniq()
-    //     .map(id => this.indicators[id])
+    //     .map(id => this.state.indicators[id])
     //     .value()
     // }
 
@@ -268,7 +287,7 @@ var BuiltinDashboardPage = React.createClass({
         campaign,
         this.state.locations,
         this.state.allCampaigns,
-        indicators,
+        this.state.indicators,
         GeoStore.features,
         this.state.responses
       )
@@ -276,7 +295,7 @@ var BuiltinDashboardPage = React.createClass({
         campaign: campaign,
         dashboard: dashboardDef,
         data: data,
-        indicators: indicators,
+        indicators: this.state.indicators,
         loading: loading,
         location: location,
         doc_tab: doc_tab,
@@ -297,18 +316,23 @@ var BuiltinDashboardPage = React.createClass({
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
-      <div className='medium-6 columns'>
+      <div className='medium-3 columns'>
         <RegionTitleMenu
           locations={this.state.locations}
           selected={location}
           sendValue={this._setLocation}/>
       </div>
-        <div className='medium-6 columns'>
+        <div className='medium-5 columns'>
           <CampaignTitleMenu
             campaigns={campaigns}
             selected={campaign}
-            location={location}
             sendValue={this._setCampaign}/>
+        </div>
+        <div className='medium-4 columns'>
+          <IndicatorTitleMenu
+            indicators={this.state.indicators}
+            selected={this.state.indicator}
+            sendValue={this._setIndicator}/>
         </div>
       </div>)
     }
@@ -319,7 +343,7 @@ var BuiltinDashboardPage = React.createClass({
         <div classNameName='clearfix'></div>
         <form className='inline no-print cd-titlebar'>
           <div className='row'>
-            <div className='medium-6 columns'>
+            <div className='medium-8 columns'>
               {settingFilter}
             </div>
             <div className={dashboardDef.builtin === true ? 'medium-3 columns' : 'medium-3 columns medium-offset-6'}>
