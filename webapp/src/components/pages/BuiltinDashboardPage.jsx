@@ -198,9 +198,7 @@ var BuiltinDashboardPage = React.createClass({
 
   _showDefault (ctx) {
     this.setState({ allDashboards: NavigationStore.dashboards })
-    this._getDashboard(ctx.params.dashboard).then(dashboard => {
-      DashboardActions.setDashboard({dashboard})
-    })
+    this._getDashboard(ctx.params.dashboard).then(dashboard => DashboardActions.setDashboard({dashboard}))
   },
 
   _show (ctx) {
