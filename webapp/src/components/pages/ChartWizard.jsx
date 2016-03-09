@@ -12,7 +12,6 @@ import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 import PreviewScreen from 'components/organisms/chart-wizard/PreviewScreen'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
-import DataFiltersStore from 'stores/DataFiltersStore'
 import ChartWizardStore from 'stores/ChartWizardStore'
 import ChartAPI from 'data/requests/ChartAPI'
 
@@ -36,7 +35,7 @@ let ChartWizard = React.createClass({
     chart_id: PropTypes.number
   },
 
-  mixins: [Reflux.connect(ChartWizardStore), Reflux.connect(DataFiltersStore, 'raw_data2')],
+  mixins: [Reflux.connect(ChartWizardStore)],
 
   componentDidMount () {
     if (this.props.chart_id) {
@@ -56,7 +55,7 @@ let ChartWizard = React.createClass({
       var chart = {
         id: this.props.chart_id,
         title: this.state.title,
-        chart_json: JSON.stringify(this.state.chartDef)
+        chart_json: JSON.stringify(this.state.chart.def)
       }
       api.post_chart(chart).then(res => {
         window.location.replace('/charts/' + res.objects.id)
@@ -73,15 +72,15 @@ let ChartWizard = React.createClass({
 
     if (indicators.length > 0) query.indicator__in = indicators
     if (locations.length > 0) query.location_id__in = locations
-    if (this.state.chartDef.startDate) query.campaign_start = moment(this.state.chartDef.startDate).format('YYYY-M-D')
-    if (this.state.chartDef.endDate) query.campaign_end = moment(this.state.chartDef.endDate).format('YYYY-M-D')
+    if (this.state.chart.def.startDate) query.campaign_start = moment(this.state.chart.def.startDate).format('YYYY-M-D')
+    if (this.state.chart.def.endDate) query.campaign_end = moment(this.state.chart.def.endDate).format('YYYY-M-D')
 
     return api.datapoints.toString(query)
   },
 
   render: function () {
     const data = this.state
-    const chartDef = this.state.chartDef
+    const chartDef = this.state.chart.def
     const start_date = chartDef ? moment(chartDef.startDate, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chartDef ? moment(chartDef.endDate, 'YYYY-MM-DD').toDate() : moment()
 
@@ -95,8 +94,8 @@ let ChartWizard = React.createClass({
       <Chart
         id='custom-chart'
         type={chartDef.type}
-        data={this.state.chartData}
-        options={this.state.chartOptions}
+        data={this.state.chart.data}
+        options={this.state.chart.options}
         campaigns={this.state.campaigns.filtered}
         defaultCampaign={this.state.campaigns.selected}
       />
@@ -142,8 +141,8 @@ let ChartWizard = React.createClass({
           </div>
         </div>
         <ChartProperties
-          selected_chart_type={this.state.chartDef.type}
-          selected_palette={this.state.chartDef.palette}
+          selected_chart_type={this.state.chart.def.type}
+          selected_palette={this.state.chart.def.palette}
           chart_title={this.state.title}
           selectChartType={ChartWizardActions.changeChart}
           selectPalette={ChartWizardActions.changePalette}
