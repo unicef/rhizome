@@ -3,13 +3,9 @@ import Reflux from 'reflux'
 import moment from 'moment'
 import api from 'data/api'
 
-import DateRangePicker from 'components/molecules/DateRangePicker'
+import Chart from 'components/molecules/Chart'
 import DownloadButton from 'components/molecules/DownloadButton'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
-import List from 'components/molecules/list/List'
-import ReorderableList from 'components/molecules/list/ReorderableList'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-import Chart from 'components/molecules/Chart'
 
 import ChartDataSelect from 'components/organisms/chart-wizard/ChartDataSelect'
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
@@ -37,12 +33,10 @@ const defaultChartDef = {
 let ChartWizard = React.createClass({
   propTypes: {
     chartDef: PropTypes.object,
-    chart_id: PropTypes.number,
-    save: PropTypes.func,
-    cancel: PropTypes.func
+    chart_id: PropTypes.number
   },
 
-  mixins: [Reflux.connect(ChartWizardStore, 'data'), Reflux.connect(DataFiltersStore, 'raw_data')],
+  mixins: [Reflux.connect(ChartWizardStore), Reflux.connect(DataFiltersStore, 'raw_data2')],
 
   componentDidMount () {
     if (this.props.chart_id) {
@@ -61,8 +55,8 @@ let ChartWizard = React.createClass({
     ChartWizardActions.saveChart(data => {
       var chart = {
         id: this.props.chart_id,
-        title: this.state.data.title,
-        chart_json: JSON.stringify(this.state.data.chartDef)
+        title: this.state.title,
+        chart_json: JSON.stringify(this.state.chartDef)
       }
       api.post_chart(chart).then(res => {
         window.location.replace('/charts/' + res.objects.id)
@@ -73,44 +67,44 @@ let ChartWizard = React.createClass({
   },
 
   _downloadRawData: function () {
-    let locations = this.state.data.selectedLocations.map(location => { return location.id })
-    let indicators = this.state.data.selectedIndicators.map(indicator => { return indicator.id })
+    let locations = this.state.locations.selected.map(location => location.id)
+    let indicators = this.state.indicators.selected.map(indicator => indicator.id)
     let query = { 'format': 'csv' }
 
     if (indicators.length > 0) query.indicator__in = indicators
     if (locations.length > 0) query.location_id__in = locations
-    if (this.state.data.chartDef.startDate) query.campaign_start = moment(this.state.data.chartDef.startDate).format('YYYY-M-D')
-    if (this.state.data.chartDef.endDate) query.campaign_end = moment(this.state.data.chartDef.endDate).format('YYYY-M-D')
+    if (this.state.chartDef.startDate) query.campaign_start = moment(this.state.chartDef.startDate).format('YYYY-M-D')
+    if (this.state.chartDef.endDate) query.campaign_end = moment(this.state.chartDef.endDate).format('YYYY-M-D')
 
     return api.datapoints.toString(query)
   },
 
   render: function () {
-    const data = this.state.data
-    const chartDef = data.chartDef
+    const data = this.state
+    const chartDef = this.state.chartDef
     const start_date = chartDef ? moment(chartDef.startDate, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chartDef ? moment(chartDef.endDate, 'YYYY-MM-DD').toDate() : moment()
 
-    if (!chartDef.type)
+    if (!chartDef.type) {
       return null
     }
 
-    const download_button = <DownloadButton onClick={this._downloadRawData} enable={data.rawData} text='Download Raw Data' working='Downloading' cookieName='dataBrowserCsvDownload'/>
+    const download_button = <DownloadButton onClick={this._downloadRawData} enable={this.state.rawData} text='Download Raw Data' working='Downloading' cookieName='dataBrowserCsvDownload'/>
 
     const chart = (
       <Chart
         id='custom-chart'
         type={chartDef.type}
-        data={data.chartData}
-        options={data.chartOptions}
-        campaings={data.campaignFilteredList}
-        defaultCampaign={data.campaign}
+        data={this.state.chartData}
+        options={this.state.chartOptions}
+        campaigns={this.state.campaigns.filtered}
+        defaultCampaign={this.state.campaigns.selected}
       />
     )
 
     const location_options = [
-      { title: 'by Status', value: data.location_lpd_statuses },
-      { title: 'by Country', value: data.locationFilteredList }
+      { title: 'by Status', value: this.state.location_lpd_statuses },
+      { title: 'by Country', value: this.state.locations.filtered }
     ]
 
     return (
@@ -120,10 +114,10 @@ let ChartWizard = React.createClass({
           <ChartDataSelect
             start_date={start_date}
             end_date={end_date}
-            all_indicators={data.indicatorList}
+            all_indicators={this.state.indicators.list}
             all_locations={location_options}
-            selected_indicators={data.selectedIndicators}
-            selected_locations={data.selectedLocations}
+            selected_indicators={this.state.indicators.selected}
+            selected_locations={this.state.locations.selected}
             addLocation={ChartWizardActions.addLocation}
             removeLocation={ChartWizardActions.removeLocation}
             addIndicator={ChartWizardActions.addIndicator}
@@ -137,25 +131,25 @@ let ChartWizard = React.createClass({
             {
               chartDef.type === 'RawData'
               ? <DatabrowserTable
-                  data={data.rawData}
-                  selected_locations={data.selectedLocations}
-                  selected_indicators={data.selectedIndicators}
+                  data={this.state.rawData}
+                  selected_locations={this.state.locations.selected}
+                  selected_indicators={this.state.indicators.selected}
                 />
-              : <PreviewScreen isLoading={data.isLoading}>
-                  {data.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
+              : <PreviewScreen isLoading={this.state.isLoading}>
+                  {this.state.canDisplayChart ? chart : (<div className='empty'>No Data</div>) }
                 </PreviewScreen>
             }
           </div>
         </div>
         <ChartProperties
-          selected_chart_type={data.chartDef.type}
-          selected_palette={data.chartDef.palette}
-          chart_title={data.title}
+          selected_chart_type={this.state.chartDef.type}
+          selected_palette={this.state.chartDef.palette}
+          chart_title={this.state.title}
           selectChartType={ChartWizardActions.changeChart}
           selectPalette={ChartWizardActions.changePalette}
           saveTitle={ChartWizardActions.editTitle}
           saveChart={this.saveChart}
-          chartIsReady={!data.canDisplayChart}
+          chartIsReady={!this.state.canDisplayChart}
         />
       </section>
     )
