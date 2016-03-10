@@ -75,6 +75,8 @@ var BuiltinDashboardPage = React.createClass({
     if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
       return
     }
+    const table_chart_indicator_ids = nextState.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
+    this.indicators = nextState.indicators.filter(indicator => table_chart_indicator_ids.indexOf(indicator.id) !== -1)
     let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
     document.title = [nextState.dashboard.title, [nextState.location.name, campaign].join(' '), 'RhizomeDB'].join(' - ')
   },
@@ -327,7 +329,7 @@ var BuiltinDashboardPage = React.createClass({
         </div>
         <div className='medium-4 columns'>
           <IndicatorTitleMenu
-            indicators={this.state.indicators}
+            indicators={this.indicators}
             selected={this.state.indicator}
             sendValue={this._setIndicator}/>
         </div>
