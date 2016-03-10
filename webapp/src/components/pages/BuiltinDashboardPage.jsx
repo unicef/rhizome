@@ -65,6 +65,7 @@ var BuiltinDashboardPage = React.createClass({
 
   componentWillMount () {
     this.getAllDashboards()
+    this.initIndicators()
     page('/dashboards/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/dashboards/:dashboard/:location/:year/:month', this._show)
     page('/dashboards/:dashboard', this._showDefault)
@@ -83,14 +84,25 @@ var BuiltinDashboardPage = React.createClass({
     this.listenTo(NavigationStore, this._onNavigationChange)
     this.listenTo(DashboardActions.navigate, this._navigate)
     this.listenTo(GeoStore, () => this.forceUpdate())
+  },
 
-    const indicator_id = getParamFromQueryString('indicator_id')
+  initIndicators() {
     IndicatorAPI.getIndicators().then(indicators => {
-      this.setState({
-        indicators: indicators,
-        indicator: indicator_id ? indicators[indicator_id] : indicators[0]
-      })
+      this.setState({indicators: indicators})
+      this.setCurrentIndicator(indicators)
     })
+  },
+
+  setCurrentIndicator(indicators) {
+    const indicator_index = _.indexBy(indicators, 'id')
+    const query_param = getParamFromQueryString('indicator_id')
+    let indicator = indicators[0]
+    if (query_param) {
+      indicator = indicator_index[query_param]
+    } else if (indicator_index[28]) {
+      indicator = indicator_index[28]
+    }
+    this.setState({indicator: indicator})
   },
 
   _onDashboardChange (state) {
@@ -140,6 +152,7 @@ var BuiltinDashboardPage = React.createClass({
 
   _setIndicator (id) {
     this._navigate({ indicator_id: id })
+    this.setCurrentIndicator(this.state.indicators)
   },
 
   _setDashboard (id) {
