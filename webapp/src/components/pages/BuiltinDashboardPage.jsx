@@ -310,6 +310,8 @@ var BuiltinDashboardPage = React.createClass({
     .reverse()
     .value()
 
+    let indicatorItems = this.state.indicators || []
+
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
@@ -327,7 +329,7 @@ var BuiltinDashboardPage = React.createClass({
         </div>
         <div className='medium-4 columns'>
           <IndicatorTitleMenu
-            indicators={this.state.indicators}
+            indicators={indicatorItems}
             selected={this.state.indicator}
             sendValue={this._setIndicator}/>
         </div>
