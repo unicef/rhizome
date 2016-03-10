@@ -43,15 +43,15 @@ var DashboardStore = Reflux.createStore({
 
   getQueries () {
     var indicators = this.indicators
-    var qs = _.groupBy(indicators, function (definition, key) {
+    var qs = _.groupBy(indicators, (definition, key) => {
       return [
         definition.duration,
         definition.startOf,
         definition.locations
       ].join('-')
     })
-    return _.map(qs, function (arr) {
-      return _.merge.apply(null, arr.concat(function (a, b) {
+    return _.map(qs, arr => {
+      return _.merge.apply(null, arr.concat((a, b) => {
         if (_.isArray(a)) {
           return a.concat(b)
         }

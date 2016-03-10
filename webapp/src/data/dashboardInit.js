@@ -245,7 +245,6 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     if (chart.type === 'TableChart') {
       chartData = tableChartResponse
     }
-
     var processedChart = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
@@ -264,7 +263,6 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
     // Use a simple array if there is only one section
     results = _(results).values().flatten().first()
   }
-
   return results
 }
 

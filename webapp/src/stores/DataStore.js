@@ -45,7 +45,7 @@ var DataStore = Reflux.createStore({
     var m = moment(campaign.start_date, 'YYYY-MM-DD')
     var end = campaign.end_date
 
-    var promises = _.map(charts, function (def) {
+    var promises = _.map(charts, def => {
       var q = {
         indicator__in: def.indicators,
         campaign_end: end,
@@ -86,7 +86,7 @@ var DataStore = Reflux.createStore({
       return api.datapoints(q)
     })
 
-    Promise.all(promises).then(function (responses) {
+    Promise.all(promises).then(responses => {
       this.data = _(responses)
         .pluck('objects')
         .flatten()
