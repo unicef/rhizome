@@ -12,7 +12,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission
+    LocationPermission, LocationTree
 
 
 class ResultObject(object):
@@ -108,8 +108,8 @@ class DatapointResource(BaseNonModelResource):
             self.error = err
             return []
 
-
         self.location_ids = self.get_locations_to_return_from_url(request)
+
 
         chart_type = 'rawData' ## make this the default
         try:
@@ -119,12 +119,14 @@ class DatapointResource(BaseNonModelResource):
 
         if chart_type == 'TableChart':
 
-            sub_location_ids = list(Location.objects\
-                .filter(parent_location_id__in = self.location_ids,
-                    lpd_status__in=[1,2])\
-                .values_list('id',flat=True))
+            sub_location_ids = list(LocationTree.objects\
+                .filter(
+                    parent_location_id__in = self.location_ids,
+                    location__location_type_id = 3,
+                    location__lpd_status__in=[1,2])\
+                .values_list('location_id',flat=True))
 
-            self.location_ids.extend(sub_location_ids)
+            self.location_ids = sub_location_ids
 
 
         # Pivot the data on request instead of caching ##
@@ -226,6 +228,7 @@ class DatapointResource(BaseNonModelResource):
             chart_type = None
 
         if chart_type == 'TableChart':
+
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
                 .values_list('name',flat=True)\

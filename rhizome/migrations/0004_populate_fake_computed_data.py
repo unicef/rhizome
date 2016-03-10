@@ -48,7 +48,7 @@ def populate_fake_dwc_data(apps, schema_editor):
         .values_list('id',flat=True))
 
     location_df = DataFrame(list(Location.objects\
-        .filter(location_type_id__lte = 2)\
+        .filter(location_type_id__lte = 3)\
         .values_list('id','name')),columns = ['location_id','name'])
 
     ind_df['join_col'] = 1
@@ -57,12 +57,6 @@ def populate_fake_dwc_data(apps, schema_editor):
 
     first_merged_df = ind_df.merge(campaign_df,on='join_col')
     final_merged_df = first_merged_df.merge(location_df, on='join_col')
-
-
-    print '=---='
-    print len(final_merged_df)
-    print final_merged_df[:10]
-    print '=---='
 
     upsert_df_data(final_merged_df, document.id)
 
