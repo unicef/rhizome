@@ -40,11 +40,15 @@ class SimpleDocTransform(DocTransform):
         return super(SimpleDocTransform, self).__init__(user_id,document_id)
 
     def build_meta_lookup(self):
-        ## build location lookup ##
+
+        csv_location_codes = list(self.csv_df[self.location_column].unique())
+        csv_campaign_codes = list(self.csv_df[self.campaign_column].unique())
+
         location_lookup = SourceObjectMap.objects\
             .filter(content_type='location',\
-                source_object_code__in=list(self.csv_df[self.location_column]))\
+                source_object_code__in = csv_location_codes)\
             .values_list('source_object_code','master_object_id')
+                # source_object_code = 'AF0010390030000000002016')\
 
         for source_object_code, master_object_id in location_lookup:
             self.meta_lookup['location'][source_object_code] = master_object_id
@@ -52,7 +56,7 @@ class SimpleDocTransform(DocTransform):
         ## build campaign lookup ##
         campaign_lookup = SourceObjectMap.objects\
             .filter(content_type='campaign',\
-                source_object_code__in=list(self.csv_df[self.campaign_column]))\
+                source_object_code__in=csv_campaign_codes)\
             .values_list('source_object_code','master_object_id')
 
         for source_object_code, campaign_id in campaign_lookup:
@@ -106,8 +110,12 @@ class SimpleDocTransform(DocTransform):
         submission  = row.submission_json
 
 
-        location_id = self.meta_lookup['location'][row.location_code]
-        campaign_id = self.meta_lookup['campaign'][row.campaign_code]
+        try:
+            location_id = self.meta_lookup['location'][row.location_code]
+            campaign_id = self.meta_lookup['campaign'][row.campaign_code]
+        except KeyError:
+            # raise RowMapErrorException -- ## no mapping for campaign/location
+            return
 
         for k,v in submission.iteritems():
 
