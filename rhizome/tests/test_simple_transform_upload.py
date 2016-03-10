@@ -34,9 +34,10 @@ class TransformUploadTestCase(TestCase):
 
         the_value_from_the_database = DataPointComputed.objects.get(
                 campaign_id = self.mapped_campaign_id,
-                indicator_id = self.mapped_indicator_id,
+                indicator_id = self.mapped_indicator_with_data,
                 location_id = self.mapped_location_id
             ).value
+
 
         some_cell_value_from_the_file = 0.082670906
         ## find this from the data frame by selecting the cell where we have mapped the data..
@@ -94,12 +95,28 @@ class TransformUploadTestCase(TestCase):
             mapped_by_id = user_id,
             master_object_id = self.mapped_campaign_id
         )
-        self.mapped_indicator_id = locations[0].id
+        self.mapped_indicator_id_0 = locations[0].id
         indicator_map = SourceObjectMap.objects.create(
             source_object_code = 'Percent missed children_PCA',
             content_type = 'indicator',
             mapped_by_id = user_id,
-            master_object_id = self.mapped_indicator_id
+            master_object_id = self.mapped_indicator_id_0
+        )
+
+        self.mapped_indicator_id_1 = locations[1].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to not visited',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_id_1
+        )
+
+        self.mapped_indicator_with_data = locations[2].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to other reasons',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_with_data
         )
 
 
