@@ -5,7 +5,10 @@ from pandas import notnull
 from django.conf import settings
 
 from rhizome.models import *
+from rhizome.api.exceptions import DatapointsException
 from rhizome.etl_tasks.transform_upload import DocTransform
+from django.db import IntegrityError
+
 
 class SimpleDocTransform(DocTransform):
     '''
@@ -129,7 +132,6 @@ class SimpleDocTransform(DocTransform):
         DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
         DataPointComputed.objects.bulk_create(dwc_batch)
 
-
     def process_submission_cell(self, location_id, campaign_id, k,v):
 
         try:
@@ -193,6 +195,10 @@ class SimpleDocTransform(DocTransform):
                 batch[instance_guid] = ss
 
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
-        ss = SourceSubmission.objects.bulk_create(object_list)
+
+        try:
+            ss = SourceSubmission.objects.bulk_create(object_list)
+        except IntegrityError as e:
+            raise DatapointsException(e.message)
 
         return
