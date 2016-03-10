@@ -18,29 +18,29 @@ class TransformUploadTestCase(TestCase):
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
 
-        self.test_file_location = 'ebola_data.csv'
+        self.test_file_location = 'eoc_post_campaign.csv'
         self.document.docfile = self.test_file_location
         self.document.save()
 
 
         self.location_list = Location.objects.all().values_list('name',flat=True)
 
-    def simple_transform(self):
+    def test_simple_transform(self):
 
         self.set_up()
 
-
         sdt = SimpleDocTransform(self.user.id, self.document.id)
+        sdt.main()
 
-        try:
-            sdt.main()
-        except Exception as err:
-            self.assertEqual(err, THeCustomExcptionIWrote)
+        the_value_from_the_database = DataPointComputed.objects.get(
+                campaign_id = self.mapped_campaign_id,
+                indicator_id = self.mapped_indicator_with_data,
+                location_id = self.mapped_location_id
+            ).value
 
-        source_submissions = dt.process_file()
 
-        the_value_from_the_database = 1
-        some_cell_value_from_the_file = 1
+        some_cell_value_from_the_file = 0.082670906
+        ## find this from the data frame by selecting the cell where we have mapped the data..
 
         self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
 
@@ -75,9 +75,49 @@ class TransformUploadTestCase(TestCase):
 
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
-        location_ids = self.model_df_to_data(location_df,Location)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
-        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        locations = self.model_df_to_data(location_df,Location)
+        campaigns = self.model_df_to_data(campaign_df,Campaign)
+        indicators = self.model_df_to_data(indicator_df,Indicator)
+
+        self.mapped_location_id = locations[0].id
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code = 'AF001039003000000000',
+            content_type = 'location',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_location_id
+        )
+
+        source_campaign_string = '2016 March NID OPV'
+        self.mapped_campaign_id = campaigns[0].id
+        campaign_map = SourceObjectMap.objects.create(
+            source_object_code = source_campaign_string,
+            content_type = 'campaign',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_campaign_id
+        )
+        self.mapped_indicator_id_0 = locations[0].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed children_PCA',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_id_0
+        )
+
+        self.mapped_indicator_id_1 = locations[1].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to not visited',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_id_1
+        )
+
+        self.mapped_indicator_with_data = locations[2].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to other reasons',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_with_data
+        )
 
 
     def model_df_to_data(self,model_df,model):
