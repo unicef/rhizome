@@ -40,7 +40,7 @@ TableChart.defaultProps = {
   cellSize: 40,
   cellFontSize: 14,
   margin: {
-    top: 40,
+    top: 100,
     right: 40,
     bottom: 40,
     left: 40,
