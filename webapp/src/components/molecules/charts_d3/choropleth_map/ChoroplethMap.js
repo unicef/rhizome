@@ -19,6 +19,7 @@ var DEFAULTS = {
     bottom: 20,
     left: 0
   },
+  data_format: 'pct',
   onClick: _.noop,
   value: _.property('properties.value'),
   color: palettes.orange,
@@ -476,8 +477,12 @@ _.extend(ChoroplethMap.prototype, {
 
   _onMouseMove: function (d, options, data) {
     const evt = d3.event
-    const locationValue = options.name(d) + ': ' + options.xFormat(_valueForLocation(data, options, d) || 0)
-    const render = () => <Tooltip left={evt.pageX + 2} top={ evt.pageY + 2}>{locationValue}</Tooltip>
+    let locationValue = options.xFormat(_valueForLocation(data, options, d) || 0)
+    if (options.data_format === 'bool') {
+      locationValue = locationValue !== '0' ? 'Yes' : 'No'
+    }
+    const displayValue = options.name(d) + ': ' + locationValue
+    const render = () => <Tooltip left={evt.pageX + 2} top={ evt.pageY + 2}>{displayValue}</Tooltip>
     this.layer ? this.layer._render = render : this.layer = new Layer(document.body, render)
     this.layer.render()
   },

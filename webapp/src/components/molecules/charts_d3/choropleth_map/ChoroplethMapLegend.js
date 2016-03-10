@@ -15,6 +15,7 @@ var DEFAULTS = {
     bottom: 0,
     left: 0
   },
+  data_format: 'pct',
   color: palettes.orange,
   onClick: _.noop,
   yFormat: d => d3.format(Math.abs(d) < 1 ? '.4f' : 'n')(d),
@@ -105,8 +106,12 @@ _.extend(MapLegend.prototype, {
         .domain(domain.concat().reverse())
         .range(options.color.concat().reverse())
 
-      const ticks = _.map(colorScale.range(), c => {
-        return _.map(colorScale.invertExtent(c), options.yFormat).join('—')
+      const ticks = colorScale.range().map((color, d) => {
+        if (options.data_format === 'bool') {
+          return d !== 1 ? 'Yes' : 'No'
+        } else {
+          return colorScale.invertExtent(color).map(options.yFormat).join('—')
+        }
       })
 
       svg.select('.legend')

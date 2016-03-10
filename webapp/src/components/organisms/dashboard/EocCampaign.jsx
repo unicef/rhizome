@@ -28,10 +28,27 @@ var EocPreCampaign = React.createClass({
     return chart[0]
   },
 
+  getChartFormat (indicator) {
+    if (indicator.data_format === 'pct') {
+      return d3.format(',.1%')
+    } else if (indicator.data_format === 'bool') {
+      return d3.format('')
+    } else {
+      return d3.format('')
+    }
+  },
+
+  getColorScale (indicator) {
+    let colorScale = ['#FF9489', '#FFED89', '#83F5A2']
+    if (indicator.data_format ===  'bool') {
+      colorScale = ['#FF9489', '#83F5A2']
+    }
+    return colorScale
+  },
+
   render () {
     const data = this.props.data
     const loading = this.props.loading
-    const colorScale = ['#FF9489', '#FFED89', '#83F5A2']
     const indicatorIndex = _.indexBy(this.props.indicators, 'id')
 
     // TABLE CHART
@@ -42,7 +59,7 @@ var EocPreCampaign = React.createClass({
         data={data.tableData.data}
         indicators={tableIndicators}
         defaultSortOrder={data.tableData.options.defaultSortOrder}
-        onRowClick={ d => { DashboardActions.navigate({ location: d }) }}
+        onRowClick={ d => DashboardActions.navigate({ location: d }) }
       />
     )
 
@@ -55,8 +72,8 @@ var EocPreCampaign = React.createClass({
           loading={loading}
           options={{
             color: ['#000000'],
-            height: '300',
-            yFormat: d3.format(',.1%')
+            height: '350',
+            yFormat: this.getChartFormat(trendIndicator)
           }}
         />
       : ''
@@ -71,21 +88,23 @@ var EocPreCampaign = React.createClass({
             loading={loading}
             options={{
               aspect: 0.6,
-              domain: _.constant([0, 0.1]),
+              data_format: mapIndicator.data_format,
+              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
               value: _.property(`properties[${mapIndicator.id}]`),
-              color: colorScale,
-              xFormat: d3.format(',.1%'),
-              onClick: d => { DashboardActions.navigate({ location: d }) }
+              color: this.getColorScale(mapIndicator),
+              xFormat: this.getChartFormat(mapIndicator),
+              onClick: d => DashboardActions.navigate({ location: d })
             }}
           />
           <Chart type='ChoroplethMapLegend'
             data={data.mapData}
             loading={loading}
             options={{
-              color: colorScale,
+              data_format: mapIndicator.data_format,
+              color: this.getColorScale(mapIndicator),
               aspect: 3.5,
-              yFormat: d3.format('%'),
-              domain: _.constant([0, 1]),
+              yFormat: this.getChartFormat(mapIndicator),
+              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
               value: _.property(`properties[${mapIndicator.id}]`),
               margin: {
                 top: 5,
