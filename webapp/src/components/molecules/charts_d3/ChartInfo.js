@@ -13,11 +13,10 @@ import TableChartInfo from 'components/molecules/charts_d3/table_chart/TableChar
 
 const ChartInfo = {
 
+  // here, datapoints is the full api response, not just the .objects
   getChartInfo: function (chartDef, datapoints, selectedLocations, selectedIndicators, layout) {
-    const indicatorOrder = selectedIndicators.map(indicator => { return indicator.short_name })
-
+    const indicatorOrder = selectedIndicators.map(indicator => indicator.short_name)
     const chartInfo = this.getInfoForChartType(chartDef, datapoints, selectedLocations, selectedIndicators, layout)
-
     if (!chartInfo.data) {
       return { data: [], options: null }
     }

@@ -9,8 +9,16 @@ import ChartDataInit from 'data/chartDataInit'
 import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
+import ChartStore from 'stores/ChartStore'
+import ChartActions from 'actions/ChartActions'
+import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
 let ChartWizardStore = Reflux.createStore({
+
+  init () {
+    this.listenTo(ChartStore, this.onChartStore)
+  },
+
   listenables: ChartWizardActions,
   data: {
     chart: {
@@ -505,16 +513,38 @@ let ChartWizardStore = Reflux.createStore({
 
     this.data.chart.def.location_ids = this.data.locations.selected.map(location => location.id)
     this.data.chart.def.indicator_ids = this.data.indicators.selected.map(indicator => indicator.id)
-    let responses = await ChartDataInit.getPromises()
-    ChartDataInit.fetchChart(this.data.chart.def, this.LAYOUT_PREVIEW, responses).then(chart => {
-      console.log('chart after fetching', chart)
+
+    ChartActions.fetchChartDatapoints(this.data.chart.def)
+
+    // let responses = await ChartDataInit.getPromises()
+    // ChartDataInit.fetchChart(this.data.chart.def, this.LAYOUT_PREVIEW, responses).then(chart => {
+    //   console.log('chart after fetching', chart)
+    //   this.data.canDisplayChart = true
+    //   this.data.isLoading = false
+    //   this.data.chart.options = chart.options
+    //   this.data.chart.data = chart.data
+    //   this.trigger(this.data)
+    // })
+  },
+
+  onChartStore (store) {
+    if (store.datapoints !== null) {
+      const result = ChartInfo.getChartInfo(
+        this.data.chart.def,
+        store.datapoints,
+        this.data.locations.index,
+        this.data.indicators.selected,
+        this.LAYOUT_PREVIEW
+      )
       this.data.canDisplayChart = true
       this.data.isLoading = false
-      this.data.chart.options = chart.options
-      this.data.chart.data = chart.data
+      this.data.chart.options = result.options
+      this.data.chart.data = result.data
       this.trigger(this.data)
-    })
+    }
   }
+
 })
+
 
 export default ChartWizardStore

@@ -12,7 +12,9 @@ import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 import PreviewScreen from 'components/organisms/chart-wizard/PreviewScreen'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
+import ChartActions from 'actions/ChartActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
+import ChartStore from 'stores/ChartStore'
 import ChartAPI from 'data/requests/ChartAPI'
 
 const defaultChartDef = {
@@ -35,7 +37,7 @@ let ChartWizard = React.createClass({
     chart_id: PropTypes.number
   },
 
-  mixins: [Reflux.connect(ChartWizardStore)],
+  mixins: [Reflux.connect(ChartWizardStore), Reflux.connect(ChartStore, 'ThisChart')],
 
   componentDidMount () {
     if (this.props.chart_id) {
