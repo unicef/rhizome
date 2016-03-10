@@ -12,8 +12,29 @@ var IndicatorTitleMenu = React.createClass({
     sendValue: React.PropTypes.func.isRequired
   },
 
+  getInitialState () {
+    return {
+      pattern: ''
+    }
+  },
+
+  setPattern (value) {
+    this.setState({ pattern: value })
+    this.forceUpdate()
+  },
+
+  filteredMenuItems () {
+    if (this.state.pattern.length > 2) {
+      return this.props.indicators.filter(indicator => {
+        return new RegExp(this.state.pattern, 'i').test(indicator.name)
+      })
+    } else {
+      return this.props.indicators
+    }
+  },
+
   render () {
-    const indicator_menu_items = this.props.indicators.map(indicator =>
+    const indicator_menu_items = this.filteredMenuItems().map(indicator =>
       <TitleMenuItem
         key={'indicator-' + indicator.id}
         text={indicator.name}
@@ -26,7 +47,9 @@ var IndicatorTitleMenu = React.createClass({
       <TitleMenu
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={this.props.selected.name}>
+        text={this.props.selected.name}
+        searchable
+        onSearch={this.setPattern}>
         {indicator_menu_items}
       </TitleMenu>
     )
