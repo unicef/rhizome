@@ -151,10 +151,12 @@ _.extend(TableChart.prototype, {
     // ---------------------------------------------------------------------------
     svg.select('.x.axis')
       .transition().duration(500)
-      .attr({'transform': 'translate(' + z + ',0)'})
+      .attr({'transform': 'translate(' + z + ',-40)'})
       .call(d3.svg.axis().scale(xScale).orient('top').outerTickSize(0))
     svg.selectAll('.x.axis text').on('click', (d, i) => { this._setSort(d, i) })
-    svg.selectAll('.x.axis text').call(this._wrap, xScale.rangeBand())
+    svg.selectAll('.x.axis text')
+      .attr({'transform': 'rotate(-45)'})
+      .call(this._wrap, xScale.rangeBand())
 
     // Y AXIS
     // ---------------------------------------------------------------------------
