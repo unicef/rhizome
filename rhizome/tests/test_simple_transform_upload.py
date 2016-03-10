@@ -38,7 +38,6 @@ class TransformUploadTestCase(TestCase):
                 location_id = self.mapped_location_id
             ).value
 
-
         some_cell_value_from_the_file = 0.082670906
         ## find this from the data frame by selecting the cell where we have mapped the data..
 

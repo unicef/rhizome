@@ -50,13 +50,35 @@ var DocFormStore = Reflux.createStore({
     console.log('this.data.isRefreshing: ', this.data.isRefreshing)
     this.trigger(this.data)
 
-    api.transformUpload(document, null, {'cache-control': 'no-cache'})
-      .then(response => {
+    // api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
+    api.transformUpload(document, null, {'cache-control': 'no-cache'}).then(res => {
+      if (res.objects) {
         this.data.doc_is_refreshed = true
         this.data.isRefreshing = true
         this.trigger(this.data)
-      })
+      }
+    }, res => {
+      this.data.errorMessage = res.msg
+      this.data.isRefreshing = false
+      this.trigger(this.data)
+    })
   },
+
+  //   api.transformUpload(document, null, {'cache-control': 'no-cache'})
+  //     .then(response => {
+  //       console.log('response', response)
+  //       if (response.error) {
+  //         console.log('HELLO!!:', response.error)
+  //         this.data.errorMessage = response.error
+  //         this.data.isRefreshing = false
+  //         this.trigger(this.data)
+  //       } else {
+  //         this.data.doc_is_refreshed = true
+  //         this.data.isRefreshing = true
+  //         this.trigger(this.data)
+  //       }
+  //     })
+  // },
 
   onSetOdkFormName (data) {
     api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
