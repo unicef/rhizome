@@ -107,6 +107,7 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function () {
+    console.log('this.state.errorMessage: ', this.state.errorMessage)
     // var uqHeaderList = this.buildHeaderList('uq_id_column')
     // var rgHeaderList = this.buildHeaderList('location_column')
     // var cpHeaderList = this.buildHeaderList('date_column')
@@ -115,7 +116,7 @@ var DocForm = React.createClass({
 
     var fileConfigForm = ''
     var syncUploadButton = <a disabled={this.state.isRefreshing} className='button button-refresh'
-       onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Syncing Data' : 'Sync Data'}
+       onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? ' ' : 'Sync Data'}
     </a>
 
     let uploadButton = ''
