@@ -34,7 +34,6 @@ _.extend(MapLegend.prototype, {
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
-    console.log('map legend options: ', options)
     var margin = options.margin
 
     var aspect = _.get(options, 'aspect', 1)
@@ -98,7 +97,6 @@ _.extend(MapLegend.prototype, {
       const features = _.reject(data, 'properties.isBorder')
       let domain = options.domain(features)
 
-      console.log('domain: ', domain)
       if (!_.isArray(domain)) {
         domain = d3.extent(features, options.value)
         domain[0] = Math.min(domain[0], 0)
