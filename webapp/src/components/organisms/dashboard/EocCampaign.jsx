@@ -43,7 +43,6 @@ var EocPreCampaign = React.createClass({
     if (indicator.data_format === 'bool') {
       colorScale = ['#FF9489', '#83F5A2']
     }
-    debugger;
     return colorScale
   },
 
