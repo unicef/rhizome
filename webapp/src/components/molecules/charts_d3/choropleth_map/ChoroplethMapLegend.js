@@ -34,6 +34,7 @@ _.extend(MapLegend.prototype, {
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
+    console.log('map legend options: ', options)
     var margin = options.margin
 
     var aspect = _.get(options, 'aspect', 1)
@@ -97,25 +98,30 @@ _.extend(MapLegend.prototype, {
       const features = _.reject(data, 'properties.isBorder')
       let domain = options.domain(features)
 
+      console.log('domain: ', domain)
       if (!_.isArray(domain)) {
         domain = d3.extent(features, options.value)
         domain[0] = Math.min(domain[0], 0)
       }
 
-      const colorScale = d3.scale.quantize()
-        .domain(domain.concat().reverse())
-        .range(options.color.concat().reverse())
+      const colors = options.color.concat().reverse()
 
-      const ticks = colorScale.range().map((color, d) => {
-        if (options.data_format === 'bool') {
-          return d !== 1 ? 'Yes' : 'No'
-        } else {
-          return colorScale.invertExtent(color).map(options.yFormat).join('—')
-        }
-      })
+      const colorScale = d3.scale.threshold()
+        .domain(options.extents)
+        .range(colors)
+
+      // const ticks = colorScale.range().map((color, d) => {
+      //   if (options.data_format === 'bool') {
+      //     return d !== 1 ? 'Yes' : 'No'
+      //   } else {
+      //     return colorScale.invertExtent(color).map(options.yFormat).join('—')
+      //   }
+      // })
 
       svg.select('.legend')
-      .call(legend().scale(d3.scale.ordinal().domain(ticks).range(colorScale.range())))
+      .call(legend().scale(d3.scale.ordinal()
+        .domain(options.tickLabels)
+        .range(colorScale.range())))
       .attr('transform', () => 'translate(2, 0)')
     }
 

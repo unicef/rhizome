@@ -39,7 +39,7 @@ var EocPreCampaign = React.createClass({
   },
   getColorScale (indicator) {
     let colorScale = ['#FF9489', '#FFED89', '#83F5A2']
-    if (indicator.data_format ===  'bool') {
+    if (indicator.data_format === 'bool') {
       colorScale = ['#FF9489', '#83F5A2']
     }
     return colorScale
@@ -80,6 +80,8 @@ var EocPreCampaign = React.createClass({
     // CHOROPLETH MAP
     // ----------------------------------------------------------------------------------------------
     const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
+    const indicatorTicks = [0]
+
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
@@ -100,6 +102,9 @@ var EocPreCampaign = React.createClass({
             loading={loading}
             options={{
               data_format: mapIndicator.data_format,
+              extents: [0.1, 0.5],
+              tickLabels: ['0 - 1%', '1 - 5%', '5% +'],
+              // extents: [mapIndicator.bad_bound, mapIndicator.good_bound]
               color: this.getColorScale(mapIndicator),
               aspect: 3.5,
               yFormat: this.getChartFormat(mapIndicator),
