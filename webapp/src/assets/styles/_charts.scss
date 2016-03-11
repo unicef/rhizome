@@ -171,6 +171,9 @@ svg {
   font-size: rem-calc(9);
   list-style: none;
   margin: 0;
+  position: absolute;
+  right: 0;
+  bottom: 0;
 
   .key {
     display: inline-block;
