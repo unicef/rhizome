@@ -67,10 +67,13 @@ $total-columns: 8;
 }
 #dashboard-title{
   font-size: 2rem;
-  vertical-align:middle;
-  text-align:center;
+  vertical-align: middle;
+  text-align: center;
 }
-
+.chart_header_text{
+  vertical-align: middle;
+  text-align: center;
+}
 .custom-dashboard__chart-title {
   background: $rhz-chart-title-bg-color;
   color: $rhz-chart-title-color;

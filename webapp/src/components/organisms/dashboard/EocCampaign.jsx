@@ -139,11 +139,11 @@ var EocPreCampaign = React.createClass({
         </div>
         <div className='row'>
           <div className='medium-5 columns cd-chart-size'>
-            <h3>{trendIndicator.short_name}</h3>
+            <h3 className='chart_header_text'>{trendIndicator.short_name}</h3>
             {trendChart}
           </div>
           <div className='medium-3 columns cd-chart-size'>
-            <h3>{mapIndicator.short_name}</h3>
+            <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
             {mapChart}
           </div>
         </div>
