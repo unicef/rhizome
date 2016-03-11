@@ -24,7 +24,8 @@ var EocPreCampaign = React.createClass({
   },
 
   getChartDefFromDashboard (type) {
-    const chart = this.props.dashboard.charts.filter(chart => chart.type === type)
+    const charts = this.props.dashboard.charts || []
+    const chart = charts.filter(chart => chart.type === type)
     return chart[0]
   },
 
