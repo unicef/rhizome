@@ -54,7 +54,7 @@ $total-columns: 8;
     color: $rhz-chart-title-color;
     text-transform: uppercase;
     font-family: adelle, Arial, Helvetica, sans-serif;
-    font-size: 0.75rem;
+    font-size: 1rem;
     padding: 2px 4px;
     margin: 10px 0;
     border: none;
@@ -64,6 +64,11 @@ $total-columns: 8;
   .choropleth-map {
     padding-top: 10px;
   }
+}
+#dashboard-title{
+  font-size: 2rem;
+  vertical-align:middle;
+  text-align:center;
 }
 
 .custom-dashboard__chart-title {
