@@ -47,11 +47,26 @@ class BaseResource(Resource):
 
         try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
-            location_ids = list(Location.objects\
+
+            location_ids = list(LocationTree.objects\
                         .filter(parent_location_id__in=pl_id_list)
-                        .values_list('id',flat=True))
-            location_ids.extend(pl_id_list)
-            return location_ids
+                        .values_list('location_id',flat=True))
+
+            ## provinces ##
+            prov_ids = Location.objects.filter(location_type__name='Province')\
+                .values_list('id',flat=True)
+
+            ## districts ##
+            dist_ids = Location.objects.filter(lpd_status__in=[1,2])\
+                .values_list('id',flat=True)
+
+            prov_and_district_ids = list(prov_ids) + list(dist_ids)
+
+            filtered_location_ids = list(set(location_ids)\
+                .intersection(set(prov_and_district_ids)))
+
+            return filtered_location_ids
+
         except KeyError:
             pass
 
