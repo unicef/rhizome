@@ -37,7 +37,15 @@ var EocPreCampaign = React.createClass({
       return d3.format('')
     }
   },
-
+  getDomain(indicator){
+    let domain = []
+    if (indicator.data_format === 'bool') {
+      domain = [0,1]
+    } else {
+      domain = [indicator.bad_bound, indicator.good_bound]
+    }
+    return domain
+  }
   getColorScale (indicator) {
     let colorScale = ['#FF9489', '#FFED89', '#83F5A2']
     if (indicator.data_format ===  'bool') {
@@ -89,7 +97,7 @@ var EocPreCampaign = React.createClass({
             options={{
               aspect: 0.6,
               data_format: mapIndicator.data_format,
-              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
+              domain: _.constant(this.getDomain(mapIndicator)),
               value: _.property(`properties[${mapIndicator.id}]`),
               color: this.getColorScale(mapIndicator),
               xFormat: this.getChartFormat(mapIndicator),
@@ -104,7 +112,8 @@ var EocPreCampaign = React.createClass({
               color: this.getColorScale(mapIndicator),
               aspect: 3.5,
               yFormat: this.getChartFormat(mapIndicator),
-              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
+              // domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
+              domain: _.constant(this.getDomain(mapIndicator)),
               value: _.property(`properties[${mapIndicator.id}]`),
               margin: {
                 top: 5,
