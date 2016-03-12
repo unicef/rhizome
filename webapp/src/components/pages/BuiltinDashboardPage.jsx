@@ -312,6 +312,14 @@ var BuiltinDashboardPage = React.createClass({
     .reverse()
     .value()
 
+    let indicatorFilter = ''
+    // <div className='medium-4 columns'>
+    //   <IndicatorTitleMenu
+    //     indicators={this.indicators}
+    //     selected={this.indicators[0]}
+    //     sendValue={this._setIndicator}/>
+    // </div>
+
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
       settingFilter = (<div className='row'>
@@ -327,12 +335,7 @@ var BuiltinDashboardPage = React.createClass({
             selected={campaign}
             sendValue={this._setCampaign}/>
         </div>
-        <div className='medium-4 columns'>
-          <IndicatorTitleMenu
-            indicators={this.indicators}
-            selected={this.indicators[0]}
-            sendValue={this._setIndicator}/>
-        </div>
+          {indicatorFilter}
       </div>)
     }
     let exportModule = (<ExportPdf className='export-file' />)
