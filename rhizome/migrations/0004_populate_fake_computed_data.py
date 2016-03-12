@@ -35,7 +35,7 @@ def populate_fake_dwc_data(apps, schema_editor):
     Maybe somethign like.. if SETTINGS.debug = True, then ingest fake data.
     '''
 
-    document = Document.objects.create(doc_title = 'Evelyn Champagne King')
+    document = Document.objects.create(doc_title = 'Initial FAKE Data Load')
 
     ind_df = DataFrame(list(Indicator.objects.all()\
         .values_list('id','short_name','data_format')),columns = ['indicator_id','short_name','data_format'])
