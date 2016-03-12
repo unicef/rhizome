@@ -17,7 +17,7 @@ export default {
     }, {
       'title': 'trendData',
       'type': 'LineChart',
-      'indicators': [28],
+      'indicators': [4],
       'timeRange': {
         months: 12
       }
@@ -26,7 +26,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [28]
+      'indicators': [4]
     }
   ]
 }

@@ -72,7 +72,7 @@ var BuiltinDashboardPage = React.createClass({
   },
 
   componentWillUpdate (nextProps, nextState) {
-    if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
+    if (!(nextState.campaign && nextState.location && nextState.dashboard.charts)) {
       return
     }
     const table_chart_indicator_ids = nextState.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators

@@ -98,30 +98,29 @@ var EocPreCampaign = React.createClass({
               onClick: d => DashboardActions.navigate({ location: d })
             }}
           />
-          <Chart type='ChoroplethMapLegend'
-            data={data.mapData}
-            loading={loading}
-            options={{
-              data_format: mapIndicator.data_format,
-              extents: [0.1, 0.5],
-              tickLabels: ['0 - 1%', '1 - 5%', '5% +'],
-              // extents: [mapIndicator.bad_bound, mapIndicator.good_bound]
-              color: this.getColorScale(mapIndicator),
-              aspect: 3.5,
-              yFormat: this.getChartFormat(mapIndicator),
-              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
-              value: _.property(`properties[${mapIndicator.id}]`),
-              margin: {
-                top: 5,
-                bottom: 0,
-                left: 20,
-                right: 0
-              }
-            }}
-          />
         </div>
       : ''
-
+      // <Chart type='ChoroplethMapLegend'
+      //   data={data.mapData}
+      //   loading={loading}
+      //   options={{
+      //     data_format: mapIndicator.data_format,
+      //     extents: [0.1, 0.5],
+      //     tickLabels: ['0 - 1%', '1 - 5%', '5% +'],
+      //     // extents: [mapIndicator.bad_bound, mapIndicator.good_bound]
+      //     color: this.getColorScale(mapIndicator),
+      //     aspect: 3.5,
+      //     yFormat: this.getChartFormat(mapIndicator),
+      //     domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
+      //     value: _.property(`properties[${mapIndicator.id}]`),
+      //     margin: {
+      //       top: 5,
+      //       bottom: 0,
+      //       left: 20,
+      //       right: 0
+      //     }
+      //   }}
+      // />
 
     // LAYOUT
     // ----------------------------------------------------------------------------------------------

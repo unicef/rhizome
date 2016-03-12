@@ -108,17 +108,17 @@ _.extend(MapLegend.prototype, {
         .domain(options.extents)
         .range(colors)
 
-      // const ticks = colorScale.range().map((color, d) => {
-      //   if (options.data_format === 'bool') {
-      //     return d !== 1 ? 'Yes' : 'No'
-      //   } else {
-      //     return colorScale.invertExtent(color).map(options.yFormat).join('—')
-      //   }
-      // })
+      const ticks = colorScale.range().map((color, d) => {
+        if (options.data_format === 'bool') {
+          return d !== 1 ? 'Yes' : 'No'
+        } else {
+          return colorScale.invertExtent(color).map(options.yFormat).join('—')
+        }
+      })
 
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal()
-        .domain(options.tickLabels)
+        .domain(ticks)
         .range(colorScale.range())))
       .attr('transform', () => 'translate(2, 0)')
     }
