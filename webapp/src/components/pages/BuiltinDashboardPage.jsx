@@ -72,7 +72,7 @@ var BuiltinDashboardPage = React.createClass({
   },
 
   componentWillUpdate (nextProps, nextState) {
-    if (!(nextState.campaign && nextState.location && nextState.dashboard.charts)) {
+    if (!(nextState.campaign && nextState.location && nextState.dashboard.charts && nextState.indicators)) {
       return
     }
     const table_chart_indicator_ids = nextState.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
@@ -330,7 +330,7 @@ var BuiltinDashboardPage = React.createClass({
         <div className='medium-4 columns'>
           <IndicatorTitleMenu
             indicators={this.indicators}
-            selected={this.state.indicator}
+            selected={this.indicators[0]}
             sendValue={this._setIndicator}/>
         </div>
       </div>)
