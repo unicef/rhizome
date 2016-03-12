@@ -6,6 +6,8 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 
+from rhizome.cache_meta import LocationTreeCache
+
 class DataPointResourceTest(ResourceTestCase):
     def setUp(self):
         super(DataPointResourceTest, self).setUp()
@@ -16,7 +18,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.user = User.objects.create_user(self.username,\
                                         'eradicate@polio.com', self.password)
 
-        self.lt = LocationType.objects.create(name='test',admin_level = 0)
+        self.lt = LocationType.objects.create(name='Country',admin_level = 0)
         self.o = Office.objects.create(name = 'Earth')
 
         self.top_lvl_location = Location.objects.create(
@@ -25,6 +27,9 @@ class DataPointResourceTest(ResourceTestCase):
                 location_type_id = self.lt.id,
                 office_id = self.o.id,
             )
+
+        ltc = LocationTreeCache()
+        ltc.main()
 
         LocationPermission.objects.create(user_id = self.user.id,\
             top_lvl_location_id = self.top_lvl_location.id)

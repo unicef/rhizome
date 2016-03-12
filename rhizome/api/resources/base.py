@@ -53,17 +53,19 @@ class BaseResource(Resource):
                         .values_list('location_id',flat=True))
 
             ## provinces ##
-            prov_ids = Location.objects.filter(location_type__name='Province')\
+            prov_and_country_ids = Location.objects\
+                .filter(location_type__name__in=['Province','Country'])\
                 .values_list('id',flat=True)
 
             ## districts ##
             dist_ids = Location.objects.filter(lpd_status__in=[1,2])\
                 .values_list('id',flat=True)
 
-            prov_and_district_ids = list(prov_ids) + list(dist_ids)
+            prov_country_and_district_ids = list(prov_and_country_ids) \
+                + list(dist_ids)
 
             filtered_location_ids = list(set(location_ids)\
-                .intersection(set(prov_and_district_ids)))
+                .intersection(set(prov_country_and_district_ids)))
 
             return filtered_location_ids
 
