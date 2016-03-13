@@ -48,11 +48,11 @@ class SourceObjectMapResource(BaseModelResource):
                 .filter(document_id=request.GET['document_id']). \
                 values_list('source_object_map_id', flat=True)
 
-            qs = SourceObjectMap.objects.filter(id__in=som_ids).values()
+            qs = SourceObjectMap.objects.filter(id__in=som_ids,\
+                master_object_id=-1).values()
         except KeyError:
             qs = SourceObjectMap.objects.filter(id=request.GET['id']).values()
         except KeyError:
             qs = SourceObjectMap.objects.all().values()
 
         return qs
-

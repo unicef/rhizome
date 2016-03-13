@@ -139,9 +139,6 @@ class SimpleDocTransform(DocTransform):
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
 
-        # print '==='
-        # print v
-
         value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0}
 
         try:
