@@ -1,7 +1,0 @@
-
-
-
-UPLOADING
-
- - Now you must choose "date" not campaign Column
- - Be sure that in "view raw" the data_date was parsed properly from "date"
