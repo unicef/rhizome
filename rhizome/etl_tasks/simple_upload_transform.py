@@ -139,7 +139,7 @@ class SimpleDocTransform(DocTransform):
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
 
-        value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0}
+        value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0, '': None}
 
         try:
             looked_up_val = value_lookup[v]
@@ -154,7 +154,7 @@ class SimpleDocTransform(DocTransform):
         if indicator_id == -1:
             return None, None
 
-        if v == '':
+        if v is None:
             return None, None
 
         try:
