@@ -119,6 +119,8 @@ class ComplexDocTransform(DocTransform):
                 .objects.get(name='date_column').id,
         ).doc_detail_value)
 
+        self.campaign_column = 'campaign'
+
     def main(self):
 
         self.process_file()
