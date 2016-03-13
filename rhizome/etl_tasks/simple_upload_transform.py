@@ -1,4 +1,5 @@
 import json
+import math
 
 from pandas import read_csv
 from pandas import notnull
@@ -90,6 +91,9 @@ class SimpleDocTransform(DocTransform):
 
         submission_data = dict(zip(self.file_header,submission_data))
         instance_guid = submission_data[self.uq_id_column]
+
+        if type(instance_guid) == float and math.isnan(instance_guid):
+            return None, None
 
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
             return None, None
