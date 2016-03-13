@@ -141,6 +141,10 @@ class SimpleDocTransform(DocTransform):
 
         value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0}
 
+        try:
+            looked_up_val = value_lookup[v]
+        except KeyError:
+            looked_up_val = v
 
         try:
             indicator_id = self.meta_lookup['indicator'][k]
