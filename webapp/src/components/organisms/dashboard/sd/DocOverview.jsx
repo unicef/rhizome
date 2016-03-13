@@ -109,15 +109,18 @@ var DocOverview = React.createClass({
     }
 
     var button_row = (
-        <div>
-            <DownloadButton
-            onClick={this._download}
-            enable='true'
-            text='Download Raw'
-            working='Downloading'
-            cookieName='dataBrowserCsvDownload' />
-          {odkRefreshBtn}
-        </div>
+      <div>
+        <DownloadButton
+          onClick={this._download}
+          enable='true'
+          text='Download Raw'
+          working='Downloading'
+          cookieName='dataBrowserCsvDownload' />
+        {odkRefreshBtn}
+        <a disabled={this.state.isRefreshing} className='button button-refresh'
+           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
+        </a>
+      </div>
     )
 
     return (
