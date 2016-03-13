@@ -32,6 +32,13 @@ class DocTransform(object):
         Create new metadata if not exists
         Add a record tying this document to the newly inserted metadata
         '''
+
+        config_columns = [self.location_column, self.uq_id_column, \
+            self.campaign_column ]
+
+        if content_type == 'indicator' and source_object_code in config_columns:
+            return ## so we dont think that "campaign" is an indicator
+
         ## this is sketchy, but since there is no user when we do the initial
         ## data migration, we have to set mapped_by_id = None
         upload_user_id = None

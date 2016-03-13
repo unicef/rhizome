@@ -79,6 +79,7 @@ class SimpleDocTransform(DocTransform):
     def main(self):
 
         self.file_to_source_submissions()
+        self.upsert_source_object_map()
 
         for row in SourceSubmission.objects.filter(document_id = \
             self.document.id):
@@ -138,9 +139,17 @@ class SimpleDocTransform(DocTransform):
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
 
+        # print '==='
+        # print v
+
+        value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0}
+
         try:
             indicator_id = self.meta_lookup['indicator'][k]
         except KeyError:
+            return None, None
+
+        if indicator_id == -1:
             return None, None
 
         if not v:

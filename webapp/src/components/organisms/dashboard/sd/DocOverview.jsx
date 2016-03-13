@@ -54,6 +54,7 @@ var DocOverview = React.createClass({
     var self = this
     DocOverviewActions.refreshMaster({document_id: self.props.doc_id})
   },
+
   syncOdk () {
     var self = this
     DocOverviewActions.syncOdk({document_id: self.props.doc_id})
@@ -108,15 +109,15 @@ var DocOverview = React.createClass({
     }
 
     var button_row = (
-      <div>
-          <DownloadButton
-          onClick={this._download}
-          enable='true'
-          text='Download Raw'
-          working='Downloading'
-          cookieName='dataBrowserCsvDownload' />
-        {odkRefreshBtn}
-      </div>
+        <div>
+            <DownloadButton
+            onClick={this._download}
+            enable='true'
+            text='Download Raw'
+            working='Downloading'
+            cookieName='dataBrowserCsvDownload' />
+          {odkRefreshBtn}
+        </div>
     )
 
     return (
