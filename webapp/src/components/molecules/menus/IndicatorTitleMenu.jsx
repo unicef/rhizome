@@ -1,6 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
-import moment from 'moment'
 
 import TitleMenu from 'components/molecules/menus/TitleMenu'
 import TitleMenuItem from 'components/molecules/menus/TitleMenuItem'
@@ -9,7 +7,8 @@ var IndicatorTitleMenu = React.createClass({
   propTypes: {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired,
+    idsToRender: React.PropTypes.array
   },
 
   getInitialState () {
@@ -18,9 +17,24 @@ var IndicatorTitleMenu = React.createClass({
     }
   },
 
+  getDefaultProps () {
+    return {
+      indicators: [],
+      idsToRender: [],
+      selected: {'name':'Loading'}
+    }
+  },
+
   setPattern (value) {
     this.setState({ pattern: value })
     this.forceUpdate()
+  },
+  indicatorsFilteredBySet(){
+    //grab current indicators based on camp/location.
+    const currentIndicators = this.props.indicators.filter(indicator =>
+        this.props.idsToRender.indexOf(indicator.id) !== -1
+      )
+    return currentIndicators
   },
 
   filteredMenuItems () {
@@ -32,8 +46,8 @@ var IndicatorTitleMenu = React.createClass({
       return this.props.indicators
     }
   },
-
   render () {
+    this.props.indicators = this.indicatorsFilteredBySet()
     const indicator_menu_items = this.filteredMenuItems().map(indicator =>
       <TitleMenuItem
         key={'indicator-' + indicator.id}

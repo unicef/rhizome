@@ -75,8 +75,8 @@ var BuiltinDashboardPage = React.createClass({
     if (!(nextState.campaign && nextState.location && nextState.dashboard.charts && nextState.indicators)) {
       return
     }
-    const table_chart_indicator_ids = nextState.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
-    this.indicators = nextState.indicators.filter(indicator => table_chart_indicator_ids.indexOf(indicator.id) !== -1)
+    // const table_chart_indicator_ids = nextState.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
+    // this.indicators = nextState.indicators.filter(indicator => table_chart_indicator_ids.indexOf(indicator.id) !== -1)
     let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
     document.title = [nextState.dashboard.title, [nextState.location.name, campaign].join(' '), 'RhizomeDB'].join(' - ')
   },
@@ -312,13 +312,15 @@ var BuiltinDashboardPage = React.createClass({
     .reverse()
     .value()
 
-    let indicatorFilter = ''
-    // <div className='medium-4 columns'>
-    //   <IndicatorTitleMenu
-    //     indicators={this.indicators}
-    //     selected={this.indicators[0]}
-    //     sendValue={this._setIndicator}/>
-    // </div>
+    const table_chart_indicator_ids = this.state.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
+
+    let indicatorFilter = <div className='medium-4 columns'>
+      <IndicatorTitleMenu
+        idsToRender={table_chart_indicator_ids}
+        indicators={this.state.indicators}
+        selected={this.state.indicator}
+        sendValue={this._setIndicator}/>
+    </div>
 
     let settingFilter = ''
     if (dashboardDef.builtin === true) {
