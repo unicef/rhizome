@@ -50,7 +50,7 @@ _.extend(TableChart.prototype, {
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
     const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
-    const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => { return ind.short_name })
+    const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => ind.short_name)
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
     const sourceFlow = _.flow(options.sourceColumn, xScale)
     const x = _.flow(options.column, xScale)
@@ -88,7 +88,6 @@ _.extend(TableChart.prototype, {
       })
       .datum(data)
 
-    // svg.select('.margin').attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
     svg.select('.margin').attr('transform', 'translate(-75, ' + margin.top + ')')
 
     const g = svg.select('.data')
@@ -105,7 +104,7 @@ _.extend(TableChart.prototype, {
     // CELLS
     // ---------------------------------------------------------------------------
 
-    const fill = d => scale(_.get(targets, d.indicator.id, _.noop)(d.value))
+    const fill = d => scale(targets[d.indicator.id](d.value))
     const cells = rows.selectAll('.cell').data(options.values)
     cells.exit().transition().duration(300).style('opacity', 0).remove()
     cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
@@ -121,7 +120,6 @@ _.extend(TableChart.prototype, {
       })
 
     const cg = cells.enter().append('g')
-    // console.log('x', x)
     cg.append('rect')
       .attr({
         'class': 'cell',
@@ -144,7 +142,7 @@ _.extend(TableChart.prototype, {
         'font-weight': 'bold'
       })
       .style({'font-size': options.cellFontSize})
-      .text(d => { return d.displayValue })
+      .text(d => d.displayValue)
       .transition().duration(500)
 
     // X AXIS
@@ -213,7 +211,7 @@ _.extend(TableChart.prototype, {
         'text-anchor': 'middle',
         'font-weight': 'bold'
       })
-      .text(d => { return d.source_name })
+      .text(d => d.source_name)
       .transition().duration(500)
       .call(this._wrap, xScale.rangeBand())
 
@@ -251,7 +249,7 @@ _.extend(TableChart.prototype, {
     // otherwise the domain will be less ( and different the ) the yScale //
     // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
     if (domain.length < options.defaultSortOrder.length) {
-      const diff = options.defaultSortOrder.filter(x => { return domain.indexOf(x) < 0 })
+      const diff = options.defaultSortOrder.filter(x => domain.indexOf(x) < 0)
       domain = domain.concat(diff)
     }
 
