@@ -95,6 +95,19 @@ var MapForm = React.createClass({
           item_plural_name='Indicators'
           text='Map Indicator'/>
     }
+    if (content_type === 'campaign') {
+      if (!this.state.data.campaigns) {
+        return loadText('Campaigns')
+      }
+      console.log('this.state.data: ', this.state.data.campaigns)
+      return <DropdownMenu
+          items={this.state.data.campaigns}
+          value_field='id'
+          title_field='name'
+          sendValue={this.postMetaMap}
+          item_plural_name='Campaigns'
+          text='Map Campaign'/>
+    }
   },
 
   render: function () {

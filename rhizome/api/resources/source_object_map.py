@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Indicator, Location
+from rhizome.models import Indicator, Location, Campaign
 from rhizome.models import SourceObjectMap, DocumentSourceObjectMap
 
 class SourceObjectMapResource(BaseModelResource):
@@ -31,6 +31,7 @@ class SourceObjectMapResource(BaseModelResource):
         qs_map = {
             'indicator': ['short_name',Indicator.objects.get],
             'location': ['name',Location.objects.get],
+            'campaign': ['name',Campaign.objects.get],
         }
 
         obj_display_field = qs_map[som_obj.content_type][0]
