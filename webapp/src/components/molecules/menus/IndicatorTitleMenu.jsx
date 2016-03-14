@@ -1,6 +1,4 @@
 import React from 'react'
-import _ from 'lodash'
-import moment from 'moment'
 
 import TitleMenu from 'components/molecules/menus/TitleMenu'
 import TitleMenuItem from 'components/molecules/menus/TitleMenuItem'
@@ -16,6 +14,14 @@ var IndicatorTitleMenu = React.createClass({
   getInitialState () {
     return {
       pattern: ''
+    }
+  },
+
+  getDefaultProps () {
+    return {
+      indicators: [],
+      idsToRender: [],
+      selected: {'name':'Loading'}
     }
   },
 
