@@ -35,19 +35,19 @@ var DateRangePicker = React.createClass({
   },
 
   render () {
-    var self = this
-    var dateTimePicker = function (dateValue, type) {
-      return (<DateTimePicker
-        value={dateValue}
-        time={false}
-        format={'yyyy-MM-dd'}
-        onChange={self.handleDateChange.bind(this, type)} />)
-    }
     return (
       <div className='date-range-picker'>
-        {dateTimePicker(this.state.start, 'start')}
+        <DateTimePicker
+          value={this.state.start}
+          time={false}
+          format={'yyyy-MM-dd'}
+          onChange={this.handleDateChange.bind(this, 'start')} />
         <span>to</span>
-        {dateTimePicker(this.state.end, 'end')}
+        <DateTimePicker
+          value={this.state.end}
+          time={false}
+          format={'yyyy-MM-dd'}
+          onChange={this.handleDateChange.bind(this, 'end')} />
       </div>
     )
   }
