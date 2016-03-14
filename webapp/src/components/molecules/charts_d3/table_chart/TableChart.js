@@ -67,9 +67,9 @@ _.extend(TableChart.prototype, {
     const targets = _(options.headers)
       .indexBy('id')
       .mapValues(ind => {
-        const extents = [ ind.bad_bound, ind.good_bound ]
         const boundsReversed = ind.bad_bound > ind.good_bound
         const names = boundsReversed ? ['good', 'ok', 'bad'] : ['bad', 'ok', 'good']
+        const extents = boundsReversed ? [ ind.good_bound, ind.bad_bound ] : [ ind.bad_bound, ind.good_bound ]
         return d3.scale.threshold().domain(extents).range(names)
       })
       .value()
