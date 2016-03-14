@@ -32,11 +32,9 @@ def reset_seq(apps, schema_editor):
     commands = StringIO()
     cursor = connection.cursor()
 
-    for app in settings.INSTALLED_APPS:
+    for app in ['rhizome', 'django.contrib.auth']:
         try:
-            print 'app: ' + app
             label = app.split('.')[-1]
-            # if get_app(label, emptyOK=True):
             if get_app(label):
                     call_command('sqlsequencereset', label, stdout=commands)
         except Exception as err:
