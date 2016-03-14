@@ -114,24 +114,24 @@ export default React.createClass({
           </div>
         )
       }
+    }
 
-      if (this.props.campaigns) {
-        let campaignDropdownTitle = this.props.defaultCampaign.name
-        let campaignIndex = _.indexBy(this.props.campaigns, 'id')
-        if (this.state.campaign_id) {
-          campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
-        }
-        campaignDropdown = (
-          <DropdownMenu
-            items={this.props.campaigns}
-            sendValue={this.setCampaign}
-            item_plural_name='Campaigns'
-            text={campaignDropdownTitle}
-            title_field='name'
-            value_field='id'
-            uniqueOnly/>
-        )
+    if (this.props.campaigns) {
+      let campaignDropdownTitle = this.props.defaultCampaign.name
+      let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+      if (this.state.campaign_id) {
+        campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
       }
+      campaignDropdown = (
+        <DropdownMenu
+          items={this.props.campaigns}
+          sendValue={this.setCampaign}
+          item_plural_name='Campaigns'
+          text={campaignDropdownTitle}
+          title_field='name'
+          value_field='id'
+          uniqueOnly/>
+      )
     }
 
     return (

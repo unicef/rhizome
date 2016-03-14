@@ -1,4 +1,8 @@
 export default {
+  // Traffic Light is the default color palette. Do not remove.
+  traffic_light: [
+    '#FF9489', '#FFED89', '#83F5A2'
+  ],
   orange: [
     '#2D2525', '#AF373E', '#D95449', '#F58667', '#FABAA2', '#FEE7DC'
   ],
@@ -7,9 +11,6 @@ export default {
   ],
   rainbow: [
     'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue'
-  ],
-  traffic_light: [
-    '#FF9489', '#FFED89', '#83F5A2'
   ]
   // rainbow: [
   //   'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue', 'darkviolet'
