@@ -180,7 +180,6 @@ var process = {
 }
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features, responses) {
-
   const indicators_index = _.indexBy(indicators, 'id')
   const locations_index = _.indexBy(locationList, 'id')
   const campaigns_index = _.indexBy(campaignList, 'id')
