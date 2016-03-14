@@ -30,13 +30,11 @@ var EocPreCampaign = React.createClass({
   },
 
   getChartFormat (indicator) {
+    let d3Format = d3.format('')
     if (indicator.data_format === 'pct') {
-      return d3.format(',.1%')
-    } else if (indicator.data_format === 'bool') {
-      return d3.format('')
-    } else {
-      return d3.format('')
+      d3Format =  d3.format(',.1%')
     }
+    return d3Format
   },
   getColorScale (indicator) {
     let colorScale = ['#FF9489', '#FFED89', '#83F5A2']
@@ -82,7 +80,6 @@ var EocPreCampaign = React.createClass({
     // ----------------------------------------------------------------------------------------------
     const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
     const indicatorTicks = [0]
-
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
@@ -98,30 +95,28 @@ var EocPreCampaign = React.createClass({
               onClick: d => DashboardActions.navigate({ location: d })
             }}
           />
-        </div>
-      : ''
-      // <Chart type='ChoroplethMapLegend'
-      //   data={data.mapData}
-      //   loading={loading}
-      //   options={{
-      //     data_format: mapIndicator.data_format,
-      //     extents: [0.1, 0.5],
-      //     tickLabels: ['0 - 1%', '1 - 5%', '5% +'],
-      //     // extents: [mapIndicator.bad_bound, mapIndicator.good_bound]
-      //     color: this.getColorScale(mapIndicator),
-      //     aspect: 3.5,
-      //     yFormat: this.getChartFormat(mapIndicator),
-      //     domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
-      //     value: _.property(`properties[${mapIndicator.id}]`),
-      //     margin: {
-      //       top: 5,
-      //       bottom: 0,
-      //       left: 20,
-      //       right: 0
-      //     }
-      //   }}
-      // />
+          <Chart type='ChoroplethMapLegend'
+            data={data.mapData}
+            loading={loading}
+            options={{
+              data_format: mapIndicator.data_format,
+              color: this.getColorScale(mapIndicator),
+              aspect: 3.5,
+              yFormat: this.getChartFormat(mapIndicator),
+              domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
+              value: _.property(`properties[${mapIndicator.id}]`),
+              margin: {
+                top: 5,
+                bottom: 0,
+                left: 20,
+                right: 0
+              }
+            }}
 
+          />
+        </div>
+
+      : ''
     // LAYOUT
     // ----------------------------------------------------------------------------------------------
     return (

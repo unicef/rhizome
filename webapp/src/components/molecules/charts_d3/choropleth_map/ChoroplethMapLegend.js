@@ -33,7 +33,6 @@ _.extend(MapLegend.prototype, {
 
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
-
     var margin = options.margin
 
     var aspect = _.get(options, 'aspect', 1)
@@ -103,9 +102,8 @@ _.extend(MapLegend.prototype, {
       }
 
       const colors = options.color.concat().reverse()
-
-      const colorScale = d3.scale.threshold()
-        .domain(options.extents)
+      const colorScale = d3.scale.quantize()
+        .domain(domain)
         .range(colors)
 
       const ticks = colorScale.range().map((color, d) => {
