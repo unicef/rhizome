@@ -313,7 +313,6 @@ var BuiltinDashboardPage = React.createClass({
     .value()
 
     const table_chart_indicator_ids = this.state.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
-    // this.indicators = nextState.indicators.filter(indicator => table_chart_indicator_ids.indexOf(indicator.id) !== -1)
 
     let indicatorFilter = <div className='medium-4 columns'>
       <IndicatorTitleMenu
