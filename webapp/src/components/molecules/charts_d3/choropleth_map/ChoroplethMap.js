@@ -228,10 +228,9 @@ _.extend(ChoroplethMap.prototype, {
       domain = d3.extent(features, options.value)
       domain[0] = Math.min(domain[0], 0)
     }
-
     var colorScale = d3.scale.quantize()
       .domain(domain.concat().reverse())
-      .range(options.color.concat().reverse().slice(0, 3))
+      .range(options.color.concat().reverse())
 //<<<<<<< HEAD:webapp/src/02-molecules/charts/choropleth.js
     // table.js --> THIS SETS THE COLOR... MOVE FROM HERE ONCE THE USER CAN SET A PALLETTE
     // var targets = _(options.headers)

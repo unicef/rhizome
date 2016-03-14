@@ -34,7 +34,8 @@ class DocTransform(object):
         '''
 
         config_columns = [self.location_column, self.uq_id_column, \
-            self.campaign_column ]
+            self.campaign_column,'District', 'DCODE', 'District.Name', \
+            'DCODE', 'level', 'PCODE', 'Province']
 
         if content_type == 'indicator' and source_object_code in config_columns:
             return ## so we dont think that "campaign" is an indicator
@@ -77,11 +78,14 @@ class DocTransform(object):
 
         for row in source_dp_json:
             row_dict = json.loads(row[0])
-
             rg_codes.append(row_dict[self.location_column])
+            cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
+
+        for c in list(set(cp_codes)):
+            all_codes.append(('campaign',c))
 
         for content_type, source_object_code in all_codes:
             self.source_submission_meta_upsert(content_type, source_object_code)
