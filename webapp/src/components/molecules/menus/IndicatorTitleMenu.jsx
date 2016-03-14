@@ -23,12 +23,15 @@ var IndicatorTitleMenu = React.createClass({
     this.setState({ pattern: value })
     this.forceUpdate()
   },
+  indicatorsFilteredBySet(){
+    //grab current indicators based on camp/location.
+    const currentIndicators = this.props.indicators.filter(indicator =>
+        this.props.idsToRender.indexOf(indicator.id) !== -1
+      )
+    return currentIndicators
+  },
 
   filteredMenuItems () {
-    // let initialIndicatorFilter = this.props.indiators.fiter(
-    //     return only indicators in idsToRender array...
-    // )
-    //
     if (this.state.pattern.length > 2) {
       return this.props.indicators.filter(indicator => {
         return new RegExp(this.state.pattern, 'i').test(indicator.name)
@@ -37,8 +40,8 @@ var IndicatorTitleMenu = React.createClass({
       return this.props.indicators
     }
   },
-
   render () {
+    this.props.indicators = this.indicatorsFilteredBySet()
     const indicator_menu_items = this.filteredMenuItems().map(indicator =>
       <TitleMenuItem
         key={'indicator-' + indicator.id}
