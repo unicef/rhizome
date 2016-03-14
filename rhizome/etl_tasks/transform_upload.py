@@ -79,7 +79,8 @@ class DocTransform(object):
         for row in source_dp_json:
             row_dict = json.loads(row[0])
             rg_codes.append(row_dict[self.location_column])
-            cp_codes.append(row_dict[self.campaign_column])
+            if self.campaign_column and self.campaign_column in row_dict:
+                cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
             all_codes.append(('location',r))
