@@ -168,7 +168,8 @@ let ChartWizardStore = Reflux.createStore({
   async initializeLocations () {
     const locations = {}
     locations.raw = await api.locations()
-    locations.index = _.indexBy(locations.raw.objects, 'id')
+    console.log('locations.raw', locations.raw)
+    locations.index = await _.indexBy(locations.raw.objects, 'id')
     locations.list = _(locations.raw.objects).map(location => {
         return {
           'title': location.name,
@@ -191,9 +192,9 @@ let ChartWizardStore = Reflux.createStore({
         locations.selected = [locations.index[selected_location_ids]]
       }
     } else {
-      this.data.locations.selected = []
+      locations.selected = []
     }
-    this.data.lpds = this.getLocationLpdStatuses(_.toArray(this.data.locations.index))
+    this.data.lpds = this.getLocationLpdStatuses(_.toArray(locations.index))
     this.data.locations = locations
     this.trigger(this.data)
   },
