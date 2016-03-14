@@ -9,7 +9,8 @@ var IndicatorTitleMenu = React.createClass({
   propTypes: {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired,
+    idsToRender: React.PropTypes.array
   },
 
   getInitialState () {
@@ -24,6 +25,10 @@ var IndicatorTitleMenu = React.createClass({
   },
 
   filteredMenuItems () {
+    // let initialIndicatorFilter = this.props.indiators.fiter(
+    //     return only indicators in idsToRender array...
+    // )
+    //
     if (this.state.pattern.length > 2) {
       return this.props.indicators.filter(indicator => {
         return new RegExp(this.state.pattern, 'i').test(indicator.name)
