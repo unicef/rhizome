@@ -85,16 +85,21 @@ _.extend(MapLegend.prototype, {
   buildTicksFromBounds: function(options) {
     //green/yellow/red pattern for 0, 1, 2
     //legendText[0] = good bound, [1] = middle, [2] = bad bound
-    var legendTicks = []
+    let legendTicks = []
     if (options.data_format === 'bool') {
       legendTicks[1] = 'No'
       legendTicks[0] = 'Yes'
     } else if (options.data_format === 'pct') {
       options.ticks.bad_bound *= 100;
       options.ticks.good_bound *= 100;
-      legendTicks[2] = options.ticks.reversed ? options.ticks.good_bound+"%-100%" : "0%-"+options.ticks.bad_bound+"%"
       legendTicks[1] = options.ticks.bad_bound+"%-"+options.ticks.good_bound+"%"
-      legendTicks[0] = options.ticks.reversed ? "0%-"+options.ticks.good_bound+"%" : options.ticks.good_bound+"%-100%"
+      if (options.ticks.reversed){
+        legendTicks[0] = "0%-"+options.ticks.bad_bound+"%"
+        legendTicks[2] = options.ticks.good_bound+"%-100%"
+      } else {
+        legendTicks[2] = "0%-"+options.ticks.bad_bound+"%"
+        legendTicks[0] = options.ticks.good_bound+"%-100%"
+      }
     } else {
       //double check actual data with this logic
       legendTicks[2] = options.ticks.good_bound+"-100"
