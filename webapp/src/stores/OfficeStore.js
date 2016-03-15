@@ -35,7 +35,7 @@ var OfficeStore = Reflux.createStore({
     this.setState({
       meta: response.meta,
       raw: response.objects,
-      index: _.indexBy(this.offices.raw, 'id')
+      index: _.indexBy(response.objects, 'id')
     })
   },
   onFetchOfficesFailed (error) {
