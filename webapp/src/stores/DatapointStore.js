@@ -19,14 +19,6 @@ var DatapointStore = Reflux.createStore({
     return this.datapoints
   },
 
-  onRootStore (store) {
-    this.campaignIndex = store.campaignIndex
-    this.chartIndex = store.chartIndex
-    this.locationIndex = store.locationIndex
-    this.indicatorIndex = store.indicatorIndex
-    this.officeIndex = store.officeIndex
-  },
-
   // =========================================================================== //
   //                              API CALL HANDLERS                              //
   // =========================================================================== //
