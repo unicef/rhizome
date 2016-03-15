@@ -73,7 +73,7 @@ var CampaignStore = Reflux.createStore({
       .reverse()
       .value()
       this.campaigns.filtered = this.campaigns.list
-      this.setState(this.campaigns)
+      this.trigger(this.campaigns)
     }
   }
 })

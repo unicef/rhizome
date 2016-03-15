@@ -57,6 +57,14 @@ var ChartStore = Reflux.createStore({
   },
 
   // =========================================================================== //
+  //                            REGULAR ACTION HANDLERS                          //
+  // =========================================================================== //
+  onSetDateRange (key, value) {
+    this.chart.def.start_date = value
+    this.trigger(this.chart)
+  },
+
+  // =========================================================================== //
   //                            OTHER STORE DEPENDECIES                          //
   // =========================================================================== //
   onDatapointStore (datapoints) {

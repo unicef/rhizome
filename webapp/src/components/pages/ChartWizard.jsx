@@ -17,15 +17,17 @@ import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import ChartStore from 'stores/ChartStore'
+import ChartWizardStore from 'stores/ChartWizardStore'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 
 const ChartWizard = React.createClass({
   mixins: [
+    Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(IndicatorStore, 'indicators'),
-    Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(CampaignStore, 'campaigns'),
+    Reflux.connect(ChartWizardStore, 'chart_wizard'),
     Reflux.connect(ChartStore, 'chart')
   ],
 
@@ -50,12 +52,13 @@ const ChartWizard = React.createClass({
   },
 
   render () {
+    console.log('this.initDataReady()', this.initDataReady())
     if (!this.initDataReady()) {
       return <div>Loading...</div>
     }
     const chart = this.state.chart
-    const start_date = chart.def ? moment(chart.def.startDate, 'YYYY-MM-DD').toDate() : moment()
-    const end_date = chart.def ? moment(chart.def.endDate, 'YYYY-MM-DD').toDate() : moment()
+    const start_date = chart.def.start_date  ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment().format('YYYY-MM-DD')
+    const end_date = chart.def.end_date ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment().subtract(1, 'y').format('YYYY-MM-DD')
 
     return (
       <section className='chart-wizard'>
@@ -64,8 +67,7 @@ const ChartWizard = React.createClass({
           start_date={start_date}
           end_date={end_date}
           indicators={this.state.indicators}
-          locations={this.state.locations}
-          setDateRange={ChartWizardActions.updateDateRangePicker} />
+          locations={this.state.locations} />
         <ChartProperties
           selected_chart_type={this.state.chart.def.type}
           selected_palette={this.state.chart.def.palette}

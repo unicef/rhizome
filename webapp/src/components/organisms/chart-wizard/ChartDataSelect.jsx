@@ -5,6 +5,7 @@ import List from 'components/molecules/list/List'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
+import ChartActions from 'actions/ChartActions'
 import LocationActions from 'actions/LocationActions'
 import IndicatorActions from 'actions/IndicatorActions'
 
@@ -20,8 +21,7 @@ const ChartDataSelect = React.createClass({
     indicators: PropTypes.shape({
       list: PropTypes.array,
       selected: PropTypes.array
-    }),
-    setDateRange: PropTypes.func
+    })
   },
 
   render () {
@@ -36,7 +36,7 @@ const ChartDataSelect = React.createClass({
         <div>
           <h3>Time</h3>
           <DateRangePicker
-            sendValue={props.setDateRange}
+            sendValue={ChartActions.setDateRange}
             start={props.start_date}
             end={props.end_date}
             fromComponent='ChartWizard'
