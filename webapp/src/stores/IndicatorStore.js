@@ -78,8 +78,9 @@ var IndicatorStore = Reflux.createStore({
     _.remove(this.indicators.selected, {id: id})
     this.trigger(this.indicators)
   },
-  onReorderIndicator (id) {
-    console.log('onReorderIndicator', id)
+  onReorderIndicator (selected_indicators) {
+    this.indidcators.selected = selected_indicators
+    this.trigger(this.indicators)
   },
   onClearSelectedIndicators (id) {
     this.indicators.selected = []
