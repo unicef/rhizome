@@ -10,7 +10,6 @@ var EocPreCampaign = React.createClass({
   propTypes: {
     dashboard: React.PropTypes.object.isRequired,
     indicators: React.PropTypes.array.isRequired,
-    campaign: React.PropTypes.object,
     data: React.PropTypes.object,
     loading: React.PropTypes.bool,
     location: React.PropTypes.object

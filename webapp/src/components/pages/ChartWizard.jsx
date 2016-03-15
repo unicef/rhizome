@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 import api from 'data/api'
 
+import ChartInit from 'components/molecules/charts_d3/ChartInit'
 import Chart from 'components/molecules/Chart'
 import DownloadButton from 'components/molecules/DownloadButton'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -16,6 +17,7 @@ import ChartActions from 'actions/ChartActions'
 import ChartWizardStore from 'stores/ChartWizardStore'
 import ChartStore from 'stores/ChartStore'
 import ChartAPI from 'data/requests/ChartAPI'
+
 
 const defaultChartDef = {
   type: 'RawData',
@@ -81,7 +83,6 @@ let ChartWizard = React.createClass({
   },
 
   render: function () {
-    const data = this.state
     const chartDef = this.state.chart.def
     const start_date = chartDef ? moment(chartDef.startDate, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chartDef ? moment(chartDef.endDate, 'YYYY-MM-DD').toDate() : moment()
@@ -91,6 +92,21 @@ let ChartWizard = React.createClass({
     }
 
     const download_button = <DownloadButton onClick={this._downloadRawData} enable={this.state.rawData} text='Download Raw Data' working='Downloading' cookieName='dataBrowserCsvDownload'/>
+
+    const data = this.state.ThisChart.chart_data
+    if (data) {
+      const features = features // To do
+      const results = ChartInit.chartInit(
+        this.state.chart.def,
+        data,
+        this.state.locations.selected,
+        this.state.campaigns.selected,
+        this.state.locations.index,
+        this.state.campaigns.index,
+        this.state.indicators.index,
+        features
+      )
+    }
 
     const chart = (
       <Chart

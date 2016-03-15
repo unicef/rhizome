@@ -22,7 +22,7 @@ const ChartInfo = {
     }
     let newOptions = _.clone(chartInfo.options)
     newOptions.indicatorsSelected = selectedIndicators
-    newOptions.color = chartDef.palette ? palettes[chartDef.palette] : null
+    newOptions.color = chartDef.palette ? palettes[chartDef.palette] : palettes['traffic_light']
     newOptions.chartInDashboard = true
     if (chartInfo.options) {
       newOptions.yFormat = !chartInfo.options.yFormat ? d3.format(chartDef.yFormat) : null
