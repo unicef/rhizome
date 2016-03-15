@@ -1,8 +1,9 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
-import RootStore from 'stores/RootStore'
 import ChartActions from 'actions/ChartActions'
+import DatapointActions from 'actions/DatapointActions'
+import DatapointStore from 'stores/DatapointStore'
 
 var ChartStore = Reflux.createStore({
 
@@ -11,28 +12,33 @@ var ChartStore = Reflux.createStore({
   listenables: ChartActions,
 
   init () {
-    this.listenTo(RootStore, this.onRootStore)
+    this.listenTo(DatapointStore, this.onDatapointStore)
+  },
+
+  chart: {
+    def: {
+      type: 'RawData',
+      indicator_ids: [28, 34],
+      location_ids: [1],
+      countries: [],
+      groupBy: 'indicator',
+      timeRange: null,
+      x: 0,
+      xFormat: ',.0f',
+      y: 0,
+      yFormat: ',.0f',
+      z: 0
+    },
+    data: null,
+    loading: false
   },
 
   getInitialState () {
-    return {
-      chart_def: null,
-      chart_data: null,
-      datapoints: null,
-      loading: false
-    }
-  },
-
-  onRootStore (store) {
-    this.campaignIndex = store.campaignIndex
-    this.chartIndex = store.chartIndex
-    this.locationIndex = store.locationIndex
-    this.indicatorIndex = store.indicatorIndex
-    this.officeIndex = store.officeIndex
+    return this.chart
   },
 
   // =========================================================================== //
-  //                              API CALL HANDLERS                              //
+  //                               API CALL HANDLERS                             //
   // =========================================================================== //
 
   // ===============================  Fetch Chart  ============================= //
@@ -40,37 +46,44 @@ var ChartStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onFetchChartCompleted (response) {
-    const chart_def = response.chart_json
-    chart_def.id = response.id
-    chart_def.title = response.title
-    ChartActions.fetchChartDatapoints(chart_def)
-    this.setState({ chart_def: chart_def, loading: false })
+    this.chart.def = response.chart_json
+    this.chart.def.id = response.id
+    this.chart.def.title = response.title
+    DatapointActions.fetchDatapoints(this.chart.def)
+    this.setState(this.chart)
   },
   onFetchChartFailed (error) {
-    this.setState({ chart_def: error, loading: false })
+    this.setState({ error: error })
   },
 
-  // ==========================  Fetch Chart Datapoints  ======================== //
-  onFetchChartDatapoints () {
-    this.setState({ loading: true })
+  // =========================================================================== //
+  //                            REGULAR ACTION HANDLERS                          //
+  // =========================================================================== //
+  onSetDateRange (key, value) {
+    this.chart.def.start_date = value
+    this.trigger(this.chart)
   },
-  onFetchChartDatapointsCompleted (response) {
-    const chart_data = _(response.objects)
+
+  // =========================================================================== //
+  //                            OTHER STORE DEPENDECIES                          //
+  // =========================================================================== //
+  onDatapointStore (datapoints) {
+    this.chart.data = _(datapoints.raw)
       .flatten()
       .sortBy(_.method('campaign.start_date.getTime'))
-      .map(melt)
+      .map(this.melt)
       .flatten()
       .value()
-    this.setState({ datapoints: response, loading: false, chart_data: chart_data })
+    this.setState(this.chart)
   },
-  onFetchChartDatapointsFailed (error) {
-    this.setState({ datapoints: error, loading: false })
+
+  // =========================================================================== //
+  //                                   UTILITIES                                 //
+  // =========================================================================== //
+  melt (datapoint) {
+    const base = _.omit(datapoint, 'indicators')
+    return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
   }
 })
-
-function melt (d) {
-  const base = _.omit(d, 'indicators')
-  return d.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
-}
 
 export default ChartStore

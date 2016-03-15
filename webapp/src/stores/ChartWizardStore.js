@@ -168,7 +168,6 @@ let ChartWizardStore = Reflux.createStore({
   async initializeLocations () {
     const locations = {}
     locations.raw = await api.locations()
-    console.log('locations.raw', locations.raw)
     locations.index = await _.indexBy(locations.raw.objects, 'id')
     locations.list = _(locations.raw.objects).map(location => {
         return {
@@ -334,7 +333,7 @@ let ChartWizardStore = Reflux.createStore({
     let campaigns = {}
     let campaigns_response = await api.campaign()
     campaigns.raw = campaigns_response.objects
-    campaigns.index = _.indexBy(this.data.campaigns.list, 'id')
+    campaigns.index = _.indexBy(campaigns.raw, 'id')
     campaigns.list = _(campaigns.raw)
       .map(campaign => {
         return _.assign({}, campaign, {

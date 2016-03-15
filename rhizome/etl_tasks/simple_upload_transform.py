@@ -39,8 +39,6 @@ class SimpleDocTransform(DocTransform):
             'campaign':{}
         }
 
-        self.build_meta_lookup()
-
         return super(SimpleDocTransform, self).__init__(user_id,document_id)
 
     def build_meta_lookup(self):
@@ -78,13 +76,25 @@ class SimpleDocTransform(DocTransform):
 
     def main(self):
 
-        self.file_to_source_submissions()
-        self.upsert_source_object_map()
+        ## only ingest submissions and upsert meta data if this is the first  ##
+        ## time the document is being processed ##
+        if not DocumentSourceObjectMap.objects.filter(document_id = self.document.id):
+            self.file_to_source_submissions()
+            self.build_meta_lookup()
+            self.upsert_source_object_map()
 
-        for row in SourceSubmission.objects.filter(document_id = \
-            self.document.id):
+        self.build_meta_lookup()
 
-            self.process_source_submission(row)
+        all_data, all_unique_keys = [], []
+        for row in SourceSubmission.objects.filter(document_id = self.document.id):
+            row_batch, dwc_list_of_lists = self.process_source_submission(row)
+            if row_batch:
+                all_data.extend(row_batch)
+                all_unique_keys.extend(dwc_list_of_lists)
+
+        dwc_ids_to_delete = self.get_dwc_ids_to_delete(all_unique_keys)
+        DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
+        DataPointComputed.objects.bulk_create(all_data)
 
     def process_raw_source_submission(self, submission):
 
@@ -117,13 +127,14 @@ class SimpleDocTransform(DocTransform):
         dwc_batch, dwc_list_of_lists = [], []
         submission  = row.submission_json
 
-
         try:
             location_id = self.meta_lookup['location'][row.location_code]
             campaign_id = self.meta_lookup['campaign'][row.campaign_code]
         except KeyError:
-            # raise RowMapErrorException -- ## no mapping for campaign/location
-            return
+            None, None
+
+        if location_id == -1 or campaign_id == 1:
+            return None, None
 
         for k,v in submission.iteritems():
 
@@ -133,12 +144,9 @@ class SimpleDocTransform(DocTransform):
                 dwc_batch.append(dwc_obj)
                 dwc_list_of_lists.append([location_id,indicator_id,campaign_id])
 
-        dwc_ids_to_delete = self.get_dwc_ids_to_delete(dwc_list_of_lists)
-        DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
-        DataPointComputed.objects.bulk_create(dwc_batch)
+        return dwc_batch, dwc_list_of_lists
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
-
         value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0, '': None}
 
         try:
@@ -148,6 +156,7 @@ class SimpleDocTransform(DocTransform):
 
         try:
             indicator_id = self.meta_lookup['indicator'][k]
+
         except KeyError:
             return None, None
 
@@ -163,7 +172,6 @@ class SimpleDocTransform(DocTransform):
             return None, None
 
         if indicator_id:
-
             dwc_obj = DataPointComputed(**{
                     'location_id': location_id,
                     'indicator_id' : indicator_id,
@@ -172,8 +180,9 @@ class SimpleDocTransform(DocTransform):
                     'cache_job_id': -1,
                     'document_id': self.document.id
                 })
-
             return dwc_obj, indicator_id
+
+
 
     def get_dwc_ids_to_delete(self, dwc_list_of_lists):
 

@@ -19,6 +19,7 @@ class TableChart extends Component {
 	            headers: props.indicators,
 	            xDomain: _.map(props.indicators, 'short_name'),
 	            defaultSortOrder: props.defaultSortOrder,
+              parentLocationMap: props.parentLocationMap,
 	            margin: props.margin
 	          }}
 	        />
