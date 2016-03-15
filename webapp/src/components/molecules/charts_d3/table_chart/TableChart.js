@@ -79,7 +79,9 @@ _.extend(TableChart.prototype, {
     // hacky way to scale the view box.. this should be done by taking into account the user's screen size
     const calculatedHeightScale = 1 + (options.headers.length - 8) / 10
     const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
-    const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
+
+    const viewBoxWidth = w + margin.left + margin.right - 150
+    const viewBox = '0 0 ' + viewBoxWidth + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     const svg = this._svg
       .attr({
         'viewBox': viewBox,
@@ -169,17 +171,17 @@ _.extend(TableChart.prototype, {
     // Z AXIS
     // ---------------------------------------------------------------------------
     // the z axis shows the parent location//
-    // svg.select('.z.axis')
-    //   .transition().duration(500)
-    //   .attr({'transform': 'translate(0,10)'})
-    //   .call(d3.svg.axis()
-    //     .scale(yScale)
-    //     .tickFormat(d => { return options.parentLocationMap[d].parent_location__name })
-    //     .orient('left')
-    //     .outerTickSize(0))
-    // svg.selectAll('.z.axis text')
-    //   .style('font-size', options.fontSize)
-    //   .on('click', (d, i) => { options.onRowClick(d, i, this) })
+
+    svg.select('.z.axis')
+      .transition().duration(500)
+      .attr({'transform': 'translate(20,10)'})
+      .call(d3.svg.axis()
+        .scale(yScale)
+        .tickFormat(d => { return options.parentLocationMap[d].parent_location__name }) .orient('left')
+        .outerTickSize(0))
+    svg.selectAll('.z.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', (d, i) => options.onRowClick(options.parentLocationMap[d].parent_location__name, i, this))
 
     // FOOTER
     // ---------------------------------------------------------------------------

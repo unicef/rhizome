@@ -218,40 +218,16 @@ var Dashboard = React.createClass({
 
     let dashboardDef = this.state.dashboard
 
-    let dashboard
-    let data = DashboardInit.dashboardInit(
-      dashboardDef,
-      this.state.data,
-      location,
-      campaign,
-      this.state.locations,
-      this.state.allCampaigns,
-      GeoStore.features
-    )
     let dashboardProps = {
       campaign: campaign,
       dashboard: dashboardDef,
-      data: data,
+      data: [],
       loading: loading,
       location: location,
       doc_tab: doc_tab,
       doc_id: doc_id
     }
-    dashboard = React.createElement(SourceData, dashboardProps)
-
-    let campaigns = _(this.state.campaigns)
-      .map(campaign => {
-        return _.assign({}, campaign, {
-          slug: moment(campaign.start_date).format('MMMM YYYY')
-        })
-      })
-      .sortBy('start_date')
-      .reverse()
-      .value()
-
-    if (campaign.office_id !== location.office_id) {
-      campaign = campaigns[0]
-    }
+    let dashboard = React.createElement(SourceData, dashboardProps)
 
     return (
       <div>
