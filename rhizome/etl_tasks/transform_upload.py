@@ -89,7 +89,7 @@ class DocTransform(object):
         for c in list(set(cp_codes)):
             all_codes.append(('campaign',c))
 
-        som_df = DataFrame(all_codes, columns = \
+        doc_som_df = DataFrame(all_codes, columns = \
             ['content_type','source_object_code'])
 
         som_columns = ['id','source_object_code','master_object_id',\
@@ -98,13 +98,12 @@ class DocTransform(object):
         existing_som_df = DataFrame(list(SourceObjectMap.objects.all()\
             .values_list(*som_columns)),columns=som_columns)
 
-        merged_df = som_df.merge(existing_som_df, on=['content_type',\
+        merged_df = doc_som_df.merge(existing_som_df, on=['content_type',\
             'source_object_code'], how='left')
 
         to_insert_df = merged_df[merged_df.isnull().any(axis=1)]
 
         to_insert_dict = to_insert_df.transpose().to_dict()
-
 
         to_insert_batch = [SourceObjectMap(** {
             'source_object_code' : data['source_object_code'],
@@ -116,15 +115,17 @@ class DocTransform(object):
 
         all_som_df = DataFrame(list(SourceObjectMap.objects.all()\
             .values_list(*som_columns)),columns=som_columns)
-        
-        #TODO some exception if number of rows not equal to rows in submission?
-        merge_all = som_df.merge(all_som_df, on=['content_type',\
-            'source_object_code'], how='left')
+
+        # TODO some exception if number of rows not equal to rows in submission #
+        post_insert_som_df = doc_som_df.merge(all_som_df, on=['content_type',\
+            'source_object_code'], how='inner')
+
+        som_ids_for_doc = list(post_insert_som_df['id'].unique())
 
         dsom_to_insert = [DocumentSourceObjectMap(** {
             'document_id' : self.document.id,
-            'source_object_map_id': data.id,
-        }) for idx, data in merge_all.iterrows()]
+            'source_object_map_id': som_id,
+        }) for som_id in som_ids_for_doc]
 
         dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(dsom_to_insert)
 

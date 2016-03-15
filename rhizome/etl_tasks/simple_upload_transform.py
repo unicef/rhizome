@@ -76,10 +76,12 @@ class SimpleDocTransform(DocTransform):
 
     def main(self):
 
-        self.file_to_source_submissions()
-        # if not DocOBjectMap.objects.filter(document_id = self.document.id):
-        self.upsert_source_object_map()
-        self.build_meta_lookup()
+        ## only ingest submissions and upsert meta data if this is the first  ##
+        ## time the document is being processed ##
+        if not DocumentSourceObjectMap.objects.filter(document_id = self.document.id):
+            self.file_to_source_submissions()
+            self.upsert_source_object_map()
+            self.build_meta_lookup()
 
         for row in SourceSubmission.objects.filter(document_id = \
             self.document.id):
@@ -171,7 +173,7 @@ class SimpleDocTransform(DocTransform):
                 })
             return dwc_obj, indicator_id
 
-        
+
 
     def get_dwc_ids_to_delete(self, dwc_list_of_lists):
 
