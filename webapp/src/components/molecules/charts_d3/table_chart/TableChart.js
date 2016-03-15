@@ -290,7 +290,7 @@ _.extend(TableChart.prototype, {
       .style('opacity', e => seriesName(e) === d[0].name ? 1 : 0.3)
   },
   _onRowClick: function (d) {
-    console.log('row clicked', d)
+    // console.log('row clicked', d)
   },
   _onRowOut: function () {
     this._svg.selectAll('.row')
