@@ -79,6 +79,7 @@ class SimpleDocTransform(DocTransform):
     def main(self):
 
         self.file_to_source_submissions()
+        # if not DocOBjectMap.objects.filter(document_id = self.document.id):
         self.upsert_source_object_map()
 
         for row in SourceSubmission.objects.filter(document_id = \

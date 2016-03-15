@@ -46,6 +46,7 @@ class DocTransform(object):
         if self.user_id > 0:
             upload_user_id = self.user_id
 
+
         sm_obj, created = SourceObjectMap.objects.get_or_create(\
             content_type = content_type\
            ,source_object_code = str(source_object_code)\
@@ -88,8 +89,36 @@ class DocTransform(object):
         for c in list(set(cp_codes)):
             all_codes.append(('campaign',c))
 
-        for content_type, source_object_code in all_codes:
-            self.source_submission_meta_upsert(content_type, source_object_code)
+        som_df = DataFrame(all_codes, columns = \
+            ['content_type','source_object_code'])
+
+        som_columns = ['id','source_object_code','master_object_id',\
+            'content_type']
+
+        existing_som_df = DataFrame(list(SourceObjectMap.objects.all()\
+            .values_list(*som_columns)),columns=som_columns)
+
+        merged_df = som_df.merge(existing_som_df, on=['content_type',\
+            'source_object_code'], how='left')
+
+        # print '= MERGED DF='
+        # print merged_df.isnull()
+
+        to_insert_df = merged_df[merged_df.isnull().any(axis=1)]
+        to_insert_dict = to_insert_df.transpose().to_dict()
+
+        to_insert_batch = [SourceObjectMap(** {
+            'source_object_code' : data['source_object_code'],
+            'master_object_id': -1,
+            'content_type': data['content_type']
+        }) for ix, data in to_insert_dict.iteritems()]
+
+        #
+        batch_result = SourceObjectMap.objects.bulk_create(to_insert_batch)
+        existing_som_ids = list(merged_df['id'].unique())
+
+        # for content_type, source_object_code in all_codes:
+        #     self.source_submission_meta_upsert(content_type, source_object_code)
 
 
 
