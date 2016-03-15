@@ -83,9 +83,16 @@ class SimpleDocTransform(DocTransform):
             self.upsert_source_object_map()
             self.build_meta_lookup()
 
+        all_data, all_unique_keys = [], []
         for row in SourceSubmission.objects.filter(document_id = \
             self.document.id):
-            self.process_source_submission(row)
+            row_batch, dwc_list_of_lists = self.process_source_submission(row)
+            all_data.extend(row_batch)
+            all_unique_keys.extend(dwc_list_of_lists)
+
+        dwc_ids_to_delete = self.get_dwc_ids_to_delete(all_unique_keys)
+        DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
+        DataPointComputed.objects.bulk_create(all_data)
 
     def process_raw_source_submission(self, submission):
 
@@ -133,9 +140,8 @@ class SimpleDocTransform(DocTransform):
             if dwc_obj:
                 dwc_batch.append(dwc_obj)
                 dwc_list_of_lists.append([location_id,indicator_id,campaign_id])
-        dwc_ids_to_delete = self.get_dwc_ids_to_delete(dwc_list_of_lists)
-        DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
-        DataPointComputed.objects.bulk_create(dwc_batch)
+
+        return dwc_batch, dwc_list_of_lists
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
         value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0, '': None}
