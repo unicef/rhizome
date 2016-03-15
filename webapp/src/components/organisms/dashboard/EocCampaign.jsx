@@ -42,7 +42,16 @@ var EocPreCampaign = React.createClass({
     }
     return colorScale
   },
-
+  reverseBounds: function(bounds){
+    bounds.reversed = false
+    if (bounds.bad_bound > bounds.good_bound){
+      var temp = bounds.bad_bound
+      bounds.bad_bound = bounds.good_bound
+      bounds.good_bound = temp
+      bounds.reversed = true
+    }
+    return bounds
+  },
   render () {
     const data = this.props.data
     const loading = this.props.loading
@@ -78,7 +87,8 @@ var EocPreCampaign = React.createClass({
     // CHOROPLETH MAP
     // ----------------------------------------------------------------------------------------------
     const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
-    const indicatorTicks = [0]
+
+    //for legend text
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
@@ -101,6 +111,7 @@ var EocPreCampaign = React.createClass({
               data_format: mapIndicator.data_format,
               color: this.getColorScale(mapIndicator),
               aspect: 3.5,
+              ticks: this.reverseBounds({bad_bound: mapIndicator.bad_bound, good_bound: mapIndicator.good_bound}),
               yFormat: this.getChartFormat(mapIndicator),
               domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
               value: _.property(`properties[${mapIndicator.id}]`),
