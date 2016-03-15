@@ -80,8 +80,10 @@ class SimpleDocTransform(DocTransform):
         ## time the document is being processed ##
         if not DocumentSourceObjectMap.objects.filter(document_id = self.document.id):
             self.file_to_source_submissions()
-            self.upsert_source_object_map()
             self.build_meta_lookup()
+            self.upsert_source_object_map()
+
+        self.build_meta_lookup()
 
         all_data, all_unique_keys = [], []
         for row in SourceSubmission.objects.filter(document_id = \
@@ -125,12 +127,10 @@ class SimpleDocTransform(DocTransform):
         dwc_batch, dwc_list_of_lists = [], []
         submission  = row.submission_json
 
-
         try:
             location_id = self.meta_lookup['location'][row.location_code]
             campaign_id = self.meta_lookup['campaign'][row.campaign_code]
         except KeyError:
-            # raise RowMapErrorException -- ## no mapping for campaign/location
             return
 
         for k,v in submission.iteritems():
