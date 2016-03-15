@@ -105,18 +105,28 @@ _.extend(MapLegend.prototype, {
       const colorScale = d3.scale.quantize()
         .domain(domain)
         .range(colors)
-
-      const ticks = colorScale.range().map((color, d) => {
-        if (options.data_format === 'bool') {
-          return d !== 1 ? 'Yes' : 'No'
-        } else {
-          return colorScale.invertExtent(color).map(options.yFormat).join('—')
-        }
-      })
+      // const boundsReversed = ind.bad_bound > ind.good_bound
+      // const names = boundsReversed ? ['good', 'ok', 'bad'] : ['bad', 'ok', 'good']
+      // const extents = boundsReversed ? [ ind.good_bound, ind.bad_bound ] : [ ind.bad_bound, ind.good_bound ]
+      var legendText = []
+      if (options.data_format === 'bool') {
+        legendText[1] = 'No'
+        legendText[0] = 'Yes'
+      } else if (options.data_format === 'pct') {
+        //red/yellow/green pattern for 0, 1, 2
+        legendText[2] = "0%-"+domain[0]+"%"
+        legendText[1] = domain[0]+"%-"+domain[1]+"%"
+        legendText[0] = domain[1]+"%-100%"
+      } else {
+        //double check actual data with this logic
+        legendText[2] = domain[1]+"-100"
+        legendText[1] = domain[0]+"-"+domain[1]
+        legendText[0] = "0-"+domain[0]
+      }
 
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal()
-        .domain(ticks)
+        .domain(legendText)
         .range(colorScale.range())))
       .attr('transform', () => 'translate(2, 0)')
     }
