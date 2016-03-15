@@ -231,11 +231,11 @@ class DatapointResource(BaseNonModelResource):
 
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
-                .values_list('name',flat=True)\
-                .order_by('location_type_id','name')
+                .values('name','parent_location__name')\
+                .order_by('parent_location__name')
 
-            # data['meta']['parent_location_list'] = [l for l in p_loc_qs]
-            data['meta']['default_sort_order'] = list(p_loc_qs)
+            data['meta']['parent_location_map'] = [l for l in p_loc_qs]
+            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
         data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
 

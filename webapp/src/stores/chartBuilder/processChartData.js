@@ -482,7 +482,7 @@ export default {
         },
         cellFontSize: 14,
         headers: [],
-        parentLocationMap: _.indexBy(datapoints.meta.parent_location_list, 'name'),
+        parentLocationMap: _.indexBy(datapoints.meta.parent_location_map, 'name'),
         defaultSortOrder: datapoints.meta.default_sort_order
       }
       let addedHeaders = {}
