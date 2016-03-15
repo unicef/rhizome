@@ -86,11 +86,11 @@ class SimpleDocTransform(DocTransform):
         self.build_meta_lookup()
 
         all_data, all_unique_keys = [], []
-        for row in SourceSubmission.objects.filter(document_id = \
-            self.document.id):
+        for row in SourceSubmission.objects.filter(document_id = self.document.id):
             row_batch, dwc_list_of_lists = self.process_source_submission(row)
-            all_data.extend(row_batch)
-            all_unique_keys.extend(dwc_list_of_lists)
+            if row_batch:
+                all_data.extend(row_batch)
+                all_unique_keys.extend(dwc_list_of_lists)
 
         dwc_ids_to_delete = self.get_dwc_ids_to_delete(all_unique_keys)
         DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
@@ -131,7 +131,10 @@ class SimpleDocTransform(DocTransform):
             location_id = self.meta_lookup['location'][row.location_code]
             campaign_id = self.meta_lookup['campaign'][row.campaign_code]
         except KeyError:
-            return
+            None, None
+
+        if location_id == -1 or campaign_id == 1:
+            return None, None
 
         for k,v in submission.iteritems():
 
