@@ -1,12 +1,40 @@
-import React, { Component, PropTypes } from 'react'
+import _ from 'lodash'
+import React, { PropTypes } from 'react'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import List from 'components/molecules/list/List'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
-class ChartProperties extends Component {
-  render = () => {
+import LocationActions from 'actions/LocationActions'
+import IndicatorActions from 'actions/IndicatorActions'
+
+const ChartDataSelect = React.createClass({
+  propTypes: {
+    start_date: PropTypes.string,
+    end_date: PropTypes.string,
+    locations: PropTypes.shape({
+      lpd_statuses: PropTypes.array,
+      filtered: PropTypes.array,
+      selected: PropTypes.array
+    }),
+    indicators: PropTypes.shape({
+      list: PropTypes.array,
+      selected: PropTypes.array
+    }),
+    setDateRange: PropTypes.func
+  },
+
+  shouldComponentUpdate (nextProps, nextState) {
+    return !_.isEmpty(nextState.indicators.raw) && !_.isEmpty(nextState.locations.raw)
+  },
+
+  render () {
     const props = this.props
+    const location_options = [
+      { title: 'by Status', value: props.locations.lpd_statuses },
+      { title: 'by Country', value: props.locations.filtered || [] }
+    ]
+
     return (
       <div className='medium-3 columns'>
         <div>
@@ -24,52 +52,34 @@ class ChartProperties extends Component {
             <h3>
               Indicators
               <DropdownMenu
-                items={props.all_indicators}
-                items={props.all_indicators}
-                sendValue={props.addIndicator}
+                items={props.indicators.list}
+                sendValue={IndicatorActions.addIndicator}
                 item_plural_name='Indicators'
                 style='icon-button right'
                 icon='fa-plus' />
             </h3>
-            <a className='remove-filters-link' onClick={props.clearIndicators}>Remove All </a>
-            <ReorderableList items={props.selected_indicators} removeItem={props.removeIndicator} dragItem={props.reorderIndicator} />
+            <a className='remove-filters-link' onClick={IndicatorActions.clearSelectedIndicators}>Remove All </a>
+            <ReorderableList items={props.indicators.selected} removeItem={IndicatorActions.removeIndicator} dragItem={IndicatorActions.reorderIndicator} />
           </div>
           <div className='medium-6 columns'>
             <h3>
               Locations
               <DropdownMenu
-                items={props.all_locations}
-                sendValue={props.addLocation}
+                items={location_options}
+                sendValue={LocationActions.selectLocation}
                 item_plural_name='Locations'
                 style='icon-button right'
                 icon='fa-plus'
                 grouped/>
             </h3>
-            <a className='remove-filters-link' onClick={props.clearSelectedLocations}>Remove All </a>
-            <List items={props.selected_locations} removeItem={props.removeLocation} />
+            <a className='remove-filters-link' onClick={LocationActions.clearSelectedLocations}>Remove All </a>
+            <List items={props.locations.selected} removeItem={LocationActions.deselectLocation} />
             <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
           </div>
         </div>
       </div>
     )
   }
-}
+})
 
-ChartProperties.propTypes = {
-  start_date: PropTypes.string,
-  end_date: PropTypes.string,
-  all_indicators: PropTypes.array,
-  all_locations: PropTypes.array,
-  selected_indicators: PropTypes.array,
-  selected_locations: PropTypes.array,
-  addLocation: PropTypes.func,
-  removeLocation: PropTypes.func,
-  addIndicator: PropTypes.func,
-  reorderIndicator: PropTypes.func,
-  removeIndicator: PropTypes.func,
-  clearSelectedIndicators: PropTypes.func,
-  clearSelectedLocations: PropTypes.func,
-  setDateRange: PropTypes.func
-}
-
-export default ChartProperties
+export default ChartDataSelect
