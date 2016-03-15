@@ -50,7 +50,7 @@ var CampaignStore = Reflux.createStore({
   },
 
   // =========================================================================== //
-  //                              OTHER STORE DEPENDECIES                        //
+  //                            OTHER STORE DEPENDECIES                          //
   // =========================================================================== //
   onOfficeStore (offices) {
     this.offices_index = offices.index
@@ -58,7 +58,7 @@ var CampaignStore = Reflux.createStore({
   },
 
   // =========================================================================== //
-  //                                    UTILITIES                                //
+  //                                  UTILITIES                                  //
   // =========================================================================== //
   processCampaigns () {
     if (this.campaigns.raw && this.offices_index) {

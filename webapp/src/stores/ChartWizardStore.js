@@ -333,7 +333,7 @@ let ChartWizardStore = Reflux.createStore({
     let campaigns = {}
     let campaigns_response = await api.campaign()
     campaigns.raw = campaigns_response.objects
-    campaigns.index = _.indexBy(this.data.campaigns.list, 'id')
+    campaigns.index = _.indexBy(campaigns.raw, 'id')
     campaigns.list = _(campaigns.raw)
       .map(campaign => {
         return _.assign({}, campaign, {
