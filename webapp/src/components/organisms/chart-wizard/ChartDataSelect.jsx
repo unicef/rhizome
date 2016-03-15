@@ -24,10 +24,6 @@ const ChartDataSelect = React.createClass({
     setDateRange: PropTypes.func
   },
 
-  shouldComponentUpdate (nextProps, nextState) {
-    return !_.isEmpty(nextState.indicators.raw) && !_.isEmpty(nextState.locations.raw)
-  },
-
   render () {
     const props = this.props
     const location_options = [
@@ -53,13 +49,13 @@ const ChartDataSelect = React.createClass({
               Indicators
               <DropdownMenu
                 items={props.indicators.list}
-                sendValue={IndicatorActions.addIndicator}
+                sendValue={IndicatorActions.selectIndicator}
                 item_plural_name='Indicators'
                 style='icon-button right'
                 icon='fa-plus' />
             </h3>
             <a className='remove-filters-link' onClick={IndicatorActions.clearSelectedIndicators}>Remove All </a>
-            <ReorderableList items={props.indicators.selected} removeItem={IndicatorActions.removeIndicator} dragItem={IndicatorActions.reorderIndicator} />
+            <ReorderableList items={props.indicators.selected} removeItem={IndicatorActions.deselectIndicator} dragItem={IndicatorActions.reorderIndicator} />
           </div>
           <div className='medium-6 columns'>
             <h3>

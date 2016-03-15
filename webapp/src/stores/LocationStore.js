@@ -64,6 +64,18 @@ var LocationStore = Reflux.createStore({
       this.setState({ selected: [this.locations.index[location_ids]] })
     }
   },
+  onSelectLocation (id) {
+    this.locations.selected.push(this.locations.index[id])
+    this.setState(this.locations)
+  },
+  onDeselectLocation (id) {
+    _.remove(this.locations.selected, {id: id})
+    this.setState(this.locations)
+  },
+  onClearSelectedLocations (id) {
+    this.locations.selected = []
+    this.setState(this.locations)
+  },
 
   // =========================================================================== //
   //                                   UTILITIES                                 //

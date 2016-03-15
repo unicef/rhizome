@@ -70,6 +70,28 @@ var IndicatorStore = Reflux.createStore({
       this.setState({ selected: [this.indicators.index[indicator_ids]] })
     }
   },
+  onSelectIndicator (id) {
+    // console.log('this.state', this.state)
+    this.indicators.selected.push(this.indicators.index[id])
+    // console.log('indicator selected: ', this.indicators.selected)
+    // this.setState({selected: this.indicators.selected})
+    // console.log('this', this)
+    // console.log('this.indicators', this.indicators)
+    // this.setState(this.indicators)
+    this.trigger(this.indicators)
+
+  },
+  onDeselectIndicator (id) {
+    _.remove(this.indicators.selected, {id: id})
+    this.setState(this.indicators)
+  },
+  onReorderIndicator (id) {
+    console.log('onReorderIndicator', id)
+  },
+  onClearSelectedIndicators (id) {
+    this.indicators.selected = []
+    this.setState(this.indicators)
+  },
 
   // =========================================================================== //
   //                                   UTILITIES                                 //
