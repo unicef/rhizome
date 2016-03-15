@@ -7,25 +7,25 @@ const DatapointActions = Reflux.createActions({
 
 // API CALLS
 // ---------------------------------------------------------------------------
-DatapointActions.fetchDatapoints.listen(chartDef => {
-  const query = _prepDatapointsQuery(chartDef)
+DatapointActions.fetchDatapoints.listen(params => {
+  const query = _prepDatapointsQuery(params)
   DatapointActions.fetchDatapoints.promise(api.datapoints(query))
 })
 
 // ACTION HELPERS
 // ---------------------------------------------------------------------------
-const _prepDatapointsQuery = (chartDef) => {
+const _prepDatapointsQuery = (params) => {
   let query = {
-    indicator__in: chartDef.indicator_ids,
-    campaign_start: chartDef.startDate,
-    campaign_end: chartDef.endDate,
-    chart_type: chartDef.type
+    indicator__in: params.indicator_ids,
+    campaign_start: params.startDate,
+    campaign_end: params.endDate,
+    chart_type: params.type
   }
 
-  if (chartDef.type === 'ChoroplethMap') {
-    query['parent_location_id__in'] = chartDef.location_ids
+  if (params.type === 'ChoroplethMap') {
+    query['parent_location_id__in'] = params.location_ids
   } else {
-    query['location_id__in'] = chartDef.location_ids
+    query['location_id__in'] = params.location_ids
   }
   return query
 }
