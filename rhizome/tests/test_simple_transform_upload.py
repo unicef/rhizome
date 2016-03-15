@@ -39,7 +39,7 @@ class TransformUploadTestCase(TestCase):
 
         for file, cell_val_from_file in file_and_cell_vals.iteritems():
             self.ingest_file(file)
-            
+
             the_value_from_the_database = DataPointComputed.objects.get(
                     campaign_id = self.mapped_campaign_id,
                     indicator_id = self.mapped_indicator_with_data,
@@ -50,15 +50,55 @@ class TransformUploadTestCase(TestCase):
             self.assertEqual(cell_val_from_file, the_value_from_the_database)
 
     def test_upsert_source_object_map(self):
-        source_map_entry = SourceObjectMap.objects.filter(source_object_code = 'AF001039006000000000',content_type = 'location')
+        source_map_entry = SourceObjectMap.objects.filter(
+            source_object_code = 'AF001039006000000000',
+            content_type = 'location'
+            )
         self.assertEqual(0, len(source_map_entry))
+
         document_id = self.ingest_file('eoc_post_campaign.csv')
-        source_map_entry = SourceObjectMap.objects.filter(source_object_code = 'AF001039006000000000',content_type = 'location')
+
+        source_map_entry = SourceObjectMap.objects.filter(
+            source_object_code = 'AF001039006000000000',
+            content_type = 'location'
+            )
         self.assertEqual(1, len(source_map_entry))
+
         #makes sure that we update DSOM as well
-        dsom_entry = DocumentSourceObjectMap.objects \
-            .filter(document_id=document_id, source_object_map_id=source_map_entry[0].id)
+        dsom_entry = DocumentSourceObjectMap.objects.filter(
+            document_id=document_id,
+            source_object_map_id=source_map_entry[0].id)
         self.assertEqual(1, len(dsom_entry))
+
+    def test_simple_transform(self):
+
+        self.ingest_file('eoc_post_campaign.csv')
+
+        the_value_from_the_database = DataPointComputed.objects.get(
+                campaign_id = self.mapped_campaign_id,
+                indicator_id = self.mapped_indicator_with_data,
+                location_id = self.mapped_location_id
+            ).value
+
+        some_cell_value_from_the_file = 0.082670906
+        ## find this from the data frame by selecting the cell where we have mapped the data..
+
+        self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
+
+    def test_dupe_transform(self):
+
+        self.ingest_file('eoc_duped.csv')
+
+        the_value_from_the_database = DataPointComputed.objects.get(
+                campaign_id = self.mapped_campaign_id,
+                indicator_id = self.mapped_indicator_with_data,
+                location_id = self.mapped_location_id
+            ).value
+
+        some_cell_value_from_the_file = 0.082670906
+        ## find this from the data frame by selecting the cell where we have mapped the data..
+
+        self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
 
 
 
@@ -157,4 +197,3 @@ class TransformUploadTestCase(TestCase):
         sdt = SimpleDocTransform(self.user.id, document.id)
         sdt.main()
         return document.id
-
