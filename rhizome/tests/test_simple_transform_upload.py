@@ -49,6 +49,18 @@ class TransformUploadTestCase(TestCase):
             #test that the file cell value reflects that in the database
             self.assertEqual(cell_val_from_file, the_value_from_the_database)
 
+    def test_upsert_source_object_map(self):
+        source_map_entry = SourceObjectMap.objects.filter(source_object_code = 'AF001039006000000000',content_type = 'location')
+        self.assertEqual(0, len(source_map_entry))
+        document_id = self.ingest_file('eoc_post_campaign.csv')
+        source_map_entry = SourceObjectMap.objects.filter(source_object_code = 'AF001039006000000000',content_type = 'location')
+        self.assertEqual(1, len(source_map_entry))
+        #makes sure that we update DSOM as well
+        dsom_entry = DocumentSourceObjectMap.objects \
+            .filter(document_id=document_id, source_object_map_id=source_map_entry[0].id)
+        self.assertEqual(1, len(dsom_entry))
+
+
 
     def create_metadata(self):
         '''
@@ -144,4 +156,5 @@ class TransformUploadTestCase(TestCase):
         document.save()
         sdt = SimpleDocTransform(self.user.id, document.id)
         sdt.main()
+        return document.id
 

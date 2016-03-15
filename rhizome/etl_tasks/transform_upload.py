@@ -101,10 +101,8 @@ class DocTransform(object):
         merged_df = som_df.merge(existing_som_df, on=['content_type',\
             'source_object_code'], how='left')
 
-        # print '= MERGED DF='
-        # print merged_df.isnull()
-
         to_insert_df = merged_df[merged_df.isnull().any(axis=1)]
+
         to_insert_dict = to_insert_df.transpose().to_dict()
 
         to_insert_batch = [SourceObjectMap(** {
@@ -113,14 +111,19 @@ class DocTransform(object):
             'content_type': data['content_type']
         }) for ix, data in to_insert_dict.iteritems()]
 
-        #
         batch_result = SourceObjectMap.objects.bulk_create(to_insert_batch)
-        existing_som_ids = list(merged_df['id'].unique())
 
-        # for content_type, source_object_code in all_codes:
-        #     self.source_submission_meta_upsert(content_type, source_object_code)
+        #TODO some exception if number of rows not equal to rows in submission?
+        ids =['id']
+        all_som_df = DataFrame(list(SourceObjectMap.objects.all()\
+            .values_list(*ids)),columns=ids)
 
+        dsom_to_insert = [DocumentSourceObjectMap(** {
+            'document_id' : self.document.id,
+            'source_object_map_id': data.id,
+        }) for idx, data in all_som_df.iterrows()]
 
+        dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(dsom_to_insert)
 
 class ComplexDocTransform(DocTransform):
     '''
