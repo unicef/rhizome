@@ -25,6 +25,10 @@ var LocationStore = Reflux.createStore({
     ]
   },
 
+  init () {
+    LocationActions.fetchLocations()
+  },
+
   getInitialState () {
     return this.locations
   },
