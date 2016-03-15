@@ -105,6 +105,7 @@ class DocTransform(object):
 
         to_insert_dict = to_insert_df.transpose().to_dict()
 
+
         to_insert_batch = [SourceObjectMap(** {
             'source_object_code' : data['source_object_code'],
             'master_object_id': -1,
@@ -113,15 +114,17 @@ class DocTransform(object):
 
         batch_result = SourceObjectMap.objects.bulk_create(to_insert_batch)
 
-        #TODO some exception if number of rows not equal to rows in submission?
-        ids =['id']
         all_som_df = DataFrame(list(SourceObjectMap.objects.all()\
-            .values_list(*ids)),columns=ids)
+            .values_list(*som_columns)),columns=som_columns)
+        
+        #TODO some exception if number of rows not equal to rows in submission?
+        merge_all = som_df.merge(all_som_df, on=['content_type',\
+            'source_object_code'], how='left')
 
         dsom_to_insert = [DocumentSourceObjectMap(** {
             'document_id' : self.document.id,
             'source_object_map_id': data.id,
-        }) for idx, data in all_som_df.iterrows()]
+        }) for idx, data in merge_all.iterrows()]
 
         dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(dsom_to_insert)
 

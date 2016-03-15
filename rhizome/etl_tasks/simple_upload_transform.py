@@ -39,8 +39,6 @@ class SimpleDocTransform(DocTransform):
             'campaign':{}
         }
 
-        self.build_meta_lookup()
-
         return super(SimpleDocTransform, self).__init__(user_id,document_id)
 
     def build_meta_lookup(self):
@@ -81,10 +79,10 @@ class SimpleDocTransform(DocTransform):
         self.file_to_source_submissions()
         # if not DocOBjectMap.objects.filter(document_id = self.document.id):
         self.upsert_source_object_map()
+        self.build_meta_lookup()
 
         for row in SourceSubmission.objects.filter(document_id = \
             self.document.id):
-
             self.process_source_submission(row)
 
     def process_raw_source_submission(self, submission):
@@ -133,13 +131,11 @@ class SimpleDocTransform(DocTransform):
             if dwc_obj:
                 dwc_batch.append(dwc_obj)
                 dwc_list_of_lists.append([location_id,indicator_id,campaign_id])
-
         dwc_ids_to_delete = self.get_dwc_ids_to_delete(dwc_list_of_lists)
         DataPointComputed.objects.filter(id__in=dwc_ids_to_delete).delete()
         DataPointComputed.objects.bulk_create(dwc_batch)
 
     def process_submission_cell(self, location_id, campaign_id, k,v):
-
         value_lookup = {'yes': 1, 'no':0, 'Yes':1, 'No': 0, '': None}
 
         try:
@@ -149,6 +145,7 @@ class SimpleDocTransform(DocTransform):
 
         try:
             indicator_id = self.meta_lookup['indicator'][k]
+
         except KeyError:
             return None, None
 
@@ -164,7 +161,6 @@ class SimpleDocTransform(DocTransform):
             return None, None
 
         if indicator_id:
-
             dwc_obj = DataPointComputed(**{
                     'location_id': location_id,
                     'indicator_id' : indicator_id,
@@ -173,8 +169,9 @@ class SimpleDocTransform(DocTransform):
                     'cache_job_id': -1,
                     'document_id': self.document.id
                 })
-
             return dwc_obj, indicator_id
+
+        
 
     def get_dwc_ids_to_delete(self, dwc_list_of_lists):
 
