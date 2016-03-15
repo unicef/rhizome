@@ -27,7 +27,6 @@ var DEFAULTS = {
 
 function MapLegend () {
 }
-
 _.extend(MapLegend.prototype, {
   defaults: DEFAULTS,
 
@@ -84,8 +83,29 @@ _.extend(MapLegend.prototype, {
 
     this.update(data)
   },
-
-  update: function (data, options) {
+  getTicksFromBounds: function(bounds,options) {
+    // const boundsReversed = ind.bad_bound > ind.good_bound
+        // const names = boundsReversed ? ['good', 'ok', 'bad'] : ['bad', 'ok', 'good']
+        // const extents = boundsReversed ? [ ind.good_bound, ind.bad_bound ] : [ ind.bad_bound, ind.good_bound ]
+    var legendText = []
+    if (options.data_format === 'bool') {
+      legendText[1] = 'No'
+      legendText[0] = 'Yes'
+    } else if (options.data_format === 'pct') {
+      //green/yellow/red pattern for 0, 1, 2
+      bounds = bounds.map(bound => {return bound*100})
+      legendText[2] = "0%-"+bounds[0]+"%"
+      legendText[1] = bounds[0]+"%-"+bounds[1]+"%"
+      legendText[0] = bounds[1]+"%-100%"
+    } else {
+      //double check actual data with this logic
+      legendText[2] = bounds[1]+"-100"
+      legendText[1] = bounds[0]+"-"+bounds[1]
+      legendText[0] = "0-"+bounds[0]
+    }
+    return legendText;
+  },
+  update: function(data, options) {
     options = _.assign(this._options, options)
 
     const svg = this._svg
@@ -105,25 +125,8 @@ _.extend(MapLegend.prototype, {
       const colorScale = d3.scale.quantize()
         .domain(domain)
         .range(colors)
-      // const boundsReversed = ind.bad_bound > ind.good_bound
-      // const names = boundsReversed ? ['good', 'ok', 'bad'] : ['bad', 'ok', 'good']
-      // const extents = boundsReversed ? [ ind.good_bound, ind.bad_bound ] : [ ind.bad_bound, ind.good_bound ]
-      var legendText = []
-      if (options.data_format === 'bool') {
-        legendText[1] = 'No'
-        legendText[0] = 'Yes'
-      } else if (options.data_format === 'pct') {
-        //red/yellow/green pattern for 0, 1, 2
-        legendText[2] = "0%-"+domain[0]+"%"
-        legendText[1] = domain[0]+"%-"+domain[1]+"%"
-        legendText[0] = domain[1]+"%-100%"
-      } else {
-        //double check actual data with this logic
-        legendText[2] = domain[1]+"-100"
-        legendText[1] = domain[0]+"-"+domain[1]
-        legendText[0] = "0-"+domain[0]
-      }
-
+      const legendText = this.getTicksFromBounds(domain,options)
+      debugger;
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal()
         .domain(legendText)
