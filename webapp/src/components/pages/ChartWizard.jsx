@@ -110,10 +110,10 @@ const ChartWizard = React.createClass({
         <ChartProperties
           selected_chart_type={this.state.chart.def.type}
           selected_palette={this.state.chart.def.palette}
-          chart_title={this.state.title}
-          selectChartType={ChartWizardActions.changeChart}
-          selectPalette={ChartWizardActions.changePalette}
-          saveTitle={ChartWizardActions.editTitle}
+          chart_title={this.state.chart.def.title}
+          selectChartType={ChartActions.setType}
+          selectPalette={ChartActions.setPalette}
+          saveTitle={ChartActions.setTitle}
           saveChart={this.saveChart}
           chartIsReady={!this.state.canDisplayChart} />
       </section>

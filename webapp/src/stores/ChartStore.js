@@ -4,7 +4,7 @@ import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import ChartActions from 'actions/ChartActions'
 import DatapointActions from 'actions/DatapointActions'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import DatapointStore from 'stores/DatapointStore'
 
 var ChartStore = Reflux.createStore({
@@ -23,6 +23,7 @@ var ChartStore = Reflux.createStore({
       timeRange: null,
       end_date: moment().format('YYYY-MM-DD'),
       start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
+      title: 'New Chart',
       x: 0,
       xFormat: ',.0f',
       y: 0,
@@ -77,6 +78,24 @@ var ChartStore = Reflux.createStore({
   onSetLocationIds (location_ids) {
     this.chart.def.location_ids = location_ids
     this.updateChart()
+  },
+
+  onSetType (type) {
+    if (type === 'ChoroplethMap') {
+      this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
+    }
+    this.chart.def.type = type
+    this.updateChart()
+  },
+
+  onSetPalette (palette) {
+    this.chart.def.palette = palette
+    this.trigger(this.chart)
+  },
+
+  onSetTitle (title) {
+    this.chart.def.title = title
+    this.trigger(this.chart)
   },
 
   // =========================================================================== //
