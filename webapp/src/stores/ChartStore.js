@@ -63,7 +63,8 @@ var ChartStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onSetDateRange (key, value) {
-    this.chart.def.start_date = value
+    const full_key = key + '_date'
+    this.chart.def[full_key] = value
     this.trigger(this.chart)
   },
 
@@ -77,7 +78,7 @@ var ChartStore = Reflux.createStore({
       .map(this.melt)
       .flatten()
       .value()
-    this.setState(this.chart)
+    this.trigger(this.chart)
   },
 
   // =========================================================================== //
