@@ -65,7 +65,36 @@ var ChartStore = Reflux.createStore({
   onSetDateRange (key, value) {
     const full_key = key + '_date'
     this.chart.def[full_key] = value
-    this.trigger(this.chart)
+    this.updateChart()
+  },
+
+  onSetIndicatorIds (indicator_ids) {
+    this.chart.def.indicator_ids = indicator_ids
+    this.updateChart()
+  },
+
+  onSetLocationIds (location_ids) {
+    this.chart.def.location_ids = location_ids
+    this.updateChart()
+  },
+
+  updateChart () {
+    const selectedLocationsReady = !_.isEmpty(this.chart.def.location_ids)
+    const selectedIndicatorsReady = !_.isEmpty(this.chart.def.indicator_ids)
+    const startDateReady = !_.isEmpty(this.chart.def.start_date)
+    const endDateReady = !_.isEmpty(this.chart.def.end_date)
+    const chartDataIsReady = selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
+    if (chartDataIsReady) {
+      DatapointActions.fetchDatapoints({
+        indicator_ids: this.chart.def.indicator_ids,
+        location_ids: this.chart.def.location_ids,
+        start_date: this.chart.def.start_date,
+        end_date: this.chart.def.end_date,
+        type: this.chart.def.type
+      })
+    } else {
+      this.trigger(this.chart)
+    }
   },
 
   // =========================================================================== //

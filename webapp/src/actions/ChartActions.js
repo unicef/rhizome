@@ -6,7 +6,9 @@ const ChartActions = Reflux.createActions({
   'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChartDatapoints': { children: ['completed', 'failed'], asyncResult: true },
-  'setDateRange': 'setDateRange'
+  'setDateRange': 'setDateRange',
+  'setIndicatorIds': 'setIndicatorIds',
+  'setLocationIds': 'setLocationIds'
 })
 
 // API CALLS

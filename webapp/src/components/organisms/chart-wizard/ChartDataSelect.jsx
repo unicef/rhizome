@@ -4,8 +4,6 @@ import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 
 import ChartActions from 'actions/ChartActions'
-import LocationActions from 'actions/LocationActions'
-import IndicatorActions from 'actions/IndicatorActions'
 
 const ChartDataSelect = React.createClass({
   propTypes: {
@@ -13,21 +11,19 @@ const ChartDataSelect = React.createClass({
     end_date: PropTypes.object,
     locations: PropTypes.shape({
       lpd_statuses: PropTypes.array,
-      filtered: PropTypes.array,
-      selected: PropTypes.array
+      filtered: PropTypes.array
     }),
     indicators: PropTypes.shape({
-      list: PropTypes.array,
-      selected: PropTypes.array
+      list: PropTypes.array
     })
   },
 
   updateIndicators (indicators) {
-    console.log('Indicators changed', indicators)
+    ChartActions.setIndicatorIds(indicators.map(indicator => indicator.id))
   },
 
   updateLocations (locations) {
-    console.log('Locations changed', locations)
+    ChartActions.setLocationIds(locations.map(location => location.id))
   },
 
   render () {

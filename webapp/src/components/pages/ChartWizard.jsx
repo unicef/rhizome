@@ -18,7 +18,6 @@ import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import ChartStore from 'stores/ChartStore'
-import ChartWizardStore from 'stores/ChartWizardStore'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
 
