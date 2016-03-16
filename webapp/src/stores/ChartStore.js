@@ -4,6 +4,7 @@ import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import ChartActions from 'actions/ChartActions'
 import DatapointActions from 'actions/DatapointActions'
+import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
 import DatapointStore from 'stores/DatapointStore'
 
 var ChartStore = Reflux.createStore({

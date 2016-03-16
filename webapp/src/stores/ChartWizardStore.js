@@ -6,7 +6,7 @@ import ChartWizardActions from 'actions/ChartWizardActions'
 
 import api from 'data/api'
 import ChartDataInit from 'data/chartDataInit'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
 import ChartStore from 'stores/ChartStore'

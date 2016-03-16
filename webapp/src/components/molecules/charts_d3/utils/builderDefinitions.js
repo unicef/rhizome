@@ -19,47 +19,38 @@ export default {
     {
       value: 'all',
       title: 'All Time',
-      getLower: start => { return null },
+      getLower: start => null,
       json: null
     },
     {
       value: '1year',
       title: 'Past Year',
-      getLower: start => { return start.clone().startOf('month').subtract(1, 'year') },
+      getLower: start => start.clone().startOf('month').subtract(1, 'year'),
       json: { years: 1 }
     },
     {
       value: '3month',
       title: 'Past 3 Months',
-      getLower: start => { return start.clone().startOf('month').subtract(3, 'month') },
+      getLower: start => start.clone().startOf('month').subtract(3, 'month'),
       json: { months: 2 }
     },
     {
       value: '1month',
       title: 'Current Campaign',
-      getLower: start => { return start.clone().startOf('month') },
+      getLower: start => start.clone().startOf('month'),
       json: { months: 0 }
     }
   ],
   formats: [
-    {
-      value: ',.0f',
-      title: 'Integer'
-    },
-    {
-      value: ',.4f',
-      title: 'Real Number'
-    },
-    {
-      value: '%',
-      title: 'Percentage'
-    }
+    { value: ',.0f', title: 'Integer' },
+    { value: ',.4f', title: 'Real Number' },
+    { value: '%', title: 'Percentage' }
   ],
   locationLevels: [
     {
       value: 'selected',
       title: 'Selected location only',
-      getAggregated: (locationSelected, locationIndex) => { return locationSelected }
+      getAggregated: (locationSelected, locationIndex) => locationSelected
     },
     {
       value: 'type',

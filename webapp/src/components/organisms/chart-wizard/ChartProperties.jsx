@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import TitleInput from 'components/molecules/TitleInput'
 import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
 import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'

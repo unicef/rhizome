@@ -6,7 +6,7 @@ import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 export default class GeneralOptions extends React.Component {
   constructor (props) {

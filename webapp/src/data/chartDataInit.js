@@ -2,7 +2,7 @@ import _ from 'lodash'
 import moment from 'moment'
 import d3 from 'd3'
 
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
 import api from 'data/api'
