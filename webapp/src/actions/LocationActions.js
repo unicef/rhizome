@@ -5,6 +5,7 @@ const LocationActions = Reflux.createActions({
   'fetchLocations': { children: ['completed', 'failed'], asyncResult: true },
   'selectLocation': 'selectLocation',
   'deselectLocation': 'deselectLocation',
+  'setSelectedLocations': 'setSelectedLocations',
   'clearSelectedLocations': 'clearSelectedLocations'
 })
 

@@ -11,8 +11,8 @@ import IndicatorActions from 'actions/IndicatorActions'
 
 const ChartDataSelect = React.createClass({
   propTypes: {
-    start_date: PropTypes.string,
-    end_date: PropTypes.string,
+    start_date: PropTypes.object,
+    end_date: PropTypes.object,
     locations: PropTypes.shape({
       lpd_statuses: PropTypes.array,
       filtered: PropTypes.array,
@@ -22,6 +22,11 @@ const ChartDataSelect = React.createClass({
       list: PropTypes.array,
       selected: PropTypes.array
     })
+  },
+
+  componentDidMount() {
+    LocationActions.setSelectedLocations([1])
+    IndicatorActions.setSelectedIndicators([28, 31])
   },
 
   render () {

@@ -72,6 +72,10 @@ var LocationStore = Reflux.createStore({
     _.remove(this.locations.selected, {id: id})
     this.trigger(this.locations)
   },
+  onSetSelectedLocations (ids) {
+    this.locations.selected = ids.map(id => this.locations.index[id])
+    this.trigger(this.locations)
+  },
   onClearSelectedLocations (id) {
     this.locations.selected = []
     this.trigger(this.locations)

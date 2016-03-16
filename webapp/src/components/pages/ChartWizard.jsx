@@ -52,13 +52,12 @@ const ChartWizard = React.createClass({
   },
 
   render () {
-    console.log('this.initDataReady()', this.initDataReady())
     if (!this.initDataReady()) {
       return <div>Loading...</div>
     }
-    const chart = this.state.chart
-    const start_date = chart.def.start_date  ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment().format('YYYY-MM-DD')
-    const end_date = chart.def.end_date ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment().subtract(1, 'y').format('YYYY-MM-DD')
+    const chart_def = this.state.chart.def
+    const start_date = chart_def ? moment(chart_def.start_date, 'YYYY-MM-DD').toDate() : moment()
+    const end_date = chart_def ? moment(chart_def.end_date, 'YYYY-MM-DD').toDate() : moment()
 
     return (
       <section className='chart-wizard'>

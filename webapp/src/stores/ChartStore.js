@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import ChartActions from 'actions/ChartActions'
@@ -11,18 +12,16 @@ var ChartStore = Reflux.createStore({
 
   listenables: ChartActions,
 
-  init () {
-    this.listenTo(DatapointStore, this.onDatapointStore)
-  },
-
   chart: {
     def: {
       type: 'RawData',
-      indicator_ids: [28, 34],
-      location_ids: [1],
+      indicator_ids: [],
+      location_ids: [],
       countries: [],
       groupBy: 'indicator',
       timeRange: null,
+      end_date: moment().format('YYYY-MM-DD'),
+      start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
       x: 0,
       xFormat: ',.0f',
       y: 0,
@@ -31,6 +30,10 @@ var ChartStore = Reflux.createStore({
     },
     data: null,
     loading: false
+  },
+
+  init () {
+    this.listenTo(DatapointStore, this.onDatapointStore)
   },
 
   getInitialState () {
@@ -83,7 +86,22 @@ var ChartStore = Reflux.createStore({
   melt (datapoint) {
     const base = _.omit(datapoint, 'indicators')
     return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
+  },
+
+  applyChartDef (chartDef) {
+    // this.data.locationLevelValue = Math.max(_.findIndex(builderDefinitions.locationLevels, { value: chartDef.location_depth }), 0)
+    // this.data.groupByValue = Math.max(_.findIndex(builderDefinitions.groups, { value: chartDef.groupBy }), 0)
+    // this.data.timeValue = Math.max(_.findIndex(this.data.timeRangeFilteredList, { json: chartDef.timeRange }), 0)
+    // this.data.yFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.yFormat }), 0)
+    // this.data.xFormatValue = Math.max(_.findIndex(builderDefinitions.formats, { value: chartDef.xFormat }), 0)
+
+    // this.data.chartDef.location_depth = builderDefinitions.locationLevels[this.data.locationLevelValue].value
+    // this.data.chartDef.groupBy = builderDefinitions.groups[this.data.groupByValue].value
+    // // this.data.chartDef.timeRange = this.data.timeRangeFilteredList[this.data.timeValue].json
+    // this.data.chartDef.yFormat = builderDefinitions.formats[this.data.yFormatValue].value
+    // this.data.chartDef.xFormat = builderDefinitions.formats[this.data.xFormatValue].value
   }
+
 })
 
 export default ChartStore

@@ -82,6 +82,10 @@ var IndicatorStore = Reflux.createStore({
     this.indidcators.selected = selected_indicators
     this.trigger(this.indicators)
   },
+  onSetSelectedIndicators (ids) {
+    this.indicators.selected = ids.map(id => this.indicators.index[id])
+    this.trigger(this.indicators)
+  },
   onClearSelectedIndicators (id) {
     this.indicators.selected = []
     this.trigger(this.indicators)

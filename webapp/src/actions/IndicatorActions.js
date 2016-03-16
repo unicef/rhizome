@@ -7,6 +7,7 @@ const IndicatorActions = Reflux.createActions({
   'selectIndicator': 'selectIndicator',
   'deselectIndicator': 'deselectIndicator',
   'reorderIndicator': 'reorderIndicator',
+  'setSelectedIndicators': 'setSelectedIndicators',
   'clearSelectedIndicators': 'clearSelectedIndicators'
 })
 
