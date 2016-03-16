@@ -16,7 +16,6 @@ var IndicatorStore = Reflux.createStore({
     index: null,
     filtered: [],
     list: [],
-    selected: [],
     tree: []
   },
 
@@ -58,37 +57,6 @@ var IndicatorStore = Reflux.createStore({
   },
   onFetchIndicatorTagsFailed (error) {
     this.setState({ error: error })
-  },
-
-  // =========================================================================== //
-  //                            REGULAR ACTION HANDLERS                          //
-  // =========================================================================== //
-  onSelectIndicators (indicator_ids) {
-    if (Array.isArray(indicator_ids)) {
-      this.setState({ selected: indicator_ids.map(id => this.indicators.index[id]) })
-    } else {
-      this.setState({ selected: [this.indicators.index[indicator_ids]] })
-    }
-  },
-  onSelectIndicator (id) {
-    this.indicators.selected.push(this.indicators.index[id])
-    this.trigger(this.indicators)
-  },
-  onDeselectIndicator (id) {
-    _.remove(this.indicators.selected, {id: id})
-    this.trigger(this.indicators)
-  },
-  onReorderIndicator (selected_indicators) {
-    this.indidcators.selected = selected_indicators
-    this.trigger(this.indicators)
-  },
-  onSetSelectedIndicators (ids) {
-    this.indicators.selected = ids.map(id => this.indicators.index[id])
-    this.trigger(this.indicators)
-  },
-  onClearSelectedIndicators (id) {
-    this.indicators.selected = []
-    this.trigger(this.indicators)
   },
 
   // =========================================================================== //

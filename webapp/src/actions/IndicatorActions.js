@@ -3,12 +3,7 @@ import api from 'data/api'
 
 const IndicatorActions = Reflux.createActions({
   'fetchIndicators': { children: ['completed', 'failed'], asyncResult: true },
-  'fetchIndicatorTags': { children: ['completed', 'failed'], asyncResult: true },
-  'selectIndicator': 'selectIndicator',
-  'deselectIndicator': 'deselectIndicator',
-  'reorderIndicator': 'reorderIndicator',
-  'setSelectedIndicators': 'setSelectedIndicators',
-  'clearSelectedIndicators': 'clearSelectedIndicators'
+  'fetchIndicatorTags': { children: ['completed', 'failed'], asyncResult: true }
 })
 
 IndicatorActions.fetchIndicators.listenAndPromise(() => {

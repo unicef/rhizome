@@ -17,7 +17,6 @@ var LocationStore = Reflux.createStore({
     index: null,
     filtered: [],
     list: [],
-    selected: [],
     lpd_statuses: [
       {value: 'lpd-1', 'title': 'LPD 1', location_ids: []},
       {value: 'lpd-2', 'title': 'LPD 2', location_ids: []},
@@ -52,33 +51,6 @@ var LocationStore = Reflux.createStore({
   },
   onFetchLocationsFailed (error) {
     this.setState({ error: error })
-  },
-
-  // =========================================================================== //
-  //                            REGULAR ACTION HANDLERS                          //
-  // =========================================================================== //
-  onSelectLocations (location_ids) {
-    if (Array.isArray(location_ids)) {
-      this.setState({ selected: location_ids.map(id => this.locations.index[id]) })
-    } else {
-      this.setState({ selected: [this.locations.index[location_ids]] })
-    }
-  },
-  onSelectLocation (id) {
-    this.locations.selected.push(this.locations.index[id])
-    this.trigger(this.locations)
-  },
-  onDeselectLocation (id) {
-    _.remove(this.locations.selected, {id: id})
-    this.trigger(this.locations)
-  },
-  onSetSelectedLocations (ids) {
-    this.locations.selected = ids.map(id => this.locations.index[id])
-    this.trigger(this.locations)
-  },
-  onClearSelectedLocations (id) {
-    this.locations.selected = []
-    this.trigger(this.locations)
   },
 
   // =========================================================================== //
