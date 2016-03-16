@@ -11,8 +11,7 @@ var DatapointStore = Reflux.createStore({
 
   datapoints: {
     meta: null,
-    raw: null,
-    index: null
+    raw: null
   },
 
   getInitialState () {
@@ -30,7 +29,6 @@ var DatapointStore = Reflux.createStore({
   onFetchDatapointsCompleted (response) {
     this.datapoints.meta = response.meta
     this.datapoints.raw = response.objects
-    this.datapoints.index = _.indexBy(this.datapoints.raw, 'id')
     this.setState(this.datapoints)
   },
   onFetchDatapointsFailed (error) {
