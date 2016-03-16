@@ -18,7 +18,6 @@ var DashboardStore = Reflux.createStore({
       Location.getLocations(),
       Location.getLocationTypes(),
       api.campaign(null, null, {'cache-control': 'max-age=86400, public'})
-      // CampaignStore.getCampaignsPromise()
     ])
     .then(([locations, locationsTypes, campaigns]) => {
       this.locations = locations

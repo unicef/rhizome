@@ -81,7 +81,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   onFetchDashboards: function () {
     Promise.all([
       Location.getLocations(),
-      CampaignStore.getCampaignsPromise(),
+      api.campaign(null, null, {'cache-control': 'max-age=86400, public'}),
       Indicator.getIndicators(),
       Office.getHomePageCharts()
     ])
@@ -116,7 +116,7 @@ var HomepageDashboardsStore = Reflux.createStore({
             dashboardDef.location,
             dashboardDef.campaign,
             locations,
-            campaigns,
+            campaigns.objects,
             indicators,
             data.features
           )

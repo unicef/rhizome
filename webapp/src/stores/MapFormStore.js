@@ -4,7 +4,6 @@ import api from 'data/api'
 import Location from 'data/requests/LocationAPI'
 
 import MapFormActions from 'actions/MapFormActions'
-import CampaignStore from 'stores/CampaignStore'
 
 var MapFormStore = Reflux.createStore({
   listenables: MapFormActions,
@@ -44,9 +43,9 @@ var MapFormStore = Reflux.createStore({
   onGetCampaigns: function () {
     if (!this.data.campaignsLoaded) {
       this.data.campaignsLoaded = true
-      CampaignStore.getCampaignsPromise()
-        .then(campaigns => {
-          this.data.campaigns = campaigns
+      api.campaign(null, null, {'cache-control': 'max-age=86400, public'})
+        .then(response => {
+          this.data.campaigns = response.objects
           this.trigger(this.data)
         })
     }
