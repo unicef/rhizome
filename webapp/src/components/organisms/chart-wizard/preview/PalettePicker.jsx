@@ -14,28 +14,31 @@ class PalettePicker extends React.Component {
   }
 
   static propTypes = {
-    value: React.PropTypes.number,
+    value: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
     onChange: React.PropTypes.func
   }
 
   render () {
     let paletteList = _.map(palettes, (value, key) => {
-      let colourList = value.slice(0, 8).map(colour => {
+      let colorList = value.slice(0, 8).map(color => {
         let style = {
-          backgroundColor: colour
+          backgroundColor: color
         }
         return (
-          <span className='palette-picker__color' style={style}>&nbsp;</span>
+          <span key={value + key + color} className='palette-picker__color' style={style}>&nbsp;</span>
         )
       })
       return (
-        <div className={`palette-picker__palette-group${this.props.value === key ? ' active' : ''}`}>
+        <div key={value + key} className={`palette-picker__palette-group${this.props.value === key ? ' active' : ''}`}>
           <input type='radio' name='palette' id={key}
             value={key}
             checked={this.props.value === key ? 'checked' : false}
             onChange={this.props.onChange.bind(null, key)}/>
           <label className='palette-picker__palette' htmlFor={key}>
-            {colourList}
+            {colorList}
           </label>
         </div>
       )

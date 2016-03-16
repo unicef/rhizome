@@ -3,7 +3,10 @@ import React from 'react'
 export default React.createClass({
   propTypes: {
     charts: React.PropTypes.array.isRequired,
-    value: React.PropTypes.number.isRequired,
+    value: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]).isRequired,
     onChange: React.PropTypes.func.isRequired
   },
 
