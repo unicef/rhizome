@@ -514,7 +514,7 @@ let ChartWizardStore = Reflux.createStore({
     this.data.chart.def.location_ids = this.data.locations.selected.map(location => location.id)
     this.data.chart.def.indicator_ids = this.data.indicators.selected.map(indicator => indicator.id)
 
-    ChartActions.fetchChartDatapoints(this.data.chart.def)
+    // ChartActions.fetchChartDatapoints(this.data.chart.def)
 
     // let responses = await ChartDataInit.getPromises()
     // ChartDataInit.fetchChart(this.data.chart.def, this.LAYOUT_PREVIEW, responses).then(chart => {
@@ -527,22 +527,22 @@ let ChartWizardStore = Reflux.createStore({
     // })
   },
 
-  onChartStore (store) {
-    if (store.datapoints !== null) {
-      const result = ChartInfo.getChartInfo(
-        this.data.chart.def,
-        store.datapoints,
-        this.data.locations.index,
-        this.data.indicators.selected,
-        this.LAYOUT_PREVIEW
-      )
-      this.data.canDisplayChart = true
-      this.data.isLoading = false
-      this.data.chart.options = result.options
-      this.data.chart.data = result.data
-      this.trigger(this.data)
-    }
-  }
+  // onChartStore (store) {
+  //   if (store.datapoints !== null) {
+  //     const result = ChartInfo.getChartInfo(
+  //       this.data.chart.def,
+  //       store.datapoints,
+  //       this.data.locations.index,
+  //       this.data.indicators.selected,
+  //       this.LAYOUT_PREVIEW
+  //     )
+  //     this.data.canDisplayChart = true
+  //     this.data.isLoading = false
+  //     this.data.chart.options = result.options
+  //     this.data.chart.data = result.data
+  //     this.trigger(this.data)
+  //   }
+  // }
 
 })
 
