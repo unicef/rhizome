@@ -9,7 +9,7 @@ from rhizome.models import *
 from rhizome.api.exceptions import DatapointsException
 from rhizome.etl_tasks.transform_upload import DocTransform
 from django.db import IntegrityError
-
+from sets import Set
 
 class SimpleDocTransform(DocTransform):
     '''
@@ -38,6 +38,7 @@ class SimpleDocTransform(DocTransform):
             'indicator':{},
             'campaign':{}
         }
+        self.indicator_ids_to_exclude = Set([-1])
 
         return super(SimpleDocTransform, self).__init__(user_id,document_id)
 
@@ -50,7 +51,6 @@ class SimpleDocTransform(DocTransform):
             .filter(content_type='location',\
                 source_object_code__in = csv_location_codes)\
             .values_list('source_object_code','master_object_id')
-                # source_object_code = 'AF0010390030000000002016')\
 
         for source_object_code, master_object_id in location_lookup:
             self.meta_lookup['location'][source_object_code] = master_object_id
@@ -71,6 +71,8 @@ class SimpleDocTransform(DocTransform):
             .values_list('source_object_code','master_object_id')
 
         for source_object_code, indicator_id in indicator_lookup:
+            if indicator_id in self.meta_lookup['indicator'].values():
+                self.indicator_ids_to_exclude.add(indicator_id)
             self.meta_lookup['indicator'][source_object_code] = indicator_id
 
 
@@ -80,7 +82,6 @@ class SimpleDocTransform(DocTransform):
         ## time the document is being processed ##
         if not DocumentSourceObjectMap.objects.filter(document_id = self.document.id):
             self.file_to_source_submissions()
-            self.build_meta_lookup()
             self.upsert_source_object_map()
 
         self.build_meta_lookup()
@@ -138,6 +139,7 @@ class SimpleDocTransform(DocTransform):
 
         for k,v in submission.iteritems():
 
+
             dwc_obj, indicator_id = self.process_submission_cell(location_id, campaign_id, k, v)
 
             if dwc_obj:
@@ -160,7 +162,7 @@ class SimpleDocTransform(DocTransform):
         except KeyError:
             return None, None
 
-        if indicator_id == -1:
+        if indicator_id in self.indicator_ids_to_exclude:
             return None, None
 
         if v is None:
@@ -208,13 +210,13 @@ class SimpleDocTransform(DocTransform):
         return ids_to_delete
 
     def file_to_source_submissions(self):
-
+        #use a dictionary to make sure that there is a single value for each instance_guid.
+        #duplicates are handled by overwriting old values 
         batch = {}
         for submission in self.csv_df.itertuples():
 
             ss, instance_guid = self.process_raw_source_submission(submission)
             if ss is not None and instance_guid is not None:
-
                 ss['instance_guid'] = instance_guid
                 batch[instance_guid] = ss
 

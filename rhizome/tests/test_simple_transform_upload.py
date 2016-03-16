@@ -5,6 +5,7 @@ from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models import *
+from django.core.exceptions import ObjectDoesNotExist
 
 class TransformUploadTestCase(TestCase):
 
@@ -100,6 +101,28 @@ class TransformUploadTestCase(TestCase):
 
         self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
 
+    def test_dupe_metadata_mapping(self):
+
+        #duplicate of master_object_id that's used in create_metadata
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to not visited',
+            content_type = 'indicator',
+            mapped_by_id = self.user_id,
+            master_object_id = self.mapped_indicator_with_data
+        )
+
+        self.ingest_file('eoc_post_campaign.csv')
+
+        #the indicator should have not been added
+        try:
+            the_value_from_the_database = DataPointComputed.objects.get(
+                campaign_id = self.mapped_campaign_id,
+                indicator_id = self.mapped_indicator_with_data,
+                location_id = self.mapped_location_id
+            )
+            fail("the value should not have been added due to duplicated indicator id")
+        except ObjectDoesNotExist:
+            pass
 
 
     def create_metadata(self):
@@ -154,13 +177,6 @@ class TransformUploadTestCase(TestCase):
             master_object_id = self.mapped_indicator_id_0
         )
 
-        self.mapped_indicator_id_1 = locations[1].id
-        indicator_map = SourceObjectMap.objects.create(
-            source_object_code = 'Percent missed due to not visited',
-            content_type = 'indicator',
-            mapped_by_id = self.user_id,
-            master_object_id = self.mapped_indicator_id_1
-        )
 
         self.mapped_indicator_with_data = locations[2].id
         indicator_map = SourceObjectMap.objects.create(
@@ -189,7 +205,6 @@ class TransformUploadTestCase(TestCase):
         ## create one doc ##
         document = Document.objects.create(
         doc_title = file_name,
-        file_header = 'Campaign,Wardcode,uq_id,HHsampled,HHvisitedTEAMS,Marked0to59,UnImmun0to59,NOimmReas1,NOimmReas2,NOimmReas3,NOimmReas4,NOimmReas5,NOimmReas6,NOimmReas7,NOimmReas8,NOimmReas9,NOimmReas10,NOimmReas11,NOimmReas12,NOimmReas13,NOimmReas14,NOimmReas15,NOimmReas16,NOimmReas17,NOimmReas18,NOimmReas19,NOimmReas20,ZeroDose,TotalYoungest,YoungstRI,RAssessMrk,RCorctCAT,RIncorect,RXAssessMrk,RXCorctCAT,RXIncorect,STannounc,SRadio,STradlead,SReiliglead,SMosque,SNewspaper,SPoster,Sbanner,SRelative,SHworker,Scommmob,SNOTAWARE,Influence1,Influence2,Influence3,Influence4,Influence5,Influence6,Influence7,Influence8',
         created_by_id = self.user_id,
         guid = 'test')
         document.docfile = file_name
