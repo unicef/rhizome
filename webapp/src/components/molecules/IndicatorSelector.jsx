@@ -15,16 +15,7 @@ const IndicatorSelector = React.createClass({
     indicators: PropTypes.shape({
       list: PropTypes.array
     }).isRequired,
-    onChange: PropTypes.func.isRequired,
     classes: PropTypes.string
-  },
-
-  componentDidMount () {
-    IndicatorSelectorActions.setSelectedIndicators([28, 31])
-  },
-
-  componentDidUpdate(prevProps, prevState) {
-    this.props.onChange(this.state.selected_indicators)
   },
 
   render () {

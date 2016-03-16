@@ -3,7 +3,6 @@ import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
-
 import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationSelectorActions from 'actions/LocationSelectorActions'
 
@@ -17,16 +16,7 @@ const LocationSelector = React.createClass({
       lpd_statuses: PropTypes.array,
       filtered: PropTypes.array
     }).isRequired,
-    onChange: PropTypes.func.isRequired,
     classes: PropTypes.string
-  },
-
-  componentDidMount () {
-    LocationSelectorActions.setSelectedLocations(1)
-  },
-
-  componentDidUpdate(prevProps, prevState) {
-    this.props.onChange(this.state.selected_locations)
   },
 
   render () {

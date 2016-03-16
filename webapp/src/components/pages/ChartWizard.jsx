@@ -3,7 +3,10 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import ChartDataSelect from 'components/organisms/chart-wizard/ChartDataSelect'
+import DateRangePicker from 'components/molecules/DateRangePicker'
+import IndicatorSelector from 'components/molecules/IndicatorSelector'
+import LocationSelector from 'components/molecules/LocationSelector'
+
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 import ChartPreview from 'components/organisms/chart-wizard/ChartPreview'
 
@@ -18,16 +21,21 @@ import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import ChartStore from 'stores/ChartStore'
+import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
+import LocationSelectorStore from 'stores/LocationSelectorStore'
 
+import ChartActions from 'actions/ChartActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
 
 const ChartWizard = React.createClass({
   mixins: [
+    Reflux.connect(ChartStore, 'chart'),
     Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(LocationStore, 'locations'),
-    Reflux.connect(IndicatorStore, 'indicators'),
     Reflux.connect(CampaignStore, 'campaigns'),
-    Reflux.connect(ChartStore, 'chart')
+    Reflux.connect(IndicatorStore, 'indicators'),
+    Reflux.connect(IndicatorSelectorStore, 'selected_indicators'), // Try to get rid of these
+    Reflux.connect(LocationSelectorStore, 'selected_locations') // Try to get rid of these
   ],
 
   defaultProps: {
@@ -36,6 +44,15 @@ const ChartWizard = React.createClass({
 
   propTypes: {
     chart_id: PropTypes.number
+  },
+
+  componentDidMount () {
+    IndicatorSelectorStore.listen(selected_indicators => {
+      return ChartActions.setIndicatorIds(selected_indicators.map(indicator => indicator.id))
+    })
+    LocationSelectorStore.listen(selected_locations => {
+      return ChartActions.setLocationIds(selected_locations.map(location => location.id))
+    })
   },
 
   initDataReady () {
@@ -61,11 +78,31 @@ const ChartWizard = React.createClass({
     return (
       <section className='chart-wizard'>
         <h1 className='medium-12 columns text-center'>Explore Data</h1>
-        <ChartDataSelect
-          start_date={start_date}
-          end_date={end_date}
-          indicators={this.state.indicators}
-          locations={this.state.locations} />
+        <div className='medium-3 columns'>
+          <div>
+            <h3>Time</h3>
+            <DateRangePicker
+              sendValue={ChartActions.setDateRange}
+              start={start_date}
+              end={end_date}
+              fromComponent='ChartWizard'
+            />
+          </div>
+          <div className='row data-filters'>
+            <br/>
+            <IndicatorSelector
+              indicators={this.state.indicators}
+              classes='medium-6 columns'
+            />
+            <LocationSelector
+              locations={this.state.locations}
+              classes='medium-6 columns'
+            />
+          </div>
+        </div>
+        <div className='medium-9 columns'>
+          <ChartPreview />
+        </div>
         <ChartProperties
           selected_chart_type={this.state.chart.def.type}
           selected_palette={this.state.chart.def.palette}
@@ -75,9 +112,6 @@ const ChartWizard = React.createClass({
           saveTitle={ChartWizardActions.editTitle}
           saveChart={this.saveChart}
           chartIsReady={!this.state.canDisplayChart} />
-        <ChartPreview
-
-        />
       </section>
     )
   }

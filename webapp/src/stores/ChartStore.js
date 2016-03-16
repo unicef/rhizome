@@ -78,25 +78,6 @@ var ChartStore = Reflux.createStore({
     this.updateChart()
   },
 
-  updateChart () {
-    const selectedLocationsReady = !_.isEmpty(this.chart.def.location_ids)
-    const selectedIndicatorsReady = !_.isEmpty(this.chart.def.indicator_ids)
-    const startDateReady = !_.isEmpty(this.chart.def.start_date)
-    const endDateReady = !_.isEmpty(this.chart.def.end_date)
-    const chartDataIsReady = selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
-    if (chartDataIsReady) {
-      DatapointActions.fetchDatapoints({
-        indicator_ids: this.chart.def.indicator_ids,
-        location_ids: this.chart.def.location_ids,
-        start_date: this.chart.def.start_date,
-        end_date: this.chart.def.end_date,
-        type: this.chart.def.type
-      })
-    } else {
-      this.trigger(this.chart)
-    }
-  },
-
   // =========================================================================== //
   //                            OTHER STORE DEPENDECIES                          //
   // =========================================================================== //
@@ -113,6 +94,28 @@ var ChartStore = Reflux.createStore({
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
+  updateChart () {
+    if (this.chartParamsAreReady()) {
+      DatapointActions.fetchDatapoints({
+        indicator_ids: this.chart.def.indicator_ids,
+        location_ids: this.chart.def.location_ids,
+        start_date: this.chart.def.start_date,
+        end_date: this.chart.def.end_date,
+        type: this.chart.def.type
+      })
+    } else {
+      this.trigger(this.chart)
+    }
+  },
+
+  chartParamsAreReady () {
+    const selectedLocationsReady = !_.isEmpty(this.chart.def.location_ids)
+    const selectedIndicatorsReady = !_.isEmpty(this.chart.def.indicator_ids)
+    const startDateReady = !_.isEmpty(this.chart.def.start_date)
+    const endDateReady = !_.isEmpty(this.chart.def.end_date)
+    return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
+  },
+
   melt (datapoint) {
     const base = _.omit(datapoint, 'indicators')
     return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
