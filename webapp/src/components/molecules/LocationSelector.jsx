@@ -16,7 +16,14 @@ const LocationSelector = React.createClass({
       lpd_statuses: PropTypes.array,
       filtered: PropTypes.array
     }).isRequired,
+    preset_location_ids: PropTypes.array,
     classes: PropTypes.string
+  },
+
+  componentDidMount() {
+    if (this.props.preset_location_ids) {
+      LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
+    }
   },
 
   render () {

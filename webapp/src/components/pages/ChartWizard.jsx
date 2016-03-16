@@ -23,6 +23,7 @@ import CampaignStore from 'stores/CampaignStore'
 import ChartStore from 'stores/ChartStore'
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
+import DatapointStore from 'stores/DatapointStore'
 
 import ChartActions from 'actions/ChartActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
@@ -34,6 +35,7 @@ const ChartWizard = React.createClass({
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators'),
+    Reflux.connect(DatapointStore, 'datapoints'),
     Reflux.connect(IndicatorSelectorStore, 'selected_indicators'), // Try to get rid of these
     Reflux.connect(LocationSelectorStore, 'selected_locations') // Try to get rid of these
   ],
@@ -92,16 +94,18 @@ const ChartWizard = React.createClass({
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
+              preset_indicator_ids={[28, 31]}
               classes='medium-6 columns'
             />
             <LocationSelector
               locations={this.state.locations}
+              preset_location_ids={[1]}
               classes='medium-6 columns'
             />
           </div>
         </div>
         <div className='medium-9 columns'>
-          <ChartPreview />
+          <ChartPreview chart={this.state.chart}/>
         </div>
         <ChartProperties
           selected_chart_type={this.state.chart.def.type}

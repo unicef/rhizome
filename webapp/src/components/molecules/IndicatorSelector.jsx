@@ -15,7 +15,20 @@ const IndicatorSelector = React.createClass({
     indicators: PropTypes.shape({
       list: PropTypes.array
     }).isRequired,
+    preset_indicator_ids: PropTypes.array,
     classes: PropTypes.string
+  },
+
+  getDefaultProps() {
+    return {
+      preset_indicator_ids: null
+    }
+  },
+
+  componentDidMount() {
+    if (this.props.preset_indicator_ids) {
+      IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
+    }
   },
 
   render () {
