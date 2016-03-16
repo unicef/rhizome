@@ -204,22 +204,12 @@ _.extend(ChoroplethMap.prototype, {
         mapFillColor = colors[1]
       }
     } else {
-      if (reverseBounds) {
-        if (indicatorValue > good_bound && indicatorValue < bad_bound){
-          mapFillColor = colors[1]
-        } else if (indicatorValue <= good_bound) {
-          mapFillColor = colors[2]
-        } else if (indicatorValue >= bad_bound){
-          mapFillColor = colors[0]
-        }
-      } else {
-        if (indicatorValue < good_bound && indicatorValue > bad_bound){
-          mapFillColor = colors[1]
-        } else if (indicatorValue <= bad_bound) {
-          mapFillColor = colors[0]
-        } else if (indicatorValue >= good_bound){
-          mapFillColor = colors[2]
-        }
+      if (indicatorValue > good_bound && indicatorValue < bad_bound){
+        mapFillColor = colors[1]
+      } else if (indicatorValue <= good_bound) {
+        mapFillColor = reverseBounds ? colors[2] : colors[0]
+      } else if (indicatorValue >= bad_bound){
+        mapFillColor = reverseBounds ? colors[0] : colors[2]
       }
     }
     return mapFillColor
@@ -282,7 +272,6 @@ _.extend(ChoroplethMap.prototype, {
     //   .value()
 // =======
 // >>>>>>> d41e7ed9ff5b20d3e11f4a31198b070068ddba67:webapp/src/components/molecules/charts_d3/choropleth_map/ChoroplethMap.js
-    const scale = d3.scale.ordinal().domain(domain.concat().reverse()).range(options.color)
     var location = g.selectAll('.location')
       .data(features, function (d, i) {
         return _.get(d, 'properties.location_id', i)
