@@ -5,6 +5,7 @@ import moment from 'moment'
 
 import ChartDataSelect from 'components/organisms/chart-wizard/ChartDataSelect'
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
+import ChartPreview from 'components/organisms/chart-wizard/ChartPreview'
 
 import ChartInit from 'components/molecules/charts_d3/ChartInit'
 import Chart from 'components/molecules/Chart'
@@ -27,7 +28,6 @@ const ChartWizard = React.createClass({
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(IndicatorStore, 'indicators'),
     Reflux.connect(CampaignStore, 'campaigns'),
-    Reflux.connect(ChartWizardStore, 'chart_wizard'),
     Reflux.connect(ChartStore, 'chart')
   ],
 
@@ -76,6 +76,9 @@ const ChartWizard = React.createClass({
           saveTitle={ChartWizardActions.editTitle}
           saveChart={this.saveChart}
           chartIsReady={!this.state.canDisplayChart} />
+        <ChartPreview
+
+        />
       </section>
     )
   }
