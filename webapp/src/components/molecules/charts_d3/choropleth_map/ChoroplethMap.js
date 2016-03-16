@@ -204,13 +204,24 @@ _.extend(ChoroplethMap.prototype, {
         mapFillColor = colors[1]
       }
     } else {
-      if (indicatorValue > good_bound && indicatorValue < bad_bound){
-        mapFillColor = colors[1]
-      } else if (indicatorValue <= good_bound) {
-        mapFillColor = reverseBounds ? colors[2] : colors[0]
-      } else if (indicatorValue >= bad_bound){
-        mapFillColor = reverseBounds ? colors[0] : colors[2]
+      if (reverseBounds) {
+        if (indicatorValue > good_bound && indicatorValue < bad_bound){
+          mapFillColor = colors[1]
+        } else if (indicatorValue <= good_bound) {
+          mapFillColor = colors[2]
+        } else if (indicatorValue >= bad_bound){
+          mapFillColor = colors[0]
+        }
+      } else {
+        if (indicatorValue < good_bound && indicatorValue > bad_bound){
+          mapFillColor = colors[1]
+        } else if (indicatorValue >= good_bound) {
+          mapFillColor = colors[2]
+        } else if (indicatorValue <= bad_bound){
+          mapFillColor = colors[0]
+        }
       }
+
     }
     return mapFillColor
   },
