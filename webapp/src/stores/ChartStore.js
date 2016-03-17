@@ -24,7 +24,7 @@ var ChartStore = Reflux.createStore({
     def: {
       data_format: 'pct',
       color: palettes['traffic_light'],
-      type: 'RawData',
+      type: 'ChoroplethMap',
       features: [],
       indicator_ids: [],
       location_ids: [],
@@ -191,8 +191,8 @@ var ChartStore = Reflux.createStore({
         type: this.chart.def.type
       })
     } else {
+      this.chart.data = null
       const formatted_chart = this.getFormattedChart()
-      this.chart.data = formatted_chart.data
       this.chart.def = formatted_chart.def
       this.trigger(this.chart)
     }
