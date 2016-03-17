@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import api from 'data/api'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
@@ -81,7 +82,6 @@ const ChartWizard = React.createClass({
         />
       : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
 
-
     const campaign_dropdown = chart.def.type !== 'RawData' ?
       (
         <DropdownList
@@ -95,7 +95,15 @@ const ChartWizard = React.createClass({
       ) : ''
 
     const campaign_placeholder = <Placeholder height='18'/>
-    const chart_placeholder =  <Placeholder height='600'/>
+    const chart_placeholder = <Placeholder height='600'/>
+
+    const raw_data_query = {
+      format: 'csv',
+      indicator__in: chart.def.indicator_ids,
+      location__in: chart.def.location_ids,
+      campaign_start: chart.def.start_date ? moment(chart.def.start_date).format('YYYY-M-D') : null ,
+      campaign_end: chart.def.end_date ? moment(chart.def.end_date).format('YYYY-M-D') : null
+    }
 
     return (
       <section className='chart-wizard'>
@@ -105,9 +113,20 @@ const ChartWizard = React.createClass({
         <div className='medium-3 columns'>
           <div className='row collapse'>
             <div className='medium-12 large-5 large-push-7 columns'>
-              <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
-                <i className='fa fa-save'></i> Save To Charts
-              </button>
+            {
+             chart.def.type === 'RawData'
+              ?
+                <DownloadButton
+                  onClick={() => api.datapoints.toString(raw_data_query)}
+                  enable={this.state.datapoints.raw}
+                  text='Download Data'
+                  working='Downloading'
+                  cookieName='dataBrowserCsvDownload'/>
+              :
+                <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
+                  <i className='fa fa-save'></i> Save To Charts
+                </button>
+            }
             </div>
             <div className='medium-12 large-7 large-pull-5 columns'>
               <h3>Chart Title</h3>

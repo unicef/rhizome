@@ -2,6 +2,7 @@ import React from 'react'
 
 var DownloadButton = React.createClass({
   propTypes: {
+    data: React.PropTypes.array,
     onClick: React.PropTypes.func.isRequired,
     enable: React.PropTypes.bool.isRequired,
     text: React.PropTypes.string.isRequired,
