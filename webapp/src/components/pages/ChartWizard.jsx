@@ -10,6 +10,7 @@ import LocationSelector from 'components/molecules/LocationSelector'
 
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 
+import Placeholder from 'components/molecules/Placeholder'
 import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 import ChartInit from 'components/molecules/charts_d3/ChartInit'
 import Chart from 'components/molecules/Chart'
@@ -74,13 +75,6 @@ const ChartWizard = React.createClass({
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
 
-    const loading_component = (
-      <div className='loading'>
-        <i className='fa fa-spinner fa-spin fa-5x'></i>
-        <div>Loading</div>
-      </div>
-    )
-
     const chart_component = chart.def.type === 'RawData'
       ? <DatabrowserTable
           data={this.state.datapoints.raw}
@@ -88,7 +82,6 @@ const ChartWizard = React.createClass({
           selected_indicators={chart.def.selected_indicators}
         />
       : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
-
 
     const sidebar_component = (
       <div>
@@ -117,7 +110,7 @@ const ChartWizard = React.createClass({
           <br/>
           <IndicatorSelector
             indicators={this.state.indicators}
-            preset_indicator_ids={[28, 31, 29]}
+            preset_indicator_ids={[31, 29, 26]}
             classes='medium-6 columns'
           />
           <LocationSelector
@@ -129,14 +122,16 @@ const ChartWizard = React.createClass({
       </div>
     )
 
+    const sidebar_placeholder = <Placeholder height='200'/>
+    const chart_placeholder =  <Placeholder height='600'/>
+
     return (
       <section className='chart-wizard'>
-        <h1 className='medium-12 columns text-center'>Explore Data</h1>
         <div className='medium-3 columns'>
-          {this.initDataReady() ? sidebar_component : loading_component}
+          {this.initDataReady() ? sidebar_component : sidebar_placeholder}
         </div>
         <div className='medium-9 columns'>
-          {!_.isEmpty(chart.data) ? chart_component : loading_component}
+          {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
         <ChartProperties
           chart={chart}
