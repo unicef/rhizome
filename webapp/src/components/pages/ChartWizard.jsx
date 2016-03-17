@@ -57,22 +57,34 @@ const ChartWizard = React.createClass({
     })
   },
 
-  initDataReady () {
-    const locationsReady = !_.isEmpty(this.state.locations.raw)
-    const indicatorsReady = !_.isEmpty(this.state.indicators.raw)
-    const campaignsReady = !_.isEmpty(this.state.campaigns.raw)
-    const officesReady = !_.isEmpty(this.state.offices.raw)
-    return locationsReady && indicatorsReady && campaignsReady && officesReady
-  },
-
-  shouldComponentUpdate (nextProps, nextState) {
-    return this.initDataReady()
-  },
-
   render () {
     const chart = this.state.chart
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
+    const raw_data_query = {
+      format: 'csv',
+      indicator__in: chart.def.indicator_ids,
+      location__in: chart.def.location_ids,
+      campaign_start: start_date,
+      campaign_end: end_date
+    }
+    const campaign_placeholder = <Placeholder height='18'/>
+    const chart_placeholder = <Placeholder height='600'/>
+
+    const campaign_dropdown = chart.def.type !== 'RawData' ?
+    (
+      <div className='row collapse'>
+        <h3>Campaign</h3>
+        <DropdownList
+          data={this.state.campaigns.raw}
+          defaultValue={!_.isEmpty(this.state.campaigns.raw) ? this.state.campaigns.raw[0].id : null}
+          textField='name'
+          valueField='id'
+          disabled={chart.def.type === 'RawData'}
+          onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
+        />
+      </div>
+    ) : ''
 
     const chart_component = chart.def.type === 'RawData'
       ? <DatabrowserTable
@@ -81,29 +93,6 @@ const ChartWizard = React.createClass({
           selected_indicators={chart.def.selected_indicators}
         />
       : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
-
-    const campaign_dropdown = chart.def.type !== 'RawData' ?
-      (
-        <DropdownList
-          data={this.state.campaigns.raw}
-          defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
-          textField='name'
-          valueField='id'
-          disabled={chart.def.type === 'RawData'}
-          onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
-        />
-      ) : ''
-
-    const campaign_placeholder = <Placeholder height='18'/>
-    const chart_placeholder = <Placeholder height='600'/>
-
-    const raw_data_query = {
-      format: 'csv',
-      indicator__in: chart.def.indicator_ids,
-      location__in: chart.def.location_ids,
-      campaign_start: chart.def.start_date ? moment(chart.def.start_date).format('YYYY-M-D') : null ,
-      campaign_end: chart.def.end_date ? moment(chart.def.end_date).format('YYYY-M-D') : null
-    }
 
     return (
       <section className='chart-wizard'>
@@ -143,10 +132,7 @@ const ChartWizard = React.createClass({
             />
             <br/>
           </div>
-          <div className='row collapse'>
-            <h3>Campaign</h3>
-            {this.initDataReady() ? campaign_dropdown : campaign_placeholder}
-          </div>
+          {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
           <div className='row data-filters'>
             <br/>
             <IndicatorSelector
