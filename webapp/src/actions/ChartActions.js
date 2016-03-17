@@ -6,6 +6,7 @@ const ChartActions = Reflux.createActions({
   'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
   'fetchMapFeatures': { children: ['completed', 'failed'], asyncResult: true },
+  'saveChart': 'saveChart',
   'setPalette': 'setPalette',
   'setType': 'setType',
   'setTitle': 'setTitle',

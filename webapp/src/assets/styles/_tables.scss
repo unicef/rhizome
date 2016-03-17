@@ -7,13 +7,16 @@ table {
   thead {
     tr {
       th {
-        color: $rhz-font-color;
+        color: $rhz-body-color;
         padding: 0.5rem 0.625rem 0.625rem;
         text-align: left;
         text-transform: uppercase;
-        background-color: $rhz-background-color;
+        font-family: proxima-bold;
         a {
           color: white;
+        }
+        .ds-data-table-sort-indicator {
+          position: absolute;
         }
       }
     }

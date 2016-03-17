@@ -35,7 +35,7 @@ var ChartStore = Reflux.createStore({
       timeRange: null,
       end_date: moment().format('YYYY-MM-DD'),
       start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-      title: 'New Chart',
+      title: null,
       cellSize: 36,
       fontSize: 14,
       margin: { top: 40, right: 40, bottom: 40, left: 40 },
@@ -93,6 +93,30 @@ var ChartStore = Reflux.createStore({
   },
   onFetchMapFeaturesFailed (error) {
     this.setState({ error: error })
+  },
+
+  // ===========================  Save Chart Features  ========================= //
+  onSaveChart (callback) {
+    if (!this.chart.def.title) {
+      return window.alert('Please add a Title to your chart')
+    }
+
+    callback(
+      _.merge(
+        this.chart.def,
+        {
+          indicators_ids: this.chart.def.indicator_ids,
+          countries: this.data.countries.selected.map(country => country.id),
+          location_ids: this.chart.def.location_ids,
+          groupBy: builderDefinitions.groups[this.data.groupByValue].value,
+          locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
+          yFormat: builderDefinitions.formats[this.data.chart.yFormatValue].value,
+          xFormat: builderDefinitions.formats[this.data.chart.xFormatValue].value
+        }, (source, override) => {
+          return override
+        }
+      )
+    )
   },
 
   // =========================================================================== //

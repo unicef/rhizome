@@ -7,8 +7,8 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
+import TitleInput from 'components/molecules/TitleInput'
 
-import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 
 import Placeholder from 'components/molecules/Placeholder'
 import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
@@ -17,6 +17,8 @@ import Chart from 'components/molecules/Chart'
 import DownloadButton from 'components/molecules/DownloadButton'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 import PreviewScreen from 'components/organisms/chart-wizard/PreviewScreen'
+import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
+import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -29,6 +31,7 @@ import DatapointStore from 'stores/DatapointStore'
 
 import ChartActions from 'actions/ChartActions'
 import ChartWizardActions from 'actions/ChartWizardActions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 const ChartWizard = React.createClass({
   mixins: [
@@ -85,7 +88,18 @@ const ChartWizard = React.createClass({
 
     const sidebar_component = (
       <div>
-        <div>
+        <div className='row collapse'>
+          <div className='medium-12 large-5 large-push-7 columns'>
+            <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
+              <i className='fa fa-save'></i> Save To Charts
+            </button>
+          </div>
+          <div className='medium-12 large-7 large-pull-5 columns'>
+            <h3>Chart Title</h3>
+            <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
+          </div>
+        </div>
+        <div className='row'>
           <h3>Time</h3>
           <DateRangePicker
             sendValue={ChartActions.setDateRange}
@@ -95,17 +109,22 @@ const ChartWizard = React.createClass({
           />
           <br/>
         </div>
-        <div className='row collapse'>
-          <h3>Campaign</h3>
-          <DropdownList
-            data={this.state.campaigns.raw}
-            defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
-            textField='name'
-            valueField='id'
-            disabled={chart.def.type === 'RawData'}
-            onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
-          />
-        </div>
+        {
+          chart.def.type !== 'RawData' ?
+          (
+            <div className='row collapse'>
+              <h3>Campaign</h3>
+              <DropdownList
+                data={this.state.campaigns.raw}
+                defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
+                textField='name'
+                valueField='id'
+                disabled={chart.def.type === 'RawData'}
+                onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
+              />
+            </div>
+          ) : ''
+        }
         <div className='row data-filters'>
           <br/>
           <IndicatorSelector
@@ -127,18 +146,27 @@ const ChartWizard = React.createClass({
 
     return (
       <section className='chart-wizard'>
-        <div className='medium-3 columns'>
-          {this.initDataReady() ? sidebar_component : sidebar_placeholder}
-        </div>
         <div className='medium-9 columns'>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
-        <ChartProperties
-          chart={chart}
-          selectChartType={ChartActions.setType}
-          selectPalette={ChartActions.setPalette}
-          saveTitle={ChartActions.setTitle}
-          saveChart={this.saveChart} />
+        <div className='medium-3 columns'>
+          {this.initDataReady() ? sidebar_component : sidebar_placeholder}
+        </div>
+        <footer className='row'>
+          <div className='medium-7 columns'>
+            <h3>Chart Type</h3>
+            <ChartSelect
+              charts={builderDefinitions.charts}
+              value={chart.def.type}
+              onChange={ChartActions.setType}/>
+          </div>
+          <div className='medium-5 columns'>
+            <h3>Color Scheme</h3>
+            <PalettePicker
+              value={chart.def.palette}
+              onChange={ChartActions.setPalette}/>
+          </div>
+        </footer>
       </section>
     )
   }
