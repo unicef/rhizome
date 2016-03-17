@@ -5,7 +5,14 @@ import api from 'data/api'
 const ChartActions = Reflux.createActions({
   'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
-  'fetchChartDatapoints': { children: ['completed', 'failed'], asyncResult: true }
+  'fetchMapFeatures': { children: ['completed', 'failed'], asyncResult: true },
+  'setPalette': 'setPalette',
+  'setType': 'setType',
+  'setTitle': 'setTitle',
+  'setDateRange': 'setDateRange',
+  'setIndicatorIds': 'setIndicatorIds',
+  'setCampaignIds': 'setCampaignIds',
+  'setLocationIds': 'setLocationIds'
 })
 
 // API CALLS
@@ -18,27 +25,10 @@ ChartActions.fetchChart.listen(chart_id => {
   ChartActions.fetchChart.promise(ChartAPI.getChart(chart_id))
 })
 
-ChartActions.fetchChartDatapoints.listen(chartDef => {
-  const query = _prepDatapointsQuery(chartDef)
-  ChartActions.fetchChartDatapoints.promise(api.datapoints(query))
+ChartActions.fetchMapFeatures.listen(location_ids => {
+  ChartActions.fetchMapFeatures.promise(
+    api.geo({parent_location_id__in: location_ids}, null, {'cache-control': 'max-age=604800, public'})
+  )
 })
-
-// ACTION HELPERS
-// ---------------------------------------------------------------------------
-const _prepDatapointsQuery = (chartDef) => {
-  let query = {
-    indicator__in: chartDef.indicator_ids,
-    campaign_start: chartDef.startDate,
-    campaign_end: chartDef.endDate,
-    chart_type: chartDef.type
-  }
-
-  if (chartDef.type === 'ChoroplethMap') {
-    query['parent_location_id__in'] = chartDef.location_ids
-  } else {
-    query['location_id__in'] = chartDef.location_ids
-  }
-  return query
-}
 
 export default ChartActions

@@ -181,71 +181,45 @@ var process = {
 
 function dashboardInit (dashboard, data, location, campaign, locationList, campaignList, indicators, features, responses) {
 
-  var results = {}
-
-  var indicatorsById = _.indexBy(indicators, 'id')
-  var locationsById = _.indexBy(locationList, 'id')
-  var campaignsById = _.indexBy(campaignList, 'id')
+  const indicators_index = _.indexBy(indicators, 'id')
+  const locations_index = _.indexBy(locationList, 'id')
+  const campaigns_index = _.indexBy(campaignList, 'id')
 
   // Merge location metadata into the properties object of each geographic feature
-  _.each(features, function (f) {
-    var id = f.properties.location_id
-    _.assign(f.properties, locationsById[id])
-  })
+  features.forEach(f => _.assign(f.properties, locations_index[f.properties.location_id]))
 
   // Fill in indicators and locations on all the data objects. If we haven't
   // loaded indicators yet, continue displaying charts as if we have no data
-  _.each(data, function (d) {
-    var ind = indicatorsById[d.indicator]
-    if (ind) {
-      d.indicator = ind
-    }
-
-    var reg = locationsById[d.location]
-    if (reg) {
-      d.location = reg
-    }
+  data.forEach(d => {
+    d.indicator = indicators_index[d.indicator] ? indicators_index[d.indicator] : d.indicator
+    d.location = locations_index[d.location] ? locations_index[d.location] : d.location
   })
-
-  var selectedCampaign = campaign
-  var selectedLocation = location
 
   // Build up an object representing the data where each property of the object
   // corresponse to a section in the dashboard. Each section is an object where
   // each property corresponds to a chart. Each chart is an array of the data
   // that can be used by that chart
+  let results = {}
+  dashboard.charts.forEach(chart => {
+    const sectionName = _.get(chart, 'section', '__none__')
+    const chartName = _.get(chart, 'id', _.camelCase(chart.title))
+    const section = _.get(results, sectionName, {})
 
-  var tableChartResponse = {}
-  if (responses) {
-    tableChartResponse = responses.filter(r => r.meta.chart_type === 'TableChart')
-  }
-
-  _.each(dashboard.charts, (chart, i) => {
-    var sectionName = _.get(chart, 'section', '__none__')
-    var chartName = _.get(chart, 'id', _.camelCase(chart.title))
-    var section = _.get(results, sectionName, {})
-
-    if (chart.location_ids) {
-      var chartLocation = locationsById[chart.location_ids]
-      if (chartLocation) location = chartLocation
-    } else {
-      location = selectedLocation
+    if (chart.location_ids && chart.location_ids.length === 1) {
+      location = locations_index[chart.location_ids]
     }
 
-    if (chart.campaignValue) {
-      var chartCampaign = campaignsById[chart.campaignValue]
-      if (chartCampaign) campaign = chartCampaign
-    } else {
-      campaign = selectedCampaign
+    if (chart.campaignValue && campaigns_index[chart.campaignValue]) {
+      campaign = campaigns_index[chart.campaignValue]
     }
 
-    var datumInChart = _.partial(inChart, chart, campaign, location)
-    var chartData = _.filter(data, datumInChart)
+    const datumInChart = _.partial(inChart, chart, campaign, location)
+    let chartData = _.filter(data, datumInChart)
 
-    if (chart.type === 'TableChart') {
-      chartData = tableChartResponse
+    if (chart.type === 'TableChart' && responses) {
+      chartData = responses.filter(r => r.meta.chart_type === 'TableChart')
     }
-    var processedChart = _.get(process, chart.type, _.constant(chartData))(
+    section[chartName] = _.get(process, chart.type, _.constant(chartData))(
       chart,
       chartData,
       campaign,
@@ -255,7 +229,6 @@ function dashboardInit (dashboard, data, location, campaign, locationList, campa
       dashboard
     )
 
-    section[chartName] = processedChart
     results[sectionName] = section
   })
 

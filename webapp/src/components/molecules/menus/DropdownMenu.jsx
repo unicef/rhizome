@@ -53,31 +53,25 @@ var DropdownMenu = React.createClass({
   _getGroupedMenuItemComponents: function (items, pattern) {
     let grouped_menu_item_components = []
 
-    _.forEach(items, function (item) {
+    items.forEach(item => {
       let menu_item_components = this._getMenuItemComponents(item.value, pattern)
       let group_name_component = <MenuItem key={item.title} depth={0} sendValue={_.noop} title={item.title} classes='menu-group-title' />
       menu_item_components.splice(0, 0, group_name_component)
       grouped_menu_item_components = grouped_menu_item_components.concat(menu_item_components)
-    }, this )
+    })
 
     return grouped_menu_item_components
   },
 
   _getMenuItemComponents: function (items, pattern) {
-    var filtered_items = this.filterMenu(items, pattern)
-    var menu_items = this.props.uniqueOnly ? _.uniq(filtered_items, (item) => { return item.id }) : filtered_items
+    const filtered_items = this.filterMenu(items, pattern)
+    let menu_items = this.props.uniqueOnly ? _.uniq(filtered_items, item => item.id) : filtered_items
     menu_items = menu_items.map(item => {
-      // if (typeof item.title === 'undefined' || item.title !== null ) {
-        item.title = item[this.props.title_field]
-      // }
-      // if (typeof item.value === 'undefined' || item.value !== null ) {
-        item.value = item[this.props.value_field].toString()
-      // }
+      item.title = item[this.props.title_field]
+      item.value = item[this.props.value_field].toString()
       return item
     })
-    return menu_items.map(item => {
-      return (<MenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} /> )
-    })
+    return menu_items.map(item => <MenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} />)
   },
 
   _setPattern: function (value) {
@@ -94,7 +88,7 @@ var DropdownMenu = React.createClass({
       )
     }
 
-    var icon = this.props.icon ? (<i className={['fa', this.props.icon].join(' ')} />) : null
+    const icon = this.props.icon ? (<i className={['fa', this.props.icon].join(' ')} />) : null
 
     return (
       <a className={'button ' + this.props.style} role='button' onClick={this._toggleMenu}>

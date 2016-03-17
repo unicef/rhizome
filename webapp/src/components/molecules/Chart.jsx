@@ -62,9 +62,10 @@ export default React.createClass({
 
   componentDidMount: function () {
     var chartData = this.filterData()
+    const container = React.findDOMNode(this)
     this._chart = ChartFactory(
       this.props.type,
-      React.findDOMNode(this),
+      container,
       chartData,
       this.props.options)
   },
@@ -85,7 +86,8 @@ export default React.createClass({
 
   componentDidUpdate: function () {
     var chartData = this.filterData()
-    this._chart.update(chartData, this.props.options)
+    const container = React.findDOMNode(this)
+    this._chart.update(chartData, this.props.options, container)
   },
 
   render: function () {
@@ -114,24 +116,24 @@ export default React.createClass({
           </div>
         )
       }
+    }
 
-      if (this.props.campaigns) {
-        let campaignDropdownTitle = this.props.defaultCampaign.name
-        let campaignIndex = _.indexBy(this.props.campaigns, 'id')
-        if (this.state.campaign_id) {
-          campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
-        }
-        campaignDropdown = (
-          <DropdownMenu
-            items={this.props.campaigns}
-            sendValue={this.setCampaign}
-            item_plural_name='Campaigns'
-            text={campaignDropdownTitle}
-            title_field='name'
-            value_field='id'
-            uniqueOnly/>
-        )
+    if (this.props.campaigns) {
+      let campaignDropdownTitle = this.props.defaultCampaign.name
+      let campaignIndex = _.indexBy(this.props.campaigns, 'id')
+      if (this.state.campaign_id) {
+        campaignDropdownTitle = campaignIndex[this.state.campaign_id].name
       }
+      campaignDropdown = (
+        <DropdownMenu
+          items={this.props.campaigns}
+          sendValue={this.setCampaign}
+          item_plural_name='Campaigns'
+          text={campaignDropdownTitle}
+          title_field='name'
+          value_field='id'
+          uniqueOnly/>
+      )
     }
 
     return (

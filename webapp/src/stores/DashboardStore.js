@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 import moment from 'moment'
+import api from 'data/api'
 
 import Location from 'data/requests/LocationAPI'
-import CampaignStore from 'stores/CampaignStore'
 
 var DashboardStore = Reflux.createStore({
   listenables: [require('actions/DashboardActions')],
@@ -17,11 +17,11 @@ var DashboardStore = Reflux.createStore({
     return Promise.all([
       Location.getLocations(),
       Location.getLocationTypes(),
-      CampaignStore.getCampaignsPromise()
+      api.campaign(null, null, {'cache-control': 'max-age=86400, public'})
     ])
     .then(([locations, locationsTypes, campaigns]) => {
       this.locations = locations
-      this.campaigns = campaigns
+      this.campaigns = campaigns.objects
 
       var locationIdx = _.indexBy(locations, 'id')
       var types = _.indexBy(locationsTypes, 'id')

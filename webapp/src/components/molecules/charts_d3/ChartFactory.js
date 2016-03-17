@@ -28,26 +28,26 @@ var DEFAULTS = {
   }
 }
 
-function ChartFactory (type, el, data, options) {
+function ChartFactory (type, container, data, options) {
   if (!_.isFunction(CHARTS[type])) {
     throw new Error(type + ' is not a valid chart type')
   }
   _.defaults(CHARTS[type].prototype, ChartFactory.prototype)
 
   var chart = new CHARTS[type]()
-  chart.initialize(el, data, options)
+  chart.initialize(container, data, options)
 
   return chart
 }
 
-ChartFactory.prototype.initialize = function (el, data, options) {
+ChartFactory.prototype.initialize = function (container, data, options) {
   options = this._options = _.defaults({}, options, this.defaults, DEFAULTS)
 
   var aspect = _.get(options, 'aspect', 1)
-  this._width = _.get(options, 'width', el.clientWidth)
+  this._width = _.get(options, 'width', container.clientWidth)
   this._height = _.get(options, 'height', this._width / aspect)
 
-  var svg = this._svg = d3.select(el).append('svg')
+  var svg = this._svg = d3.select(container).append('svg')
     .attr({
       'viewBox': '0 0 ' + this._width + ' ' + this._height
     })
@@ -81,7 +81,7 @@ ChartFactory.prototype.initialize = function (el, data, options) {
   g.append('g').attr('class', 'data')
   g.append('g').attr('class', 'annotation')
 
-  this.update(data, options)
+  this.update(data, options, container)
 }
 
 export default ChartFactory

@@ -5,7 +5,7 @@ import RadioGroup from 'components/molecules/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 
 import ChartWizardActions from 'actions/ChartWizardActions'
-import builderDefinitions from 'stores/chartBuilder/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 export default class ScatterOptions extends React.Component {
   constructor (props) {

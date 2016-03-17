@@ -1,12 +1,12 @@
 import Reflux from 'reflux'
-import CampaignAPI from 'data/requests/CampaignAPI'
+import api from 'data/api'
 
 const CampaignActions = Reflux.createActions({
   'fetchCampaigns': { children: ['completed', 'failed'], asyncResult: true }
 })
 
 CampaignActions.fetchCampaigns.listenAndPromise(() => {
-  return CampaignAPI.getCampaigns()
+  return api.campaign(null, null, {'cache-control': 'no-cache'})
 })
 
 export default CampaignActions

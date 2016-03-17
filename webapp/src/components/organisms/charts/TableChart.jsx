@@ -13,12 +13,13 @@ class TableChart extends Component {
 	          data={props.data}
 	          options={{
 	            color: color,
-	            cellSize: props.cellSize,
+	            cellHeight: props.cellHeight,
 	            cellFontSize: props.cellFontSize,
 	            onRowClick: props.onRowClick,
 	            headers: props.indicators,
 	            xDomain: _.map(props.indicators, 'short_name'),
-	            defaultSortOrder: props.defaultSortOrder,
+	            default_sort_order: props.default_sort_order,
+              parentLocationMap: props.parentLocationMap,
 	            margin: props.margin
 	          }}
 	        />
@@ -34,10 +35,10 @@ class TableChart extends Component {
 TableChart.defaultProps = {
   data: [],
   indicators: [],
-  defaultSortOrder: [],
+  default_sort_order: [],
   onRowClick: null,
   color: 'traffic_light',
-  cellSize: 40,
+  cellHeight: 40,
   cellFontSize: 14,
   margin: {
     top: 100,
@@ -50,14 +51,14 @@ TableChart.defaultProps = {
 TableChart.propTypes = {
   data: PropTypes.array,
   indicators: PropTypes.arrayOf(PropTypes.object).isRequired,
-  defaultSortOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+  default_sort_order: PropTypes.arrayOf(PropTypes.string).isRequired,
   onRowClick: PropTypes.func,
   color: PropTypes.oneOfType([
       PropTypes.string,
 		  PropTypes.arrayOf(PropTypes.string),
   ]),
   cellFontSize: PropTypes.number,
-  cellSize: PropTypes.number,
+  cellHeight: PropTypes.number,
   margin: PropTypes.shape({
      top: PropTypes.number,
      right: PropTypes.number,

@@ -27,14 +27,12 @@ var DEFAULTS = {
 
 function MapLegend () {
 }
-
 _.extend(MapLegend.prototype, {
   defaults: DEFAULTS,
 
   initialize: function (el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
     var margin = options.margin
-
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width / aspect)
@@ -84,8 +82,33 @@ _.extend(MapLegend.prototype, {
 
     this.update(data)
   },
-
-  update: function (data, options) {
+  buildTicksFromBounds: function(options) {
+    //green/yellow/red pattern for 0, 1, 2
+    //legendText[0] = good bound, [1] = middle, [2] = bad bound
+    let legendTicks = []
+    if (options.data_format === 'bool') {
+      legendTicks[1] = 'No'
+      legendTicks[0] = 'Yes'
+    } else if (options.data_format === 'pct') {
+      options.ticks.bad_bound *= 100;
+      options.ticks.good_bound *= 100;
+      legendTicks[1] = options.ticks.bad_bound+"%-"+options.ticks.good_bound+"%"
+      if (options.ticks.reversed){
+        legendTicks[0] = "0%-"+options.ticks.bad_bound+"%"
+        legendTicks[2] = options.ticks.good_bound+"%-100%"
+      } else {
+        legendTicks[2] = "0%-"+options.ticks.bad_bound+"%"
+        legendTicks[0] = options.ticks.good_bound+"%-100%"
+      }
+    } else {
+      //double check actual data with this logic
+      legendTicks[2] = options.ticks.good_bound+"-100"
+      legendTicks[1] = options.ticks.bad_bound+"-"+options.ticks.good_bound
+      legendTicks[0] = "0-"+options.ticks.bad_bound
+    }
+    return legendTicks;
+  },
+  update: function(data, options) {
     options = _.assign(this._options, options)
 
     const svg = this._svg
@@ -106,17 +129,10 @@ _.extend(MapLegend.prototype, {
         .domain(domain)
         .range(colors)
 
-      const ticks = colorScale.range().map((color, d) => {
-        if (options.data_format === 'bool') {
-          return d !== 1 ? 'Yes' : 'No'
-        } else {
-          return colorScale.invertExtent(color).map(options.yFormat).join('—')
-        }
-      })
-
+      const legendTicks = this.buildTicksFromBounds(options)
       svg.select('.legend')
       .call(legend().scale(d3.scale.ordinal()
-        .domain(ticks)
+        .domain(legendTicks)
         .range(colorScale.range())))
       .attr('transform', () => 'translate(2, 0)')
     }

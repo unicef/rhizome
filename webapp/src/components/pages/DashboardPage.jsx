@@ -9,7 +9,6 @@ import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
 import ChartActions from 'actions/ChartActions'
 
-import ChartStore from 'stores/ChartStore'
 import RootStore from 'stores/RootStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
 
@@ -18,7 +17,6 @@ var DashboardPage = React.createClass({
   mixins: [
     StateMixin.connect(RootStore, 'rootStore'),
     // StateMixin.connect(DashboardPageStore),
-    // StateMixin.connect(ChartStore)
   ],
 
    propTypes: {

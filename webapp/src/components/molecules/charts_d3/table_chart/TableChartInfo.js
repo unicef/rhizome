@@ -13,13 +13,13 @@ const TableChartInfo = {
 
   getChartOptions: function (datapoints) {
     return {
-      cellSize: 36,
+      cellHeight: 36,
       fontSize: 14,
       margin: { top: 40, right: 40, bottom: 40, left: 40 },
       cellFontSize: 14,
       headers: [],
-      parentLocationMap: _.indexBy(datapoints.meta.parent_location_list, 'name'),
-      defaultSortOrder: datapoints.meta.default_sort_order
+      parentLocationMap: _.indexBy(datapoints.meta.parent_location_map, 'name'),
+      default_sort_order: datapoints.meta.default_sort_order
     }
   },
 

@@ -191,10 +191,42 @@ _.extend(ChoroplethMap.prototype, {
 
     this.update(data)
   },
+  getColor(indicatorValue, location){
+    const bad_bound = this._options.domain()[0]
+    const good_bound = this._options.domain()[1]
+    const reverseBounds = bad_bound > good_bound
+    const colors = this._options.color
+    let mapFillColor = ''
+    if (this._options.data_format === 'bool'){
+      if (indicatorValue === 0){
+        mapFillColor = colors[0]
+      } else {
+        mapFillColor = colors[1]
+      }
+    } else {
+      if (reverseBounds) {
+        if (indicatorValue > good_bound && indicatorValue < bad_bound){
+          mapFillColor = colors[1]
+        } else if (indicatorValue <= good_bound) {
+          mapFillColor = colors[2]
+        } else if (indicatorValue >= bad_bound){
+          mapFillColor = colors[0]
+        }
+      } else {
+        if (indicatorValue < good_bound && indicatorValue > bad_bound){
+          mapFillColor = colors[1]
+        } else if (indicatorValue >= good_bound) {
+          mapFillColor = colors[2]
+        } else if (indicatorValue <= bad_bound){
+          mapFillColor = colors[0]
+        }
+      }
 
+    }
+    return mapFillColor
+  },
   update: function (data, options) {
     options = _.assign(this._options, options)
-
     var margin = options.margin
     var w = this._width - margin.left - margin.right
     var h = this._height - margin.top - margin.bottom
@@ -220,15 +252,16 @@ _.extend(ChoroplethMap.prototype, {
     projection.scale(s)
 
     var path = d3.geo.path().projection(projection)
-
-    var domain = options.domain(features)
+    //removed features from parameters into domain()
+    var domain = options.domain()
     // calculate the bounds upon which to color the map based on the
     // scale of the cooresponding data.
+
     if (!_.isArray(domain)) {
       domain = d3.extent(features, options.value)
       domain[0] = Math.min(domain[0], 0)
     }
-    var colorScale = d3.scale.quantize()
+    var colorScale = d3.scale.threshold()
       .domain(domain.concat().reverse())
       .range(options.color.concat().reverse())
 //<<<<<<< HEAD:webapp/src/02-molecules/charts/choropleth.js
@@ -238,11 +271,11 @@ _.extend(ChoroplethMap.prototype, {
     //   .mapValues(ind => {
     //     var extents = [ ind.low_bound, ind.high_bound ]
     //     var names = ['bad', 'ok', 'good']
-    //
+
     //     if (ind.low_bound > ind.high_bound) {
     //       names = ['good', 'ok', 'bad']
     //     }
-    //
+
     //     return d3.scale.threshold()
     //       .domain(extents)
     //       .range(names)
@@ -250,7 +283,6 @@ _.extend(ChoroplethMap.prototype, {
     //   .value()
 // =======
 // >>>>>>> d41e7ed9ff5b20d3e11f4a31198b070068ddba67:webapp/src/components/molecules/charts_d3/choropleth_map/ChoroplethMap.js
-
     var location = g.selectAll('.location')
       .data(features, function (d, i) {
         return _.get(d, 'properties.location_id', i)
@@ -267,13 +299,12 @@ _.extend(ChoroplethMap.prototype, {
         if (_.isFinite(v)) {
           classNames.push('clickable')
         }
-
         return classNames.join(' ')
       }
     })
-      .style('fill', function (d) {
+      .style('fill', d => {
         var v = options.value(d)
-        return _.isFinite(v) ? colorScale(v) : '#fff'
+        return _.isFinite(v) ? this.getColor(v,d) : '#fff'
       })
       .on('click', _.partial(this._onClick, _, options, data))
       .on('mousemove', _.partial(this._onMouseMove, _, options, data))
@@ -283,7 +314,7 @@ _.extend(ChoroplethMap.prototype, {
 
     var ticks = _.map(
       colorScale.range(),
-        c => _.map(colorScale.invertExtent(c), options.xFormat).join('—')
+        c => _.map(colorScale, options.xFormat).join('—')
     )
     if (!options.homepage && options.chartInDashboard) {
       if (_.every(colorScale.domain(), _.isNaN)) {
@@ -480,7 +511,7 @@ _.extend(ChoroplethMap.prototype, {
     if (options.data_format === 'bool') {
       locationValue = locationValue !== '0' ? 'Yes' : 'No'
     }
-    const displayValue = options.name(d) + ': ' + locationValue
+    const displayValue = d.properties.name + ': ' + locationValue
     const render = () => <Tooltip left={evt.pageX + 2} top={ evt.pageY + 2}>{displayValue}</Tooltip>
     this.layer ? this.layer._render = render : this.layer = new Layer(document.body, render)
     this.layer.render()

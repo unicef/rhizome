@@ -3,7 +3,7 @@ import d3 from 'd3'
 import formatUtil from 'components/molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
-  cellSize: 16,
+  cellHeight: 16,
   column: _.property('indicator.short_name'),
   sourceColumn: _.property('short_name'),
   fontSize: 12,
@@ -29,9 +29,9 @@ _.extend(TableChart.prototype, {
   defaults: DEFAULTS,
   sortCol: null,
 
-  initialize: function (el, data, options) {
+  initialize: function (container, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
-    const svg = this._svg = d3.select(el).append('svg').attr('class', 'heatmap sortable')
+    const svg = this._svg = d3.select(container).append('svg').attr('class', 'heatmap sortable')
     const g = svg.append('g').attr('class', 'margin')
     g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
@@ -43,14 +43,14 @@ _.extend(TableChart.prototype, {
     this.update(data, options)
   },
 
-  update: function (data, options) {
+  update: function (data, options, container) {
     options = _.extend(this._options, options)
 
-    const h = Math.max(data.length * options.cellSize, 0)
+    const h = Math.max(data.length * options.cellHeight, 0)
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
-    const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
+    const w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
-    const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => ind.short_name)
+    const xDomain = xDomainProvided ? options.xDomain : options.selected_indicators.map(ind => ind.short_name)
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
     const sourceFlow = _.flow(options.sourceColumn, xScale)
     const x = _.flow(options.column, xScale)
@@ -79,7 +79,9 @@ _.extend(TableChart.prototype, {
     // hacky way to scale the view box.. this should be done by taking into account the user's screen size
     const calculatedHeightScale = 1 + (options.headers.length - 8) / 10
     const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
-    const viewBox = '0 0 ' + (w + margin.left + margin.right) + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
+
+    const viewBoxWidth = w + margin.left + margin.right - 150
+    const viewBox = '0 0 ' + viewBoxWidth + ' ' + ((h * viewBoxHeightScale) + margin.top + margin.bottom)
     const svg = this._svg
       .attr({
         'viewBox': viewBox,
@@ -135,7 +137,7 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'x': d => x(d) + xScale.rangeBand() / 2,
-        'y': (options.cellSize / 2) - (options.cellFontSize / 4.3),
+        'y': (options.cellHeight / 2) - (options.cellFontSize / 4.3),
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
         'text-anchor': 'middle',
@@ -169,17 +171,18 @@ _.extend(TableChart.prototype, {
     // Z AXIS
     // ---------------------------------------------------------------------------
     // the z axis shows the parent location//
-    // svg.select('.z.axis')
-    //   .transition().duration(500)
-    //   .attr({'transform': 'translate(0,10)'})
-    //   .call(d3.svg.axis()
-    //     .scale(yScale)
-    //     .tickFormat(d => { return options.parentLocationMap[d].parent_location__name })
-    //     .orient('left')
-    //     .outerTickSize(0))
-    // svg.selectAll('.z.axis text')
-    //   .style('font-size', options.fontSize)
-    //   .on('click', (d, i) => { options.onRowClick(d, i, this) })
+
+    svg.select('.z.axis')
+      .transition().duration(500)
+      .attr({'transform': 'translate(20,10)'})
+      .call(d3.svg.axis()
+        .scale(yScale)
+        .tickFormat(d => options.parentLocationMap[d].parent_location__name)
+        .orient('left')
+        .outerTickSize(0))
+    svg.selectAll('.z.axis text')
+      .style('font-size', options.fontSize)
+      .on('click', (d, i) => options.onRowClick(options.parentLocationMap[d].parent_location__name, i, this))
 
     // FOOTER
     // ---------------------------------------------------------------------------
@@ -204,8 +207,8 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'transform': 'translate(' + z + ',' + h + ')',
-        'x': d => sourceFlow(d) + options.cellSize * 1.33,
-        'y': options.cellSize / 2,
+        'x': d => sourceFlow(d) + options.cellHeight * 1.33,
+        'y': options.cellHeight / 2,
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
         'text-anchor': 'middle',
@@ -237,7 +240,7 @@ _.extend(TableChart.prototype, {
       var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
     } else {
       // if not, show default.  This also applies to the third click of a header
-      domain = options.defaultSortOrder
+      domain = options.default_sort_order
       this.sortDirection = 1
     }
 
@@ -248,8 +251,8 @@ _.extend(TableChart.prototype, {
     // For empty data points i need to add the x axis domain items explicitly //
     // otherwise the domain will be less ( and different the ) the yScale //
     // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
-    if (domain.length < options.defaultSortOrder.length) {
-      const diff = options.defaultSortOrder.filter(x => domain.indexOf(x) < 0)
+    if (domain.length < options.default_sort_order.length) {
+      const diff = options.default_sort_order.filter(x => domain.indexOf(x) < 0)
       domain = domain.concat(diff)
     }
 
@@ -290,7 +293,7 @@ _.extend(TableChart.prototype, {
       .style('opacity', e => seriesName(e) === d[0].name ? 1 : 0.3)
   },
   _onRowClick: function (d) {
-    console.log('row clicked', d)
+    // console.log('row clicked', d)
   },
   _onRowOut: function () {
     this._svg.selectAll('.row')
