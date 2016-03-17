@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
+import IndicatorStore from 'stores/IndicatorStore'
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import IndicatorSelectorActions from 'actions/IndicatorSelectorActions'
 
@@ -15,7 +16,22 @@ const IndicatorSelector = React.createClass({
     indicators: PropTypes.shape({
       list: PropTypes.array
     }).isRequired,
+    preset_indicator_ids: PropTypes.array,
     classes: PropTypes.string
+  },
+
+  getDefaultProps() {
+    return {
+      preset_indicator_ids: null
+    }
+  },
+
+  componentDidMount () {
+    IndicatorStore.listen(indicators => {
+      if (this.props.preset_indicator_ids) {
+        return IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
+      }
+    })
   },
 
   render () {

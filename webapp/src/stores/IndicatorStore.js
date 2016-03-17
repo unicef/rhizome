@@ -66,7 +66,7 @@ var IndicatorStore = Reflux.createStore({
     if (this.indicators.raw && this.indicators.tags) {
       this.indicators.tree = this.buildIndicatorsTree(this.indicators.raw, this.indicators.tags, true, true)
       this.indicators.list = _.sortBy(this.indicators.tree, 'title')
-      this.setState(this.indicators)
+      this.trigger(this.indicators)
     }
   },
 

@@ -4,34 +4,29 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import DropdownList from 'react-widgets/lib/DropdownList'
-import DateRangePicker from 'components/molecules/DateRangePicker'
+
+import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
+import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'
+import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
-import TitleInput from 'components/molecules/TitleInput'
-
-
-import Placeholder from 'components/molecules/Placeholder'
-import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
-import ChartInit from 'components/molecules/charts_d3/ChartInit'
-import Chart from 'components/molecules/Chart'
-import DownloadButton from 'components/molecules/DownloadButton'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
-import PreviewScreen from 'components/organisms/chart-wizard/PreviewScreen'
-import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
-import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'
+import DownloadButton from 'components/molecules/DownloadButton'
+import DateRangePicker from 'components/molecules/DateRangePicker'
+import Placeholder from 'components/molecules/Placeholder'
+import TitleInput from 'components/molecules/TitleInput'
+import Chart from 'components/molecules/Chart'
 
+import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
+import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import ChartStore from 'stores/ChartStore'
-import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
-import LocationSelectorStore from 'stores/LocationSelectorStore'
 import DatapointStore from 'stores/DatapointStore'
 
 import ChartActions from 'actions/ChartActions'
-import ChartWizardActions from 'actions/ChartWizardActions'
-import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 const ChartWizard = React.createClass({
   mixins: [
@@ -137,7 +132,7 @@ const ChartWizard = React.createClass({
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
-              preset_indicator_ids={[31, 29, 26]}
+              preset_indicator_ids={[28, 29, 31]}
               classes='medium-6 columns'
             />
             <LocationSelector
