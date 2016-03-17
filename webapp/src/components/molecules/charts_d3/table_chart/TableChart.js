@@ -50,7 +50,7 @@ _.extend(TableChart.prototype, {
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
     const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
-    const xDomain = xDomainProvided ? options.xDomain : options.indicatorsSelected.map(ind => ind.short_name)
+    const xDomain = xDomainProvided ? options.xDomain : options.selected_indicators.map(ind => ind.short_name)
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
     const sourceFlow = _.flow(options.sourceColumn, xScale)
     const x = _.flow(options.column, xScale)
@@ -177,7 +177,8 @@ _.extend(TableChart.prototype, {
       .attr({'transform': 'translate(20,10)'})
       .call(d3.svg.axis()
         .scale(yScale)
-        .tickFormat(d => { return options.parentLocationMap[d].parent_location__name }) .orient('left')
+        .tickFormat(d => options.parentLocationMap[d].parent_location__name)
+        .orient('left')
         .outerTickSize(0))
     svg.selectAll('.z.axis text')
       .style('font-size', options.fontSize)
@@ -239,7 +240,7 @@ _.extend(TableChart.prototype, {
       var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
     } else {
       // if not, show default.  This also applies to the third click of a header
-      domain = options.defaultSortOrder
+      domain = options.default_sort_order
       this.sortDirection = 1
     }
 
@@ -250,8 +251,8 @@ _.extend(TableChart.prototype, {
     // For empty data points i need to add the x axis domain items explicitly //
     // otherwise the domain will be less ( and different the ) the yScale //
     // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
-    if (domain.length < options.defaultSortOrder.length) {
-      const diff = options.defaultSortOrder.filter(x => domain.indexOf(x) < 0)
+    if (domain.length < options.default_sort_order.length) {
+      const diff = options.default_sort_order.filter(x => domain.indexOf(x) < 0)
       domain = domain.concat(diff)
     }
 

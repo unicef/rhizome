@@ -65,7 +65,7 @@ var EocPreCampaign = React.createClass({
       <TableChart
         data={data.tableData.data}
         indicators={tableIndicators}
-        defaultSortOrder={data.tableData.options.defaultSortOrder}
+        default_sort_order={data.tableData.options.default_sort_order}
         parentLocationMap={data.tableData.options.parentLocationMap}
         onRowClick={ d => DashboardActions.navigate({ location: d }) }
       />

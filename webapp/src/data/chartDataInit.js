@@ -127,7 +127,7 @@ export default {
         return { data: [], options: null }
       }
       let newOptions = _.clone(chart.options)
-        newOptions.indicatorsSelected = selectedIndicators
+        newOptions.selected_indicators = selectedIndicators
       if (chart.options && !chart.options.yFormat) {
         newOptions.yFormat = d3.format(chartDef.yFormat)
       }

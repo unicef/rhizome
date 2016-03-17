@@ -18,7 +18,7 @@ class TableChart extends Component {
 	            onRowClick: props.onRowClick,
 	            headers: props.indicators,
 	            xDomain: _.map(props.indicators, 'short_name'),
-	            defaultSortOrder: props.defaultSortOrder,
+	            default_sort_order: props.default_sort_order,
               parentLocationMap: props.parentLocationMap,
 	            margin: props.margin
 	          }}
@@ -35,7 +35,7 @@ class TableChart extends Component {
 TableChart.defaultProps = {
   data: [],
   indicators: [],
-  defaultSortOrder: [],
+  default_sort_order: [],
   onRowClick: null,
   color: 'traffic_light',
   cellSize: 40,
@@ -51,7 +51,7 @@ TableChart.defaultProps = {
 TableChart.propTypes = {
   data: PropTypes.array,
   indicators: PropTypes.arrayOf(PropTypes.object).isRequired,
-  defaultSortOrder: PropTypes.arrayOf(PropTypes.string).isRequired,
+  default_sort_order: PropTypes.arrayOf(PropTypes.string).isRequired,
   onRowClick: PropTypes.func,
   color: PropTypes.oneOfType([
       PropTypes.string,
