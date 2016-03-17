@@ -36,5 +36,10 @@ describe(__filename, () => {
       expect(choroplethMapInstance).to.respondTo('getColor');
       expect(choroplethMapInstance).to.respondTo('update');
     })
+    it('should require correct number of parameters', () => {
+      expect(choroplethMapInstance.initialize.length).to.be.eq(3)
+      expect(choroplethMapInstance.update.length).to.be.eq(2)
+      expect(choroplethMapInstance.getColor.length).to.be.eq(2)
+    })
   })
 })
