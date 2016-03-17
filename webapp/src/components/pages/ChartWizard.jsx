@@ -109,6 +109,7 @@ const ChartWizard = React.createClass({
             defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
             textField='name'
             valueField='id'
+            disabled={chart.def.type === 'RawData'}
             onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
           />
         </div>
