@@ -10,6 +10,7 @@ import LocationSelector from 'components/molecules/LocationSelector'
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
 import ChartPreview from 'components/organisms/chart-wizard/ChartPreview'
 
+import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 import ChartInit from 'components/molecules/charts_d3/ChartInit'
 import Chart from 'components/molecules/Chart'
 import DownloadButton from 'components/molecules/DownloadButton'
@@ -35,14 +36,8 @@ const ChartWizard = React.createClass({
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators'),
-    Reflux.connect(DatapointStore, 'datapoints'),
-    Reflux.connect(IndicatorSelectorStore, 'selected_indicators'), // Try to get rid of these
-    Reflux.connect(LocationSelectorStore, 'selected_locations') // Try to get rid of these
+    Reflux.connect(DatapointStore, 'datapoints')
   ],
-
-  defaultProps: {
-    data: []
-  },
 
   propTypes: {
     chart_id: PropTypes.number
@@ -70,42 +65,56 @@ const ChartWizard = React.createClass({
   },
 
   render () {
-    if (!this.initDataReady()) {
-      return <div>Loading...</div>
-    }
-    const chart_def = this.state.chart.def
-    const start_date = chart_def ? moment(chart_def.start_date, 'YYYY-MM-DD').toDate() : moment()
-    const end_date = chart_def ? moment(chart_def.end_date, 'YYYY-MM-DD').toDate() : moment()
+    const chart = this.state.chart
+    const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
+    const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
+
+    const loading_component = (
+      <div className='loading'>
+        <i className='fa fa-spinner fa-spin fa-5x'></i>
+        <div>Loading</div>
+      </div>
+    )
+
+    const chart_component = (
+      <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+    )
+
+    const sidebar_component = (
+      <div>
+        <div>
+          <h3>Time</h3>
+          <DateRangePicker
+            sendValue={ChartActions.setDateRange}
+            start={start_date}
+            end={end_date}
+            fromComponent='ChartWizard'
+          />
+        </div>
+        <div className='row data-filters'>
+          <br/>
+          <IndicatorSelector
+            indicators={this.state.indicators}
+            preset_indicator_ids={[28, 31]}
+            classes='medium-6 columns'
+          />
+          <LocationSelector
+            locations={this.state.locations}
+            preset_location_ids={[1]}
+            classes='medium-6 columns'
+          />
+        </div>
+      </div>
+    )
 
     return (
       <section className='chart-wizard'>
         <h1 className='medium-12 columns text-center'>Explore Data</h1>
         <div className='medium-3 columns'>
-          <div>
-            <h3>Time</h3>
-            <DateRangePicker
-              sendValue={ChartActions.setDateRange}
-              start={start_date}
-              end={end_date}
-              fromComponent='ChartWizard'
-            />
-          </div>
-          <div className='row data-filters'>
-            <br/>
-            <IndicatorSelector
-              indicators={this.state.indicators}
-              preset_indicator_ids={[28, 31]}
-              classes='medium-6 columns'
-            />
-            <LocationSelector
-              locations={this.state.locations}
-              preset_location_ids={[1]}
-              classes='medium-6 columns'
-            />
-          </div>
+          {this.initDataReady() ? sidebar_component : loading_component}
         </div>
         <div className='medium-9 columns'>
-          <ChartPreview chart={this.state.chart}/>
+          {!_.isEmpty(chart.data) ? chart_component : loading_component}
         </div>
         <ChartProperties
           selected_chart_type={this.state.chart.def.type}
