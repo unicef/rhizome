@@ -1,5 +1,6 @@
-import { expect } from 'chai'
-import ChoroplethMap from '../ChoroplethMap.js'
+import { expect } from 'chai';
+import ChoroplethMap from '../ChoroplethMap.js';
+var lodash = require('lodash');
 
 describe(__filename, () => {
   context('ChoroplethMap', () => {
@@ -11,8 +12,6 @@ describe(__filename, () => {
       expect(choroplethMapInstance.defaults).to.exist;
     })
     it('should have these specific defaults', () => {
-      //which are needed? circle back to defaults later.
-      //use .keys off of chai
       expect(choroplethMapInstance.defaults).include.keys(
         'aspect',
         'domain',
@@ -31,6 +30,11 @@ describe(__filename, () => {
     })
     it('should be extensible', () => {
       expect(choroplethMapInstance).to.be.extensible;
+    })
+    it('should have required methods', () => {
+      expect(choroplethMapInstance).to.respondTo('initialize');
+      expect(choroplethMapInstance).to.respondTo('getColor');
+      expect(choroplethMapInstance).to.respondTo('update');
     })
   })
 })
