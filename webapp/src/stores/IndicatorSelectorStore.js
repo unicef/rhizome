@@ -4,7 +4,7 @@ import StateMixin from'reflux-state-mixin'
 import IndicatorSelectorActions from 'actions/IndicatorSelectorActions'
 import IndicatorStore from 'stores/IndicatorStore'
 
-var IndicatorSelectorStore = Reflux.createStore({
+const IndicatorSelectorStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
 

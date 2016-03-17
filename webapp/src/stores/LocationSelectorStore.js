@@ -4,7 +4,7 @@ import StateMixin from'reflux-state-mixin'
 import LocationSelectorActions from 'actions/LocationSelectorActions'
 import LocationStore from 'stores/LocationStore'
 
-var LocationSelectorStore = Reflux.createStore({
+const LocationSelectorStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
 
