@@ -81,9 +81,14 @@ const ChartWizard = React.createClass({
       </div>
     )
 
-    const chart_component = (
-      <Chart type={chart.def.type} data={chart.data} options={chart.def} />
-    )
+    const chart_component = chart.def.type === 'RawData'
+      ? <DatabrowserTable
+          data={this.state.datapoints.raw}
+          selected_locations={chart.def.selected_locations}
+          selected_indicators={chart.def.selected_indicators}
+        />
+      : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+
 
     const sidebar_component = (
       <div>

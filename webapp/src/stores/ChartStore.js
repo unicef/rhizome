@@ -210,6 +210,8 @@ var ChartStore = Reflux.createStore({
     const melted_datapoints = this.meltFurther(datapoints, selected_indicators)
 
     switch (chart.def.type) {
+      case 'RawData':
+        return {data: datapoints, def: chart.def}
       case 'LineChart':
         return ChartStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
       // case 'PieChart':
