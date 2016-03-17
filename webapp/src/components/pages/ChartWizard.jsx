@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
+import DropdownList from 'react-widgets/lib/DropdownList'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
@@ -88,6 +89,17 @@ const ChartWizard = React.createClass({
             start={start_date}
             end={end_date}
             fromComponent='ChartWizard'
+          />
+          <br/>
+        </div>
+        <div className='row collapse'>
+          <h3>Campaign</h3>
+          <DropdownList
+            data={this.state.campaigns.raw}
+            defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
+            textField='name'
+            valueField='id'
+            onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
           />
         </div>
         <div className='row data-filters'>

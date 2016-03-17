@@ -7,6 +7,7 @@ import ChartActions from 'actions/ChartActions'
 import DatapointActions from 'actions/DatapointActions'
 import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import DatapointStore from 'stores/DatapointStore'
+import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import ChartStoreHelpers from 'stores/ChartStoreHelpers'
@@ -53,6 +54,7 @@ var ChartStore = Reflux.createStore({
   init () {
     this.listenTo(DatapointStore, this.onDatapointStore)
     this.listenTo(IndicatorStore, this.onIndicatorStore)
+    this.listenTo(CampaignStore, this.onCampaignStore)
     this.listenTo(LocationStore, this.onLocationStore)
   },
 
@@ -102,6 +104,12 @@ var ChartStore = Reflux.createStore({
     this.updateChart()
   },
 
+  onSetCampaignIds (campaign_ids) {
+    this.chart.def.campaign_ids = campaign_ids
+    this.chart.def.selected_campaigns = campaign_ids.map(id => this.campaigns.index[id])
+    this.updateChart()
+  },
+
   onSetType (type) {
     if (type === 'ChoroplethMap') {
       this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
@@ -143,6 +151,10 @@ var ChartStore = Reflux.createStore({
 
   onLocationStore (locations) {
     this.locations = locations
+  },
+
+  onCampaignStore (campaigns) {
+    this.campaigns = campaigns
   },
 
   // =========================================================================== //

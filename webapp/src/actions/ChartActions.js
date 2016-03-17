@@ -9,6 +9,7 @@ const ChartActions = Reflux.createActions({
   'setTitle': 'setTitle',
   'setDateRange': 'setDateRange',
   'setIndicatorIds': 'setIndicatorIds',
+  'setCampaignIds': 'setCampaignIds',
   'setLocationIds': 'setLocationIds'
 })
 
