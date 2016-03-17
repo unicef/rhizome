@@ -103,13 +103,13 @@ function _chooseRadius (v, radius) {
   }
 }
 
-function ChoroplethMap () {
+function ChoroplethMap() {
 }
 
 _.extend(ChoroplethMap.prototype, {
   defaults: DEFAULTS,
 
-  initialize: function (el, data, options) {
+  initialize(el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
     var margin = options.margin
@@ -189,13 +189,13 @@ _.extend(ChoroplethMap.prototype, {
 
     this.update(data)
   },
-  getColor(indicatorValue, location){
+  getColor(indicatorValue, location) {
     const bad_bound = this._options.domain()[0]
     const good_bound = this._options.domain()[1]
     const reverseBounds = bad_bound > good_bound
     const colors = this._options.color
     let mapFillColor = ''
-    if (this._options.data_format === 'bool'){
+    if (this._options.data_format === 'bool') {
       if (indicatorValue === 0){
         mapFillColor = colors[0]
       } else {
@@ -207,15 +207,15 @@ _.extend(ChoroplethMap.prototype, {
           mapFillColor = colors[1]
         } else if (indicatorValue <= good_bound) {
           mapFillColor = colors[2]
-        } else if (indicatorValue >= bad_bound){
+        } else if (indicatorValue >= bad_bound) {
           mapFillColor = colors[0]
         }
       } else {
-        if (indicatorValue < good_bound && indicatorValue > bad_bound){
+        if (indicatorValue < good_bound && indicatorValue > bad_bound) {
           mapFillColor = colors[1]
         } else if (indicatorValue >= good_bound) {
           mapFillColor = colors[2]
-        } else if (indicatorValue <= bad_bound){
+        } else if (indicatorValue <= bad_bound) {
           mapFillColor = colors[0]
         }
       }
@@ -223,7 +223,7 @@ _.extend(ChoroplethMap.prototype, {
     }
     return mapFillColor
   },
-  update: function (data, options) {
+  update(data, options) {
     options = _.assign(this._options, options)
     var margin = options.margin
     var w = this._width - margin.left - margin.right
