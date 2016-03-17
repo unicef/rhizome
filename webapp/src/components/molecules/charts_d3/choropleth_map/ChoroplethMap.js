@@ -132,8 +132,6 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     var g = svg.append('g')
-      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
-
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'legend')
     svg.append('g').attr('class', 'bubbles')
@@ -335,12 +333,14 @@ _.extend(ChoroplethMap.prototype, {
     var fontLength = 100
     var stripeLegendStartPosition
 
+
+    // =========================================================================== //
+    //                                 STRIPE DATA                                 //
+    // =========================================================================== //
     if (options.stripeValue) {
-      var stripes = svg.select('.stripes').select('.data')
-      var stripeData = stripes.selectAll('.location')
-        .data(features, function (d, i) {
-          return _.get(d, 'properties.location_id', i)
-        })
+      const stripes = svg.select('.stripes').select('.data')
+      const stripeData = stripes.selectAll('.location')
+        .data(features, (d, i) => _.get(d, 'properties.location_id', i))
 
       stripeData.enter().append('path')
 

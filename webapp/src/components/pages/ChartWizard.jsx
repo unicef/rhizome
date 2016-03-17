@@ -81,9 +81,14 @@ const ChartWizard = React.createClass({
       </div>
     )
 
-    const chart_component = (
-      <Chart type={chart.def.type} data={chart.data} options={chart.def} />
-    )
+    const chart_component = chart.def.type === 'RawData'
+      ? <DatabrowserTable
+          data={this.state.datapoints.raw}
+          selected_locations={chart.def.selected_locations}
+          selected_indicators={chart.def.selected_indicators}
+        />
+      : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+
 
     const sidebar_component = (
       <div>
@@ -104,6 +109,7 @@ const ChartWizard = React.createClass({
             defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
             textField='name'
             valueField='id'
+            disabled={chart.def.type === 'RawData'}
             onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
           />
         </div>
@@ -111,7 +117,7 @@ const ChartWizard = React.createClass({
           <br/>
           <IndicatorSelector
             indicators={this.state.indicators}
-            preset_indicator_ids={[28, 31]}
+            preset_indicator_ids={[28, 31, 29]}
             classes='medium-6 columns'
           />
           <LocationSelector
@@ -133,14 +139,11 @@ const ChartWizard = React.createClass({
           {!_.isEmpty(chart.data) ? chart_component : loading_component}
         </div>
         <ChartProperties
-          selected_chart_type={this.state.chart.def.type}
-          selected_palette={this.state.chart.def.palette}
-          chart_title={this.state.chart.def.title}
+          chart={chart}
           selectChartType={ChartActions.setType}
           selectPalette={ChartActions.setPalette}
           saveTitle={ChartActions.setTitle}
-          saveChart={this.saveChart}
-          chartIsReady={!this.state.canDisplayChart} />
+          saveChart={this.saveChart} />
       </section>
     )
   }

@@ -13,22 +13,22 @@ class ChartProperties extends Component {
           <h3>Chart Type</h3>
           <ChartSelect
             charts={builderDefinitions.charts}
-            value={props.selected_chart_type}
+            value={props.chart.def.type}
             onChange={props.selectChartType}/>
         </div>
         <div className='medium-2 columns'>
           <h3>Color Scheme</h3>
           <PalettePicker
-            value={props.selected_palette}
+            value={props.chart.def.palette}
             onChange={props.selectPalette}/>
         </div>
         <div className='medium-4 columns'>
           <div className='medium-8 columns'>
             <h3>Chart Title</h3>
-            <TitleInput initialText={props.chart_title} save={props.saveTitle}/>
+            <TitleInput initialText={props.chart.def.title} save={props.saveTitle}/>
           </div>
           <div className='medium-4 columns'>
-            <button className='right button success' disabled={props.chartIsReady} onClick={props.saveChart}>
+            <button className='right button success' disabled={!props.chart.data} onClick={props.saveChart}>
               <i className='fa fa-save'></i> Save Chart
             </button>
           </div>
@@ -39,21 +39,17 @@ class ChartProperties extends Component {
 }
 
 ChartProperties.propTypes = {
-  selected_chart_type: PropTypes.string,
-  selected_palette: PropTypes.string,
-  chart_title: PropTypes.string,
+  chart: PropTypes.object,
   selectChartType: PropTypes.func,
   selectPalette: PropTypes.func,
   saveTitle: PropTypes.func,
-  saveChart: PropTypes.func,
-  chartIsReady: PropTypes.bool
+  saveChart: PropTypes.func
 }
 
 ChartProperties.defaultProps = {
   selected_palette: 'orange',
   selected_chart_type: 'RawData',
-  chart_title: '',
-  chartIsReady: false
+  chart_title: ''
 }
 
 export default ChartProperties
