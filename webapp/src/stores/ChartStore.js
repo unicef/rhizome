@@ -22,6 +22,7 @@ var ChartStore = Reflux.createStore({
 
   chart: {
     def: {
+      data_format: 'pct',
       color: palettes['traffic_light'],
       type: 'RawData',
       features: [],
@@ -108,6 +109,9 @@ var ChartStore = Reflux.createStore({
     this.chart.def.selected_indicators = indicator_ids.map(id => this.indicators.index[id])
     this.chart.def.headers = this.chart.def.selected_indicators
     this.chart.def.xDomain = this.chart.def.headers.map(indicator => indicator.short_name)
+    this.chart.def.x = indicator_ids[0]
+    this.chart.def.y = indicator_ids[1] ? indicator_ids[1] : 0
+    this.chart.def.z = indicator_ids[2] ? indicator_ids[2] : 0
     this.updateChart()
   },
 
@@ -125,10 +129,10 @@ var ChartStore = Reflux.createStore({
 
   onSetType (type) {
     this.chart.def.type = type
+    this.chart.data = []
     if (type === 'ChoroplethMap') {
       this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
-      ChartActions.fetchMapFeatures(this.chart.def.location_ids)
-      return this.trigger(this.chart)
+      return ChartActions.fetchMapFeatures(this.chart.def.location_ids)
     }
     this.updateChart()
   },
@@ -156,7 +160,9 @@ var ChartStore = Reflux.createStore({
     //   .map(this.melt)
     //   .flatten()
     //   .value()
-    this.chart.data = this.getChartFormattedData()
+    const formatted_chart = this.getFormattedChart()
+    this.chart.data = formatted_chart.data
+    this.chart.def = formatted_chart.def
     this.trigger(this.chart)
   },
 
@@ -185,44 +191,45 @@ var ChartStore = Reflux.createStore({
         type: this.chart.def.type
       })
     } else {
-      this.chart.data = this.getChartFormattedData()
+      const formatted_chart = this.getFormattedChart()
+      this.chart.data = formatted_chart.data
+      this.chart.def = formatted_chart.def
       this.trigger(this.chart)
     }
   },
 
-  getChartFormattedData () {
-    const chart_def = this.chart.def
+  getFormattedChart () {
+    const chart = this.chart
     const datapoints = this.datapoints.raw
     const selected_locations = this.chart.def.location_ids.map(id => this.locations.index[id])
     const selected_indicators = this.chart.def.indicator_ids.map(id => this.indicators.index[id])
-    const selected_locations_index = this.locations.index
-    const selected_indicators_index = this.indicators.index
-    const features = this.chart.def.features
-    const lower = moment(chart_def.start_date, 'YYYY-MM-DD')
-    const upper = moment(chart_def.end_date, 'YYYY-MM-DD')
+    const selected_locations_index = _.indexBy(selected_locations, 'id')
+    const selected_indicators_index = _.indexBy(selected_indicators, 'id')
+    const groups = chart.def.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
+    const lower = moment(chart.def.start_date, 'YYYY-MM-DD')
+    const upper = moment(chart.def.end_date, 'YYYY-MM-DD')
     const layout = 1 // hard coded for now
-    const groups = chart_def.groupBy === 'indicator' ? _.indexBy(selected_indicators, 'id') : _.indexBy(selected_locations, 'id')
 
     const selected_indicator_ids = selected_indicators.map(_.property('id'))
     const meltPromise = this.meltFurther(datapoints, selected_indicator_ids)
 
-    switch (chart_def.type) {
-      case 'LineChart':
-        return ChartStoreHelpers.getLineChartData(meltPromise, lower, upper, groups, chart_def, layout)
-      case 'PieChart':
-        return ChartStoreHelpers.getPieChartData(meltPromise, selected_indicators, layout)
+    switch (chart.def.type) {
+      // case 'LineChart':
+        // return ChartStoreHelpers.formatLineChart(meltPromise, lower, upper, groups, chart.def, layout)
+      // case 'PieChart':
+        // return ChartStoreHelpers.formatPieChart(meltPromise, selected_indicators, layout)
       case 'ChoroplethMap':
-        return ChartStoreHelpers.getChoroplethMapData(meltPromise, selected_locations_index, selected_indicators, chart_def, layout, features)
-      case 'ColumnChart':
-        return ChartStoreHelpers.getColumnChartData(meltPromise, lower, upper, groups, chart_def, layout)
-      case 'ScatterChart':
-        return ChartStoreHelpers.getScatterChartData(datapoints, selected_locations_index, selected_indicators_index, chart_def, layout)
-      case 'BarChart':
-        return ChartStoreHelpers.getBarChartData(datapoints, selected_locations_index, selected_indicators_index, chart_def, layout)
+        return ChartStoreHelpers.formatChoroplethMap(meltPromise, chart, this.locations.index, this.indicators.index, layout)
+      // case 'ColumnChart':
+        // return ChartStoreHelpers.formatColumnChart(meltPromise, lower, upper, groups, chart.def, layout)
+      // case 'ScatterChart':
+        // return ChartStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart.def, layout)
+      // case 'BarChart':
+        // return ChartStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart.def, layout)
       case 'TableChart':
-        return ChartStoreHelpers.getTableChartData(datapoints, selected_locations_index, selected_indicators_index, chart_def, layout)
+        return ChartStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
       default:
-        console.log('No such chart type: ' + chart_def.type)
+        console.log('No such chart type: ' + chart.def.type)
     }
   },
 

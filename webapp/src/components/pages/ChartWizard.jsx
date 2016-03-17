@@ -50,6 +50,11 @@ const ChartWizard = React.createClass({
     LocationSelectorStore.listen(selected_locations => {
       return ChartActions.setLocationIds(selected_locations.map(location => location.id))
     })
+    CampaignStore.listen(campaigns => {
+      if (campaigns.raw[0]) {
+        ChartActions.setCampaignIds([campaigns.raw[0].id])
+      }
+    })
   },
 
   initDataReady () {
