@@ -3,9 +3,10 @@ import ChartAPI from 'data/requests/ChartAPI'
 import api from 'data/api'
 
 const ChartActions = Reflux.createActions({
-  'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
-  'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
-  'fetchMapFeatures': { children: ['completed', 'failed'], asyncResult: true },
+  'fetchCharts': { children: ['completed', 'failed'] },
+  'fetchChart': { children: ['completed', 'failed'] },
+  'fetchMapFeatures': { children: ['completed', 'failed'] },
+  'postChart': { children: ['completed', 'failed'] },
   'saveChart': 'saveChart',
   'setPalette': 'setPalette',
   'setType': 'setType',
@@ -24,6 +25,10 @@ ChartActions.fetchCharts.listenAndPromise(() => {
 
 ChartActions.fetchChart.listen(chart_id => {
   ChartActions.fetchChart.promise(ChartAPI.getChart(chart_id))
+})
+
+ChartActions.postChart.listen(chart_def => {
+  ChartActions.postChart.promise(api.post_chart(chart_def))
 })
 
 ChartActions.fetchMapFeatures.listen(location_ids => {

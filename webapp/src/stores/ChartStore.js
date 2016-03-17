@@ -83,6 +83,17 @@ var ChartStore = Reflux.createStore({
     this.setState({ error: error })
   },
 
+  // ===============================  Post Chart  ============================= //
+  onPostChart () {
+    this.setState({ loading: true })
+  },
+  onPostChartCompleted (response) {
+    this.trigger(this.chart)
+  },
+  onPostChartFailed (error) {
+    this.setState({ error: error })
+  },
+
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures () {
     this.setState({ loading: true })
@@ -93,30 +104,6 @@ var ChartStore = Reflux.createStore({
   },
   onFetchMapFeaturesFailed (error) {
     this.setState({ error: error })
-  },
-
-  // ===========================  Save Chart Features  ========================= //
-  onSaveChart (callback) {
-    if (!this.chart.def.title) {
-      return window.alert('Please add a Title to your chart')
-    }
-
-    callback(
-      _.merge(
-        this.chart.def,
-        {
-          indicators_ids: this.chart.def.indicator_ids,
-          countries: this.data.countries.selected.map(country => country.id),
-          location_ids: this.chart.def.location_ids,
-          groupBy: builderDefinitions.groups[this.data.groupByValue].value,
-          locations: builderDefinitions.locationLevels[this.data.locationLevelValue].value,
-          yFormat: builderDefinitions.formats[this.data.chart.yFormatValue].value,
-          xFormat: builderDefinitions.formats[this.data.chart.xFormatValue].value
-        }, (source, override) => {
-          return override
-        }
-      )
-    )
   },
 
   // =========================================================================== //
@@ -216,8 +203,6 @@ var ChartStore = Reflux.createStore({
       })
     } else {
       this.chart.data = null
-      const formatted_chart = this.getFormattedChart()
-      this.chart.def = formatted_chart.def
       this.trigger(this.chart)
     }
   },

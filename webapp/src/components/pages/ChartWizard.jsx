@@ -57,10 +57,38 @@ const ChartWizard = React.createClass({
     })
   },
 
+  _saveChart (callback) {
+    const chart_def = this.state.chart.def
+    if (!chart_def.title) {
+      return window.alert('Please add a Title to your chart')
+    }
+    if (!this.state.chart.data) {
+      return window.alert('Get a valid chart')
+    }
+    const params_to_save = {
+      campaign_ids: chart_def.campaign_ids,
+      location_ids: chart_def.location_ids,
+      indicator_ids: chart_def.indicator_ids,
+      start_date: chart_def.start_date,
+      end_date: chart_def.end_date,
+      type: chart_def.type,
+    }
+
+    const chart_query = {
+      id: this.props.chart_id,
+      title: chart_def.title,
+      chart_json: JSON.stringify(params_to_save)
+    }
+    console.log('chart_query.chart_json', chart_query.chart_json)
+    console.log('chart_def.chart.def', chart_def)
+    // ChartActions.postChart(chart_query)
+  },
+
   render () {
     const chart = this.state.chart
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
+    const disableSave = _.isEmpty(chart.def.location_ids) || _.isEmpty(chart.def.indicator_ids)
     const raw_data_query = {
       format: 'csv',
       indicator__in: chart.def.indicator_ids,
@@ -112,7 +140,7 @@ const ChartWizard = React.createClass({
                   working='Downloading'
                   cookieName='dataBrowserCsvDownload'/>
               :
-                <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
+                <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
                   <i className='fa fa-save'></i> Save To Charts
                 </button>
             }
