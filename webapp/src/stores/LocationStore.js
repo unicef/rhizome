@@ -36,7 +36,7 @@ var LocationStore = Reflux.createStore({
   //                              API CALL HANDLERS                              //
   // =========================================================================== //
 
-  // ===============================  Fetch Locations  ============================= //
+  // =============================  Fetch Locations  =========================== //
   onFetchLocations () {
     this.setState({ raw: [] })
   },
