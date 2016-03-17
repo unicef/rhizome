@@ -8,7 +8,6 @@ import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 
 import ChartProperties from 'components/organisms/chart-wizard/ChartProperties'
-import ChartPreview from 'components/organisms/chart-wizard/ChartPreview'
 
 import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 import ChartInit from 'components/molecules/charts_d3/ChartInit'

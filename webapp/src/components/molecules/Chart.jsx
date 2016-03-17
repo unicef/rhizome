@@ -62,9 +62,10 @@ export default React.createClass({
 
   componentDidMount: function () {
     var chartData = this.filterData()
+    const container = React.findDOMNode(this)
     this._chart = ChartFactory(
       this.props.type,
-      React.findDOMNode(this),
+      container,
       chartData,
       this.props.options)
   },
@@ -85,7 +86,8 @@ export default React.createClass({
 
   componentDidUpdate: function () {
     var chartData = this.filterData()
-    this._chart.update(chartData, this.props.options)
+    const container = React.findDOMNode(this)
+    this._chart.update(chartData, this.props.options, container)
   },
 
   render: function () {

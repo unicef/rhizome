@@ -3,7 +3,7 @@ import d3 from 'd3'
 import formatUtil from 'components/molecules/charts_d3/utils/format'
 
 var DEFAULTS = {
-  cellSize: 16,
+  cellHeight: 16,
   column: _.property('indicator.short_name'),
   sourceColumn: _.property('short_name'),
   fontSize: 12,
@@ -29,9 +29,9 @@ _.extend(TableChart.prototype, {
   defaults: DEFAULTS,
   sortCol: null,
 
-  initialize: function (el, data, options) {
+  initialize: function (container, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
-    const svg = this._svg = d3.select(el).append('svg').attr('class', 'heatmap sortable')
+    const svg = this._svg = d3.select(container).append('svg').attr('class', 'heatmap sortable')
     const g = svg.append('g').attr('class', 'margin')
     g.append('g').attr('class', 'z axis')
     g.append('g').attr('class', 'y axis')
@@ -43,12 +43,12 @@ _.extend(TableChart.prototype, {
     this.update(data, options)
   },
 
-  update: function (data, options) {
+  update: function (data, options, container) {
     options = _.extend(this._options, options)
 
-    const h = Math.max(data.length * options.cellSize, 0)
+    const h = Math.max(data.length * options.cellHeight, 0)
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
-    const w = 3 * Math.max(options.headers.length * options.cellSize, 0)
+    const w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
     const xDomain = xDomainProvided ? options.xDomain : options.selected_indicators.map(ind => ind.short_name)
     const xScale = d3.scale.ordinal().domain(xDomain).rangeBands([0, w], 0.1)
@@ -137,7 +137,7 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'x': d => x(d) + xScale.rangeBand() / 2,
-        'y': (options.cellSize / 2) - (options.cellFontSize / 4.3),
+        'y': (options.cellHeight / 2) - (options.cellFontSize / 4.3),
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
         'text-anchor': 'middle',
@@ -207,8 +207,8 @@ _.extend(TableChart.prototype, {
       .attr({
         'height': yScale.rangeBand(),
         'transform': 'translate(' + z + ',' + h + ')',
-        'x': d => sourceFlow(d) + options.cellSize * 1.33,
-        'y': options.cellSize / 2,
+        'x': d => sourceFlow(d) + options.cellHeight * 1.33,
+        'y': options.cellHeight / 2,
         'width': xScale.rangeBand(),
         'dominant-baseline': 'central',
         'text-anchor': 'middle',

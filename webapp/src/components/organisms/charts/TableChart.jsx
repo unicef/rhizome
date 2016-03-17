@@ -13,7 +13,7 @@ class TableChart extends Component {
 	          data={props.data}
 	          options={{
 	            color: color,
-	            cellSize: props.cellSize,
+	            cellHeight: props.cellHeight,
 	            cellFontSize: props.cellFontSize,
 	            onRowClick: props.onRowClick,
 	            headers: props.indicators,
@@ -38,7 +38,7 @@ TableChart.defaultProps = {
   default_sort_order: [],
   onRowClick: null,
   color: 'traffic_light',
-  cellSize: 40,
+  cellHeight: 40,
   cellFontSize: 14,
   margin: {
     top: 100,
@@ -58,7 +58,7 @@ TableChart.propTypes = {
 		  PropTypes.arrayOf(PropTypes.string),
   ]),
   cellFontSize: PropTypes.number,
-  cellSize: PropTypes.number,
+  cellHeight: PropTypes.number,
   margin: PropTypes.shape({
      top: PropTypes.number,
      right: PropTypes.number,
