@@ -86,62 +86,20 @@ const ChartWizard = React.createClass({
         />
       : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
 
-    const sidebar_component = (
-      <div>
-        <div className='row collapse'>
-          <div className='medium-12 large-5 large-push-7 columns'>
-            <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
-              <i className='fa fa-save'></i> Save To Charts
-            </button>
-          </div>
-          <div className='medium-12 large-7 large-pull-5 columns'>
-            <h3>Chart Title</h3>
-            <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
-          </div>
-        </div>
-        <div className='row'>
-          <h3>Time</h3>
-          <DateRangePicker
-            sendValue={ChartActions.setDateRange}
-            start={start_date}
-            end={end_date}
-            fromComponent='ChartWizard'
-          />
-          <br/>
-        </div>
-        {
-          chart.def.type !== 'RawData' ?
-          (
-            <div className='row collapse'>
-              <h3>Campaign</h3>
-              <DropdownList
-                data={this.state.campaigns.raw}
-                defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
-                textField='name'
-                valueField='id'
-                disabled={chart.def.type === 'RawData'}
-                onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
-              />
-            </div>
-          ) : ''
-        }
-        <div className='row data-filters'>
-          <br/>
-          <IndicatorSelector
-            indicators={this.state.indicators}
-            preset_indicator_ids={[31, 29, 26]}
-            classes='medium-6 columns'
-          />
-          <LocationSelector
-            locations={this.state.locations}
-            preset_location_ids={[1]}
-            classes='medium-6 columns'
-          />
-        </div>
-      </div>
-    )
 
-    const sidebar_placeholder = <Placeholder height='200'/>
+    const campaign_dropdown = chart.def.type !== 'RawData' ?
+      (
+        <DropdownList
+          data={this.state.campaigns.raw}
+          defaultValue={this.state.campaigns.raw ? this.state.campaigns.raw[0].id : null}
+          textField='name'
+          valueField='id'
+          disabled={chart.def.type === 'RawData'}
+          onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
+        />
+      ) : ''
+
+    const campaign_placeholder = <Placeholder height='18'/>
     const chart_placeholder =  <Placeholder height='600'/>
 
     return (
@@ -150,7 +108,44 @@ const ChartWizard = React.createClass({
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
         <div className='medium-3 columns'>
-          {this.initDataReady() ? sidebar_component : sidebar_placeholder}
+          <div className='row collapse'>
+            <div className='medium-12 large-5 large-push-7 columns'>
+              <button className='expand button success field-submit' disabled={!chart.data} onClick={ChartActions.saveChart}>
+                <i className='fa fa-save'></i> Save To Charts
+              </button>
+            </div>
+            <div className='medium-12 large-7 large-pull-5 columns'>
+              <h3>Chart Title</h3>
+              <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
+            </div>
+          </div>
+          <div className='row'>
+            <h3>Time</h3>
+            <DateRangePicker
+              sendValue={ChartActions.setDateRange}
+              start={start_date}
+              end={end_date}
+              fromComponent='ChartWizard'
+            />
+            <br/>
+          </div>
+          <div className='row collapse'>
+            <h3>Campaign</h3>
+            {this.initDataReady() ? campaign_dropdown : campaign_placeholder}
+          </div>
+          <div className='row data-filters'>
+            <br/>
+            <IndicatorSelector
+              indicators={this.state.indicators}
+              preset_indicator_ids={[31, 29, 26]}
+              classes='medium-6 columns'
+            />
+            <LocationSelector
+              locations={this.state.locations}
+              preset_location_ids={[1]}
+              classes='medium-6 columns'
+            />
+          </div>
         </div>
         <footer className='row'>
           <div className='medium-7 columns'>
