@@ -1,3 +1,7 @@
+import _ from 'lodash'
+import api from 'data/api'
+import aspects from 'components/molecules/charts_d3/utils/aspects'
+
 const ChartStoreHelpers = {
   getTableChartData (datapoints, locations_index, indicators_index, chartOptions) {
     return datapoints.map(datapoint => {
@@ -44,9 +48,53 @@ const ChartStoreHelpers = {
     return null
   },
 
-  getChoroplethMapData (meltPromise, selected_locations_index, selected_indicators, chart_def, layout) {
-    // TO DO
-    return null
+  getChoroplethMapData (datapoints, selected_locations_index, selected_indicators, chart_def, layout, features) {
+    console.log('---------------------------- getChoroplethMapData ---------------------------')
+    let xAxis = chart_def.x
+    let yAxis = chart_def.y
+    let zAxis = chart_def.z
+
+    var chartOptions = {
+      aspect: aspects[layout].choroplethMap,
+      name: d => _.get(selected_locations_index, '[' + d.properties.location_id + '].name', ''),
+      border: features
+    }
+    if (!datapoints || datapoints.length === 0) {
+      return { options: chartOptions, data: features }
+    }
+
+    let indicatorIndex = _(datapoints).groupBy('indicator').value()
+    let index = _.indexBy(indicatorIndex[xAxis], 'location')
+    let bubbleIndex = null
+    let gradientIndex = null
+    // if (yAxis) {
+    //   let maxValue = 5000
+    //   let bubbleValues = indicatorIndex[yAxis].map(v => v.value)
+    //   bubbleIndex = _.indexBy(indicatorIndex[yAxis], 'location')
+    //   chartOptions.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
+    //   chartOptions.bubbleValue = _.property('properties.bubbleValue')
+    // }
+    // if (zAxis) {
+    //   gradientIndex = _.indexBy(indicatorIndex[zAxis], 'location')
+    //   chartOptions.indicatorName = _.result(_.find(selected_indicators, indicator => indicator.id === zAxis), 'short_name')
+    //   chartOptions.stripeValue = _.property('properties.stripeValue')
+    // }
+
+    var chartData = features.map(feature => {
+      var location = _.get(index, feature.properties.location_id)
+      let properties = {value: _.get(location, 'value')}
+      if (yAxis) {
+        let bubbleLocation = _.get(bubbleIndex, feature.properties.location_id)
+        properties.bubbleValue = _.get(bubbleLocation, 'value')
+      }
+      if (zAxis) {
+        let gradientLocation = _.get(gradientIndex, feature.properties.location_id)
+        properties.stripeValue = _.get(gradientLocation, 'value')
+      }
+      return _.merge({}, feature, {properties: properties})
+    })
+
+    return { options: chartOptions, data: chartData }
   },
 
   getColumnChartData (meltPromise, lower, upper, groups, chart_def, layout) {

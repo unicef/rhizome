@@ -24,6 +24,7 @@ var ChartStore = Reflux.createStore({
     def: {
       color: palettes['traffic_light'],
       type: 'RawData',
+      features: [],
       indicator_ids: [],
       location_ids: [],
       selected_indicators: [],
@@ -81,6 +82,18 @@ var ChartStore = Reflux.createStore({
     this.setState({ error: error })
   },
 
+  // ============================  Fetch Map Features  ========================= //
+  onFetchMapFeatures () {
+    this.setState({ loading: true })
+  },
+  onFetchMapFeaturesCompleted (response) {
+    this.chart.def.features = response.objects.features
+    this.updateChart()
+  },
+  onFetchMapFeaturesFailed (error) {
+    this.setState({ error: error })
+  },
+
   // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
@@ -111,10 +124,12 @@ var ChartStore = Reflux.createStore({
   },
 
   onSetType (type) {
+    this.chart.def.type = type
     if (type === 'ChoroplethMap') {
       this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
+      ChartActions.fetchMapFeatures(this.chart.def.location_ids)
+      return this.trigger(this.chart)
     }
-    this.chart.def.type = type
     this.updateChart()
   },
 
@@ -182,13 +197,14 @@ var ChartStore = Reflux.createStore({
     const selected_indicators = this.chart.def.indicator_ids.map(id => this.indicators.index[id])
     const selected_locations_index = this.locations.index
     const selected_indicators_index = this.indicators.index
+    const features = this.chart.def.features
     const lower = moment(chart_def.start_date, 'YYYY-MM-DD')
     const upper = moment(chart_def.end_date, 'YYYY-MM-DD')
     const layout = 1 // hard coded for now
     const groups = chart_def.groupBy === 'indicator' ? _.indexBy(selected_indicators, 'id') : _.indexBy(selected_locations, 'id')
 
-    // const selected_indicator_ids = selected_indicators.map(_.property('id'))
-    // const meltPromise = this.meltFurther(datapoints, selected_indicator_ids)
+    const selected_indicator_ids = selected_indicators.map(_.property('id'))
+    const meltPromise = this.meltFurther(datapoints, selected_indicator_ids)
 
     switch (chart_def.type) {
       case 'LineChart':
@@ -196,7 +212,7 @@ var ChartStore = Reflux.createStore({
       case 'PieChart':
         return ChartStoreHelpers.getPieChartData(meltPromise, selected_indicators, layout)
       case 'ChoroplethMap':
-        return ChartStoreHelpers.getChoroplethMapData(meltPromise, selected_locations_index, selected_indicators, chart_def, layout)
+        return ChartStoreHelpers.getChoroplethMapData(meltPromise, selected_locations_index, selected_indicators, chart_def, layout, features)
       case 'ColumnChart':
         return ChartStoreHelpers.getColumnChartData(meltPromise, lower, upper, groups, chart_def, layout)
       case 'ScatterChart':
@@ -221,25 +237,24 @@ var ChartStore = Reflux.createStore({
   melt (datapoint) {
     const base = _.omit(datapoint, 'indicators')
     return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
+  },
+
+  meltFurther (datapoints, indicatorArray) {
+    const baseIndicators = indicatorArray.map(indicator => {
+      return { indicator: indicator + '', value: 0 }
+    })
+    const o = _(datapoints).map(d => {
+      const base = _.omit(d, 'indicators')
+      const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
+      return indicatorFullList.map(indicator => {
+        return _.assign({}, base, indicator)
+      })
+    })
+    .flatten()
+    .value()
+
+    return o
   }
-
-  // meltFurther (datapoints, indicatorArray) {
-  //   const dataset = data.objects
-  //   const baseIndicators = indicatorArray.map(indicator => {
-  //     return { indicator: indicator + '', value: 0 }
-  //   })
-  //   const o = _(dataset).map(d => {
-  //     const base = _.omit(d, 'indicators')
-  //     const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
-  //     return indicatorFullList.map(indicator => {
-  //       return _.assign({}, base, indicator)
-  //     })
-  //   })
-  //   .flatten()
-  //   .value()
-
-  //   return o
-  // }
 
 })
 

@@ -1,9 +1,11 @@
 import Reflux from 'reflux'
 import ChartAPI from 'data/requests/ChartAPI'
+import api from 'data/api'
 
 const ChartActions = Reflux.createActions({
   'fetchCharts': { children: ['completed', 'failed'], asyncResult: true },
   'fetchChart': { children: ['completed', 'failed'], asyncResult: true },
+  'fetchMapFeatures': { children: ['completed', 'failed'], asyncResult: true },
   'setPalette': 'setPalette',
   'setType': 'setType',
   'setTitle': 'setTitle',
@@ -21,6 +23,12 @@ ChartActions.fetchCharts.listenAndPromise(() => {
 
 ChartActions.fetchChart.listen(chart_id => {
   ChartActions.fetchChart.promise(ChartAPI.getChart(chart_id))
+})
+
+ChartActions.fetchMapFeatures.listen(location_ids => {
+  ChartActions.fetchMapFeatures.promise(
+    api.geo({parent_location_id__in: location_ids}, null, {'cache-control': 'max-age=604800, public'})
+  )
 })
 
 export default ChartActions
