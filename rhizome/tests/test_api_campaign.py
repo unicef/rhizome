@@ -48,7 +48,8 @@ class CampaignResourceTest(ResourceTestCase):
             office_id = self.o.id,
             campaign_type_id = self.ct.id,
             top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = self.it.id
+            top_lvl_indicator_tag_id = self.it.id,
+            name="can_see"
         )
 
         self.can_not_see_campaign = Campaign.objects.create(
@@ -83,3 +84,45 @@ class CampaignResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
 
         self.assertEqual(len(response_data['objects']), 1)
+
+    def test_get_campaign(self):
+        data = {'id__in':self.can_see_campaign.id}
+        resp = self.api_client.get('/api/v1/campaign/', format='json', \
+                                    data=data, authentication=self.get_credentials())
+        response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(response_data['objects']), 1)
+
+    def test_post_campaign(self):
+        data={
+            'name': 'something',
+            'top_lvl_location_id': self.top_lvl_location.id,
+            'top_lvl_indicator_tag_id': self.it.id,
+            'office_id': self.o.id,
+            'campaign_type_id': self.ct.id,
+            'start_date': '2016-05-01',
+            'end_date': '2016-05-01',
+            'pct_complete': 0.1
+        }
+        resp = self.api_client.post('/api/v1/campaign/', format='json', \
+                                    data=data, authentication=self.get_credentials())
+        response_data = self.deserialize(resp)
+        self.assertHttpCreated(resp)
+        self.assertEqual(response_data['name'], 'something')
+
+    def test_get_detail(self):
+        detailURL = '/api/v1/campaign/{0}/'.format(self.can_see_campaign.id)
+        resp=self.api_client.get(detailURL, format='json', \
+                                    authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(self.can_see_campaign.name, response_data['name'])
+
+    #TODO: make this a 404 error
+    def test_get_detail_invalid_id(self):
+        detailURL = '/api/v1/campaign/12345/'
+        resp=self.api_client.get(detailURL, format='json', \
+                                    authentication=self.get_credentials())
+        self.assertHttpApplicationError(resp)
+
+
