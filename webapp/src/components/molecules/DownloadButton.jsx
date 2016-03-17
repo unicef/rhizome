@@ -62,14 +62,14 @@ var DownloadButton = React.createClass({
 
   render () {
     let text = this.state.isWorking ? this.props.working : this.props.text
-    let classesString = this.props.enable && !this.state.isWorking ? 'button success ' : 'button success disabled '
+    let classesString = this.props.enable && !this.state.isWorking ? 'button success expand ' : 'button success expand disabled '
     return (
-      <a role='button'
+      <button role='button'
         className={classesString + this.props.classes}
         onClick={this._download}>
         <i className='fa fa-fw fa-download' />&emsp; {text}
         <iframe width='0' height='0' className='hidden' src={this.state.url}></iframe>
-      </a>
+      </button>
     )
   }
 })
