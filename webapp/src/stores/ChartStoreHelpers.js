@@ -1,5 +1,7 @@
 import d3 from 'd3'
 import _ from 'lodash'
+import moment from 'moment'
+import chartOptionsHelpers from 'components/molecules/charts_d3/utils/chartOptionsHelpers'
 import aspects from 'components/molecules/charts_d3/utils/aspects'
 
 const ChartStoreHelpers = {
@@ -66,20 +68,20 @@ const ChartStoreHelpers = {
     const xAxis = chart.def.x
     const yAxis = chart.def.y
     const zAxis = chart.def.z
-    const groupedDatapoints = _(datapoints).groupBy('indicator').value()
-    const index = _.indexBy(groupedDatapoints[xAxis], 'location')
+    const groupedDatapoints = _(datapoints).groupBy('indicator.id').value()
+    const index = _.indexBy(groupedDatapoints[xAxis], 'location.id')
     let bubbleIndex = null
     let gradientIndex = null
 
     if (yAxis) {
       let maxValue = 5000
       let bubbleValues = groupedDatapoints[yAxis].map(datapoint => datapoint.value)
-      bubbleIndex = _.indexBy(groupedDatapoints[yAxis], 'location')
+      bubbleIndex = _.indexBy(groupedDatapoints[yAxis], 'location.id')
       chart.def.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
       chart.def.bubbleValue = _.property('properties.bubbleValue')
     }
     if (zAxis) {
-      gradientIndex = _.indexBy(groupedDatapoints[zAxis], 'location')
+      gradientIndex = _.indexBy(groupedDatapoints[zAxis], 'location.id')
       chart.def.indicatorName = _.result(_.find(selected_indicators_index, indicator => indicator.id === zAxis), 'short_name')
       chart.def.stripeValue = _.property('properties.stripeValue')
     }
@@ -88,27 +90,19 @@ const ChartStoreHelpers = {
     // display historical data. Index by location for quick lookup.
     const dataIdx = _(datapoints)
       .filter(d => d.campaign.id === chart.def.campaign_ids[0])
-      .indexBy('location')
+      .indexBy('location.id')
       .value()
 
-    chart.def.features.forEach(f => {
-      var d = dataIdx[f.properties.location_id]
-      if (d) {
-        f.properties[d.indicator] = d.value
+    chart.def.features.forEach(feature => {
+      var datapoint = dataIdx[feature.properties.location_id]
+      if (datapoint) {
+        feature.properties[datapoint.indicator.id] = datapoint.value
       }
     })
 
     chart.data = chart.def.features.map(feature => {
       const datapoint = index[feature.properties.location_id]
-      const location = locations_index[feature.properties.location_id]
-      const properties = {
-        value: datapoint['value'],
-        name: location.name,
-        lvl: location.lvl,
-        parent_location_id: location.parent_location_id,
-        parent: locations_index[location.parent_location_id],
-        location_type_id: location.location_type_id
-      }
+      const properties = _.merge({}, datapoint.location, { value: datapoint['value'] })
       if (yAxis) {
         const bubbleLocation = bubbleIndex[feature.properties.location_id]
         properties.bubbleValue = bubbleLocation['value']
@@ -117,17 +111,55 @@ const ChartStoreHelpers = {
         const gradientLocation = gradientIndex[feature.properties.location_id]
         properties.stripeValue = gradientLocation['value']
       }
-      return _.merge({}, feature, {properties: properties})
+      return _.merge({}, feature, {properties: properties}, datapoint.location)
     })
 
     return chart
   },
 
-  formatLineChart (meltPromise, lower, upper, groups, chart_def, layout) {
-    // TO DO
-    return null
+  // =========================================================================== //
+  //                                  LINE CHART                                 //
+  // =========================================================================== //
+  formatLineChart (datapoints, chart, groups, layout) {
+    let lower = moment(chart.def.start_date, 'YYYY-MM-DD')
+    let upper = moment(chart.def.end_date, 'YYYY-MM-DD')
+
+    if (!lower) { // set the lower bound from the lowest datapoint value
+      const sortedDates = _.sortBy(datapoints, _.method('campaign.start_date.getTime'))
+      lower = moment(_.first(sortedDates).campaign.start_date)
+    }
+
+    chart.def.domain = _.constant([lower.toDate(), upper.toDate()])
+    chart.def.aspect = aspects[layout].lineChart
+    chart.def.values = _.property('values')
+    chart.def.x = _.property('campaign.start_date')
+    chart.def.xFormat = d => moment(d).format('MMM YYYY')
+    chart.def.y = _.property('value')
+    chart.def.xLabel = chart.def.xLabel
+    chart.def.yLabel = chart.def.yLabel
+    chart.def.height = 350
+
+    const def = chartOptionsHelpers.generateMarginForAxisLabel(chart.def)
+
+    if (!datapoints || datapoints.length === 0) {
+      return chart
+    }
+
+    const data = _(datapoints).groupBy(chart.def.groupBy)
+      .map(datapoint => {
+        return {
+          name: groups[datapoint[0].indicator.id].name,
+          values: _.sortBy(datapoint, _.method('campaign.start_date.getTime'))
+        }
+      })
+      .value()
+
+    return {data: data, def: def}
   },
 
+  // =========================================================================== //
+  //                                   PIE CHART                                 //
+  // =========================================================================== //
   formatPieChart (meltPromise, selected_indicators, layout) {
     // TO DO
     return null

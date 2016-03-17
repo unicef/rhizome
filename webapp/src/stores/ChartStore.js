@@ -206,22 +206,18 @@ var ChartStore = Reflux.createStore({
     const selected_locations_index = _.indexBy(selected_locations, 'id')
     const selected_indicators_index = _.indexBy(selected_indicators, 'id')
     const groups = chart.def.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
-    const lower = moment(chart.def.start_date, 'YYYY-MM-DD')
-    const upper = moment(chart.def.end_date, 'YYYY-MM-DD')
     const layout = 1 // hard coded for now
-
-    const selected_indicator_ids = selected_indicators.map(_.property('id'))
-    const meltPromise = this.meltFurther(datapoints, selected_indicator_ids)
+    const melted_datapoints = this.meltFurther(datapoints, selected_indicators)
 
     switch (chart.def.type) {
-      // case 'LineChart':
-        // return ChartStoreHelpers.formatLineChart(meltPromise, lower, upper, groups, chart.def, layout)
+      case 'LineChart':
+        return ChartStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
       // case 'PieChart':
-        // return ChartStoreHelpers.formatPieChart(meltPromise, selected_indicators, layout)
+        // return ChartStoreHelpers.formatPieChart(melted_datapoints, selected_indicators, layout)
       case 'ChoroplethMap':
-        return ChartStoreHelpers.formatChoroplethMap(meltPromise, chart, this.locations.index, this.indicators.index, layout)
+        return ChartStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
-        // return ChartStoreHelpers.formatColumnChart(meltPromise, lower, upper, groups, chart.def, layout)
+        // return ChartStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart.def, layout)
       // case 'ScatterChart':
         // return ChartStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart.def, layout)
       // case 'BarChart':
@@ -246,21 +242,21 @@ var ChartStore = Reflux.createStore({
     return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
   },
 
-  meltFurther (datapoints, indicatorArray) {
-    const baseIndicators = indicatorArray.map(indicator => {
-      return { indicator: indicator + '', value: 0 }
-    })
-    const o = _(datapoints).map(d => {
-      const base = _.omit(d, 'indicators')
-      const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), d.indicators)
-      return indicatorFullList.map(indicator => {
-        return _.assign({}, base, indicator)
-      })
+  meltFurther (datapoints, selected_indicators) {
+    const selected_indicator_ids = selected_indicators.map(_.property('id'))
+    const baseIndicators = selected_indicator_ids.map(id => ({ indicator: id + '', value: 0 }))
+    const melted_datapoints = _(datapoints).map(datapoint => {
+      const base = _.omit(datapoint, 'indicators')
+      const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), datapoint.indicators)
+      return indicatorFullList.map(indicator => _.assign({}, base, indicator))
     })
     .flatten()
     .value()
-
-    return o
+    melted_datapoints.forEach(melted_datapoint => {
+      melted_datapoint.indicator = this.indicators.index[parseInt(melted_datapoint.indicator, 0)]
+      melted_datapoint.location = this.locations.index[melted_datapoint.location]
+    })
+    return melted_datapoints
   }
 
 })
