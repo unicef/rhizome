@@ -88,6 +88,7 @@ var ChartStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onPostChartCompleted (response) {
+    window.location.replace('/charts/' + response.objects.id)
     this.trigger(this.chart)
   },
   onPostChartFailed (error) {

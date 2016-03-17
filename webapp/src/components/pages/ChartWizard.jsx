@@ -62,26 +62,18 @@ const ChartWizard = React.createClass({
     if (!chart_def.title) {
       return window.alert('Please add a Title to your chart')
     }
-    if (!this.state.chart.data) {
-      return window.alert('Get a valid chart')
-    }
-    const params_to_save = {
-      campaign_ids: chart_def.campaign_ids,
-      location_ids: chart_def.location_ids,
-      indicator_ids: chart_def.indicator_ids,
-      start_date: chart_def.start_date,
-      end_date: chart_def.end_date,
-      type: chart_def.type,
-    }
-
-    const chart_query = {
+    ChartActions.postChart({
       id: this.props.chart_id,
       title: chart_def.title,
-      chart_json: JSON.stringify(params_to_save)
-    }
-    console.log('chart_query.chart_json', chart_query.chart_json)
-    console.log('chart_def.chart.def', chart_def)
-    // ChartActions.postChart(chart_query)
+      chart_json: JSON.stringify({
+        type: chart_def.type,
+        start_date: chart_def.start_date,
+        end_date: chart_def.end_date,
+        campaign_ids: chart_def.campaign_ids,
+        location_ids: chart_def.location_ids,
+        indicator_ids: chart_def.indicator_ids
+      })
+    })
   },
 
   render () {
