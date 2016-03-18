@@ -117,7 +117,6 @@ _.extend(ChoroplethMap.prototype, {
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width * aspect)
-
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'class': 'reds',
@@ -191,7 +190,7 @@ _.extend(ChoroplethMap.prototype, {
   },
   roundToTwo(num) {
     //rounds to 99.9
-    //if num is 0.9987 = 0.999 === 99.9%
+    //if num is 0.9987, it should = 0.999, which === 99.9%
     //this logic matchs table chart logic.
     return +(Math.round(num + "e+3")  + "e-3");
   },
