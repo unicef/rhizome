@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 // import Chart from 'components/molecules/Chart'
-import Chart from 'components/organisms/charts/Chart'
+import Chart from 'components/organisms/charts/D3Chart'
 import ExportPdf from 'components/molecules/ExportPdf'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
