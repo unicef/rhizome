@@ -24,7 +24,7 @@ var ChartStore = Reflux.createStore({
     def: {
       data_format: 'pct',
       color: palettes['traffic_light'],
-      type: 'ChoroplethMap',
+      type: 'RawData',
       features: [],
       indicator_ids: [],
       location_ids: [],
