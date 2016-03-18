@@ -71,19 +71,22 @@ var ChartStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onFetchChartCompleted (response) {
-    this.chart.def = response.chart_json
+    const chart_json = response.chart_json
+    this.chart.def.campaign_ids = chart_json.campaign_ids
+    this.chart.def.end_date = chart_json.end_date
+    this.chart.def.indicator_ids = chart_json.indicator_ids
+    this.chart.def.location_ids = chart_json.location_ids
+    this.chart.def.start_date = chart_json.start_date
     this.chart.def.id = response.id
     this.chart.def.title = response.title
-    this.chart.def.location_ids = this.chart.def.location_ids
     this.chart.def.selected_locations = this.chart.def.location_ids.map(id => this.locations.index[id])
-    this.chart.def.indicator_ids = this.chart.def.indicator_ids
     this.chart.def.selected_indicators = this.chart.def.indicator_ids.map(id => this.indicators.index[id])
     this.chart.def.headers = this.chart.def.selected_indicators
     this.chart.def.xDomain = this.chart.def.headers.map(indicator => indicator.short_name)
     this.chart.def.x = this.chart.def.indicator_ids[0]
     this.chart.def.y = this.chart.def.indicator_ids[1] ? this.chart.def.indicator_ids[1] : 0
     this.chart.def.z = this.chart.def.indicator_ids[2] ? this.chart.def.indicator_ids[2] : 0
-    ChartActions.setType(this.chart.def.type)
+    ChartActions.setType(chart_json.type)
   },
   onFetchChartFailed (error) {
     this.setState({ error: error })
