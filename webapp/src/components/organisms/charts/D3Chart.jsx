@@ -54,7 +54,7 @@ const D3Chart = React.createClass({
     return (
       <div className='chart-container'>
         { chart_component }
-        { type === 'ChoroplethMap' ? chart_legend }
+        { type === 'ChoroplethMap' ? chart_legend : ''}
       </div>
     )
   }
