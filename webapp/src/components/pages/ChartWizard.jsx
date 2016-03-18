@@ -57,7 +57,7 @@ const ChartWizard = React.createClass({
     })
   },
 
-  _saveChart (callback) {
+  _saveChart () {
     const chart_def = this.state.chart.def
     if (!chart_def.title) {
       return window.alert('Please add a Title to your chart')
