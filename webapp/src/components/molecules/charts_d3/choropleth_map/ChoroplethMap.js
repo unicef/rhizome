@@ -189,12 +189,19 @@ _.extend(ChoroplethMap.prototype, {
 
     this.update(data)
   },
-  getColor(indicatorValue, location) {
+  roundToTwo(num) {
+    //rounds to 99.9
+    //if num is 0.9987 = 0.999 === 99.9%
+    //this logic matchs table chart logic.
+    return +(Math.round(num + "e+3")  + "e-3");
+  },
+  getColor(indicatorValue) {
     const bad_bound = this._options.domain()[0]
     const good_bound = this._options.domain()[1]
     const reverseBounds = bad_bound > good_bound
     const colors = this._options.color
     let mapFillColor = ''
+    indicatorValue = this.roundToTwo(indicatorValue)
     if (this._options.data_format === 'bool') {
       if (indicatorValue === 0){
         mapFillColor = colors[0]
@@ -219,7 +226,6 @@ _.extend(ChoroplethMap.prototype, {
           mapFillColor = colors[0]
         }
       }
-
     }
     return mapFillColor
   },
