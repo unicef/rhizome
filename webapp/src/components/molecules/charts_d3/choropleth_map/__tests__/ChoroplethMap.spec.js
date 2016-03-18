@@ -62,6 +62,9 @@ describe(__filename, () => {
       const goodBound = 0.9;
       const badBound = 0.8;
       var counter = 0;
+      const okIndicator = 0.85;
+      const goodIndicator = 0.95;
+      const badIndicator = 0.79;
       beforeEach(() => {
         var domain = [badBound, goodBound];
         choroplethMapInstance._options = {
@@ -77,61 +80,51 @@ describe(__filename, () => {
           expect(choroplethMapInstance.getColor.length).to.be.eq(1);
         });
         it('should return green for good bound indicator', () => {
-          const goodIndicator = 0.95;
           expect(choroplethMapInstance.getColor(goodIndicator)).to.be.eq(GREEN);
         });
         it('should ONLY return green for good bound indicator', () => {
-          const goodIndicator = 0.95;
           expect(choroplethMapInstance.getColor(goodIndicator)).to.not.be.eq(YELLOW);
           expect(choroplethMapInstance.getColor(goodIndicator)).to.not.be.eq(RED);
         });
         it('should return red for bad bound indicator', () => {
-          const badIndicator = 0.79;
           expect(choroplethMapInstance.getColor(badIndicator)).to.be.eq(RED);
         });
         it('should ONLY return red for bad bound indicator', () => {
-          const badIndicator = 0.79;
           expect(choroplethMapInstance.getColor(badIndicator)).to.not.be.eq(YELLOW);
           expect(choroplethMapInstance.getColor(badIndicator)).to.not.be.eq(GREEN);
         });
         it('should return yellow for bad bound indicator', () => {
-          const okIndicator = 0.85;
           expect(choroplethMapInstance.getColor(okIndicator)).to.be.eq(YELLOW);
         });
         it('should ONLY return yellow for bad bound indicator', () => {
-          const okIndicator = 0.85;
           expect(choroplethMapInstance.getColor(okIndicator)).to.not.be.eq(RED);
           expect(choroplethMapInstance.getColor(okIndicator)).to.not.be.eq(GREEN);
         });
       });
-      context('if good and bad bounds are reversed', () => {
+      context('if good bound is less than bad bound', () => {
+        const reversedGoodIndicator = 0.79;
+        const reversedBadIndicator = 0.95;
         beforeEach(() => {
           choroplethMapInstance._options.domain = _.constant(choroplethMapInstance._options.domain().reverse());
         });
         it('should return green for good bound indicator', () => {
-          const goodIndicator = 0.79;
-          expect(choroplethMapInstance.getColor(goodIndicator)).to.be.eq(GREEN);
+          expect(choroplethMapInstance.getColor(reversedGoodIndicator)).to.be.eq(GREEN);
         });
         it('should ONLY return green for good bound indicator', () => {
-          const goodIndicator = 0.79;
-          expect(choroplethMapInstance.getColor(goodIndicator)).to.not.be.eq(YELLOW);
-          expect(choroplethMapInstance.getColor(goodIndicator)).to.not.be.eq(RED);
+          expect(choroplethMapInstance.getColor(reversedGoodIndicator)).to.not.be.eq(YELLOW);
+          expect(choroplethMapInstance.getColor(reversedGoodIndicator)).to.not.be.eq(RED);
         });
         it('should return red for bad bound indicator', () => {
-          const badIndicator = 0.95;
-          expect(choroplethMapInstance.getColor(badIndicator)).to.be.eq(RED);
+          expect(choroplethMapInstance.getColor(reversedBadIndicator)).to.be.eq(RED);
         });
         it('should ONLY return red for bad bound indicator', () => {
-          const badIndicator = 0.95;
-          expect(choroplethMapInstance.getColor(badIndicator)).to.not.be.eq(YELLOW);
-          expect(choroplethMapInstance.getColor(badIndicator)).to.not.be.eq(GREEN);
+          expect(choroplethMapInstance.getColor(reversedBadIndicator)).to.not.be.eq(YELLOW);
+          expect(choroplethMapInstance.getColor(reversedBadIndicator)).to.not.be.eq(GREEN);
         });
         it('should return yellow for bad bound indicator', () => {
-          const okIndicator = 0.85;
           expect(choroplethMapInstance.getColor(okIndicator)).to.be.eq(YELLOW);
         });
         it('should ONLY return yellow for bad bound indicator', () => {
-          const okIndicator = 0.85;
           expect(choroplethMapInstance.getColor(okIndicator)).to.not.be.eq(RED);
           expect(choroplethMapInstance.getColor(okIndicator)).to.not.be.eq(GREEN);
         });
