@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import NavMenuItem from 'components/molecules/NavMenuItem.jsx'
 import RootStore from 'stores/RootStore'
 
-let DashboadrNav = React.createClass({
+let DashboardNav = React.createClass({
 
   mixins: [
     Reflux.connect(RootStore),
@@ -62,4 +62,4 @@ let DashboadrNav = React.createClass({
   }
 })
 
-export default DashboadrNav
+export default DashboardNav
