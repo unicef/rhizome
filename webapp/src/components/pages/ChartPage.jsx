@@ -30,6 +30,7 @@ var ChartPage = React.createClass({
   componentWillMount () {
     Reflux.connect(LocationStore, 'chart')
     LocationStore.listen(this.getChart)
+    IndicatorStore.listen(this.getChart)
   },
 
   getChart (locations, indicators) {
