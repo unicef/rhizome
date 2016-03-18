@@ -76,8 +76,16 @@ var ChartStore = Reflux.createStore({
     this.chart.def = response.chart_json
     this.chart.def.id = response.id
     this.chart.def.title = response.title
-    DatapointActions.fetchDatapoints(this.chart.def)
-    this.setState(this.chart)
+    this.chart.def.location_ids = this.chart.def.location_ids
+    this.chart.def.selected_locations = this.chart.def.location_ids.map(id => this.locations.index[id])
+    this.chart.def.indicator_ids = this.chart.def.indicator_ids
+    this.chart.def.selected_indicators = this.chart.def.indicator_ids.map(id => this.indicators.index[id])
+    this.chart.def.headers = this.chart.def.selected_indicators
+    this.chart.def.xDomain = this.chart.def.headers.map(indicator => indicator.short_name)
+    this.chart.def.x = this.chart.def.indicator_ids[0]
+    this.chart.def.y = this.chart.def.indicator_ids[1] ? this.chart.def.indicator_ids[1] : 0
+    this.chart.def.z = this.chart.def.indicator_ids[2] ? this.chart.def.indicator_ids[2] : 0
+    ChartActions.setType(this.chart.def.type)
   },
   onFetchChartFailed (error) {
     this.setState({ error: error })
@@ -166,12 +174,6 @@ var ChartStore = Reflux.createStore({
     this.datapoints = datapoints
     this.chart.def.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.chart.def.default_sort_order = datapoints.meta.default_sort_order
-    // this.chart.data = _(datapoints.raw)
-    //   .flatten()
-    //   .sortBy(_.method('campaign.start_date.getTime'))
-    //   .map(this.melt)
-    //   .flatten()
-    //   .value()
     const formatted_chart = this.getFormattedChart()
     this.chart.data = formatted_chart.data
     this.chart.def = formatted_chart.def
@@ -217,7 +219,7 @@ var ChartStore = Reflux.createStore({
     const selected_indicators_index = _.indexBy(selected_indicators, 'id')
     const groups = chart.def.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
     const layout = 1 // hard coded for now
-    const melted_datapoints = this.meltFurther(datapoints, selected_indicators)
+    const melted_datapoints = this.melt(datapoints, selected_indicators)
 
     switch (chart.def.type) {
       case 'RawData':
@@ -249,12 +251,7 @@ var ChartStore = Reflux.createStore({
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
   },
 
-  melt (datapoint) {
-    const base = _.omit(datapoint, 'indicators')
-    return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
-  },
-
-  meltFurther (datapoints, selected_indicators) {
+  melt (datapoints, selected_indicators) {
     const selected_indicator_ids = selected_indicators.map(_.property('id'))
     const baseIndicators = selected_indicator_ids.map(id => ({ indicator: id + '', value: 0 }))
     const melted_datapoints = _(datapoints).map(datapoint => {
