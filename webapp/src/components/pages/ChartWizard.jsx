@@ -157,7 +157,7 @@ const ChartWizard = React.createClass({
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
-              preset_indicator_ids={[28, 29, 31]}
+              preset_indicator_ids={[15]}
               classes='medium-6 columns'
             />
             <LocationSelector

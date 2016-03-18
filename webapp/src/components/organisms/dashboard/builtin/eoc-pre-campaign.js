@@ -17,6 +17,8 @@ export default {
     }, {
       'title': 'trendData',
       'type': 'LineChart',
+      'locations': 'sublocations',
+      'groupBy': 'location',
       'indicators': [7],
       'timeRange': {
         months: 12

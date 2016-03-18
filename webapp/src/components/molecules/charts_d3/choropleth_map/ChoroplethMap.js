@@ -117,7 +117,6 @@ _.extend(ChoroplethMap.prototype, {
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width * aspect)
-
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'class': 'reds',
@@ -189,12 +188,19 @@ _.extend(ChoroplethMap.prototype, {
 
     this.update(data)
   },
-  getColor(indicatorValue, location) {
+  roundToTwo(num) {
+    //rounds to 99.9
+    //if num is 0.9987, it should = 0.999, which === 99.9%
+    //this logic matchs table chart logic.
+    return +(Math.round(num + "e+3")  + "e-3");
+  },
+  getColor(indicatorValue) {
     const bad_bound = this._options.domain()[0]
     const good_bound = this._options.domain()[1]
     const reverseBounds = bad_bound > good_bound
     const colors = this._options.color
     let mapFillColor = ''
+    indicatorValue = this.roundToTwo(indicatorValue)
     if (this._options.data_format === 'bool') {
       if (indicatorValue === 0){
         mapFillColor = colors[0]
@@ -219,7 +225,6 @@ _.extend(ChoroplethMap.prototype, {
           mapFillColor = colors[0]
         }
       }
-
     }
     return mapFillColor
   },

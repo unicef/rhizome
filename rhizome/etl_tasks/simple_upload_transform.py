@@ -134,7 +134,7 @@ class SimpleDocTransform(DocTransform):
         except KeyError:
             None, None
 
-        if location_id == -1 or campaign_id == 1:
+        if location_id == -1 or campaign_id == -1:
             return None, None
 
         for k,v in submission.iteritems():
@@ -211,7 +211,7 @@ class SimpleDocTransform(DocTransform):
 
     def file_to_source_submissions(self):
         #use a dictionary to make sure that there is a single value for each instance_guid.
-        #duplicates are handled by overwriting old values 
+        #duplicates are handled by overwriting old values
         batch = {}
         for submission in self.csv_df.itertuples():
 
