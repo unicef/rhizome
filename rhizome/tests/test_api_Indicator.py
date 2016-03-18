@@ -2,6 +2,7 @@ import json
 
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
+from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent,IndicatorToTag, IndicatorBound, \
@@ -13,32 +14,17 @@ class IndicatorResourceTest(ResourceTestCase):
     def setUp(self):
         super(IndicatorResourceTest, self).setUp()
 
-        # Create a user.
-        self.username = 'john'
-        self.password = 'pass'
-        self.user = User.objects.create_user(self.username,
-                                             'john@john.com', self.password)
-        self.lt = LocationType.objects.create(name='test',admin_level = 0)
-        self.o = Office.objects.create(name = 'Earth')
+        self.ts = TestSetupHelpers()
 
-        self.top_lvl_location = Location.objects.create(
-                name = 'Nigeria',
-                location_code = 'Nigeria',
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
-            )
+        self.lt = self.ts.create_arbitrary_location_type()
+        self.o = self.ts.create_arbitrary_office()
 
-        LocationPermission.objects.create(user_id = self.user.id,\
+        self.top_lvl_location = self.ts.create_arbitrary_location(self.lt.id, self.o.id)
+
+        LocationPermission.objects.create(user_id = self.ts.user.id,\
             top_lvl_location_id = self.top_lvl_location.id)
 
-        self.get_credentials()
-
-        # create their api_key
-
-    def get_credentials(self):
-        result = self.api_client.client.login(username=self.username,
-                                              password=self.password)
-        return result
+        self.ind = self.ts.create_arbitrary_indicator()
 
     def test_auth_valid(self):
         resp = self.api_client.get('/api/v1/', format='json')
@@ -65,8 +51,7 @@ class IndicatorResourceTest(ResourceTestCase):
 
         post_data = {'indicator_id': indicator_1.id, 'component_id': indicator_2.id, 'typeInfo': 'DENOMINATOR'}
 
-        resp = self.api_client.post('/api/v1/indicator_calculation/', format='json', \
-                                    data=post_data, authentication=self.get_credentials())
+        resp = self.ts.post(self, '/api/v1/indicator_calculation/', data=post_data)
 
         response_data = self.deserialize(resp)
         indicator_calculation = CalculatedIndicatorComponent.objects.all().order_by('-id')[0]
@@ -100,58 +85,71 @@ class IndicatorResourceTest(ResourceTestCase):
 
         delete_url = '/api/v1/indicator_calculation/?id=' + str(component.id)
 
-        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+        self.api_client.delete(delete_url, format='json', data={}, authentication=self.ts.get_credentials(self))
 
         self.assertEqual(CalculatedIndicatorComponent.objects.count(), 0)
 
 
-    def test_create_tag(self):
-        Indicator.objects.create(short_name='Test Indicator', \
-                                 name='Test Indicator for the Tag', \
-                                 data_format='int', \
-                                 description='Test Indicator for the Tag Description', )
-        indicatior = Indicator.objects.all().order_by('-id')[0]
+    #GET request. If 'id' is passed in, it returns specific indicator. Otherwise,
+    #returns all indicators
+    #if an error occurs, returns 200 code and an empty list of indicator objects
+    def test_get_indicator_id(self):
+        get_data ={'id':self.ind.id}
+        resp = self.ts.get(self, '/api/v1/indicator/', data= get_data)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(len(resp_data['objects']), 1)
 
-        IndicatorTag.objects.create(tag_name='Test tag')
-        tag = IndicatorTag.objects.all().order_by('-id')[0]
-
-        IndicatorToTag.objects.filter(indicator_id=indicatior.id, indicator_tag_id=tag.id).delete()
-
-        post_data = {'indicator_id': indicatior.id, 'indicator_tag_id': tag.id}
-
-        resp = self.api_client.post('/api/v1/indicator_to_tag/', format='json', \
-                                    data=post_data, authentication=self.get_credentials())
-
-        response_data = self.deserialize(resp)
-        indicator_tag = IndicatorToTag.objects.all().order_by('-id')[0]
-
-        self.assertHttpCreated(resp)
-        self.assertEqual(indicator_tag.id, response_data['id'])
-        self.assertEqual(indicatior.id, response_data['indicator_id'])
-        self.assertEqual(tag.id, response_data['indicator_tag_id'])
-
-    def test_remove_tag(self):
-        indicatior = Indicator.objects.create(short_name='Test Indicator', \
-                                              name='Test Indicator for the Tag', \
-                                              data_format='int', \
-                                              description='Test Indicator for the Tag Description', )
-
-        tag = IndicatorTag.objects.create(tag_name='Test tag')
-
-        IndicatorToTag.objects.all().delete()
-
-        indicatior_tag = IndicatorToTag.objects.create(indicator_id=indicatior.id, indicator_tag_id=tag.id)
-
-        self.assertEqual(IndicatorToTag.objects.count(), 1)
-
-        delete_url = '/api/v1/indicator_to_tag/?id=' + str(indicatior_tag.id)
-
-        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
-
-        self.assertEqual(IndicatorToTag.objects.count(), 0)
+    def test_get_invalid_indicator_id(self):
+        get_data ={'id':123456}
+        resp = self.ts.get(self, '/api/v1/indicator/', data= get_data)
+        self.assertHttpOK(resp)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(len(resp_data['objects']), 0)
 
 
+    #POST request requires fields: 'name, 'short_name', 'description','data_format'
+    #'good_bound', 'bad_bound', 'source_name'
+    #'id' field is optional
+    #if any of these fields are missing or incorrect returns 500 error code
+    #if data format not specified it defaults to int
     def test_create_indicator(self):
+        Indicator.objects.all().delete()
+
+        self.assertEqual(Indicator.objects.count(), 0)
+
+        post_data = {'name': 'New test indicator name', \
+            'short_name': 'New test short name', \
+            'description':'test',\
+            'bad_bound': 1,
+            'good_bound': 10,
+            'source_name': 'RHIZOME'
+            }
+
+        resp = self.ts.post(self, '/api/v1/indicator/', data= post_data)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(Indicator.objects.count(), 1)
+        self.assertEqual(resp_data['name'], 'New test indicator name')
+
+    def test_create_indicator_with_id(self):
+        Indicator.objects.all().delete()
+
+        self.assertEqual(Indicator.objects.count(), 0)
+
+        post_data = {'name': 'New test indicator name', \
+            'short_name': 'New test short name', \
+            'description':'test',\
+            'id':123,
+            'bad_bound': 1,
+            'good_bound': 10,
+            'source_name': 'RHIZOME'
+            }
+
+        resp = self.ts.post(self, '/api/v1/indicator/', data= post_data)
+
+        resp_data = self.deserialize(resp)
+        self.assertEqual(resp_data['id'], 123)
+
+    def test_create_indicator_missing_fields(self):
         Indicator.objects.all().delete()
 
         self.assertEqual(Indicator.objects.count(), 0)
@@ -161,17 +159,33 @@ class IndicatorResourceTest(ResourceTestCase):
             'data_format':'int', \
             'id': -1,\
             'description':'test',\
-            'bad_bound': 1,
-            'good_bound': 10,
             'source_name': 'RHIZOME'
             }
 
-        resp = self.api_client.post('/api/v1/indicator/', format='json', \
-                                    data=post_data, authentication=self.get_credentials())
+        resp = self.ts.post(self, '/api/v1/indicator/', data= post_data)
 
-        self.assertEqual(Indicator.objects.count(), 1)
+        self.assertHttpApplicationError(resp)
+
+    #the indicator is invalid because bad_bound and good_bound are passed as strings
+    def test_create_indicator_invalid(self):
+        Indicator.objects.all().delete()
+
+        self.assertEqual(Indicator.objects.count(), 0)
+
+        post_data = {'name': 'New test indicator name', \
+            'short_name': 'New test short name', \
+            'description':'test',\
+            'bad_bound': "hello",
+            'good_bound': 'dsds',
+            'source_name': '???'
+            }
+
+        resp = self.ts.post(self, '/api/v1/indicator/', data= post_data)
+
+        self.assertHttpApplicationError(resp)
 
     def test_bound_and_tag_json(self):
+        Indicator.objects.all().delete()
 
         ind = Indicator.objects.create(**{
             'name':'test name',
@@ -207,8 +221,7 @@ class IndicatorResourceTest(ResourceTestCase):
         target_tag_json = [ind_tag_0.id, ind_tag_1.id]
         target_bound_json = [bound_dict_0, bound_dict_1]
 
-        resp = self.api_client.get('/api/v1/indicator/', format='json'\
-            , data={}, authentication=self.get_credentials())
+        resp = self.ts.get(self, '/api/v1/indicator/', data= {})
 
         data = self.deserialize(resp)
         objects = data['objects']
@@ -225,3 +238,4 @@ class IndicatorResourceTest(ResourceTestCase):
             ,sorted(objects[0]['tag_json']))
         self.assertEqual(sorted(target_bound_json)\
             ,sorted(objects[0]['bound_json']))
+
