@@ -24,7 +24,7 @@ var ChartStore = Reflux.createStore({
     def: {
       data_format: 'pct',
       color: palettes['traffic_light'],
-      type: 'ChoroplethMap',
+      type: 'RawData',
       features: [],
       indicator_ids: [],
       location_ids: [],
@@ -35,7 +35,7 @@ var ChartStore = Reflux.createStore({
       timeRange: null,
       end_date: moment().format('YYYY-MM-DD'),
       start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-      title: 'New Chart',
+      title: null,
       cellSize: 36,
       fontSize: 14,
       margin: { top: 40, right: 40, bottom: 40, left: 40 },
@@ -55,9 +55,7 @@ var ChartStore = Reflux.createStore({
 
   init () {
     this.listenTo(DatapointStore, this.onDatapointStore)
-    this.listenTo(IndicatorStore, this.onIndicatorStore)
-    this.listenTo(CampaignStore, this.onCampaignStore)
-    this.listenTo(LocationStore, this.onLocationStore)
+    this.joinTrailing(LocationStore, IndicatorStore, CampaignStore, this.onGetInintialStores)
   },
 
   getInitialState () {
@@ -73,13 +71,36 @@ var ChartStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onFetchChartCompleted (response) {
-    this.chart.def = response.chart_json
+    const chart_json = response.chart_json
+    this.chart.def.campaign_ids = chart_json.campaign_ids
+    this.chart.def.end_date = chart_json.end_date
+    this.chart.def.indicator_ids = chart_json.indicator_ids
+    this.chart.def.location_ids = chart_json.location_ids
+    this.chart.def.start_date = chart_json.start_date
     this.chart.def.id = response.id
     this.chart.def.title = response.title
-    DatapointActions.fetchDatapoints(this.chart.def)
-    this.setState(this.chart)
+    this.chart.def.selected_locations = this.chart.def.location_ids.map(id => this.locations.index[id])
+    this.chart.def.selected_indicators = this.chart.def.indicator_ids.map(id => this.indicators.index[id])
+    this.chart.def.headers = this.chart.def.selected_indicators
+    this.chart.def.xDomain = this.chart.def.headers.map(indicator => indicator.short_name)
+    this.chart.def.x = this.chart.def.indicator_ids[0]
+    this.chart.def.y = this.chart.def.indicator_ids[1] ? this.chart.def.indicator_ids[1] : 0
+    this.chart.def.z = this.chart.def.indicator_ids[2] ? this.chart.def.indicator_ids[2] : 0
+    ChartActions.setType(chart_json.type)
   },
   onFetchChartFailed (error) {
+    this.setState({ error: error })
+  },
+
+  // ===============================  Post Chart  ============================= //
+  onPostChart () {
+    this.setState({ loading: true })
+  },
+  onPostChartCompleted (response) {
+    window.location.replace('/charts/' + response.objects.id)
+    this.trigger(this.chart)
+  },
+  onPostChartFailed (error) {
     this.setState({ error: error })
   },
 
@@ -150,32 +171,20 @@ var ChartStore = Reflux.createStore({
   // =========================================================================== //
   //                            OTHER STORE DEPENDECIES                          //
   // =========================================================================== //
+  onGetInintialStores (locations, indicators, campaigns) {
+    this.indicators = indicators[0]
+    this.locations = locations[0]
+    this.campaigns = campaigns[0]
+  },
+
   onDatapointStore (datapoints) {
     this.datapoints = datapoints
     this.chart.def.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.chart.def.default_sort_order = datapoints.meta.default_sort_order
-    // this.chart.data = _(datapoints.raw)
-    //   .flatten()
-    //   .sortBy(_.method('campaign.start_date.getTime'))
-    //   .map(this.melt)
-    //   .flatten()
-    //   .value()
     const formatted_chart = this.getFormattedChart()
     this.chart.data = formatted_chart.data
     this.chart.def = formatted_chart.def
     this.trigger(this.chart)
-  },
-
-  onIndicatorStore (indicators) {
-    this.indicators = indicators
-  },
-
-  onLocationStore (locations) {
-    this.locations = locations
-  },
-
-  onCampaignStore (campaigns) {
-    this.campaigns = campaigns
   },
 
   // =========================================================================== //
@@ -192,8 +201,6 @@ var ChartStore = Reflux.createStore({
       })
     } else {
       this.chart.data = null
-      const formatted_chart = this.getFormattedChart()
-      this.chart.def = formatted_chart.def
       this.trigger(this.chart)
     }
   },
@@ -207,7 +214,7 @@ var ChartStore = Reflux.createStore({
     const selected_indicators_index = _.indexBy(selected_indicators, 'id')
     const groups = chart.def.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
     const layout = 1 // hard coded for now
-    const melted_datapoints = this.meltFurther(datapoints, selected_indicators)
+    const melted_datapoints = this.melt(datapoints, selected_indicators)
 
     switch (chart.def.type) {
       case 'RawData':
@@ -239,12 +246,7 @@ var ChartStore = Reflux.createStore({
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
   },
 
-  melt (datapoint) {
-    const base = _.omit(datapoint, 'indicators')
-    return datapoint.indicators.map(i => _.assign({indicator: i.indicator, value: i.value}, base))
-  },
-
-  meltFurther (datapoints, selected_indicators) {
+  melt (datapoints, selected_indicators) {
     const selected_indicator_ids = selected_indicators.map(_.property('id'))
     const baseIndicators = selected_indicator_ids.map(id => ({ indicator: id + '', value: 0 }))
     const melted_datapoints = _(datapoints).map(datapoint => {
