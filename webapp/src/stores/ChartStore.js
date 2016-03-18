@@ -55,9 +55,7 @@ var ChartStore = Reflux.createStore({
 
   init () {
     this.listenTo(DatapointStore, this.onDatapointStore)
-    this.listenTo(IndicatorStore, this.onIndicatorStore)
-    this.listenTo(CampaignStore, this.onCampaignStore)
-    this.listenTo(LocationStore, this.onLocationStore)
+    this.joinTrailing(LocationStore, IndicatorStore, CampaignStore, this.onGetInintialStores)
   },
 
   getInitialState () {
@@ -170,6 +168,12 @@ var ChartStore = Reflux.createStore({
   // =========================================================================== //
   //                            OTHER STORE DEPENDECIES                          //
   // =========================================================================== //
+  onGetInintialStores (locations, indicators, campaigns) {
+    this.indicators = indicators[0]
+    this.locations = locations[0]
+    this.campaigns = campaigns[0]
+  },
+
   onDatapointStore (datapoints) {
     this.datapoints = datapoints
     this.chart.def.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
@@ -178,18 +182,6 @@ var ChartStore = Reflux.createStore({
     this.chart.data = formatted_chart.data
     this.chart.def = formatted_chart.def
     this.trigger(this.chart)
-  },
-
-  onIndicatorStore (indicators) {
-    this.indicators = indicators
-  },
-
-  onLocationStore (locations) {
-    this.locations = locations
-  },
-
-  onCampaignStore (campaigns) {
-    this.campaigns = campaigns
   },
 
   // =========================================================================== //

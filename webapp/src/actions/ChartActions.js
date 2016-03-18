@@ -19,13 +19,9 @@ const ChartActions = Reflux.createActions({
 
 // API CALLS
 // ---------------------------------------------------------------------------
-ChartActions.fetchCharts.listenAndPromise(() => {
-  return ChartAPI.getCharts()
-})
+ChartActions.fetchCharts.listenAndPromise(() => ChartAPI.getCharts())
 
-ChartActions.fetchChart.listen(chart_id => {
-  ChartActions.fetchChart.promise(ChartAPI.getChart(chart_id))
-})
+ChartActions.fetchChart.listenAndPromise(chart_id => ChartAPI.getChart(chart_id))
 
 ChartActions.postChart.listen(chart_def => {
   ChartActions.postChart.promise(api.post_chart(chart_def))

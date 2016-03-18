@@ -1,33 +1,25 @@
-import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import StateMixin from'reflux-state-mixin'
 
 import Chart from 'components/molecules/Chart'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 import ExportPdf from 'components/molecules/ExportPdf'
-import ChartFactory from 'components/molecules/charts_d3/ChartFactory'
-import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
+import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
-import ChartStore from 'stores/ChartStore'
-import LocationStore from 'stores/LocationStore'
-import CampaignStore from 'stores/CampaignStore'
+import RootStore from 'stores/RootStore'
 import IndicatorStore from 'stores/IndicatorStore'
+import LocationStore from 'stores/LocationStore'
+import ChartStore from 'stores/ChartStore'
 import DatapointStore from 'stores/DatapointStore'
-
 import ChartActions from 'actions/ChartActions'
-import IndicatorActions from 'actions/IndicatorActions'
-import CampaignActions from 'actions/CampaignActions'
-import LocationActions from 'actions/LocationActions'
-import OfficeActions from 'actions/OfficeActions'
-
-import ChartAPI from 'data/requests/ChartAPI'
-import CampaignAPI from 'data/requests/CampaignAPI'
 
 var ChartPage = React.createClass({
 
   mixins: [
+    Reflux.ListenerMixin,
     Reflux.connect(ChartStore, 'chart'),
+    Reflux.connect(LocationStore, 'locations'),
+    Reflux.connect(IndicatorStore, 'indicators'),
+    Reflux.connect(DatapointStore, 'datapoints')
   ],
 
   propTypes: {
@@ -35,11 +27,26 @@ var ChartPage = React.createClass({
   },
 
   componentWillMount () {
-    ChartActions.fetchChart(this.props.chart_id)
+    Reflux.connect(LocationStore, 'chart')
+    LocationStore.listen(this.getChart)
+  },
+
+  getChart (locations, indicators) {
+    if (this.state.locations.index && this.state.indicators.index) {
+      ChartActions.fetchChart(this.props.chart_id)
+    }
   },
 
   render () {
     const chart = this.state.chart
+    const chart_component = chart.def.type === 'RawData'
+      ? <DatabrowserTable
+          data={this.state.datapoints.raw}
+          selected_locations={chart.def.selected_locations}
+          selected_indicators={chart.def.selected_indicators}
+        />
+      : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+
     return (
       <div className='row layout-basic'>
         <div className='medium-12 columns text-center'>
@@ -52,7 +59,7 @@ var ChartPage = React.createClass({
           <ExportPdf className='button expand small' />
         </div>
         <div className='medium-10 columns'>
-          <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+          {chart_component}
         </div>
       </div>
     )
