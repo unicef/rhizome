@@ -8,6 +8,7 @@ from rhizome.cache_meta import LocationTreeCache
 from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull
 from rhizome.models import *
+from setup_helpers import TestSetupHelpers
 
 class SourceObjectMapResourceTest(ResourceTestCase):
     def setUp(self):
@@ -15,72 +16,26 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         ## instantiate the test client and all other methods ##
         super(SourceObjectMapResourceTest, self).setUp()
 
-        # Create a user.
-        self.username = 'test_user'
-        self.password = 'test_password'
-        self.user = User.objects\
-            .create_user(self.username,'test@test.com', self.password)
-        self.lt = LocationType.objects.create(name='test',admin_level = 0)
-        self.o = Office.objects.create(name = 'Earth')
-        self.not_allowed_to_see_location = Location.objects.create(
-                name = 'Somalia',
-                location_code = 'Somalia',
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
-            )
+        self.test_setup = TestSetupHelpers()
+        self.user = self.test_setup.user
+        self.lt = self.test_setup.create_arbitrary_location_type()
+        self.o = self.test_setup.create_arbitrary_office()
+        self.not_allowed_to_see_location = self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
 
-        self.indicator_map = SourceObjectMap.objects.create(
-            source_object_code = 'Percent missed children_PCA',
-            content_type = 'indicator',
-            mapped_by_id = self.user.id,
-            master_object_id = -1,
-            id=21
-        )
+        self.indicator_map = self.test_setup.create_arbitrary_som(
+            source_object_code = 'Percent missed children_PCA', 
+            id=21)
 
-        SourceObjectMap.objects.create(
-            source_object_code = 'Percent missed due to other reasons',
-            content_type = 'indicator',
-            mapped_by_id = self.user.id,
-            master_object_id = -1,
-            id=24
-        )
-
+        self.test_setup.create_arbitrary_som(
+            source_object_code = 'Percent missed due to other reasons', 
+            id=24)
 
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
-        self.indicators = self.model_df_to_data(indicator_df,Indicator)
+        self.indicators = self.test_setup.model_df_to_data(indicator_df,Indicator)
         
-        self.document = Document.objects.create(
-        doc_title = 'eoc_post_campaign.csv',
-        created_by_id = self.user.id,
-        guid = 'test',
-        id=22)
-        self.document.docfile = 'eoc_post_campaign.csv'
-        self.document.save()
+        self.document = self.test_setup.create_arbitrary_document(id=22)
 
-        self.dsom= DocumentSourceObjectMap.objects.create(
-            document_id = self.document.id,
-            source_object_map_id = self.indicator_map.id,
-            id=23
-        )
-
-    def get_credentials(self):
-        result = self.api_client.client.login(username=self.username,
-                                              password=self.password)
-        return result
-
-    def model_df_to_data(self,model_df,model):
-        meta_ids = []
-
-        non_null_df = model_df.where((notnull(model_df)), None)
-        list_of_dicts = non_null_df.transpose().to_dict()
-
-        for row_ix, row_dict in list_of_dicts.iteritems():
-
-            row_id = model.objects.create(**row_dict)
-            meta_ids.append(row_id)
-
-        return meta_ids
-
+        self.dsom= self.test_setup.create_arbitrary_dsom(self.document.id, self.indicator_map.id, 23)
 
     #POST changes the master object for an existing source object map.
     #Required fields: 'master_object_id' 'mapped_by_id' 'id'
@@ -92,8 +47,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
-        post_resp = self.api_client.post('/api/v1/source_object_map/',\
-            format='json', data=post_data, authentication=self.get_credentials())
+        post_resp = self.test_setup.post(self, '/api/v1/source_object_map/', post_data)
 
         self.assertHttpCreated(post_resp)
         response_data = self.deserialize(post_resp)
@@ -108,8 +62,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
-        post_resp = self.api_client.post('/api/v1/source_object_map/',\
-            format='json', data=post_data, authentication=self.get_credentials())
+        post_resp = self.test_setup.post(self, '/api/v1/source_object_map/', post_data)
 
         self.assertHttpApplicationError(post_resp)
 
@@ -122,9 +75,8 @@ class SourceObjectMapResourceTest(ResourceTestCase):
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
-        post_resp = self.api_client.post('/api/v1/source_object_map/',\
-            format='json', data=post_data, authentication=self.get_credentials())
-        
+        post_resp = self.test_setup.post(self, '/api/v1/source_object_map/', post_data)
+    
         self.assertHttpApplicationError(post_resp)
 
     #GET requests: if "document_id" is specified, returns a list of Source Object Maps
@@ -133,8 +85,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
     def test_som_get_id(self):
         get_data ={'id':self.indicator_map.id}
-        get_resp = self.api_client.get('/api/v1/source_object_map/',\
-            format='json', data=get_data, authentication=self.get_credentials())
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
@@ -143,16 +94,14 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
     def test_som_get_doc_id(self):
         get_data ={'document_id':self.document.id}
-        get_resp = self.api_client.get('/api/v1/source_object_map/',\
-            format='json', data=get_data, authentication=self.get_credentials())
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
 
     def test_som_get(self):
-        get_resp = self.api_client.get('/api/v1/source_object_map/',\
-            format='json', authentication=self.get_credentials())
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/')
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
@@ -161,8 +110,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
     #if GET contains invalid document id or id, returns 200 but with empty object
     def test_som_get_doc_id_invalid(self):
         get_data={'document_id':123456}
-        get_resp = self.api_client.get('/api/v1/source_object_map/',\
-            format='json', data=get_data, authentication=self.get_credentials())
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
@@ -170,8 +118,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
     def test_som_get_id_invalid(self):
         get_data={'id':123456}
-        get_resp = self.api_client.get('/api/v1/source_object_map/',\
-            format='json', data=get_data, authentication=self.get_credentials())
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
