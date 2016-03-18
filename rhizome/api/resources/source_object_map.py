@@ -6,8 +6,6 @@ class SourceObjectMapResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_object_map'
 
-    #changes the master object for an existing source object map.
-    #Required fields: 'master_object_id' 'mapped_by_id' 'id'
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
@@ -42,9 +40,7 @@ class SourceObjectMapResource(BaseModelResource):
 
         return master_object_name
 
-    #if "document_id" is specified, returns a list of Source Object Maps
-    #if 'id' field is specified, returns the Source Object Map
-    #if neither is specified, returns all of the source object maps
+
     def get_object_list(self, request):
         qs =''
         if 'document_id' in request.GET:

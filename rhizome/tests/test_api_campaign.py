@@ -52,6 +52,16 @@ class CampaignResourceTest(ResourceTestCase):
             name="can_see"
         )
 
+        self.can_see_campaign_2 = Campaign.objects.create(
+            start_date = '2016-01-04',
+            end_date = '2016-01-09',
+            office_id = self.o.id,
+            campaign_type_id = self.ct.id,
+            top_lvl_location_id = self.top_lvl_location.id,
+            top_lvl_indicator_tag_id = self.it.id,
+            name="can_see_2"
+        )
+
         self.can_not_see_campaign = Campaign.objects.create(
             start_date = '2016-02-01',
             end_date = '2016-02-01',
@@ -75,24 +85,53 @@ class CampaignResourceTest(ResourceTestCase):
                                               password=self.password)
         return result
 
-    def test_get_campaign_no_param(self):
+    #GET request: if there are no parameters, return all campaigns.
+    #if id__in is set, returns a list of campaigns. and 200 code
+    def test_campaign_get(self):
 
         resp = self.api_client.get('/api/v1/campaign/', format='json', \
                                     authentication=self.get_credentials())
         self.assertHttpOK(resp)
-
         response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), 2)
 
-        self.assertEqual(len(response_data['objects']), 1)
-
-    def test_get_campaign(self):
-        data = {'id__in':self.can_see_campaign.id}
+    def test_campaign_get_id_list(self):
+        campaign_id_list = [self.can_see_campaign.id, self.can_see_campaign_2.id]
+        data = {'id__in':str(campaign_id_list).strip('[]')}
         resp = self.api_client.get('/api/v1/campaign/', format='json', \
                                     data=data, authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
-        self.assertEqual(len(response_data['objects']), 1)
+        self.assertEqual(len(response_data['objects']), 2)
 
+    #if id__in contains an invalid id, returns 200 with an empty list
+    def test_campaign_get_id_list_invalid(self):
+        data = {'id__in':12345}
+        resp = self.api_client.get('/api/v1/campaign/', format='json', \
+                                    data=data, authentication=self.get_credentials())
+        response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(response_data['objects']), 0)
+
+    def test_get_detail(self):
+        detailURL = '/api/v1/campaign/{0}/'.format(self.can_see_campaign.id)
+        resp=self.api_client.get(detailURL, format='json', \
+                                    authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(self.can_see_campaign.name, response_data['name'])
+
+    #if an id is invalid for get_detail, 500 response
+    def test_get_detail_invalid_id(self):
+        detailURL = '/api/v1/campaign/12345/'
+        resp=self.api_client.get(detailURL, format='json', \
+                                    authentication=self.get_credentials())
+        self.assertHttpApplicationError(resp)
+
+    #POST request requires fields: 'name','top_lvl_location_id',
+    #'top_lvl_indicator_tag_id', 'office_id','campaign_type_id',
+    #'start_date','end_date','pct_complete'
+    #Returns 201 
     def test_post_campaign(self):
         data={
             'name': 'something',
@@ -110,19 +149,18 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['name'], 'something')
 
-    def test_get_detail(self):
-        detailURL = '/api/v1/campaign/{0}/'.format(self.can_see_campaign.id)
-        resp=self.api_client.get(detailURL, format='json', \
-                                    authentication=self.get_credentials())
-        self.assertHttpOK(resp)
-        response_data = self.deserialize(resp)
-        self.assertEqual(self.can_see_campaign.name, response_data['name'])
-
-    #TODO: make this a 404 error
-    def test_get_detail_invalid_id(self):
-        detailURL = '/api/v1/campaign/12345/'
-        resp=self.api_client.get(detailURL, format='json', \
-                                    authentication=self.get_credentials())
+    #if any of the fields are missing, returns a 500 error
+    def test_post_campaign_invalid(self):
+        data={
+            'top_lvl_indicator_tag_id': self.it.id,
+            'office_id': self.o.id,
+            'campaign_type_id': self.ct.id,
+            'start_date': '2016-05-01',
+            'end_date': '2016-05-01',
+            'pct_complete': 0.1
+        }
+        resp = self.api_client.post('/api/v1/campaign/', format='json', \
+                                    data=data, authentication=self.get_credentials())
         self.assertHttpApplicationError(resp)
 
 

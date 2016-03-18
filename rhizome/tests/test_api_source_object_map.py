@@ -36,6 +36,16 @@ class SourceObjectMapResourceTest(ResourceTestCase):
             master_object_id = -1,
             id=21
         )
+
+        SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to other reasons',
+            content_type = 'indicator',
+            mapped_by_id = self.user.id,
+            master_object_id = -1,
+            id=24
+        )
+
+
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         self.indicators = self.model_df_to_data(indicator_df,Indicator)
         
@@ -72,6 +82,8 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         return meta_ids
 
 
+    #POST changes the master object for an existing source object map.
+    #Required fields: 'master_object_id' 'mapped_by_id' 'id'
     def test_som_post(self):
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
@@ -88,6 +100,36 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
         self.assertEqual(response_data['master_object_id'], self.indicators[0].id)
 
+    #POST returns 500 if required field is not included
+    def test_som_post_invalid(self):
+        post_data = {
+            'source_object_code': 'Percent missed children_PCA',
+            'id':self.indicator_map.id,
+            'content_type': 'indicator',
+            'mapped_by_id': self.user.id
+        }
+        post_resp = self.api_client.post('/api/v1/source_object_map/',\
+            format='json', data=post_data, authentication=self.get_credentials())
+
+        self.assertHttpApplicationError(post_resp)
+
+    #POST returns 500 if master_object_id is invalid
+    def test_som_post_invalid_master_obj_id(self):
+        post_data = {
+            'source_object_code': 'Percent missed children_PCA',
+            'master_object_id': 12345,
+            'id':self.indicator_map.id,
+            'content_type': 'indicator',
+            'mapped_by_id': self.user.id
+        }
+        post_resp = self.api_client.post('/api/v1/source_object_map/',\
+            format='json', data=post_data, authentication=self.get_credentials())
+        
+        self.assertHttpApplicationError(post_resp)
+
+    #GET requests: if "document_id" is specified, returns a list of Source Object Maps
+    #if 'id' field is specified, returns the Source Object Map
+    #if neither is specified, returns all of the source object maps
 
     def test_som_get_id(self):
         get_data ={'id':self.indicator_map.id}
@@ -97,7 +139,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
-
+        self.assertEqual(len(get_data['objects']), 1)
 
     def test_som_get_doc_id(self):
         get_data ={'document_id':self.document.id}
@@ -108,7 +150,16 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         get_data = self.deserialize(get_resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
 
-    def test_get_object_list_fail(self):
+    def test_som_get(self):
+        get_resp = self.api_client.get('/api/v1/source_object_map/',\
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(get_resp)
+        get_data = self.deserialize(get_resp)
+        self.assertEqual(len(get_data['objects']), 2)
+
+    #if GET contains invalid document id or id, returns 200 but with empty object
+    def test_som_get_doc_id_invalid(self):
         get_data={'document_id':123456}
         get_resp = self.api_client.get('/api/v1/source_object_map/',\
             format='json', data=get_data, authentication=self.get_credentials())
@@ -116,4 +167,14 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(len(get_data['objects']),0)
+
+    def test_som_get_id_invalid(self):
+        get_data={'id':123456}
+        get_resp = self.api_client.get('/api/v1/source_object_map/',\
+            format='json', data=get_data, authentication=self.get_credentials())
+
+        self.assertHttpOK(get_resp)
+        get_data = self.deserialize(get_resp)
+        self.assertEqual(len(get_data['objects']),0)
+
 
