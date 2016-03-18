@@ -2,10 +2,10 @@
 *[role="button"] {
   background-color: $rhz-button-bg-color;
   color: $rhz-font-color;
-  text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: .7rem;
   border-style: hidden;
   font-family: adelle;
+  letter-spacing: 1px;
 	margin: .5rem .5rem .5rem 0;
   &:not(.disabled):not(.success):not(.icon-button):hover {
     background-color: #426281;
@@ -26,9 +26,16 @@
     cursor: pointer;
   }
   &.expand {
-    font-size: .7rem;
+    font-size: .9rem;
+  }
+  &.field-submit {
+    @media screen and (min-width: 64em) {
+      margin-top: 1.36rem;
+    }
+    padding: .8rem 0 .85rem 0;
   }
 }
+
 
 
 .search-button {

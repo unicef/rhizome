@@ -11,6 +11,7 @@ var DatapointStore = Reflux.createStore({
 
   datapoints: {
     meta: null,
+    melted: null,
     raw: null
   },
 
@@ -29,11 +30,32 @@ var DatapointStore = Reflux.createStore({
   onFetchDatapointsCompleted (response) {
     this.setState({
       meta: response.meta,
-      raw: response.objects
+      raw: response.objects,
+      melted: _(response.objects)
+        .flatten()
+        .sortBy(_.method('campaign.start_date.getTime'))
+        .map(this.melt)
+        .flatten()
+        .value()
     })
   },
+
   onFetchDatapointsFailed (error) {
     this.setState({ error: error })
+  },
+
+  // =========================================================================== //
+  //                                  UTILITIES                                  //
+  // =========================================================================== //
+  melt (datapoint) {
+    var base = _.omit(datapoint, 'indicators')
+    return datapoint.indicators.map(indicator => {
+      return _.assign({
+        computed: indicator.computed,
+        indicator: indicator.indicator,
+        value: indicator.value
+      }, base)
+    })
   }
 })
 

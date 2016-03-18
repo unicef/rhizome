@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
+import LocationStore from 'stores/LocationStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationSelectorActions from 'actions/LocationSelectorActions'
 
@@ -20,18 +21,29 @@ const LocationSelector = React.createClass({
     classes: PropTypes.string
   },
 
-  componentDidMount() {
-    if (this.props.preset_location_ids) {
-      LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
+  getDefaultProps() {
+    return {
+      preset_location_ids: null
     }
+  },
+
+  componentDidMount () {
+    LocationStore.listen(locations => {
+      if (this.props.preset_location_ids) {
+        return LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
+      }
+    })
   },
 
   render () {
     const props = this.props
-    const location_options = [
-      { title: 'by Status', value: props.locations.lpd_statuses },
-      { title: 'by Country', value: props.locations.filtered || [] }
-    ]
+    let location_options = []
+    if (this.props.locations.filtered.length > 0) {
+      location_options = [
+        { title: 'by Status', value: props.locations.lpd_statuses },
+        { title: 'by Country', value: props.locations.filtered || [] }
+      ]
+    }
 
     return (
       <div className={props.classes}>

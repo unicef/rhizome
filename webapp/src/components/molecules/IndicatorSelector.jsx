@@ -3,6 +3,7 @@ import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
+import IndicatorStore from 'stores/IndicatorStore'
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import IndicatorSelectorActions from 'actions/IndicatorSelectorActions'
 
@@ -25,10 +26,12 @@ const IndicatorSelector = React.createClass({
     }
   },
 
-  componentDidMount() {
-    if (this.props.preset_indicator_ids) {
-      IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
-    }
+  componentDidMount () {
+    IndicatorStore.listen(indicators => {
+      if (this.props.preset_indicator_ids) {
+        return IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
+      }
+    })
   },
 
   render () {
@@ -37,13 +40,13 @@ const IndicatorSelector = React.createClass({
     return (
       <div className={props.classes}>
         <h3>
-          Indicators
           <DropdownMenu
             items={props.indicators.list}
             sendValue={IndicatorSelectorActions.selectIndicator}
             item_plural_name='Indicators'
             style='icon-button right'
             icon='fa-plus' />
+          Indicators
         </h3>
         <a className='remove-filters-link' onClick={IndicatorSelectorActions.clearSelectedIndicators}>Remove All </a>
         <ReorderableList items={this.state.selected_indicators} removeItem={IndicatorSelectorActions.deselectIndicator} dragItem={IndicatorSelectorActions.reorderIndicator} />

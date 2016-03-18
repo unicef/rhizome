@@ -1,60 +1,69 @@
+import _ from 'lodash'
+import builtins from 'components/organisms/dashboard/builtin'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
-import ChartActions from 'actions/ChartActions'
-import CampaignActions from 'actions/CampaignActions'
-import IndicatorActions from 'actions/IndicatorActions'
-import LocationActions from 'actions/LocationActions'
-import OfficeActions from 'actions/OfficeActions'
+import RootActions from 'actions/RootActions'
 
 var RootStore = Reflux.createStore({
 
+  listenables: RootActions,
+
   mixins: [StateMixin.store],
+
+  data: {
+    charts: [],
+    dashboards: [],
+    loading: false
+  },
+
+  getInitialState () {
+    return this.data
+  },
 
   init () {
     this.getInitialData()
   },
 
-  getInitialState () {
-    return {
-      chartIndex: [],
-      campaignIndex: [],
-      indicatorIndex: [],
-      locationIndex: [],
-      officeIndex: []
-    }
+  getInitialData () {
+    RootActions.fetchAllCharts()
+    RootActions.fetchAllDashboards()
   },
 
-  getInitialData () {
-    const promises = [
-      OfficeActions.fetchOffices(),
-      CampaignActions.fetchCampaigns(),
-      IndicatorActions.fetchIndicators(),
-      LocationActions.fetchLocations(),
-      ChartActions.fetchCharts()
-    ]
-    Promise.all(promises).then(values => {
-      const [offices, campaigns, indicators, locations, charts] = values
-      const officeIndex = []
-      const campaignIndex = []
-      const indicatorIndex = []
-      const locationIndex = []
-      const chartIndex = []
+  // =========================================================================== //
+  //                               API CALL HANDLERS                             //
+  // =========================================================================== //
 
-      offices.forEach(office => { officeIndex[office.id] = office })
-      campaigns.forEach(campaign => { campaignIndex[campaign.id] = campaign })
-      indicators.forEach(indicator => { indicatorIndex[indicator.id] = indicator })
-      locations.forEach(location => { locationIndex[location.id] = location })
-      charts.forEach(chart => { chartIndex[chart.id] = chart })
+  // ===============================  Fetch Charts  ============================= //
+  onFetchAllCharts () {
+    this.setState({ loading: true })
+  },
+  onFetchAllChartsCompleted (response) {
+    this.data.charts = response.objects
+    this.data.loading = false
+    this.trigger(this.data)
+  },
+  onFetchAllChartsFailed (error) {
+    this.setState({ error: error })
+  },
 
-      this.trigger({
-        officeIndex: officeIndex,
-        campaignIndex: campaignIndex,
-        indicatorIndex: indicatorIndex,
-        locationIndex: locationIndex,
-        chartIndex: chartIndex
-      })
+  // ===============================  Fetch Dashboards  ============================= //
+  onFetchAllDashboards () {
+    this.setState({ loading: true })
+  },
+  onFetchAllDashboardsCompleted (response) {
+    const all_dashboards = builtins.concat(_(response.objects).sortBy('id').reverse().value())
+    // Patch the non-comformant API response
+    this.data.dashboards = _(all_dashboards).map(dashboard => {
+      dashboard.charts = dashboard.charts || dashboard.dashboard_json
+      return dashboard
     })
+    .reject(_.isNull)
+    .value()
+    this.trigger(this.data)
+  },
+  onFetchAllDashboardsFailed (error) {
+    this.setState({ error: error })
   }
 
 })
