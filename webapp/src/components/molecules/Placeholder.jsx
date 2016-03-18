@@ -1,8 +1,25 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 
 const Placeholder = React.createClass({
+
+  propTypes: {
+    height: PropTypes.number,
+    text: PropTypes.string,
+    loading: PropTypes.bool
+  },
+
+  getDefaultProps() {
+    return {
+    	text: 'No Data',
+    	height: 50,
+    	loading: true
+    }
+  },
+
 	render () {
 		const height = this.props.height
+		const loading = this.props.loading
+
 		let icon_size = '5x'
 		let top_offset = 68
 		let	padding = '50px 0'
@@ -26,12 +43,13 @@ const Placeholder = React.createClass({
 			top_offset = 14
 			padding = '10px 0'
 		}
+
 		return (
 		  <div className='loading' style={{height: height+'px', padding: padding }}>
 		    <div style={{ position: 'relative', top: (height/2)- top_offset +'px' }}>
-		      <i className={'fa fa-spinner fa-spin fa-'+icon_size}></i>
+		    	{ loading ? <i className={'fa fa-spinner fa-spin fa-'+icon_size}></i> : '' }
 		      <br />
-		      Loading
+		    	{ loading ? 'Loading...' : this.props.text }
 		    </div>
 		  </div>
 		)
