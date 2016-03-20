@@ -1,9 +1,10 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
-// import Chart from 'components/molecules/Chart'
-import Chart from 'components/organisms/charts/D3Chart'
+import Chart from 'components/molecules/charts/Chart'
 import ExportPdf from 'components/molecules/ExportPdf'
+import Placeholder from 'components/molecules/Placeholder'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
 import RootStore from 'stores/RootStore'
@@ -41,13 +42,17 @@ var ChartPage = React.createClass({
 
   render () {
     const chart = this.state.chart
-    const chart_component = chart.def.type === 'RawData'
-      ? <DatabrowserTable
-          data={this.state.datapoints.raw}
-          selected_locations={chart.def.selected_locations}
-          selected_indicators={chart.def.selected_indicators}
-        />
-      : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+    let chart_component = <Placeholder height={200}/>
+
+    if (!_.isEmpty(chart.data)) {
+      chart_component = chart.def.type === 'RawData'
+        ? <DatabrowserTable
+            data={this.state.datapoints.raw}
+            selected_locations={chart.def.selected_locations}
+            selected_indicators={chart.def.selected_indicators}
+          />
+        : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+    }
 
     return (
       <div className='row layout-basic'>
@@ -61,7 +66,7 @@ var ChartPage = React.createClass({
           <ExportPdf className='button expand small' />
         </div>
         <div className='medium-10 columns'>
-          {chart_component}
+          { chart_component }
         </div>
       </div>
     )

@@ -57,7 +57,7 @@ const ChartStoreHelpers = {
     chart.def.name = d => _.get(selected_locations_index, '[' + d.properties.location_id + '].name', '')
     chart.def.border = chart.def.features
     chart.def.data_format = mapIndicator.data_format
-    chart.def.domain = _.constant([mapIndicator.bad_bound, mapIndicator.good_bound])
+    chart.def.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
     chart.def.value = _.property(`properties[${mapIndicator.id}]`)
     chart.def.xFormat = this._getChartFormat(mapIndicator)
     // chart.def.onClick = d => DashboardActions.navigate({ location: d })
