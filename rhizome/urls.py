@@ -55,6 +55,9 @@ v1_api.register(user.UserResource())
 
 
 protected_patterns = [
+
+    url(r'^$', RedirectView.as_view(url='dashboards/eoc-post-campaign/'), name='homepage-redirect'),
+
     url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system/', views.manage_system, name='manage_system'),
     url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
@@ -74,11 +77,12 @@ protected_patterns = [
     url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
     url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder, name='chart_builder'),
 
+    url(r'^dashboards/eoc-post-campaign/$', views.builtin_dashboard, name='dashboards'),
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
     url(r'^dashboards/create$', views.explore_data, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)$', views.builtin_dashboard, name='builtin_dashboard'),
-    url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+/[-a-zA-Z]+/[0-9]+/[0-9]+)$', views.builtin_dashboard, name='builtin_dashboard'),
+    url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+/[-a-zA-Z]+/[0-9]+)$', views.builtin_dashboard, name='builtin_dashboard'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/edit/$', views.explore_data, name='dashboard_edit'),
     # url(r'^dashboards/[-a-zA-Z0-9]+/$',
     #     decorator_include(login_required, 'rhizome.urls', namespace='datapoints')),
@@ -90,7 +94,7 @@ urlpatterns = patterns(
     (r'^api/', include(v1_api.urls)),
 
     # url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
-    url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-pre-campaign/Afghanistan/2016/01')), name='homepage'),
+    # url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-post-campaign/')), name='homepage'),
 
     url(r'^about$', views.about, name='about'),
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
