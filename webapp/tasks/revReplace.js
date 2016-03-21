@@ -18,9 +18,10 @@ function revCompile (config) {
     }
   }
 
+  console.log('config.templates: ', config.templates)
   return gulp.src(config.templates + '/base.hbs')
         .pipe(handlebars(manifestFile, handlebarOpts))
-        .pipe(rename('base2.html'))
+        .pipe(rename('base.html'))
         .pipe(gulp.dest(config.templates))
 }
 
