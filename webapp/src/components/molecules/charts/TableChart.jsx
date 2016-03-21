@@ -6,7 +6,7 @@ import formatUtil from 'components/molecules/charts_d3/utils/format'
 import TableHelpers from 'components/molecules/charts/TableHelpers'
 
 const TABLE_DEFAULTS = {
-  cellHeight: 16,
+  cellHeight: 24,
   column: _.property('indicator.short_name'),
   sourceColumn: _.property('short_name'),
   fontSize: 12,
@@ -121,10 +121,10 @@ class TableChart extends Component {
     // ROWS
     // ---------------------------------------------------------------------------
     const rows = g.selectAll('.row').data(this.props.data)
-    rows.enter().append('g').attr({'class': 'row', 'transform': this.transform})
+    rows.enter().append('g').attr({'class': 'row', 'transform': this.table.transform})
     rows.exit().transition().duration(300).style('opacity', 0).remove()
     rows.on('click', (d, i) => TableHelpers.onRowClick([d, i]))
-    rows.on('mouseover', (d, i) => TableHelpers.onRowOver([d, i])).transition().duration(750).attr('transform', this.transform)
+    rows.on('mouseover', (d, i) => TableHelpers.onRowOver([d, i])).transition().duration(750).attr('transform', this.table.transform)
 
     // CELLS
     // ---------------------------------------------------------------------------
