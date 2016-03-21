@@ -30,7 +30,9 @@ var DEFAULTS = {
   bubbleLegendRatio: [0.1, 0.5, 1],
   indicatorName: 'Has data'
 }
-
+function test(){
+  return 'something something something';
+}
 function wrap (text, width, x) {
   text.each(function () {
     let text = d3.select(this)
