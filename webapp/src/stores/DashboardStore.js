@@ -76,7 +76,12 @@ var DashboardStore = Reflux.createStore({
       location = locations[0]
     }
 
+    // if no campaign param set to the first //
     var campaign = campaignIx[campaign_id]
+    if (!campaign) {
+      campaign = campaigns[0]
+    }
+
     var hasMap = _(dashboard.charts)
       .pluck('type')
       .any(t => _.endsWith(t, 'Map'))
@@ -100,6 +105,7 @@ var DashboardStore = Reflux.createStore({
   onSetDashboard (definition) {
     var dashboard = this.dashboard = definition.dashboard
     var campaign_id = definition.campaign
+
     this.location = definition.location || this.location
 
     if (this.campaigns || this.locations) {
