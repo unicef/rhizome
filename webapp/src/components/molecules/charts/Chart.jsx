@@ -1,13 +1,19 @@
 import React, { Component } from 'react'
+import Reflux from 'reflux'
 import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
+import CampaignStore from 'stores/CampaignStore'
 
-class ChartContainer extends Component {
+const ChartContainer = React.createClass({
+
+  mixins: [
+    Reflux.connect(CampaignStore, 'campaigns'),
+  ],
 
 	componentDidMount() {
 		this.container = React.findDOMNode(this)
-	}
+	},
 
 	renderChart(type, chart_props) {
 	  if (type === 'TableChart') {
@@ -17,7 +23,16 @@ class ChartContainer extends Component {
 	  } else if (type === 'ChoroplethMap') {
 	  	return <ChoroplethMap {...chart_props} />
 	  }
-	}
+	},
+
+  filterData () {
+    if (this.props.type === 'TableChart') {
+      const campaign_id = this.props.options.campaign_ids[0] || this.state.campaigns.list[0].id
+      return this.props.data.filter(datapoint => datapoint.campaign_id === campaign_id)
+    } else {
+      return this.props.data
+    }
+  },
 
 	render () {
 		console.log('------------------------------ Chart.jsx - render ------------------------------')
@@ -33,7 +48,7 @@ class ChartContainer extends Component {
 	 	 	const h = this.height - margin.top - margin.bottom
 	 	 	const w = this.width - margin.left - margin.right
 		  const chart_props = {
-		  	data: props.data,
+		  	data: this.filterData(),
 		  	options: props.options,
 		  	domain: options.domain,
 		  	data_format: options.data_format,
@@ -51,7 +66,7 @@ class ChartContainer extends Component {
 			</div>
 		)
 	}
-}
+})
 
 export default ChartContainer
 
