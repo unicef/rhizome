@@ -20,18 +20,18 @@ class ChartContainer extends Component {
 	}
 
 	render () {
+		console.log('------------------------------ Chart.jsx - render ------------------------------')
 		let chart
 		const props = this.props
 		if (this.container) {
 			const options = props.options
 			const margin = options.margin
 	   	const aspect = options['aspect'] || 1
-		 	this._width =  options['width'] || this.container.clientWidth
-	 		this._height = options['height'], this._width / aspect
-	   	const viewBox = '0 0 ' + this._width + ' ' + this._height
-	 	 	const h = this._height - margin.top - margin.bottom
-	 	 	const w = this._width - margin.left - margin.right
-
+		 	this.width =  options['width'] || this.container.clientWidth
+	 		this.height = options['height'] || this.width / aspect
+	   	const viewBox = '0 0 ' + this.width + ' ' + this._height
+	 	 	const h = this.height - margin.top - margin.bottom
+	 	 	const w = this.width - margin.left - margin.right
 		  const chart_props = {
 		  	data: props.data,
 		  	options: props.options,
@@ -39,8 +39,8 @@ class ChartContainer extends Component {
 		  	data_format: options.data_format,
 		  	colors: options.color,
 		  	margin: margin,
-		  	height: 300,
-		  	width: 300
+		  	height: this.height,
+		  	width: this.width
 		  }
 		  chart = this.renderChart(props.type, chart_props)
 		}
