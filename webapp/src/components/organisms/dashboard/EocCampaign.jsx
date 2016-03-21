@@ -113,7 +113,7 @@ var EocPreCampaign = React.createClass({
               data_format: mapIndicator.data_format,
               color: this.getColorScale(mapIndicator),
               aspect: 3.5,
-              ticks: this.reverseBounds({bad_bound: mapIndicator.bad_bound, good_bound: mapIndicator.good_bound}),
+              ticks: this.reverseBounds({badBound: mapIndicator.bad_bound, goodBound: mapIndicator.good_bound}),
               yFormat: this.getChartFormat(mapIndicator),
               domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
               value: _.property(`properties[${mapIndicator.id}]`),

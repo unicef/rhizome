@@ -86,25 +86,25 @@ _.extend(MapLegend.prototype, {
     //green/yellow/red pattern for 0, 1, 2
     //legendText[0] = good bound, [1] = middle, [2] = bad bound
     let legendTicks = []
+    options.ticks.badBound *= 100;
+    options.ticks.goodBound *= 100;
     if (options.data_format === 'bool') {
       legendTicks[1] = 'No'
       legendTicks[0] = 'Yes'
     } else if (options.data_format === 'pct') {
-      options.ticks.bad_bound *= 100;
-      options.ticks.good_bound *= 100;
-      legendTicks[1] = options.ticks.bad_bound+"%-"+options.ticks.good_bound+"%"
+      legendTicks[1] = `${options.ticks.badBound}%-${options.ticks.goodBound}%`
       if (options.ticks.reversed){
-        legendTicks[0] = "0%-"+options.ticks.bad_bound+"%"
-        legendTicks[2] = options.ticks.good_bound+"%-100%"
+        legendTicks[0] = `0%-${options.ticks.badBound}%`
+        legendTicks[2] = `${options.ticks.goodBound}%-100%`
       } else {
-        legendTicks[2] = "0%-"+options.ticks.bad_bound+"%"
-        legendTicks[0] = options.ticks.good_bound+"%-100%"
+        legendTicks[2] = `0%-${options.ticks.badBound}%`
+        legendTicks[0] = `${options.ticks.goodBound}%-100%`
       }
     } else {
       //double check actual data with this logic
-      legendTicks[2] = options.ticks.good_bound+"-100"
-      legendTicks[1] = options.ticks.bad_bound+"-"+options.ticks.good_bound
-      legendTicks[0] = "0-"+options.ticks.bad_bound
+      legendTicks[2] = `${options.ticks.goodBound}%-100%`
+      legendTicks[1] = `${options.ticks.badBound}%-${options.ticks.goodBound}%`
+      legendTicks[0] = `0%-${options.ticks.badBound}%`
     }
     return legendTicks;
   },

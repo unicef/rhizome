@@ -8,7 +8,7 @@ from rhizome.cache_meta import LocationTreeCache
 from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull
 from rhizome.models import *
-
+from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 
 class TestSetupHelpers(ResourceTestCase):
 
@@ -131,6 +131,23 @@ class TestSetupHelpers(ResourceTestCase):
             name=name, \
             description='Test Indicator for the Tag 2 Description')
 
+	def ingest_file(self, file_name):
+		document = Document.objects.create(
+        	doc_title = file_name,
+        	created_by_id = self.user.id,
+        	guid = 'test')
+		document.docfile = file_name
+		document.save()
+		sdt = SimpleDocTransform(self.user.id, document.id)
+		sdt.main()
+		return document.id
+
+	def create_arbitrary_ss(self, doc_id, data_date='2016-01-01'):
+		return SourceSubmission.objects.create(
+			document_id=doc_id,
+			submission_json ='',
+			row_number=0,
+			data_date = data_date)
 
 
 

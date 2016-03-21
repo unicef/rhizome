@@ -6,8 +6,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{% endblock %}RhizomeDB</title>
-  <link rel="stylesheet" href="{% static "css/screen.css" %}">
-  <link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
+  <link rel="stylesheet" href="{% static "{{ assetPath "css/screen.css" }}" %}">
+  <link rel="stylesheet" href="{% static "{{ assetPath "css/print-redesign.css" }}" %}" media="print">
 </head>
 
 <body class="{% block section %}{% endblock %}">
@@ -64,8 +64,8 @@
     </nav>
   </footer>
 
-  <script src="{% static "js/vendor.js" %}"></script>
-  <script src="{% static "js/main.js" %}"></script>
+  <script src="{% static "{{ assetPath "js/vendor.js" }}" %}"></script>
+  <script src="{% static "{{ assetPath "js/main.js" }}" %}"></script>
   {% block scripts %}{% endblock %}
 
 </body>

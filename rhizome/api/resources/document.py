@@ -25,7 +25,6 @@ class DocumentResource(BaseModelResource):
         If post, create file and return the JSON of that object.
         If get, just query the source_doc table with request parameters
         '''
-
         doc_data = bundle.data['docfile']
 
         try:
@@ -50,12 +49,10 @@ class DocumentResource(BaseModelResource):
         # when posting from ODK, i dont add the file_meta.. from the webapp
         # i do.  I should change so the post requests are consistent but
         # tryign to get this working for now.
-
         try:
             file_meta, base64data = post_data.split(',')
         except ValueError:
             base64data = post_data
-
         file_content = ContentFile(base64.b64decode(base64data))
         file_header = file_content.readline()
 

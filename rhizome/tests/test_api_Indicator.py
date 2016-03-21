@@ -30,65 +30,6 @@ class IndicatorResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/', format='json')
         self.assertValidJSONResponse(resp)
 
-    def test_create_calculation(self):
-        Indicator.objects.create(short_name='Test Indicator 1', \
-                                 name='Test Indicator for the Tag 1', \
-                                 data_format='int', \
-                                 description='Test Indicator for the Tag 1 Description', )
-
-        Indicator.objects.create(short_name='Test Indicator 2', \
-                                 name='Test Indicator for the Tag 2', \
-                                 data_format='int', \
-                                 description='Test Indicator for the Tag 2 Description', )
-
-        list = Indicator.objects.all().order_by('-id')
-
-        indicator_1 = list[0]
-        indicator_2 = list[1]
-
-        CalculatedIndicatorComponent.objects.filter(indicator_id=indicator_1.id,
-                                                    indicator_component_id=indicator_2.id).delete()
-
-        post_data = {'indicator_id': indicator_1.id, 'component_id': indicator_2.id, 'typeInfo': 'DENOMINATOR'}
-
-        resp = self.ts.post(self, '/api/v1/indicator_calculation/', data=post_data)
-
-        response_data = self.deserialize(resp)
-        indicator_calculation = CalculatedIndicatorComponent.objects.all().order_by('-id')[0]
-
-        self.assertHttpCreated(resp)
-        self.assertEqual(indicator_calculation.id, response_data['id'])
-        self.assertEqual(indicator_1.id, response_data['indicator_id'])
-        self.assertEqual(indicator_2.id, response_data['component_id'])
-        self.assertEqual(indicator_calculation.calculation, response_data['typeInfo'])
-
-    def test_remove_calculation(self):
-        Indicator.objects.create(short_name='Test Indicator 1', \
-                                 name='Test Indicator for the Tag 1', \
-                                 description='Test Indicator for the Tag 1 Description', )
-        Indicator.objects.create(short_name='Test Indicator 2', \
-                                 name='Test Indicator for the Tag 2', \
-                                 description='Test Indicator for the Tag 2 Description', )
-
-        list = Indicator.objects.all().order_by('-id')
-
-        indicator_1 = list[0]
-        indicator_2 = list[1]
-
-        CalculatedIndicatorComponent.objects.all().delete()
-
-        component = CalculatedIndicatorComponent.objects.create(indicator_id=indicator_1.id,
-                                                    indicator_component_id=indicator_2.id,
-                                                    calculation = 'test calculation')
-
-        self.assertEqual(CalculatedIndicatorComponent.objects.count(), 1)
-
-        delete_url = '/api/v1/indicator_calculation/?id=' + str(component.id)
-
-        self.api_client.delete(delete_url, format='json', data={}, authentication=self.ts.get_credentials(self))
-
-        self.assertEqual(CalculatedIndicatorComponent.objects.count(), 0)
-
 
     #GET request. If 'id' is passed in, it returns specific indicator. Otherwise,
     #returns all indicators

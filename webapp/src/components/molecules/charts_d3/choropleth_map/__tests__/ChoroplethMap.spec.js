@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import _ from 'lodash';
-import d3 from 'd3'
+import d3 from 'd3';
 import React from 'react';
 import Chart from 'components/molecules/Chart';
 import ChoroplethMap from '../ChoroplethMap.js';
@@ -14,10 +14,8 @@ describe(__filename, () => {
     const goodBound = 0.9;
     const badBound = 0.8;
     beforeEach(() => {
-      choroplethMapInstance = undefined;
       choroplethMapInstance = new ChoroplethMap();
     });
-
     it('instantiates object with the proper class', () => {
       expect(choroplethMapInstance).to.be.an.instanceof(ChoroplethMap);
     });
@@ -26,6 +24,7 @@ describe(__filename, () => {
     });
     it('has existing method', () => {
       expect(choroplethMapInstance).to.respondTo('update');
+      expect(choroplethMapInstance).to.respondTo('initialize');
       expect(choroplethMapInstance).to.respondTo('getColor');
     });
     describe('#defaults', () => {
@@ -51,9 +50,6 @@ describe(__filename, () => {
       });
     });
     describe('#initialize()', () => {
-      it('has existing method', () => {
-        expect(choroplethMapInstance).to.respondTo('initialize');
-      });
       it('requires correct number of parameters', () => {
         expect(choroplethMapInstance.initialize.length).to.be.eq(3);
       });
@@ -106,9 +102,6 @@ describe(__filename, () => {
           };
         });
         it('fills correct color on choropleth map', () => {
-          console.log('element', element)
-          console.log('geoFeatures', geoFeatures)
-          console.log('options', options)
           choroplethMapInstance.initialize(element, geoFeatures, options);
           expect(true).to.be.eq(true);
         });

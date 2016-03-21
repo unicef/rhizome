@@ -18,10 +18,10 @@ gulp.config('tasks.build', {
     'clean',
     'copy',
     'sass',
-    'browserify'
+    'browserify',
+    'revCompile',
+    'revReplace'
     // 'standard',
-    // 'revCompile'
-    // 'revReplace'
   ]
 })
 
