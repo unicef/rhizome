@@ -46,7 +46,7 @@ _.extend(TableChart.prototype, {
   update: function (data, options, container) {
     options = _.extend(this._options, options)
 
-    const h = Math.max(data.length * options.cellHeight, 0)
+    const h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
     const w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
