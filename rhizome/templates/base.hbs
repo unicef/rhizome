@@ -1,0 +1,96 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>{% block title %}{% endblock %}RhizomeDB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="{% static "{{ assetPath "css/screen.css" }}" %}">
+  <link rel="stylesheet" href="{% static "{{ assetPath "css/print-redesign.css" }}" %}" media="print">
+</head>
+
+<body class="{% block section %}{% endblock %}">
+
+  <header class="no-print">
+    <div class="row navigation-bar">
+      <nav class="large-3 medium-4 small-4 columns">
+        <ul class="channels raw">
+          <li class="small-4 columns">
+            <a href="http://69.28.84.217:8080/web/guest/sop" class="tab">
+              <i class="fa fa-plus"></i><span>SOP</span>
+            </a>
+          </li>
+          <li class="small-4 columns">
+            <a href="http://69.28.84.217:8080/web/guest/c4d" class="tab">
+              <i class="fa fa-plus"></i><span>C4D</span>
+            </a>
+          </li>
+          <li class="small-4 columns tab active">
+            <a href="/">
+              <i class="fa fa-plus"></i><span>Data</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+
+      <div class="large-6 medium-4 small-4 columns logo">
+        <a href="/">
+            <img class="image-style" src="{% static 'img/' %}{{LOGO_FILENAME}}" alt="{{LOGO_ALT}}">
+        </a>
+      </div>
+
+      <nav class="large-3 medium-4 small-4 columns dashboard-control">
+        <div id="dashboards-nav" class="row"></div>
+      </nav>
+    </div>
+
+  </header>
+
+  <div id="main" role="main">
+    {% block nav %}{% endblock %}
+    {% block content %}{% endblock %}
+  </div>
+
+  <footer class="row main-footer">
+    <nav class="large-6 medium-6 small-12 columns actions">
+      <ul>
+        <li>
+          <a href="/manage_system/users" class="action"><i class="fa fa-cog"></i>Manage system</a>
+        </li>
+        <li>
+          <a href="/datapoints/entry"  class="action"><i class="fa fa-plus"></i>Data Entry</a>
+        </li>
+        <li>
+          <a href="/datapoints/source-data"  class="action"><i class="fa fa-file"></i>Source Data</a>
+        </li>
+      </ul>
+    </nav>
+    <nav class="large-6 medium-6 small-12 columns static-links">
+      <ul>
+        <li>
+          <a href="/about" class="action">About</a>
+        </li>
+        <li>
+          <a href="#" class="action">Sitemap</a>
+        </li>
+        <li>
+          <a href="#" class="action">Report a bug</a>
+        </li>
+        <li>
+          <a href="#" class="action">Contact us</a>
+        </li>
+      </ul>
+    </nav>
+
+  </footer>
+
+  <script src="{% static "{{ assetPath "js/vendor.js" }}" %}"></script>
+  <script src="{% static "{{ assetPath "js/main.js" }}" %}"></script>
+
+  {% block scripts %}{% endblock %}
+
+</body>
+</html>
