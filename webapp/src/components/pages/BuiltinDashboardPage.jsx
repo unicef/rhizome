@@ -66,8 +66,9 @@ var BuiltinDashboardPage = React.createClass({
   componentWillMount () {
     this.getAllDashboards()
     this.initIndicators()
+
     page('/dashboards/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
-    page('/dashboards/:dashboard/:location/:year/:month', this._show)
+    page('/dashboards/:dashboard/:location/:campaign_id', this._show)
     page('/dashboards/:dashboard', this._showDefault)
   },
 
@@ -88,14 +89,14 @@ var BuiltinDashboardPage = React.createClass({
     this.listenTo(GeoStore, () => this.forceUpdate())
   },
 
-  initIndicators() {
+  initIndicators () {
     IndicatorAPI.getIndicators().then(indicators => {
       this.setState({indicators: indicators})
       this.setCurrentIndicator(indicators)
     })
   },
 
-  setCurrentIndicator(indicators) {
+  setCurrentIndicator (indicators) {
     const indicator_index = _.indexBy(indicators, 'id')
     const query_param = getParamFromQueryString('indicator_id')
     let indicator = indicators[0]
@@ -143,7 +144,7 @@ var BuiltinDashboardPage = React.createClass({
   _setCampaign (id) {
     let campaign = _.find(this.state.campaigns, c => c.id === id)
     if (!campaign) return
-    this._navigate({ campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') })
+    this._navigate({ campaign: id })
   },
 
   _setLocation (id) {
@@ -199,15 +200,12 @@ var BuiltinDashboardPage = React.createClass({
       location = _.find(this.state.locations, r => r.id === location).name
     }
 
-    let campaign_dates = _.get(params, 'campaign', moment(this.state.campaigns[0].start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-    if (typeof this.state.campaign !== 'undefined') {
-      campaign_dates = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-    }
+    let campaign_id = _.get(params, 'campaign')
 
     if (params.indicator_id) {
-      page('/dashboards/' + [slug, location, campaign_dates].join('/') + '?indicator_id=' + params.indicator_id)
+      page('/dashboards/' + [slug, location, campaign_id].join('/') + '?indicator_id=' + params.indicator_id)
     } else {
-      page('/dashboards/' + [slug, location, campaign_dates].join('/'))
+      page('/dashboards/' + [slug, location, campaign_id].join('/'))
     }
   },
 
@@ -227,7 +225,7 @@ var BuiltinDashboardPage = React.createClass({
       DashboardActions.setDashboard({
         dashboard,
         location: ctx.params.location,
-        date: [ctx.params.year, ctx.params.month].join('-')
+        campaign: ctx.params.campaign_id
       })
     })
   },

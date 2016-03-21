@@ -16,7 +16,7 @@ import DownloadButton from 'components/molecules/DownloadButton'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
-import Chart from 'components/molecules/Chart'
+import Chart from 'components/molecules/charts/Chart'
 
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'

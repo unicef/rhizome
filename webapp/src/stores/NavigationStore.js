@@ -36,6 +36,7 @@ var NavigationStore = Reflux.createStore({
   // This function is seemingly used only to call the SourceData builtin dashboard.
   // Where can we move it or refactor it out?
   getDashboard: function (slug) {
+
     var dashboard = _.find(this.dashboards, d => _.kebabCase(d.title) === slug)
 
     if (dashboard.id <= 0) {

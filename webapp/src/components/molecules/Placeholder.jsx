@@ -11,7 +11,7 @@ const Placeholder = React.createClass({
   getDefaultProps() {
     return {
     	text: 'No Data',
-    	height: 50,
+    	height: null,
     	loading: true
     }
   },
@@ -44,9 +44,12 @@ const Placeholder = React.createClass({
 			padding = '10px 0'
 		}
 
+		const container_styles = height ? { height: height+'px', padding: padding } : {}
+		const spinner_styles = height ? { position: 'relative', top: (height/2)- top_offset +'px' } : {}
+
 		return (
-		  <div className='loading' style={{height: height+'px', padding: padding }}>
-		    <div style={{ position: 'relative', top: (height/2)- top_offset +'px' }}>
+		  <div className='loading' style={container_styles}>
+		    <div style={spinner_styles}>
 		    	{ loading ? <i className={'fa fa-spinner fa-spin fa-'+icon_size}></i> : '' }
 		      <br />
 		    	{ loading ? 'Loading...' : this.props.text }

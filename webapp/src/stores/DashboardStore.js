@@ -59,12 +59,13 @@ var DashboardStore = Reflux.createStore({
     })
   },
 
-  setDashboardInternal (dashboard) {
+  setDashboardInternal (dashboard, campaign_id) {
     this.indicators = {}
     dashboard.charts.forEach(this.addChartDefinition)
 
     var locations = this.locations
     var campaigns = this.campaigns
+    var campaignIx = _.indexBy(campaigns, 'id')
 
     var location = _.find(locations, location => {
       return location.name === this.location
@@ -75,14 +76,11 @@ var DashboardStore = Reflux.createStore({
       location = locations[0]
     }
 
-    var campaign = _(campaigns)
-      // get the default configuration from the api //
-      .filter(function (c) {
-        return c.office_id === location.office_id &&
-          (!this.date || _.startsWith(c.start_date, this.date))
-      }.bind(this))
-      .sortBy('start_date')
-      .last()
+    // if no campaign param set to the first //
+    var campaign = campaignIx[campaign_id]
+    if (!campaign) {
+      campaign = campaigns[0]
+    }
 
     var hasMap = _(dashboard.charts)
       .pluck('type')
@@ -106,14 +104,15 @@ var DashboardStore = Reflux.createStore({
   // action handlers
   onSetDashboard (definition) {
     var dashboard = this.dashboard = definition.dashboard
+    var campaign_id = definition.campaign
+
     this.location = definition.location || this.location
-    this.date = definition.date || this.date
 
     if (this.campaigns || this.locations) {
-      this.setDashboardInternal(dashboard)
+      this.setDashboardInternal(dashboard, campaign_id)
     } else {
       this.onInitialize().then(() => {
-        this.setDashboardInternal(dashboard)
+        this.setDashboardInternal(dashboard, campaign_id)
       })
     }
   },
