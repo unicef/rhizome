@@ -7,11 +7,13 @@ import ExportPdf from 'components/molecules/ExportPdf'
 import Placeholder from 'components/molecules/Placeholder'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
+import DropdownList from 'react-widgets/lib/DropdownList'
 import RootStore from 'stores/RootStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import LocationStore from 'stores/LocationStore'
 import ChartStore from 'stores/ChartStore'
 import DatapointStore from 'stores/DatapointStore'
+import CampaignStore from 'stores/CampaignStore'
 import ChartActions from 'actions/ChartActions'
 
 var ChartPage = React.createClass({
@@ -21,6 +23,7 @@ var ChartPage = React.createClass({
     Reflux.connect(ChartStore, 'chart'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(IndicatorStore, 'indicators'),
+    Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(DatapointStore, 'datapoints')
   ],
 
@@ -42,6 +45,7 @@ var ChartPage = React.createClass({
 
   render () {
     const chart = this.state.chart
+    const campaigns = this.state.campaigns.raw || []
     let chart_component = <Placeholder height={200}/>
 
     if (!_.isEmpty(chart.data)) {
@@ -57,10 +61,23 @@ var ChartPage = React.createClass({
     return (
       <div>
         <form className='row no-print cd-titlebar'>
-          <a href={'/charts/' + this.props.chart_id + '/edit'} className='button small'>
-            <i className='fa fa-pencil'></i> Edit Chart
-          </a>
-          <ExportPdf className='button small' />
+          <div className='medium-4 columns'>
+            <a href={'/charts/' + this.props.chart_id + '/edit'} className='button small'>
+              <i className='fa fa-pencil'></i> Edit Chart
+            </a>
+          </div>
+          <div className='medium-4 columns'>
+            <DropdownList
+              data={campaigns}
+              defaultValue={!_.isEmpty(campaigns) ? campaigns[0].id : null}
+              textField='name'
+              valueField='id'
+              onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
+            />
+          </div>
+          <div className='medium-4 columns'>
+            <ExportPdf className='button small' />
+          </div>
         </form>
         <div className='row layout-basic'>
           <div className='medium-12 columns text-center'>
