@@ -156,22 +156,21 @@ class TableRenderer {
       .attr({'transform': 'translate(20,10)'})
       .call(d3.svg.axis()
         .scale(this.yScale)
-        .tickFormat(d => this.options.parentLocationMap[d].parent_location__name)
+        .tickFormat(d => this.options.parent_location_map[d].parent_location__name)
         .orient('left')
         .outerTickSize(0))
     svg.selectAll('.z.axis text')
       .style('font-size', this.options.fontSize)
-      .on('click', (d, i) => this.options.onRowClick(this.options.parentLocationMap[d].parent_location__name, i, this))
+      .on('click', (d, i) => this.options.onRowClick(this.options.parent_location_map[d].parent_location__name, i, this))
   }
 
   // FOOTER
   //---------------------------------------------------------------------------
   renderFooter(svg) {
-    var singleRowIndicators = this.options.headers // chartData[0].values
-    var sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
-    var sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
-    var sourceG = sourceCell.enter().append('g')
-
+    const singleRowIndicators = this.options.headers // chartData[0].values
+    const sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
+    const sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
+    const sourceG = sourceCell.enter().append('g')
     sourceG.append('rect')
       .attr({
         'class': 'cell',
@@ -188,7 +187,7 @@ class TableRenderer {
       .attr({
         'height': this.yScale.rangeBand(),
         'transform': `translate(${this.z}, ${this.h})`,
-        'x': d => sourceFlow(d) + this.options.cellHeight * 1.33,
+        'x': d => this.sourceFlow(d) + this.options.cellHeight * 1.33,
         'y': this.options.cellHeight / 2,
         'width': this.xScale.rangeBand(),
         'dominant-baseline': 'central',
