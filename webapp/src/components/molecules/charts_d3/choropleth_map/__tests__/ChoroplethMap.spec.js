@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import _ from 'lodash';
-import d3 from 'd3'
+import d3 from 'd3';
 import React from 'react';
 import Chart from 'components/molecules/Chart';
 import ChoroplethMap from '../ChoroplethMap.js';
@@ -27,10 +27,10 @@ describe(__filename, () => {
       expect(choroplethMapInstance).to.respondTo('initialize');
       expect(choroplethMapInstance).to.respondTo('getColor');
     });
-    it('has DEFAULTS attribute', () => {
-      expect(choroplethMapInstance.defaults).to.exist;
-    });
     describe('#defaults', () => {
+      it('has attribute', () => {
+        expect(choroplethMapInstance.defaults).to.exist;
+      });
       it('has specific keys', () => {
         expect(choroplethMapInstance.defaults).include.keys(
           'aspect',
