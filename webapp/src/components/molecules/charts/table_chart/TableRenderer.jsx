@@ -52,7 +52,7 @@ class TableRenderer {
     const calculatedHeightScale = 1 + (this.options.headers.length - 8) / 10
     const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
     const viewBoxWidth = this.w + this.margin.left + this.margin.right - 150
-    const viewBox = '0 0 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.margin.bottom)
+    const viewBox = '0 -50 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.margin.bottom + 50)
     const svg = d3.select(container)
       .attr({
         'viewBox': viewBox,
