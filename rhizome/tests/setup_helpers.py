@@ -142,6 +142,12 @@ class TestSetupHelpers(ResourceTestCase):
 		sdt.main()
 		return document.id
 
+	def create_arbitrary_ss(self, doc_id, data_date='2016-01-01'):
+		return SourceSubmission.objects.create(
+			document_id=doc_id,
+			submission_json ='',
+			row_number=0,
+			data_date = data_date)
 
 
 

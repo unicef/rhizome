@@ -11,11 +11,6 @@ class ComputedDatapointResourceTest(ResourceTestCase):
         super(ComputedDatapointResourceTest, self).setUp()
 
         self.ts = TestSetupHelpers()
-        self.lt = self.ts.create_arbitrary_location_type()
-        # self.o = self.ts.create_arbitrary_office()
-        # self.top_lvl_location = self.ts.create_arbitrary_location(self.lt.id, self.o.id)
-        # LocationPermission.objects.create(user_id = self.ts.user.id,\
-            # top_lvl_location_id = self.top_lvl_location.id)
         self.create_metadata()
         self.doc_id = self.ts.ingest_file('eoc_post_campaign.csv') 
 
