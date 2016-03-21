@@ -3,7 +3,7 @@ import d3 from 'd3'
 import React, { PropTypes, Component } from 'react'
 
 import formatUtil from 'components/molecules/charts_d3/utils/format'
-import TableRenderer from 'components/molecules/charts/table_chart/TableRenderer'
+import TableChartRenderer from 'components/molecules/charts/TableChartRenderer'
 
 const TABLE_DEFAULTS = {
   cellHeight: 24,
@@ -33,7 +33,7 @@ class TableChart extends Component {
 
 	componentDidMount () {
     this.container = React.findDOMNode(this)
-    this.table = new TableRenderer(this.props.data, this.options, this.container)
+    this.table = new TableChartRenderer(this.props.data, this.options, this.container)
     this.table.render()
   }
 

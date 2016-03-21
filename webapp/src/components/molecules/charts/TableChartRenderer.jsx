@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import d3 from 'd3'
 
-class TableRenderer {
+class TableChartRenderer {
   constructor (data, options, container) {
     this.setTableParams(data, options, container)
   }
@@ -326,4 +326,4 @@ class TableRenderer {
 
 }
 
-export default TableRenderer
+export default TableChartRenderer

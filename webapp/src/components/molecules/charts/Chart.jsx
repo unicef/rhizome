@@ -35,7 +35,6 @@ const ChartContainer = React.createClass({
   },
 
 	render () {
-		console.log('------------------------------ Chart.jsx - render ------------------------------')
 		let chart
 		const props = this.props
 		if (this.container) {
@@ -44,6 +43,9 @@ const ChartContainer = React.createClass({
 	   	const aspect = options['aspect'] || 1
 		 	this.width =  options['width'] || this.container.clientWidth
 	 		this.height = options['height'] || this.width / aspect
+	 		options.width = this.width
+	 		options.height = this.height
+	 		options.colors = options.colors || options.color
 	   	const viewBox = '0 0 ' + this.width + ' ' + this.height
 	 	 	const h = this.height - margin.top - margin.bottom
 	 	 	const w = this.width - margin.left - margin.right
