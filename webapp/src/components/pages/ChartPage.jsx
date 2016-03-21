@@ -55,18 +55,20 @@ var ChartPage = React.createClass({
     }
 
     return (
-      <div className='row layout-basic'>
-        <div className='medium-12 columns text-center'>
-          <h1>{ chart.def.title }</h1>
-        </div>
-        <div className='medium-2 columns'>
-          <a href={'/charts/' + this.props.chart_id + '/edit'} className='button expand small'>
+      <div>
+        <form className='row no-print cd-titlebar'>
+          <a href={'/charts/' + this.props.chart_id + '/edit'} className='button small'>
             <i className='fa fa-pencil'></i> Edit Chart
           </a>
-          <ExportPdf className='button expand small' />
-        </div>
-        <div className='medium-10 columns'>
-          { chart_component }
+          <ExportPdf className='button small' />
+        </form>
+        <div className='row layout-basic'>
+          <div className='medium-12 columns text-center'>
+            <h1>{ chart.def.title }</h1>
+          </div>
+          <div className='medium-12 columns'>
+            { chart_component }
+          </div>
         </div>
       </div>
     )
