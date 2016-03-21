@@ -1,5 +1,6 @@
 import { expect } from 'chai';
 import _ from 'lodash';
+import d3 from 'd3';
 import MapLegend from '../ChoroplethMapLegend.js';
 
 describe(__filename, () => {
