@@ -34,3 +34,20 @@ footer.main-footer {
   }
 }
 
+footer.hideable {
+  transition: all .7s ease 0s;
+  .footer-toggle-button {
+    font-size: .8rem;
+    padding-top: 0.6rem;
+    padding-bottom: 0.4rem;
+    border-top-left-radius: 3px;
+    outline: none;
+    border: none;
+    color: white;
+    background: $rhz-footer-bg-color;
+    position: absolute;
+    right: 0;
+    top: -1.8rem;
+    text-decoration: underline;
+  }
+}

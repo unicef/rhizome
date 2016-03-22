@@ -39,11 +39,18 @@ const ChartWizard = React.createClass({
     Reflux.connect(DatapointStore, 'datapoints')
   ],
 
+  getInitialState() {
+    return {
+      footerHidden: false
+    }
+  },
+
   propTypes: {
     chart_id: PropTypes.number
   },
 
   componentDidMount () {
+    if (this.props.chart_id) { this.setState({footerHidden: true})}
     IndicatorSelectorStore.listen(selected_indicators => {
       return ChartActions.setIndicatorIds(selected_indicators.map(indicator => indicator.id))
     })
@@ -74,6 +81,10 @@ const ChartWizard = React.createClass({
         indicator_ids: chart_def.indicator_ids
       })
     })
+  },
+
+  showHideFooter () {
+    this.setState({footerHidden: !this.state.footerHidden})
   },
 
   render () {
@@ -167,7 +178,7 @@ const ChartWizard = React.createClass({
             />
           </div>
         </div>
-        <footer className='row'>
+        <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
           <div className='medium-7 columns'>
             <h3>Chart Type</h3>
             <ChartSelect
@@ -180,6 +191,10 @@ const ChartWizard = React.createClass({
             <PalettePicker
               value={chart.def.palette}
               onChange={ChartActions.setPalette}/>
+            <button className='footer-toggle-button' onClick={this.showHideFooter}>
+              <i className={this.state.footerHidden ? 'fa fa-caret-up' : 'fa fa-caret-down'}>&nbsp; </i>
+              { this.state.footerHidden ? 'Show' : 'Hide'} Properties
+            </button>
           </div>
         </footer>
       </section>
