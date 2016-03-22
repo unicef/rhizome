@@ -92,7 +92,6 @@ class MasterRefresh(object):
         ## during the DocTransform process we associate new AND existing mappings between
         ## the metadata assoicated with this doucment.
 
-
         sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
             self.document_id).values_list('source_object_map_id',flat=True)
 
@@ -112,12 +111,16 @@ class MasterRefresh(object):
 
     def main(self):
 
-        if len(self.ss_ids_to_process) == 0:
-            return
+        # if len(self.ss_ids_to_process) == 0:
+        #     return
 
+        print '1'
         self.refresh_submission_details()
+        print '2'
         self.submissions_to_doc_datapoints()
+        print '3'
         self.delete_unmapped()
+        print '4'
         self.sync_datapoint()
         # self.mark_datapoints_with_needs_campaign()
 
