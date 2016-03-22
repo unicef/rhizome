@@ -200,7 +200,8 @@ var BuiltinDashboardPage = React.createClass({
       location = _.find(this.state.locations, r => r.id === location).name
     }
 
-    let campaign_id = this.state.campaign.id
+    // let campaign_id = this.state.campaign.id
+    let campaign_id = _.get(params, 'campaign')
 
     if (params.indicator_id) {
       page('/dashboards/' + [slug, location, campaign_id].join('/') + '/?indicator_id=' + params.indicator_id)
