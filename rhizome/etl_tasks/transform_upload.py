@@ -28,6 +28,7 @@ class DocTransform(object):
 
         raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+
         csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
 
         self.csv_df = csv_df
@@ -208,6 +209,7 @@ class ComplexDocTransform(DocTransform):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
+            'campaign_code': submission_data[self.campaign_column],
             # 'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',

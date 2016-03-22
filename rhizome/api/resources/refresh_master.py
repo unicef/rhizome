@@ -21,7 +21,6 @@ class RefreshMasterResource(BaseModelResource):
         # dt = DocTransform(request.user.id, doc_id)
 
         mr = MasterRefresh(request.user.id, doc_id)
-        print 'we in!!!!'
         mr.main()
 
         doc_campaign_ids = set(list(DataPoint.objects\

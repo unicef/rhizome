@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from pandas import concat
 from pandas import DataFrame
@@ -83,7 +83,7 @@ class AggRefresh(object):
         response_msg = self.main()
 
         ## mark job as completed and save
-        self.cache_job.date_completed = datetime.now()
+        self.cache_job.date_completed = timezone.now()
         self.cache_job.response_msg = response_msg
         self.cache_job.save()
 

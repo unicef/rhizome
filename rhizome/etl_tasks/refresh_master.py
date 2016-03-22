@@ -1,5 +1,5 @@
 import locale
-import datetime
+from django.utils import timezone
 
 from collections import defaultdict
 import json
@@ -114,13 +114,9 @@ class MasterRefresh(object):
         # if len(self.ss_ids_to_process) == 0:
         #     return
 
-        print '1'
         self.refresh_submission_details()
-        print '2'
         self.submissions_to_doc_datapoints()
-        print '3'
         self.delete_unmapped()
-        print '4'
         self.sync_datapoint()
         # self.mark_datapoints_with_needs_campaign()
 
@@ -256,8 +252,9 @@ class MasterRefresh(object):
 
         dp_batch = []
 
-        # if not ss_id_list:
-        #     ss_id_list = self.submission_data.keys()
+        if not ss_id_list:
+            ss_id_list = SourceSubmission.objects\
+                .filter(document_id = self.document_id).values_list('id',flat=True)
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
@@ -302,6 +299,7 @@ class MasterRefresh(object):
                 dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
+                    'campaign_id' : row.campaign_id,
                     'data_date' : row.data_date,
                     'value' : row.value,
                     'source_submission_id' : row.source_submission_id,
@@ -319,7 +317,7 @@ class MasterRefresh(object):
         doc_dp_batch = []
         submission  = row.submission_json
 
-        data_date = datetime.datetime.now().date()
+        data_date = timezone.now().date()
 
         for k,v in submission.iteritems():
 
@@ -362,7 +360,7 @@ class MasterRefresh(object):
                 'campaign_id': row.campaign_id,
                 'data_date': data_date,
                 'document_id': self.document_id,
-                'source_submission_id': ss_id,
+                'source_submission_id': row.id,
                 'agg_on_location': True,
             })
 

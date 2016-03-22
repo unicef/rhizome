@@ -12,7 +12,8 @@ class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
 
-        self.location_code_input_column = 'Wardcode'
+        self.location_code_input_column = 'geocode'
+        self.campaign_code_input_column = 'campaign'
         self.data_date_input_column = 'submission_date'
         self.uq_code_input_column = 'uq_id'
 
@@ -245,6 +246,7 @@ class RefreshMasterTestCase(TestCase):
         ss_id, first_submission = submission_qs[0],json.loads(submission_qs[1])
 
         location_code = first_submission[self.location_code_input_column]
+        campaign_code = first_submission[self.campaign_code_input_column]
         data_date = first_submission[self.data_date_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
 
@@ -256,6 +258,7 @@ class RefreshMasterTestCase(TestCase):
         ## choose meta data values for the source_map update ##
         map_location_id = Location.objects.all()[0].id
         first_indicator_id = Indicator.objects.all()[0].id
+        first_campaign = Campaign.objects.all()[0].id
 
         ## map location ##
         som_id_l = SourceObjectMap.objects.get(
@@ -272,6 +275,14 @@ class RefreshMasterTestCase(TestCase):
         )
         som_id_i.master_object_id = first_indicator_id
         som_id_i.save()
+
+        ## map campaign ##
+        som_id_c = SourceObjectMap.objects.get(
+            content_type = 'campaign',
+            source_object_code = campaign_code,
+        )
+        som_id_c.master_object_id = first_campaign
+        som_id_c.save()
 
         mr_with_new_meta = MasterRefresh(self.user.id ,self.document.id)
         mr_with_new_meta.refresh_submission_details()
