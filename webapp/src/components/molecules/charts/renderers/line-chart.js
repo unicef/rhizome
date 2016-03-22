@@ -1,9 +1,7 @@
-import React from 'react'
 import _ from 'lodash'
 import d3 from 'd3'
-import Tooltip from 'components/molecules/Tooltip'
-import hoverLine from 'components/molecules/charts_d3/line_chart/hover-line'
-import Layer from 'react-layer'
+import hoverLine from 'components/molecules/charts/renderers/common/hover-line'
+import axisLabel from 'components/molecules/charts/renderers/common/axis-label'
 
 class LineChartRenderer {
   constructor (data, options, container) {
@@ -19,18 +17,10 @@ class LineChartRenderer {
     this.width = options.width - options.margin.left - options.margin.right * 2
     this.domain = _.isFunction(options.domain)
       ? options.domain(data)
-      : d3.extent(_(data)
-      .map(options.values)
-      .flatten()
-      .map(options.x)
-      .value())
-   this.range = _.isFunction(options.range)
+      : d3.extent(_(data).map(options.values).flatten().map(options.x).value())
+    this.range = _.isFunction(options.range)
       ? options.range(data)
-      : d3.extent(_(data)
-      .map(options.values)
-      .flatten()
-      .map(options.y)
-      .value())
+      : d3.extent(_(data).map(options.values).flatten().map(options.y).value())
     this.range[0] = Math.min(this.range[0], 0)
     this.dataXScale = d3.time.scale().domain(this.domain).range([30, this.width])
     this.yScale = options.scale().domain(this.range).range([0.9 * this.height, 0])
@@ -54,9 +44,9 @@ class LineChartRenderer {
     this.renderHoverline()
   }
 
-  //===========================================================================//
-  //                                   RENDER                                  //
-  //===========================================================================//
+  // =========================================================================== //
+  //                                   RENDER                                    //
+  // =========================================================================== //
 
   // LINE
   // ---------------------------------------------------------------------------
@@ -159,10 +149,10 @@ class LineChartRenderer {
       .sortBy('y')
       .value()
     if (this.options.xLabel || this.options.yLabel) {
-      svg.call(axisLabel()
+      this.svg.call(axisLabel()
       .data(this.options.xLabel, this.options.yLabel)
-      .width(width)
-      .height(height)
+      .width(this.width)
+      .height(this.height)
       .margin(this.options.margin))
     }
   }

@@ -2,8 +2,8 @@ import _ from 'lodash'
 import d3 from 'd3'
 import React, { PropTypes, Component } from 'react'
 
-import formatUtil from 'components/molecules/charts_d3/utils/format'
-import ChoroplethMapRenderer from 'components/molecules/charts/ChoroplethMapRenderer'
+import formatUtil from 'components/molecules/charts/utils/format'
+import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
 class ChoroplethMap extends Component {
   constructor(props) {

@@ -2,9 +2,9 @@ import _ from 'lodash'
 import d3 from 'd3'
 import React, { PropTypes, Component } from 'react'
 
-import format from 'components/molecules/charts_d3/utils/format'
-import palettes from 'components/molecules/charts_d3/utils/palettes'
-import LineChartRenderer from 'components/molecules/charts/LineChartRenderer'
+import format from 'components/molecules/charts/utils/format'
+import palettes from 'components/molecules/charts/utils/palettes'
+import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
 
 
 const DEFAULTS = {

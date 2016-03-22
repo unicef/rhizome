@@ -2,8 +2,8 @@ import _ from 'lodash'
 import d3 from 'd3'
 import React, { PropTypes, Component } from 'react'
 
-import formatUtil from 'components/molecules/charts_d3/utils/format'
-import TableChartRenderer from 'components/molecules/charts/TableChartRenderer'
+import formatUtil from 'components/molecules/charts/utils/format'
+import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 
 const TABLE_DEFAULTS = {
   cellHeight: 24,

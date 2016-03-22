@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
@@ -11,6 +12,8 @@ const IndicatorSelector = React.createClass({
   mixins: [
     Reflux.connect(IndicatorSelectorStore, 'selected_indicators'),
   ],
+
+  indicators_index: null,
 
   propTypes: {
     indicators: PropTypes.shape({
@@ -28,10 +31,17 @@ const IndicatorSelector = React.createClass({
 
   componentDidMount () {
     IndicatorStore.listen(indicators => {
+      this.indicators_index = indicators.index
       if (this.props.preset_indicator_ids) {
-        return IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
+        IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
       }
     })
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEmpty(nextProps.preset_indicator_ids)) {
+      this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => this.indicators_index[id])})
+    }
   },
 
   render () {

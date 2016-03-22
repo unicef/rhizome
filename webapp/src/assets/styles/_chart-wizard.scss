@@ -32,12 +32,16 @@
     }
   }
   .data-filters {
+    padding-bottom: 5rem;
     .medium-6.columns {
       padding-left: 0;
       &:last-child {
         padding-right: 0;
       }
     }
+  }
+  .chart-container {
+    padding-bottom: 5rem;
   }
 }
 

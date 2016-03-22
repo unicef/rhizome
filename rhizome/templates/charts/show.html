@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 
 {% block scripts %}
-	<script>Rhizome.Chart(document.getElementById('main'),{{chart_id}});</script>
+	<script>
+		// Rhizome.Chart(document.getElementById('main'),{{chart_id}});
+		Rhizome.ChartBuilder(document.getElementById('main'), {{chart_id}});
+	</script>
+
 {% endblock %}
