@@ -7,7 +7,7 @@ import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import CampaignStore from 'stores/CampaignStore'
 
-const ChartContainer = React.createClass({
+const Chart = React.createClass({
 
   mixins: [
     Reflux.connect(CampaignStore, 'campaigns'),
@@ -72,5 +72,5 @@ const ChartContainer = React.createClass({
 	}
 })
 
-export default ChartContainer
+export default Chart
 
