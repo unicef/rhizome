@@ -77,13 +77,16 @@ protected_patterns = [
     url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
     url(r'^chart_builder/(?P<dashboard_id>[0-9]+)/', views.chart_builder, name='chart_builder'),
 
+    url(r'^dashboards/eoc-post-campaign/$', views.builtin_dashboard, name='dashboards'),
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
     url(r'^dashboards/create$', views.explore_data, name='dashboard_create'),
+
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/$', views.builtin_dashboard, name='builtin_dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/$', views.builtin_dashboard, name='dashboards'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/[0-9]+/$', views.builtin_dashboard, name='builtin_dashboard'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/edit/$', views.explore_data, name='dashboard_edit'),
+
     # url(r'^dashboards/[-a-zA-Z0-9]+/$',
     #     decorator_include(login_required, 'rhizome.urls', namespace='datapoints')),
 ]
