@@ -107,16 +107,14 @@ describe(__filename, () => {
         context('bad bound greater than good bound', () => {
           beforeEach(() => {
             options.data_format = 'pct';
-            options.ticks.goodBound = badBound;
-            options.ticks.badBound = goodBound;
+            options.ticks.goodBound = goodBound;
+            options.ticks.badBound = badBound;
             options.ticks.reversed = true;
           });
           it('returns legendTicks of good range, middle range, bad range', () => {
-            var legendTicks = [`${options.ticks.badBound*100}%-100%`, `${options.ticks.goodBound*100}%-${options.ticks.badBound*100}%`, `0%-${options.ticks.goodBound*100}%`];
-            var temp = options.ticks.badBound;
-            options.ticks.badBound = options.ticks.goodBound;
-            options.ticks.goodBound = temp;
-            expect(mapLegendInstance.buildTicksFromBounds(options)).to.have.members(legendTicks);
+            var legendTicks = [`${options.ticks.goodBound*100}%-100%`, `${options.ticks.badBound*100}%-${options.ticks.goodBound*100}%`, `0%-${options.ticks.badBound*100}%`];
+            const ticks = mapLegendInstance.buildTicksFromBounds(options);
+            expect(ticks).to.have.members(legendTicks);
           });
           it('returns legendTicks of good range, middle range, bad range in correct order', () => {
             var legendTicks = [`0%-${options.ticks.badBound*100}%`, `${options.ticks.badBound*100}%-${options.ticks.goodBound*100}%`,`${options.ticks.goodBound*100}%-100%`];
@@ -148,20 +146,45 @@ describe(__filename, () => {
         context('bad bound less than good bound', () => {
           beforeEach(() => {
             options.data_format = 'int';
-            options.ticks.goodBound = goodBound;
-            options.ticks.badBound = badBound;
+            options.ticks.goodBound = 2;
+            options.ticks.badBound = 1;
             options.ticks.reversed = false;
           });
           it('returns legendTicks of bad range, middle range, good range', () => {
-            var legendTicks = [`0-${options.ticks.badBound*100}`, `${options.ticks.badBound*100}-${options.ticks.goodBound*100}`,`${options.ticks.goodBound*100}-100`];
+            var legendTicks = [`0-${options.ticks.badBound}`, `${options.ticks.badBound}-${options.ticks.goodBound}`,`${options.ticks.goodBound}+`];
             expect(mapLegendInstance.buildTicksFromBounds(options)).to.have.members(legendTicks);
           });
           it('returns legendTicks of bad range, middle range, good range in correct order', () => {
-            var legendTicks = [`0-${options.ticks.badBound*100}`, `${options.ticks.badBound*100}-${options.ticks.goodBound*100}`,`${options.ticks.goodBound*100}-100`];
+            var legendTicks = [`0-${options.ticks.badBound}`, `${options.ticks.badBound}-${options.ticks.goodBound}`,`${options.ticks.goodBound}+`];
             const ticks = mapLegendInstance.buildTicksFromBounds(options);
-            expect(ticks[0]).to.be.eq(legendTicks[0]);
+            expect(ticks[0]).to.be.eq(legendTicks[2]);
             expect(ticks[1]).to.be.eq(legendTicks[1]);
-            expect(ticks[2]).to.be.eq(legendTicks[2]);
+            expect(ticks[2]).to.be.eq(legendTicks[0]);
+          });
+        });
+        context('bad bound greater than good bound', () => {
+          beforeEach(() => {
+            options.data_format = 'int';
+            options.ticks.goodBound = 1;
+            options.ticks.badBound = 2;
+            options.ticks.reversed = true;
+          });
+          it('returns legendTicks of good range, middle range, bad range', () => {
+            var legendTicks = [`0-${options.ticks.goodBound}`, `${options.ticks.goodBound}-${options.ticks.badBound}`, `${options.ticks.badBound}+`];
+            var temp = options.ticks.badBound;
+            options.ticks.badBound = options.ticks.goodBound;
+            options.ticks.goodBound = temp;
+            expect(mapLegendInstance.buildTicksFromBounds(options)).to.have.members(legendTicks);
+          });
+          it('returns legendTicks of good range, middle range, bad range in correct order', () => {
+            var legendTicks = [`${options.ticks.badBound}+`, `${options.ticks.goodBound}-${options.ticks.badBound}`,`0-${options.ticks.goodBound}`];
+            var temp = options.ticks.badBound;
+            options.ticks.badBound = options.ticks.goodBound;
+            options.ticks.goodBound = temp;
+            const ticks = mapLegendInstance.buildTicksFromBounds(options);
+            expect(ticks[0]).to.be.eq(legendTicks[2]);
+            expect(ticks[1]).to.be.eq(legendTicks[1]);
+            expect(ticks[2]).to.be.eq(legendTicks[0]);
           });
         });
       });
