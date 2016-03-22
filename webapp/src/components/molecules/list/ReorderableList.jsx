@@ -25,7 +25,7 @@ export default React.createClass({
       template={ReorderableItem}
       callback={this.rearrangeItems}
       listClass='reorderable-list'
-      itemClass='reorderable-item animated slideInLeft'
+      itemClass='reorderable-item animated slideInRight'
       removeItem={this.props.removeItem}
       disableReorder={false}
       list={items}/>

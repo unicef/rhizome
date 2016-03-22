@@ -49,6 +49,17 @@ const ChartWizard = React.createClass({
     chart_id: PropTypes.number
   },
 
+  componentWillMount () {
+    LocationStore.listen(this.getChart)
+    IndicatorStore.listen(this.getChart)
+  },
+
+  getChart (locations, indicators) {
+    if (this.state.locations.index && this.state.indicators.index) {
+      ChartActions.fetchChart(this.props.chart_id)
+    }
+  },
+
   componentDidMount () {
     if (this.props.chart_id) { this.setState({footerHidden: true})}
     IndicatorSelectorStore.listen(selected_indicators => {
@@ -117,6 +128,20 @@ const ChartWizard = React.createClass({
       </div>
     ) : ''
 
+    const date_range_picker = chart.def.type !== 'TableChart' ?
+    (
+      <div className='row'>
+        <h3>Time</h3>
+        <DateRangePicker
+          sendValue={ChartActions.setDateRange}
+          start={start_date}
+          end={end_date}
+          fromComponent='ChartWizard'
+        />
+        <br/>
+      </div>
+    ) : ''
+
     const chart_component = chart.def.type === 'RawData'
       ? <DatabrowserTable
           data={this.state.datapoints.raw}
@@ -125,6 +150,8 @@ const ChartWizard = React.createClass({
         />
       : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
 
+    const preset_indicator_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.indicator_ids : [15]
+    const preset_location_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.location_ids : [1]
     return (
       <section className='chart-wizard'>
         <div className='medium-9 columns'>
@@ -144,7 +171,7 @@ const ChartWizard = React.createClass({
                   cookieName='dataBrowserCsvDownload'/>
               :
                 <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
-                  <i className='fa fa-save'></i> Save To Charts
+                  <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
                 </button>
             }
             </div>
@@ -153,27 +180,18 @@ const ChartWizard = React.createClass({
               <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
             </div>
           </div>
-          <div className='row'>
-            <h3>Time</h3>
-            <DateRangePicker
-              sendValue={ChartActions.setDateRange}
-              start={start_date}
-              end={end_date}
-              fromComponent='ChartWizard'
-            />
-            <br/>
-          </div>
+          { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
           <div className='row data-filters'>
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
-              preset_indicator_ids={[15]}
+              preset_indicator_ids={preset_indicator_ids}
               classes='medium-6 columns'
             />
             <LocationSelector
               locations={this.state.locations}
-              preset_location_ids={[1]}
+              preset_location_ids={preset_location_ids}
               classes='medium-6 columns'
             />
           </div>

@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
@@ -11,6 +12,8 @@ const LocationSelector = React.createClass({
   mixins: [
     Reflux.connect(LocationSelectorStore, 'selected_locations'),
   ],
+
+  locations_index: null,
 
   propTypes: {
     locations: PropTypes.shape({
@@ -29,10 +32,17 @@ const LocationSelector = React.createClass({
 
   componentDidMount () {
     LocationStore.listen(locations => {
+      this.locations_index = locations.index
       if (this.props.preset_location_ids) {
         return LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
       }
     })
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (!_.isEmpty(nextProps.preset_location_ids)) {
+      this.setState({selected_locations: nextProps.preset_location_ids.map(id => this.locations_index[id])})
+    }
   },
 
   render () {
