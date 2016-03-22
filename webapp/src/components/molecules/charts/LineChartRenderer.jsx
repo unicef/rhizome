@@ -13,10 +13,10 @@ class LineChartRenderer {
   setChartParams (data, options, container) {
     this.container = container
     this.options = options
-    this.data = this.filterData(data, options)
+    this.data = data
+    this.data.forEach(d => d.values = d.values.filter(item => item.value !== null))
     this.height = options.height - options.margin.top - options.margin.bottom
     this.width = options.width - options.margin.left - options.margin.right * 2
-    this.svg = d3.select(this.container)
     this.domain = _.isFunction(options.domain)
       ? options.domain(data)
       : d3.extent(_(data)
@@ -37,6 +37,7 @@ class LineChartRenderer {
     this.yFormat = d3.format(',d')
     this.x = _.flow(options.x, this.dataXScale)
     this.y = _.flow(options.y, this.yScale)
+    this.svg = d3.select(this.container)
   }
 
   update () {
@@ -90,7 +91,7 @@ class LineChartRenderer {
         .ticks(3)
         .scale(this.dataXScale)
         .orient('bottom'))
-        .attr('transform', `translate(0, ${this.height - (this.options.margin.bottom + this.options.margin.top)})`)
+        .attr('transform', `translate(0, ${this.height - this.options.margin.top})`)
         .selectAll('.domain').data([0]).attr('d', `M0,0V0H${this.width}V0`)
   }
 
@@ -108,8 +109,8 @@ class LineChartRenderer {
     gy.selectAll('line').attr('transform', 'translate(25, 0)')
     gy.selectAll('text').attr({'x': -6, 'y': -5, 'dy': 10})
     gy.selectAll('g').classed('minor', d => d !== this.range[0])
-    d3.select(gy.selectAll('line')[0][0]).attr('visibility', 'hidden') // Hide lowest tick line
-    d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden') // Hide lowest tick (usually 0)
+    // d3.select(gy.selectAll('line')[0][0]).attr('visibility', 'hidden') // Hide lowest tick line
+    // d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden') // Hide lowest tick (usually 0)
   }
 
   // HOVERLINE
@@ -184,16 +185,6 @@ class LineChartRenderer {
           .dots(this.options.hasDots))
     }
   }
-
-  //===========================================================================//
-  //                                    UTILITIES                              //
-  //===========================================================================//
-  filterData (data, options) {
-    data.forEach(d => { d.values = d.values.filter(item => item.value !== null) })
-    return data
-  }
-
-
 }
 
 export default LineChartRenderer
