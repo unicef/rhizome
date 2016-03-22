@@ -100,11 +100,11 @@ _.extend(MapLegend.prototype, {
         legendTicks[2] = `0%-${options.ticks.badBound}%`
         legendTicks[0] = `${options.ticks.goodBound}%-100%`
       }
-    } else {
+    } else if (options.data_format === 'int'){
       //double check actual data with this logic
-      legendTicks[2] = `${options.ticks.goodBound}%-100%`
-      legendTicks[1] = `${options.ticks.badBound}%-${options.ticks.goodBound}%`
-      legendTicks[0] = `0%-${options.ticks.badBound}%`
+      legendTicks[2] = `${options.ticks.goodBound}-100`
+      legendTicks[1] = `${options.ticks.badBound}-${options.ticks.goodBound}`
+      legendTicks[0] = `0-${options.ticks.badBound}`
     }
     return legendTicks;
   },
