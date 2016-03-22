@@ -121,15 +121,16 @@ const ChartStoreHelpers = {
   //                                  LINE CHART                                 //
   // =========================================================================== //
   formatLineChart (datapoints, chart, groups, layout) {
-    let lower = moment(chart.def.start_date, 'YYYY-MM-DD')
-    let upper = moment(chart.def.end_date, 'YYYY-MM-DD')
+    // The LineChart has its own logic that determines the domain and it seems to work
+    // more correctly than this code.
+    // let lower = moment(chart.def.start_date, 'YYYY-MM-DD')
+    // let upper = moment(chart.def.end_date, 'YYYY-MM-DD')
+    // if (!lower) { // set the lower bound from the lowest datapoint value
+    //   const sortedDates = _.sortBy(datapoints, _.method('campaign.start_date.getTime'))
+    //   lower = moment(_.first(sortedDates).campaign.start_date)
+    // }
+    // chart.def.domain = _.constant([lower.toDate(), upper.toDate()])
 
-    if (!lower) { // set the lower bound from the lowest datapoint value
-      const sortedDates = _.sortBy(datapoints, _.method('campaign.start_date.getTime'))
-      lower = moment(_.first(sortedDates).campaign.start_date)
-    }
-
-    chart.def.domain = _.constant([lower.toDate(), upper.toDate()])
     chart.def.aspect = aspects[layout].lineChart
     chart.def.values = _.property('values')
     chart.def.x = _.property('campaign.start_date')

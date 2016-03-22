@@ -91,8 +91,10 @@ class LineChartRenderer {
         .ticks(3)
         .scale(this.dataXScale)
         .orient('bottom'))
-        .attr('transform', `translate(0, ${this.height - this.options.margin.top})`)
-        .selectAll('.domain').data([0]).attr('d', `M0,0V0H${this.width}V0`)
+        .attr('transform', `translate(0, ${this.height - this.options.margin.top + 12})`)
+        .selectAll('.domain').data([0])
+          .attr('d', `M0,0V0H${this.width - 30}V0`)
+          .attr('transform', 'translate(30, 0)')
   }
 
   // Y AXIS
@@ -109,8 +111,8 @@ class LineChartRenderer {
     gy.selectAll('line').attr('transform', 'translate(25, 0)')
     gy.selectAll('text').attr({'x': -6, 'y': -5, 'dy': 10})
     gy.selectAll('g').classed('minor', d => d !== this.range[0])
-    // d3.select(gy.selectAll('line')[0][0]).attr('visibility', 'hidden') // Hide lowest tick line
-    // d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden') // Hide lowest tick (usually 0)
+    d3.select(gy.selectAll('line')[0][0]).attr('visibility', 'hidden') // Hide lowest tick line
+    d3.select(gy.selectAll('text')[0][0]).attr('visibility', 'hidden') // Hide lowest tick (usually 0)
   }
 
   // HOVERLINE
