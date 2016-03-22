@@ -144,20 +144,20 @@ describe(__filename, () => {
           });
         });
       });
-      context('\"other\" data format indicator', ()=>{
+      context('integer data format indicator', ()=>{
         context('bad bound less than good bound', () => {
           beforeEach(() => {
-            options.data_format = 'none given';
+            options.data_format = 'int';
             options.ticks.goodBound = goodBound;
             options.ticks.badBound = badBound;
             options.ticks.reversed = false;
           });
           it('returns legendTicks of bad range, middle range, good range', () => {
-            var legendTicks = [`0%-${options.ticks.badBound*100}%`, `${options.ticks.badBound*100}%-${options.ticks.goodBound*100}%`,`${options.ticks.goodBound*100}%-100%`];
+            var legendTicks = [`0-${options.ticks.badBound*100}`, `${options.ticks.badBound*100}-${options.ticks.goodBound*100}`,`${options.ticks.goodBound*100}-100`];
             expect(mapLegendInstance.buildTicksFromBounds(options)).to.have.members(legendTicks);
           });
           it('returns legendTicks of bad range, middle range, good range in correct order', () => {
-            var legendTicks = [`0%-${options.ticks.badBound*100}%`, `${options.ticks.badBound*100}%-${options.ticks.goodBound*100}%`,`${options.ticks.goodBound*100}%-100%`];
+            var legendTicks = [`0-${options.ticks.badBound*100}`, `${options.ticks.badBound*100}-${options.ticks.goodBound*100}`,`${options.ticks.goodBound*100}-100`];
             const ticks = mapLegendInstance.buildTicksFromBounds(options);
             expect(ticks[0]).to.be.eq(legendTicks[0]);
             expect(ticks[1]).to.be.eq(legendTicks[1]);

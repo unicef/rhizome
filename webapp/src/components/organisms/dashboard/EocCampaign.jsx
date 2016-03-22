@@ -31,7 +31,7 @@ var EocPreCampaign = React.createClass({
   getChartFormat (indicator) {
     let d3Format = d3.format('')
     if (indicator.data_format === 'pct') {
-      d3Format =  d3.format(',.1%')
+      d3Format = d3.format(',.1%')
     }
     return d3Format
   },
@@ -42,9 +42,9 @@ var EocPreCampaign = React.createClass({
     }
     return colorScale
   },
-  reverseBounds: function(bounds){
+  reverseBounds: function (bounds) {
     bounds.reversed = false
-    if (bounds.bad_bound > bounds.good_bound){
+    if (bounds.bad_bound > bounds.good_bound) {
       var temp = bounds.bad_bound
       bounds.bad_bound = bounds.good_bound
       bounds.good_bound = temp
@@ -90,7 +90,7 @@ var EocPreCampaign = React.createClass({
     // ----------------------------------------------------------------------------------------------
     const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
 
-    //for legend text
+    // for legend text
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
@@ -139,18 +139,21 @@ var EocPreCampaign = React.createClass({
           </div>
         </div>
         <div className='row'>
-          <div className='medium-8 columns' style={{'marginBottom': '-10px'}}>
+          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
+            <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
+            {mapChart}
+          </div>
+        </div>
+        <div className='row'>
+          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
+            <h3 className='chart_header_text'>All Indicators</h3>
             {tableChart}
           </div>
         </div>
         <div className='row'>
-          <div className='medium-5 columns cd-chart-size'>
+          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
             <h3 className='chart_header_text'>{trendIndicator.short_name}</h3>
             {trendChart}
-          </div>
-          <div className='medium-3 columns cd-chart-size'>
-            <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
-            {mapChart}
           </div>
         </div>
       </div>
