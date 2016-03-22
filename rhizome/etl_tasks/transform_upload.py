@@ -87,6 +87,11 @@ class DocTransform(object):
         endpoint: api/v2/doc_mapping/?document=66
         '''
 
+
+        if DocumentSourceObjectMap.objects.filter(document_id = \
+            self.document.id):
+            return
+
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document.id).values_list('submission_json')
 

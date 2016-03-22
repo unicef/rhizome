@@ -1,8 +1,11 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
-from rhizome.models import Document
+from rhizome.models import Document, DataPoint
 # from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
+from rhizome.agg_tasks import AggRefresh
+
 
 class DocTransFormResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
@@ -36,9 +39,9 @@ class DocTransFormResource(BaseModelResource):
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 
-        c_id_list = set(list(DataPoint.objects\
+        doc_campaign_ids = set(list(DataPoint.objects\
             .filter(source_submission__document_id = doc_id)\
-            .values_list('campaign_id')))
+            .values_list('campaign_id',flat=True)))
 
         for c_id in doc_campaign_ids:
             ar = AggRefresh(c_id)
