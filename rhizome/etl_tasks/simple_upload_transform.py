@@ -9,7 +9,7 @@ from rhizome.models import *
 from rhizome.api.exceptions import DatapointsException
 from rhizome.etl_tasks.transform_upload import DocTransform
 from django.db import IntegrityError
-from sets import Set
+
 
 class SimpleDocTransform(DocTransform):
     '''
@@ -18,27 +18,6 @@ class SimpleDocTransform(DocTransform):
     '''
 
     def __init__(self,user_id,document_id):
-
-        self.location_column, self.campaign_column, self.uq_id_column = \
-            ['geocode', 'campaign', 'unique_key']
-
-        self.document = Document.objects.get(id=document_id)
-        self.file_path = str(self.document.docfile)
-
-        raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
-        csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-        csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
-
-        self.csv_df = csv_df
-
-        self.file_header = csv_df.columns
-
-        self.meta_lookup = {
-            'location':{},
-            'indicator':{},
-            'campaign':{}
-        }
-        self.indicator_ids_to_exclude = Set([-1])
 
         return super(SimpleDocTransform, self).__init__(user_id,document_id)
 
