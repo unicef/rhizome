@@ -5,9 +5,12 @@ from tastypie.resources import ALL
 from tastypie import fields
 
 from django.core.files.base import ContentFile
+from pandas import read_excel
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Document
+from django.conf import settings
+import os
 
 class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
@@ -53,8 +56,24 @@ class DocumentResource(BaseModelResource):
             file_meta, base64data = post_data.split(',')
         except ValueError:
             base64data = post_data
-        file_content = ContentFile(base64.b64decode(base64data))
-        file_header = file_content.readline()
+
+        file_header = None
+        file_content = None
+        if '.csv' in doc_title:
+            file_content = ContentFile(base64.b64decode(base64data))
+            file_header = file_content.readline()
+        elif '.xlsx' in doc_title or '.xls' in doc_title:
+            # workaround-- need to create the excel file in order to read from it
+            new_file_path = settings.MEDIA_ROOT+doc_title
+            new_file = open(new_file_path, 'wr')
+            new_file.write(base64.b64decode(base64data))
+            new_file.close()
+            file_df=read_excel(open(new_file_path))
+            file_content = ContentFile(file_df.to_csv())
+            file_header = file_content.readline()
+            # delete the excel file
+            os.remove(new_file_path)
+
 
         sd, created = Document.objects.update_or_create(
             id=doc_id,
@@ -63,6 +82,5 @@ class DocumentResource(BaseModelResource):
         )
 
         sd.docfile.save(sd.guid, file_content)
-
         return sd
 
