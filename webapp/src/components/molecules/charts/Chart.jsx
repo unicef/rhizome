@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import Reflux from 'reflux'
+
 import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
+
 import CampaignStore from 'stores/CampaignStore'
 
 const ChartContainer = React.createClass({

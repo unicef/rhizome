@@ -26,6 +26,7 @@ class TableChartRenderer {
     this.transform = (d, i) => `translate(${this.z}, ${this.y(d) + 10})`
     this.targets = this.getTargets(options.headers)
     this.fill = d => this.scale(this.targets[d.indicator.id](d.value))
+    this.svg = d3.select(container)
   }
 
   update () {
@@ -34,124 +35,119 @@ class TableChartRenderer {
   }
 
   render () {
-    this.svg = this.prepContainer(this.container)
-    this.rows = this.renderRows(this.svg)
-    this.cells = this.renderCells(this.rows)
-    this.renderXAxis(this.svg)
-    this.renderYAxis(this.svg)
-    this.renderZAxis(this.svg)
-    this.renderFooter(this.svg)
-    this.renderLegend(this.svg)
+    this.prepContainer()
+    this.renderRows()
+    this.renderCells()
+    this.renderXAxis()
+    this.renderYAxis()
+    this.renderZAxis()
+    this.renderFooter()
+    this.renderLegend()
   }
 
-  //===========================================================================//
-  //                                   RENDER                                  //
-  //===========================================================================//
-  prepContainer (container) {
+  // =========================================================================== //
+  //                                    RENDER                                   //
+  // =========================================================================== //
+  prepContainer () {
     // hacky way to scale the view box.. this should be done by taking into account the user's screen size
     const calculatedHeightScale = 1 + (this.options.headers.length - 8) / 10
     const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
     const viewBoxWidth = this.w + this.margin.left + this.margin.right - 150
     const viewBox = '0 -50 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.margin.bottom + 50)
-    const svg = d3.select(container)
-      .attr({
-        'viewBox': viewBox,
-        'width': (this.w + this.margin.left + this.margin.right),
-        'height': (this.h + this.margin.top + this.margin.bottom)
-      })
-      .datum(this.data)
-    svg.select('.margin').attr('transform', 'translate(-75, ' + this.margin.top + ')')
-
-    return svg
+    this.svg.attr({
+      'viewBox': viewBox,
+      'width': (this.w + this.margin.left + this.margin.right),
+      'height': (this.h + this.margin.top + this.margin.bottom)
+    })
+   .datum(this.data)
+    this.svg.select('.margin').attr('transform', 'translate(-75, ' + this.margin.top + ')')
   }
 
   // ROWS
-  //---------------------------------------------------------------------------
-  renderRows (svg) {
-    const g = svg.select('.data')
+  // ---------------------------------------------------------------------------
+  renderRows () {
+    const g = this.svg.select('.data')
     g.on('mouseout', () => this.onRowOut.apply(this))
     const rows = g.selectAll('.row').data(this.data)
     rows.enter().append('g').attr({'class': 'row', 'transform': this.transform})
     rows.exit().transition().duration(300).style('opacity', 0).remove()
     rows.on('click', (d, i) => this.onRowClick([d, i]))
     rows.on('mouseover', (d, i) => this.onRowOver([d, i])).transition().duration(750).attr('transform', this.transform)
-    return rows
+    this.rows = rows
   }
 
   // CELLS
-  //---------------------------------------------------------------------------
-  renderCells (rows) {
-    const options = this.options
-    const cells = rows.selectAll('.cell').data(this.options.values)
-      cells.exit().transition().duration(300).style('opacity', 0).remove()
-      cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
-      cells.style('cursor', _.isFunction(this.options.onClick) ? 'pointer' : 'initial')
-      cells.on('mousemove', this.options.onMouseMove)
-      cells.on('mouseout', this.options.onMouseOut)
-      cells.on('click', this.options.onClick)
-      cells.transition().duration(500).style('fill', this.fill)
-        .attr({
-          'height': this.yScale.rangeBand(),
-          'width': this.xScale.rangeBand(),
-          'x': this.x
-        })
+  // ---------------------------------------------------------------------------
+  renderCells () {
+    const cells = this.rows.selectAll('.cell').data(this.options.values)
+    cells.exit().transition().duration(300).style('opacity', 0).remove()
+    cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
+    cells.style('cursor', _.isFunction(this.options.onClick) ? 'pointer' : 'initial')
+    cells.on('mousemove', this.options.onMouseMove)
+    cells.on('mouseout', this.options.onMouseOut)
+    cells.on('click', this.options.onClick)
+    cells.transition().duration(500).style('fill', this.fill)
+      .attr({
+        'height': this.yScale.rangeBand(),
+        'width': this.xScale.rangeBand(),
+        'x': this.x
+      })
 
-      const cg = cells.enter().append('g')
-      cg.append('rect')
-        .attr({
-          'class': 'cell',
-          'height': this.yScale.rangeBand(),
-          'x': this.x,
-          'width': this.xScale.rangeBand()
-        })
-        .style({ 'opacity': 0, 'fill': this.fill })
-        .transition().duration(500)
-        .style('opacity', 1)
-      cg.append('text')
-        .attr({
-          'height': this.yScale.rangeBand(),
-          'x': d => this.x(d) + this.xScale.rangeBand() / 2,
-          'y': (this.options.cellHeight / 2) - (this.options.cellFontSize / 4.3),
-          'width': this.xScale.rangeBand(),
-          'dominant-baseline': 'central',
-          'text-anchor': 'middle',
-          'font-weight': 'bold'
-        })
-        .style({'font-size': this.options.cellFontSize})
-        .text(d => d.displayValue)
-        .transition().duration(500)
-    return cells
+    const cg = cells.enter().append('g')
+    cg.append('rect')
+      .attr({
+        'class': 'cell',
+        'height': this.yScale.rangeBand(),
+        'x': this.x,
+        'width': this.xScale.rangeBand()
+      })
+      .style({ 'opacity': 0, 'fill': this.fill })
+      .transition().duration(500)
+      .style('opacity', 1)
+    cg.append('text')
+      .attr({
+        'height': this.yScale.rangeBand(),
+        'x': d => this.x(d) + this.xScale.rangeBand() / 2,
+        'y': (this.options.cellHeight / 2) - (this.options.cellFontSize / 4.3),
+        'width': this.xScale.rangeBand(),
+        'dominant-baseline': 'central',
+        'text-anchor': 'middle',
+        'font-weight': 'bold'
+      })
+      .style({'font-size': this.options.cellFontSize})
+      .text(d => d.displayValue)
+      .transition().duration(500)
   }
 
   // X AXIS
-  //---------------------------------------------------------------------------
-  renderXAxis (svg) {
-    svg.select('.x.axis')
+  // ---------------------------------------------------------------------------
+  renderXAxis () {
+    this.svg.select('.x.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(' + this.z + ',-40)'})
       .call(d3.svg.axis().scale(this.xScale).orient('top').outerTickSize(0))
-    svg.selectAll('.x.axis text').on('click', (d, i) => this.onSetSort(d, i))
-    svg.selectAll('.x.axis text')
+    this.svg.selectAll('.x.axis text').on('click', (d, i) => this.onSetSort(d, i))
+    this.svg.selectAll('.x.axis text')
       .attr({'transform': 'rotate(-45)'})
       .call(this.wrap, this.xScale.rangeBand())
   }
 
   // Y AXIS
-  //---------------------------------------------------------------------------
-  renderYAxis (svg) {
-    svg.select('.y.axis')
+  // ---------------------------------------------------------------------------
+  renderYAxis () {
+    this.svg.select('.y.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(' + this.z + ',10)'})
       .call(d3.svg.axis().scale(this.yScale).orient('left').outerTickSize(0))
-    svg.selectAll('.y.axis text')
+    this.svg.selectAll('.y.axis text')
       .style('font-size', this.options.fontSize + 2)
       .on('click', (d, i) => this.options.onRowClick(d, i, this))
   }
 
   // Z AXIS
-  //---------------------------------------------------------------------------
-  renderZAxis (svg) {
-   svg.select('.z.axis')
+  // ---------------------------------------------------------------------------
+  renderZAxis () {
+    this.svg.select('.z.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(20,10)'})
       .call(d3.svg.axis()
@@ -159,16 +155,16 @@ class TableChartRenderer {
         .tickFormat(d => this.options.parent_location_map[d].parent_location__name)
         .orient('left')
         .outerTickSize(0))
-    svg.selectAll('.z.axis text')
+    this.svg.selectAll('.z.axis text')
       .style('font-size', this.options.fontSize)
       .on('click', (d, i) => this.options.onRowClick(this.options.parent_location_map[d].parent_location__name, i, this))
   }
 
   // FOOTER
-  //---------------------------------------------------------------------------
-  renderFooter(svg) {
+  // ---------------------------------------------------------------------------
+  renderFooter () {
     const singleRowIndicators = this.options.headers // chartData[0].values
-    const sourceFooter = svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
+    const sourceFooter = this.svg.select('.source-footer').attr({'transform': 'translate(0,' + 10 + ')'})
     const sourceCell = sourceFooter.selectAll('.source-cell').data(singleRowIndicators)
     const sourceG = sourceCell.enter().append('g')
     sourceG.append('rect')
@@ -200,25 +196,24 @@ class TableChartRenderer {
   }
 
   // LEGEND
-  //---------------------------------------------------------------------------
-  renderLegend(svg) {
+  // ---------------------------------------------------------------------------
+  renderLegend () {
     if (this.options.legend) {
-      svg.select('.legend')
+      this.svg.select('.legend')
         .call(this.options.legend)
         .attr('transform', () => {
           const bbox = this.getBoundingClientRect()
-          const dx = this.w + margin.right - bbox.width
+          const dx = this.w + this.margin.right - bbox.width
           return `translate(${dx}, 0)`
         })
     } else {
-      svg.select('.legend').selectAll('*').remove()
+      this.svg.select('.legend').selectAll('*').remove()
     }
   }
 
-
-  //===========================================================================//
-  //                               EVENT HANDLERS                              //
-  //===========================================================================//
+  // =========================================================================== //
+  //                                EVENT HANDLERS                               //
+  // =========================================================================== //
   onRowOver (d) {
     this.rows
       .transition().duration(300)
@@ -249,9 +244,9 @@ class TableChartRenderer {
     this.update()
   }
 
-  //===========================================================================//
-  //                                    UTILITIES                              //
-  //===========================================================================//
+  // =========================================================================== //
+  //                                     UTILITIES                               //
+  // =========================================================================== //
   getTargets (headers) {
     // COLORS - Move from here once the user can set a pallette
     // ---------------------------------------------------------------------------
@@ -265,29 +260,29 @@ class TableChartRenderer {
   }
 
   getDomain (data, options) {
-      // if there is a sortCol set, order the data that way.
-      if (this.sortCol) {
-        let sortValue = _.partial(this.getSortValue.bind(this), _, this.sortCol)
-        var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
-      } else {
-        // if not, show default.  This also applies to the third click of a header
-        domain = options.default_sort_order
-        this.sortDirection = 1
-      }
+    // if there is a sortCol set, order the data that way.
+    if (this.sortCol) {
+      let sortValue = _.partial(this.getSortValue.bind(this), _, this.sortCol)
+      var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
+    } else {
+      // if not, show default.  This also applies to the third click of a header
+      domain = options.default_sort_order
+      this.sortDirection = 1
+    }
 
-      if (this.sortDirection === -1) {
-        domain = domain.reverse()
-      }
+    if (this.sortDirection === -1) {
+      domain = domain.reverse()
+    }
 
-      // For empty data points i need to add the x axis domain items explicitly //
-      // otherwise the domain will be less ( and different the ) the yScale //
-      // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
-      if (domain.length < options.default_sort_order.length) {
-        const diff = options.default_sort_order.filter(x => domain.indexOf(x) < 0)
-        domain = domain.concat(diff)
-      }
+    // For empty data points i need to add the x axis domain items explicitly //
+    // otherwise the domain will be less ( and different the ) the yScale //
+    // see trello : https://trello.com/c/bCwyqSWs/277-display-bug-when-creating-table-chart //
+    if (domain.length < options.default_sort_order.length) {
+      const diff = options.default_sort_order.filter(x => domain.indexOf(x) < 0)
+      domain = domain.concat(diff)
+    }
 
-      return domain
+    return domain
   }
 
   getSortValue (s, sortCol) {
