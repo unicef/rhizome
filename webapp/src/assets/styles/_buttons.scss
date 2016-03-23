@@ -7,7 +7,6 @@
   font-family: adelle;
   letter-spacing: 1px;
 	margin: .5rem .5rem .5rem 0;
-  padding: .6rem 0 .65rem 0;
   &:not(.disabled):not(.success):not(.icon-button):hover {
     background-color: #426281;
     color: $rhz-font-color;
@@ -28,6 +27,7 @@
   }
   &.expand {
     font-size: .9rem;
+    padding: .5rem 0 .55rem 0;
   }
   &.field-submit {
     @media screen and (min-width: 64em) {

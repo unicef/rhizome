@@ -97,7 +97,7 @@ export default React.createClass({
     var itemlistStyle = { maxHeight: this.state.maxHeight }
     var containerStyle = { marginLeft: this.state.marginLeft }
     var position = {
-      position: 'absolute',
+      position: 'fixed',
       left: this.props.x,
       top: this.props.y
     }

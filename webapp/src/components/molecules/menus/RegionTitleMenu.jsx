@@ -20,7 +20,7 @@ var RegionTitleMenu = React.createClass({
   getDefaultProps () {
     return {
       locations: [],
-      selected: {'name':'Loading'}
+      selected: {'name':'Loading ...'}
     }
   },
 
