@@ -5,12 +5,15 @@ import json
 from rhizome.api.serialize import CustomSerializer
 
 class AllMetaResult(object):
-	content = list()
+    indicators = list()
+    campaigns = list()
+    locations = list()
 
 
 class AllMetaResource(BaseNonModelResource):
-    content = fields.ListField(attribute='content')
-
+    indicators = fields.ListField(attribute='indicators')
+    campaigns = fields.ListField(attribute='campaigns')
+    locations = fields.ListField(attribute='locations')
     class Meta(BaseNonModelResource.Meta):
         object_class = AllMetaResult
         resource_name = 'all_meta'
@@ -21,9 +24,9 @@ class AllMetaResource(BaseNonModelResource):
 
     def get_object_list(self, request):
         qs = []
-    	all_meta_objs ={'indicators': Indicator, 'campaigns':Campaign, 'locations':Location}
-    	for idx, (meta_name, meta_resource) in enumerate(all_meta_objs.iteritems()):
-            am_result = AllMetaResult()
-            am_result.content = meta_resource.objects.all().values()
-            qs.append(am_result)
-    	return qs
+        am_result = AllMetaResult()
+        am_result.indicators = Indicator.objects.all().values()
+        am_result.campaigns = Campaign.objects.all().values()
+        am_result.locations = Location.objects.all().values()
+        qs.append(am_result)
+        return qs
