@@ -37,10 +37,12 @@ footer.main-footer {
 footer.hideable {
   transition: all .7s ease 0s;
   z-index: 100;
+  display: block;
+  bottom: 3.1rem;
   .footer-toggle-button {
     font-size: .8rem;
     padding-top: 0.6rem;
-    padding-bottom: 0.4rem;
+    padding-bottom: 0.5rem;
     border-top-left-radius: 3px;
     outline: none;
     border: none;
@@ -48,7 +50,19 @@ footer.hideable {
     background: $rhz-footer-bg-color;
     position: absolute;
     right: 0;
-    top: -1.8rem;
     text-decoration: underline;
+    top: -1.9rem;
+    @media #{$small-only} {
+      display: none;
+    }
+  }
+  @media #{$small-only} {
+    display: inline-block;
+    position: relative;
+    top: 3.3rem;
+    bottom: 0;
+  }
+  &.descended {
+    bottom: -3.4rem;
   }
 }

@@ -35,7 +35,7 @@ var ChartStore = Reflux.createStore({
       timeRange: null,
       end_date: moment().format('YYYY-MM-DD'),
       start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-      title: null,
+      title: 'Untitled',
       cellSize: 36,
       fontSize: 14,
       margin: { top: 40, right: 40, bottom: 40, left: 40 },

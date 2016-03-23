@@ -241,7 +241,7 @@ class TableChartRenderer {
       this.sortDirection = 1
     }
 
-    this.update()
+    this.update(this.data, this.options, this.container)
   }
 
   // =========================================================================== //

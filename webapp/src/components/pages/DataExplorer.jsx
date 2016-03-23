@@ -42,7 +42,8 @@ const DataExplorer = React.createClass({
 
   getInitialState() {
     return {
-      footerHidden: false
+      footerHidden: false,
+      titleEditMode: false
     }
   },
 
@@ -103,7 +104,6 @@ const DataExplorer = React.createClass({
   },
 
   _toggleTitleEdit (title) {
-    console.log('title', title)
     if (_.isString(title)) {
       ChartActions.setTitle(title)
     }
@@ -213,7 +213,7 @@ const DataExplorer = React.createClass({
     // FOOTER
     //---------------------------------------------------------------------------
     const footer = (
-      <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
+      <footer className={'row hideable' + (this.state.footerHidden ? ' descended' : '')}>
         <div className='medium-7 columns'>
           <h3>View</h3>
           <ChartSelect
@@ -236,13 +236,7 @@ const DataExplorer = React.createClass({
 
     return (
       <section className='data-explorer'>
-        <div className='medium-9 large-10 columns'>
-          <div className='row chart-header'>
-          {!_.isEmpty(chart.def.title) ? title_bar : ''}
-          </div>
-          {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
-        </div>
-        <div className='medium-3 large-2 columns'>
+        <div className='medium-3 large-2 medium-push-9 large-push-10 columns'>
           { call_to_actions }
           <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
             { date_range_picker }
@@ -250,6 +244,12 @@ const DataExplorer = React.createClass({
             { indicator_selector }
             { location_selector }
           </div>
+        </div>
+        <div className='medium-9 large-10 medium-pull-3 large-pull-2 columns'>
+          <div className='row chart-header'>
+            { title_bar }
+          </div>
+          {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
         { footer }
       </section>

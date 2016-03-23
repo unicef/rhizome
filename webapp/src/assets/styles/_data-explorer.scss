@@ -2,6 +2,10 @@
   width: 100%;
   margin: 20px auto;
   padding-bottom: 3.5rem;
+  @media #{$small-only} {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
   .chart-header {
     text-align: center;
   }
@@ -17,7 +21,6 @@
     position: fixed;
     background: #252525;
     width: 100%;
-    bottom: 3.1rem;
     padding-bottom: .5rem;
     z-index: 9997;
     min-width: 100%;

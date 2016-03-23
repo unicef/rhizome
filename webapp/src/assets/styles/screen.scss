@@ -63,6 +63,9 @@ body {
 
 #main {
   padding-bottom: 100px;
+  @media #{$small-only} {
+    padding-top: 4rem;
+  }
 }
 
 
