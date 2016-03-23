@@ -13,4 +13,4 @@ script:
   - cd webapp && gulp build && gulp mocha && cd ..
 
 notifications:
-  slack: rhisome:h0h50gjD2A72P1fEAjF3IMjK
+  slack: SLACK_ACCESS_KEY
