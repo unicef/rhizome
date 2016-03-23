@@ -73,10 +73,10 @@ var ChartStore = Reflux.createStore({
   onFetchChartCompleted (response) {
     const chart_json = response.chart_json
     this.chart.def.campaign_ids = chart_json.campaign_ids
+    this.chart.def.start_date = chart_json.start_date
     this.chart.def.end_date = chart_json.end_date
     this.chart.def.indicator_ids = chart_json.indicator_ids
     this.chart.def.location_ids = chart_json.location_ids
-    this.chart.def.start_date = chart_json.start_date
     this.chart.def.id = response.id
     this.chart.def.title = response.title
     this.chart.def.selected_locations = this.chart.def.location_ids.map(id => this.locations.index[id])
@@ -125,7 +125,6 @@ var ChartStore = Reflux.createStore({
   },
 
   onSetIndicatorIds (indicator_ids) {
-    console.log('indicator_ids', indicator_ids)
     if (_.isArray(indicator_ids)) {
       this.chart.def.indicator_ids = indicator_ids
       this.chart.def.selected_indicators = indicator_ids.map(id => this.indicators.index[id])
@@ -133,7 +132,6 @@ var ChartStore = Reflux.createStore({
       this.chart.def.indicator_ids = [indicator_ids]
       this.chart.def.selected_indicators = [this.indicators.index[indicator_ids]]
     }
-    console.log('this.chart.def', this.chart.def)
     this.chart.def.headers = this.chart.def.selected_indicators
     this.chart.def.xDomain = this.chart.def.headers.map(indicator => indicator.short_name)
     this.chart.def.x = indicator_ids[0]
@@ -145,12 +143,22 @@ var ChartStore = Reflux.createStore({
   onSetLocationIds (location_ids) {
     this.chart.def.location_ids = location_ids
     this.chart.def.selected_locations = location_ids.map(id => this.locations.index[id])
+    if (this.chart.def.type === 'ChoroplethMap') {
+      this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
+      return ChartActions.fetchMapFeatures(this.chart.def.location_ids)
+    }
     this.updateChart()
   },
 
   onSetCampaignIds (campaign_ids) {
     this.chart.def.campaign_ids = campaign_ids
     this.chart.def.selected_campaigns = campaign_ids.map(id => this.campaigns.index[id])
+    this.chart.def.start_date = this.chart.def.selected_campaigns[0].start_date
+    this.chart.def.end_date = this.chart.def.selected_campaigns[0].end_date
+    if (this.chart.def.start_date === this.chart.def.end_date) {
+      this.chart.def.start_date = moment(this.chart.def.start_date).subtract(1, 'M').format('YYYY-MM-DD')
+      this.chart.def.end_date = moment(this.chart.def.start_date).add(1, 'M').format('YYYY-MM-DD')
+    }
     this.updateChart()
   },
 
@@ -160,6 +168,14 @@ var ChartStore = Reflux.createStore({
     if (type === 'ChoroplethMap') {
       this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
       return ChartActions.fetchMapFeatures(this.chart.def.location_ids)
+    }
+    if (type === 'TableChart') {
+      this.chart.def.start_date = this.chart.def.selected_campaigns[0].start_date
+      this.chart.def.end_date = this.chart.def.selected_campaigns[0].end_date
+      if (this.chart.def.end_date === this.chart.def.end_date) {
+        this.chart.def.start_date = moment(this.chart.def.start_date).subtract(1, 'M').format('YYYY-MM-DD')
+        this.chart.def.end_date = moment(this.chart.def.start_date).add(1, 'M').format('YYYY-MM-DD')
+      }
     }
     this.updateChart()
   },

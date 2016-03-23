@@ -20,8 +20,8 @@ class ChoroplethMapRenderer {
     this.colorScale = this.getColorScale(options.domain, options.colors)
   }
 
-  update () {
-    this.setMapParams(this.data, this.options, this.container)
+  update (data, options, container) {
+    this.setMapParams(data, options, container)
     this.render()
   }
 

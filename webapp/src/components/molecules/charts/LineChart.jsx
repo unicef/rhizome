@@ -38,6 +38,7 @@ class LineChart extends Component {
   }
 
   componentDidUpdate () {
+    this.options = _.defaults({}, this.props.options, this.options)
     this.chart.update(this.props.data, this.options, this.container)
   }
 

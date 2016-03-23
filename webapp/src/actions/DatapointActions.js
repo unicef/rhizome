@@ -17,8 +17,8 @@ DatapointActions.fetchDatapoints.listen(params => {
 const _prepDatapointsQuery = (params) => {
   let query = {
     indicator__in: params.indicator_ids,
-    campaign_start: params.startDate,
-    campaign_end: params.endDate,
+    campaign_start: params.start_date,
+    campaign_end: params.end_date,
     chart_type: params.type
   }
 
