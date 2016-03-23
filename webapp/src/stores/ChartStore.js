@@ -126,12 +126,12 @@ var ChartStore = Reflux.createStore({
 
   onSetIndicatorIds (indicator_ids) {
     console.log('indicator_ids', indicator_ids)
-    if (!_.isArray(indicator_ids)) {
-      this.chart.def.indicator_ids = [this.indicators.index[indicator_ids]]
-      this.chart.def.selected_indicators = [this.indicators.index[indicator_ids]]
-    } else {
-      this.chart.def.indicator_ids = indicator_ids.map(id => this.indicators.index[id])
+    if (_.isArray(indicator_ids)) {
+      this.chart.def.indicator_ids = indicator_ids
       this.chart.def.selected_indicators = indicator_ids.map(id => this.indicators.index[id])
+    } else {
+      this.chart.def.indicator_ids = [indicator_ids]
+      this.chart.def.selected_indicators = [this.indicators.index[indicator_ids]]
     }
     console.log('this.chart.def', this.chart.def)
     this.chart.def.headers = this.chart.def.selected_indicators

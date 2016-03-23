@@ -113,7 +113,7 @@ const ChartWizard = React.createClass({
     const campaign_placeholder = <Placeholder height='18'/>
     const chart_placeholder = <Placeholder height='600'/>
 
-    const campaign_dropdown = chart.def.type !== 'RawData' ?
+    const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
     (
       <div className='row collapse'>
         <h3>Campaign</h3>
@@ -151,6 +151,8 @@ const ChartWizard = React.createClass({
 
     const preset_indicator_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.indicator_ids : [15]
     const preset_location_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.location_ids : [1]
+    const multi_indicator = chart.def.type === 'TableChart'
+    const multi_location = chart.def.type === 'TableChart'
     return (
       <section className='chart-wizard'>
         <div className='medium-9 columns'>
@@ -170,26 +172,26 @@ const ChartWizard = React.createClass({
             </button>
             </div>
             <div className='medium-12 large-7 large-pull-5 columns'>
-              <h3>Chart Title</h3>
+              <h3>Title</h3>
               <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
             </div>
           </div>
           { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
-          <div className='row collapse data-filters'>
+          <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
               preset_indicator_ids={preset_indicator_ids}
-              classes={chart.def.type === 'TableChart' ? 'medium-6 columns' : 'medium-12 columns'}
-              multi={chart.def.type === 'TableChart'}
+              classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={multi_indicator}
             />
-            <br/>
+            {multi_indicator && multi_location ? '' : <br/>}
             <LocationSelector
               locations={this.state.locations}
               preset_location_ids={preset_location_ids}
-              classes={chart.def.type === 'TableChart' ? 'medium-6 columns' : 'medium-12 columns'}
-              multi={chart.def.type === 'TableChart'}
+              classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={multi_location}
             />
           </div>
         </div>

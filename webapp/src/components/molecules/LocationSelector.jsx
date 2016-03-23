@@ -22,7 +22,8 @@ const LocationSelector = React.createClass({
       filtered: PropTypes.array
     }).isRequired,
     preset_location_ids: PropTypes.array,
-    classes: PropTypes.string
+    classes: PropTypes.string,
+    multi: PropTypes.bool
   },
 
   getDefaultProps() {
@@ -56,37 +57,36 @@ const LocationSelector = React.createClass({
       ]
     }
 
-    return (
+    const locations = props.locations.raw || []
+    const single_selector = (
       <div className={props.classes}>
-        <h3>{ props.multi ? 'Locations' : 'location' }</h3>
-        {
-          props.multi ?
-          <form>
-            <h3>
-              Locations
-              <DropdownMenu
-                items={location_options}
-                sendValue={LocationSelectorActions.selectLocation}
-                item_plural_name='Locations'
-                style='icon-button right'
-                icon='fa-plus'
-                grouped/>
-            </h3>
-            <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
-            <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
-            <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-          </form>
-          :
-          props.locations.raw && this.state.selected_locations[0] ?
-            <RegionTitleMenu
-              locations={props.locations.raw}
-              selected={this.state.selected_locations[0]}
-              sendValue={LocationSelectorActions.selectLocation}
-            />
-          : ''
-        }
+        <h3>Location</h3>
+        <RegionTitleMenu
+          locations={locations}
+          selected={this.state.selected_locations[0]}
+          sendValue={LocationSelectorActions.setSelectedLocations}
+        />
       </div>
     )
+
+    const multi_selector = (
+      <form className={props.classes}>
+        <h3>Locations
+          <DropdownMenu
+            items={location_options}
+            sendValue={LocationSelectorActions.selectLocation}
+            item_plural_name='Locations'
+            style='icon-button right'
+            icon='fa-plus'
+            grouped/>
+        </h3>
+        <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
+        <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
+        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+      </form>
+    )
+
+    return props.multi ? multi_selector : single_selector
   }
 })
 
