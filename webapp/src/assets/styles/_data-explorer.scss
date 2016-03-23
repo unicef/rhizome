@@ -2,6 +2,9 @@
   width: 100%;
   margin: 20px auto;
   padding-bottom: 3.5rem;
+  .chart-header {
+    text-align: center;
+  }
   .remove-filters-link {
     text-decoration: underline;
     color: $rhz-link-color;
@@ -34,6 +37,7 @@
   .dropdown-list {
     padding: 0 10px 10px 0;
     text-transform: none;
+    font-size: .9rem;
   }
   .export-file {
     margin: 0;
@@ -43,6 +47,9 @@
     padding: .5rem 0 .55rem 0;
   }
   .data-filters {
+    h3 {
+      margin-top: .6rem;
+    }
     padding-bottom: 5rem;
     .medium-6.columns {
       padding-left: 0;

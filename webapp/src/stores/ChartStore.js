@@ -151,8 +151,13 @@ var ChartStore = Reflux.createStore({
   },
 
   onSetCampaignIds (campaign_ids) {
-    this.chart.def.campaign_ids = campaign_ids
-    this.chart.def.selected_campaigns = campaign_ids.map(id => this.campaigns.index[id])
+    if (_.isArray(campaign_ids)) {
+      this.chart.def.campaign_ids = campaign_ids
+      this.chart.def.selected_campaigns = campaign_ids.map(id => this.campaigns.index[id])
+    } else {
+      this.chart.def.campaign_ids = [campaign_ids]
+      this.chart.def.selected_campaigns = [this.campaigns.index[campaign_ids]]
+    }
     this.chart.def.start_date = this.chart.def.selected_campaigns[0].start_date
     this.chart.def.end_date = this.chart.def.selected_campaigns[0].end_date
     if (this.chart.def.start_date === this.chart.def.end_date) {

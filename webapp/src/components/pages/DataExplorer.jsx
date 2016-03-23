@@ -4,11 +4,10 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DropdownList from 'react-widgets/lib/DropdownList'
-
 import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
+import CampaignTitleMenu from 'components/molecules/menus/CampaignTitleMenu'
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import Chart from 'components/molecules/charts/Chart'
 import ExportPdf from 'components/molecules/ExportPdf'
@@ -51,15 +50,15 @@ const DataExplorer = React.createClass({
     chart_id: PropTypes.number
   },
 
-  componentWillMount () {
-    LocationStore.listen(this.getChart)
-    IndicatorStore.listen(this.getChart)
-  },
-
   getChart (locations, indicators) {
     if (this.state.locations.index && this.state.indicators.index && this.props.chart_id) {
       ChartActions.fetchChart(this.props.chart_id)
     }
+  },
+
+  componentWillMount () {
+    LocationStore.listen(this.getChart)
+    IndicatorStore.listen(this.getChart)
   },
 
   componentDidMount () {
@@ -77,6 +76,9 @@ const DataExplorer = React.createClass({
     })
   },
 
+  //===========================================================================//
+  //                               EVENT HANDLERS                              //
+  //===========================================================================//
   _saveChart () {
     const chart_def = this.state.chart.def
     if (!chart_def.title) {
@@ -96,11 +98,11 @@ const DataExplorer = React.createClass({
     })
   },
 
-  showHideFooter () {
+  _showHideFooter () {
     this.setState({footerHidden: !this.state.footerHidden})
   },
 
-  toggleTitleEdit (title) {
+  _toggleTitleEdit (title) {
     console.log('title', title)
     if (_.isString(title)) {
       ChartActions.setTitle(title)
@@ -108,6 +110,9 @@ const DataExplorer = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
+  //===========================================================================//
+  //                                   RENDER                                  //
+  //===========================================================================//
   render () {
     const chart = this.state.chart
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
@@ -127,15 +132,14 @@ const DataExplorer = React.createClass({
     const campaign_placeholder = <Placeholder height={18}/>
     const chart_placeholder = <Placeholder height={600}/>
 
-    // =========================================================================== //
-    //                                     CHART                                   //
-    // =========================================================================== //
+    // CHART
+    //---------------------------------------------------------------------------
     const title_bar = this.state.titleEditMode ?
-      <TitleInput initialText={chart.def.title} save={this.toggleTitleEdit}/>
+      <TitleInput initialText={chart.def.title} save={this._toggleTitleEdit}/>
       :
       <h1>
         {chart.def.title}
-        <a className='button icon-button' onClick={this.toggleTitleEdit}><i className='fa fa-pencil'/></a>
+        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
       </h1>
 
     const chart_component = chart.def.type === 'RawData'?
@@ -147,12 +151,11 @@ const DataExplorer = React.createClass({
       :
       <Chart type={chart.def.type} data={chart.data} options={chart.def} />
 
-    // =========================================================================== //
-    //                                    SIDEBAR                                  //
-    // =========================================================================== //
+    // SIDEBAR
+    //---------------------------------------------------------------------------
     const call_to_actions = (
       <div className='row collapse'>
-        <button className='expand button success' disabled={disableSave} onClick={this._saveChart}>
+        <button className='expand button success' disabled={disableSave} onClick={this._saveChart} style={{marginTop: 0}}>
           <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
         </button>
         <ExportPdf className='expand' button disabled={disableSave}/>
@@ -166,7 +169,7 @@ const DataExplorer = React.createClass({
     )
 
     const date_range_picker = chart.def.type === 'LineChart' ? (
-      <div className='row'>
+      <div className='medium-12 columns'>
         <h3>Time</h3>
         <DateRangePicker
           sendValue={ChartActions.setDateRange}
@@ -182,14 +185,10 @@ const DataExplorer = React.createClass({
     (
       <div className='row collapse'>
         <h3>Campaign</h3>
-        <DropdownList
-          data={this.state.campaigns.raw}
-          defaultValue={!_.isEmpty(this.state.campaigns.raw) ? this.state.campaigns.raw[0].id : null}
-          textField='name'
-          valueField='id'
-          disabled={chart.def.type === 'RawData'}
-          onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
-        />
+        <CampaignTitleMenu
+          campaigns={this.state.campaigns.raw}
+          selected={chart.def.selected_campaigns[0]}
+          sendValue={ChartActions.setCampaignIds}/>
       </div>
     ) : ''
 
@@ -211,9 +210,8 @@ const DataExplorer = React.createClass({
       />
     )
 
-    // =========================================================================== //
-    //                                     FOOTER                                  //
-    // =========================================================================== //
+    // FOOTER
+    //---------------------------------------------------------------------------
     const footer = (
       <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
         <div className='medium-7 columns'>
@@ -228,7 +226,7 @@ const DataExplorer = React.createClass({
           <PalettePicker
             value={chart.def.palette}
             onChange={ChartActions.setPalette}/>
-          <button className='footer-toggle-button' onClick={this.showHideFooter}>
+          <button className='footer-toggle-button' onClick={this._showHideFooter}>
             <i className={this.state.footerHidden ? 'fa fa-caret-up' : 'fa fa-caret-down'}>&nbsp; </i>
             { this.state.footerHidden ? 'Show' : 'Hide'} Properties
           </button>
@@ -246,12 +244,10 @@ const DataExplorer = React.createClass({
         </div>
         <div className='medium-3 large-2 columns'>
           { call_to_actions }
-          { date_range_picker }
-          {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
           <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
-            <br/>
+            { date_range_picker }
+            {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
             { indicator_selector }
-            {multi_indicator && multi_location ? '' : <br/>}
             { location_selector }
           </div>
         </div>
