@@ -3,8 +3,8 @@ python:
   - "2.7"
 
 before_install:
-  openssl aes-256-cbc -K $encrypted_9f1ee704bc4a_key -iv $encrypted_9f1ee704bc4a_iv -in rhizome.pem.enc -out ~\/.ssh/rhizome.pem -d
-  openssl aes-256-cbc -K $encrypted_9f1ee704bc4a_key -iv $encrypted_9f1ee704bc4a_iv -in config.enc -out ~\/.ssh/config -d
+  - openssl aes-256-cbc -K $encrypted_9f1ee704bc4a_key -iv $encrypted_9f1ee704bc4a_iv -in rhizome.pem.enc -out ~\/.ssh/rhizome.pem -d
+  - openssl aes-256-cbc -K $encrypted_9f1ee704bc4a_key -iv $encrypted_9f1ee704bc4a_iv -in config.enc -out ~\/.ssh/config -d
 before_script:
   - sh -c "psql -c 'CREATE ROLE djangoapp WITH SUPERUSER LOGIN;' -U postgres; fi"
   - npm install -g npm@latest
