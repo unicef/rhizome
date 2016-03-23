@@ -25,6 +25,7 @@ class DatapointEntryResourceTest(ResourceTestCase):
         self.ind = self.ts.create_arbitrary_indicator()
         self.doc = self.ts.create_arbitrary_document()
         self.ss = self.ts.create_arbitrary_ss(self.doc.id)
+        
     # @martha plz fix.
     # def test_get(self):
     #     dp = DataPointEntry.objects.create(
