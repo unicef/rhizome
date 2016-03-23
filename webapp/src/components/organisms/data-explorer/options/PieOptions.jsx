@@ -4,7 +4,7 @@ import List from 'components/molecules/list/List.jsx'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu.jsx'
 import RadioGroup from 'components/molecules/RadioGroup.jsx'
 
-import ChartWizardActions from 'actions/ChartWizardActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 export default class PieOptions extends React.Component {
@@ -31,29 +31,29 @@ export default class PieOptions extends React.Component {
   render () {
     let [firstIndicator, ...otherIndicator] = this.props.indicatorSelected
     return (
-      <div className='chart-wizard__options chart-wizard__options--general'>
+      <div className='data-explorer__options data-explorer__options--general'>
         <h4>First Indicator</h4>
         <ul className='list'>
           <li>{firstIndicator && firstIndicator.name}</li>
         </ul>
-        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
+        <p className='data-explorer__para'>You may choose additional indicators now.</p>
         <DropdownMenu
           items={this.props.indicatorList}
-          sendValue={ChartWizardActions.addIndicator}
+          sendValue={DataExplorerActions.addIndicator}
           item_plural_name='Indicators'
           text='Add Indicators'
           icon='fa-plus'/>
-        <List items={otherIndicator} removeItem={ChartWizardActions.removeIndicator} />
+        <List items={otherIndicator} removeItem={DataExplorerActions.removeIndicator} />
 
-        <p className='chart-wizard__para'>You may also change additional chart settings.</p>
+        <p className='data-explorer__para'>You may also change additional chart settings.</p>
         <RadioGroup name='location-level' title='Location Level: '
           value={this.props.locationLevelValue}
           values={builderDefinitions.locationLevels}
-          onChange={ChartWizardActions.changeLocationLevelRadio} />
+          onChange={DataExplorerActions.changeLocationLevelRadio} />
         <RadioGroup name='format' title='Format: '
           value={this.props.yFormatValue}
           values={builderDefinitions.formats}
-          onChange={ChartWizardActions.changeYFormatRadio} />
+          onChange={DataExplorerActions.changeYFormatRadio} />
       </div>
     )
   }

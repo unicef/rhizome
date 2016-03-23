@@ -5,7 +5,7 @@ import DropdownMenu from 'components/molecules/menus/DropdownMenu.jsx'
 import MapAxisChooser from '../MapAxisChooser.jsx'
 import api from 'data/api'
 
-import ChartWizardActions from 'actions/ChartWizardActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 export default class GeneralOptions extends React.Component {
@@ -40,8 +40,8 @@ export default class GeneralOptions extends React.Component {
     let boolIndicators = _.sortBy(api.buildIndicatorsTree(this.props.rawIndicators.objects, this.props.rawTags.objects, true, true, 'bool'), 'title')
     let [colorIndicator, bubbleIndicator, gradientIndicator] = this.props.indicatorSelected
     return (
-      <div className='chart-wizard__options chart-wizard__options--general'>
-        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
+      <div className='data-explorer__options data-explorer__options--general'>
+        <p className='data-explorer__para'>You may choose additional indicators now.</p>
         <h4>Color Axis</h4>
         <ul className='list'>
           <li>{colorIndicator && colorIndicator.name}</li>
@@ -49,20 +49,20 @@ export default class GeneralOptions extends React.Component {
         <h4>Bubble Axis</h4>
         <DropdownMenu
           items={intIndicators}
-          sendValue={ChartWizardActions.changeYAxis}
+          sendValue={DataExplorerActions.changeYAxis}
           item_plural_name='Indicators'
           text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
           icon='fa-plus'/>
         <h4>Gradient Axis</h4>
         <DropdownMenu
           items={boolIndicators}
-          sendValue={ChartWizardActions.changeZAxis}
+          sendValue={DataExplorerActions.changeZAxis}
           item_plural_name='Indicators'
           text={bubbleIndicator ? bubbleIndicator.name : 'Add Indicators'}
           icon='fa-plus'/>
-        <p className='chart-wizard__para'>You may also change additional chart settings.</p>
+        <p className='data-explorer__para'>You may also change additional chart settings.</p>
         <MapAxisChooser colorFormatValue={this.props.xFormatValue}
-                        onColorFormatChange={ChartWizardActions.changeXFormatRadio}
+                        onColorFormatChange={DataExplorerActions.changeXFormatRadio}
                         formatValues={builderDefinitions.formats}/>
       </div>
     )

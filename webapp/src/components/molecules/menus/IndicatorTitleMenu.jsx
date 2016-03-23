@@ -21,7 +21,7 @@ var IndicatorTitleMenu = React.createClass({
     return {
       indicators: [],
       idsToRender: [],
-      selected: {'name':'Loading'}
+      selected: {'name':'Loading ...'}
     }
   },
 

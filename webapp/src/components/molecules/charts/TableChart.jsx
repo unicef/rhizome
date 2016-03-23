@@ -5,7 +5,7 @@ import React, { PropTypes, Component } from 'react'
 import formatUtil from 'components/molecules/charts/utils/format'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 
-const TABLE_DEFAULTS = {
+const DEFAULTS = {
   cellHeight: 24,
   column: _.property('indicator.short_name'),
   sourceColumn: _.property('short_name'),
@@ -28,16 +28,17 @@ const TABLE_DEFAULTS = {
 class TableChart extends Component {
 	constructor(props) {
 		super(props)
-    this.options = _.defaults({}, props.options, TABLE_DEFAULTS)
-	}
+    this.options = _.defaults({}, props.options, DEFAULTS)
+  }
 
-	componentDidMount () {
+  componentDidMount () {
     this.container = React.findDOMNode(this)
     this.table = new TableChartRenderer(this.props.data, this.options, this.container)
     this.table.render()
   }
 
   componentDidUpdate () {
+    this.options = _.defaults({}, this.props.options, this.options)
     this.table.update(this.props.data, this.options, this.container)
   }
 

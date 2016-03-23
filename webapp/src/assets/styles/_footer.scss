@@ -3,7 +3,7 @@ footer.main-footer {
   position: fixed;
   width: 100%;
   bottom: 0;
-  z-index: 9997;
+  z-index: 120;
   min-width: 100%;
   > nav ul {
     margin-bottom: 0;
@@ -36,6 +36,7 @@ footer.main-footer {
 
 footer.hideable {
   transition: all .7s ease 0s;
+  z-index: 100;
   .footer-toggle-button {
     font-size: .8rem;
     padding-top: 0.6rem;

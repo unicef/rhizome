@@ -29,8 +29,8 @@ class TableChartRenderer {
     this.svg = d3.select(container)
   }
 
-  update () {
-    this.setTableParams(this.data, this.options, this.container)
+  update (data, options, container) {
+    this.setTableParams(data, options, container)
     this.render()
   }
 
