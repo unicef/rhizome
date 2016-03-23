@@ -36,7 +36,6 @@ class AggRefresh(object):
         method.
         '''
 
-
         if not campaign_id:
             campaign_id_list = self.get_campaign_ids_to_process()
             campaign_id = campaign_id_list[0]
@@ -48,8 +47,8 @@ class AggRefresh(object):
 
         self.dwc_batch, self.dwc_tuple_dict = [],{}
 
-        if CacheJob.objects.filter(response_msg = 'PENDING'):
-            return
+        # if CacheJob.objects.filter(response_msg = 'PENDING'):
+        #     return
 
         self.campaign = Campaign.objects.get(id = campaign_id)
 
@@ -58,22 +57,14 @@ class AggRefresh(object):
             response_msg = 'PENDING'
         )
 
-        dp_ids_to_process = self.campaign.get_raw_datapoint_ids()
-        top_lvl_location_id = self.campaign.top_lvl_location_id
 
-        ## update the datapoint table with this cache_job_id
-        DataPoint.objects.filter(id__in = dp_ids_to_process)\
-            .update(cache_job_id = self.cache_job.id)
+        ## set the document_id to the newest for this campaign ##
+        latest_dp_source = DataPoint.objects.filter(campaign_id = \
+            self.campaign.id).order_by('-created_at')[0].source_submission_id
 
-        self.document_id = SourceSubmission.objects.all()[0].document_id
-        ## this is sketchy -- for aggregation we need to figure out how to
-        ## appropriately set the document id of data.. what if for example
-        ## there are two uploads, one for Kandahar, one for Nangahar
-        ## for missed children, and we need to generate one number for the
-        ## afghanistan total missed children number.. we would have two
-        ## document_ids that we would need to attribute here.  For now..
-        ## we don't do any aggregation, so this solution works will have to
-        ## due until we bring back the aggregation / cacluclation framework.
+        self.document_id = SourceSubmission.objects.get(id = latest_dp_source)\
+            .document_id
+
 
 
         response_msg = self.main()
@@ -306,6 +297,8 @@ class AggRefresh(object):
         Add the raw indicator data to the tuple dict.  This happens last so
         the raw indicator data will always override the calculated.
         '''
+
+        print len(list(AggDataPoint.objects.filter(campaign_id = self.campaign.id)))
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
             adp_tuple = (adp.location_id, adp.indicator_id)
