@@ -28,4 +28,4 @@ deploy:
   region: us-east-1
   skip_cleanup: true
   on:
-    branch: travis-config
+    branch: travis_config
