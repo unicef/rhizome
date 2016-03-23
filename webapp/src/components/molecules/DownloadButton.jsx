@@ -4,7 +4,7 @@ var DownloadButton = React.createClass({
   propTypes: {
     data: React.PropTypes.array,
     onClick: React.PropTypes.func.isRequired,
-    enable: React.PropTypes.bool.isRequired,
+    enable: React.PropTypes.bool,
     text: React.PropTypes.string.isRequired,
     cookieName: React.PropTypes.string.isRequired,
     working: React.PropTypes.string.isRequired,

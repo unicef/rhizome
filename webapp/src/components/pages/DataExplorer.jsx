@@ -57,7 +57,7 @@ const DataExplorer = React.createClass({
   },
 
   getChart (locations, indicators) {
-    if (this.state.locations.index && this.state.indicators.index) {
+    if (this.state.locations.index && this.state.indicators.index && this.props.chart_id) {
       ChartActions.fetchChart(this.props.chart_id)
     }
   },
@@ -112,8 +112,8 @@ const DataExplorer = React.createClass({
       campaign_start: start_date,
       campaign_end: end_date
     }
-    const campaign_placeholder = <Placeholder height='18'/>
-    const chart_placeholder = <Placeholder height='600'/>
+    const campaign_placeholder = <Placeholder height={18}/>
+    const chart_placeholder = <Placeholder height={600}/>
 
     const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
     (
@@ -153,8 +153,8 @@ const DataExplorer = React.createClass({
 
     const preset_indicator_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.indicator_ids : [15]
     const preset_location_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.location_ids : [1]
-    const multi_indicator = chart.def.type === 'TableChart'
-    const multi_location = chart.def.type === 'TableChart'
+    const multi_indicator = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
+    const multi_location = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
     return (
       <section className='data-explorer'>
         <div className='medium-9 columns'>
@@ -165,7 +165,7 @@ const DataExplorer = React.createClass({
             <ExportPdf className='export-file' />
             <DownloadButton
               onClick={() => api.datapoints.toString(raw_data_query)}
-              enable={this.state.datapoints.raw}
+              enable={this.state.datapoints.raw ? true : false}
               text='Download Data'
               working='Downloading'
               cookieName='dataBrowserCsvDownload'/>
@@ -200,7 +200,7 @@ const DataExplorer = React.createClass({
         </div>
         <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
           <div className='medium-7 columns'>
-            <h3>Chart Type</h3>
+            <h3>View</h3>
             <ChartSelect
               charts={builderDefinitions.charts}
               value={chart.def.type}

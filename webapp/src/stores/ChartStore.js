@@ -5,14 +5,14 @@ import StateMixin from'reflux-state-mixin'
 
 import ChartActions from 'actions/ChartActions'
 import DatapointActions from 'actions/DatapointActions'
-import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import ChartStoreHelpers from 'stores/ChartStoreHelpers'
 
-import palettes from 'components/molecules/charts_d3/utils/palettes'
+import palettes from 'components/molecules/charts/utils/palettes'
 
 var ChartStore = Reflux.createStore({
 
