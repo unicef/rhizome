@@ -28,6 +28,7 @@ class AggRefreshTestCase(TestCase):
 
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
+        self.campaign_id = Campaign.objects.all()[0].id
 
         ltr = LocationTreeCache()
         ltr.main()
@@ -125,6 +126,7 @@ class AggRefreshTestCase(TestCase):
             location_id = location_id,
             data_date = data_date,
             indicator_id = indicator_id,
+            campaign_id = self.campaign_id,
             value = value,
             cache_job_id = -1,
             source_submission_id = ss_id
@@ -244,6 +246,7 @@ class AggRefreshTestCase(TestCase):
         dp_1 = DataPoint.objects.create(
             indicator_id = pct_ind.id,
             location_id = location_ids[0],
+            campaign_id = self.campaign_id,
             data_date = data_date,
             value = .2,
             source_submission_id = 1
@@ -252,6 +255,7 @@ class AggRefreshTestCase(TestCase):
         dp_2 = DataPoint.objects.create(
             indicator_id = pct_ind.id,
             location_id = location_ids[1],
+            campaign_id = self.campaign_id,
             data_date = data_date,
             value = .6,
             source_submission_id = 1
@@ -284,7 +288,7 @@ class AggRefreshTestCase(TestCase):
         self.set_up()
         self.create_raw_datapoints()
         indicator_id, data_date, raw_location_id,\
-            agg_location_id = 22,'2016-01-01',12910,12907
+            agg_location_id, campaign_id = 22,'2016-01-01',12910,12907,1
 
         location_ids = Location.objects.filter(parent_location_id =\
             agg_location_id).values_list('id',flat=True)
@@ -343,6 +347,7 @@ class AggRefreshTestCase(TestCase):
 
         data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         val_1, val_2, val_3 = 303, 808, 909
+        campaign_id = 1
 
         ## create the parent and sub indicators ##
         parent_indicator = Indicator.objects.create(
@@ -419,6 +424,7 @@ class AggRefreshTestCase(TestCase):
             indicator_id = sub_indicator_1.id,
             data_date = data_date,
             location_id = location_id,
+            campaign_id = campaign_id,
             value = val_1,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -427,6 +433,7 @@ class AggRefreshTestCase(TestCase):
             indicator_id = sub_indicator_2.id,
             data_date = data_date,
             location_id = location_id,
+            campaign_id = campaign_id,
             value = val_2,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -435,6 +442,7 @@ class AggRefreshTestCase(TestCase):
             indicator_id = sub_indicator_3.id,
             data_date = data_date,
             location_id = location_id,
+            campaign_id = campaign_id,
             value = val_3,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -520,6 +528,7 @@ class AggRefreshTestCase(TestCase):
             indicator_id = sub_indicator_denom.id,
             data_date = data_date,
             location_id = location_id,
+            campaign_id = self.campaign_id,
             value = x,
             source_submission_id = 1,
             cache_job_id = -1,
@@ -528,6 +537,7 @@ class AggRefreshTestCase(TestCase):
             indicator_id = sub_indicator_part.id,
             data_date = data_date,
             location_id = location_id,
+            campaign_id = self.campaign_id,
             value = y,
             source_submission_id = 1,
             cache_job_id = -1,

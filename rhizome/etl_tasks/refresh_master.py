@@ -259,10 +259,6 @@ class MasterRefresh(object):
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
 
-        print 'doc_datapoint DF '
-        print doc_dp_df
-        print '===\n'
-
         if len(doc_dp_df) == 0:
             return
 
