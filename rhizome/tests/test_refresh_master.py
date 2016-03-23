@@ -305,7 +305,7 @@ class RefreshMasterTestCase(TestCase):
 
         mr_with_new_meta.submissions_to_doc_datapoints()
         doc_dp_ids = DocDataPoint.objects.filter(document_id =
-            self.document.id,indicator_id=first_indicator_id)
+            self.document.id,indicator_id=first_indicator_id).values()
 
         ## Test Case #3
         self.assertEqual(1,len(doc_dp_ids))

@@ -33,22 +33,22 @@ class MasterRefresh(object):
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
 
-        self.to_process_ss_ids = SourceSubmission.objects\
-                .filter(document_id = self.document_id,\
-                    process_status='TO_PROCESS')
-
-        self.location_codes_to_process = SourceSubmission\
-            .objects.filter(id__in = self.to_process_ss_ids)\
-            .values_list('location_code',flat = True).distinct()\
-            [:self.ss_location_code_batch_size]
-
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
-        self.ss_ids_to_process, self.all_ss_ids =\
-            self.refresh_submission_details()
+        # self.to_process_ss_ids = SourceSubmission.objects\
+        #         .filter(document_id = self.document_id,\
+        #             process_status='TO_PROCESS')
 
-        self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
-            self.ss_ids_to_process).values_list('id','submission_json'))
+        # self.location_codes_to_process = SourceSubmission\
+        #     .objects.filter(id__in = self.to_process_ss_ids)\
+        #     .values_list('location_code',flat = True).distinct()\
+        #     [:self.ss_location_code_batch_size]
+
+        # self.ss_ids_to_process, self.all_ss_ids =\
+        #     self.refresh_submission_details()
+        #
+        # self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
+        #     self.ss_ids_to_process).values_list('id','submission_json'))
 
     ## __init__ HELPER METHOD ##
 
@@ -120,9 +120,6 @@ class MasterRefresh(object):
         self.sync_datapoint()
         # self.mark_datapoints_with_needs_campaign()
 
-        SourceSubmission.objects.filter(id__in = self.ss_ids_to_process)\
-            .update(process_status = 'PROCESSED')
-
     # def mark_datapoints_with_needs_campaign(self):
     #
     #     new_dp_df = DataFrame(list(DataPoint.objects\
@@ -184,17 +181,17 @@ class MasterRefresh(object):
 
         ## delete bad_indicator_data ##
         DataPoint.objects.filter(
-            source_submission_id__in = self.ss_ids_to_process,
+            source_submission_id__document_id = self.document_id,
         ).exclude(indicator_id__in=som_lookup['indicator']).delete()
 
         ## delete bad_location_data ##
         DataPoint.objects.filter(
-            source_submission_id__in = self.ss_ids_to_process,
+            source_submission_id__document_id = self.document_id,
         ).exclude(location_id__in=som_lookup['location']).delete()
 
         ## delete bad_campaign_data ##
         DataPoint.objects.filter(
-            source_submission_id__in = self.ss_ids_to_process,
+            source_submission_id__document_id = self.document_id,
         ).exclude(location_id__in=som_lookup['campaign']).delete()
 
 
@@ -215,9 +212,7 @@ class MasterRefresh(object):
         ## find soure_submission_ids based of location_codes to process
         ## then get the json of all of the related submissions .
         submission_qs = SourceSubmission.objects\
-            .filter(document_id = self.document_id,
-                location_code__in = self.location_codes_to_process,
-                process_status = 'TO_PROCESS')
+            .filter(document_id = self.document_id)
 
         for submission in submission_qs:
             all_ss_ids.append(submission.id)
@@ -240,13 +235,19 @@ class MasterRefresh(object):
         Send all rows queued for processing to the process_source_submission method.
         '''
 
-        ss_ids_in_batch = self.submission_data.keys()
+        # ss_ids_in_batch = self.submission_data.keys()
 
-        for row in SourceSubmission.objects.filter(id__in = ss_ids_in_batch):
+        for row in SourceSubmission.objects.filter(document_id = self.document_id):
+
             row.location_id = row.get_location_id()
             row.campaign_id = row.get_campaign_id()
-
-            doc_dps = self.process_source_submission(row)
+            ## if no mapping for campaign / location -- dont process
+            if row.campaign_id == -1:
+                row.process_status = 'missing campaign'
+            elif row.location_id == -1:
+                row.process_status = 'missing location'
+            else:
+                doc_dps = self.process_source_submission(row)
 
     def sync_datapoint(self, ss_id_list = None):
 
@@ -350,11 +351,8 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
+            row.status = 'missing campaign / location'
             return None
-
-        ## if no mapping for campaign / location -- dont process
-        if row.campaign_id is None or row.location_id is None:
-            return
 
         doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,

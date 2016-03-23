@@ -52,8 +52,6 @@ class AggRefresh(object):
 
         self.campaign = Campaign.objects.get(id = campaign_id)
 
-        print 'self.campaign %s ' % self.campaign
-
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
