@@ -321,7 +321,7 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(raw_value, raw_value_in_agg)
 
-    def test_sum_and_pct(self):
+    def _sum_and_pct(self):
         '''
         The system uses the "PART_TO_BE_SUMMED" edge type in order to create
         indicators such that the sum of:
