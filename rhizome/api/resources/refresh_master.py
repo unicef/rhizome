@@ -29,6 +29,5 @@ class RefreshMasterResource(BaseModelResource):
 
         for c_id in doc_campaign_ids:
             ar = AggRefresh(c_id)
-            ar.main()
 
         return Document.objects.filter(id=doc_id).values()
