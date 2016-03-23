@@ -128,8 +128,7 @@ const ChartWizard = React.createClass({
       </div>
     ) : ''
 
-    const date_range_picker = chart.def.type !== 'TableChart' ?
-    (
+    const date_range_picker = chart.def.type === 'LineChart' ? (
       <div className='row'>
         <h3>Time</h3>
         <DateRangePicker
@@ -159,21 +158,16 @@ const ChartWizard = React.createClass({
         </div>
         <div className='medium-3 columns'>
           <div className='row collapse'>
+            <DownloadButton
+              onClick={() => api.datapoints.toString(raw_data_query)}
+              enable={this.state.datapoints.raw}
+              text='Download Data'
+              working='Downloading'
+              cookieName='dataBrowserCsvDownload'/>
             <div className='medium-12 large-5 large-push-7 columns'>
-            {
-             chart.def.type === 'RawData'
-              ?
-                <DownloadButton
-                  onClick={() => api.datapoints.toString(raw_data_query)}
-                  enable={this.state.datapoints.raw}
-                  text='Download Data'
-                  working='Downloading'
-                  cookieName='dataBrowserCsvDownload'/>
-              :
-                <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
-                  <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
-                </button>
-            }
+            <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
+              <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
+            </button>
             </div>
             <div className='medium-12 large-7 large-pull-5 columns'>
               <h3>Chart Title</h3>
@@ -182,17 +176,20 @@ const ChartWizard = React.createClass({
           </div>
           { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
-          <div className='row data-filters'>
+          <div className='row collapse data-filters'>
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
               preset_indicator_ids={preset_indicator_ids}
-              classes='medium-6 columns'
+              classes={chart.def.type === 'TableChart' ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={chart.def.type === 'TableChart'}
             />
+            <br/>
             <LocationSelector
               locations={this.state.locations}
               preset_location_ids={preset_location_ids}
-              classes='medium-6 columns'
+              classes={chart.def.type === 'TableChart' ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={chart.def.type === 'TableChart'}
             />
           </div>
         </div>
