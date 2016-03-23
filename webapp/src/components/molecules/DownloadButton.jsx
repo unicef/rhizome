@@ -62,7 +62,7 @@ var DownloadButton = React.createClass({
 
   render () {
     let text = this.state.isWorking ? this.props.working : this.props.text
-    let classesString = this.props.enable && !this.state.isWorking ? 'button expand ' : 'button expand disabled '
+    let classesString = this.props.enable && !this.state.isWorking ? 'button success expand ' : 'button success expand disabled '
     return (
       <button role='button'
         className={classesString + this.props.classes}

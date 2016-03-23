@@ -105,6 +105,10 @@ const DataExplorer = React.createClass({
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
     const disableSave = _.isEmpty(chart.def.location_ids) || _.isEmpty(chart.def.indicator_ids)
+    const preset_indicator_ids = this.props.chart_id && chart ? chart.def.indicator_ids : [15]
+    const preset_location_ids = this.props.chart_id && chart ? chart.def.location_ids : [1]
+    const multi_indicator = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
+    const multi_location = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
     const raw_data_query = {
       format: 'csv',
       indicator__in: chart.def.indicator_ids,
@@ -114,6 +118,60 @@ const DataExplorer = React.createClass({
     }
     const campaign_placeholder = <Placeholder height={18}/>
     const chart_placeholder = <Placeholder height={600}/>
+
+    // =========================================================================== //
+    //                                     CHART                                   //
+    // =========================================================================== //
+    const title_bar = this.state.editMode ?
+      <div className='medium-6 columns'>
+        <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
+        <a><i className='fa fa-cross'/></a>
+      </div>
+      :
+      <div className='medium-6 columns'>
+        <h2>{chart.def.title}</h2>
+        <a><i className='fa fa-pencil'/></a>
+      </div>
+
+    const chart_component = chart.def.type === 'RawData'?
+      <DatabrowserTable
+        data={this.state.datapoints.raw}
+        selected_locations={chart.def.selected_locations}
+        selected_indicators={chart.def.selected_indicators}
+      />
+      :
+      <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+
+    // =========================================================================== //
+    //                                    SIDEBAR                                  //
+    // =========================================================================== //
+    const call_to_actions = (
+      <div className='row collapse'>
+        <button className='expand button success' disabled={disableSave} onClick={this._saveChart}>
+          <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
+        </button>
+        <ExportPdf className='expand' button disabled={disableSave}/>
+        <DownloadButton
+          onClick={() => api.datapoints.toString(raw_data_query)}
+          enable={this.state.datapoints.raw ? true : false}
+          text='Download Data'
+          working='Downloading'
+          cookieName='dataBrowserCsvDownload'/>
+      </div>
+    )
+
+    const date_range_picker = chart.def.type === 'LineChart' ? (
+      <div className='row'>
+        <h3>Time</h3>
+        <DateRangePicker
+          sendValue={ChartActions.setDateRange}
+          start={start_date}
+          end={end_date}
+          fromComponent='DataExplorer'
+        />
+        <br/>
+      </div>
+    ) : ''
 
     const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
     (
@@ -130,89 +188,69 @@ const DataExplorer = React.createClass({
       </div>
     ) : ''
 
-    const date_range_picker = chart.def.type === 'LineChart' ? (
-      <div className='row'>
-        <h3>Time</h3>
-        <DateRangePicker
-          sendValue={ChartActions.setDateRange}
-          start={start_date}
-          end={end_date}
-          fromComponent='DataExplorer'
-        />
-        <br/>
-      </div>
-    ) : ''
+    const location_selector = (
+      <LocationSelector
+        locations={this.state.locations}
+        preset_location_ids={preset_location_ids}
+        classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
+        multi={multi_location}
+      />
+    )
 
-    const chart_component = chart.def.type === 'RawData'
-      ? <DatabrowserTable
-          data={this.state.datapoints.raw}
-          selected_locations={chart.def.selected_locations}
-          selected_indicators={chart.def.selected_indicators}
-        />
-      : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+    const indicator_selector = (
+      <IndicatorSelector
+        indicators={this.state.indicators}
+        preset_indicator_ids={preset_indicator_ids}
+        classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
+        multi={multi_indicator}
+      />
+    )
 
-    const preset_indicator_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.indicator_ids : [15]
-    const preset_location_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.location_ids : [1]
-    const multi_indicator = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
-    const multi_location = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
+    // =========================================================================== //
+    //                                     FOOTER                                  //
+    // =========================================================================== //
+    const footer = (
+      <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
+        <div className='medium-7 columns'>
+          <h3>View</h3>
+          <ChartSelect
+            charts={builderDefinitions.charts}
+            value={chart.def.type}
+            onChange={ChartActions.setType}/>
+        </div>
+        <div className='medium-5 columns'>
+          <h3>Color Scheme</h3>
+          <PalettePicker
+            value={chart.def.palette}
+            onChange={ChartActions.setPalette}/>
+          <button className='footer-toggle-button' onClick={this.showHideFooter}>
+            <i className={this.state.footerHidden ? 'fa fa-caret-up' : 'fa fa-caret-down'}>&nbsp; </i>
+            { this.state.footerHidden ? 'Show' : 'Hide'} Properties
+          </button>
+        </div>
+      </footer>
+    )
+
     return (
       <section className='data-explorer'>
         <div className='medium-9 large-10 columns'>
+          <div className='row chart-header'>
+          {!_.isEmpty(chart.def.title) ? title_bar : ''}
+          </div>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
         <div className='medium-3 large-2 columns'>
-          <div className='row collapse'>
-            <ExportPdf className='expand' button/>
-            <DownloadButton
-              onClick={() => api.datapoints.toString(raw_data_query)}
-              enable={this.state.datapoints.raw ? true : false}
-              text='Download Data'
-              working='Downloading'
-              cookieName='dataBrowserCsvDownload'/>
-              <button className='expand button success' disabled={disableSave} onClick={this._saveChart}>
-                <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
-              </button>
-              <h3>Title</h3>
-              <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
-          </div>
+          { call_to_actions }
           { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
           <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
             <br/>
-            <IndicatorSelector
-              indicators={this.state.indicators}
-              preset_indicator_ids={preset_indicator_ids}
-              classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
-              multi={multi_indicator}
-            />
+            { indicator_selector }
             {multi_indicator && multi_location ? '' : <br/>}
-            <LocationSelector
-              locations={this.state.locations}
-              preset_location_ids={preset_location_ids}
-              classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
-              multi={multi_location}
-            />
+            { location_selector }
           </div>
         </div>
-        <footer style={{ bottom: this.state.footerHidden ? '-3.4rem' : '3.1rem'}} className='row hideable'>
-          <div className='medium-7 columns'>
-            <h3>View</h3>
-            <ChartSelect
-              charts={builderDefinitions.charts}
-              value={chart.def.type}
-              onChange={ChartActions.setType}/>
-          </div>
-          <div className='medium-5 columns'>
-            <h3>Color Scheme</h3>
-            <PalettePicker
-              value={chart.def.palette}
-              onChange={ChartActions.setPalette}/>
-            <button className='footer-toggle-button' onClick={this.showHideFooter}>
-              <i className={this.state.footerHidden ? 'fa fa-caret-up' : 'fa fa-caret-down'}>&nbsp; </i>
-              { this.state.footerHidden ? 'Show' : 'Hide'} Properties
-            </button>
-          </div>
-        </footer>
+        { footer }
       </section>
     )
   }

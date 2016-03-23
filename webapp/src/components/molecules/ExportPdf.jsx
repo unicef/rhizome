@@ -6,11 +6,13 @@ import MenuItem from 'components/molecules/MenuItem.jsx'
 var ExportPdf = React.createClass({
   propTypes: {
     className: React.PropTypes.string,
-    button: React.PropTypes.bool
+    button: React.PropTypes.bool,
+    disabled: React.PropTypes.bool
   },
 
   defaults: {
     label: 'Export',
+    disabled: false,
     isFetching: false,
     url: '/export_file/?',
     interval: 1000,
@@ -73,6 +75,7 @@ var ExportPdf = React.createClass({
     let classString = this.props.button ? ' button success ' : ''
     classString += this.state.isFetching ? ' inactive ' : ''
     classString += this.props.className ? this.props.className : ''
+    classString += this.props.disabled ? ' disabled ' : ''
     return (
       <div>
         <TitleMenu
