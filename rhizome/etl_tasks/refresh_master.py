@@ -342,16 +342,21 @@ class MasterRefresh(object):
         '''
 
         ## if i can't clean the value, i.e. its a string not a number, dont process
+        print '==\n' * 3
+        print 'k: %s' % indicator_string
+        print 'v: %s' % value
+
         try:
             cleaned_val = self.clean_val(value)
         except ValueError:
+            print 'VALUE ERROR'
             return None
 
         ## it no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
-            row.status = 'missing campaign / location'
+            print 'NO INDICATOR MAP'
             return None
 
         doc_dp = DocDataPoint(**{

@@ -36,6 +36,7 @@ class AggRefresh(object):
         method.
         '''
 
+
         if not campaign_id:
             campaign_id_list = self.get_campaign_ids_to_process()
             campaign_id = campaign_id_list[0]
@@ -90,9 +91,13 @@ class AggRefresh(object):
             return 'ANOTHER_AGG_IN_PROCESS'
 
         try:
+            print 'begin regional agg'
             self.agg_datapoints()
+            print 'begin calculation'
             self.calc_datapoints()
         except Exception as err:
+            print 'error '
+            print err
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
             self.cache_job.save()
@@ -148,7 +153,7 @@ class AggRefresh(object):
         location_tree_columns = ['location_id','parent_location_id','lvl']
 
         dp_df = DataFrame(list(DataPoint.objects\
-            .filter(cache_job_id = self.cache_job.id)\
+            .filter(campaign_id = self.campaign.id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         ## NaN to None
