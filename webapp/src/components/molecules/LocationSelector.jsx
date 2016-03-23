@@ -40,9 +40,22 @@ const LocationSelector = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.preset_location_ids) && nextProps.locations.index && !this.state.selected_locations) {
+    if (!_.isEmpty(nextProps.preset_location_ids) && nextProps.locations.index && _.isEmpty(this.state.selected_locations)) {
       this.setState({selected_locations: nextProps.preset_location_ids.map(id => nextProps.locations.index[id])})
     }
+  },
+
+  getAvailableLocations () {
+    const selected_ids = this.state.selected_locations.map(location => location.id)
+    const locations_filtered = this.props.locations.filtered
+    locations_filtered.forEach(country => {
+      country.disabled = selected_ids.indexOf(country.id) > -1
+      country.children.forEach(province => {
+        province.disabled = selected_ids.indexOf(province.value) > -1
+        province.children.forEach(city => city.disabled = selected_ids.indexOf(city.value) > -1)
+      })
+    })
+    return locations_filtered
   },
 
   render () {
@@ -51,7 +64,7 @@ const LocationSelector = React.createClass({
     if (this.props.locations.filtered.length > 0) {
       location_options = [
         { title: 'by Status', value: props.locations.lpd_statuses },
-        { title: 'by Country', value: props.locations.filtered || [] }
+        { title: 'by Country', value: this.getAvailableLocations() || [] }
       ]
     }
 
