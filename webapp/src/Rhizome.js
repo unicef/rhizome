@@ -39,8 +39,8 @@ export default {
   Chart: function (el, chart_id) {
     React.render(React.createElement(require('components/pages/ChartPage'), { chart_id: chart_id }), el)
   },
-  ChartBuilder: function (el, chart_id) {
-    React.render(React.createElement(require('components/pages/ChartWizard'), { chart_id: chart_id }), el)
+  DataExplorer: function (el, chart_id) {
+    React.render(React.createElement(require('components/pages/DataExplorer'), { chart_id: chart_id }), el)
   },
   HomepageCharts: function (el) {
     React.render(React.createElement(require('components/pages/HomepageChartsView')), el)

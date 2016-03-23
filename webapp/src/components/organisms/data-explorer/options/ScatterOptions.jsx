@@ -4,7 +4,7 @@ import DropdownMenu from 'components/molecules/menus/DropdownMenu.jsx'
 import RadioGroup from 'components/molecules/RadioGroup.jsx'
 import ScatterAxisChooser from '../ScatterAxisChooser.jsx'
 
-import ChartWizardActions from 'actions/ChartWizardActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 
 export default class ScatterOptions extends React.Component {
@@ -33,8 +33,8 @@ export default class ScatterOptions extends React.Component {
   render () {
     let [xIndicator, yIndicator] = this.props.indicatorSelected
     return (
-      <div className='chart-wizard__options chart-wizard__options--general'>
-        <p className='chart-wizard__para'>You may choose additional indicators now.</p>
+      <div className='data-explorer__options data-explorer__options--general'>
+        <p className='data-explorer__para'>You may choose additional indicators now.</p>
         <h4>X Axis</h4>
         <ul className='list'>
           <li>{xIndicator && xIndicator.name}</li>
@@ -42,19 +42,19 @@ export default class ScatterOptions extends React.Component {
         <h4>Y Axis</h4>
         <DropdownMenu
           items={this.props.indicatorList}
-          sendValue={ChartWizardActions.changeYAxis}
+          sendValue={DataExplorerActions.changeYAxis}
           item_plural_name='Indicators'
           text={yIndicator ? yIndicator.name : 'Add Indicators'}
           icon='fa-plus'/>
-        <p className='chart-wizard__para'>You may also change additional chart settings.</p>
+        <p className='data-explorer__para'>You may also change additional chart settings.</p>
         <RadioGroup name='location-level' title='Location Level: '
           value={this.props.locationLevelValue}
           values={builderDefinitions.locationLevels}
-          onChange={ChartWizardActions.changeLocationLevelRadio} />
+          onChange={DataExplorerActions.changeLocationLevelRadio} />
         <ScatterAxisChooser xFormatValue={this.props.xFormatValue}
-          onXFormatChange={ChartWizardActions.changeXFormatRadio}
+          onXFormatChange={DataExplorerActions.changeXFormatRadio}
           yFormatValue={this.props.yFormatValue}
-          onYFormatChange={ChartWizardActions.changeYFormatRadio}
+          onYFormatChange={DataExplorerActions.changeYFormatRadio}
           formatValues={builderDefinitions.formats}
         />
       </div>

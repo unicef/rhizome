@@ -1,6 +1,6 @@
 import React from 'react'
 
-let ChartWizardStepList = React.createClass({
+let DataExplorerStepList = React.createClass({
   propTypes: {
     active: React.PropTypes.string,
     onToggle: React.PropTypes.func,
@@ -17,11 +17,11 @@ let ChartWizardStepList = React.createClass({
     })
 
     return (
-      <ul className='chart-wizard__step-list'>
+      <ul className='data-explorer__step-list'>
         {children}
       </ul>
     )
   }
 })
 
-export default ChartWizardStepList
+export default DataExplorerStepList

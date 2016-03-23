@@ -7,8 +7,8 @@ import moment from 'moment'
 import DropdownList from 'react-widgets/lib/DropdownList'
 
 import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
-import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'
-import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
+import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
+import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -29,7 +29,7 @@ import DatapointStore from 'stores/DatapointStore'
 
 import ChartActions from 'actions/ChartActions'
 
-const ChartWizard = React.createClass({
+const DataExplorer = React.createClass({
   mixins: [
     Reflux.connect(ChartStore, 'chart'),
     Reflux.connect(OfficeStore, 'offices'),
@@ -135,7 +135,7 @@ const ChartWizard = React.createClass({
           sendValue={ChartActions.setDateRange}
           start={start_date}
           end={end_date}
-          fromComponent='ChartWizard'
+          fromComponent='DataExplorer'
         />
         <br/>
       </div>
@@ -154,7 +154,7 @@ const ChartWizard = React.createClass({
     const multi_indicator = chart.def.type === 'TableChart'
     const multi_location = chart.def.type === 'TableChart'
     return (
-      <section className='chart-wizard'>
+      <section className='data-explorer'>
         <div className='medium-9 columns'>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
@@ -219,4 +219,4 @@ const ChartWizard = React.createClass({
   }
 })
 
-export default ChartWizard
+export default DataExplorer

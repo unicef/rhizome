@@ -7,7 +7,7 @@ import Reflux from 'reflux/src'
 import LayoutOptions from 'components/molecules/LayoutOptions'
 import LayoutDefaultSettings from 'components/organisms/dashboard/builtin/layout-options'
 import CustomDashboard from 'components/organisms/dashboard/CustomDashboard'
-import ChartWizard from 'components/pages/ChartWizard'
+import DataExplorer from 'components/pages/DataExplorer'
 
 import DashboardBuilderActions from 'actions/DashboardBuilderActions'
 import DashboardActions from 'actions/DashboardActions'
@@ -225,7 +225,7 @@ export default React.createClass({
       let chartDef = _.isNull(this.state.chartBuilderindex)
         ? null
         : this.state.store.dashboard.charts[this.state.chartBuilderindex]
-      return (<ChartWizard dashboard_id={this.props.dashboard_id}
+      return (<DataExplorer dashboard_id={this.props.dashboard_id}
                            chartDef={chartDef}
                            save={this.saveChart}
                            cancel={this.cancelEditChart}/>)

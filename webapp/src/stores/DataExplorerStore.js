@@ -2,7 +2,7 @@ import Reflux from 'reflux'
 import _ from 'lodash'
 import moment from 'moment'
 
-import ChartWizardActions from 'actions/ChartWizardActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 
 import api from 'data/api'
 import ChartDataInit from 'data/chartDataInit'
@@ -13,13 +13,13 @@ import ChartStore from 'stores/ChartStore'
 import ChartActions from 'actions/ChartActions'
 import ChartInfo from 'components/molecules/charts_d3/ChartInfo'
 
-let ChartWizardStore = Reflux.createStore({
+let DataExplorerStore = Reflux.createStore({
 
   init () {
     this.listenTo(ChartStore, this.onChartStore)
   },
 
-  listenables: ChartWizardActions,
+  listenables: DataExplorerActions,
   data: {
     chart: {
       options: null,
@@ -547,4 +547,4 @@ let ChartWizardStore = Reflux.createStore({
 })
 
 
-export default ChartWizardStore
+export default DataExplorerStore
