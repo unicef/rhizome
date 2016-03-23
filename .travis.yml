@@ -14,7 +14,3 @@ script:
 
 notifications:
   slack: rhisome:$SLACK_ACCESS_KEY
-
-after_success:
-  - chmod 400 rhizome.pem && ssh -i rhizome.pem ubuntu@52.2.128.26
-  - fab -H rhizome_test deploy
