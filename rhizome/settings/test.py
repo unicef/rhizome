@@ -13,3 +13,5 @@ MEDIA_ROOT = 'rhizome/tests/_data/'
 
 DATABASES['default']['ENGINE'] = 'django.db.backends.postgresql_psycopg2'
 DATABASES['default']['NAME'] = 'rhizome'
+
+USE_TZ = False

@@ -148,8 +148,11 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
+
         test_ind_id = Indicator.objects.all()[0].id
         test_loc_id = Location.objects.all()[0].id
+        test_campaign_id = Campaign.objects.all()[0].id
+
         bad_val, good_val = 10, 20
         data_date = '2015-12-31'
         ss_old = SourceSubmission.objects\
@@ -177,6 +180,7 @@ class RefreshMasterTestCase(TestCase):
             'document_id' : self.document.id,
             'indicator_id' : test_ind_id,
             'location_id' : test_loc_id,
+            'campaign_id': test_campaign_id,
             'data_date' : data_date,
             'agg_on_location': True,
         }
@@ -184,6 +188,7 @@ class RefreshMasterTestCase(TestCase):
         bad_doc_dp_dict = {
             'value' : bad_val,
             'data_date' : data_date,
+            'campaign_id': test_campaign_id,
             'source_submission_id' : ss_old.id,
         }
         bad_doc_dp_dict.update(base_doc_dp_dict)
@@ -191,6 +196,7 @@ class RefreshMasterTestCase(TestCase):
         good_doc_dp_dict = {
             'value' : good_val,
             'data_date' : data_date,
+            'campaign_id': test_campaign_id,
             'source_submission_id' : ss_new.id,
         }
         good_doc_dp_dict.update(base_doc_dp_dict)
@@ -199,6 +205,7 @@ class RefreshMasterTestCase(TestCase):
         DocDataPoint.objects.create(**bad_doc_dp_dict)
 
         mr = MasterRefresh(self.user.id, self.document.id)
+
         mr.sync_datapoint([ss_old.id, ss_new.id])
 
         dp_result = DataPoint.objects.filter(

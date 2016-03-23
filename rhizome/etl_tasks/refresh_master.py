@@ -259,20 +259,27 @@ class MasterRefresh(object):
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
 
+        print 'doc_datapoint DF '
+        print doc_dp_df
+        print '===\n'
+
         if len(doc_dp_df) == 0:
             return
 
         location_ids = doc_dp_df['location_id'].unique()
         indicator_ids = doc_dp_df['indicator_id'].unique()
-        min_date, max_date = doc_dp_df['data_date'].min(),\
-            doc_dp_df['data_date'].max()
+        campaign_ids = doc_dp_df['campaign_id'].unique()
+
+        # min_date, max_date = doc_dp_df['data_date'].min(),\
+        #     doc_dp_df['data_date'].max()
 
         pontential_conflict_doc_dp_df = DataFrame(list(DocDataPoint\
             .objects.filter(
                 indicator_id__in = indicator_ids,
                 location_id__in = location_ids,
-                data_date__gte = min_date,
-                data_date__lte = max_date,
+                campaign_id__in = campaign_ids
+                # data_date__gte = min_date,
+                # data_date__lte = max_date,
             ).values()))
 
         full_dp_df = concat([doc_dp_df,pontential_conflict_doc_dp_df])
