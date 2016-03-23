@@ -24,16 +24,7 @@ var MenuItem = React.createClass({
       if (!_.isFinite(depth)) {
         depth = 0
       }
-
-      return arr.map(item => {
-        return (
-          <MenuItem
-            key={item.value}
-            depth={depth}
-            sendValue={sendValue}
-            {...item} />
-        )
-      })
+      return arr.map(item => <MenuItem key={item.value} depth={depth} sendValue={sendValue} {...item} />)
     }
   },
 
@@ -68,7 +59,7 @@ var MenuItem = React.createClass({
   },
 
   _handleClick: function (e) {
-    if (!this.props.noValue && !this.props.disabled) {
+    if (!this.props.noValue && !this.state.disabled) {
       this.props.sendValue(this.props.value)
       this.setState({disabled: true})
     } else {
@@ -93,7 +84,6 @@ var MenuItem = React.createClass({
 
     var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
     var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
-
     return (
       <li className={this.props.classes}>
         <a

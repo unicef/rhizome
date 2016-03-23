@@ -20,4 +20,4 @@ class AllMetaResourceTest(ResourceTestCase):
         resp = self.ts.get(self, '/api/v1/all_meta/')
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-        self.assertEqual(len(response_data['objects']), 3)
+        self.assertEqual(len(response_data['objects']), 1)

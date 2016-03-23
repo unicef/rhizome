@@ -16,7 +16,7 @@ export default React.createClass({
     let items = this.props.items.map(item => {
       item.removeFunction = this.props.removeItem
       return item
-    }, this)
+    })
 
     return <Reorderable
       itemKey='id'

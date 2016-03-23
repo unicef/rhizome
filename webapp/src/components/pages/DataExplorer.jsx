@@ -157,27 +157,23 @@ const DataExplorer = React.createClass({
     const multi_location = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
     return (
       <section className='data-explorer'>
-        <div className='medium-9 columns'>
+        <div className='medium-9 large-10 columns'>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
-        <div className='medium-3 columns'>
+        <div className='medium-3 large-2 columns'>
           <div className='row collapse'>
-            <ExportPdf className='export-file' />
+            <ExportPdf className='expand' button/>
             <DownloadButton
               onClick={() => api.datapoints.toString(raw_data_query)}
               enable={this.state.datapoints.raw ? true : false}
               text='Download Data'
               working='Downloading'
               cookieName='dataBrowserCsvDownload'/>
-            <div className='medium-12 large-5 large-push-7 columns'>
-            <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
-              <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
-            </button>
-            </div>
-            <div className='medium-12 large-7 large-pull-5 columns'>
+              <button className='expand button success' disabled={disableSave} onClick={this._saveChart}>
+                <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
+              </button>
               <h3>Title</h3>
               <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
-            </div>
           </div>
           { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
