@@ -86,21 +86,6 @@ class TransformUploadTestCase(TestCase):
 
         self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
 
-    def test_dupe_transform(self):
-
-        self.ingest_file('eoc_duped.csv')
-
-        the_value_from_the_database = DataPointComputed.objects.get(
-                campaign_id = self.mapped_campaign_id,
-                indicator_id = self.mapped_indicator_with_data,
-                location_id = self.mapped_location_id
-            ).value
-
-        some_cell_value_from_the_file = 0.9029
-        ## find this from the data frame by selecting the cell where we have mapped the data..
-
-        self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
-
     def test_dupe_metadata_mapping(self):
 
         #duplicate of master_object_id that's used in create_metadata
