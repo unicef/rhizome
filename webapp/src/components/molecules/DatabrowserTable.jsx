@@ -14,7 +14,7 @@ let DatabrowserTable = React.createClass({
   ],
 
   propTypes: {
-    data: React.PropTypes.object.isRequired,
+    data: React.PropTypes.object,
     editable: React.PropTypes.bool,
     selected_locations: React.PropTypes.array.isRequired,
     selected_indicators: React.PropTypes.array.isRequired
