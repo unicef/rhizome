@@ -57,7 +57,7 @@ const DataExplorer = React.createClass({
   },
 
   getChart (locations, indicators) {
-    if (this.state.locations.index && this.state.indicators.index) {
+    if (this.state.locations.index && this.state.indicators.index && this.props.chart_id) {
       ChartActions.fetchChart(this.props.chart_id)
     }
   },
@@ -112,8 +112,8 @@ const DataExplorer = React.createClass({
       campaign_start: start_date,
       campaign_end: end_date
     }
-    const campaign_placeholder = <Placeholder height='18'/>
-    const chart_placeholder = <Placeholder height='600'/>
+    const campaign_placeholder = <Placeholder height={18}/>
+    const chart_placeholder = <Placeholder height={600}/>
 
     const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
     (
