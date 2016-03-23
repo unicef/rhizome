@@ -91,13 +91,9 @@ class AggRefresh(object):
             return 'ANOTHER_AGG_IN_PROCESS'
 
         try:
-            print 'begin regional agg'
             self.agg_datapoints()
-            print 'begin calculation'
             self.calc_datapoints()
         except Exception as err:
-            print 'error '
-            print err
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
             self.cache_job.save()
