@@ -43,11 +43,11 @@ var DocForm = React.createClass({
   },
 
   onDrop: function (files) {
-    if (files[0].name.endsWith('.csv')) {
+    if (files[0].name.endsWith('.csv') || files[0].name.endsWith('.xlsx') || files[0].name.endsWith('.xls')) {
       this.handleFile(files[0])
     } else {
       this.setState({
-        errorMessage: 'Please upload a .csv file.'
+        errorMessage: 'Please upload a .csv, .xls or .xlsx file.'
       })
     }
   },

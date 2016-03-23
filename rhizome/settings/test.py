@@ -2,11 +2,11 @@ from rhizome.settings.base import *
 
 class DisableMigrations(object):
 
-    def __contains__(self, item):
-        return True
+   def __contains__(self, item):
+       return True
 
-    def __getitem__(self, item):
-        return "notmigrations"
+   def __getitem__(self, item):
+       return "notmigrations"
 
 MIGRATION_MODULES =  DisableMigrations()
 MEDIA_ROOT = 'rhizome/tests/_data/'

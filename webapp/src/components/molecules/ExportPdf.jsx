@@ -5,7 +5,8 @@ import MenuItem from 'components/molecules/MenuItem.jsx'
 
 var ExportPdf = React.createClass({
   propTypes: {
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    button: React.PropTypes.bool
   },
 
   defaults: {
@@ -66,19 +67,23 @@ var ExportPdf = React.createClass({
     var fileList = []
     fileList.push({value: 'pdf', title: 'PDF'})
     fileList.push({value: 'jpeg', title: 'IMAGE'})
+    const exportIcon = <i className='fa fa-external-link' style={{fontSize: '1rem', position: 'absolute', top: '1.1rem', left: '1.5rem', color: 'white'}}/>
 
     let items = MenuItem.fromArray(fileList, this._onExportDashboard)
-
+    let classString = this.props.button ? ' button success ' : ''
+    classString += this.state.isFetching ? ' inactive ' : ''
+    classString += this.props.className ? this.props.className : ''
     return (
       <div>
         <TitleMenu
-          className={'font-weight-600 ' + this.props.className + (this.state.isFetching ? ' inactive' : '')}
-          icon='fa-chevron-down'
+          className={'font-weight-600 export-file ' + classString}
+          icon={this.props.button ? '' : 'fa-chevron-down'}
           searchable={false}
           text={this.state.label}>
           {items}
         </TitleMenu>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
+        {this.props.button ? exportIcon : ''}
       </div>
     )
   }

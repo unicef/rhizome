@@ -12,7 +12,4 @@ export default {
   rainbow: [
     'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue'
   ]
-  // rainbow: [
-  //   'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue', 'darkviolet'
-  // ]
 }

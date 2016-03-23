@@ -44,10 +44,10 @@ var EocPreCampaign = React.createClass({
   },
   reverseBounds: function (bounds) {
     bounds.reversed = false
-    if (bounds.bad_bound > bounds.good_bound) {
-      var temp = bounds.bad_bound
-      bounds.bad_bound = bounds.good_bound
-      bounds.good_bound = temp
+    if (bounds.badBound > bounds.goodBound){
+      var temp = bounds.badBound
+      bounds.badBound = bounds.goodBound
+      bounds.goodBound = temp
       bounds.reversed = true
     }
     return bounds

@@ -49,7 +49,7 @@ So far, all of them are tables. See attached:*
 The wizard would then be about defining the number of indicators (columns), number of regions (lines), and then selecting these indicators and regions in our drop down. After that, for each indicator, the user should be able to define cut-of values (either Y/N, or thresholds for bad/average/good) which will drive the color of the cell (red, yellow, green).*
 
 
-Creating a Table via the Chart Wizard
+Creating a Table via the Data Explorer
 --------------------------------------
 
 
