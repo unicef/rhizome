@@ -12,7 +12,6 @@ class CampaignResourceTest(ResourceTestCase):
         ## instantiate the test client and all other methods ##
         super(CampaignResourceTest, self).setUp()
 
-        # Create a user.
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
         self.o = self.ts.create_arbitrary_office()
