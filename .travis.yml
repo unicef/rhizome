@@ -14,3 +14,18 @@ script:
 
 notifications:
   slack: rhisome:$SLACK_ACCESS_KEY
+
+after_script:
+  npm run package
+
+deploy:
+  provider: s3
+  access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: rhizome-dev
+  file: dist/rhizome.zip
+  endpoint: ec2-52-2-128-26.compute-1.amazonaws.com
+  region: us-east-1
+  skip_cleanup: true
+  on:
+    branch: travis-config
