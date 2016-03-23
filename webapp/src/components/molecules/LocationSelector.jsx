@@ -3,6 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
 
 import LocationStore from 'stores/LocationStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
@@ -57,19 +58,33 @@ const LocationSelector = React.createClass({
 
     return (
       <div className={props.classes}>
-        <h3>
-          Locations
-          <DropdownMenu
-            items={location_options}
-            sendValue={LocationSelectorActions.selectLocation}
-            item_plural_name='Locations'
-            style='icon-button right'
-            icon='fa-plus'
-            grouped/>
-        </h3>
-        <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
-        <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
-        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+        <h3>{ props.multi ? 'Locations' : 'location' }</h3>
+        {
+          props.multi ?
+          <form>
+            <h3>
+              Locations
+              <DropdownMenu
+                items={location_options}
+                sendValue={LocationSelectorActions.selectLocation}
+                item_plural_name='Locations'
+                style='icon-button right'
+                icon='fa-plus'
+                grouped/>
+            </h3>
+            <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
+            <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
+            <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+          </form>
+          :
+          props.locations.raw && this.state.selected_locations[0] ?
+            <RegionTitleMenu
+              locations={props.locations.raw}
+              selected={this.state.selected_locations[0]}
+              sendValue={LocationSelectorActions.selectLocation}
+            />
+          : ''
+        }
       </div>
     )
   }
