@@ -30,8 +30,8 @@ var TitleMenu = React.createClass({
     return (
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
         <div className='row'>
-          <div className='medium-8 columns dashboard-nav__text'>{this.props.text}</div>
-          <div className='medium-4 columns'>
+          <div className='medium-9 columns dashboard-nav__text'>{this.props.text}</div>
+          <div className='medium-3 columns'>
             <a className='menu-button fa-stack'>
               <i className={'fa fa-stack-1x ' + this.props.icon}></i>
             </a>
