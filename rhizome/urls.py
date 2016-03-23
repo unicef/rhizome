@@ -52,6 +52,7 @@ v1_api.register(source_submission.SourceSubmissionResource())
 v1_api.register(sync_odk.SyncOdkResource())
 v1_api.register(user_group.UserGroupResource())
 v1_api.register(user.UserResource())
+v1_api.register(all_meta.AllMetaResource())
 
 
 protected_patterns = [
