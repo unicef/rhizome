@@ -1,4 +1,4 @@
-.chart-wizard {
+.data-explorer {
   width: 100%;
   margin: 20px auto;
   padding-bottom: 3.5rem;
@@ -31,6 +31,10 @@
       margin-bottom: .25rem;
     }
   }
+  .dropdown-list {
+    padding: 0 10px 10px 0;
+    text-transform: none;
+  }
   .data-filters {
     padding-bottom: 5rem;
     .medium-6.columns {
@@ -45,7 +49,7 @@
   }
 }
 
-.chart-wizard__step-list {
+.data-explorer__step-list {
   width: 25%;
   min-width: 250px;
   margin: 0;
@@ -73,9 +77,9 @@
   }
 }
 
-.chart-wizard__save,
-.chart-wizard__cancel,
-.chart-wizard__next {
+.data-explorer__save,
+.data-explorer__cancel,
+.data-explorer__next {
   display: inline-block;;
   margin: 10px 10px;
   text-align: center;
@@ -89,12 +93,12 @@
   }
 }
 
-.chart-wizard__cancel {
+.data-explorer__cancel {
   width: 85px;
   padding: 10px;
 }
 
-.chart-wizard__next {
+.data-explorer__next {
   width: 100px;
   padding: 10px;
   position: absolute;
@@ -102,7 +106,7 @@
   right: 10px;
 }
 
-.chart-wizard__para {
+.data-explorer__para {
   font-size: 14px;
   line-height: 16px;
   margin: 0 0 15px;

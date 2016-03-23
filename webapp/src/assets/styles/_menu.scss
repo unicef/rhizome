@@ -1,6 +1,7 @@
 .menu {
 	display  : inline-block;
 	position : relative;
+	z-index: 1000;
 
 	.container {
 		padding  : 11px 4px 22px 4px;

@@ -1,8 +1,9 @@
 import d3 from 'd3'
 import _ from 'lodash'
 import moment from 'moment'
-import chartOptionsHelpers from 'components/molecules/charts_d3/utils/chartOptionsHelpers'
-import aspects from 'components/molecules/charts_d3/utils/aspects'
+import LocationSelectorActions from 'actions/LocationSelectorActions'
+import chartOptionsHelpers from 'components/molecules/charts/utils/chartOptionsHelpers'
+import aspects from 'components/molecules/charts/utils/aspects'
 
 const ChartStoreHelpers = {
   // =========================================================================== //
@@ -52,6 +53,9 @@ const ChartStoreHelpers = {
     const selected_indicators = chart.def.indicator_ids.map(id => indicators_index[id])
     const selected_locations_index = _.indexBy(selected_locations, 'id')
     const selected_indicators_index = _.indexBy(selected_indicators, 'id')
+    chart.def.x = selected_indicators[0] ? selected_indicators[0].id : 0
+    chart.def.y = selected_indicators[1] ? selected_indicators[1].id : 0
+    chart.def.z = selected_indicators[2] ? selected_indicators[2].id : 0
     const mapIndicator = selected_indicators_index[chart.def.x]
     chart.def.aspect = aspects[layout].choroplethMap
     chart.def.name = d => _.get(selected_locations_index, '[' + d.properties.location_id + '].name', '')
@@ -60,7 +64,7 @@ const ChartStoreHelpers = {
     chart.def.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
     chart.def.value = _.property(`properties[${mapIndicator.id}]`)
     chart.def.xFormat = this._getChartFormat(mapIndicator)
-    // chart.def.onClick = d => DashboardActions.navigate({ location: d })
+    chart.def.onClick = id => LocationSelectorActions.setSelectedLocations(id)
     if (!datapoints || datapoints.length === 0) {
       return { data: chart.def.features, def: chart.def }
     }

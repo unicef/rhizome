@@ -30,8 +30,8 @@ class LineChartRenderer {
     this.svg = d3.select(this.container)
   }
 
-  update () {
-    this.setChartParams(this.data, this.options, this.container)
+  update (data, options, container) {
+    this.setChartParams(data, options, container)
     this.render()
   }
 

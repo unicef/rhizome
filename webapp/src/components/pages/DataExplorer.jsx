@@ -6,9 +6,12 @@ import moment from 'moment'
 
 import DropdownList from 'react-widgets/lib/DropdownList'
 
-import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
-import PalettePicker from 'components/organisms/chart-wizard/preview/PalettePicker'
-import ChartSelect from 'components/organisms/chart-wizard/ChartSelect'
+import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
+import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
+
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
+import Chart from 'components/molecules/charts/Chart'
+import ExportPdf from 'components/molecules/ExportPdf'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -16,7 +19,6 @@ import DownloadButton from 'components/molecules/DownloadButton'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
-import Chart from 'components/molecules/charts/Chart'
 
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
@@ -29,7 +31,7 @@ import DatapointStore from 'stores/DatapointStore'
 
 import ChartActions from 'actions/ChartActions'
 
-const ChartWizard = React.createClass({
+const DataExplorer = React.createClass({
   mixins: [
     Reflux.connect(ChartStore, 'chart'),
     Reflux.connect(OfficeStore, 'offices'),
@@ -113,7 +115,7 @@ const ChartWizard = React.createClass({
     const campaign_placeholder = <Placeholder height='18'/>
     const chart_placeholder = <Placeholder height='600'/>
 
-    const campaign_dropdown = chart.def.type !== 'RawData' ?
+    const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
     (
       <div className='row collapse'>
         <h3>Campaign</h3>
@@ -128,15 +130,14 @@ const ChartWizard = React.createClass({
       </div>
     ) : ''
 
-    const date_range_picker = chart.def.type !== 'TableChart' ?
-    (
+    const date_range_picker = chart.def.type === 'LineChart' ? (
       <div className='row'>
         <h3>Time</h3>
         <DateRangePicker
           sendValue={ChartActions.setDateRange}
           start={start_date}
           end={end_date}
-          fromComponent='ChartWizard'
+          fromComponent='DataExplorer'
         />
         <br/>
       </div>
@@ -152,47 +153,48 @@ const ChartWizard = React.createClass({
 
     const preset_indicator_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.indicator_ids : [15]
     const preset_location_ids = this.props.chart_id && this.state.chart ? this.state.chart.def.location_ids : [1]
+    const multi_indicator = chart.def.type === 'TableChart'
+    const multi_location = chart.def.type === 'TableChart'
     return (
-      <section className='chart-wizard'>
+      <section className='data-explorer'>
         <div className='medium-9 columns'>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
         </div>
         <div className='medium-3 columns'>
           <div className='row collapse'>
+            <ExportPdf className='export-file' />
+            <DownloadButton
+              onClick={() => api.datapoints.toString(raw_data_query)}
+              enable={this.state.datapoints.raw}
+              text='Download Data'
+              working='Downloading'
+              cookieName='dataBrowserCsvDownload'/>
             <div className='medium-12 large-5 large-push-7 columns'>
-            {
-             chart.def.type === 'RawData'
-              ?
-                <DownloadButton
-                  onClick={() => api.datapoints.toString(raw_data_query)}
-                  enable={this.state.datapoints.raw}
-                  text='Download Data'
-                  working='Downloading'
-                  cookieName='dataBrowserCsvDownload'/>
-              :
-                <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
-                  <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
-                </button>
-            }
+            <button className='expand button success field-submit' disabled={disableSave} onClick={this._saveChart}>
+              <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
+            </button>
             </div>
             <div className='medium-12 large-7 large-pull-5 columns'>
-              <h3>Chart Title</h3>
+              <h3>Title</h3>
               <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
             </div>
           </div>
           { date_range_picker }
           {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
-          <div className='row data-filters'>
+          <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
             <br/>
             <IndicatorSelector
               indicators={this.state.indicators}
               preset_indicator_ids={preset_indicator_ids}
-              classes='medium-6 columns'
+              classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={multi_indicator}
             />
+            {multi_indicator && multi_location ? '' : <br/>}
             <LocationSelector
               locations={this.state.locations}
               preset_location_ids={preset_location_ids}
-              classes='medium-6 columns'
+              classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
+              multi={multi_location}
             />
           </div>
         </div>
@@ -220,4 +222,4 @@ const ChartWizard = React.createClass({
   }
 })
 
-export default ChartWizard
+export default DataExplorer

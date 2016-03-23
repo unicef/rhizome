@@ -27,12 +27,12 @@
   }
   &.expand {
     font-size: .9rem;
+    padding: .5rem 0 .55rem 0;
   }
   &.field-submit {
     @media screen and (min-width: 64em) {
       margin-top: 1.36rem;
     }
-    padding: .8rem 0 .85rem 0;
   }
 }
 

@@ -1,6 +1,6 @@
 import Reflux from 'reflux'
 
-let ChartWizardActions = Reflux.createActions([
+let DataExplorerActions = Reflux.createActions([
   'initialize',
   'clear',
   'editTitle',
@@ -28,4 +28,4 @@ let ChartWizardActions = Reflux.createActions([
   'updateDateRangePicker'
 ])
 
-export default ChartWizardActions
+export default DataExplorerActions
