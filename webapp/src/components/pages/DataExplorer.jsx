@@ -6,9 +6,12 @@ import moment from 'moment'
 
 import DropdownList from 'react-widgets/lib/DropdownList'
 
-import builderDefinitions from 'components/molecules/charts_d3/utils/builderDefinitions'
 import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
+
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
+import Chart from 'components/molecules/charts/Chart'
+import ExportPdf from 'components/molecules/ExportPdf'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -16,7 +19,6 @@ import DownloadButton from 'components/molecules/DownloadButton'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
-import Chart from 'components/molecules/charts/Chart'
 
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
@@ -160,6 +162,7 @@ const DataExplorer = React.createClass({
         </div>
         <div className='medium-3 columns'>
           <div className='row collapse'>
+            <ExportPdf className='export-file' />
             <DownloadButton
               onClick={() => api.datapoints.toString(raw_data_query)}
               enable={this.state.datapoints.raw}
