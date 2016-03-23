@@ -499,4 +499,20 @@ ul {
   width: 100%;
 }
 
+.title-input {
+  input {
+    width: 20rem;
+    display: inline-block;
+    font-size: 1rem;
+    background: none;
+    padding-left: 0;
+  }
+  i.fa {
+    padding-left: .5rem;
+    position: relative;
+    top: .3rem;
+    font-size: 1.2rem;
+  }
+}
+
 @import "footer";

@@ -100,6 +100,14 @@ const DataExplorer = React.createClass({
     this.setState({footerHidden: !this.state.footerHidden})
   },
 
+  toggleTitleEdit (title) {
+    console.log('title', title)
+    if (_.isString(title)) {
+      ChartActions.setTitle(title)
+    }
+    this.setState({titleEditMode: !this.state.titleEditMode})
+  },
+
   render () {
     const chart = this.state.chart
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
@@ -122,16 +130,13 @@ const DataExplorer = React.createClass({
     // =========================================================================== //
     //                                     CHART                                   //
     // =========================================================================== //
-    const title_bar = this.state.editMode ?
-      <div className='medium-6 columns'>
-        <TitleInput initialText={chart.def.title} save={ChartActions.setTitle}/>
-        <a><i className='fa fa-cross'/></a>
-      </div>
+    const title_bar = this.state.titleEditMode ?
+      <TitleInput initialText={chart.def.title} save={this.toggleTitleEdit}/>
       :
-      <div className='medium-6 columns'>
-        <h2>{chart.def.title}</h2>
-        <a><i className='fa fa-pencil'/></a>
-      </div>
+      <h1>
+        {chart.def.title}
+        <a className='button icon-button' onClick={this.toggleTitleEdit}><i className='fa fa-pencil'/></a>
+      </h1>
 
     const chart_component = chart.def.type === 'RawData'?
       <DatabrowserTable

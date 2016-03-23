@@ -69,8 +69,7 @@ var ExportPdf = React.createClass({
     var fileList = []
     fileList.push({value: 'pdf', title: 'PDF'})
     fileList.push({value: 'jpeg', title: 'IMAGE'})
-    const exportIcon = <i className='fa fa-external-link' style={{fontSize: '1rem', position: 'absolute', top: '1.1rem', left: '1.5rem', color: 'white'}}/>
-
+    const exportIcon = <i className='fa fa-external-link' style={{fontSize: '1rem', position: 'relative', top: '-1.1rem', left: '.75rem', color: 'white'}}/>
     let items = MenuItem.fromArray(fileList, this._onExportDashboard)
     let classString = this.props.button ? ' button success ' : ''
     classString += this.state.isFetching ? ' inactive ' : ''

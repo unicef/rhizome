@@ -18,10 +18,39 @@ export default React.createClass({
   },
 
   _updateText: function (e) {
-    this.props.save(e.currentTarget.value)
     this.setState({text: e.currentTarget.value})
   },
+
+  saveTitle: function (event) {
+    if (event.type === 'blur' || event.keyCode === 13 ) { // Keycode for 'Enter' key
+      this.props.save(this.state.text)
+    } else if (event.keyCode === 27) {
+      this.props.save(null)
+    }
+  },
+
   render: function () {
-    return (<input type='text' className={this.props.className} value={this.state.text} onChange={this._updateText} placeholder='Title'/>)
+    return (
+      <form onSubmit={event => event.preventDefault()} className='title-input'>
+        <input type='text'
+          className={this.props.className}
+          value={this.state.text}
+          onChange={this._updateText}
+          onBlur={this.saveTitle}
+          onKeyUp={this.saveTitle}
+          placeholder='Title'/>
+          <button type='reset' className='button icon-button' onClick={() => this.props.save(null)} >
+            <i className='fa fa-times'/>
+          </button>
+          <button
+            className='button icon-button'
+            onClick={(e) => {
+              e.preventDefault()
+              this.props.save(this.state.text)
+            }}>
+            <i className='fa fa-check'/>
+          </button>
+      </form>
+    )
   }
 })
