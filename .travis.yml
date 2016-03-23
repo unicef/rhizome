@@ -24,3 +24,4 @@ deploy:
   endpoint: ec2-52-2-128-26.compute-1.amazonaws.com
   region: us-east-1
   skip_cleanup: true
+  key: dist/rhizome.zip
