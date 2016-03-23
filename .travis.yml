@@ -15,14 +15,13 @@ script:
 notifications:
   slack: rhisome:$SLACK_ACCESS_KEY
 
-after_success:
-  deploy:
-    provider: s3
-    access_key_id: $AWS_ACCESS_KEY
-    secret_access_key: $AWS_SECRET_KEY
-    bucket: rhizome-dev
-    endpoint: ec2-52-2-128-26.compute-1.amazonaws.com
-    region: us-east-1
-    skip_cleanup: true
-    on:
-      branch: development
+deploy:
+  provider: s3
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  bucket: rhizome-dev
+  endpoint: ec2-52-2-128-26.compute-1.amazonaws.com
+  region: us-east-1
+  skip_cleanup: true
+  on:
+    branch: development
