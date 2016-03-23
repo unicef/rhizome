@@ -19,7 +19,7 @@ notifications:
   slack: rhisome:$SLACK_ACCESS_KEY
 
 after_success:
-  - chmod 600
+  - chmod 400
   - ssh -i ~/.ssh/rhizome.pem rhizome_dev
   - fab -H rhizome_test deploy
 
