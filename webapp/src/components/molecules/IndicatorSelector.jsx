@@ -19,7 +19,7 @@ const IndicatorSelector = React.createClass({
   propTypes: {
     indicators: PropTypes.shape({
       raw: PropTypes.array,
-      list: PropTypes.object
+      list: PropTypes.array
     }).isRequired,
     preset_indicator_ids: PropTypes.array,
     classes: PropTypes.string,
@@ -42,7 +42,7 @@ const IndicatorSelector = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.preset_indicator_ids) && nextProps.indicators.index) {
+    if (!_.isEmpty(nextProps.preset_indicator_ids) && nextProps.indicators.index && !this.state.selected_indicators) {
       this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => nextProps.indicators.index[id])})
     }
   },

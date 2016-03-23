@@ -14,10 +14,9 @@ const LocationSelector = React.createClass({
     Reflux.connect(LocationSelectorStore, 'selected_locations'),
   ],
 
-  locations_index: null,
-
   propTypes: {
     locations: PropTypes.shape({
+      index: PropTypes.object,
       lpd_statuses: PropTypes.array,
       filtered: PropTypes.array
     }).isRequired,
@@ -34,7 +33,6 @@ const LocationSelector = React.createClass({
 
   componentDidMount () {
     LocationStore.listen(locations => {
-      this.locations_index = locations.index
       if (this.props.preset_location_ids) {
         return LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
       }
@@ -42,8 +40,8 @@ const LocationSelector = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.preset_location_ids)) {
-      this.setState({selected_locations: nextProps.preset_location_ids.map(id => this.locations_index[id])})
+    if (!_.isEmpty(nextProps.preset_location_ids) && nextProps.locations.index && !this.state.selected_locations) {
+      this.setState({selected_locations: nextProps.preset_location_ids.map(id => nextProps.locations.index[id])})
     }
   },
 
