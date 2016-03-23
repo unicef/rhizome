@@ -107,7 +107,6 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function () {
-    console.log('this.state.errorMessage: ', this.state.errorMessage)
     // var uqHeaderList = this.buildHeaderList('uq_id_column')
     // var rgHeaderList = this.buildHeaderList('location_column')
     // var cpHeaderList = this.buildHeaderList('date_column')

@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from rhizome.models import *
+from sets import Set
 
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
@@ -17,10 +18,29 @@ class DocTransform(object):
 
     def __init__(self, user_id, document_id):
 
-        self.file_delimiter = ','
-        self.document = Document.objects.get(id=document_id)
-        self.source_datapoints = []
         self.user_id = user_id
+
+        self.location_column, self.campaign_column, self.uq_id_column = \
+            ['geocode', 'campaign', 'unique_key']
+
+        self.document = Document.objects.get(id=document_id)
+        self.file_path = str(self.document.docfile)
+
+        raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+        csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+
+        csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
+
+        self.csv_df = csv_df
+
+        self.file_header = csv_df.columns
+
+        self.meta_lookup = {
+            'location':{},
+            'indicator':{},
+            'campaign':{}
+        }
+        self.indicator_ids_to_exclude = Set([-1])
 
         self.existing_submission_keys = SourceSubmission.objects.filter(
             document_id = self.document.id).values_list('instance_guid',flat=True)
@@ -67,6 +87,11 @@ class DocTransform(object):
 
         endpoint: api/v2/doc_mapping/?document=66
         '''
+
+
+        if DocumentSourceObjectMap.objects.filter(document_id = \
+            self.document.id):
+            return
 
         source_dp_json = SourceSubmission.objects.filter(
             document_id = self.document.id).values_list('submission_json')
@@ -129,6 +154,7 @@ class DocTransform(object):
 
         dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(dsom_to_insert)
 
+
 class ComplexDocTransform(DocTransform):
     '''
     This type of transformation handles abstract data for which :
@@ -137,30 +163,31 @@ class ComplexDocTransform(DocTransform):
         indicators - indicators are columns.
     '''
 
-
     def __init__(self,user_id,document_id):
 
         super(ComplexDocTransform, self).__init__(user_id, document_id)
 
-        self.uq_id_column = DocumentDetail.objects.get(
-            document_id = self.document.id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='uq_id_column').id,
-        ).doc_detail_value
-
-        self.location_column = str(DocumentDetail.objects.get(
-            document_id = self.document.id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='location_column').id,
-        ).doc_detail_value)
-
-        self.date_column = str(DocumentDetail.objects.get(
-            document_id = self.document.id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='date_column').id,
-        ).doc_detail_value)
-
-        self.campaign_column = 'campaign'
+        ## if we allow for user input to choose column definitinos
+        ## we can pull the data frmo the below calls.  Since we are hard
+        ## coding configurations and expecting a upload template then
+        ## we dont need the belwo code.
+        # self.uq_id_column = DocumentDetail.objects.get(
+        #     document_id = self.document.id,
+        #     doc_detail_type_id = DocDetailType\
+        #         .objects.get(name='uq_id_column').id,
+        # ).doc_detail_value
+        #
+        # self.location_column = str(DocumentDetail.objects.get(
+        #     document_id = self.document.id,
+        #     doc_detail_type_id = DocDetailType\
+        #         .objects.get(name='location_column').id,
+        # ).doc_detail_value)
+        #
+        # self.date_column = str(DocumentDetail.objects.get(
+        #     document_id = self.document.id,
+        #     doc_detail_type_id = DocDetailType\
+        #         .objects.get(name='date_column').id,
+        # ).doc_detail_value)
 
     def main(self):
 
@@ -182,18 +209,19 @@ class ComplexDocTransform(DocTransform):
             'document_id': self.document.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'data_date': submission_data['data_date'],
+            'campaign_code': submission_data[self.campaign_column],
+            # 'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
         return submission_dict, instance_guid
 
-    def process_date_column(self, doc_df):
-
-        dt_col = to_datetime(doc_df[self.date_column])
-        doc_df['data_date'] = dt_col
-
-        return doc_df
+    # def process_date_column(self, doc_df):
+    #
+    #     dt_col = to_datetime(doc_df[self.date_column])
+    #     doc_df['data_date'] = dt_col
+    #
+    #     return doc_df
 
 
     def apply_doc_config_to_csv_df(self, csv_df):
@@ -231,13 +259,13 @@ class ComplexDocTransform(DocTransform):
         Returns a list of source_submission_ids
         '''
 
-        full_file_path = settings.MEDIA_ROOT + self.file_path
-        raw_csv_df = read_csv(full_file_path)
-        csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+        # full_file_path = settings.MEDIA_ROOT + self.file_path
+        # raw_csv_df = read_csv(full_file_path)
+        # csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
 
         ## transform the raw data based on the documents configurations ##
-        doc_df = self.apply_doc_config_to_csv_df(csv_df)
-        doc_df = self.process_date_column(doc_df)
+        doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
+        # doc_df = self.process_date_column(doc_df)
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)
