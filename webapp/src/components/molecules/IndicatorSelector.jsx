@@ -19,7 +19,7 @@ const IndicatorSelector = React.createClass({
   propTypes: {
     indicators: PropTypes.shape({
       raw: PropTypes.array,
-      list: PropTypes.object
+      list: PropTypes.array
     }).isRequired,
     preset_indicator_ids: PropTypes.array,
     classes: PropTypes.string,
@@ -42,9 +42,20 @@ const IndicatorSelector = React.createClass({
   },
 
   componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.preset_indicator_ids) && nextProps.indicators.index) {
+    if (!_.isEmpty(nextProps.preset_indicator_ids) && nextProps.indicators.index && _.isEmpty(this.state.selected_indicators)) {
       this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => nextProps.indicators.index[id])})
     }
+  },
+
+  getAvailableIndicators () {
+    const selected_ids = this.state.selected_indicators.map(indicator => indicator.id)
+    const indicators_list = this.props.indicators.list
+    indicators_list.forEach(indicator_group => {
+      indicator_group.children.forEach(indicator => {
+        indicator.disabled = selected_ids.indexOf(indicator.id) > -1
+      })
+    })
+    return indicators_list
   },
 
   render () {
@@ -62,11 +73,12 @@ const IndicatorSelector = React.createClass({
       </div>
     )
 
+    const available_indicators = this.getAvailableIndicators()
     const multi_selector = (
       <form className={props.classes}>
         <h3>Indicators
           <DropdownMenu
-            items={props.indicators.list}
+            items={available_indicators}
             sendValue={IndicatorSelectorActions.selectIndicator}
             item_plural_name='Indicators'
             style='icon-button right'
