@@ -13,7 +13,7 @@ table {
         text-transform: uppercase;
         font-family: proxima-bold;
         a {
-          color: white;
+          color: $rhz-body-color;
         }
         .ds-data-table-sort-indicator {
           position: absolute;
@@ -184,6 +184,7 @@ table {
 
     th {
       border-bottom: 1px solid $borderColor;
+      color: $rhz-body-color;
     }
 
     td {
@@ -196,7 +197,7 @@ table {
         font-size: 11px;
         background-color: #999;
         font-weight: 100;
-        color: #fff;
+        color: white;
         text-transform: uppercase;
       }
     }

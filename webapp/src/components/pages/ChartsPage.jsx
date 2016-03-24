@@ -1,47 +1,50 @@
 import _ from 'lodash'
 import React from 'react'
+import Reflux from 'reflux'
 
 import ChartAPI from 'data/requests/ChartAPI'
+import ChartActions from 'actions/ChartActions'
+import ChartStore from 'stores/ChartStore'
 
 var ChartsPage = React.createClass({
 
-  getInitialState () {
-    return {
-      custom_charts: []
-    }
-  },
-
-  componentWillMount () {
-    ChartAPI.getCharts().then(charts => {
-      this.setState({ custom_charts: charts })
-    })
-  },
+  mixins: [
+    Reflux.connect(ChartStore, 'charts'),
+  ],
 
   sortCharts (sort_column) {
-    let sorted_charts = _.orderBy(this.state.custom_charts, chart => { return chart.id })
-    this.setState({ custom_charts: sorted_charts })
+    let sorted_charts = _.orderBy(this.state.charts, chart => chart.id )
+    this.setState({ charts: sorted_charts })
+  },
+
+  duplicateChart (chart) {
+    const chart_def = chart.chart_json
+    ChartActions.postChart({
+      title: chart.title + ' Copy',
+      chart_json: JSON.stringify({
+        type: chart_def.type,
+        start_date: chart_def.start_date,
+        end_date: chart_def.end_date,
+        campaign_ids: chart_def.campaign_ids,
+        location_ids: chart_def.location_ids,
+        indicator_ids: chart_def.indicator_ids
+      })
+    })
   },
 
   deleteChart (id) {
     if (confirm('Are you sure you want to delete this chart?')) {
-      ChartAPI.deleteChart(id).then(response => {
-        if (response.status === 204) {
-          let remaining_charts = this.state.custom_charts.filter(chart => {
-            return chart.id !== id
-          })
-          this.setState({ custom_charts: remaining_charts })
-        }
-      })
+      ChartActions.deleteChart(id)
     }
   },
 
   render () {
     let rows = <tr><td colSpan='3'>No custom charts created yet.</td></tr>
 
-    if (_.isNull(this.state.custom_charts)) {
+    if (_.isNull(this.state.charts.list)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
-    } else if (this.state.custom_charts.length > 0) {
-      rows = this.state.custom_charts.map(chart => {
+    } else if (this.state.charts.list.length > 0) {
+      rows = this.state.charts.list.map(chart => {
         return (
           <tr>
             <td>
@@ -49,13 +52,16 @@ var ChartsPage = React.createClass({
               <strong>  {chart.title}</strong> </a>
             </td>
             <td>{chart.chart_json.type}</td>
-            <td>{chart.chart_json.startDate}</td>
-            <td>{chart.chart_json.endDate}</td>
+            <td>{chart.chart_json.start_date}</td>
+            <td>{chart.chart_json.end_date}</td>
             <td>
+              <a onClick={() => this.duplicateChart(chart)}>
+                <i className='fa fa-clone'></i> Duplicate
+              </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <a href={'/charts/' + chart.id + '/edit'}>
                 <i className='fa fa-pencil'></i> Edit
               </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <a onClick={ this.deleteChart.bind(this, chart.id) }>
+              <a onClick={() => this.deleteChart(chart.id) }>
                 <i className='fa fa-trash'></i> Delete
               </a>
             </td>
@@ -67,7 +73,8 @@ var ChartsPage = React.createClass({
     return (
       <div className='row'>
         <div className='medium-12 medium-centered columns'>
-          <h5 className='all-dashboard'>All Saved Charts</h5>
+          <h2 className='all-dashboard left'>All Saved Charts</h2>
+          <a href='/charts/create' className='button success right'>Create New Chart</a>
           <table>
             <thead>
               <tr>

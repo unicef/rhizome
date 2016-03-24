@@ -31,6 +31,7 @@ import RootStore from 'stores/RootStore'
 import DatapointStore from 'stores/DatapointStore'
 
 import DataExplorerActions from 'actions/DataExplorerActions'
+import ChartActions from 'actions/ChartActions'
 
 const DataExplorer = React.createClass({
   mixins: [
@@ -43,7 +44,7 @@ const DataExplorer = React.createClass({
     Reflux.connect(DatapointStore, 'datapoints')
   ],
 
-  getInitialState() {
+  getInitialState () {
     return {
       footerHidden: false,
       titleEditMode: false
@@ -55,7 +56,7 @@ const DataExplorer = React.createClass({
   },
 
   componentDidMount () {
-    if (this.props.chart_id) { this.setState({footerHidden: true})}
+    if (this.props.chart_id) { this.setState({footerHidden: true}) }
     IndicatorSelectorStore.listen(selected_indicators => {
       return DataExplorerActions.setIndicatorIds(selected_indicators.map(indicator => indicator.id))
     })
@@ -63,30 +64,28 @@ const DataExplorer = React.createClass({
       return DataExplorerActions.setLocationIds(selected_locations.map(location => location.id))
     })
     CampaignStore.listen(campaigns => {
-      if (campaigns.raw[0]) {
-        DataExplorerActions.setCampaignIds([campaigns.raw[0].id])
-      }
+      if (campaigns.raw[0]) { DataExplorerActions.setCampaignIds([campaigns.raw[0].id])}
     })
     RootStore.listen(this.getChart)
     ChartStore.listen(this.getChart)
   },
 
-  getChart(a, b) {
+  getChart () {
     const dataIsReady = this.state.locations.index && this.state.indicators.index && this.state.charts.index
     if (this.props.chart_id && dataIsReady) {
       DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
     }
   },
 
-  //===========================================================================//
-  //                               EVENT HANDLERS                              //
-  //===========================================================================//
+  // =========================================================================== //
+  //                                EVENT HANDLERS                               //
+  // =========================================================================== //
   _saveChart () {
     const chart_def = this.state.chart.def
     if (!chart_def.title) {
       return window.alert('Please add a Title to your chart')
     }
-    DataExplorerActions.postChart({
+    ChartActions.postChart({
       id: this.props.chart_id,
       title: chart_def.title,
       chart_json: JSON.stringify({
@@ -111,9 +110,9 @@ const DataExplorer = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  //===========================================================================//
-  //                                   RENDER                                  //
-  //===========================================================================//
+  // =========================================================================== //
+  //                                    RENDER                                   //
+  // =========================================================================== //
   render () {
     const chart = this.state.chart
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
@@ -134,7 +133,7 @@ const DataExplorer = React.createClass({
     const chart_placeholder = <Placeholder height={600}/>
 
     // CHART
-    //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={chart.def.title} save={this._toggleTitleEdit}/>
       :
@@ -153,7 +152,7 @@ const DataExplorer = React.createClass({
       <Chart type={chart.def.type} data={chart.data} options={chart.def} />
 
     // SIDEBAR
-    //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     const call_to_actions = (
       <div className='row collapse'>
         <button className='expand button success' disabled={disableSave} onClick={this._saveChart} style={{marginTop: 0}}>
@@ -182,7 +181,7 @@ const DataExplorer = React.createClass({
       </div>
     ) : ''
 
-    const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart'?
+    const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart' ?
     (
       <div className='row collapse'>
         <h3>Campaign</h3>
@@ -212,7 +211,7 @@ const DataExplorer = React.createClass({
     )
 
     // FOOTER
-    //---------------------------------------------------------------------------
+    // ---------------------------------------------------------------------------
     const footer = (
       <footer className={'row hideable' + (this.state.footerHidden ? ' descended' : '')}>
         <div className='medium-7 columns'>
@@ -239,7 +238,7 @@ const DataExplorer = React.createClass({
       <section className='data-explorer'>
         <div className='medium-3 large-2 medium-push-9 large-push-10 columns'>
           { call_to_actions }
-          <div className={'row data-filters ' + (multi_indicator  && multi_location ? '' : 'collapse')}>
+          <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
             { date_range_picker }
             {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
             { indicator_selector }

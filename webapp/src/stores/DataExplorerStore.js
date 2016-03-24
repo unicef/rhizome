@@ -91,17 +91,6 @@ var DataExplorerStore = Reflux.createStore({
     this.setState({ error: error })
   },
 
-  // ===============================  Post Chart  ============================= //
-  onPostChart () {
-    this.setState({ loading: true })
-  },
-  onPostChartCompleted (response) {
-    this.trigger(this.chart)
-  },
-  onPostChartFailed (error) {
-    this.setState({ error: error })
-  },
-
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures () {
     this.setState({ loading: true })

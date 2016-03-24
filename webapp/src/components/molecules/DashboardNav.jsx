@@ -56,7 +56,7 @@ let DashboardNav = React.createClass({
     return (
       <ul className='dashboards-nav'>
         <li>
-          <a href='#'>Charts</a>
+          <a href='/charts'>Charts</a>
           <ul className='dashboard-menu'>
             { custom_charts }
             <li className='separator'><hr /></li>
