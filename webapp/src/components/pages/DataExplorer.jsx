@@ -117,8 +117,8 @@ const DataExplorer = React.createClass({
     const start_date = chart.def ? moment(chart.def.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart.def ? moment(chart.def.end_date, 'YYYY-MM-DD').toDate() : moment()
     const disableSave = _.isEmpty(chart.def.location_ids) || _.isEmpty(chart.def.indicator_ids)
-    const preset_indicator_ids = this.props.chart_id && chart ? chart.def.indicator_ids : [15]
-    const preset_location_ids = this.props.chart_id && chart ? chart.def.location_ids : [1]
+    const preset_indicator_ids = this.props.chart_id && chart ? chart.def.indicator_ids : []
+    const preset_location_ids = this.props.chart_id && chart ? chart.def.location_ids : []
     const multi_indicator = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
     const multi_location = chart.def.type === 'TableChart' || chart.def.type === 'RawData'
     const raw_data_query = {

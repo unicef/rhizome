@@ -6,7 +6,7 @@ import formatUtil from 'components/molecules/charts/utils/format'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 
 const DEFAULTS = {
-  cellHeight: 24,
+  cellHeight: 30,
   column: _.property('indicator.short_name'),
   sourceColumn: _.property('short_name'),
   fontSize: 12,

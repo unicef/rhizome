@@ -27,7 +27,21 @@ const LocationSelectorStore = Reflux.createStore({
   },
 
   onSelectLocation (id) {
+    if (typeof id === 'string' && id.indexOf('lpd') > -1) {
+      return this.addLocationsByLpdStatus(id)
+    }
     this.selected_locations.push(this.locations.index[id])
+    this.trigger(this.selected_locations)
+  },
+
+  addLocationsByLpdStatus (index) {
+    let locations_to_add = this.locations.lpd_statuses.find(lpd_status => lpd_status.value === index)
+    locations_to_add.location_ids.forEach(location_id => {
+      if (this.selected_locations.map(item => item.id).indexOf(location_id) >= 0) {
+        return
+      }
+      this.selected_locations.push(this.locations.index[location_id])
+    })
     this.trigger(this.selected_locations)
   },
 
