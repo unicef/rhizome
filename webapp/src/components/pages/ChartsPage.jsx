@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import orderBy from 'lodash.orderBy'
+import orderBy from 'lodash.orderby'
 import React from 'react'
 import Reflux from 'reflux'
 
