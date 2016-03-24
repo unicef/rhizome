@@ -13,6 +13,10 @@ export default React.createClass({
     }
   },
 
+  componentDidMount: function () {
+    React.findDOMNode(this.refs.title_input).focus()
+  },
+
   componentWillReceiveProps: function (nextProps) {
     this.setState({text: nextProps.initialText})
   },
@@ -33,6 +37,7 @@ export default React.createClass({
     return (
       <form onSubmit={event => event.preventDefault()} className='title-input'>
         <input type='text'
+          ref='title_input'
           className={this.props.className}
           value={this.state.text}
           onChange={this._updateText}
