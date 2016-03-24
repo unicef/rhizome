@@ -309,15 +309,16 @@ var BuiltinDashboardPage = React.createClass({
 
     const table_chart_indicator_ids = this.state.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
 
-    // by default select the smallest indicator ID //
     let indicatorIx = _.indexBy(this.state.indicators, 'id')
-    let minIndicatorId = table_chart_indicator_ids.sort()[0]
-    let defaultSelectedIndicator = this.state.indicator || indicatorIx[minIndicatorId]
+    const selected_indicator_id = this.state.dashboard.charts.filter(chart =>
+      chart.type === 'ChoroplethMap')[0].indicators
+
+    // let defaultSelectedIndicator = this.state.indicator || indicatorIx[minIndicatorId]
     let indicatorFilter = <div className='medium-4 columns'>
       <IndicatorTitleMenu
         idsToRender={table_chart_indicator_ids}
         indicators={this.state.indicators}
-        selected={defaultSelectedIndicator}
+        selected={indicatorIx[selected_indicator_id]}
         sendValue={this._setIndicator}/>
     </div>
 
