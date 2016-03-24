@@ -128,11 +128,6 @@ const DataExplorer = React.createClass({
       campaign_start: start_date,
       campaign_end: end_date
     }
-    const campaign_placeholder = <Placeholder height={18}/>
-    let chart_placeholder = <Placeholder height={600}/>
-    if (chart.data && chart.data.length === 0) {
-      chart_placeholder =  <Placeholder height={600} text='NO DATA' loading={false}/>
-    }
 
     // CHART
     // ---------------------------------------------------------------------------
@@ -235,6 +230,22 @@ const DataExplorer = React.createClass({
         </div>
       </footer>
     )
+
+    // PLACEHOLDERS
+    // ---------------------------------------------------------------------------
+    const campaign_placeholder = <Placeholder height={18}/>
+    let chart_placeholder = <Placeholder height={600}/>
+    if (chart.data && chart.data.length === 0) {
+      chart_placeholder =  <Placeholder height={600} text='NO DATA' loading={false}/>
+    }
+    console.log('----------------------- this -----------------------')
+    console.log('chart.data', chart.data)
+    console.log('this.state.charts.raw', this.state.charts.raw)
+    const missingParams = _.isEmpty(chart.def.indicator_ids) || _.isEmpty(chart.def.location_ids)
+    console.log('missingParams', missingParams)
+    if (!chart.data && missingParams) {
+      chart_placeholder = <Placeholder height={600} text='Please select an INDICATOR and LOCATION' loading={false}/>
+    }
 
     return (
       <section className='data-explorer'>
