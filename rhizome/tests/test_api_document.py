@@ -60,6 +60,15 @@ class DocumentResourceTest(ResourceTestCase):
 
         self.assertEqual(some_cell_value_from_the_file, the_value_from_the_database)
 
+    def test_upload_empty_csv(self):
+        file_name = '_data/empty_csv.csv'
+        path = os.path.join(os.path.dirname(__file__), file_name)
+        file = open(path).read()
+        encoded_data = base64.b64encode(file)
+        post_data = {'docfile':encoded_data, 'doc_title': 'empty_csv.csv'}        
+        resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
+        print(resp)
+        self.assertHttpCreated(resp)
 
     def create_metadata(self):
         '''
