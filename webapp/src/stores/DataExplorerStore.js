@@ -67,7 +67,7 @@ var DataExplorerStore = Reflux.createStore({
   // =========================================================================== //
   // ==============================  Fetch Chart  =========================== //
   onFetchChart (id) {
-    this.setState({ loading: true })
+    this.setState({ data: null })
   },
   onFetchChartCompleted (response) {
     const chart_json = typeof response.chart_json === 'string' ? JSON.parse(response.chart_json) : response.chart_json
@@ -157,7 +157,7 @@ var DataExplorerStore = Reflux.createStore({
 
   onSetType (type) {
     this.chart.def.type = type
-    this.chart.data = []
+    this.chart.data = null
     if (type === 'ChoroplethMap') {
       this.chart.def.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
       return DataExplorerActions.fetchMapFeatures(this.chart.def.location_ids)

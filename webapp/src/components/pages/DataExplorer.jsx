@@ -129,7 +129,10 @@ const DataExplorer = React.createClass({
       campaign_end: end_date
     }
     const campaign_placeholder = <Placeholder height={18}/>
-    const chart_placeholder = <Placeholder height={600}/>
+    let chart_placeholder = <Placeholder height={600}/>
+    if (chart.data && chart.data.length === 0) {
+      chart_placeholder =  <Placeholder height={600} text='NO DATA' loading={false}/>
+    }
 
     // CHART
     // ---------------------------------------------------------------------------

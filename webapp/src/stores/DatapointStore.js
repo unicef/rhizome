@@ -25,7 +25,7 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints () {
-    this.setState({ raw: [] })
+    this.setState({ raw: null })
   },
   onFetchDatapointsCompleted (response) {
     this.setState({
