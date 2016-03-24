@@ -11,7 +11,7 @@ import treeify from 'data/transform/treeify'
 import ancestryString from 'data/transform/ancestryString'
 
 let DataExplorerStore = Reflux.createStore({
-  listenables: DataExplorerActions,
+  listenables: DataExplorerActionsActions,
   data: {
     title: '',
     indicatorList: [],
@@ -473,7 +473,7 @@ let DataExplorerStore = Reflux.createStore({
     this.data.chartDef.location_ids = this.data.selectedLocations.map(location => { return location.id })
     this.data.chartDef.indicator_ids = this.data.selectedIndicators.map(indicator => { return indicator.id })
     let responses = await ChartDataInit.getPromises()
-    ChartDataInit.fetchChart(this.data.chartDef, this.LAYOUT_PREVIEW, responses).then(chart => {
+    ChartDataInit.getChart(this.data.chartDef, this.LAYOUT_PREVIEW, responses).then(chart => {
       console.log('chart after fetching', chart)
       this.data.canDisplayChart = true
       this.data.isLoading = false

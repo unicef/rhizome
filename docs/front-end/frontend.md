@@ -113,7 +113,7 @@ Use
 
 instead of
 
-`mixins: [Reflux.connect(DataStore)]`
+`mixins: [Reflux.connect(DataExplorerStore)]`
 
 **Write React in ES6+**
 
@@ -167,7 +167,7 @@ There is two kinds dashboard, one is the built-in dashboard, one is the custom d
 The custom dashboard is created by a user, click the url /datapoints/dashboards/create and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder, and custom dashbaord is rendered by webapp/src/dashboard/CustomDashboard.jsx component.
 
 ## DataExplorer
-When you create a dashboard, you need to add a chart to the dashboard. the DataExplorer will help you to add a chart to your created custom dashboard. The DataExplorer code is at the webapp/src/view/data-explorer/ the DataExplorer.js defines the whole page UI, you can add the chart settings and actions in this component.
+When you create a dashboard, you need to add a chart to the dashboard. the DataExplorer will help you to add a chart to your created custom dashboard. The DataExplorer code is at the webapp/src/view/data-explorer/ the DataExplorerActions.js defines the whole page UI, you can add the chart settings and actions in this component.
 
 DataExplorer options folder (/webapp/src/view/data-explorer/options) defines all chart options, you can change or define every different chart options as you want.
 

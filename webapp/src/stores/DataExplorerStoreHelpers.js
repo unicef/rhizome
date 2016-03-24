@@ -5,7 +5,7 @@ import LocationSelectorActions from 'actions/LocationSelectorActions'
 import chartOptionsHelpers from 'components/molecules/charts/utils/chartOptionsHelpers'
 import aspects from 'components/molecules/charts/utils/aspects'
 
-const ChartStoreHelpers = {
+const DataExplorerStoreHelpers = {
   // =========================================================================== //
   //                                 TABLE CHART                                 //
   // =========================================================================== //
@@ -193,4 +193,4 @@ const ChartStoreHelpers = {
   }
 }
 
-export default ChartStoreHelpers
+export default DataExplorerStoreHelpers

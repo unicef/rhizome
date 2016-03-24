@@ -22,17 +22,19 @@ import TitleInput from 'components/molecules/TitleInput'
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationStore from 'stores/LocationStore'
+import ChartStore from 'stores/ChartStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
-import ChartStore from 'stores/ChartStore'
+import DataExplorerStore from 'stores/DataExplorerStore'
 import DatapointStore from 'stores/DatapointStore'
 
-import ChartActions from 'actions/ChartActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 
 const DataExplorer = React.createClass({
   mixins: [
-    Reflux.connect(ChartStore, 'chart'),
+    Reflux.connect(DataExplorerStore, 'chart'),
+    Reflux.connect(ChartStore, 'charts'),
     Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
@@ -51,28 +53,22 @@ const DataExplorer = React.createClass({
     chart_id: PropTypes.number
   },
 
-  getChart (locations, indicators) {
-    if (this.state.locations.index && this.state.indicators.index && this.props.chart_id) {
-      ChartActions.fetchChart(this.props.chart_id)
-    }
-  },
-
-  componentWillMount () {
-    LocationStore.listen(this.getChart)
-    IndicatorStore.listen(this.getChart)
-  },
-
   componentDidMount () {
     if (this.props.chart_id) { this.setState({footerHidden: true})}
     IndicatorSelectorStore.listen(selected_indicators => {
-      return ChartActions.setIndicatorIds(selected_indicators.map(indicator => indicator.id))
+      return DataExplorerActions.setIndicatorIds(selected_indicators.map(indicator => indicator.id))
     })
     LocationSelectorStore.listen(selected_locations => {
-      return ChartActions.setLocationIds(selected_locations.map(location => location.id))
+      return DataExplorerActions.setLocationIds(selected_locations.map(location => location.id))
     })
     CampaignStore.listen(campaigns => {
       if (campaigns.raw[0]) {
-        ChartActions.setCampaignIds([campaigns.raw[0].id])
+        DataExplorerActions.setCampaignIds([campaigns.raw[0].id])
+      }
+    })
+    ChartStore.listen(charts => {
+      if (this.props.chart_id) {
+        DataExplorerActions.fetchChart.completed(charts.index[this.props.chart_id])
       }
     })
   },
@@ -85,7 +81,7 @@ const DataExplorer = React.createClass({
     if (!chart_def.title) {
       return window.alert('Please add a Title to your chart')
     }
-    ChartActions.postChart({
+    DataExplorerActions.postChart({
       id: this.props.chart_id,
       title: chart_def.title,
       chart_json: JSON.stringify({
@@ -105,7 +101,7 @@ const DataExplorer = React.createClass({
 
   _toggleTitleEdit (title) {
     if (_.isString(title)) {
-      ChartActions.setTitle(title)
+      DataExplorerActions.setTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
@@ -172,7 +168,7 @@ const DataExplorer = React.createClass({
       <div className='medium-12 columns'>
         <h3>Time</h3>
         <DateRangePicker
-          sendValue={ChartActions.setDateRange}
+          sendValue={DataExplorerActions.setDateRange}
           start={start_date}
           end={end_date}
           fromComponent='DataExplorer'
@@ -188,7 +184,7 @@ const DataExplorer = React.createClass({
         <CampaignTitleMenu
           campaigns={this.state.campaigns.raw}
           selected={chart.def.selected_campaigns[0]}
-          sendValue={ChartActions.setCampaignIds}/>
+          sendValue={DataExplorerActions.setCampaignIds}/>
       </div>
     ) : ''
 
@@ -219,13 +215,13 @@ const DataExplorer = React.createClass({
           <ChartSelect
             charts={builderDefinitions.charts}
             value={chart.def.type}
-            onChange={ChartActions.setType}/>
+            onChange={DataExplorerActions.setType}/>
         </div>
         <div className='medium-5 columns'>
           <h3>Color Scheme</h3>
           <PalettePicker
             value={chart.def.palette}
-            onChange={ChartActions.setPalette}/>
+            onChange={DataExplorerActions.setPalette}/>
           <button className='footer-toggle-button' onClick={this._showHideFooter}>
             <i className={this.state.footerHidden ? 'fa fa-caret-up' : 'fa fa-caret-down'}>&nbsp; </i>
             { this.state.footerHidden ? 'Show' : 'Hide'} Properties

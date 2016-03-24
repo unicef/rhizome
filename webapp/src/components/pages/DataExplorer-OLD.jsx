@@ -13,13 +13,13 @@
 // import PreviewScreen from 'components/organisms/data-explorer/PreviewScreen'
 
 // import DataExplorerActions from 'actions/DataExplorerActions'
-// import ChartActions from 'actions/ChartActions'
+// import DataExplorerActions from 'actions/DataExplorerActions'
 // import DataExplorerStore from 'stores/DataExplorerStore'
 // import LocationStore from 'stores/LocationStore'
 // import IndicatorStore from 'stores/IndicatorStore'
 // import OfficeStore from 'stores/OfficeStore'
 // import CampaignStore from 'stores/CampaignStore'
-// import ChartStore from 'stores/ChartStore'
+// import DataExplorerStore from 'stores/DataExplorerStore'
 // import ChartAPI from 'data/requests/ChartAPI'
 
 
@@ -45,7 +45,7 @@
 
 //   mixins: [
 //     Reflux.connect(DataExplorerStore),
-//     Reflux.connect(ChartStore, 'ThisChart'),
+//     Reflux.connect(DataExplorerStore, 'ThisChart'),
 //     Reflux.connect(LocationStore, 'root-locations'),
 //     Reflux.connect(IndicatorStore, 'root-indicators'),
 //     Reflux.connect(OfficeStore, 'root-offices'),

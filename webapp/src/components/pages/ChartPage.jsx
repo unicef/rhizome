@@ -11,16 +11,16 @@ import DropdownList from 'react-widgets/lib/DropdownList'
 import RootStore from 'stores/RootStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import LocationStore from 'stores/LocationStore'
-import ChartStore from 'stores/ChartStore'
+import DataExplorerStore from 'stores/DataExplorerStore'
 import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
-import ChartActions from 'actions/ChartActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 
 var ChartPage = React.createClass({
 
   mixins: [
     Reflux.ListenerMixin,
-    Reflux.connect(ChartStore, 'chart'),
+    Reflux.connect(DataExplorerStore, 'chart'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(IndicatorStore, 'indicators'),
     Reflux.connect(CampaignStore, 'campaigns'),
@@ -39,7 +39,7 @@ var ChartPage = React.createClass({
 
   getChart (locations, indicators) {
     if (this.state.locations.index && this.state.indicators.index) {
-      ChartActions.fetchChart(this.props.chart_id)
+      DataExplorerActions.getChart(this.props.chart_id)
     }
   },
 
@@ -72,7 +72,7 @@ var ChartPage = React.createClass({
               defaultValue={!_.isEmpty(campaigns) ? campaigns[0].id : null}
               textField='name'
               valueField='id'
-              onChange={campaign => ChartActions.setCampaignIds([campaign.id])}
+              onChange={campaign => DataExplorerActions.setCampaignIds([campaign.id])}
             />
           </div>
           <div className='medium-4 columns'>
