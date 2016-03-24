@@ -67,11 +67,9 @@ var DataExplorerStore = Reflux.createStore({
   // =========================================================================== //
   // ==============================  Fetch Chart  =========================== //
   onFetchChart (id) {
-    // console.log('----------------------- DataExplorerStore - onFetchChart -----------------------')
     this.setState({ loading: true })
   },
   onFetchChartCompleted (response) {
-    // console.log('----------------------- DataExplorerStore - onFetchChartCompleted -----------------------')
     const chart_json = typeof response.chart_json === 'string' ? JSON.parse(response.chart_json) : response.chart_json
     this.chart.def.campaign_ids = chart_json.campaign_ids
     this.chart.def.start_date = chart_json.start_date

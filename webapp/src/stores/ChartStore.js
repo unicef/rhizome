@@ -12,6 +12,7 @@ var ChartStore = Reflux.createStore({
 
   charts: {
     meta: null,
+    list: null,
     raw: null,
     index: null
   },
@@ -30,6 +31,10 @@ var ChartStore = Reflux.createStore({
   onFetchChartsCompleted (response) {
     this.charts.meta = response.meta
     this.charts.raw = response.objects[0].charts || response.objects
+    this.charts.list = this.charts.raw.map(c => {
+      c.chart_json = JSON.parse(c.chart_json)
+      return c
+    })
     this.charts.index = _.indexBy(this.charts.raw, 'id')
     this.trigger(this.charts)
   },

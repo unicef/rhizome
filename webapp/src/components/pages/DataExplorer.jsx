@@ -27,6 +27,7 @@ import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import DataExplorerStore from 'stores/DataExplorerStore'
+import RootStore from 'stores/RootStore'
 import DatapointStore from 'stores/DatapointStore'
 
 import DataExplorerActions from 'actions/DataExplorerActions'
@@ -66,11 +67,15 @@ const DataExplorer = React.createClass({
         DataExplorerActions.setCampaignIds([campaigns.raw[0].id])
       }
     })
-    ChartStore.listen(charts => {
-      if (this.props.chart_id) {
-        DataExplorerActions.fetchChart.completed(charts.index[this.props.chart_id])
-      }
-    })
+    RootStore.listen(this.getChart)
+    ChartStore.listen(this.getChart)
+  },
+
+  getChart(a, b) {
+    const dataIsReady = this.state.locations.index && this.state.indicators.index && this.state.charts.index
+    if (this.props.chart_id && dataIsReady) {
+      DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
+    }
   },
 
   //===========================================================================//

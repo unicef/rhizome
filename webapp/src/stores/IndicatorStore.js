@@ -47,7 +47,7 @@ var IndicatorStore = Reflux.createStore({
     this.setState({ raw: [] })
   },
   onFetchIndicatorTagsCompleted (response) {
-    this.indicators.tags = response.objects[0].indicators || response.objects
+    this.indicators.tags = response.objects[0].indicator_tags || response.objects
     this.processIndicators()
   },
   onFetchIndicatorTagsFailed (error) {
