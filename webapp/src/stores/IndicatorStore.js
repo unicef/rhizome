@@ -19,11 +19,6 @@ var IndicatorStore = Reflux.createStore({
     tree: []
   },
 
-  init () {
-    IndicatorActions.fetchIndicators()
-    IndicatorActions.fetchIndicatorTags()
-  },
-
   getInitialState () {
     return this.indicators
   },
@@ -38,7 +33,7 @@ var IndicatorStore = Reflux.createStore({
   },
   onFetchIndicatorsCompleted (response) {
     this.indicators.meta = response.meta
-    this.indicators.raw = response.objects
+    this.indicators.raw = response.objects[0].indicators || response.objects
     this.indicators.filtered = this.indicators.raw
     this.indicators.index = _.indexBy(this.indicators.raw, 'id')
     this.processIndicators()
@@ -52,7 +47,7 @@ var IndicatorStore = Reflux.createStore({
     this.setState({ raw: [] })
   },
   onFetchIndicatorTagsCompleted (response) {
-    this.indicators.tags = response.objects
+    this.indicators.tags = response.objects[0].indicators || response.objects
     this.processIndicators()
   },
   onFetchIndicatorTagsFailed (error) {

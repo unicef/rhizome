@@ -3,14 +3,32 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import NavMenuItem from 'components/molecules/NavMenuItem.jsx'
+import ChartStore from 'stores/ChartStore'
+import DashboardStore from 'stores/DashboardStore'
 import RootStore from 'stores/RootStore'
 
 let DashboardNav = React.createClass({
 
   mixins: [
-    Reflux.connect(RootStore),
+    // Reflux.connect(RootStore),
     require('components/molecules/menus/MenuControl')
   ],
+
+  getInitialState() {
+    return {
+      charts: [],
+      dashboards: []
+    }
+  },
+
+  componentDidMount () {
+    ChartStore.listen(charts => this.setState({charts: charts.raw}))
+    DashboardStore.listen(dashboards => this.setState({dashboards: dashboards.list}))
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEmpty(nextState.charts) && !_.isEmpty(nextState.dashboards)
+  },
 
   render: function () {
     let dashboards = this.state.dashboards

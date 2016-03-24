@@ -1,9 +1,13 @@
-import _ from 'lodash'
-import builtins from 'components/organisms/dashboard/builtin'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
 import RootActions from 'actions/RootActions'
+import IndicatorActions from 'actions/IndicatorActions'
+import LocationActions from 'actions/LocationActions'
+import CampaignActions from 'actions/CampaignActions'
+import OfficeActions from 'actions/OfficeActions'
+import DashboardActions from 'actions/DashboardActions'
+import ChartActions from 'actions/ChartActions'
 
 var RootStore = Reflux.createStore({
 
@@ -12,8 +16,12 @@ var RootStore = Reflux.createStore({
   mixins: [StateMixin.store],
 
   data: {
+    campaigns: [],
     charts: [],
     dashboards: [],
+    indicators: [],
+    locations: [],
+    offices: [],
     loading: false
   },
 
@@ -26,46 +34,36 @@ var RootStore = Reflux.createStore({
   },
 
   getInitialData () {
-    RootActions.fetchAllCharts()
-    RootActions.fetchAllDashboards()
+    RootActions.fetchAllMeta()
   },
 
   // =========================================================================== //
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
 
-  // ===============================  Fetch Charts  ============================= //
-  onFetchAllCharts () {
+  // ===============================  Fetch Meta  ============================= //
+  onFetchAllMeta () {
     this.setState({ loading: true })
   },
-  onFetchAllChartsCompleted (response) {
-    this.data.charts = response.objects
-    this.data.loading = false
+  onFetchAllMetaCompleted (response) {
+    this.data.campaigns = response.objects[0].campaigns
+    this.data.charts = response.objects[0].charts
+    this.data.dashboards = response.objects[0].dashboards
+    this.data.indicators = response.objects[0].indicators
+    this.data.locations = response.objects[0].locations
+    this.data.offices = response.objects[0].offices
+    CampaignActions.fetchCampaigns.completed(response)
+    ChartActions.fetchCharts.completed(response)
+    DashboardActions.fetchDashboards.completed(response)
+    IndicatorActions.fetchIndicators.completed(response)
+    IndicatorActions.fetchIndicatorTags.completed(response)
+    LocationActions.fetchLocations.completed(response)
+    OfficeActions.fetchOffices.completed(response)
     this.trigger(this.data)
   },
-  onFetchAllChartsFailed (error) {
-    this.setState({ error: error })
-  },
-
-  // ===============================  Fetch Dashboards  ============================= //
-  onFetchAllDashboards () {
-    this.setState({ loading: true })
-  },
-  onFetchAllDashboardsCompleted (response) {
-    const all_dashboards = builtins.concat(_(response.objects).sortBy('id').reverse().value())
-    // Patch the non-comformant API response
-    this.data.dashboards = _(all_dashboards).map(dashboard => {
-      dashboard.charts = dashboard.charts || dashboard.dashboard_json
-      return dashboard
-    })
-    .reject(_.isNull)
-    .value()
-    this.trigger(this.data)
-  },
-  onFetchAllDashboardsFailed (error) {
+  onFetchAllMetaFailed (error) {
     this.setState({ error: error })
   }
-
 })
 
 export default RootStore

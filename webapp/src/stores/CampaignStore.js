@@ -23,7 +23,6 @@ var CampaignStore = Reflux.createStore({
   },
 
   init () {
-    CampaignActions.fetchCampaigns()
     this.listenTo(OfficeStore, this.onOfficeStore)
   },
 
@@ -41,7 +40,7 @@ var CampaignStore = Reflux.createStore({
   },
   onFetchCampaignsCompleted (response) {
     this.campaigns.meta = response.meta
-    this.campaigns.raw = response.objects
+    this.campaigns.raw = response.objects[0].campaigns || response.objects
     this.campaigns.index = _.indexBy(this.campaigns.raw, 'id')
     this.processCampaigns()
   },
