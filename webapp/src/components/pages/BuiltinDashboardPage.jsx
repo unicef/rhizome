@@ -99,13 +99,9 @@ var BuiltinDashboardPage = React.createClass({
   setCurrentIndicator (indicators) {
     const indicator_index = _.indexBy(indicators, 'id')
     const query_param = getParamFromQueryString('indicator_id')
-    let indicator = indicators[0]
     if (query_param) {
-      indicator = indicator_index[query_param]
-    } else if (indicator_index[28]) {
-      indicator = indicator_index[28]
+      this.setState({indicator: indicator_index[query_param]})
     }
-    this.setState({indicator: indicator})
   },
 
   _onDashboardChange (state) {
@@ -266,6 +262,7 @@ var BuiltinDashboardPage = React.createClass({
     let {campaign, loading, location, doc_id, doc_tab} = this.state
 
     let dashboardDef = this.state.dashboard
+
     let dashboardName = _.get(dashboardDef, 'title', '')
 
     let campaigns = _(this.state.campaigns)
@@ -312,11 +309,15 @@ var BuiltinDashboardPage = React.createClass({
 
     const table_chart_indicator_ids = this.state.dashboard.charts.filter(chart => chart.type === 'TableChart')[0].indicators
 
+    // by default select the smallest indicator ID //
+    let indicatorIx = _.indexBy(this.state.indicators, 'id')
+    let minIndicatorId = table_chart_indicator_ids.sort()[0]
+    let defaultSelectedIndicator = this.state.indicator || indicatorIx[minIndicatorId]
     let indicatorFilter = <div className='medium-4 columns'>
       <IndicatorTitleMenu
         idsToRender={table_chart_indicator_ids}
         indicators={this.state.indicators}
-        selected={this.state.indicator}
+        selected={defaultSelectedIndicator}
         sendValue={this._setIndicator}/>
     </div>
 
