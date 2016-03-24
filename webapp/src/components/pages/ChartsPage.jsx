@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import orderBy from 'lodash.orderBy'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -6,15 +7,26 @@ import ChartAPI from 'data/requests/ChartAPI'
 import ChartActions from 'actions/ChartActions'
 import ChartStore from 'stores/ChartStore'
 
+
 var ChartsPage = React.createClass({
 
   mixins: [
     Reflux.connect(ChartStore, 'charts'),
   ],
 
+  getInitialState() {
+    return {
+      sort_column: null,
+      sort_desc: true
+    }
+  },
+
   sortCharts (sort_column) {
-    let sorted_charts = _.orderBy(this.state.charts, chart => chart.id )
-    this.setState({ charts: sorted_charts })
+    if (sort_column === this.state.sort_column) {
+      this.setState({sort_desc: !this.state.sort_desc})
+    } else {
+      this.setState({sort_column: sort_column})
+    }
   },
 
   duplicateChart (chart) {
@@ -38,13 +50,15 @@ var ChartsPage = React.createClass({
     }
   },
 
+
   render () {
     let rows = <tr><td colSpan='3'>No custom charts created yet.</td></tr>
-
     if (_.isNull(this.state.charts.list)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
     } else if (this.state.charts.list.length > 0) {
-      rows = this.state.charts.list.map(chart => {
+      const order = this.state.sort_desc ? 'desc' : 'asc'
+      const chart_list = orderBy(this.state.charts.list, this.state.sort_column, order)
+      rows = chart_list.map(chart => {
         return (
           <tr>
             <td>
