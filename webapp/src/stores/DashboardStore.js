@@ -2,13 +2,24 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import moment from 'moment'
 import api from 'data/api'
+import StateMixin from'reflux-state-mixin'
 
+import builtins from 'components/organisms/dashboard/builtin'
 import Location from 'data/requests/LocationAPI'
 
 var DashboardStore = Reflux.createStore({
+
   listenables: [require('actions/DashboardActions')],
 
+  mixins: [StateMixin.store],
+
   init () {
+    this.dashboards = {
+      list: null,
+      meta: null,
+      raw: null,
+      index: null
+    }
     this.loaded = true
     this.indicators = {}
   },
@@ -127,6 +138,32 @@ var DashboardStore = Reflux.createStore({
         this.indicators[hash] = _.defaults({duration: duration, indicators: [id]}, base)
       }
     })
+  },
+
+  // =========================================================================== //
+  //                               API CALL HANDLERS                             //
+  // =========================================================================== //
+  // =============================  Fetch Dashboards  ========================== //
+  onFetchDashboards () {
+    this.setState({ loading: true })
+  },
+  onFetchDashboardsCompleted (response) {
+    const dashboards = response.objects[0].dashboards || response.objects
+    this.dashboards.raw = dashboards
+    this.dashboards.meta = response.meta
+    this.dashboards.index = _.indexBy(this.dashboards.raw, 'id')
+    const all_dashboards = builtins.concat(_(dashboards).sortBy('id').reverse().value())
+    // Patch the non-comformant API response
+    this.dashboards.list = _(all_dashboards).map(dashboard => {
+      dashboard.charts = dashboard.charts || dashboard.dashboard_json
+      return dashboard
+    })
+    .reject(_.isNull)
+    .value()
+    this.trigger(this.dashboards)
+  },
+  onFetchDashboardsFailed (error) {
+    this.setState({ error: error })
   }
 })
 
