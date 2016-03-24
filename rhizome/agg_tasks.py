@@ -62,6 +62,8 @@ class AggRefresh(object):
         latest_dp_source = DataPoint.objects.filter(campaign_id = \
             self.campaign.id).order_by('-created_at')[0].source_submission_id
 
+        print('latest_dp_source')
+        print latest_dp_source
         self.document_id = SourceSubmission.objects.get(id = latest_dp_source)\
             .document_id
 

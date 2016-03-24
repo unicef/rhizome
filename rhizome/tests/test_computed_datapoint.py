@@ -16,16 +16,12 @@ class ComputedDatapointResourceTest(ResourceTestCase):
 
     #GET request: pass in a 'document_id' field to retrieve all computed data points for that
     #document. Returns 200 code with an empty set of objects if the id is invalid
-    def _get_computed_datapoint(self):
-        ## Martha - see Here
-        ## https://trello.com/c/pgVLF4o2/208-fix-datapoint-computed-api-test
+    def test_get_computed_datapoint(self):
         get_data = {'document_id':self.doc_id}
     	resp = self.ts.get(self, '/api/v1/computed_datapoint/', get_data)
     	self.assertHttpOK(resp)
     	resp_data = self.deserialize(resp)
-
         db_data = DataPointComputed.objects.filter(document_id = self.doc_id).values()
-
     	self.assertEqual(len(resp_data['objects']), len(db_data))
 
     def create_metadata(self):
