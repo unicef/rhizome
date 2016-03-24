@@ -2,7 +2,7 @@ from pandas import read_csv
 from pandas import notnull
 from pandas import to_datetime
 import json
-
+from rhizome.api.exceptions import DatapointsException
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -25,14 +25,18 @@ class DocTransform(object):
 
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
-
+        print 'here1'
         raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+        print 'here2'
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-
-        csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
-
+        try:
+            csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
+        except Exception as err:
+            dp_error_message = '%s is a required column.' %err.message
+            raise DatapointsException(message=dp_error_message)
+        print 'here4'
         self.csv_df = csv_df
-
+        print 'here5'
         self.file_header = csv_df.columns
 
         self.meta_lookup = {
@@ -41,7 +45,7 @@ class DocTransform(object):
             'campaign':{}
         }
         self.indicator_ids_to_exclude = Set([-1])
-
+        print 'here6'
         self.existing_submission_keys = SourceSubmission.objects.filter(
             document_id = self.document.id).values_list('instance_guid',flat=True)
 
