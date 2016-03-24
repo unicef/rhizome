@@ -67,7 +67,6 @@ const DataExplorer = React.createClass({
       if (campaigns.raw[0]) { DataExplorerActions.setCampaignIds([campaigns.raw[0].id])}
     })
     RootStore.listen(this.getChart)
-    ChartStore.listen(this.getChart)
   },
 
   getChart () {
