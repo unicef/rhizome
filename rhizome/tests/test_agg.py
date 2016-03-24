@@ -20,7 +20,7 @@ class AggRefreshTestCase(TestCase):
 
         super(AggRefreshTestCase, self).__init__(*args, **kwargs)
 
-    def set_up(self):
+    def setUp(self):
 
         data_df = read_csv('rhizome/tests/_data/calc_data.csv')
         self.create_metadata()
@@ -29,9 +29,9 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
         self.campaign_id = Campaign.objects.all()[0].id
-
         ltr = LocationTreeCache()
         ltr.main()
+
 
     def create_metadata(self):
         '''
@@ -89,6 +89,7 @@ class AggRefreshTestCase(TestCase):
         ).id
 
 
+
     def model_df_to_data(self,model_df,model):
 
         meta_ids = []
@@ -121,7 +122,6 @@ class AggRefreshTestCase(TestCase):
 
         document_id = Document.objects.get(doc_title='test').id
         ss_id = SourceSubmission.objects.get(document_id = document_id).id
-
         dp = DataPoint.objects.create(
             location_id = location_id,
             data_date = data_date,
@@ -148,8 +148,6 @@ class AggRefreshTestCase(TestCase):
         python manage.py test rhizome.tests.test_agg.AggRefreshTestCase.test_location_aggregation --settings=rhizome.settings.test
 
         '''
-
-        self.set_up()
         self.create_raw_datapoints()
 
         indicator_id, data_date, raw_location_id,\
@@ -285,7 +283,6 @@ class AggRefreshTestCase(TestCase):
         datapoint_with_computed table no matter what.
         '''
 
-        self.set_up()
         self.create_raw_datapoints()
         indicator_id, data_date, raw_location_id,\
             agg_location_id, campaign_id = 22,'2016-01-01',12910,12907,1
@@ -321,7 +318,7 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(raw_value, raw_value_in_agg)
 
-    def _sum_and_pct(self):
+    def test_sum_and_pct(self):
         '''
         The system uses the "PART_TO_BE_SUMMED" edge type in order to create
         indicators such that the sum of:
@@ -343,12 +340,8 @@ class AggRefreshTestCase(TestCase):
             calculation.
         '''
 
-        self.set_up()
-
         data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         val_1, val_2, val_3 = 303, 808, 909
-        campaign_id = 1
-
         ## create the parent and sub indicators ##
         parent_indicator = Indicator.objects.create(
             name = 'Number of Avoidable Deaths',
@@ -419,32 +412,33 @@ class AggRefreshTestCase(TestCase):
             calculation = 'DENOMINATOR'
         )
 
+        ss_id = SourceSubmission.objects.all()[0].id
         ## create the datapoints ##
         dp_1 = DataPoint.objects.create(
             indicator_id = sub_indicator_1.id,
             data_date = data_date,
             location_id = location_id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             value = val_1,
-            source_submission_id = 1,
+            source_submission_id = ss_id,
             cache_job_id = -1,
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_2.id,
             data_date = data_date,
             location_id = location_id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             value = val_2,
-            source_submission_id = 1,
+            source_submission_id = ss_id,
             cache_job_id = -1,
         )
         dp_3 = DataPoint.objects.create(
             indicator_id = sub_indicator_3.id,
             data_date = data_date,
             location_id = location_id,
-            campaign_id = campaign_id,
+            campaign_id = self.campaign_id,
             value = val_3,
-            source_submission_id = 1,
+            source_submission_id = ss_id,
             cache_job_id = -1,
         )
 
@@ -470,7 +464,7 @@ class AggRefreshTestCase(TestCase):
         pct_target_value = val_3 / float(sum_target_value)
         self.assertEqual(calc_value_pct,pct_target_value)
 
-    def _part_of_difference(self):
+    def test_part_of_difference(self):
         '''
         see here: rhizome.work/manage_system/manage/indicator/187
 
@@ -481,7 +475,6 @@ class AggRefreshTestCase(TestCase):
              WHOLE_OF_DIFFERENCE(x)
         '''
 
-        self.set_up()
 
         data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         x, y = 303.00, 808.00
@@ -523,6 +516,7 @@ class AggRefreshTestCase(TestCase):
             calculation = 'WHOLE_OF_DIFFERENCE'
         )
 
+        ss_id = SourceSubmission.objects.all()[0].id
         ## create the datapoints ##
         dp_1 = DataPoint.objects.create(
             indicator_id = sub_indicator_denom.id,
@@ -530,7 +524,7 @@ class AggRefreshTestCase(TestCase):
             location_id = location_id,
             campaign_id = self.campaign_id,
             value = x,
-            source_submission_id = 1,
+            source_submission_id = ss_id,
             cache_job_id = -1,
         )
         dp_2 = DataPoint.objects.create(
@@ -539,7 +533,7 @@ class AggRefreshTestCase(TestCase):
             location_id = location_id,
             campaign_id = self.campaign_id,
             value = y,
-            source_submission_id = 1,
+            source_submission_id = ss_id,
             cache_job_id = -1,
         )
 
@@ -569,7 +563,6 @@ class AggRefreshTestCase(TestCase):
         There are two levels here and this test aims to cover this use case.
         '''
 
-        self.set_up()
         data_date, location_id = '2016-01-01',12910
 
         parent_indicator = Indicator.objects.create(
