@@ -139,7 +139,7 @@ const DataExplorer = React.createClass({
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
       </h1>
 
-    const chart_component = chart.def.type === 'RawData'?
+    const ChartComponent = chart.def.type === 'RawData'?
       <DatabrowserTable
         data={this.state.datapoints.raw}
         selected_locations={chart.def.selected_locations}
@@ -150,7 +150,7 @@ const DataExplorer = React.createClass({
 
     // SIDEBAR
     // ---------------------------------------------------------------------------
-    const call_to_actions = (
+    const CallToActions = (
       <div className='row collapse'>
         <button className='expand button success' disabled={disableSave} onClick={this._saveChart} style={{marginTop: 0}}>
           <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
@@ -165,7 +165,7 @@ const DataExplorer = React.createClass({
       </div>
     )
 
-    const date_range_picker = chart.def.type === 'LineChart' ? (
+    const DateRangePicker = chart.def.type === 'LineChart' ? (
       <div className='medium-12 columns'>
         <h3>Time</h3>
         <DateRangePicker
@@ -178,18 +178,18 @@ const DataExplorer = React.createClass({
       </div>
     ) : ''
 
-    const campaign_dropdown = chart.def.type !== 'RawData' && chart.def.type !== 'LineChart' ?
-    (
-      <div className='row collapse'>
-        <h3>Campaign</h3>
-        <CampaignTitleMenu
-          campaigns={this.state.campaigns.raw}
-          selected={chart.def.selected_campaigns[0]}
-          sendValue={DataExplorerActions.setCampaignIds}/>
-      </div>
-    ) : ''
+    const CampaignDropdown = chart.def.type !== 'LineChart' && !_.isEmpty(this.state.campaigns.raw) && !_.isEmpty(chart.def.selected_campaigns)
+      ? (
+        <div className='row collapse'>
+          <h3>Campaign</h3>
+          <CampaignTitleMenu
+            campaigns={this.state.campaigns.raw}
+            selected={_.isEmpty(chart.def.selected_campaigns) ? null : chart.def.selected_campaigns[0]}
+            sendValue={DataExplorerActions.setCampaignIds}/>
+        </div>
+      ) : <Placeholder height={100}/>
 
-    const location_selector = (
+    const LocationSelector = (
       <LocationSelector
         locations={this.state.locations}
         preset_location_ids={preset_location_ids}
@@ -198,7 +198,7 @@ const DataExplorer = React.createClass({
       />
     )
 
-    const indicator_selector = (
+    const IndicatorSelector = (
       <IndicatorSelector
         indicators={this.state.indicators}
         preset_indicator_ids={preset_indicator_ids}
@@ -209,7 +209,7 @@ const DataExplorer = React.createClass({
 
     // FOOTER
     // ---------------------------------------------------------------------------
-    const footer = (
+    const Footer = (
       <footer className={'row hideable' + (this.state.footerHidden ? ' descended' : '')}>
         <div className='medium-7 columns'>
           <h3>View</h3>
@@ -233,16 +233,11 @@ const DataExplorer = React.createClass({
 
     // PLACEHOLDERS
     // ---------------------------------------------------------------------------
-    const campaign_placeholder = <Placeholder height={18}/>
     let chart_placeholder = <Placeholder height={600}/>
     if (chart.data && chart.data.length === 0) {
       chart_placeholder =  <Placeholder height={600} text='NO DATA' loading={false}/>
     }
-    console.log('----------------------- this -----------------------')
-    console.log('chart.data', chart.data)
-    console.log('this.state.charts.raw', this.state.charts.raw)
     const missingParams = _.isEmpty(chart.def.indicator_ids) || _.isEmpty(chart.def.location_ids)
-    console.log('missingParams', missingParams)
     if (!chart.data && missingParams) {
       chart_placeholder = <Placeholder height={600} text='Please select an INDICATOR and LOCATION' loading={false}/>
     }
@@ -250,21 +245,21 @@ const DataExplorer = React.createClass({
     return (
       <section className='data-explorer'>
         <div className='medium-3 large-2 medium-push-9 large-push-10 columns'>
-          { call_to_actions }
+          { CallToActions }
           <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
-            { date_range_picker }
-            {!_.isEmpty(this.state.campaigns.raw) ? campaign_dropdown : campaign_placeholder}
-            { indicator_selector }
-            { location_selector }
+            { DateRangePicker }
+            { CampaignDropdown }
+            { IndicatorSelector }
+            { LocationSelector }
           </div>
         </div>
         <div className='medium-9 large-10 medium-pull-3 large-pull-2 columns'>
           <div className='row chart-header'>
             { title_bar }
           </div>
-          {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
+          {!_.isEmpty(chart.data) ? ChartComponent : chart_placeholder}
         </div>
-        { footer }
+        { Footer }
       </section>
     )
   }
