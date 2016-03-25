@@ -73,6 +73,10 @@ const DataExplorer = React.createClass({
     }
   },
 
+  shouldComponentUpdate(nextProps, nextState) {
+    return !_.isEmpty(nextState.datapoints.raw)
+  },
+
   // =========================================================================== //
   //                                EVENT HANDLERS                               //
   // =========================================================================== //
@@ -109,7 +113,7 @@ const DataExplorer = React.createClass({
   // =========================================================================== //
   //                                    RENDER                                   //
   // =========================================================================== //
-  getChartComponentByType(type) {
+  getChartComponentByType (type) {
     if (type === 'TableChart') {
       return <TableChart {...this.state.chart} />
     } else if (type === 'LineChart') {
@@ -147,7 +151,7 @@ const DataExplorer = React.createClass({
 
     const chart_component = chart.type === 'RawData'?
       <DatabrowserTable
-        data={this.state.datapoints.raw}
+        data={chart.data}
         selected_locations={chart.selected_locations}
         selected_indicators={chart.selected_indicators}
       />
@@ -182,7 +186,6 @@ const DataExplorer = React.createClass({
         <br/>
       </div>
     ) : ''
-
 
     const campaign_selector = chart.type !== 'LineChart' ? (
       <CampaignSelector
@@ -237,7 +240,7 @@ const DataExplorer = React.createClass({
     // ---------------------------------------------------------------------------
     let chart_placeholder = <Placeholder height={600}/>
     if (chart.data && chart.data.length === 0) {
-      chart_placeholder =  <Placeholder height={600} text='NO DATA' loading={false}/>
+      chart_placeholder = <Placeholder height={600} text='NO DATA' loading={false}/>
     }
     const missingParams = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
     if (!chart.data && missingParams) {

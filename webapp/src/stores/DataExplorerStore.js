@@ -224,19 +224,17 @@ var DataExplorerStore = Reflux.createStore({
       chart.data = datapoints
       return chart
     }
-    const selected_locations = this.chart.selected_locations
-    const selected_indicators = this.chart.selected_indicators
-    const selected_locations_index = _.indexBy(selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(selected_indicators, 'id')
+    const selected_locations_index = _.indexBy(this.chart.selected_locations, 'id')
+    const selected_indicators_index = _.indexBy(this.chart.selected_indicators, 'id')
     const groups = chart.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
     const layout = 1 // hard coded for now
-    const melted_datapoints = this.melt(datapoints, selected_indicators)
+    const melted_datapoints = this.melt(datapoints, this.chart.selected_indicators)
 
     switch (chart.type) {
       case 'LineChart':
         return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
       // case 'PieChart':
-        // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, selected_indicators, layout)
+        // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.chart.selected_indicators, layout)
       case 'ChoroplethMap':
         return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
