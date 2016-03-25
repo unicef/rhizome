@@ -61,13 +61,13 @@ const DataExplorer = React.createClass({
 
   componentDidMount () {
     if (this.props.chart_id) { this.setState({footerHidden: true}) }
-    RootStore.listen( this.getChart)
-
-    this.joinTrailing(LocationStore, LocationSelectorStore, IndicatorStore, IndicatorSelectorStore,
-      CampaignStore, this.setInitialData)
+    RootStore.listen(this.getChart)
+    this.joinTrailing(LocationSelectorStore, IndicatorSelectorStore, CampaignStore, this.setInitialData)
+    IndicatorSelectorStore.listen(DataExplorerActions.setIndicators)
+    LocationSelectorStore.listen(DataExplorerActions.setLocations)
   },
 
-  setInitialData (locations, selected_locations, indicators, selected_indicators, campaigns) {
+  setInitialData (selected_locations, selected_indicators, campaigns) {
     // joinTrailing delivers everythign in a 1 item array for some reason
     DataExplorerActions.setIndicators(selected_indicators[0])
     DataExplorerActions.setLocations(selected_locations[0])

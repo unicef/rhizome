@@ -108,14 +108,12 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
 
+  // =============================  Set Indicators  ============================ //
   onSetIndicators (indicators) {
     if (_.isArray(indicators)) {
-      this.chart.selected_indicators = indicators.map(indicators => {
-        return _.isNumber(indicators) || _.isString(indicators) ? this.indicators.index[indicators] : indicators
-      })
+      this.chart.selected_indicators = indicators.map(ind => this.couldBeId(ind) ? this.indicators.index[ind] : ind)
     } else {
-      const indicator = indicators // If only one is passed
-      this.chart.selected_indicators = _.isNumber(indicator) || _.isString(indicator) ? [this.indicators.index[indicator]] : [indicator]
+      this.chart.selected_indicators = this.couldBeId(indicators) ? [this.indicators.index[indicators]] : [indicators]
     }
     this.chart.headers = this.chart.selected_indicators
     this.chart.xDomain = this.chart.headers.map(indicator => indicator.short_name)
@@ -125,14 +123,12 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
 
+  // =============================  Set Locations  ============================ //
   onSetLocations (locations) {
     if (_.isArray(locations)) {
-      this.chart.selected_locations = locations.map(locations => {
-        return _.isNumber(locations) || _.isString(locations) ? this.locations.index[locations] : locations
-      })
+      this.chart.selected_locations = locations.map(location => this.couldBeId(location) ? this.locations.index[location] : location)
     } else {
-      const location = locations // If only one is passed
-      this.chart.selected_locations = _.isNumber(location) || _.isString(location) ? [this.locations.index[location]] : [location]
+      this.chart.selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
     }
     if (this.chart.type === 'ChoroplethMap') {
       this.chart.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
@@ -141,14 +137,12 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
 
+  // =============================  Set Campaigns  ============================ //
   onSetCampaigns (campaigns) {
     if (_.isArray(campaigns)) {
-      this.chart.selected_campaigns = campaigns.map(campaign => {
-        return _.isNumber(campaign) || _.isString(campaign) ? this.campaigns.index[campaign] : campaign
-      })
+      this.chart.selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
     } else {
-      const campaign = campaigns // If only one is passed
-      this.chart.selected_campaigns = _.isNumber(campaign) || _.isString(campaign) ? [this.campaigns.index[campaign]] : [campaign]
+      this.chart.selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
     }
     this.chart.start_date = this.chart.selected_campaigns[0].start_date
     this.chart.end_date = this.chart.selected_campaigns[0].end_date
@@ -159,6 +153,7 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
 
+  // ===============================  Set Type  ============================= //
   onSetType (type) {
     this.chart.type = type
     this.chart.data = null
@@ -279,6 +274,10 @@ var DataExplorerStore = Reflux.createStore({
       melted_datapoint.location = this.locations.index[melted_datapoint.location]
     })
     return melted_datapoints
+  },
+
+  couldBeId (value) {
+    return _.isNumber(value) || _.isString(value)
   }
 
 })
