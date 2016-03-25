@@ -61,36 +61,36 @@ const IndicatorSelector = React.createClass({
   render () {
     const props = this.props
     const raw_indicators = props.indicators.raw || []
-    const single_selector = (
-      <div className={props.classes}>
-        <h3>Indicator</h3>
-        <IndicatorTitleMenu
-          idsToRender={raw_indicators.map(indicator => indicator.id)}
-          indicators={raw_indicators}
-          selected={this.state.selected_indicators[0]}
-          sendValue={IndicatorSelectorActions.setSelectedIndicators}
-        />
-      </div>
-    )
-
-    const available_indicators = this.getAvailableIndicators()
-    const multi_selector = (
-      <form className={props.classes}>
-        <h3>Indicators
-          <DropdownMenu
-            items={available_indicators}
-            sendValue={IndicatorSelectorActions.selectIndicator}
-            item_plural_name='Indicators'
-            style='icon-button right'
-            icon='fa-plus'
+    if (props.multi) {
+      const available_indicators = this.getAvailableIndicators()
+      return (
+        <form className={props.classes}>
+          <h3>Indicators
+            <DropdownMenu
+              items={available_indicators}
+              sendValue={IndicatorSelectorActions.selectIndicator}
+              item_plural_name='Indicators'
+              style='icon-button right'
+              icon='fa-plus'
+            />
+          </h3>
+          <a className='remove-filters-link' onClick={IndicatorSelectorActions.clearSelectedIndicators}>Remove All </a>
+          <ReorderableList items={this.state.selected_indicators} removeItem={IndicatorSelectorActions.deselectIndicator} dragItem={IndicatorSelectorActions.reorderIndicator} />
+        </form>
+      )
+    } else {
+      return (
+        <div className={props.classes}>
+          <h3>Indicator</h3>
+          <IndicatorTitleMenu
+            idsToRender={raw_indicators.map(indicator => indicator.id)}
+            indicators={raw_indicators}
+            selected={this.state.selected_indicators[0]}
+            sendValue={IndicatorSelectorActions.setSelectedIndicators}
           />
-        </h3>
-        <a className='remove-filters-link' onClick={IndicatorSelectorActions.clearSelectedIndicators}>Remove All </a>
-        <ReorderableList items={this.state.selected_indicators} removeItem={IndicatorSelectorActions.deselectIndicator} dragItem={IndicatorSelectorActions.reorderIndicator} />
-      </form>
-    )
-
-    return props.multi ? multi_selector : single_selector
+        </div>
+      )
+    }
   }
 })
 

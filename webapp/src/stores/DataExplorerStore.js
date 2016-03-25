@@ -252,11 +252,12 @@ var DataExplorerStore = Reflux.createStore({
   },
 
   chartParamsAreReady () {
+    const campaignsReady = !_.isEmpty(this.chart.selected_campaigns)
     const selectedLocationsReady = !_.isEmpty(this.chart.selected_locations)
     const selectedIndicatorsReady = !_.isEmpty(this.chart.selected_indicators)
     const startDateReady = !_.isEmpty(this.chart.start_date)
     const endDateReady = !_.isEmpty(this.chart.end_date)
-    return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady
+    return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady && campaignsReady
   },
 
   melt (datapoints, selected_indicators) {

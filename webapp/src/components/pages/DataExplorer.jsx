@@ -7,10 +7,9 @@ import moment from 'moment'
 import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
-import CampaignTitleMenu from 'components/molecules/menus/CampaignTitleMenu'
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
-import Chart from 'components/molecules/charts/Chart'
 import ExportPdf from 'components/molecules/ExportPdf'
+import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -19,6 +18,7 @@ import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
 
+import CampaignSelectorStore from 'stores/CampaignSelectorStore'
 import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
 import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationStore from 'stores/LocationStore'
@@ -34,7 +34,6 @@ import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import DataExplorerActions from 'actions/DataExplorerActions'
-import IndicatorSelectorActions from 'actions/IndicatorSelectorActions'
 import ChartActions from 'actions/ChartActions'
 
 const DataExplorer = React.createClass({
@@ -62,16 +61,9 @@ const DataExplorer = React.createClass({
   componentDidMount () {
     if (this.props.chart_id) { this.setState({footerHidden: true}) }
     RootStore.listen(this.getChart)
-    this.joinTrailing(LocationSelectorStore, IndicatorSelectorStore, CampaignStore, this.setInitialData)
     IndicatorSelectorStore.listen(DataExplorerActions.setIndicators)
     LocationSelectorStore.listen(DataExplorerActions.setLocations)
-  },
-
-  setInitialData (selected_locations, selected_indicators, campaigns) {
-    // joinTrailing delivers everythign in a 1 item array for some reason
-    DataExplorerActions.setIndicators(selected_indicators[0])
-    DataExplorerActions.setLocations(selected_locations[0])
-    DataExplorerActions.setCampaigns(campaigns[0].raw[0])
+    CampaignSelectorStore.listen(DataExplorerActions.setCampaigns)
   },
 
   getChart () {
@@ -191,16 +183,13 @@ const DataExplorer = React.createClass({
       </div>
     ) : ''
 
-    const campaign_dropdown = chart.type !== 'LineChart' && !_.isEmpty(this.state.campaigns.raw) && !_.isEmpty(chart.selected_campaigns)
-      ? (
-        <div className='row collapse'>
-          <h3>Campaign</h3>
-          <CampaignTitleMenu
-            campaigns={this.state.campaigns.raw}
-            selected={_.isEmpty(chart.selected_campaigns) ? null : chart.selected_campaigns[0]}
-            sendValue={DataExplorerActions.setCampaigns}/>
-        </div>
-      ) : <Placeholder height={100}/>
+
+    const campaign_selector = chart.type !== 'LineChart' ? (
+      <CampaignSelector
+        campaigns={this.state.campaigns}
+        classes={'medium-12 columns'}
+      />
+    ) : ''
 
     const location_selector = (
       <LocationSelector
@@ -261,7 +250,7 @@ const DataExplorer = React.createClass({
           { call_to_actions }
           <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
             { date_range_picker }
-            { campaign_dropdown }
+            { campaign_selector }
             { indicator_selector }
             { location_selector }
           </div>

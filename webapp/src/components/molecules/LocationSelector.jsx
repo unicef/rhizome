@@ -69,35 +69,35 @@ const LocationSelector = React.createClass({
     }
 
     const locations = props.locations.raw || []
-    const single_selector = (
-      <div className={props.classes}>
-        <h3>Location</h3>
-        <RegionTitleMenu
-          locations={locations}
-          selected={this.state.selected_locations[0]}
-          sendValue={LocationSelectorActions.setSelectedLocations}
-        />
-      </div>
-    )
-
-    const multi_selector = (
-      <form className={props.classes}>
-        <h3>Locations
-          <DropdownMenu
-            items={location_options}
-            sendValue={LocationSelectorActions.selectLocation}
-            item_plural_name='Locations'
-            style='icon-button right'
-            icon='fa-plus'
-            grouped/>
-        </h3>
-        <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
-        <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
-        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-      </form>
-    )
-
-    return props.multi ? multi_selector : single_selector
+    if (props.multi) {
+      return (
+        <form className={props.classes}>
+          <h3>Locations
+            <DropdownMenu
+              items={location_options}
+              sendValue={LocationSelectorActions.selectLocation}
+              item_plural_name='Locations'
+              style='icon-button right'
+              icon='fa-plus'
+              grouped/>
+          </h3>
+          <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
+          <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
+          <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+        </form>
+      )
+    } else {
+      return (
+        <div className={props.classes}>
+          <h3>Location</h3>
+          <RegionTitleMenu
+            locations={locations}
+            selected={this.state.selected_locations[0]}
+            sendValue={LocationSelectorActions.setSelectedLocations}
+          />
+        </div>
+      )
+    }
   }
 })
 

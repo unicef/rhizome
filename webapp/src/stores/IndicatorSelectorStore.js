@@ -50,7 +50,7 @@ const IndicatorSelectorStore = Reflux.createStore({
     this.trigger(this.selected_indicators)
   },
 
-  onClearSelectedIndicators (id) {
+  onClearSelectedIndicators () {
     this.selected_indicators = []
     this.trigger(this.selected_indicators)
   }

@@ -59,7 +59,7 @@ const LocationSelectorStore = Reflux.createStore({
     this.trigger(this.selected_locations)
   },
 
-  onClearSelectedLocations (id) {
+  onClearSelectedLocations () {
     this.selected_locations = []
     this.trigger(this.selected_locations)
   }

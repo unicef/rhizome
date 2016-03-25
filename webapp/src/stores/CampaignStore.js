@@ -11,7 +11,7 @@ var CampaignStore = Reflux.createStore({
 
   listenables: CampaignActions,
 
-  offices_index: {},
+  offices_index: null,
 
   campaigns: {
     meta: null,
