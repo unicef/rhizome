@@ -26,7 +26,7 @@ const IndicatorSelector = React.createClass({
     multi: PropTypes.bool
   },
 
-  getDefaultProps() {
+  getDefaultProps () {
     return {
       multi: false,
       preset_indicator_ids: null

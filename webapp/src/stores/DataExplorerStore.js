@@ -70,12 +70,13 @@ var DataExplorerStore = Reflux.createStore({
     const chart_json = typeof response.chart_json === 'string' ? JSON.parse(response.chart_json) : response.chart_json
     this.chart.id = response.id
     this.chart.title = response.title
+    this.chart.type = chart_json.type
     this.chart.start_date = chart_json.start_date
     this.chart.end_date = chart_json.end_date
     this.chart.selected_campaigns = chart_json.campaign_ids.map(id => this.campaigns.index[id])
     this.chart.selected_locations = chart_json.location_ids.map(id => this.locations.index[id])
     this.chart.selected_indicators = chart_json.indicator_ids.map(id => this.indicators.index[id])
-    DataExplorerActions.setType(chart_json.type)
+    this.updateChart()
   },
   onFetchChartFailed (error) {
     this.setState({ error: error })
@@ -145,8 +146,6 @@ var DataExplorerStore = Reflux.createStore({
   // ===============================  Set Type  ============================= //
   onSetType (type) {
     this.chart.type = type
-    this.chart.data = null
-
     this.updateChart()
   },
 
@@ -175,7 +174,6 @@ var DataExplorerStore = Reflux.createStore({
     this.chart.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.chart.default_sort_order = datapoints.meta.default_sort_order
     this.chart = this.formatChartByType()
-    this.trigger(this.chart)
   },
 
   // =========================================================================== //
@@ -191,8 +189,10 @@ var DataExplorerStore = Reflux.createStore({
         type: this.chart.type
       })
     } else {
-      DatapointActions.clearDatapoints()
-      this.chart.data = null
+      if (this.chart.data !== null) {
+        DatapointActions.clearDatapoints()
+        this.chart.data = null
+      }
       this.trigger(this.chart)
     }
   },

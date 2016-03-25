@@ -59,22 +59,24 @@ const DataExplorer = React.createClass({
   },
 
   componentDidMount () {
-    if (this.props.chart_id) { this.setState({footerHidden: true}) }
-    RootStore.listen(this.getChart)
+    RootStore.listen(() => {
+      const state = this.state
+      if (this.props.chart_id && state.locations.index && state.indicators.index && state.charts.index) {
+        return DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
+      }
+    })
     IndicatorSelectorStore.listen(DataExplorerActions.setIndicators)
     LocationSelectorStore.listen(DataExplorerActions.setLocations)
     CampaignSelectorStore.listen(DataExplorerActions.setCampaigns)
-  },
-
-  getChart () {
-    const dataIsReady = this.state.locations.index && this.state.indicators.index && this.state.charts.index
-    if (this.props.chart_id && dataIsReady) {
-      DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
-    }
+    if (this.props.chart_id) { this.setState({footerHidden: true}) }
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEmpty(nextState.datapoints.raw) || _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
+    const missing_datapoints =  _.isEmpty(nextState.datapoints.raw)
+    const missing_chart_data = _.isEmpty(nextState.chart.data)
+    const missing_data = nextState.chart.type === 'RawData' ? missing_datapoints : missing_chart_data
+    const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
+    return !missing_data && !missing_params
   },
 
   // =========================================================================== //
@@ -174,8 +176,8 @@ const DataExplorer = React.createClass({
       </div>
     )
 
-    const date_range_picker = chart.type === 'LineChart' ? (
-      <div className='medium-12 columns'>
+    const date_range_picker = chart.type === 'LineChart' || chart.type === 'TableChart' ? (
+      <div className=''>
         <h3>Time</h3>
         <DateRangePicker
           sendValue={DataExplorerActions.setDateRange}

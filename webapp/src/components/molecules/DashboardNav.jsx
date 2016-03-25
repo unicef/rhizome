@@ -32,7 +32,6 @@ let DashboardNav = React.createClass({
 
   render: function () {
     let dashboards = this.state.dashboards
-
     if (!_.isUndefined(dashboards) && dashboards.length > 14) {
       dashboards = _.slice(dashboards, 0, 14)
     }
