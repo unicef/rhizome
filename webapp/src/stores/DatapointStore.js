@@ -48,7 +48,6 @@ var DatapointStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onClearDatapoints () {
-    console.log('----------------------- onClearDatapoints -----------------------')
     this.setState({ meta: null, melted: null, raw: null })
   },
 

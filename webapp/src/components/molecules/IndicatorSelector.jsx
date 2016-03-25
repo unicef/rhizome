@@ -37,6 +37,8 @@ const IndicatorSelector = React.createClass({
     IndicatorStore.listen(indicators => {
       if (this.props.preset_indicator_ids && indicators.index) {
         IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
+        // Set state here manually to make sure any preset indicators are ready immediately
+        this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => nextProps.indicators.index[id])})
       }
     })
   },
