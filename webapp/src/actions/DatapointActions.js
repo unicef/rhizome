@@ -2,7 +2,8 @@ import Reflux from 'reflux'
 import api from 'data/api'
 
 const DatapointActions = Reflux.createActions({
-  'fetchDatapoints': { children: ['completed', 'failed'], asyncResult: true }
+  'fetchDatapoints': { children: ['completed', 'failed'], asyncResult: true },
+  'clearDatapoints': 'clearDatapoints'
 })
 
 // API CALLS

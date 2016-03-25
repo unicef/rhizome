@@ -74,7 +74,7 @@ const DataExplorer = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEmpty(nextState.datapoints.raw)
+    return !_.isEmpty(nextState.datapoints.raw) || _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
   },
 
   // =========================================================================== //
@@ -188,10 +188,7 @@ const DataExplorer = React.createClass({
     ) : ''
 
     const campaign_selector = chart.type !== 'LineChart' ? (
-      <CampaignSelector
-        campaigns={this.state.campaigns}
-        classes={'medium-12 columns'}
-      />
+      <CampaignSelector campaigns={this.state.campaigns} />
     ) : ''
 
     const location_selector = (
@@ -250,10 +247,10 @@ const DataExplorer = React.createClass({
     return (
       <section className='data-explorer'>
         <div className='medium-3 large-2 medium-push-9 large-push-10 columns'>
-          { call_to_actions }
-          <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
+            { call_to_actions }
             { date_range_picker }
             { campaign_selector }
+          <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
             { indicator_selector }
             { location_selector }
           </div>

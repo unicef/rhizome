@@ -68,19 +68,13 @@ var DataExplorerStore = Reflux.createStore({
   },
   onFetchChartCompleted (response) {
     const chart_json = typeof response.chart_json === 'string' ? JSON.parse(response.chart_json) : response.chart_json
-    this.chart.campaign_ids = chart_json.campaign_ids
-    this.chart.start_date = chart_json.start_date
-    this.chart.end_date = chart_json.end_date
     this.chart.id = response.id
     this.chart.title = response.title
-    this.chart.selected_locations = chart_json.campaign_ids.map(id => this.campaigns.index[id])
+    this.chart.start_date = chart_json.start_date
+    this.chart.end_date = chart_json.end_date
+    this.chart.selected_campaigns = chart_json.campaign_ids.map(id => this.campaigns.index[id])
     this.chart.selected_locations = chart_json.location_ids.map(id => this.locations.index[id])
     this.chart.selected_indicators = chart_json.indicator_ids.map(id => this.indicators.index[id])
-    this.chart.headers = this.chart.selected_indicators
-    this.chart.xDomain = this.chart.headers.map(indicator => indicator.short_name)
-    this.chart.x = this.chart.selected_indicators[0]
-    this.chart.y = this.chart.selected_indicators[1] ? this.chart.selected_indicators[1].id : 0
-    this.chart.z = this.chart.selected_indicators[2] ? this.chart.selected_indicators[2].id : 0
     DataExplorerActions.setType(chart_json.type)
   },
   onFetchChartFailed (error) {
@@ -110,29 +104,24 @@ var DataExplorerStore = Reflux.createStore({
 
   // =============================  Set Indicators  ============================ //
   onSetIndicators (indicators) {
-    if (_.isArray(indicators)) {
+    if (_.isEmpty(indicators)) {
+      this.chart.selected_indicators = []
+    } else if (_.isArray(indicators)) {
       this.chart.selected_indicators = indicators.map(ind => this.couldBeId(ind) ? this.indicators.index[ind] : ind)
     } else {
       this.chart.selected_indicators = this.couldBeId(indicators) ? [this.indicators.index[indicators]] : [indicators]
     }
-    this.chart.headers = this.chart.selected_indicators
-    this.chart.xDomain = this.chart.headers.map(indicator => indicator.short_name)
-    this.chart.x = this.chart.selected_indicators[0]
-    this.chart.y = this.chart.selected_indicators[1] ? this.chart.selected_indicators[1].id : 0
-    this.chart.z = this.chart.selected_indicators[2] ? this.chart.selected_indicators[2].id : 0
     this.updateChart()
   },
 
   // =============================  Set Locations  ============================ //
   onSetLocations (locations) {
-    if (_.isArray(locations)) {
+    if (_.isEmpty(locations)) {
+      this.chart.selected_locations = []
+    } else if (_.isArray(locations)) {
       this.chart.selected_locations = locations.map(location => this.couldBeId(location) ? this.locations.index[location] : location)
     } else {
       this.chart.selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
-    }
-    if (this.chart.type === 'ChoroplethMap') {
-      this.chart.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
-      return DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
     }
     this.updateChart()
   },
@@ -157,18 +146,7 @@ var DataExplorerStore = Reflux.createStore({
   onSetType (type) {
     this.chart.type = type
     this.chart.data = null
-    if (type === 'ChoroplethMap') {
-      this.chart.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
-      return DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
-    }
-    if (type === 'TableChart') {
-      this.chart.start_date = this.chart.selected_campaigns[0].start_date
-      this.chart.end_date = this.chart.selected_campaigns[0].end_date
-      if (this.chart.end_date === this.chart.end_date) {
-        this.chart.start_date = moment(this.chart.start_date).subtract(1, 'M').format('YYYY-MM-DD')
-        this.chart.end_date = moment(this.chart.start_date).add(1, 'M').format('YYYY-MM-DD')
-      }
-    }
+
     this.updateChart()
   },
 
@@ -192,6 +170,7 @@ var DataExplorerStore = Reflux.createStore({
   },
 
   onDatapointStore (datapoints) {
+    if (_.isEmpty(datapoints.raw)) { return }
     this.datapoints = datapoints
     this.chart.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.chart.default_sort_order = datapoints.meta.default_sort_order
@@ -212,6 +191,7 @@ var DataExplorerStore = Reflux.createStore({
         type: this.chart.type
       })
     } else {
+      DatapointActions.clearDatapoints()
       this.chart.data = null
       this.trigger(this.chart)
     }
@@ -236,6 +216,8 @@ var DataExplorerStore = Reflux.createStore({
       // case 'PieChart':
         // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.chart.selected_indicators, layout)
       case 'ChoroplethMap':
+        this.chart.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
+        DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
         return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
         // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart.def, layout)
