@@ -49,13 +49,13 @@ var ChartPage = React.createClass({
     let chart_component = <Placeholder height={200}/>
 
     if (!_.isEmpty(chart.data)) {
-      chart_component = chart.def.type === 'RawData'
+      chart_component = chart.type === 'RawData'
         ? <DatabrowserTable
             data={this.state.datapoints.raw}
-            selected_locations={chart.def.selected_locations}
-            selected_indicators={chart.def.selected_indicators}
+            selected_locations={chart.selected_locations}
+            selected_indicators={chart.selected_indicators}
           />
-        : <Chart type={chart.def.type} data={chart.data} options={chart.def} />
+        : <Chart type={chart.type} data={chart.data} options={chart.def} />
     }
 
     return (
@@ -72,7 +72,7 @@ var ChartPage = React.createClass({
               defaultValue={!_.isEmpty(campaigns) ? campaigns[0].id : null}
               textField='name'
               valueField='id'
-              onChange={campaign => DataExplorerActions.setCampaignIds([campaign.id])}
+              onChange={campaign => DataExplorerActions.setCampaigns([campaign.id])}
             />
           </div>
           <div className='medium-4 columns'>
@@ -81,7 +81,7 @@ var ChartPage = React.createClass({
         </form>
         <div className='row layout-basic'>
           <div className='medium-12 columns text-center'>
-            <h1>{ chart.def.title }</h1>
+            <h1>{ chart.title }</h1>
           </div>
           <div className='medium-12 columns'>
             { chart_component }

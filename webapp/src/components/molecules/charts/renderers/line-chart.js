@@ -4,8 +4,8 @@ import hoverLine from 'components/molecules/charts/renderers/common/hover-line'
 import axisLabel from 'components/molecules/charts/renderers/common/axis-label'
 
 class LineChartRenderer {
-  constructor (data, options, container) {
-    this.setChartParams(data, options, container)
+  constructor (chart, container) {
+    this.setChartParams(chart.data, chart, container)
   }
 
   setChartParams (data, options, container) {
@@ -30,8 +30,8 @@ class LineChartRenderer {
     this.svg = d3.select(this.container)
   }
 
-  update (data, options, container) {
-    this.setChartParams(data, options, container)
+  update (chart, container) {
+    this.setChartParams(chart.data, chart, container)
     this.render()
   }
 

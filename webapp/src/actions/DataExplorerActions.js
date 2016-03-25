@@ -10,10 +10,10 @@ const DataExplorerActions = Reflux.createActions({
   'setPalette': 'setPalette',
   'setType': 'setType',
   'setTitle': 'setTitle',
+  'setIndicators': 'setIndicators',
   'setDateRange': 'setDateRange',
-  'setIndicatorIds': 'setIndicatorIds',
-  'setCampaignIds': 'setCampaignIds',
-  'setLocationIds': 'setLocationIds'
+  'setCampaigns': 'setCampaigns',
+  'setLocations': 'setLocations'
 })
 
 // API CALLS

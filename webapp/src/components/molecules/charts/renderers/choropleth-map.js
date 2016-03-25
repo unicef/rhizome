@@ -5,8 +5,8 @@ import Tooltip from 'components/molecules/Tooltip'
 import Layer from 'react-layer'
 
 class ChoroplethMapRenderer {
-  constructor (data, options, container) {
-    this.setMapParams(data, options, container)
+  constructor (chart, container) {
+    this.setMapParams(chart.data, chart, container)
   }
 
   setMapParams (data, options, container) {
@@ -20,8 +20,8 @@ class ChoroplethMapRenderer {
     this.colorScale = this.getColorScale(options.domain, options.colors)
   }
 
-  update (data, options, container) {
-    this.setMapParams(data, options, container)
+  update (chart, container) {
+    this.setMapParams(chart.data, chart, container)
     this.render()
   }
 

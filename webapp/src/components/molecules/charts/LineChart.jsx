@@ -28,18 +28,26 @@ const DEFAULTS = {
 class LineChart extends Component {
   constructor(props) {
     super(props)
-    this.options = _.defaults({}, props.options, DEFAULTS)
+    this.params = _.defaults({}, props, DEFAULTS)
   }
 
   componentDidMount () {
     this.container = React.findDOMNode(this)
-    this.chart = new LineChartRenderer(this.props.data, this.options, this.container)
+    this.chart = new LineChartRenderer(this.getParams(), this.container)
     this.chart.render()
   }
 
   componentDidUpdate () {
-    this.options = _.defaults({}, this.props.options, this.options)
-    this.chart.update(this.props.data, this.options, this.container)
+    this.params = _.defaults({}, this.props, this.params)
+    this.chart.update(this.getParams(), this.container)
+  }
+
+  getParams () {
+    const aspect = this.params.aspect || 1
+    this.params.width = this.props.width || this.container.clientWidth
+    this.params.height = this.props.height || this.params.width / aspect
+    this.params.colors = this.props.colors || this.props.color
+    return this.params
   }
 
   render () {

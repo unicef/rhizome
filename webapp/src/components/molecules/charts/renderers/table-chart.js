@@ -19,7 +19,7 @@ class TableChartRenderer {
     this.sourceFlow = _.flow(options.sourceColumn, this.xScale)
     this.x = _.flow(options.column, this.xScale)
     this.margin = options.margin
-    this.scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.color)
+    this.scale = d3.scale.ordinal().domain(['bad', 'ok', 'good']).range(options.colors)
     this.domain = this.getDomain(data, options)
     this.yScale = d3.scale.ordinal().domain(this.domain).rangeBands([0, this.h], 0.1)
     this.y = _.flow(options.seriesName, this.yScale)

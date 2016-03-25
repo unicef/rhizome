@@ -35,7 +35,7 @@ const IndicatorSelector = React.createClass({
 
   componentDidMount () {
     IndicatorStore.listen(indicators => {
-      if (this.props.preset_indicator_ids) {
+      if (this.props.preset_indicator_ids && indicators.index) {
         IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
       }
     })
