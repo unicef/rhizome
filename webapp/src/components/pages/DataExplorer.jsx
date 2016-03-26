@@ -40,8 +40,7 @@ const DataExplorer = React.createClass({
     Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
-    Reflux.connect(IndicatorStore, 'indicators'),
-    Reflux.connect(DatapointStore, 'datapoints')
+    Reflux.connect(IndicatorStore, 'indicators')
   ],
 
   getInitialState () {
@@ -170,7 +169,7 @@ const DataExplorer = React.createClass({
         <ExportPdf className='expand' button disabled={disableSave}/>
         <DownloadButton
           onClick={() => api.datapoints.toString(raw_data_query)}
-          enable={this.state.datapoints.raw ? true : false}
+          enable={this.state.chart.data ? true : false}
           text='Download Data'
           working='Downloading'
           cookieName='dataBrowserCsvDownload'/>
