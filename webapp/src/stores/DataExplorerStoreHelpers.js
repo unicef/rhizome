@@ -1,7 +1,7 @@
 import d3 from 'd3'
 import _ from 'lodash'
 import moment from 'moment'
-import LocationSelectorActions from 'actions/LocationSelectorActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 import chartOptionsHelpers from 'components/molecules/charts/utils/chartOptionsHelpers'
 import aspects from 'components/molecules/charts/utils/aspects'
 
@@ -11,7 +11,9 @@ const DataExplorerStoreHelpers = {
   // =========================================================================== //
   formatTableChart (datapoints, chart, locations_index, indicators_index) {
     console.log('----- DataExplorerStoreHelpers.formatTableChart')
-    const data = datapoints.map(datapoint => {
+    const selected_campaign_id = chart.selected_campaigns[0].id
+    const filtered_datapoints = datapoints.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
+    chart.data = filtered_datapoints.map(datapoint => {
       const values = []
       datapoint.indicators.forEach(i => {
         if (i.value != null) {
@@ -43,7 +45,6 @@ const DataExplorerStoreHelpers = {
         campaign_id: datapoint.campaign.id
       }
     })
-    chart.data = data
     chart.headers = chart.selected_indicators
     chart.xDomain = chart.headers.map(indicator => indicator.short_name)
     chart.x = chart.selected_indicators[0]
@@ -55,6 +56,7 @@ const DataExplorerStoreHelpers = {
     //   chart.start_date = moment(chart.start_date).subtract(1, 'M').format('YYYY-MM-DD')
     //   chart.end_date = moment(chart.start_date).add(1, 'M').format('YYYY-MM-DD')
     // }
+
     return chart
   },
 
@@ -77,7 +79,7 @@ const DataExplorerStoreHelpers = {
     chart.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
     chart.value = _.property(`properties[${mapIndicator.id}]`)
     chart.xFormat = this._getChartFormat(mapIndicator)
-    chart.onClick = id => LocationSelectorActions.setSelectedLocations(id)
+    chart.onClick = id => DataExplorerActions.setSelectedLocations(id)
     if (!datapoints || datapoints.length === 0) {
       chart.data = chart.features
       return chart

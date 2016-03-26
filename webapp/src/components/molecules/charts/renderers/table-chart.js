@@ -15,7 +15,7 @@ class TableChartRenderer {
     this.z = 160 //  extra margin space needed to add the "z" (parent) axis
     this.w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     this.xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
-    this.xDomain = this.xDomainProvided ? options.xDomain : options.selected_indicators.map(ind => ind.short_name)
+    this.xDomain = this.xDomainProvided ? options.xDomain : options.headers.map(ind => ind.short_name)
     this.xScale = d3.scale.ordinal().domain(this.xDomain).rangeBands([0, this.w], 0.1)
     this.sourceFlow = _.flow(options.sourceColumn, this.xScale)
     this.x = _.flow(options.column, this.xScale)
