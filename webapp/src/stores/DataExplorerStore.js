@@ -98,13 +98,15 @@ var DataExplorerStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onSetDateRange (key, value) {
+    console.info('- Store.onSetDateRange')
     const full_key = key + '_date'
     this.chart.def[full_key] = value
     this.updateChart()
   },
 
-  // =============================  Set Indicators  ============================ //
+  // =============================  Indicators  ============================ //
   onSetIndicators (indicators) {
+    console.info('- Store.onSetIndicators')
     if (_.isEmpty(indicators)) {
       this.chart.selected_indicators = []
     } else if (_.isArray(indicators)) {
@@ -115,24 +117,29 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
   onSelectIndicator (id) {
+    console.info('- Store.onSelectIndicator')
     this.chart.selected_indicators.push(this.indicators.index[id])
     this.updateChart()
   },
   onDeselectIndicator (id) {
+    console.info('- Store.onDeselectIndicator')
     _.remove(this.chart.selected_indicators, {id: id})
     this.updateChart()
   },
   onReorderIndicator (selected_indicators) {
+    console.info('- Store.onReorderIndicator')
     this.chart.selected_indicators = selected_indicators
     this.updateChart()
   },
   onClearSelectedIndicators () {
+    console.info('- Store.onClearSelectedIndicators')
     this.chart.selected_indicators = []
     this.updateChart()
   },
 
-  // =============================  Set Locations  ============================ //
+  // =============================  Locations  ============================ //
   onSetLocations (locations) {
+    console.info('- Store.onSetLocations')
     if (_.isEmpty(locations)) {
       this.chart.selected_locations = []
     } else if (_.isArray(locations)) {
@@ -143,6 +150,7 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
   onSelectLocation (id) {
+    console.info('- Store.onSelectLocation')
     if (typeof id === 'string' && id.indexOf('lpd') > -1) {
       return this.addLocationsByLpdStatus(id)
     }
@@ -160,16 +168,19 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
   onDeselectLocation (id) {
+    console.info('- Store.onDeselectLocation')
     _.remove(this.chart.selected_locations, {id: id})
     this.updateChart()
   },
   onClearSelectedLocations () {
+    console.info('- Store.onClearSelectedLocations')
     this.chart.selected_locations = []
     this.updateChart()
   },
 
-  // =============================  Set Campaigns  ============================ //
+  // =============================  Campaigns  ============================ //
   onSetCampaigns (campaigns) {
+    console.info('- Store.onSetCampaigns')
     if (_.isArray(campaigns)) {
       this.chart.selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
     } else {
@@ -184,28 +195,34 @@ var DataExplorerStore = Reflux.createStore({
     this.updateChart()
   },
   onSelectCampaign (id) {
+    console.info('- Store.onSelectCampaign')
     this.chart.selected_campaigns.push(this.campaigns.index[id])
     this.trigger(this.chart)
   },
   onDeselectCampaign (id) {
+    console.info('- Store.onDeselectCampaign')
     _.remove(this.chart.selected_campaigns, {id: id})
     this.trigger(this.chart)
   },
   onClearSelectedCampaigns () {
+    console.info('- Store.onClearSelectedCampaigns')
     this.chart.selected_campaigns = []
     this.trigger(this.chart)
   },
 
-  // ===============================  Set Type  ============================= //
+  // ============================  Chart Properties =========================== //
   onSetType (type) {
+    console.info('- Store.onSetType')
     this.chart.type = type
     this.updateChart()
   },
   onSetPalette (palette) {
+    console.info('- Store.onSetPalette')
     this.chart.palette = palette
     this.trigger(this.chart)
   },
   onSetTitle (title) {
+    console.info('- Store.onSetTitle')
     this.chart.title = title
     this.trigger(this.chart)
   },
@@ -220,6 +237,7 @@ var DataExplorerStore = Reflux.createStore({
   },
 
   onDatapointStore (datapoints) {
+    console.info('--- Store.onDatapointStore')
     if (_.isEmpty(datapoints.raw)) {
       this.chart.data = null
       return this.trigger(this.chart)
@@ -235,6 +253,7 @@ var DataExplorerStore = Reflux.createStore({
   //                                   UTILITIES                                 //
   // =========================================================================== //
   updateChart () {
+  console.info('-- Store.updateChart' + (this.chartParamsAreReady() ? ' (Params Ready!)' : ''))
     if (this.chartParamsAreReady()) {
       DatapointActions.fetchDatapoints({
         indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id),
@@ -253,6 +272,7 @@ var DataExplorerStore = Reflux.createStore({
   },
 
   formatChartByType () {
+    console.info('---- Store.formatChartByType')
     const chart = this.chart
     const datapoints = this.datapoints.raw
     if (chart.type === 'RawData') {

@@ -20,6 +20,7 @@ class TableChart extends Component {
   }
 
   componentDidUpdate () {
+    console.log('----------- Tablechart.componentDidUpdate')
     this.params = this.props
     const chart = this.getParams()
     this.table.update(chart.data, chart, this.container)

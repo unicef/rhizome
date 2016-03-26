@@ -10,6 +10,7 @@ const DataExplorerStoreHelpers = {
   //                                 TABLE CHART                                 //
   // =========================================================================== //
   formatTableChart (datapoints, chart, locations_index, indicators_index) {
+    console.log('----- DataExplorerStoreHelpers.formatTableChart')
     const data = datapoints.map(datapoint => {
       const values = []
       datapoint.indicators.forEach(i => {

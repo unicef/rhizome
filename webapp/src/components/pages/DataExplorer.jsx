@@ -45,6 +45,7 @@ const DataExplorer = React.createClass({
   ],
 
   getInitialState () {
+    console.info('DataExplorer.getInitialState')
     return {
       footerHidden: false,
       titleEditMode: false
@@ -56,6 +57,7 @@ const DataExplorer = React.createClass({
   },
 
   componentDidMount () {
+    console.info('DataExplorer.componentDidMount')
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index &&  state.campaigns.index && state.charts.index) {
@@ -81,6 +83,7 @@ const DataExplorer = React.createClass({
   //                                EVENT HANDLERS                               //
   // =========================================================================== //
   _saveChart () {
+    console.info('DataExplorer._saveChart')
     const chart = this.state.chart
     if (!chart.title) {
       return window.alert('Please add a Title to your chart')
@@ -100,6 +103,7 @@ const DataExplorer = React.createClass({
   },
 
   _showHideFooter () {
+    console.info('DataExplorer._showHideFooter')
     this.setState({footerHidden: !this.state.footerHidden})
   },
 
@@ -124,6 +128,7 @@ const DataExplorer = React.createClass({
   },
 
   render () {
+    console.info('DataExplorer.RENDER')
     const chart = this.state.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()

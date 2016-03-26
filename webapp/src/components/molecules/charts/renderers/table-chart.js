@@ -7,6 +7,7 @@ class TableChartRenderer {
   }
 
   setTableParams (data, options, container) {
+    console.log('----------------------- TableChartRenderer.setTableParams -----------------------')
     this.container = container
     this.options = options
     this.data = data

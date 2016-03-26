@@ -25,9 +25,11 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints () {
+  console.info('--- DatapointsStore.onFetchDatapoints')
     this.setState({ raw: null })
   },
   onFetchDatapointsCompleted (response) {
+  console.info('--- DatapointsStore.onFetchDatapointsCompleted')
     this.setState({
       meta: response.meta,
       raw: response.objects,
@@ -41,6 +43,7 @@ var DatapointStore = Reflux.createStore({
   },
 
   onFetchDatapointsFailed (error) {
+  console.info('--- DatapointsStore.onFetchDatapointsFailed')
     this.setState({ error: error })
   },
 
@@ -48,6 +51,7 @@ var DatapointStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onClearDatapoints () {
+    console.info('--- DatapointsStore.onClearDatapoints')
     this.setState({ meta: null, melted: null, raw: null })
   },
 
