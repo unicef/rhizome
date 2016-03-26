@@ -249,7 +249,7 @@ const DataExplorer = React.createClass({
     let chart_placeholder = <Placeholder height={600}/>
     if (!chart.loading && missingParams) {
       chart_placeholder = <Placeholder height={600} text='Please select an INDICATOR and LOCATION' loading={false}/>
-    } else if (!chart.loading && !missingParams) {
+    } else if (_.isEmpty(chart.data) && !_.isNull(chart.data) && chart.loading) {
       chart_placeholder = <Placeholder height={600} text='NO DATA' loading={false}/>
     }
 

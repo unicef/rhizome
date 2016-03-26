@@ -60,29 +60,6 @@ var DataExplorerStore = Reflux.createStore({
     return this.chart
   },
 
-  updateChart () {
-  console.info('-- Store.updateChart' + (this.chartParamsAreReady() ? ' (Params Ready!)' : ''))
-    if (this.chartParamsAreReady()) {
-      if (this.chart.type === 'ChoroplethMap') {
-        DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
-      }
-      DatapointActions.fetchDatapoints({
-        indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id),
-        location_ids: this.chart.selected_locations.map(location => location.id),
-        start_date: this.chart.start_date,
-        end_date: this.chart.end_date,
-        type: this.chart.type
-      })
-    } else {
-      if (this.chart.data !== null) {
-        DatapointActions.clearDatapoints()
-        this.chart.data = null
-      }
-      this.chart.loading = false
-      this.trigger(this.chart)
-    }
-  },
-
   // =========================================================================== //
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
@@ -278,7 +255,7 @@ var DataExplorerStore = Reflux.createStore({
   onDatapointStore (datapoints) {
     console.info('--- Store.onDatapointStore')
     if (_.isEmpty(datapoints.raw)) {
-      this.chart.data = null
+      this.chart.data = []
       return this.trigger(this.chart)
     }
     this.datapoints = datapoints
@@ -292,6 +269,30 @@ var DataExplorerStore = Reflux.createStore({
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
+  updateChart () {
+  console.info('-- Store.updateChart' + (this.chartParamsAreReady() ? ' (Params Ready!)' : ''))
+    if (this.chart.data !== null) {
+      DatapointActions.clearDatapoints()
+      this.chart.data = null
+      this.trigger(this.chart)
+    }
+    if (this.chartParamsAreReady()) {
+      if (this.chart.type === 'ChoroplethMap') {
+        DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
+      }
+      DatapointActions.fetchDatapoints({
+        indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id),
+        location_ids: this.chart.selected_locations.map(location => location.id),
+        start_date: this.chart.start_date,
+        end_date: this.chart.end_date,
+        type: this.chart.type
+      })
+    } else {
+      this.chart.loading = false
+      this.trigger(this.chart)
+    }
+  },
+
   formatChartByType () {
     console.info('---- Store.formatChartByType')
     const chart = this.chart
