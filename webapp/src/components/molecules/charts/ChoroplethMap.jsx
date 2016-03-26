@@ -8,22 +8,25 @@ import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropl
 class ChoroplethMap extends Component {
   constructor(props) {
     super(props)
-    this.params = {}
+    this.params = this.props
   }
 
   componentDidMount () {
     this.container = React.findDOMNode(this)
-    this.map = new ChoroplethMapRenderer(this.getParams(), this.container)
+    const chart = this.getParams()
+    this.map = new ChoroplethMapRenderer(chart.data, chart, this.container)
     this.map.render()
   }
 
   componentDidUpdate () {
-    this.map.update(this.getParams(), this.container)
+    console.log('----------- ChoroplethMap.componentDidUpdate')
+    this.params = this.props
+    const chart = this.getParams()
+    this.map.update(chart.data, chart, this.container)
   }
 
   getParams () {
     const aspect = this.params.aspect || 1
-    this.params = this.props
     this.params.width = this.props.width || this.container.clientWidth
     this.params.height = this.props.height || this.params.width / aspect
     this.params.colors = this.props.colors || this.props.color
@@ -31,15 +34,12 @@ class ChoroplethMap extends Component {
   }
 
   render () {
-    const width = this.params.width || 100
-    const height = this.params.height || 100
-    const viewBox = '0 0 ' + width + ' ' + height
     const lineWidth = 10
     const lineHeight = 10
     const lineInterval = 5
 
     return (
-      <svg className='reds' viewBox={viewBox} width={width} height={height}>
+      <svg className='reds'>
         <g>
           <g className='data'></g>
           <g className='legend'></g>

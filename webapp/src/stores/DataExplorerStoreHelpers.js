@@ -79,7 +79,7 @@ const DataExplorerStoreHelpers = {
     chart.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
     chart.value = _.property(`properties[${mapIndicator.id}]`)
     chart.xFormat = this._getChartFormat(mapIndicator)
-    chart.onClick = id => DataExplorerActions.setSelectedLocations(id)
+    chart.onClick = id => DataExplorerActions.setLocations(id)
     if (!datapoints || datapoints.length === 0) {
       chart.data = chart.features
       return chart

@@ -5,11 +5,13 @@ import Tooltip from 'components/molecules/Tooltip'
 import Layer from 'react-layer'
 
 class ChoroplethMapRenderer {
-  constructor (chart, container) {
-    this.setMapParams(chart.data, chart, container)
+  constructor (data, options, container) {
+    console.log('------- MapRenderer.constructor')
+    this.setMapParams(data, options, container)
   }
 
   setMapParams (data, options, container) {
+    console.log('------- MapRenderer.setMapParams')
     this.container = container
     this.options = options
     this.data = data
@@ -20,16 +22,24 @@ class ChoroplethMapRenderer {
     this.colorScale = this.getColorScale(options.domain, options.colors)
   }
 
-  update (chart, container) {
-    this.setMapParams(chart.data, chart, container)
+  update (data, options, container) {
+    console.log('------- MapRenderer.update')
+    this.setMapParams(data, options, container)
     this.render()
   }
 
   //===========================================================================//
   //                                   RENDER                                  //
   //===========================================================================//
+
   render () {
+    console.log('------- MapRenderer.render')
     const svg = d3.select(this.container)
+    svg.attr({
+      'viewBox': '0 0 ' + this.options.width + ' ' + this.options.height,
+      'width': this.options.width,
+      'height': this.options.height
+    })
     const g = svg.select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
     location.enter().append('path')
