@@ -75,7 +75,7 @@ const DataExplorer = React.createClass({
   shouldComponentUpdate(nextProps, nextState) {
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
     const chart_data = !_.isEmpty(nextState.chart.data)
-    return chart_data || nextState.chart.loading
+    return chart_data || nextState.chart.loading || missing_params
   },
 
   _saveChart () {
@@ -200,6 +200,7 @@ const DataExplorer = React.createClass({
         selectLocation={DataExplorerActions.selectLocation}
         deselectLocation={DataExplorerActions.deselectLocation}
         setLocations={DataExplorerActions.setLocations}
+        clearSelectedLocations={DataExplorerActions.clearSelectedLocations}
         classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multi_location}
       />
