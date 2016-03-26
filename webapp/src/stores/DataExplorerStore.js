@@ -236,6 +236,7 @@ var DataExplorerStore = Reflux.createStore({
   onSetPalette (palette) {
     console.info('- Store.onSetPalette')
     this.chart.palette = palette
+    this.chart.colors = palettes[palette]
     this.trigger(this.chart)
   },
   onSetTitle (title) {
