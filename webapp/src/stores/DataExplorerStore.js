@@ -201,12 +201,10 @@ var DataExplorerStore = Reflux.createStore({
     this.chart.type = type
     this.updateChart()
   },
-
   onSetPalette (palette) {
     this.chart.palette = palette
     this.trigger(this.chart)
   },
-
   onSetTitle (title) {
     this.chart.title = title
     this.trigger(this.chart)
@@ -222,11 +220,15 @@ var DataExplorerStore = Reflux.createStore({
   },
 
   onDatapointStore (datapoints) {
-    if (_.isEmpty(datapoints.raw)) { return }
+    if (_.isEmpty(datapoints.raw)) {
+      this.chart.data = null
+      return this.trigger(this.chart)
+    }
     this.datapoints = datapoints
     this.chart.parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.chart.default_sort_order = datapoints.meta.default_sort_order
     this.chart = this.formatChartByType()
+    this.trigger(this.chart)
   },
 
   // =========================================================================== //

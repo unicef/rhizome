@@ -18,7 +18,6 @@ import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
 
-import CampaignSelectorStore from 'stores/CampaignSelectorStore'
 import LocationStore from 'stores/LocationStore'
 import ChartStore from 'stores/ChartStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -74,7 +73,8 @@ const DataExplorer = React.createClass({
 
   shouldComponentUpdate(nextProps, nextState) {
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
-    return !_.isEmpty(nextState.chart.data) || (_.isEmpty(nextState.chart.data) && missing_params)
+    const chart_data = !_.isEmpty(nextState.chart.data)
+    return chart_data
   },
 
   // =========================================================================== //
