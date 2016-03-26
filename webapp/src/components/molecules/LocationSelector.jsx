@@ -75,7 +75,7 @@ const LocationSelector = React.createClass({
           <RegionTitleMenu
             locations={locations}
             selected={this.props.selected_locations[0]}
-            sendValue={this.props.setSelectedLocations}
+            sendValue={this.props.setLocations}
           />
         </div>
       )
