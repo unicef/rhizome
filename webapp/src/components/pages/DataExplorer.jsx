@@ -75,12 +75,9 @@ const DataExplorer = React.createClass({
   shouldComponentUpdate(nextProps, nextState) {
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
     const chart_data = !_.isEmpty(nextState.chart.data)
-    return chart_data
+    return chart_data || nextState.chart.loading
   },
 
-  // =========================================================================== //
-  //                                EVENT HANDLERS                               //
-  // =========================================================================== //
   _saveChart () {
     console.info('DataExplorer._saveChart')
     const chart = this.state.chart
@@ -113,9 +110,6 @@ const DataExplorer = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  // =========================================================================== //
-  //                                    RENDER                                   //
-  // =========================================================================== //
   getChartComponentByType (type) {
     if (type === 'TableChart') {
       return <TableChart {...this.state.chart} />
@@ -251,13 +245,12 @@ const DataExplorer = React.createClass({
 
     // PLACEHOLDERS
     // ---------------------------------------------------------------------------
-    let chart_placeholder = <Placeholder height={600}/>
-    if (chart.data && chart.data.length === 0) {
-      chart_placeholder = <Placeholder height={600} text='NO DATA' loading={false}/>
-    }
     const missingParams = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
-    if (!chart.data && missingParams) {
+    let chart_placeholder = <Placeholder height={600}/>
+    if (!chart.loading && missingParams) {
       chart_placeholder = <Placeholder height={600} text='Please select an INDICATOR and LOCATION' loading={false}/>
+    } else if (!chart.loading && !missingParams) {
+      chart_placeholder = <Placeholder height={600} text='NO DATA' loading={false}/>
     }
 
     return (
