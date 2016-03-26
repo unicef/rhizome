@@ -57,7 +57,7 @@ const CampaignSelector = React.createClass({
           <CampaignTitleMenu
             campaigns={raw_campaigns}
             selected={selected_campaigns[0]}
-            sendValue={this.props.selectCampaign}/>
+            sendValue={this.props.setCampaigns}/>
         </div>
       )
     }
