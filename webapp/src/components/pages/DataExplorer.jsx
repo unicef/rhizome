@@ -128,7 +128,7 @@ const DataExplorer = React.createClass({
   },
 
   render () {
-    console.info('DataExplorer.RENDER')
+    console.info('DataExplorer.RENDER ==========================================')
     const chart = this.state.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
