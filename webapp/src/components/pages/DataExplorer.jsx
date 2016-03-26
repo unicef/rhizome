@@ -8,7 +8,6 @@ import PalettePicker from 'components/organisms/data-explorer/preview/PalettePic
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
-import ExportPdf from 'components/molecules/ExportPdf'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
@@ -16,7 +15,11 @@ import DatabrowserTable from 'components/molecules/DatabrowserTable'
 import DownloadButton from 'components/molecules/DownloadButton'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
+import ExportPdf from 'components/molecules/ExportPdf'
 import TitleInput from 'components/molecules/TitleInput'
+import TableChart from 'components/molecules/charts/TableChart'
+import LineChart from 'components/molecules/charts/LineChart'
+import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import LocationStore from 'stores/LocationStore'
 import ChartStore from 'stores/ChartStore'
@@ -25,10 +28,6 @@ import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import DataExplorerStore from 'stores/DataExplorerStore'
 import RootStore from 'stores/RootStore'
-import DatapointStore from 'stores/DatapointStore'
-import TableChart from 'components/molecules/charts/TableChart'
-import LineChart from 'components/molecules/charts/LineChart'
-import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import DataExplorerActions from 'actions/DataExplorerActions'
 import ChartActions from 'actions/ChartActions'
@@ -59,7 +58,7 @@ const DataExplorer = React.createClass({
     console.info('DataExplorer.componentDidMount')
     RootStore.listen(() => {
       const state = this.state
-      if (state.locations.index && state.indicators.index &&  state.campaigns.index && state.charts.index) {
+      if (state.locations.index && state.indicators.index && state.campaigns.index && state.charts.index) {
         if (this.props.chart_id) {
           DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
         } else {
@@ -72,7 +71,7 @@ const DataExplorer = React.createClass({
     if (this.props.chart_id) { this.setState({footerHidden: true}) }
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate (nextProps, nextState) {
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
     const chart_data = !_.isEmpty(nextState.chart.data)
     return chart_data || nextState.chart.loading || missing_params
