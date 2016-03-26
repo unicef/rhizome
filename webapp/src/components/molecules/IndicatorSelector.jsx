@@ -5,23 +5,20 @@ import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 import IndicatorTitleMenu from 'components/molecules/menus/IndicatorTitleMenu'
 
-import IndicatorStore from 'stores/IndicatorStore'
-import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
-import IndicatorSelectorActions from 'actions/IndicatorSelectorActions'
 
 const IndicatorSelector = React.createClass({
-  mixins: [
-    Reflux.connect(IndicatorSelectorStore, 'selected_indicators'),
-  ],
-
-  indicators_index: null,
 
   propTypes: {
     indicators: PropTypes.shape({
       raw: PropTypes.array,
       list: PropTypes.array
     }).isRequired,
-    preset_indicator_ids: PropTypes.array,
+    selected_indicators: PropTypes.array,
+    setIndicators: PropTypes.func,
+    selectIndicator: PropTypes.func,
+    deselectIndicator: PropTypes.func,
+    clearSelectedIndicators: PropTypes.func,
+    reorderIndicator: PropTypes.func,
     classes: PropTypes.string,
     multi: PropTypes.bool
   },
@@ -29,28 +26,12 @@ const IndicatorSelector = React.createClass({
   getDefaultProps () {
     return {
       multi: false,
-      preset_indicator_ids: null
-    }
-  },
-
-  componentDidMount () {
-    IndicatorStore.listen(indicators => {
-      if (this.props.preset_indicator_ids && indicators.index) {
-        IndicatorSelectorActions.setSelectedIndicators(this.props.preset_indicator_ids)
-        // Set state here manually to make sure any preset indicators are ready immediately
-        this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => nextProps.indicators.index[id])})
-      }
-    })
-  },
-
-  componentWillReceiveProps(nextProps) {
-    if (!_.isEmpty(nextProps.preset_indicator_ids) && nextProps.indicators.index && _.isEmpty(this.state.selected_indicators)) {
-      this.setState({selected_indicators: nextProps.preset_indicator_ids.map(id => nextProps.indicators.index[id])})
+      selected_indicators: []
     }
   },
 
   getAvailableIndicators () {
-    const selected_ids = this.state.selected_indicators.map(indicator => indicator.id)
+    const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
     const indicators_list = this.props.indicators.list
     indicators_list.forEach(indicator_group => {
       indicator_group.children.forEach(indicator => {
@@ -70,14 +51,14 @@ const IndicatorSelector = React.createClass({
           <h3>Indicators
             <DropdownMenu
               items={available_indicators}
-              sendValue={IndicatorSelectorActions.selectIndicator}
+              sendValue={this.props.selectIndicator}
               item_plural_name='Indicators'
               style='icon-button right'
               icon='fa-plus'
             />
           </h3>
-          <a className='remove-filters-link' onClick={IndicatorSelectorActions.clearSelectedIndicators}>Remove All </a>
-          <ReorderableList items={this.state.selected_indicators} removeItem={IndicatorSelectorActions.deselectIndicator} dragItem={IndicatorSelectorActions.reorderIndicator} />
+          <a className='remove-filters-link' onClick={this.props.clearSelectedIndicators}>Remove All </a>
+          <ReorderableList items={this.props.selected_indicators} removeItem={this.props.deselectIndicator} dragItem={this.props.reorderIndicator} />
         </form>
       )
     } else {
@@ -87,8 +68,8 @@ const IndicatorSelector = React.createClass({
           <IndicatorTitleMenu
             idsToRender={raw_indicators.map(indicator => indicator.id)}
             indicators={raw_indicators}
-            selected={this.state.selected_indicators[0]}
-            sendValue={IndicatorSelectorActions.setSelectedIndicators}
+            selected={this.props.selected_indicators[0]}
+            sendValue={this.props.selectIndicator}
           />
         </div>
       )

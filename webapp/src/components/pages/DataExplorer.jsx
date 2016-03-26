@@ -19,8 +19,6 @@ import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
 
 import CampaignSelectorStore from 'stores/CampaignSelectorStore'
-import IndicatorSelectorStore from 'stores/IndicatorSelectorStore'
-import LocationSelectorStore from 'stores/LocationSelectorStore'
 import LocationStore from 'stores/LocationStore'
 import ChartStore from 'stores/ChartStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -61,22 +59,22 @@ const DataExplorer = React.createClass({
   componentDidMount () {
     RootStore.listen(() => {
       const state = this.state
-      if (this.props.chart_id && state.locations.index && state.indicators.index && state.charts.index) {
-        return DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
+      if (state.locations.index && state.indicators.index &&  state.campaigns.index && state.charts.index) {
+        if (this.props.chart_id) {
+          DataExplorerActions.fetchChart.completed(this.state.charts.index[this.props.chart_id])
+        } else {
+          DataExplorerActions.setIndicators(this.state.indicators.index[27])
+          DataExplorerActions.setLocations(this.state.locations.index[1])
+          DataExplorerActions.setCampaigns(this.state.campaigns.raw[0])
+        }
       }
     })
-    IndicatorSelectorStore.listen(DataExplorerActions.setIndicators)
-    LocationSelectorStore.listen(DataExplorerActions.setLocations)
-    CampaignSelectorStore.listen(DataExplorerActions.setCampaigns)
     if (this.props.chart_id) { this.setState({footerHidden: true}) }
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    const missing_datapoints =  _.isEmpty(nextState.datapoints.raw)
-    const missing_chart_data = _.isEmpty(nextState.chart.data)
-    const missing_data = nextState.chart.type === 'RawData' ? missing_datapoints : missing_chart_data
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
-    return !missing_data && !missing_params
+    return !_.isEmpty(nextState.chart.data) || (_.isEmpty(nextState.chart.data) && missing_params)
   },
 
   // =========================================================================== //
@@ -130,8 +128,6 @@ const DataExplorer = React.createClass({
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
     const disableSave = _.isEmpty(chart.selected_locations) || _.isEmpty(chart.selected_indicators)
-    const preset_indicator_ids = this.props.chart_id && chart ? chart.selected_indicators.map(indicator => indicator.id) : [27]
-    const preset_location_ids = this.props.chart_id && chart ? chart.selected_locations.map(location => location.id) : [1]
     const multi_indicator = chart.type === 'TableChart' || chart.type === 'RawData'
     const multi_location = chart.type === 'TableChart' || chart.type === 'RawData'
     const raw_data_query = {
@@ -190,13 +186,22 @@ const DataExplorer = React.createClass({
     ) : ''
 
     const campaign_selector = chart.type !== 'LineChart' ? (
-      <CampaignSelector campaigns={this.state.campaigns} />
+      <CampaignSelector
+        campaigns={this.state.campaigns}
+        selected_campaigns={chart.selected_campaigns}
+        selectCampaign={DataExplorerActions.selectCampaign}
+        deselectCampaign={DataExplorerActions.deselectCampaign}
+        setCampaigns={DataExplorerActions.setCampaigns}
+      />
     ) : ''
 
     const location_selector = (
       <LocationSelector
         locations={this.state.locations}
-        preset_location_ids={preset_location_ids}
+        selected_locations={chart.selected_locations}
+        selectLocation={DataExplorerActions.selectLocation}
+        deselectLocation={DataExplorerActions.deselectLocation}
+        setLocations={DataExplorerActions.setLocations}
         classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multi_location}
       />
@@ -205,7 +210,12 @@ const DataExplorer = React.createClass({
     const indicator_selector = (
       <IndicatorSelector
         indicators={this.state.indicators}
-        preset_indicator_ids={preset_indicator_ids}
+        selected_indicators={chart.selected_indicators}
+        selectIndicator={DataExplorerActions.selectIndicator}
+        setIndicators={DataExplorerActions.setIndicators}
+        deselectIndicator={DataExplorerActions.deselectIndicator}
+        clearSelectedIndicators={DataExplorerActions.clearSelectedIndicators}
+        reorderIndicator={DataExplorerActions.reorderIndicator}
         classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multi_indicator}
       />

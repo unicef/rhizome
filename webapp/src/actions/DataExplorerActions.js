@@ -7,13 +7,27 @@ const DataExplorerActions = Reflux.createActions({
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'getChart': 'getChart',
   'saveChart': 'saveChart',
+  // Chart Params
+  'setTitle': 'setTitle',
   'setPalette': 'setPalette',
   'setType': 'setType',
-  'setTitle': 'setTitle',
-  'setIndicators': 'setIndicators',
   'setDateRange': 'setDateRange',
+  // Locations
+  'setLocations': 'setLocations',
+  'selectLocation': 'selectLocation',
+  'deselectLocation': 'deselectLocation',
+  'clearSelectedLocations': 'clearSelectedLocations',
+  // Indicators
+  'setIndicators': 'setIndicators',
+  'selectIndicator': 'selectIndicator',
+  'deselectIndicator': 'deselectIndicator',
+  'reorderIndicator': 'reorderIndicator',
+  'clearSelectedIndicators': 'clearSelectedIndicators',
+  // Campaigns
   'setCampaigns': 'setCampaigns',
-  'setLocations': 'setLocations'
+  'selectCampaign': 'selectCampaign',
+  'deselectCampaign': 'deselectCampaign',
+  'clearSelectedCampaigns': 'clearSelectedCampaigns'
 })
 
 // API CALLS

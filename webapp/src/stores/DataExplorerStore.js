@@ -73,9 +73,9 @@ var DataExplorerStore = Reflux.createStore({
     this.chart.type = chart_json.type
     this.chart.start_date = chart_json.start_date
     this.chart.end_date = chart_json.end_date
-    this.chart.selected_campaigns = chart_json.campaign_ids.map(id => this.campaigns.index[id])
-    this.chart.selected_locations = chart_json.location_ids.map(id => this.locations.index[id])
     this.chart.selected_indicators = chart_json.indicator_ids.map(id => this.indicators.index[id])
+    this.chart.selected_locations = chart_json.location_ids.map(id => this.locations.index[id])
+    this.chart.selected_campaigns = chart_json.campaign_ids.map(id => this.campaigns.index[id])
     this.updateChart()
   },
   onFetchChartFailed (error) {
@@ -114,6 +114,22 @@ var DataExplorerStore = Reflux.createStore({
     }
     this.updateChart()
   },
+  onSelectIndicator (id) {
+    this.chart.selected_indicators.push(this.indicators.index[id])
+    this.updateChart()
+  },
+  onDeselectIndicator (id) {
+    _.remove(this.chart.selected_indicators, {id: id})
+    this.updateChart()
+  },
+  onReorderIndicator (selected_indicators) {
+    this.chart.selected_indicators = selected_indicators
+    this.updateChart()
+  },
+  onClearSelectedIndicators () {
+    this.chart.selected_indicators = []
+    this.updateChart()
+  },
 
   // =============================  Set Locations  ============================ //
   onSetLocations (locations) {
@@ -124,6 +140,31 @@ var DataExplorerStore = Reflux.createStore({
     } else {
       this.chart.selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
     }
+    this.updateChart()
+  },
+  onSelectLocation (id) {
+    if (typeof id === 'string' && id.indexOf('lpd') > -1) {
+      return this.addLocationsByLpdStatus(id)
+    }
+    this.chart.selected_locations.push(this.locations.index[id])
+    this.updateChart()
+  },
+  addLocationsByLpdStatus (index) {
+    let locations_to_add = this.locations.lpd_statuses.find(lpd_status => lpd_status.value === index)
+    locations_to_add.location_ids.forEach(location_id => {
+      if (this.chart.selected_locations.map(item => item.id).indexOf(location_id) >= 0) {
+        return
+      }
+      this.chart.selected_locations.push(this.locations.index[location_id])
+    })
+    this.updateChart()
+  },
+  onDeselectLocation (id) {
+    _.remove(this.chart.selected_locations, {id: id})
+    this.updateChart()
+  },
+  onClearSelectedLocations () {
+    this.chart.selected_locations = []
     this.updateChart()
   },
 
@@ -141,6 +182,18 @@ var DataExplorerStore = Reflux.createStore({
       this.chart.end_date = moment(this.chart.start_date).add(1, 'M').format('YYYY-MM-DD')
     }
     this.updateChart()
+  },
+  onSelectCampaign (id) {
+    this.chart.selected_campaigns.push(this.campaigns.index[id])
+    this.trigger(this.chart)
+  },
+  onDeselectCampaign (id) {
+    _.remove(this.chart.selected_campaigns, {id: id})
+    this.trigger(this.chart)
+  },
+  onClearSelectedCampaigns () {
+    this.chart.selected_campaigns = []
+    this.trigger(this.chart)
   },
 
   // ===============================  Set Type  ============================= //
