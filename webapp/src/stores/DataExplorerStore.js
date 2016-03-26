@@ -132,7 +132,7 @@ var DataExplorerStore = Reflux.createStore({
   onSetIndicators (indicators) {
     console.info('- Store.onSetIndicators')
     this.toggleLoading()
-    if (_.isEmpty(indicators)) {
+    if (_.isNull(indicators)) {
       this.chart.selected_indicators = []
     } else if (_.isArray(indicators)) {
       this.chart.selected_indicators = indicators.map(ind => this.couldBeId(ind) ? this.indicators.index[ind] : ind)
@@ -170,7 +170,7 @@ var DataExplorerStore = Reflux.createStore({
   onSetLocations (locations) {
     console.info('- Store.onSetLocations')
     this.toggleLoading()
-    if (_.isEmpty(locations)) {
+    if (_.isNull(locations)) {
       this.chart.selected_locations = []
     } else if (_.isArray(locations)) {
       this.chart.selected_locations = locations.map(location => this.couldBeId(location) ? this.locations.index[location] : location)
