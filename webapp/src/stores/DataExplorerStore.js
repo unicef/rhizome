@@ -21,32 +21,33 @@ var DataExplorerStore = Reflux.createStore({
   listenables: DataExplorerActions,
 
   chart: {
-    data_format: 'pct',
-    colors: palettes['traffic_light'],
     type: 'RawData',
-    features: [],
+    title: 'Untitled',
+    data: null,
+    data_format: 'pct',
     selected_campaigns: [],
     selected_indicators: [],
     selected_locations: [],
-    countries: [],
-    groupBy: 'indicator',
-    timeRange: null,
     end_date: moment().format('YYYY-MM-DD'),
     start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-    title: 'Untitled',
+    features: [],
+    countries: [],
+    headers: [],
+    parent_location_map: null,
     cellSize: 36,
     fontSize: 14,
     margin: { top: 40, right: 40, bottom: 40, left: 40 },
     cellFontSize: 14,
-    headers: [],
-    parent_location_map: null,
+    colors: palettes['traffic_light'],
+    groupBy: 'indicator',
+    locationLevelValue: _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'}),
+    timeRange: null,
     default_sort_order: null,
     x: 0,
     xFormat: ',.0f',
     y: 0,
     yFormat: ',.0f',
     z: 0,
-    data: null,
     loading: false
   },
 
@@ -57,6 +58,29 @@ var DataExplorerStore = Reflux.createStore({
 
   getInitialState () {
     return this.chart
+  },
+
+  updateChart () {
+  console.info('-- Store.updateChart' + (this.chartParamsAreReady() ? ' (Params Ready!)' : ''))
+    if (this.chartParamsAreReady()) {
+      if (this.chart.type === 'ChoroplethMap') {
+        DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
+      }
+      DatapointActions.fetchDatapoints({
+        indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id),
+        location_ids: this.chart.selected_locations.map(location => location.id),
+        start_date: this.chart.start_date,
+        end_date: this.chart.end_date,
+        type: this.chart.type
+      })
+    } else {
+      if (this.chart.data !== null) {
+        DatapointActions.clearDatapoints()
+        this.chart.data = null
+      }
+      this.chart.loading = false
+      this.trigger(this.chart)
+    }
   },
 
   // =========================================================================== //
@@ -85,11 +109,10 @@ var DataExplorerStore = Reflux.createStore({
 
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures () {
-    this.setState({ loading: false })
+    this.setState({ loading: true })
   },
   onFetchMapFeaturesCompleted (response) {
     this.chart.features = response.objects.features
-    this.updateChart()
   },
   onFetchMapFeaturesFailed (error) {
     this.setState({ error: error })
@@ -162,8 +185,6 @@ var DataExplorerStore = Reflux.createStore({
     if (typeof id === 'string' && id.indexOf('lpd') > -1) {
       return this.addLocationsByLpdStatus(id)
     }
-    this.chart.locationLevelValue = _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'})
-    DataExplorerActions.fetchMapFeatures(this.chart.selected_locations.map(location => location.id))
     this.chart.selected_locations.push(this.locations.index[id])
     this.updateChart()
   },
@@ -271,26 +292,6 @@ var DataExplorerStore = Reflux.createStore({
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
-  updateChart () {
-  console.info('-- Store.updateChart' + (this.chartParamsAreReady() ? ' (Params Ready!)' : ''))
-    if (this.chartParamsAreReady()) {
-      DatapointActions.fetchDatapoints({
-        indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id),
-        location_ids: this.chart.selected_locations.map(location => location.id),
-        start_date: this.chart.start_date,
-        end_date: this.chart.end_date,
-        type: this.chart.type
-      })
-    } else {
-      if (this.chart.data !== null) {
-        DatapointActions.clearDatapoints()
-        this.chart.data = null
-      }
-      this.chart.loading = false
-      this.trigger(this.chart)
-    }
-  },
-
   formatChartByType () {
     console.info('---- Store.formatChartByType')
     const chart = this.chart
