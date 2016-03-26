@@ -23,25 +23,30 @@ const Placeholder = React.createClass({
 		let icon_size = '5x'
 		let top_offset = 68
 		let	padding = '50px 0'
+		let	font_size = '1.8rem'
 		if (height < 400 ) {
 			icon_size = '4x'
 			top_offset = 54
 			padding = '40px 0'
+			font_size = '1.6rem'
 		}
 		if (height < 300 ) {
 			icon_size = '3x'
 			top_offset = 42
 			padding = '30px 0'
+			font_size = '1.4rem'
 		}
 		if (height < 200 ) {
 			icon_size = '2x'
 			top_offset = 28
 			padding = '20px 0'
+			font_size = '1.2rem'
 		}
 		if (height < 100 ) {
 			icon_size = '1x'
 			top_offset = 14
 			padding = '10px 0'
+			font_size = '1rem'
 		}
 
 		const container_styles = height ? { height: height+'px', padding: padding } : {}
@@ -52,7 +57,9 @@ const Placeholder = React.createClass({
 		    <div style={spinner_styles}>
 		    	{ loading ? <i className={'fa fa-spinner fa-spin fa-'+icon_size}></i> : '' }
 		      <br />
-		    	{ loading ? 'Loading...' : this.props.text }
+		      <span style={{fontSize: font_size}}>
+			    	{ loading ? 'Loading...' : this.props.text }
+		      </span>
 		    </div>
 		  </div>
 		)
