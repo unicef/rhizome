@@ -20,12 +20,12 @@ after_script:
 
 deploy:
   provider: s3
-  access_key_id: $AWS_ACCESS_KEY # declared in Travis repo settings
+  access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
   bucket: rhizome-dev
-  file: dist/rhizome.zip
-  endpoint: ec2-52-2-128-26.compute-1.amazonaws.com
+  application: rhizome_test
   region: us-east-1
+  deployment_group: rhizome_test_deploy
   skip_cleanup: true
   on:
     branch: travis_config
