@@ -69,7 +69,7 @@ const IndicatorSelector = React.createClass({
             idsToRender={raw_indicators.map(indicator => indicator.id)}
             indicators={raw_indicators}
             selected={this.props.selected_indicators[0]}
-            sendValue={this.props.selectIndicator}
+            sendValue={this.props.setIndicators}
           />
         </div>
       )
