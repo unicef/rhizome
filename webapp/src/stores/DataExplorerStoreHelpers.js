@@ -49,6 +49,25 @@ const DataExplorerStoreHelpers = {
     return chart
   },
 
+  // =========================================================================== //
+  //                                  LINE CHART                                 //
+  // =========================================================================== //
+  formatLineChart (datapoints, chart, groups, layout) {
+    chart = chartOptionsHelpers.generateMarginForAxisLabel(chart)
+
+    if (!datapoints || datapoints.length === 0) {
+      return chart
+    }
+
+    chart.data = _(datapoints).groupBy(chart.groupBy)
+      .map(datapoint => {
+        return {
+          name: groups[datapoint[0].indicator.id].name,
+          values: _.sortBy(datapoint, _.method('campaign.start_date.getTime'))
+        }
+      })
+      .value()
+
     return chart
   },
 
@@ -125,47 +144,6 @@ const DataExplorerStoreHelpers = {
       }
       return _.merge({}, feature, {properties: properties}, datapoint.location)
     })
-
-    return chart
-  },
-
-  // =========================================================================== //
-  //                                  LINE CHART                                 //
-  // =========================================================================== //
-  formatLineChart (datapoints, chart, groups, layout) {
-    // The LineChart has its own logic that determines the domain and it seems to work
-    // more correctly than this code.
-    // let lower = moment(chart.start_date, 'YYYY-MM-DD')
-    // let upper = moment(chart.end_date, 'YYYY-MM-DD')
-    // if (!lower) { // set the lower bound from the lowest datapoint value
-    //   const sortedDates = _.sortBy(datapoints, _.method('campaign.start_date.getTime'))
-    //   lower = moment(_.first(sortedDates).campaign.start_date)
-    // }
-    // chart.domain = _.constant([lower.toDate(), upper.toDate()])
-
-    chart.aspect = aspects[layout].lineChart
-    chart.values = _.property('values')
-    chart.x = _.property('campaign.start_date')
-    chart.xFormat = d => moment(d).format('MMM YYYY')
-    chart.y = _.property('value')
-    chart.xLabel = chart.xLabel
-    chart.yLabel = chart.yLabel
-    chart.height = 350
-
-    chart = chartOptionsHelpers.generateMarginForAxisLabel(chart)
-
-    if (!datapoints || datapoints.length === 0) {
-      return chart
-    }
-
-    chart.data = _(datapoints).groupBy(chart.groupBy)
-      .map(datapoint => {
-        return {
-          name: groups[datapoint[0].indicator.id].name,
-          values: _.sortBy(datapoint, _.method('campaign.start_date.getTime'))
-        }
-      })
-      .value()
 
     return chart
   },
