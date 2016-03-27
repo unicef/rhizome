@@ -3,9 +3,40 @@ import d3 from 'd3'
 import React, { PropTypes, Component } from 'react'
 
 import formatUtil from 'components/molecules/charts/utils/format'
+import palettes from 'components/molecules/charts/utils/palettes'
 import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
 class ChoroplethMap extends Component {
+
+  static propTypes = {
+    data: PropTypes.array,
+    data_format: PropTypes.string,
+    domain: PropTypes.func,
+    onClick: PropTypes.func,
+    value: PropTypes.func,
+    colors: PropTypes.array,
+    height: PropTypes.number,
+    width: PropTypes.number,
+    margin: PropTypes.shape({
+       top: PropTypes.number,
+       right: PropTypes.number,
+       bottom: PropTypes.number,
+       left: PropTypes.number
+    })
+  }
+
+  static defaultProps = {
+    data: null,
+    data_format: 'pct',
+    domain: _.noop,
+    onClick: _.noop,
+    value: d => d.properties.value,
+    colors: palettes.orange,
+    height: 0,
+    width: 0,
+    margin: { top: 0, right: 0, bottom: 20, left: 0 }
+  }
+
   constructor(props) {
     super(props)
     this.params = this.props

@@ -108,18 +108,18 @@ const DataExplorerStoreHelpers = {
     let bubbleIndex = null
     let gradientIndex = null
 
-    if (yAxis) {
-      let maxValue = 5000
-      let bubbleValues = groupedDatapoints[yAxis].map(datapoint => datapoint.value)
-      bubbleIndex = _.indexBy(groupedDatapoints[yAxis], 'location.id')
-      chart.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
-      chart.bubbleValue = _.property('properties.bubbleValue')
-    }
-    if (zAxis) {
-      gradientIndex = _.indexBy(groupedDatapoints[zAxis], 'location.id')
-      chart.indicatorName = _.result(_.find(selected_indicators_index, indicator => indicator.id === zAxis), 'short_name')
-      chart.stripeValue = _.property('properties.stripeValue')
-    }
+    // if (yAxis) {
+    //   let maxValue = 5000
+    //   let bubbleValues = groupedDatapoints[yAxis].map(datapoint => datapoint.value)
+    //   bubbleIndex = _.indexBy(groupedDatapoints[yAxis], 'location.id')
+    //   chart.maxBubbleValue = Math.min(Math.max(...bubbleValues), maxValue)
+    //   chart.bubbleValue = _.property('properties.bubbleValue')
+    // }
+    // if (zAxis) {
+    //   gradientIndex = _.indexBy(groupedDatapoints[zAxis], 'location.id')
+    //   chart.indicatorName = _.result(_.find(selected_indicators_index, indicator => indicator.id === zAxis), 'short_name')
+    //   chart.stripeValue = _.property('properties.stripeValue')
+    // }
 
     // Make sure we only get data for the current campaign maps can't
     // display historical data. Index by location for quick lookup.
@@ -138,14 +138,14 @@ const DataExplorerStoreHelpers = {
     chart.data = chart.features.map(feature => {
       const datapoint = index[feature.properties.location_id]
       const properties = _.merge({}, datapoint.location, { value: datapoint['value'] })
-      if (yAxis) {
-        const bubbleLocation = bubbleIndex[feature.properties.location_id]
-        properties.bubbleValue = bubbleLocation['value']
-      }
-      if (zAxis) {
-        const gradientLocation = gradientIndex[feature.properties.location_id]
-        properties.stripeValue = gradientLocation['value']
-      }
+      // if (yAxis) {
+      //   const bubbleLocation = bubbleIndex[feature.properties.location_id]
+      //   properties.bubbleValue = bubbleLocation['value']
+      // }
+      // if (zAxis) {
+      //   const gradientLocation = gradientIndex[feature.properties.location_id]
+      //   properties.stripeValue = gradientLocation['value']
+      // }
       return _.merge({}, feature, {properties: properties}, datapoint.location)
     })
 

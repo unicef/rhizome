@@ -6,6 +6,12 @@ import TableChartRenderer from 'components/molecules/charts/renderers/table-char
 class TableChart extends Component {
 
   static propTypes = {
+    // Chart Data
+    data: PropTypes.array,
+    headers: PropTypes.array,
+    default_sort_order: PropTypes.array,
+    parent_location_map: PropTypes.object,
+    selected_campaigns: PropTypes.array,
     // Look and Feel
     colors: PropTypes.array,
     cellHeight: PropTypes.number,
@@ -19,12 +25,6 @@ class TableChart extends Component {
       bottom: PropTypes.number,
       left: PropTypes.number
     }),
-    // Chart Data
-    data: PropTypes.array,
-    headers: PropTypes.array,
-    default_sort_order: PropTypes.array,
-    parent_location_map: PropTypes.object,
-    selected_campaigns: PropTypes.array,
     // Functions to map data to table
     sourceColumn: PropTypes.func,
     column: PropTypes.func,
@@ -40,7 +40,7 @@ class TableChart extends Component {
     cellFontSize: 14,
     fontSize: 12,
     margin: {},
-    colors: palettes['traffic_light'],
+    colors: palettes.traffic_light,
     // Defaults
     sourceColumn: d => d.short_name,
     column: d => d.indicator.short_name,
