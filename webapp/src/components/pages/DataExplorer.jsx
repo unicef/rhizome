@@ -141,6 +141,7 @@ const DataExplorer = React.createClass({
         <AsyncButton
           text={this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
           classes='button success expand'
+          disabled={!this.state.chart.data ? true : false}
           alt_text='Saving ...'
           icon='save'
           isBusy={this.state.charts.loading}

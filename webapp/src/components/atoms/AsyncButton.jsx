@@ -9,6 +9,7 @@ class AsyncButton extends Component {
   static propTypes = {
     text: PropTypes.string,
     alt_text: PropTypes.string,
+    disabled: PropTypes.bool,
     isBusy: PropTypes.bool,
     onClick: PropTypes.func.isRequired,
     icon: PropTypes.string, // Fontawesome icons. Leave off the 'fa-'
@@ -23,12 +24,13 @@ class AsyncButton extends Component {
   }
 
   render () {
+    const props = this.props
     const icon_string = this.props.isBusy ? 'spinner fa-spin saving-icon' : this.props.icon
     return (
-      <button className={this.props.classes} onClick={this.props.onClick} style={this.props.style}>
-        { this.props.icon ? <i className={'fa fa-' + icon_string}></i> : '' }
+      <button disabled={props.disabled} className={props.classes} onClick={props.onClick} style={props.style}>
+        { props.icon ? <i className={'fa fa-' + icon_string}></i> : '' }
         <span>
-          { this.props.isBusy ? this.props.alt_text : this.props.text }
+          { props.isBusy ? props.alt_text : props.text }
         </span>
       </button>
     )
