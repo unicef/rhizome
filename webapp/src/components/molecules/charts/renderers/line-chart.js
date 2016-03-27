@@ -4,17 +4,22 @@ import hoverLine from 'components/molecules/charts/renderers/common/hover-line'
 import axisLabel from 'components/molecules/charts/renderers/common/axis-label'
 
 class LineChartRenderer {
-  constructor (chart, container) {
-    this.setChartParams(chart.data, chart, container)
+  constructor (data, options, container) {
+    console.info('------- LineChartRenderer.constructor')
+    this.setChartParams(data, options, container)
+    this.prepContainer()
   }
 
   setChartParams (data, options, container) {
+    console.info('------- LineChartRenderer.setChartParams')
     this.container = container
     this.options = options
     this.data = data
+    this.margin = options.margin
     this.data.forEach(d => d.values = d.values.filter(item => item.value !== null))
-    this.height = options.height - options.margin.top - options.margin.bottom
-    this.width = options.width - options.margin.left - options.margin.right * 2
+    this.height = options.height - this.margin.top - this.margin.bottom
+    this.width = options.width - this.margin.left - this.margin.right * 2
+    this.h = this.height - options.margin.top - options.margin.bottom
     this.domain = _.isFunction(options.domain)
       ? options.domain(data)
       : d3.extent(_(data).map(options.values).flatten().map(options.x).value())
@@ -24,18 +29,19 @@ class LineChartRenderer {
     this.range[0] = Math.min(this.range[0], 0)
     this.dataXScale = d3.time.scale().domain(this.domain).range([30, this.width])
     this.yScale = options.scale().domain(this.range).range([0.9 * this.height, 0])
-    this.yFormat = d3.format(',d')
     this.x = _.flow(options.x, this.dataXScale)
     this.y = _.flow(options.y, this.yScale)
     this.svg = d3.select(this.container)
   }
 
-  update (chart, container) {
-    this.setChartParams(chart.data, chart, container)
+  update (data, options, container) {
+    console.info('------- LineChartRenderer.update')
+    this.setChartParams(data, options, container)
     this.render()
   }
 
   render () {
+    console.info('------- LineChartRenderer.render')
     this.renderLine()
     this.renderLabels()
     this.renderXAxis()
@@ -48,9 +54,39 @@ class LineChartRenderer {
   //                                   RENDER                                    //
   // =========================================================================== //
 
+  prepContainer () {
+    console.info('------- LineChartRenderer.prepContainer')
+    this.svg.attr({
+      'viewBox': '0 0 ' + this.width + ' ' + this.height,
+      'width': this.width,
+      'height': this.height
+    })
+
+    this.svg.append('rect')
+      .attr({
+        'class': 'bg',
+        'x': this.margin.left,
+        'y': 0,
+        'width': this.width - this.margin.left - this.margin.right,
+        'height': this.h
+      })
+
+    const g = this.svg.append('g')
+      .attr('transform', 'translate(' + this.margin.left + ', ' + this.margin.top + ')')
+
+    g.append('g').attr('class', 'y axis')
+    g.append('g').attr({
+      'class': 'x axis',
+      'transform': 'translate(0, ' + this.h + ')'
+    })
+    g.append('g').attr('class', 'data')
+    g.append('g').attr('class', 'annotation')
+  }
+
   // LINE
   // ---------------------------------------------------------------------------
   renderLine () {
+    console.log('LineChartRenderer.renderLine')
     const dataColorScale = d3.scale.ordinal()
       .domain(_(this.data)
         .map(this.options.seriesName)
@@ -74,6 +110,7 @@ class LineChartRenderer {
   // X AXIS
   // ---------------------------------------------------------------------------
   renderXAxis () {
+    console.log('LineChartRenderer.renderXAxis')
     this.svg.select('.x.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.xFormat)
@@ -81,7 +118,7 @@ class LineChartRenderer {
         .ticks(3)
         .scale(this.dataXScale)
         .orient('bottom'))
-        .attr('transform', `translate(0, ${this.height - this.options.margin.top + 12})`)
+        .attr('transform', `translate(0, ${this.height - this.margin.top + 12})`)
         .selectAll('.domain').data([0])
           .attr('d', `M0,0V0H${this.width - 30}V0`)
           .attr('transform', 'translate(30, 0)')
@@ -90,9 +127,10 @@ class LineChartRenderer {
   // Y AXIS
   // ---------------------------------------------------------------------------
   renderYAxis () {
+    console.log('LineChartRenderer.renderYAxis')
     const gy = this.svg.select('.y.axis')
       .call(d3.svg.axis()
-        .tickFormat(this.yFormat)
+        .tickFormat(this.options.yFormat)
         .tickSize(this.width - 25)
         .tickPadding(30)
         .ticks(4)
@@ -108,12 +146,13 @@ class LineChartRenderer {
   // HOVERLINE
   // ---------------------------------------------------------------------------
   renderHoverline () {
+    console.log('LineChartRenderer.renderHoverline')
     this.svg.attr('class', 'line')
       .call(hoverLine()
         .width(this.width)
         .height(this.height)
         .xFormat(this.options.xFormat)
-        .yFormat(this.yFormat)
+        .yFormat(this.options.yFormat)
         .x(this.options.x)
         .y(this.options.y)
         .xScale(this.dataXScale)
@@ -121,7 +160,7 @@ class LineChartRenderer {
         .value(this.options.y)
         .seriesName(_.property('seriesName'))
         .sort(true)
-        .colorRange(this.options.color)
+        .colorRange(this.options.colors)
         .datapoints(_(this.data).map(d => {
           return _.map(this.options.values(d), _.partial(_.set, _, 'seriesName', this.options.seriesName(d)))
         })
@@ -134,12 +173,13 @@ class LineChartRenderer {
   // LABELS
   // ---------------------------------------------------------------------------
   renderLabels () {
+    console.log('LineChartRenderer.renderLabels')
     this.labels = _(this.data)
       .map(d => {
         const last = _.max(this.options.values(d), this.options.x)
         const v = this.options.y(last)
         return {
-          text: this.options.seriesName(d) + ' ' + this.yFormat(v),
+          text: this.options.seriesName(d) + ' ' + this.options.yFormat(v),
           x: this.x(last),
           y: this.y(last),
           defined: _.isFinite(v)
@@ -153,20 +193,19 @@ class LineChartRenderer {
       .data(this.options.xLabel, this.options.yLabel)
       .width(this.width)
       .height(this.height)
-      .margin(this.options.margin))
+      .margin(this.margin))
     }
   }
-
 
   // ANNOTATIONS
   // ---------------------------------------------------------------------------
   renderAnnotations () {
     const legendColorScale = d3.scale.ordinal()
       .domain(_(this.labels).map(d => d.text).uniq().sortBy().value())
-      .range(this.options.color)
+      .range(this.options.colors)
     const legendColor = _.flow(d => d.text, legendColorScale)
     if (this.options.annotated) {
-      svg.select('.annotation').selectAll('.series.label')
+      this.svg.select('.annotation').selectAll('.series.label')
         .data(this.labels)
         .call(label()
           .addClass('series')
