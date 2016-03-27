@@ -80,13 +80,13 @@ files:
 #   revision's file bundle.
 hooks:
   ApplicationStop:
-    - location: /bin/auto_deploy/stop_apache.sh
+    - location: /bin/auto_deploy/stop_apache
       timeout: 1800
       runas: root
 # During the BeforeInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   BeforeInstall:
-    - location: /bin/auto_deploy/build_dependencies.sh
+    - location: /bin/auto_deploy/build_dependencies
       timeout: 1800
       runas: root
 # During the AfterInstall deployment lifecycle event, run the commands
@@ -98,7 +98,7 @@ hooks:
 # During the ApplicationInstall deployment lifecycle event, run the commands
 #   in the script specified in "location".
   ApplicationStart:
-    - location: /bin/auto_deploy/start_apache.sh
+    - location: /bin/auto_deploy/start_apache
       timeout: 1800
       runas: root
 # During the ValidateService deployment lifecycle event, run the commands
