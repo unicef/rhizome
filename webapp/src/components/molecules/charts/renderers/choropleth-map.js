@@ -50,6 +50,13 @@ class ChoroplethMapRenderer {
         if (_.isFinite(d.properties.value)) {
           classNames.push('clickable')
         }
+        if (d.location_type_id === 1) {
+          classNames.push('country-path')
+        } else if (d.location_type_id === 2) {
+          classNames.push('province-path')
+        } else if (d.location_type_id === 3) {
+          classNames.push('district-path')
+        }
         return classNames.join(' ')
       }
     })
