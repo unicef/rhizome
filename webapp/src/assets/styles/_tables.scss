@@ -261,7 +261,8 @@ $valueColumnWidth: 80px;
 .empty,
 .loading
 {
-  background-color: #fafafa;
+  // background-color: #fafafa;
+  background-color: transparent;
   color: #999;
   text-align: center;
   padding: 40px 0;

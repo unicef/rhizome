@@ -57,9 +57,9 @@ const Placeholder = React.createClass({
 		    <div style={spinner_styles}>
 		    	{ loading ? <i className={'fa fa-spinner fa-spin fa-'+icon_size}></i> : '' }
 		      <br />
-		      <span style={{fontSize: font_size}}>
+		      <div style={{fontSize: font_size, marginTop: '2rem' }}>
 			    	{ loading ? 'Loading...' : this.props.text }
-		      </span>
+		      </div>
 		    </div>
 		  </div>
 		)

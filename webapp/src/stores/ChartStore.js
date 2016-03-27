@@ -14,7 +14,8 @@ var ChartStore = Reflux.createStore({
     meta: null,
     list: null,
     raw: null,
-    index: null
+    index: null,
+    loading: false
   },
 
   getInitialState () {
@@ -29,6 +30,7 @@ var ChartStore = Reflux.createStore({
     this.setState({ raw: null })
   },
   onFetchChartsCompleted (response) {
+    this.charts.loading = false
     this.charts.meta = response.meta
     this.charts.raw = response.objects[0].charts || response.objects
     this.charts.list = this.charts.raw.map(chart => {
@@ -46,7 +48,7 @@ var ChartStore = Reflux.createStore({
 
   // ===============================  Post Chart  ============================= //
   onPostChart () {
-    this.setState({ raw: null })
+    this.setState({ raw: null, loading: true })
   },
   onPostChartCompleted (response) {
     ChartActions.fetchCharts()

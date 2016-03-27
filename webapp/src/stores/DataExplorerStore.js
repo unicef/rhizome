@@ -3,6 +3,7 @@ import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
+import ChartActions from 'actions/ChartActions'
 import DataExplorerActions from 'actions/DataExplorerActions'
 import DatapointActions from 'actions/DatapointActions'
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
@@ -241,6 +242,24 @@ var DataExplorerStore = Reflux.createStore({
     console.info('- Store.onSetTitle')
     this.chart.title = title
     this.trigger(this.chart)
+  },
+  onSaveChart () {
+    console.info('- Store.saveChart')
+    if (!this.chart.title) {
+      return window.alert('Please add a Title to your chart')
+    }
+    ChartActions.postChart({
+      id: this.chart.id,
+      title: this.chart.title,
+      chart_json: JSON.stringify({
+        type: this.chart.type,
+        start_date: this.chart.start_date,
+        end_date: this.chart.end_date,
+        campaign_ids: this.chart.selected_campaigns.map(campaign => campaign.id),
+        location_ids: this.chart.selected_locations.map(location => location.id),
+        indicator_ids: this.chart.selected_indicators.map(indicator => indicator.id)
+      })
+    })
   },
 
   // =========================================================================== //

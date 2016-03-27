@@ -21,6 +21,8 @@ import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
+import AsyncButton from 'components/atoms/AsyncButton'
+
 import LocationStore from 'stores/LocationStore'
 import ChartStore from 'stores/ChartStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -75,26 +77,6 @@ const DataExplorer = React.createClass({
     const missing_params = _.isEmpty(nextState.chart.selected_indicators) || _.isEmpty(nextState.chart.selected_locations)
     const chart_data = !_.isEmpty(nextState.chart.data)
     return chart_data || nextState.chart.loading || missing_params
-  },
-
-  _saveChart () {
-    console.info('DataExplorer._saveChart')
-    const chart = this.state.chart
-    if (!chart.title) {
-      return window.alert('Please add a Title to your chart')
-    }
-    ChartActions.postChart({
-      id: this.props.chart_id,
-      title: chart.title,
-      chart_json: JSON.stringify({
-        type: chart.type,
-        start_date: chart.start_date,
-        end_date: chart.end_date,
-        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
-        location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
-      })
-    })
   },
 
   _showHideFooter () {
@@ -156,9 +138,13 @@ const DataExplorer = React.createClass({
     // ---------------------------------------------------------------------------
     const call_to_actions = (
       <div className='row collapse'>
-        <button className='expand button success' disabled={disableSave} onClick={this._saveChart} style={{marginTop: 0}}>
-          <i className='fa fa-save'></i> {this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
-        </button>
+        <AsyncButton
+          text={this.props.chart_id ? 'Save Chart' : 'Save To Charts'}
+          classes='button success expand'
+          alt_text='Saving ...'
+          icon='save'
+          isBusy={this.state.charts.loading}
+          onClick={DataExplorerActions.saveChart}/>
         <ExportPdf className='expand' button disabled={disableSave}/>
         <DownloadButton
           onClick={() => api.datapoints.toString(raw_data_query)}
