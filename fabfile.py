@@ -21,12 +21,12 @@ def deploy(venv_path=None):
 
     # on local machine
     _build_dependencies()
-    # run_tests()
+    run_tests()
 
-    # # on target machine
-    # stop_apache()
-    # _push_to_remote()
-    # start_apache()
+    # on target machine
+    stop_apache()
+    _push_to_remote()
+    start_apache()
 
 # apache controls
 def stop_apache():
