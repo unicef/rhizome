@@ -96,7 +96,7 @@ var DataExplorerStore = Reflux.createStore({
   onSetDateRange (key, value) {
     console.info('- Store.onSetDateRange')
     const full_key = key + '_date'
-    this.chart.def[full_key] = value
+    this.chart[full_key] = value
     this.updateChart()
   },
 
@@ -328,11 +328,11 @@ var DataExplorerStore = Reflux.createStore({
       case 'ChoroplethMap':
         return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
-        // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart.def, layout)
+        // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart, layout)
       // case 'ScatterChart':
-        // return DataExplorerStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart.def, layout)
+        // return DataExplorerStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
       // case 'BarChart':
-        // return DataExplorerStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart.def, layout)
+        // return DataExplorerStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
       case 'TableChart':
         return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
       default:
