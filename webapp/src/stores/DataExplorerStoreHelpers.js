@@ -1,8 +1,6 @@
 import d3 from 'd3'
 import _ from 'lodash'
-import moment from 'moment'
 import DataExplorerActions from 'actions/DataExplorerActions'
-import chartOptionsHelpers from 'components/molecules/charts/utils/chartOptionsHelpers'
 import aspects from 'components/molecules/charts/utils/aspects'
 
 const DataExplorerStoreHelpers = {
@@ -53,7 +51,13 @@ const DataExplorerStoreHelpers = {
   //                                  LINE CHART                                 //
   // =========================================================================== //
   formatLineChart (datapoints, chart, groups, layout) {
-    chart = chartOptionsHelpers.generateMarginForAxisLabel(chart)
+    if (chart.xLabel || chart.yLabel) {
+      let marginLeft = chart.yLabel ? 15 : chart.margin.left || 0
+      let marginBottom = chart.xLabel ? 30 : chart.margin.bottom || 0
+      let marginTop = chart.margin.top || 0
+      let marginRight = chart.margin.right || 0
+      chart['margin'] = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
+    }
 
     if (!datapoints || datapoints.length === 0) {
       return chart
