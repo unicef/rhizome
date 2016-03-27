@@ -1,76 +1,50 @@
+import _ from 'lodash'
 import React, { Component } from 'react'
-import Reflux from 'reflux'
 
-import TableChart from 'components/molecules/charts/TableChart'
-import LineChart from 'components/molecules/charts/LineChart'
-import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
+import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
+import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
+import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
-import CampaignStore from 'stores/CampaignStore'
+class Chart extends Component {
 
-const Chart = React.createClass({
+  constructor (props) {
+    super(props)
+    this.params = props
+  }
 
-  mixins: [
-    Reflux.connect(CampaignStore, 'campaigns'),
-  ],
-
-  componentDidMount() {
+  componentDidMount () {
     this.container = React.findDOMNode(this)
-  },
-
-  renderChart(type, chart_props) {
-    if (type === 'TableChart') {
-      return <TableChart {...chart_props} />
-    } else if (type === 'LineChart') {
-      return <LineChart {...chart_props} />
-    } else if (type === 'ChoroplethMap') {
-      return <ChoroplethMap {...chart_props} />
+    const chart = this.getParams()
+    if (chart.type === 'LineChart') {
+      this.chart = new LineChartRenderer(chart.data, chart, this.container)
+    } else if (chart.type === 'TableChart') {
+      this.chart = new TableChartRenderer(chart.data, chart, this.container)
+    } else if (chart.type === 'ChoroplethMap') {
+      this.chart = new ChoroplethMapRenderer(chart.data, chart, this.container)
     }
-  },
+    this.chart.render()
+  }
 
-  filterData () {
-    if (this.props.type === 'TableChart') {
-      const campaign_id = this.props.options.campaign_ids[0] || this.state.campaigns.list[0].id
-      return this.props.data.filter(datapoint => datapoint.campaign_id === campaign_id)
-    } else {
-      return this.props.data
-    }
-  },
+  componentDidUpdate () {
+    this.params = _.defaults({}, this.props, this.params)
+    const chart = this.getParams()
+    this.chart.update(chart.data, chart, this.container)
+  }
+
+  getParams () {
+    const aspect = this.params.aspect || 1
+    this.params.width = this.props.width || this.container.clientWidth
+    this.params.height = this.props.height || this.params.width / aspect
+    return this.params
+  }
 
   render () {
-    let chart
-    const props = this.props
-    if (this.container) {
-      const options = props.options
-      const margin = options.margin
-      const aspect = options['aspect'] || 1
-      this.width =  options['width'] || this.container.clientWidth
-      this.height = options['height'] || this.width / aspect
-      options.width = this.width
-      options.height = this.height
-      options.colors = options.colors || options.color
-      const viewBox = '0 0 ' + this.width + ' ' + this.height
-      const h = this.height - margin.top - margin.bottom
-      const w = this.width - margin.left - margin.right
-      const chart_props = {
-        data: this.filterData(),
-        options: props.options,
-        domain: options.domain,
-        data_format: options.data_format,
-        colors: options.color,
-        margin: margin,
-        height: this.height,
-        width: this.width
-      }
-      chart = this.renderChart(props.type, chart_props)
-    }
-
     return (
-      <div className='chart-container'>
-        { chart }
-      </div>
+      <svg className='line'>
+      </svg>
     )
   }
-})
+}
 
 export default Chart
 

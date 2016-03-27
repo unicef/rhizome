@@ -1,29 +1,10 @@
 import _ from 'lodash'
-import d3 from 'd3'
-import React, { PropTypes, Component } from 'react'
+import React, { PropTypes } from 'react'
 
-import formatUtil from 'components/molecules/charts/utils/format'
+import Chart from 'components/molecules/charts/Chart'
 import palettes from 'components/molecules/charts/utils/palettes'
-import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
-class ChoroplethMap extends Component {
-
-  static propTypes = {
-    data: PropTypes.array,
-    data_format: PropTypes.string,
-    domain: PropTypes.func,
-    onClick: PropTypes.func,
-    value: PropTypes.func,
-    colors: PropTypes.array,
-    height: PropTypes.number,
-    width: PropTypes.number,
-    margin: PropTypes.shape({
-       top: PropTypes.number,
-       right: PropTypes.number,
-       bottom: PropTypes.number,
-       left: PropTypes.number
-    })
-  }
+class ChoroplethMap extends Chart {
 
   static defaultProps = {
     data: null,
@@ -35,25 +16,6 @@ class ChoroplethMap extends Component {
     height: 0,
     width: 0,
     margin: { top: 0, right: 0, bottom: 20, left: 0 }
-  }
-
-  constructor(props) {
-    super(props)
-    this.params = this.props
-  }
-
-  componentDidMount () {
-    this.container = React.findDOMNode(this)
-    const chart = this.getParams()
-    this.map = new ChoroplethMapRenderer(chart.data, chart, this.container)
-    this.map.render()
-  }
-
-  componentDidUpdate () {
-    console.log('----------- ChoroplethMap.componentDidUpdate')
-    this.params = this.props
-    const chart = this.getParams()
-    this.map.update(chart.data, chart, this.container)
   }
 
   getParams () {
@@ -94,6 +56,23 @@ class ChoroplethMap extends Component {
       </svg>
     )
   }
+}
+
+ChoroplethMap.propTypes = {
+  data: PropTypes.array,
+  data_format: PropTypes.string,
+  domain: PropTypes.func,
+  onClick: PropTypes.func,
+  value: PropTypes.func,
+  colors: PropTypes.array,
+  height: PropTypes.number,
+  width: PropTypes.number,
+  margin: PropTypes.shape({
+     top: PropTypes.number,
+     right: PropTypes.number,
+     bottom: PropTypes.number,
+     left: PropTypes.number
+  })
 }
 
 export default ChoroplethMap
