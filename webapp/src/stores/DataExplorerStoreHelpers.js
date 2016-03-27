@@ -45,17 +45,9 @@ const DataExplorerStoreHelpers = {
         campaign_id: datapoint.campaign.id
       }
     })
-    chart.headers = chart.selected_indicators
-    chart.xDomain = chart.headers.map(indicator => indicator.short_name)
-    chart.x = chart.selected_indicators[0]
-    chart.y = chart.selected_indicators[1] ? chart.selected_indicators[1].id : 0
-    chart.z = chart.selected_indicators[2] ? chart.selected_indicators[2].id : 0
-    // chart.start_date = chart.selected_campaigns[0].start_date
-    // chart.end_date = chart.selected_campaigns[0].end_date
-    // if (chart.end_date === chart.end_date) {
-    //   chart.start_date = moment(chart.start_date).subtract(1, 'M').format('YYYY-MM-DD')
-    //   chart.end_date = moment(chart.start_date).add(1, 'M').format('YYYY-MM-DD')
-    // }
+
+    return chart
+  },
 
     return chart
   },

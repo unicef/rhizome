@@ -33,7 +33,6 @@ var DataExplorerStore = Reflux.createStore({
     start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
     features: [],
     countries: [],
-    headers: [],
     parent_location_map: null,
     cellSize: 36,
     fontSize: 14,
@@ -44,11 +43,6 @@ var DataExplorerStore = Reflux.createStore({
     locationLevelValue: _.findIndex(builderDefinitions.locationLevels, {value: 'sublocations'}),
     timeRange: null,
     default_sort_order: null,
-    x: 0,
-    xFormat: ',.0f',
-    y: 0,
-    yFormat: ',.0f',
-    z: 0,
     loading: false
   },
 
