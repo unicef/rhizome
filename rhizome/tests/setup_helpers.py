@@ -1,5 +1,5 @@
 import json
-
+import re
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, \
@@ -9,6 +9,7 @@ from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull
 from rhizome.models import *
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
+import ast
 
 class TestSetupHelpers(ResourceTestCase):
 
@@ -104,13 +105,20 @@ class TestSetupHelpers(ResourceTestCase):
     			format ='json', data=data, authentication= self.get_credentials(test_class))
 		else:
 			return test_class.api_client.get(uri,\
-    			format ='json', data=data, authentication= self.get_credentials(test_class))
+    			format ='json', authentication= self.get_credentials(test_class))
 
 	def model_df_to_data(self,model_df,model):
 		meta_ids = []
 		non_null_df = model_df.where((notnull(model_df)), None)
 		list_of_dicts = non_null_df.transpose().to_dict()
 		for row_ix, row_dict in list_of_dicts.iteritems():
+			#hack for running api_geo test
+			# if 'geo_json' in row_dict.keys():
+			# 	row_dict['geo_json'] = re.sub('\"\"$', '', row_dict['geo_json'])
+			# 	row_dict['geo_json'] = ast.literal_eval(row_dict['geo_json'])
+			# 	print row_dict['geo_json']
+
+				# row_dict['geo_json'] = json.dumps(row_dict['geo_json'])
 			row_id = model.objects.create(**row_dict)
 			meta_ids.append(row_id)
 		return meta_ids

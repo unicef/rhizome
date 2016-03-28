@@ -14,7 +14,7 @@ script:
 
 notifications:
   slack:
-    $SLACK_ACCESS_KEY
+    rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 
 deploy:
   provider: codedeploy

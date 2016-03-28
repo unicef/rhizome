@@ -126,6 +126,7 @@ class TransformUploadTestCase(TestCase):
 
         location_df= read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
+        print indicator_df
 
         office_id = Office.objects.create(id=1,name='test').id
 
