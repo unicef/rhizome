@@ -301,7 +301,6 @@ _.extend(ChoroplethMap.prototype, {
         if (_.isFinite(v)) {
           classNames.push('clickable')
         }
-        console.log('d', d)
         if (d.properties.location_type_id === 1) {
           classNames.push('country-path')
         } else if (d.properties.location_type_id === 2) {
