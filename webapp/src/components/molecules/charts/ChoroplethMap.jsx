@@ -1,8 +1,11 @@
 import _ from 'lodash'
+import d3 from 'd3'
 import React, { PropTypes } from 'react'
 
 import Chart from 'components/molecules/charts/Chart'
+
 import palettes from 'components/molecules/charts/utils/palettes'
+import DataExplorerActions from 'actions/DataExplorerActions'
 
 class ChoroplethMap extends Chart {
 
@@ -19,11 +22,30 @@ class ChoroplethMap extends Chart {
   }
 
   getParams () {
+    console.log('------- ChoroplethMap.getParams')
+    const props = this.props
+    const params = this.params
     const aspect = this.params.aspect || 1
-    this.params.width = this.props.width || this.container.clientWidth
-    this.params.height = this.props.height || this.params.width / aspect
-    this.params.colors = this.props.colors || this.props.color
-    return this.params
+    // params.aspect = aspects[layout].choroplethMap
+    const selected_locations = props.selected_locations
+    const selected_indicators = props.selected_indicators
+    const selected_locations_index = _.indexBy(selected_locations, 'id')
+    const selected_indicators_index = _.indexBy(selected_indicators, 'id')
+    params.width = props.width || this.container.clientWidth
+    params.height = props.height || params.width / aspect
+    params.colors = props.colors || props.color
+    params.x = selected_indicators[0] ? selected_indicators[0].id : 0
+    params.y = selected_indicators[1] ? selected_indicators[1].id : 0
+    params.z = selected_indicators[2] ? selected_indicators[2].id : 0
+    const mapIndicator = selected_indicators_index[params.x]
+    params.name = d => selected_locations_index[d.properties.location_id].name || ''
+    params.border = props.features
+    params.data_format = mapIndicator.data_format
+    params.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
+    params.value = d => d.properties[mapIndicator.id]
+    params.xFormat = mapIndicator.data_format === 'pct' ? d3.format(',.1%') : d3.format('')
+    params.onClick = id => DataExplorerActions.setLocations(id)
+    return params
   }
 
   render () {

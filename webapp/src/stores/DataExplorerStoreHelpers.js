@@ -51,14 +51,6 @@ const DataExplorerStoreHelpers = {
   //                                  LINE CHART                                 //
   // =========================================================================== //
   formatLineChart (datapoints, chart, groups, layout) {
-    if (chart.xLabel || chart.yLabel) {
-      let marginLeft = chart.yLabel ? 15 : chart.margin.left || 0
-      let marginBottom = chart.xLabel ? 30 : chart.margin.bottom || 0
-      let marginTop = chart.margin.top || 0
-      let marginRight = chart.margin.right || 0
-      chart['margin'] = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
-    }
-
     if (!datapoints || datapoints.length === 0) {
       return chart
     }
@@ -79,34 +71,20 @@ const DataExplorerStoreHelpers = {
   //                                CHOROPLETH MAP                               //
   // =========================================================================== //
   formatChoroplethMap (datapoints, chart, locations_index, indicators_index, layout) {
-    const selected_locations = chart.selected_locations
     const selected_indicators = chart.selected_indicators
-    const selected_locations_index = _.indexBy(selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(selected_indicators, 'id')
-    chart.x = selected_indicators[0] ? selected_indicators[0].id : 0
-    chart.y = selected_indicators[1] ? selected_indicators[1].id : 0
-    chart.z = selected_indicators[2] ? selected_indicators[2].id : 0
-    const mapIndicator = selected_indicators_index[chart.x]
-    chart.aspect = aspects[layout].choroplethMap
-    chart.name = d => _.get(selected_locations_index, '[' + d.properties.location_id + '].name', '')
-    chart.border = chart.features
-    chart.data_format = mapIndicator.data_format
-    chart.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
-    chart.value = _.property(`properties[${mapIndicator.id}]`)
-    chart.xFormat = this._getChartFormat(mapIndicator)
-    chart.onClick = id => DataExplorerActions.setLocations(id)
+    const x = selected_indicators[0] ? selected_indicators[0].id : 0
     if (!datapoints || datapoints.length === 0) {
       chart.data = chart.features
       return chart
     }
 
-    const xAxis = chart.x
-    const yAxis = chart.y
-    const zAxis = chart.z
+    const xAxis = x
+    // const yAxis = chart.y
+    // const zAxis = chart.z
     const groupedDatapoints = _(datapoints).groupBy('indicator.id').value()
     const index = _.indexBy(groupedDatapoints[xAxis], 'location.id')
-    let bubbleIndex = null
-    let gradientIndex = null
+    // let bubbleIndex = null
+    // let gradientIndex = null
 
     // if (yAxis) {
     //   let maxValue = 5000
