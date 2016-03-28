@@ -20,7 +20,6 @@ import TitleInput from 'components/molecules/TitleInput'
 import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
-import ChoroplethMapLegend from 'components/molecules/charts/ChoroplethMapLegend'
 
 import AsyncButton from 'components/atoms/AsyncButton'
 

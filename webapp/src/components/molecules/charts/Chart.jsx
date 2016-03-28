@@ -4,7 +4,6 @@ import React, { Component } from 'react'
 import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
-import ChoroplethMapLegendRenderer from 'components/molecules/charts/renderers/choropleth-map-legend'
 
 class Chart extends Component {
 
@@ -23,8 +22,6 @@ class Chart extends Component {
       this.chart = new TableChartRenderer(this.props.data, this.options, this.container)
     } else if (options.type === 'ChoroplethMap') {
       this.chart = new ChoroplethMapRenderer(this.props.data, this.options, this.container)
-    } else if (options.type === 'ChoroplethMapLegend') {
-      this.chart = new ChoroplethMapLegendRenderer(this.props.data, this.options, this.container)
     }
     this.chart.render()
   }
