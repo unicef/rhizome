@@ -15,17 +15,15 @@ script:
 notifications:
   slack: rhisome:$SLACK_ACCESS_KEY
 
-after_script:
-  npm run package
-
 deploy:
-  provider: s3
+  provider: codedeploy
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
-  bucket: rhizome-dev
+  # bucket: rhizome-dev
+  revision_type: github
   application: rhizome_test
   region: us-east-1
   deployment_group: rhizome_test_deploy
   skip_cleanup: true
   on:
-    branch: travis_config
+    branch: development
