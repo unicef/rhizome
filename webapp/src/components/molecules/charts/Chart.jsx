@@ -16,11 +16,11 @@ class Chart extends Component {
     this.container = React.findDOMNode(this)
     const chart = this.getParams()
     if (chart.type === 'LineChart') {
-      this.chart = new LineChartRenderer(chart.data, chart, this.container)
+      this.chart = new LineChartRenderer(this.props.data, this.options, this.container)
     } else if (chart.type === 'TableChart') {
-      this.chart = new TableChartRenderer(chart.data, chart, this.container)
+      this.chart = new TableChartRenderer(this.props.data, this.options, this.container)
     } else if (chart.type === 'ChoroplethMap') {
-      this.chart = new ChoroplethMapRenderer(chart.data, chart, this.container)
+      this.chart = new ChoroplethMapRenderer(this.props.data, this.options, this.container)
     }
     this.chart.render()
   }
@@ -28,7 +28,7 @@ class Chart extends Component {
   componentDidUpdate () {
     this.options = _.defaults({}, this.props, this.options)
     const chart = this.getParams()
-    this.chart.update(chart.data, chart, this.container)
+    this.chart.update(this.props.data, this.options, this.container)
   }
 
   getParams () {
