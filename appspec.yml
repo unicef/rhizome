@@ -3,10 +3,8 @@ version: 0.0
 os: linux
 
 files:
-  - source:
-    destination:
-  - source:
-    destination:
+  - source: /var/www/apps/rhizome/*
+    destination: /var/www/apps/rhizome/
 
 hooks:
   ApplicationStop:
@@ -15,6 +13,10 @@ hooks:
       runas: root
   BeforeInstall:
     - location: /bin/auto_deploy/build_dependencies
+      timeout: 1800
+      runas: root
+  AfterInstall:
+    - location: /bin/auto_deploy/database_init
       timeout: 1800
       runas: root
   ApplicationStart:
