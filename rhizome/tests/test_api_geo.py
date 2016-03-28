@@ -44,3 +44,4 @@ class GeoResourceTest(ResourceTestCase):
         # resp = self.ts.get(self, '/api/v1/geo/', get_data)
         # self.assertHttpOK(resp)
         # self.assertEqual(len(self.deserialize(resp)['features']), 5)
+        return True
