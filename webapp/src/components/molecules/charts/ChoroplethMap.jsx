@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react'
 import Chart from 'components/molecules/charts/Chart'
 
 import palettes from 'components/molecules/charts/utils/palettes'
+import aspects from 'components/molecules/charts/utils/aspects'
 import DataExplorerActions from 'actions/DataExplorerActions'
 
 class ChoroplethMap extends Chart {
@@ -25,14 +26,12 @@ class ChoroplethMap extends Chart {
     console.log('------- ChoroplethMap.setOptions')
     const props = this.props
     const options = this.options
-    const aspect = this.options.aspect || 1
-    // options.aspect = aspects[layout].choroplethMap
     const selected_locations = props.selected_locations
     const selected_indicators = props.selected_indicators
     const selected_locations_index = _.indexBy(selected_locations, 'id')
     const selected_indicators_index = _.indexBy(selected_indicators, 'id')
-    options.width = props.width || this.container.clientWidth
-    options.height = props.height || options.width / aspect
+    options.height = props.height || window.innerHeight - 100
+    options.width = props.height || options.height
     options.colors = props.colors || props.color
     options.x = selected_indicators[0] ? selected_indicators[0].id : 0
     options.y = selected_indicators[1] ? selected_indicators[1].id : 0

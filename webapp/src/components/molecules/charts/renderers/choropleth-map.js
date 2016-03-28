@@ -40,7 +40,8 @@ class ChoroplethMapRenderer {
     svg.attr({
       'viewBox': '0 0 ' + this.options.width + ' ' + this.options.height,
       'width': this.options.width,
-      'height': this.options.height
+      'height': this.options.height,
+      'preserveAspectRatio': 'xMinYMin'
     })
     this.renderMapPaths()
     this.renderColorLegend()
@@ -49,7 +50,8 @@ class ChoroplethMapRenderer {
   // RENDER MAP PATHS
   // ---------------------------------------------------------------------------
   renderMapPaths() {
-    const g = this.svg.select('.colors').select('.data')
+    const map = this.svg.select('.colors')
+    const g = map.select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
     location.enter().append('path')
     location.attr({
@@ -77,9 +79,10 @@ class ChoroplethMapRenderer {
     .on('mousemove', this._onMouseMove)
     .on('mouseout', this._onMouseOut)
 
-    const map_width = g.node().getBBox().width
-    const offset = (this.options.width - map_width) / 2
-    g.attr('transform', `translate(${offset}, 0)`)
+    // const svg_width = map.node().getBBox().width
+    const map_width = map.node().getBoundingClientRect().width
+    const offset = (this.container.clientWidth - map_width) / 2
+    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-offset/4})`)
     location.exit().remove()
   }
 
@@ -101,7 +104,7 @@ class ChoroplethMapRenderer {
     g.select('.legend').call(legend().scale(d3.scale.ordinal()
       .domain(legendTicks)
       .range(colorScale.range())))
-    .attr('transform', () => 'translate(2, 0)')
+    .attr('transform', () => 'translate(50, 75)')
   }
 
   // MAP STRIPES LEGEND
