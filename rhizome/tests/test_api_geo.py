@@ -39,9 +39,9 @@ class GeoResourceTest(ResourceTestCase):
             top_lvl_location_id = 1)
 
 
-    def test_get_geo_tree_lvl(self):
-        # get_data ={'parent_location_id__in':6, 'tree_lvl':1}
-        # resp = self.ts.get(self, '/api/v1/geo/', get_data)
-        # self.assertHttpOK(resp)
-        # self.assertEqual(len(self.deserialize(resp)['features']), 5)
-        return True
+
+    def _get_geo_tree_lvl(self):
+        get_data ={'parent_location_id__in':6, 'tree_lvl':1}
+        resp = self.ts.get(self, '/api/v1/geo/', get_data)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(self.deserialize(resp)['features']), 5)
