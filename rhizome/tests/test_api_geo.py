@@ -11,8 +11,7 @@ from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
 class GeoResourceTest(ResourceTestCase):
     def setUp(self):
-        super(GeoResourceTest, self).setUp()
-
+      #   super(GeoResourceTest, self).setUp()
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
         self.o = self.ts.create_arbitrary_office()
