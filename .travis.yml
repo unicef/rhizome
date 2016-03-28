@@ -32,4 +32,4 @@ deploy:
   deployment_group: rhizome_dev_codeDeploy
   skip_cleanup: true
   on:
-    branch: development
+    branch: rhizome_dev_autodeploy
