@@ -98,12 +98,7 @@ const DataExplorer = React.createClass({
     } else if (type === 'LineChart') {
       return <LineChart {...this.state.chart} />
     } else if (type === 'ChoroplethMap') {
-      return (
-        <div>
-          <ChoroplethMap {...this.state.chart} />
-          <ChoroplethMapLegend {...this.state.chart} />
-        </div>
-      )
+      return <ChoroplethMap {...this.state.chart} />
     }
   },
 

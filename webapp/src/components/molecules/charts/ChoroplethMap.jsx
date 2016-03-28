@@ -44,8 +44,20 @@ class ChoroplethMap extends Chart {
     options.domain = () => [mapIndicator.bad_bound, mapIndicator.good_bound]
     options.value = d => d.properties[mapIndicator.id]
     options.xFormat = mapIndicator.data_format === 'pct' ? d3.format(',.1%') : d3.format('')
+    options.ticks = this.reverseBounds({bad: mapIndicator.bad_bound, good: mapIndicator.good_bound})
     options.onClick = id => DataExplorerActions.setLocations(id)
     return options
+  }
+
+  reverseBounds (bounds) {
+    bounds.reversed = false
+    if (bounds.bad > bounds.good){
+      var temp = bounds.bad
+      bounds.bad = bounds.good
+      bounds.good = temp
+      bounds.reversed = true
+    }
+    return bounds
   }
 
   render () {
@@ -55,15 +67,15 @@ class ChoroplethMap extends Chart {
 
     return (
       <svg className='reds'>
-        <g>
+        <g className='colors'>
           <g className='data'></g>
           <g className='legend'></g>
         </g>
-        <g clasName='bubbles'>
+        <g className='bubbles'>
           <g className='data'></g>
           <g className='legend'></g>
         </g>
-        <g clasName='stripes'>
+        <g className='stripes'>
           <g className='data'></g>
           <g className='legend'></g>
         </g>

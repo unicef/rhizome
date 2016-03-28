@@ -1,8 +1,9 @@
 import React from 'react'
 import _ from 'lodash'
 import d3 from 'd3'
-import Tooltip from 'components/molecules/Tooltip'
 import Layer from 'react-layer'
+import Tooltip from 'components/molecules/Tooltip'
+import legend from 'components/molecules/charts/renderers/common/legend'
 
 class ChoroplethMapRenderer {
   constructor (data, options, container) {
@@ -20,6 +21,7 @@ class ChoroplethMapRenderer {
     this.h = options.height - options.margin.top - options.margin.bottom
     this.path = this.calculatePath(this.features, this.w, this.h)
     this.colorScale = this.getColorScale(options.domain, options.colors)
+    this.svg = d3.select(container)
   }
 
   update (data, options, container) {
@@ -40,7 +42,14 @@ class ChoroplethMapRenderer {
       'width': this.options.width,
       'height': this.options.height
     })
-    const g = svg.select('.data')
+    this.renderMapPaths()
+    this.renderColorLegend()
+  }
+
+  // RENDER MAP PATHS
+  // ---------------------------------------------------------------------------
+  renderMapPaths() {
+    const g = this.svg.select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
     location.enter().append('path')
     location.attr({
@@ -70,6 +79,90 @@ class ChoroplethMapRenderer {
     location.exit().remove()
   }
 
+  // MAP COLOR LEGEND
+  // ---------------------------------------------------------------------------
+  renderColorLegend () {
+    console.log('------- MapLegendRenderer.renderColorLegend')
+    const features = _.reject(this.data, 'properties.isBorder')
+    let domain = this.options.domain(features)
+    if (!_.isArray(domain)) {
+      domain = d3.extent(features, this.options.value)
+      domain[0] = Math.min(domain[0], 0)
+    }
+
+    const colors = this.options.colors.concat().reverse()
+    const colorScale = d3.scale.quantize().domain(domain).range(colors)
+    const legendTicks = this.buildTicksFromBounds(this.options)
+    const g  = this.svg.select('.colors')
+    g.select('.legend').call(legend().scale(d3.scale.ordinal()
+      .domain(legendTicks)
+      .range(colorScale.range())))
+    .attr('transform', () => 'translate(2, 0)')
+  }
+
+  // MAP STRIPES LEGEND
+  // ---------------------------------------------------------------------------
+  // renderStripesLegend () {
+  //   console.log('------- MapLegendRenderer.renderStripesLegend')
+  //   if (this.options.stripeValue) {
+  //     const stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
+  //     const stripeLegendText = this.options.stripeLegendText
+  //     const stripeLegend = this.svg.select('.stripes').select('.legend')
+  //       .attr('transform', () => 'translate(' + 2 + ', ' + 0 + ')')
+  //       .selectAll('.series').data(stripeLegendText)
+  //       .enter().append('g')
+  //       .attr('class', 'series')
+  //       .attr('transform', (d, i) => `translate(0, ${i * 15})`)
+
+  //     stripeLegend.append('rect')
+  //       .attr('width', 11)
+  //       .attr('height', 11)
+  //       .style({
+  //         'fill': stripeLegendColor,
+  //         'stroke': '#cccccc',
+  //         'stroke-width': 1
+  //       })
+
+  //     stripeLegend.append('text')
+  //       .attr({'x': 16, 'y': 3.5, 'dy': 6})
+  //       .style({'text-anchor': 'start', 'font-size': 12})
+  //       .text(d => d)
+  //   }
+  // }
+
+  // MAP BUBBLES LEGEND
+  // ---------------------------------------------------------------------------
+  // renderBubbleLegend () {
+  //   console.log('------- MapLegendRenderer.renderBubbleLegend')
+  //   if (this.options.bubbleValue) {
+  //     const radius = d3.scale.sqrt().domain([0, this.options.maxBubbleValue]).range([0, this.options.maxBubbleRadius])
+  //     const bubbleLegendText = _.map(this.options.bubbleLegendRatio, d => Math.ceil(d * this.options.maxBubbleValue, -1))
+  //     const bubbleLegend = this.svg.select('.bubbles').select('.legend')
+  //       .attr('transform', () => 'translate(2, 0)')
+  //       .selectAll('.series').data(bubbleLegendText)
+  //       .enter().append('g')
+  //       .attr('class', 'series')
+
+  //     let cx = 2.5 * this.options.maxBubbleRadius
+  //     let cy = d => 2.5 * this.options.maxBubbleRadius - radius(d)
+  //     const lineY = d => cy(d) - radius(d)
+
+  //     bubbleLegend.append('circle')
+  //       .attr('r', d => radius(d))
+  //       .attr({ 'cx': cx, 'cy': cy })
+  //       .style({'opacity': 0.5, 'fill': 'transparent', 'stroke': '#AAAAAA'})
+
+  //     bubbleLegend.append('line')
+  //       .attr({ x1: 0, y1: lineY, x2: cx, y2: lineY })
+  //       .style('stroke', '#AAAAAA')
+
+  //     bubbleLegend.append('text')
+  //       .attr('dx', 0)
+  //       .attr('dy', lineY)
+  //       .text(d => d)
+  //       .style('fill', '#AAAAAA')
+  //   }
+  // }
 
   //===========================================================================//
   //                               EVENT HANDLERS                              //
@@ -215,6 +308,39 @@ class ChoroplethMapRenderer {
     } else {
       return radius(v)
     }
+  }
+
+  buildTicksFromBounds (options) {
+    // green/yellow/red pattern for 0, 1, 2
+    // legendText[0] = good bound, [1] = middle, [2] = bad bound
+    const ticks = this.options.ticks
+    let legendTicks = []
+    if (this.options.data_format === 'bool') {
+      legendTicks[1] = 'No'
+      legendTicks[0] = 'Yes'
+    } else if (this.options.data_format === 'pct') {
+      this.options.ticks.bad *= 100
+      this.options.ticks.good *= 100
+      legendTicks[1] = `${ticks.bad}%-${ticks.good}%`
+      if (ticks.reversed) {
+        legendTicks[0] = `0%-${ticks.bad}%`
+        legendTicks[2] = `${ticks.good}%-100%`
+      } else {
+        legendTicks[2] = `0%-${ticks.bad}%`
+        legendTicks[0] = `${ticks.good}%-100%`
+      }
+    } else if (this.options.data_format === 'int') {
+      // double check actual data with this logic
+      legendTicks[1] = `${ticks.bad}-${ticks.good}`
+      if (ticks.reversed) {
+        legendTicks[0] = `0-${ticks.bad}`
+        legendTicks[2] = `${ticks.good}+`
+      } else {
+        legendTicks[2] = `0-${ticks.bad}`
+        legendTicks[0] = `${ticks.good}+`
+      }
+    }
+    return legendTicks
   }
 
 
