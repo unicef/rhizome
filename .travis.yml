@@ -13,7 +13,8 @@ script:
   - cd webapp && gulp build && gulp mocha && cd ..
 
 notifications:
-  slack: $SLACK_ACCESS_KEY
+  slack:
+    $SLACK_ACCESS_KEY
 
 deploy:
   provider: codedeploy
