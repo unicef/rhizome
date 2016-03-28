@@ -139,9 +139,15 @@ var EocPreCampaign = React.createClass({
           </div>
         </div>
         <div className='row'>
-          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
+          <div className='medium-1 columns' style={{'marginBottom': '-10px'}}>
+            &nbsp;
+          </div>
+          <div className='medium-6 columns' style={{'marginBottom': '-10px'}}>
             <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
             {mapChart}
+          </div>
+          <div className='medium-1 columns' style={{'marginBottom': '-10px'}}>
+            &nbsp;
           </div>
         </div>
         <div className='row'>
