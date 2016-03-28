@@ -13,12 +13,12 @@ script:
   - cd webapp && gulp build && gulp mocha && cd ..
 
 notifications:
-  slack: rhisome:$SLACK_ACCESS_KEY
+  slack: rhisome:SLACK_ACCESS_KEY
 
 deploy:
   provider: codedeploy
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  access_key_id: AWS_ACCESS_KEY
+  secret_access_key: AWS_SECRET_KEY
   # bucket: rhizome-dev
   revision_type: github
   application: rhizome_test
