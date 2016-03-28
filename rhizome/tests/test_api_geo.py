@@ -30,7 +30,6 @@ class GeoResourceTest(ResourceTestCase):
         LocationPermission.objects.create(user_id = self.ts.user.id,\
             top_lvl_location_id = 1)
 
-
     def _get_geo_tree_lvl(self):
         get_data ={'parent_location_id__in':6, 'tree_lvl':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
