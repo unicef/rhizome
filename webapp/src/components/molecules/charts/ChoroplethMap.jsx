@@ -21,8 +21,8 @@ class ChoroplethMap extends Chart {
     margin: { top: 0, right: 0, bottom: 20, left: 0 }
   }
 
-  getParams () {
-    console.log('------- ChoroplethMap.getParams')
+  setOptions () {
+    console.log('------- ChoroplethMap.setOptions')
     const props = this.props
     const options = this.options
     const aspect = this.options.aspect || 1

@@ -29,8 +29,8 @@ class LineChart extends Chart {
     y: d => d.value
   }
 
-  getParams () {
-    console.info('------ LineChart.getParams')
+  setOptions () {
+    console.info('------ LineChart.setOptions')
     const options = this.options
     const props = this.props
     const aspect = options.aspect || 1

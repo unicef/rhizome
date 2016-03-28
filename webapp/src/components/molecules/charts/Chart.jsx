@@ -14,7 +14,7 @@ class Chart extends Component {
 
   componentDidMount () {
     this.container = React.findDOMNode(this)
-    const chart = this.getParams()
+    const chart = this.setOptions()
     if (chart.type === 'LineChart') {
       this.chart = new LineChartRenderer(this.props.data, this.options, this.container)
     } else if (chart.type === 'TableChart') {
@@ -27,11 +27,11 @@ class Chart extends Component {
 
   componentDidUpdate () {
     this.options = _.defaults({}, this.props, this.options)
-    const chart = this.getParams()
+    const chart = this.setOptions()
     this.chart.update(this.props.data, this.options, this.container)
   }
 
-  getParams () {
+  setOptions () {
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect

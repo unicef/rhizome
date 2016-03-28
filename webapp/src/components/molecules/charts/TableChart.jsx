@@ -20,7 +20,7 @@ class TableChart extends Chart {
     values: d => d.values
   }
 
-  getParams () {
+  setOptions () {
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
