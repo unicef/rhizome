@@ -57,6 +57,7 @@ class LineChartRenderer {
   prepContainer () {
     console.info('------- LineChartRenderer.prepContainer')
     this.svg.attr({
+      'class': 'line',
       'viewBox': '0 0 ' + this.width + ' ' + this.height,
       'width': this.width,
       'height': this.height

@@ -20,6 +20,7 @@ import TitleInput from 'components/molecules/TitleInput'
 import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
+import ChoroplethMapLegend from 'components/molecules/charts/ChoroplethMapLegend'
 
 import AsyncButton from 'components/atoms/AsyncButton'
 
@@ -97,7 +98,12 @@ const DataExplorer = React.createClass({
     } else if (type === 'LineChart') {
       return <LineChart {...this.state.chart} />
     } else if (type === 'ChoroplethMap') {
-      return <ChoroplethMap {...this.state.chart} />
+      return (
+        <div>
+          <ChoroplethMap {...this.state.chart} />
+          <ChoroplethMapLegend {...this.state.chart} />
+        </div>
+      )
     }
   },
 
