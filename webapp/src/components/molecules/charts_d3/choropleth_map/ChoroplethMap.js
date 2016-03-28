@@ -298,9 +298,16 @@ _.extend(ChoroplethMap.prototype, {
       'class': function (d) {
         var v = options.value(d)
         var classNames = ['location']
-
         if (_.isFinite(v)) {
           classNames.push('clickable')
+        }
+        console.log('d', d)
+        if (d.properties.location_type_id === 1) {
+          classNames.push('country-path')
+        } else if (d.properties.location_type_id === 2) {
+          classNames.push('province-path')
+        } else if (d.properties.location_type_id === 3) {
+          classNames.push('district-path')
         }
         return classNames.join(' ')
       }
