@@ -20,7 +20,7 @@ class GeoResourceTest(ResourceTestCase):
         locations = self.ts.model_df_to_data(location_df_from_csv,Location)
 
         ## override location type attribute from file so that these locations ##
-        ## are provinces ##
+        ### are provinces ###
         for loc in locations:
             loc.location_type_id = self.lt.id
             loc.save()
