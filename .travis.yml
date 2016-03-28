@@ -21,15 +21,15 @@ notifications:
   slack:
     rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 
-# deploy:
-#   provider: codedeploy
-#   access_key_id: $AWS_ACCESS_KEY
-#   secret_access_key: $AWS_SECRET_KEY
-#   # bucket: rhizome-dev
-#   revision_type: github
-#   application: rhizome_test
-#   region: us-east-1
-#   deployment_group: rhizome_test_deploy
-#   skip_cleanup: true
-#   on:
-#     branch: development
+deploy:
+  provider: codedeploy
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  # bucket: rhizome-dev
+  revision_type: github
+  application: rhizome_dev
+  region: us-east-1
+  deployment_group: rhizome_dev_codeDeploy
+  skip_cleanup: true
+  on:
+    branch: development
