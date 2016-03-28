@@ -13,7 +13,6 @@ class GeoResourceTest(ResourceTestCase):
     def setUp(self):
       #   super(GeoResourceTest, self).setUp()
 
-
         self.ts = TestSetupHelpers()
         self.lt = LocationType.objects.create(name='Province',admin_level=2)
         self.o = self.ts.create_arbitrary_office()
