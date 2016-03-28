@@ -9,7 +9,7 @@ class Chart extends Component {
 
   constructor (props) {
     super(props)
-    this.params = props
+    this.options = props
   }
 
   componentDidMount () {
@@ -26,16 +26,16 @@ class Chart extends Component {
   }
 
   componentDidUpdate () {
-    this.params = _.defaults({}, this.props, this.params)
+    this.options = _.defaults({}, this.props, this.options)
     const chart = this.getParams()
     this.chart.update(chart.data, chart, this.container)
   }
 
   getParams () {
-    const aspect = this.params.aspect || 1
-    this.params.width = this.props.width || this.container.clientWidth
-    this.params.height = this.props.height || this.params.width / aspect
-    return this.params
+    const aspect = this.options.aspect || 1
+    this.options.width = this.props.width || this.container.clientWidth
+    this.options.height = this.props.height || this.options.width / aspect
+    return this.options
   }
 
   render () {

@@ -31,21 +31,21 @@ class LineChart extends Chart {
 
   getParams () {
     console.info('------ LineChart.getParams')
-    const params = this.params
+    const options = this.options
     const props = this.props
-    const aspect = params.aspect || 1
-    params.width = props.width || this.container.clientWidth
-    params.height = props.height || params.width / aspect
-    params.colors = props.colors || props.color
+    const aspect = options.aspect || 1
+    options.width = props.width || this.container.clientWidth
+    options.height = props.height || options.width / aspect
+    options.colors = props.colors || props.color
     if (props.xLabel || props.yLabel) {
       let marginLeft = props.yLabel ? 15 : props.margin.left || 0
       let marginBottom = props.xLabel ? 30 : props.margin.bottom || 0
       let marginTop = props.margin.top || 0
       let marginRight = props.margin.right || 0
-      params.margin = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
+      options.margin = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
     }
 
-    return this.params
+    return this.options
   }
 }
 

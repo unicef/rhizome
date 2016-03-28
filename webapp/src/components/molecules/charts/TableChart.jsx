@@ -21,15 +21,15 @@ class TableChart extends Chart {
   }
 
   getParams () {
-    const aspect = this.params.aspect || 1
-    this.params.width = this.props.width || this.container.clientWidth
-    this.params.height = this.props.height || this.params.width / aspect
-    this.params.headers = this.params.selected_indicators
-    this.params.xDomain = this.params.headers.map(indicator => indicator.short_name)
-    this.params.x = this.params.selected_indicators[0]
-    this.params.y = this.params.selected_indicators[1] ? this.params.selected_indicators[1].id : 0
-    this.params.z = this.params.selected_indicators[2] ? this.params.selected_indicators[2].id : 0
-    return this.params
+    const aspect = this.options.aspect || 1
+    this.options.width = this.props.width || this.container.clientWidth
+    this.options.height = this.props.height || this.options.width / aspect
+    this.options.headers = this.options.selected_indicators
+    this.options.xDomain = this.options.headers.map(indicator => indicator.short_name)
+    this.options.x = this.options.selected_indicators[0]
+    this.options.y = this.options.selected_indicators[1] ? this.options.selected_indicators[1].id : 0
+    this.options.z = this.options.selected_indicators[2] ? this.options.selected_indicators[2].id : 0
+    return this.options
   }
 
   render () {
