@@ -11,8 +11,8 @@ const DataExplorerStoreHelpers = {
     chart.data = filtered_datapoints.map(datapoint => {
       const values = []
       datapoint.indicators.forEach(i => {
+        const indicator_id = i.indicator
         if (i.value != null) {
-          const indicator_id = i.indicator
           let displayValue = i.value
           if (indicators_index[indicator_id].data_format === 'pct') {
             displayValue = (i.value * 100).toFixed(1) + ' %'
@@ -28,6 +28,14 @@ const DataExplorerStoreHelpers = {
             value: i.value,
             campaign: datapoint.campaign,
             displayValue: displayValue,
+            location: locations_index[datapoint.location]
+          })
+        } else {
+          values.push({
+            indicator: indicators_index[indicator_id],
+            value: null,
+            campaign: datapoint.campaign,
+            displayValue: '',
             location: locations_index[datapoint.location]
           })
         }

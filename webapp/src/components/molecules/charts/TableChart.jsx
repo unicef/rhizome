@@ -16,7 +16,7 @@ class TableChart extends Chart {
     column: d => d.indicator.short_name,
     seriesName: d => d.name,
     sortDirection: 1,
-    value: d => d.value,
+    value: d => d ? d.value : null,
     values: d => d.values
   }
 

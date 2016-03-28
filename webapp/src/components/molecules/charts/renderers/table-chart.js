@@ -26,7 +26,7 @@ class TableChartRenderer {
     this.y = _.flow(options.seriesName, this.yScale)
     this.transform = (d, i) => `translate(${this.z}, ${this.y(d) + 10})`
     this.targets = this.getTargets(options.headers)
-    this.fill = d => this.scale(this.targets[d.indicator.id](d.value))
+    this.fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? this.scale(this.targets[d.indicator.id](d.value)) : '#FFFFFF'
     this.svg = d3.select(container)
   }
 
@@ -271,7 +271,6 @@ class TableChartRenderer {
       domain = options.default_sort_order
       this.sortDirection = 1
     }
-
     if (this.sortDirection === -1) {
       domain = domain.reverse()
     }
@@ -292,7 +291,12 @@ class TableChartRenderer {
     if (sortCol === null) {
       return options.seriesName(s)
     }
-    return options.value(_.find(options.values(s), d => options.column(d) === sortCol))
+    return options.value(_.find(options.values(s), d => {
+      if (d.value === null || !_.isFinite(d.value)) {
+        d.value = this.sortDirection !== 1 ? -Infinity : Infinity
+      }
+      return options.column(d) === sortCol
+    }))
   }
 
   wrap (text, width) {

@@ -55,6 +55,14 @@ const TableChartInfo = {
             chartOptions.headers.push(indicators_map[i.indicator])
             addedHeaders[i.indicator] = true
           }
+        } else {
+          values.push({
+            indicator: indicators_map[i.indicator],
+            value: null,
+            campaign: d.campaign,
+            displayValue: '',
+            location: indicators_map[d.location]
+          })
         }
       })
 

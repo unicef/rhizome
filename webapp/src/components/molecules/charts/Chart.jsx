@@ -4,6 +4,7 @@ import React, { Component } from 'react'
 import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
+import ChoroplethMapLegendRenderer from 'components/molecules/charts/renderers/choropleth-map-legend'
 
 class Chart extends Component {
 
@@ -13,25 +14,30 @@ class Chart extends Component {
   }
 
   componentDidMount () {
+    console.log('------ Chart.componentDidMount')
     this.container = React.findDOMNode(this)
-    const chart = this.setOptions()
-    if (chart.type === 'LineChart') {
+    const options = this.setOptions()
+    if (options.type === 'LineChart') {
       this.chart = new LineChartRenderer(this.props.data, this.options, this.container)
-    } else if (chart.type === 'TableChart') {
+    } else if (options.type === 'TableChart') {
       this.chart = new TableChartRenderer(this.props.data, this.options, this.container)
-    } else if (chart.type === 'ChoroplethMap') {
+    } else if (options.type === 'ChoroplethMap') {
       this.chart = new ChoroplethMapRenderer(this.props.data, this.options, this.container)
+    } else if (options.type === 'ChoroplethMapLegend') {
+      this.chart = new ChoroplethMapLegendRenderer(this.props.data, this.options, this.container)
     }
     this.chart.render()
   }
 
   componentDidUpdate () {
+    console.log('------ Chart.componentDidUpdate')
     this.options = _.defaults({}, this.props, this.options)
     const chart = this.setOptions()
     this.chart.update(this.props.data, this.options, this.container)
   }
 
   setOptions () {
+    console.log('------ Chart.setOptions')
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
@@ -39,9 +45,9 @@ class Chart extends Component {
   }
 
   render () {
+    console.log('------ Chart.render')
     return (
-      <svg className='line'>
-      </svg>
+      <svg></svg>
     )
   }
 }
