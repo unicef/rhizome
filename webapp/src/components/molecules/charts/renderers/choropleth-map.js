@@ -49,7 +49,7 @@ class ChoroplethMapRenderer {
   // RENDER MAP PATHS
   // ---------------------------------------------------------------------------
   renderMapPaths() {
-    const g = this.svg.select('.data')
+    const g = this.svg.select('.colors').select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
     location.enter().append('path')
     location.attr({
@@ -76,6 +76,10 @@ class ChoroplethMapRenderer {
     .on('click', this._onClick)
     .on('mousemove', this._onMouseMove)
     .on('mouseout', this._onMouseOut)
+
+    const map_width = g.node().getBBox().width
+    const offset = (this.options.width - map_width) / 2
+    g.attr('transform', `translate(${offset}, 0)`)
     location.exit().remove()
   }
 

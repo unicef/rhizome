@@ -11,7 +11,7 @@ function legend (chartOptions) {
   var _interactive = false
   var _padding = 6
   var _scale = d3.scale.category20b()
-  var _size = 8
+  var _size = 10
   var _fontSize = 65
 
   function fill (d, i) {
