@@ -1,7 +1,4 @@
-import d3 from 'd3'
 import _ from 'lodash'
-import DataExplorerActions from 'actions/DataExplorerActions'
-import aspects from 'components/molecules/charts/utils/aspects'
 
 const DataExplorerStoreHelpers = {
   // =========================================================================== //
@@ -151,13 +148,6 @@ const DataExplorerStoreHelpers = {
   formatBarChart () {
     // TO DO
     return null
-  },
-  _getChartFormat (indicator) {
-    let d3Format = d3.format('')
-    if (indicator.data_format === 'pct') {
-      d3Format = d3.format(',.1%')
-    }
-    return d3Format
   }
 }
 
