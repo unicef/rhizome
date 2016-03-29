@@ -318,15 +318,10 @@ var DashboardNewStore = Reflux.createStore({
 
   chartParamsAreReady (uuid) {
     const campaignsReady = !_.isEmpty(this.charts[uuid].selected_campaigns)
-    console.log('campaignsReady', campaignsReady)
     const selectedLocationsReady = !_.isEmpty(this.charts[uuid].selected_locations)
-    console.log('selectedLocationsReady', selectedLocationsReady)
     const selectedIndicatorsReady = !_.isEmpty(this.charts[uuid].selected_indicators)
-    console.log('selectedIndicatorsReady', selectedIndicatorsReady)
     const startDateReady = !_.isEmpty(this.charts[uuid].start_date)
-    console.log('startDateReady', startDateReady)
     const endDateReady = !_.isEmpty(this.charts[uuid].end_date)
-    console.log('endDateReady', endDateReady)
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady && campaignsReady
   },
 
@@ -352,9 +347,6 @@ var DashboardNewStore = Reflux.createStore({
   },
 
   toggleLoading (uuid) { console.log('Store.toggleLoading')
-    console.log('uuid', uuid)
-    console.log('this.charts', this.charts)
-    console.log('this.charts[uuid]', this.charts[uuid])
     this.charts[uuid].loading = true
     this.trigger(this.charts)
   }

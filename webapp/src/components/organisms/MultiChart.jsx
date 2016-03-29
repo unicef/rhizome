@@ -78,7 +78,7 @@ const MultiChart = React.createClass({
   },
 
   render () {
-    console.info('MultiChart.RENDER ==========================================')
+    // console.info('MultiChart.RENDER ==========================================')
     const chart = this.props.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()

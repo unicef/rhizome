@@ -18,7 +18,6 @@ const Dashboard = React.createClass({
 
   mixins: [
     Reflux.connect(DashboardNewStore, 'charts'),
-    Reflux.connect(OfficeStore, 'offices'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -57,7 +56,6 @@ const Dashboard = React.createClass({
         <div className='row'>
           <MultiChart
             chart={chart}
-            chart_id={7}
             removeChart={DashboardNewActions.removeChart}
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
