@@ -48,8 +48,6 @@ class TransformUploadTestCase(TestCase):
               those created in other documents)
             4. Inserting one record into submission_detail        '''
 
-        self.set_up()
-
         dt = ComplexDocTransform(self.user.id, self.document.id)
 
         source_submissions = dt.process_file()
@@ -60,7 +58,6 @@ class TransformUploadTestCase(TestCase):
         self.assertEqual(len(source_submissions),file_line_count)
 
     def test_missing_required_column(self):
-        self.set_up()
         doc_id = self.ingest_file('missing_campaign.csv')
         try:
             ComplexDocTransform(self.user.id, doc_id)
