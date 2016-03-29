@@ -3,7 +3,7 @@ version: 0.0
 os: linux
 
 files:
-  - source: /test2
+  - source: /test.md
   destination: /var/www/apps/rhizome/
 
 hooks:
