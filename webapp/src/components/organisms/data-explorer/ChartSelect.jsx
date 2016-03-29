@@ -1,12 +1,13 @@
 import React from 'react'
 
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
+
 export default React.createClass({
   propTypes: {
-    charts: React.PropTypes.array.isRequired,
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
       React.PropTypes.number
-    ]).isRequired,
+    ]),
     onChange: React.PropTypes.func.isRequired
   },
 
@@ -15,7 +16,8 @@ export default React.createClass({
   },
 
   render () {
-    var chartBoxes = this.props.charts.map((chart, index) => {
+    const charts = builderDefinitions.charts
+    var chartBoxes = charts.map((chart, index) => {
       return (
         <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === this.props.value ? 'active' : '')}>
           <div className='chart-box' onClick={this.props.onChange.bind(null, chart.name)}>
