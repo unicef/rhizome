@@ -57,15 +57,13 @@ $total-columns: 7;
     color: #FF9489;
     top: -1rem;
     left: initial;
+    z-index: 100;
 	}
   footer.hideable {
     position: fixed;
-    bottom: 6.2rem;
+    bottom: 6rem;
     background: #252525;
     padding-top: .75rem;
-    &.descended {
-      bottom: -.1rem;
-    }
     h1, h2, h3, h4, h5, h6, p {
       color: white;
     }

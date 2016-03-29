@@ -23,7 +23,7 @@ var DashboardNewStore = Reflux.createStore({
   listenables: DashboardNewActions,
 
   chart_template: {
-    uuid: uuid.v4(),
+    uuid: null,
     type: 'RawData',
     title: 'Untitled',
     data: null,
@@ -38,23 +38,7 @@ var DashboardNewStore = Reflux.createStore({
     fetching: false
   },
 
-  charts: [
-    {
-      uuid: uuid.v4(),
-      type: 'RawData',
-      title: 'Untitled',
-      data: null,
-      data_format: 'pct',
-      selected_campaigns: [],
-      selected_indicators: [],
-      selected_locations: [],
-      end_date: moment().format('YYYY-MM-DD'),
-      start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-      features: [],
-      loading: false,
-      fetching: false
-    }
-  ],
+  charts: {},
 
   init () {
     this.listenTo(DatapointStore, this.onDatapointStore)
@@ -66,22 +50,6 @@ var DashboardNewStore = Reflux.createStore({
   },
 
   // =========================================================================== //
-  //                               API CALL HANDLERS                             //
-  // =========================================================================== //
-  // ============================  Fetch Map Features  ========================= //
-  onFetchMapFeatures (index) {
-    this.charts[index].loading = true
-    this.trigger(this.charts)
-  },
-  onFetchMapFeaturesCompleted (response) {
-    this.charts[index].loading = true
-    this.charts[index].features = response.objects.features
-  },
-  onFetchMapFeaturesFailed (error) {
-    this.setState({ error: error })
-  },
-
-  // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   // =================================  Charts  ================================ //
@@ -89,7 +57,9 @@ var DashboardNewStore = Reflux.createStore({
     const new_chart = _.assign({}, this.chart_template)
     new_chart.type = type
     new_chart.title = format.unCamelCase(type)
-    this.charts.push(new_chart)
+    new_chart.uuid = uuid.v4()
+    this.charts[new_chart.uuid] = new_chart
+    // this.charts.push(new_chart)
     this.trigger(this.charts)
   },
   onRemoveChart (uuid) { console.info('- Store.onRemoveChart')
@@ -100,153 +70,165 @@ var DashboardNewStore = Reflux.createStore({
   },
 
   // =============================  Indicators  ============================ //
-  onSetIndicators (indicators, index) {
-    console.info('- Store.onSetIndicators')
-    this.toggleLoading(index)
+  onSetIndicators (indicators, uuid) { console.info('- Store.onSetIndicators')
+    this.toggleLoading(uuid)
     if (_.isNull(indicators)) {
-      this.charts[index].selected_indicators = []
+      this.charts[uuid].selected_indicators = []
     } else if (_.isArray(indicators)) {
-      this.charts[index].selected_indicators = indicators.map(ind => this.couldBeId(ind) ? this.indicators.index[ind] : ind)
+      this.charts[uuid].selected_indicators = indicators.map(ind => this.couldBeId(ind) ? this.indicators.index[ind] : ind)
     } else {
-      this.charts[index].selected_indicators = this.couldBeId(indicators) ? [this.indicators.index[indicators]] : [indicators]
+      this.charts[uuid].selected_indicators = this.couldBeId(indicators) ? [this.indicators.index[indicators]] : [indicators]
     }
-    this.updateChart(index)
+    this.updateChart(uuid)
   },
-  onSelectIndicator (id, index) {
-    console.info('- Store.onSelectIndicator')
-    this.toggleLoading(index)
-    this.charts[index].selected_indicators.push(this.indicators.index[id])
-    this.updateChart(index)
+  onSelectIndicator (id, uuid) { console.info('- Store.onSelectIndicator')
+    console.log('id', id)
+    console.log('uuid', uuid)
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_indicators.push(this.indicators.index[id])
+    this.updateChart(uuid)
   },
-  onDeselectIndicator (id, index) {
-    console.info('- Store.onDeselectIndicator')
-    this.toggleLoading(index)
-    _.remove(this.charts[index].selected_indicators, {id: id})
-    this.updateChart(index)
+  onDeselectIndicator (id, uuid) { console.info('- Store.onDeselectIndicator')
+    this.toggleLoading(uuid)
+    _.remove(this.charts[uuid].selected_indicators, {id: id})
+    this.updateChart(uuid)
   },
-  onReorderIndicator (selected_indicators, index) {
-    console.info('- Store.onReorderIndicator')
-    this.toggleLoading(index)
-    this.charts[index].selected_indicators = selected_indicators
-    this.updateChart(index)
+  onReorderIndicator (selected_indicators, uuid) { console.info('- Store.onReorderIndicator')
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_indicators = selected_indicators
+    this.updateChart(uuid)
   },
-  onClearSelectedIndicators (index) {
-    console.info('- Store.onClearSelectedIndicators')
-    this.toggleLoading(index)
-    this.charts[index].selected_indicators = []
-    this.updateChart(index)
+  onClearSelectedIndicators (uuid) { console.info('- Store.onClearSelectedIndicators')
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_indicators = []
+    this.updateChart(uuid)
   },
 
   // =============================  Locations  ============================ //
-  onSetLocations (locations, index) {
-    console.info('- Store.onSetLocations')
-    this.toggleLoading(index)
+  onSetLocations (locations, uuid) { console.info('- Store.onSetLocations')
+    this.toggleLoading(uuid)
     if (_.isNull(locations)) {
-      this.charts[index].selected_locations = []
+      this.charts[uuid].selected_locations = []
     } else if (_.isArray(locations)) {
-      this.charts[index].selected_locations = locations.map(location => this.couldBeId(location) ? this.locations.index[location] : location)
+      this.charts[uuid].selected_locations = locations.map(location => this.couldBeId(location) ? this.locations.index[location] : location)
     } else {
-      this.charts[index].selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
+      this.charts[uuid].selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
     }
-    this.updateChart(index)
+    this.updateChart(uuid)
   },
-  onSelectLocation (id, index) {console.info('- Store.onSelectLocation')
-    this.toggleLoading(index)
+  onSelectLocation (id, uuid) {console.info('- Store.onSelectLocation')
+    this.toggleLoading(uuid)
     if (typeof id === 'string' && id.indexOf('lpd') > -1) {
       return this.addLocationsByLpdStatus(id)
     }
-    this.charts[index].selected_locations.push(this.locations.index[id])
-    this.updateChart(index)
+    this.charts[uuid].selected_locations.push(this.locations.index[id])
+    this.updateChart(uuid)
   },
-  addLocationsByLpdStatus (index) {
+  addLocationsByLpdStatus (uuid) {
     let locations_to_add = this.locations.lpd_statuses.find(lpd_status => lpd_status.value === index)
     locations_to_add.location_ids.forEach(location_id => {
-      if (this.charts[index].selected_locations.map(item => item.id).indexOf(location_id) >= 0) {
+      if (this.charts[uuid].selected_locations.map(item => item.id).indexOf(location_id) >= 0) {
         return
       }
-      this.charts[index].selected_locations.push(this.locations.index[location_id])
+      this.charts[uuid].selected_locations.push(this.locations.index[location_id])
     })
-    this.updateChart(index)
+    this.updateChart(uuid)
   },
-  onDeselectLocation (id, index) {console.info('- Store.onDeselectLocation')
-    this.toggleLoading(index)
-    _.remove(this.charts[index].selected_locations, {id: id})
-    this.updateChart(index)
+  onDeselectLocation (id, uuid) {console.info('- Store.onDeselectLocation')
+    this.toggleLoading(uuid)
+    _.remove(this.charts[uuid].selected_locations, {id: id})
+    this.updateChart(uuid)
   },
-  onClearSelectedLocations (index) {console.info('- Store.onClearSelectedLocations')
-    this.toggleLoading(index)
-    this.charts[index].selected_locations = []
-    this.updateChart(index)
+  onClearSelectedLocations (uuid) {console.info('- Store.onClearSelectedLocations')
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_locations = []
+    this.updateChart(uuid)
   },
 
   // =============================  Campaigns  ============================ //
-  onSetCampaigns (campaigns, index) {console.info('- Store.onSetCampaigns')
-    this.toggleLoading(index)
+  onSetCampaigns (campaigns, uuid) {console.info('- Store.onSetCampaigns')
+    this.toggleLoading(uuid)
     if (_.isArray(campaigns)) {
-      this.charts[index].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
+      this.charts[uuid].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
     } else {
-      this.charts[index].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
+      this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
     }
-    this.charts[index].start_date = this.charts[index].selected_campaigns[0].start_date
-    this.charts[index].end_date = this.charts[index].selected_campaigns[0].end_date
-    if (this.charts[index].start_date === this.charts[index].end_date) {
-      this.charts[index].start_date = moment(this.charts[index].start_date).subtract(1, 'M').format('YYYY-MM-DD')
-      this.charts[index].end_date = moment(this.charts[index].start_date).add(1, 'M').format('YYYY-MM-DD')
+    this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
+    this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
+    if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
+      this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
+      this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
     }
-    this.updateChart(index)
+    this.updateChart(uuid)
   },
-  onSelectCampaign (id, index) { console.info('- Store.onSelectCampaign')
-    this.toggleLoading(index)
-    this.charts[index].selected_campaigns.push(this.campaigns.index[id])
-    this.updateChart(index)
+  onSelectCampaign (id, uuid) { console.info('- Store.onSelectCampaign')
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_campaigns.push(this.campaigns.index[id])
+    this.updateChart(uuid)
   },
-  onDeselectCampaign (id, index) { console.info('- Store.onDeselectCampaign')
-    this.toggleLoading(index)
-    _.remove(this.charts[index].selected_campaigns, {id: id})
-    this.updateChart(index)
+  onDeselectCampaign (id, uuid) { console.info('- Store.onDeselectCampaign')
+    this.toggleLoading(uuid)
+    _.remove(this.charts[uuid].selected_campaigns, {id: id})
+    this.updateChart(uuid)
   },
-  onClearSelectedCampaigns (index) { console.info('- Store.onClearSelectedCampaigns')
-    this.toggleLoading(index)
-    this.charts[index].selected_campaigns = []
-    this.updateChart(index)
+  onClearSelectedCampaigns (uuid) { console.info('- Store.onClearSelectedCampaigns')
+    this.toggleLoading(uuid)
+    this.charts[uuid].selected_campaigns = []
+    this.updateChart(uuid)
   },
 
   // ============================  Chart Properties =========================== //
-  onSetDateRange (key, value, index) { console.info('- Store.onSetDateRange')
+  onSetDateRange (key, value, uuid) { console.info('- Store.onSetDateRange')
     const full_key = key + '_date'
     this.chart[full_key] = value
-    this.updateChart(index)
+    this.updateChart(uuid)
   },
-  onSetType (type, index) { console.info('- Store.onSetType')
-    this.toggleLoading(index)
-    this.charts[index].type = type
-    this.updateChart(index)
+  onSetType (type, uuid) { console.info('- Store.onSetType')
+    this.toggleLoading(uuid)
+    this.charts[uuid].type = type
+    this.updateChart(uuid)
   },
-  onSetPalette (palette, index) { console.info('- Store.onSetPalette')
-    this.charts[index].palette = palette
-    this.charts[index].colors = palettes[palette]
+  onSetPalette (palette, uuid) { console.info('- Store.onSetPalette')
+    this.charts[uuid].palette = palette
+    this.charts[uuid].colors = palettes[palette]
     this.trigger(this.charts)
   },
-  onSetTitle (title, index) { console.info('- Store.onSetTitle')
-    this.charts[index].title = title
+  onSetTitle (title, uuid) { console.info('- Store.onSetTitle')
+    this.charts[uuid].title = title
     this.trigger(this.charts)
   },
-  onSaveChart (index) { console.info('- Store.saveChart')
-    if (!this.charts[index].title) {
+  onSaveChart (uuid) { console.info('- Store.saveChart')
+    if (!this.charts[uuid].title) {
       return window.alert('Please add a Title to your chart')
     }
     ChartActions.postChart({
-      id: this.charts[index].id,
-      title: this.charts[index].title,
+      id: this.charts[uuid].id,
+      title: this.charts[uuid].title,
       chart_json: JSON.stringify({
-        type: this.charts[index].type,
-        start_date: this.charts[index].start_date,
-        end_date: this.charts[index].end_date,
-        campaign_ids: this.charts[index].selected_campaigns.map(campaign => campaign.id),
-        location_ids: this.charts[index].selected_locations.map(location => location.id),
-        indicator_ids: this.charts[index].selected_indicators.map(indicator => indicator.id)
+        type: this.charts[uuid].type,
+        start_date: this.charts[uuid].start_date,
+        end_date: this.charts[uuid].end_date,
+        campaign_ids: this.charts[uuid].selected_campaigns.map(campaign => campaign.id),
+        location_ids: this.charts[uuid].selected_locations.map(location => location.id),
+        indicator_ids: this.charts[uuid].selected_indicators.map(indicator => indicator.id)
       })
     })
+  },
+
+  // =========================================================================== //
+  //                               API CALL HANDLERS                             //
+  // =========================================================================== //
+  // ============================  Fetch Map Features  ========================= //
+  onFetchMapFeatures (uuid) {
+    this.charts[uuid].loading = true
+    this.trigger(this.charts)
+  },
+  onFetchMapFeaturesCompleted (response) {
+    this.charts[uuid].loading = true
+    this.charts[uuid].features = response.objects.features
+  },
+  onFetchMapFeaturesFailed (error) {
+    this.setState({ error: error })
   },
 
   // =========================================================================== //
@@ -263,63 +245,63 @@ var DashboardNewStore = Reflux.createStore({
     const index = this.charts.filter(chart => chart.fetching)
     console.log('index', index)
     if (_.isEmpty(datapoints.raw)) {
-      this.charts[index].data = []
+      this.charts[uuid].data = []
       return this.trigger(this.charts)
     }
     this.datapoints = datapoints
-    this.charts[index].parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
-    this.charts[index].default_sort_order = datapoints.meta.default_sort_order
-    this.charts[index] = this.formatChartByType(index)
-    this.charts[index].loading = false
-    this.charts[index].fetching = false
+    this.charts[uuid].parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
+    this.charts[uuid].default_sort_order = datapoints.meta.default_sort_order
+    this.charts[uuid] = this.formatChartByType(uuid)
+    this.charts[uuid].loading = false
+    this.charts[uuid].fetching = false
     this.trigger(this.charts)
   },
 
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
-  updateChart (index) {  console.info('-- Store.updateChart' + (this.chartParamsAreReady(index) ? ' (Params Ready!)' : ''))
-    if (this.charts[index].data !== null) {
+  updateChart (uuid) {  console.info('-- Store.updateChart' + (this.chartParamsAreReady(uuid) ? ' (Params Ready!)' : ''))
+    if (this.charts[uuid].data !== null) {
       DatapointActions.clearDatapoints()
-      this.charts[index].data = null
+      this.charts[uuid].data = null
       this.trigger(this.charts)
     }
-    if (this.chartParamsAreReady(index)) {
-      this.charts[index].fetching = true
-      if (this.charts[index].type === 'ChoroplethMap') {
-        DashboardNewActions.fetchMapFeatures(this.charts[index].selected_locations.map(location => location.id))
+    if (this.chartParamsAreReady(uuid)) {
+      this.charts[uuid].fetching = true
+      if (this.charts[uuid].type === 'ChoroplethMap') {
+        DashboardNewActions.fetchMapFeatures(this.charts[uuid].selected_locations.map(location => location.id))
       }
       DatapointActions.fetchDatapoints({
-        indicator_ids: this.charts[index].selected_indicators.map(indicator => indicator.id),
-        location_ids: this.charts[index].selected_locations.map(location => location.id),
-        start_date: this.charts[index].start_date,
-        end_date: this.charts[index].end_date,
-        type: this.charts[index].type
+        indicator_ids: this.charts[uuid].selected_indicators.map(indicator => indicator.id),
+        location_ids: this.charts[uuid].selected_locations.map(location => location.id),
+        start_date: this.charts[uuid].start_date,
+        end_date: this.charts[uuid].end_date,
+        type: this.charts[uuid].type
       })
     } else {
-      this.charts[index].loading = false
+      this.charts[uuid].loading = false
       this.trigger(this.charts)
     }
   },
 
-  formatChartByType (index) {  console.info('---- Store.formatChartByType')
-    const chart = this.charts[index]
+  formatChartByType (uuid) {  console.info('---- Store.formatChartByType')
+    const chart = this.charts[uuid]
     const datapoints = this.datapoints.raw
     if (chart.type === 'RawData') {
       chart.data = datapoints
       return chart
     }
-    const selected_locations_index = _.indexBy(this.charts[index].selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(this.charts[index].selected_indicators, 'id')
+    const selected_locations_index = _.indexBy(this.charts[uuid].selected_locations, 'id')
+    const selected_indicators_index = _.indexBy(this.charts[uuid].selected_indicators, 'id')
     const groups = chart.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
     const layout = 1 // hard coded for now
-    const melted_datapoints = this.melt(datapoints, this.charts[index].selected_indicators)
+    const melted_datapoints = this.melt(datapoints, this.charts[uuid].selected_indicators)
 
     switch (chart.type) {
       case 'LineChart':
         return DashboardNewStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
       // case 'PieChart':
-        // return DashboardNewStoreHelpers.formatPieChart(melted_datapoints, this.charts[index].selected_indicators, layout)
+        // return DashboardNewStoreHelpers.formatPieChart(melted_datapoints, this.charts[uuid].selected_indicators, layout)
       case 'ChoroplethMap':
         return DashboardNewStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
@@ -334,16 +316,16 @@ var DashboardNewStore = Reflux.createStore({
     }
   },
 
-  chartParamsAreReady (index) {
-    const campaignsReady = !_.isEmpty(this.charts[index].selected_campaigns)
+  chartParamsAreReady (uuid) {
+    const campaignsReady = !_.isEmpty(this.charts[uuid].selected_campaigns)
     console.log('campaignsReady', campaignsReady)
-    const selectedLocationsReady = !_.isEmpty(this.charts[index].selected_locations)
+    const selectedLocationsReady = !_.isEmpty(this.charts[uuid].selected_locations)
     console.log('selectedLocationsReady', selectedLocationsReady)
-    const selectedIndicatorsReady = !_.isEmpty(this.charts[index].selected_indicators)
+    const selectedIndicatorsReady = !_.isEmpty(this.charts[uuid].selected_indicators)
     console.log('selectedIndicatorsReady', selectedIndicatorsReady)
-    const startDateReady = !_.isEmpty(this.charts[index].start_date)
+    const startDateReady = !_.isEmpty(this.charts[uuid].start_date)
     console.log('startDateReady', startDateReady)
-    const endDateReady = !_.isEmpty(this.charts[index].end_date)
+    const endDateReady = !_.isEmpty(this.charts[uuid].end_date)
     console.log('endDateReady', endDateReady)
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady && campaignsReady
   },
@@ -369,8 +351,11 @@ var DashboardNewStore = Reflux.createStore({
     return _.isNumber(value) || _.isString(value)
   },
 
-  toggleLoading (index) {
-    this.charts[index].loading = true
+  toggleLoading (uuid) { console.log('Store.toggleLoading')
+    console.log('uuid', uuid)
+    console.log('this.charts', this.charts)
+    console.log('this.charts[uuid]', this.charts[uuid])
+    this.charts[uuid].loading = true
     this.trigger(this.charts)
   }
 

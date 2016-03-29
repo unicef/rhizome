@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import Notification from 'react-notification'
@@ -34,6 +35,10 @@ const Dashboard = React.createClass({
     }
   },
 
+  componentDidMount() {
+    DashboardNewActions.addChart('RawData')
+  },
+
   _showHideFooter () { console.info('Dashboard._showHideFooter')
     this.setState({footerHidden: !this.state.footerHidden})
   },
@@ -45,28 +50,37 @@ const Dashboard = React.createClass({
 
   render () {
     console.info('Dashboard.RENDER ==========================================')
-    const charts = this.state.charts.map((chart, index) => {
+    let charts = _.toArray(this.state.charts)
+    console.log('charts', charts)
+    charts = charts.map(chart => {
       return (
         <div className='row'>
           <MultiChart
             chart={chart}
             chart_id={7}
             removeChart={DashboardNewActions.removeChart}
-            setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, index)}
-            selectIndicator={(id) => DashboardNewActions.selectIndicator(id, index)}
-            deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, index)}
-            reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, index)}
-            clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(index)}
-            setLocations={(locations) => DashboardNewActions.setLocations(locations, index)}
-            selectLocation={(id) => DashboardNewActions.selectLocation(id, index)}
-            deselectLocation={(id) => DashboardNewActions.deselectLocation(id, index)}
-            clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(index)}
-            setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, index)}
-            selectCampaign={(id) => DashboardNewActions.selectCampaign(id, index)}
-            deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, index)}
-            setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, index)}
-            setPalette={(palette) => DashboardNewActions.setPalette(palette, index)}
-            setTitle={(title) => DashboardNewActions.setTitle(title, index)}
+            setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
+            setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
+            setTitle={(title) => DashboardNewActions.setTitle(title, chart.uuid)}
+
+            setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
+            selectIndicator={(id) => {
+              console.log('id', id)
+              console.log('SleectIndicator')
+              return DashboardNewActions.selectIndicator(id, chart.uuid)}
+            }
+            deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, chart.uuid)}
+            reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, chart.uuid)}
+            clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(chart.uuid)}
+
+            setLocations={(locations) => DashboardNewActions.setLocations(locations, chart.uuid)}
+            selectLocation={(id) => DashboardNewActions.selectLocation(id, chart.uuid)}
+            deselectLocation={(id) => DashboardNewActions.deselectLocation(id, chart.uuid)}
+            clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(chart.uuid)}
+
+            setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, chart.uuid)}
+            selectCampaign={(id) => DashboardNewActions.selectCampaign(id, chart.uuid)}
+            deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, chart.uuid)}
           />
           <hr />
         </div>
