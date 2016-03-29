@@ -3,7 +3,7 @@ version: 0.1
 os: linux
 
 files:
-  - source: /test.md
+  - source: /dist/rhizome.zip
   destination: /var/www/apps/rhizome/
 permissions:
   - object: /var/www/apps/rhizome/

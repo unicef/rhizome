@@ -14,8 +14,10 @@ before_script:
 - cd webapp/ && npm install && npm install -g gulp && cd ..
 
 script:
-- python manage.py test --settings=rhizome.settings.test
-- cd webapp && gulp build && gulp mocha
+  - python manage.py test --settings=rhizome.settings.test
+  - cd webapp && gulp build && gulp mocha && cd ..
+  - npm run package
+
 
 
 notifications:
@@ -30,6 +32,7 @@ deploy:
   application: rhizome_auto_deploy
   region: us-east-1
   deployment_group: rhizome_dev_group
+  key: dist/rhizome.zip
   skip_cleanup: true
   on:
     branch: rhizome_dev_autodeploy
