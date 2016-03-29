@@ -3,12 +3,8 @@ version: 0.0
 os: linux
 
 files:
-  - source: /rhizome
-  - destination: /rhizome
-permissions:
-  - object: /rhizome
-  - pattern: "**"
-  - mode: 777
+  - source: /test.md
+  destination: /var/www/apps/rhizome/
 
 hooks:
   ApplicationStop:
