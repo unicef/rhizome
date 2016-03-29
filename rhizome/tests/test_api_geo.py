@@ -14,10 +14,17 @@ class GeoResourceTest(ResourceTestCase):
         super(GeoResourceTest, self).setUp()
 
         self.ts = TestSetupHelpers()
-        self.lt = self.ts.create_arbitrary_location_type()
+        self.lt = LocationType.objects.create(name='Province',admin_level=2)
         self.o = self.ts.create_arbitrary_office()
         location_df_from_csv= read_csv('rhizome/tests/_data/locations_nimroz.csv')
         locations = self.ts.model_df_to_data(location_df_from_csv,Location)
+
+        ## override location type attribute from file so that these locations ##
+        ## are provinces ##
+        for loc in locations:
+            loc.location_type_id = self.lt.id
+            loc.save()
+
         geo_json_df = read_csv('rhizome/tests/_data/geo_json.txt',delimiter = "|")
         location_df = DataFrame(list(Location.objects.all()\
 		    .values_list('id','location_code')),columns=['location_id','location_code'])
