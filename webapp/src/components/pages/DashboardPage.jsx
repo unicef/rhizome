@@ -1,48 +1,72 @@
-import _ from 'lodash'
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
-import StateMixin from 'reflux-state-mixin'
 
-import Chart from 'components/molecules/Chart'
-import ExportPdf from 'components/molecules/ExportPdf'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import MultiChart from 'components/organisms/MultiChart'
 
-import DataExplorerActions from 'actions/DataExplorerActions'
+import LocationStore from 'stores/LocationStore'
+import IndicatorStore from 'stores/IndicatorStore'
+import OfficeStore from 'stores/OfficeStore'
+import CampaignStore from 'stores/CampaignStore'
+import DashboardNewStore from 'stores/DashboardNewStore'
+import DashboardNewActions from 'actions/DashboardNewActions'
 
-import RootStore from 'stores/RootStore'
-import DashboardPageStore from 'stores/DashboardPageStore'
-
-var DashboardPage = React.createClass({
+const Dashboard = React.createClass({
 
   mixins: [
-    StateMixin.connect(RootStore, 'rootStore'),
-    // StateMixin.connect(DashboardPageStore),
+    Reflux.connect(DashboardNewStore, 'charts'),
+    Reflux.connect(OfficeStore, 'offices'),
+    Reflux.connect(LocationStore, 'locations'),
+    Reflux.connect(CampaignStore, 'campaigns'),
+    Reflux.connect(IndicatorStore, 'indicators')
   ],
 
-   propTypes: {
-    campaign: React.PropTypes.object,
-    charts_ids: React.PropTypes.array
-  },
-
-  getDefaultProps () {
-    return {
-      chart_ids: [5, 3],
-    }
-  },
-
-  charts: [],
-
-  componentDidMount () {
-
+  propTypes: {
+    chart_id: PropTypes.number
   },
 
   render () {
+    console.info('Dashboard.RENDER ==========================================')
+    const charts = this.state.charts.map((chart, index) => {
+      return (
+        <div>
+          <MultiChart
+            chart={chart}
+            chart_id={7}
+            removeChart={DashboardNewActions.removeChart}
+            setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, index)}
+            selectIndicator={(id) => DashboardNewActions.selectIndicator(id, index)}
+            deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, index)}
+            reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, index)}
+            clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(index)}
+            setLocations={(locations) => DashboardNewActions.setLocations(locations, index)}
+            selectLocation={(id) => DashboardNewActions.selectLocation(id, index)}
+            deselectLocation={(id) => DashboardNewActions.deselectLocation(id, index)}
+            clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(index)}
+            setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, index)}
+            selectCampaign={(id) => DashboardNewActions.selectCampaign(id, index)}
+            deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, index)}
+            setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, index)}
+            setPalette={(palette) => DashboardNewActions.setPalette(palette, index)}
+            setTitle={(title) => DashboardNewActions.setTitle(title, index)}
+            setType={(type) => DashboardNewActions.setType(type, index)}
+          />
+          <hr />
+        </div>
+      )
+    })
     return (
-      <div className='row layout-basic'>
-        <h1>we need a chart</h1>
-      </div>
+      <section className='multi-chart'>
+        { charts }
+        <button
+          className='button expand'
+          onClick={DashboardNewActions.addChart}
+          style={{paddingTop: '1rem', paddingBottom: '1rem'}}
+        >
+          Add Chart
+        </button>
+      </section>
     )
   }
 })
 
-export default DashboardPage
+export default Dashboard
