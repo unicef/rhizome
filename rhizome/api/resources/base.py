@@ -37,22 +37,27 @@ class BaseResource(Resource):
             .filter(parent_location_id__in=location_ids)\
             .values_list('location_id',flat=True)
 
+        print 'sub_location_ids'
+
         latest_campaign = Campaign.objects\
             .filter(id__in=self.parsed_params['campaign__in'])\
             .order_by('-end_date')[0]
 
-        if indicator_obj.good_bound > indicator_obj.bad_bound:
-            worst_performing = DataPointComputed.objects.filter(
-                location_id__in=sub_location_ids,
-                campaign=latest_campaign,
-                indicator_id=indicator_id
-            ).order_by('value')[0].location_id
-        else:
-            worst_performing = DataPointComputed.objects.filter(
-                location_id__in=sub_location_ids,
-                campaign=latest_campaign,
-                indicator_id=indicator_id
-            ).order_by('-value')[0].location_id
+        try:
+            if indicator_obj.good_bound > indicator_obj.bad_bound:
+                worst_performing = DataPointComputed.objects.filter(
+                    location_id__in=sub_location_ids,
+                    campaign=latest_campaign,
+                    indicator_id=indicator_id
+                ).order_by('value')[0].location_id
+            else:
+                worst_performing = DataPointComputed.objects.filter(
+                    location_id__in=sub_location_ids,
+                    campaign=latest_campaign,
+                    indicator_id=indicator_id
+                ).order_by('-value')[0].location_id
+        except IndexError:
+            return sub_location_ids[:1]
 
         return [worst_performing]
 
