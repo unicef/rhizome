@@ -17,6 +17,7 @@ script:
 - python manage.py test --settings=rhizome.settings.test
 - cd webapp && gulp build && gulp mocha
 
+
 notifications:
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 deploy:
