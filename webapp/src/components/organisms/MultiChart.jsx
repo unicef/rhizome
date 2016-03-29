@@ -149,10 +149,7 @@ const MultiChart = React.createClass({
       <IndicatorSelector
         indicators={this.state.indicators}
         selected_indicators={chart.selected_indicators}
-        selectIndicator={() => {
-          console.log('How about this')
-          return this.props.selectIndicator}
-        }
+        selectIndicator={this.props.selectIndicator}
         setIndicators={this.props.setIndicators}
         deselectIndicator={this.props.deselectIndicator}
         clearSelectedIndicators={this.props.clearSelectedIndicators}
