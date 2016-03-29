@@ -10,7 +10,7 @@ class TableChart extends Chart {
     cellHeight: 30,
     cellFontSize: 14,
     fontSize: 12,
-    margin: {},
+    margin: { top: 40, right: 40, bottom: 40, left: 40 },
     colors: palettes.traffic_light,
     sourceColumn: d => d.short_name,
     column: d => d.indicator.short_name,

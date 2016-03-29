@@ -12,7 +12,7 @@ import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
-import DashboardNewStoreHelpers from 'stores/DashboardNewStoreHelpers'
+import DataExplorerStoreHelpers from 'stores/DataExplorerStoreHelpers'
 
 import palettes from 'components/molecules/charts/utils/palettes'
 
@@ -53,7 +53,8 @@ var DashboardNewStore = Reflux.createStore({
     start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
     features: [],
     loading: false,
-    fetching: false
+    fetching: false,
+    fetching_map: false,
   },
 
   charts: {},
@@ -239,8 +240,11 @@ var DashboardNewStore = Reflux.createStore({
     this.trigger(this.charts)
   },
   onFetchMapFeaturesCompleted (response) {
-    this.charts[uuid].loading = true
+    const currently_fetching_charts = _.toArray(this.charts).filter(chart => chart.fetching_map)
+    const uuid = currently_fetching_charts[0].uuid
     this.charts[uuid].features = response.objects.features
+    this.charts[uuid].loading = true
+    this.charts[uuid].fetching_map = false
   },
   onFetchMapFeaturesFailed (error) {
     this.setState({ error: error })
@@ -259,6 +263,7 @@ var DashboardNewStore = Reflux.createStore({
     console.info('--- Store.onDatapointStore')
     const currently_fetching_charts = _.toArray(this.charts).filter(chart => chart.fetching)
     const uuid = currently_fetching_charts[0].uuid
+
     if (_.isEmpty(datapoints.raw)) {
       this.charts[uuid].data = []
       return this.trigger(this.charts)
@@ -284,6 +289,7 @@ var DashboardNewStore = Reflux.createStore({
     if (this.chartParamsAreReady(uuid)) {
       this.charts[uuid].fetching = true
       if (this.charts[uuid].type === 'ChoroplethMap') {
+        this.charts[uuid].fetching_map = true
         DashboardNewActions.fetchMapFeatures(this.charts[uuid].selected_locations.map(location => location.id))
       }
       DatapointActions.fetchDatapoints({
@@ -314,19 +320,19 @@ var DashboardNewStore = Reflux.createStore({
 
     switch (chart.type) {
       case 'LineChart':
-        return DashboardNewStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
+        return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
       // case 'PieChart':
-        // return DashboardNewStoreHelpers.formatPieChart(melted_datapoints, this.charts[uuid].selected_indicators, layout)
+        // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.charts[uuid].selected_indicators, layout)
       case 'ChoroplethMap':
-        return DashboardNewStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
+        return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
       // case 'ColumnChart':
-        // return DashboardNewStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart, layout)
+        // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart, layout)
       // case 'ScatterChart':
-        // return DashboardNewStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
+        // return DataExplorerStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
       // case 'BarChart':
-        // return DashboardNewStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
+        // return DataExplorerStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
       case 'TableChart':
-        return DashboardNewStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
+        return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
       default:
     }
   },

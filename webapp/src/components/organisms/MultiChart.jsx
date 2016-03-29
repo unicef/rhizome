@@ -91,7 +91,6 @@ const MultiChart = React.createClass({
         {chart.title}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
-        <small>{chart.uuid}</small>
       </h1>
 
     const chart_component = chart.type === 'RawData'?
