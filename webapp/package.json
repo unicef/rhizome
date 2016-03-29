@@ -33,7 +33,8 @@
     "reflux-promise": "^1.0.4",
     "reflux-state-mixin": "^0.7.0",
     "superagent": "1.4.0",
-    "superagent-prefix": "0.0.2"
+    "superagent-prefix": "0.0.2",
+    "uuid": "^2.0.1"
   },
   "devDependencies": {
     "babel": "^5.8.21",
