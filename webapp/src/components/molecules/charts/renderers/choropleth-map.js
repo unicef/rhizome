@@ -175,7 +175,11 @@ class ChoroplethMapRenderer {
   //                               EVENT HANDLERS                              //
   //===========================================================================//
   _onMouseMove = (location) => {
-    const xFormat = value => d3.format(Math.abs(value) < 1 ? '.4f' : 'n')(value)
+
+    const xFormat = value => {
+      const format = this.options.data_format === 'pct' ? ',.1%' : Math.abs(value) < 1 ? '.4f' : 'n'
+      return d3.format(format)(value)
+    }
     let locationValue = xFormat(this.valueForLocation(this.data, location) || 0)
     if (this.options.data_format === 'bool') {
       locationValue = Math.abs(locationValue) !== 0 ? 'Yes' : 'No'
