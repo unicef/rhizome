@@ -16,6 +16,8 @@ before_script:
 script:
   - python manage.py test --settings=rhizome.settings.test
   - cd webapp && gulp build && gulp mocha && cd ..
+  - npm run package
+
 
 notifications:
   slack:
@@ -23,12 +25,13 @@ notifications:
 
 deploy:
   provider: codedeploy
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+  access_key_id: $Root_Access_Key
+  secret_access_key: $Root_Secret_Key
   bucket: rhizome-dev
   application: rhizome_dev
   region: us-east-1
   deployment_group: rhizome_dev_group
+  key: dist/rhizome.zip
   skip_cleanup: true
   on:
     branch: rhizome_dev_autodeploy
