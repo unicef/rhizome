@@ -362,6 +362,7 @@ export default {
   post_indicator_tag: endPoint('/indicator_tag/', 'post', 1),
   get_dashboard: endPoint('/custom_dashboard/', 'get', 1),
   get_chart: endPoint('/custom_chart/', 'get', 1),
+  get_all_meta: endPoint('/all_meta/', 'get', 1),
   post_chart: endPoint('/custom_chart/', 'post', 1),
   delete_chart: emptyResponsePoint('/custom_chart', 'delete', 1, false),
   groups: endPoint('/group/', 'get', 1),

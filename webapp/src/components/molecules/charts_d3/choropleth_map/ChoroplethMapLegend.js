@@ -35,7 +35,7 @@ _.extend(MapLegend.prototype, {
     var margin = options.margin
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
-    this._height = _.get(options, 'height', this._width / aspect)
+    this._height = _.get(options, 'height', this._width / aspect) / 8
 
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
@@ -90,21 +90,26 @@ _.extend(MapLegend.prototype, {
       legendTicks[1] = 'No'
       legendTicks[0] = 'Yes'
     } else if (options.data_format === 'pct') {
-      options.ticks.bad_bound *= 100;
-      options.ticks.good_bound *= 100;
-      legendTicks[1] = options.ticks.bad_bound+"%-"+options.ticks.good_bound+"%"
+      options.ticks.badBound *= 100;
+      options.ticks.goodBound *= 100;
+      legendTicks[1] = `${options.ticks.badBound}%-${options.ticks.goodBound}%`
       if (options.ticks.reversed){
-        legendTicks[0] = "0%-"+options.ticks.bad_bound+"%"
-        legendTicks[2] = options.ticks.good_bound+"%-100%"
+        legendTicks[0] = `0%-${options.ticks.badBound}%`
+        legendTicks[2] = `${options.ticks.goodBound}%-100%`
       } else {
-        legendTicks[2] = "0%-"+options.ticks.bad_bound+"%"
-        legendTicks[0] = options.ticks.good_bound+"%-100%"
+        legendTicks[2] = `0%-${options.ticks.badBound}%`
+        legendTicks[0] = `${options.ticks.goodBound}%-100%`
       }
-    } else {
+    } else if (options.data_format === 'int'){
       //double check actual data with this logic
-      legendTicks[2] = options.ticks.good_bound+"-100"
-      legendTicks[1] = options.ticks.bad_bound+"-"+options.ticks.good_bound
-      legendTicks[0] = "0-"+options.ticks.bad_bound
+      legendTicks[1] = `${options.ticks.badBound}-${options.ticks.goodBound}`
+      if (options.ticks.reversed){
+        legendTicks[0] = `0-${options.ticks.badBound}`
+        legendTicks[2] = `${options.ticks.goodBound}+`
+      } else {
+        legendTicks[2] = `0-${options.ticks.badBound}`
+        legendTicks[0] = `${options.ticks.goodBound}+`
+      }
     }
     return legendTicks;
   },

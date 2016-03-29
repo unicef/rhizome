@@ -7,7 +7,7 @@ import Chart from 'components/molecules/Chart'
 import ExportPdf from 'components/molecules/ExportPdf'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
-import ChartActions from 'actions/ChartActions'
+import DataExplorerActions from 'actions/DataExplorerActions'
 
 import RootStore from 'stores/RootStore'
 import DashboardPageStore from 'stores/DashboardPageStore'

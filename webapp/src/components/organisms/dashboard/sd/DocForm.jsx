@@ -43,11 +43,11 @@ var DocForm = React.createClass({
   },
 
   onDrop: function (files) {
-    if (files[0].name.endsWith('.csv')) {
+    if (files[0].name.endsWith('.csv') || files[0].name.endsWith('.xlsx') || files[0].name.endsWith('.xls')) {
       this.handleFile(files[0])
     } else {
       this.setState({
-        errorMessage: 'Please upload a .csv file.'
+        errorMessage: 'Please upload a .csv, .xls or .xlsx file.'
       })
     }
   },
@@ -107,7 +107,6 @@ var DocForm = React.createClass({
 
   // return the structure to display and bind the onChange, onSubmit handlers
   render: function () {
-    console.log('this.state.errorMessage: ', this.state.errorMessage)
     // var uqHeaderList = this.buildHeaderList('uq_id_column')
     // var rgHeaderList = this.buildHeaderList('location_column')
     // var cpHeaderList = this.buildHeaderList('date_column')

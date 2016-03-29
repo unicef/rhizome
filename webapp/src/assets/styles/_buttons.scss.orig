@@ -1,0 +1,85 @@
+.button,
+*[role="button"] {
+  background-color: $rhz-button-bg-color;
+  color: $rhz-font-color;
+  font-size: .7rem;
+  border-style: hidden;
+  font-family: adelle;
+  letter-spacing: 1px;
+  margin: .5rem .5rem .5rem 0;
+  &:not(.disabled):not(.success):not(.icon-button):hover {
+    background-color: #426281;
+    color: $rhz-font-color;
+  }
+  &:focus {
+    outline: none;
+  }
+  &.icon-button {
+    background: none;
+    padding: .1rem;
+    font-size: 1rem;
+    color: $rhz-button-bg-color;
+    margin: 0;
+    position: relative;
+    top: -.2rem;
+    left: .25rem;
+    cursor: pointer;
+    &:hover {
+      color: $rhz-body-color;
+    }
+  }
+  &.expand {
+    font-size: .9rem;
+    padding: .5rem 0 .55rem 0;
+  }
+<<<<<<< HEAD
+=======
+  &:not(.icon-button).expand {
+    i.fa {
+      position: absolute;
+      left: 1rem;
+      top: .6rem;
+      width: auto;
+      text-align: left;
+    }
+  }
+>>>>>>> development
+}
+
+h1 .button.icon-button {
+  font-size: .9rem;
+  position: relative;
+  left: 1rem;
+}
+
+
+.search-button {
+  background-color: #FAFAFA;
+  .icon {
+    color: #000000;
+  }
+  &:not(.disabled):not(.success):hover {
+    background-color: #FAFAFA;
+  }
+}
+
+.button-bar {
+  .button-bar__edit {
+    display: inline-block;
+    padding: 0 3px;
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    &:hover {
+      color: darken(white, 20%);
+    }
+  }
+}
+
+.button.read-only {
+  color: $rhz-font-color;
+  &:not(.disabled):not(.success):hover {
+    background-color: #426281;
+    color: $rhz-font-color;
+  }
+}

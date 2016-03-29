@@ -9,10 +9,10 @@ class SourceObjectMapResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
-
         som_id = int(post_data['id'])
 
         som_obj = SourceObjectMap.objects.get(id=som_id)
+
         master_object_id = post_data['master_object_id']
         som_obj.master_object_id = master_object_id
         som_obj.master_object_name = self.get_master_object_name(som_obj)
@@ -27,7 +27,6 @@ class SourceObjectMapResource(BaseModelResource):
 
     def get_master_object_name(self, som_obj):
 
-        # som_obj = SourceObjectMap.objects.get(id=3078)
         qs_map = {
             'indicator': ['short_name',Indicator.objects.get],
             'location': ['name',Location.objects.get],
@@ -36,24 +35,22 @@ class SourceObjectMapResource(BaseModelResource):
 
         obj_display_field = qs_map[som_obj.content_type][0]
         qs = qs_map[som_obj.content_type][1]
-
         master_obj = qs(id=som_obj.master_object_id).__dict__
         master_object_name = master_obj[obj_display_field]
 
         return master_object_name
 
+
     def get_object_list(self, request):
-
-        try:
+        qs =''
+        if 'document_id' in request.GET:
             som_ids = DocumentSourceObjectMap.objects \
-                .filter(document_id=request.GET['document_id']). \
-                values_list('source_object_map_id', flat=True)
-
+            .filter(document_id=request.GET['document_id']). \
+            values_list('source_object_map_id', flat=True)
             qs = SourceObjectMap.objects.filter(id__in=som_ids,\
-                master_object_id=-1).values()
-        except KeyError:
+            master_object_id=-1).values()
+        elif 'id' in request.GET:
             qs = SourceObjectMap.objects.filter(id=request.GET['id']).values()
-        except KeyError:
+        else:
             qs = SourceObjectMap.objects.all().values()
-
         return qs

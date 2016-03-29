@@ -12,6 +12,13 @@ var CampaignTitleMenu = React.createClass({
     sendValue: React.PropTypes.func.isRequired
   },
 
+  getDefaultProps () {
+    return {
+      campaigns: [],
+      selected: {'name':'Loading ...'}
+    }
+  },
+
   render () {
     const campaign_menu_items = this.props.campaigns.map(campaign =>
       <TitleMenuItem

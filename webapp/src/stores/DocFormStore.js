@@ -47,7 +47,6 @@ var DocFormStore = Reflux.createStore({
 
   onTransformUpload (document) {
     this.data.isRefreshing = true
-    console.log('this.data.isRefreshing: ', this.data.isRefreshing)
     this.trigger(this.data)
 
     // api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {

@@ -49,15 +49,11 @@ export default React.createClass({
   },
 
   filterData: function () {
-    // if (this.props.type === 'TableChart') {
-    //   var campaignId = this.state.campaign_id || this.props.defaultCampaign.id.toString()
-    //   var filteredData = this.props.data.filter(function (d) {
-    //     return d.campaign_id.toString() === campaignId
-    //   })
-    // } else {
-    //   filteredData = this.props.data
-    // }
-    return this.props.data
+    if (this.props.type === 'TableChart' && this.props.options.campaign_ids) {
+      return this.props.data.filter(d => d.campaign_id === this.props.options.campaign_ids[0])
+    } else {
+      return this.props.data
+    }
   },
 
   componentDidMount: function () {

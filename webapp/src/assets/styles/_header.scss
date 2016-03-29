@@ -18,6 +18,10 @@ header {
     }
     ul.dashboards-nav > li > a {
       padding: 27px 10px;
+      @media #{$small-only} {
+        height: 3.7rem;
+        padding: 1rem;
+      }
     }
   }
 
@@ -87,7 +91,13 @@ header {
   }
 
   .dashboard-control {
+    background: black;
     text-align: right;
+    position: relative;
+    @media #{$small-only} {
+      top: .5rem;
+      width: 100%;
+    }
   }
 }
 

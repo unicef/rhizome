@@ -1,0 +1,25 @@
+version: 0.0
+
+os: linux
+
+files:
+  - source: /var/www/apps/rhizome/*
+    destination: /var/www/apps/rhizome/
+
+hooks:
+  ApplicationStop:
+    - location: /bin/auto_deploy/stop_apache
+      timeout: 1800
+      runas: root
+  BeforeInstall:
+    - location: /bin/auto_deploy/build_dependencies
+      timeout: 1800
+      runas: root
+  AfterInstall:
+    - location: /bin/auto_deploy/database_init
+      timeout: 1800
+      runas: root
+  ApplicationStart:
+    - location: /bin/auto_deploy/start_apache
+      timeout: 1800
+      runas: root

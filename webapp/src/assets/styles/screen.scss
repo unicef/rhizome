@@ -13,6 +13,7 @@
 @import "menu";
 @import "buttons";
 @import "navigation";
+@import "notifications";
 @import "dashboards-redesign";
 @import "dashboard-builder";
 @import "radio-group";
@@ -22,7 +23,7 @@
 @import "text";
 @import "admin";
 @import "expandable-section";
-@import "chart-wizard";
+@import "data-explorer";
 @import "react-widgets";
 @import "react-widgets-core";
 @import "rw-dateTimePicker";
@@ -63,6 +64,9 @@ body {
 
 #main {
   padding-bottom: 100px;
+  @media #{$small-only} {
+    padding-top: 4rem;
+  }
 }
 
 
@@ -485,7 +489,7 @@ ul {
 }
 
 .all-dashboard {
-  font-size: 1rem;
+  font-size: 2rem;
   text-transform: uppercase;
   font-weight: 600;
   margin: 10px;
@@ -497,6 +501,21 @@ ul {
     margin: auto auto;
   }
   width: 100%;
+}
+
+.title-input {
+  input {
+    width: 20rem;
+    display: inline-block;
+    font-size: 1rem;
+    background: none;
+  }
+  i.fa {
+    padding-left: .5rem;
+    position: relative;
+    top: .3rem;
+    font-size: 1.2rem;
+  }
 }
 
 @import "footer";
