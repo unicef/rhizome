@@ -29,7 +29,7 @@ class GeoResourceTest(ResourceTestCase):
         self.ts.model_df_to_data(merged_df, LocationPolygon)
         minify_geo_json()
         LocationPermission.objects.create(user_id = self.ts.user.id,\
-            top_lvl_location_id = 1) 
+            top_lvl_location_id = 1)
 
 
     def test_get_geo_tree_lvl(self):
