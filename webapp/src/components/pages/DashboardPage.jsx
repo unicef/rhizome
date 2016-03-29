@@ -1,8 +1,11 @@
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
+import Notification from 'react-notification'
 
 import MultiChart from 'components/organisms/MultiChart'
 
+import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
+import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import OfficeStore from 'stores/OfficeStore'
@@ -24,11 +27,27 @@ const Dashboard = React.createClass({
     chart_id: PropTypes.number
   },
 
+  getInitialState () {
+    return {
+      notification: true,
+      footerHidden: true
+    }
+  },
+
+  _showHideFooter () { console.info('Dashboard._showHideFooter')
+    this.setState({footerHidden: !this.state.footerHidden})
+  },
+
+  _addChart (type) {
+    this.setState({footerHidden: true})
+    DashboardNewActions.addChart(type)
+  },
+
   render () {
     console.info('Dashboard.RENDER ==========================================')
     const charts = this.state.charts.map((chart, index) => {
       return (
-        <div>
+        <div className='row'>
           <MultiChart
             chart={chart}
             chart_id={7}
@@ -48,21 +67,24 @@ const Dashboard = React.createClass({
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, index)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, index)}
             setTitle={(title) => DashboardNewActions.setTitle(title, index)}
-            setType={(type) => DashboardNewActions.setType(type, index)}
           />
           <hr />
         </div>
       )
     })
+
     return (
-      <section className='multi-chart'>
+      <section className='dashboard'>
         { charts }
+        <footer className={'row hideable text-center' + (this.state.footerHidden ? ' descended' : '')}>
+            <h4>Select a Chart Type</h4>
+            <ChartSelect onChange={this._addChart}/>
+        </footer>
         <button
-          className='button expand'
-          onClick={DashboardNewActions.addChart}
-          style={{paddingTop: '1rem', paddingBottom: '1rem'}}
-        >
-          Add Chart
+          className='button expand fix-to-bottom'
+          onClick={this._showHideFooter}
+          style={{paddingTop: '1rem', paddingBottom: '1rem', position: 'fixed', bottom: '2.6rem'}}>
+          { this.state.footerHidden ? ' Add Chart' : 'Cancel'}
         </button>
       </section>
     )

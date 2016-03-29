@@ -107,7 +107,7 @@ const MultiChart = React.createClass({
     // SIDEBAR
     // ---------------------------------------------------------------------------
     const date_range_picker = chart.type === 'LineChart' || chart.type === 'TableChart' ? (
-      <div className=''>
+      <div className='medium-12 columns'>
         <h3>Time</h3>
         <DateRangePicker
           sendValue={this.props.setDateRange}
@@ -117,7 +117,7 @@ const MultiChart = React.createClass({
         />
         <br/>
       </div>
-    ) : ''
+    ) : null
 
     const campaign_selector = chart.type !== 'LineChart' ? (
       <CampaignSelector
@@ -126,6 +126,7 @@ const MultiChart = React.createClass({
         selectCampaign={this.props.selectCampaign}
         deselectCampaign={this.props.deselectCampaign}
         setCampaigns={this.props.setCampaigns}
+        classes='medium-12 columns'
       />
     ) : ''
 
@@ -174,8 +175,8 @@ const MultiChart = React.createClass({
       </div>
     )
     const remove_chart_button = this.props.removeChart ? (
-      <button className='button' onClick={() => this.props.removeChart(chart.uuid)}>
-        Remove Chart
+      <button className='button icon-button right remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
+        <i className='fa fa-times-circle fa-2x'/>
       </button>
     ) : ''
 
@@ -190,18 +191,16 @@ const MultiChart = React.createClass({
     }
 
     return (
-      <section className='data-explorer'>
-        <div className='medium-3 large-2 medium-push-9 large-push-10 columns'>
-            { remove_chart_button }
-            { date_range_picker }
-            { campaign_selector }
-          <div className={'row data-filters ' + (multi_indicator && multi_location ? '' : 'collapse')}>
-            { indicator_selector }
-            { location_selector }
-          </div>
+      <section className='multi-chart row'>
+        <div className='medium-4 large-2 medium-push-8 large-push-10 columns'>
+          { remove_chart_button }
+          { date_range_picker }
+          { campaign_selector }
+          { indicator_selector }
+          { location_selector }
         </div>
-        <div className='medium-9 large-10 medium-pull-3 large-pull-2 columns'>
-          <div className='row chart-header'>
+        <div className='medium-8 large-10 medium-pull-4 large-pull-2 columns'>
+          <div className='row chart-header text-center'>
             { title_bar }
           </div>
           {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}

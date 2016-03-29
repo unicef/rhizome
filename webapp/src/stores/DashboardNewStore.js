@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import uuid from 'uuid'
 import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
@@ -6,13 +7,12 @@ import StateMixin from'reflux-state-mixin'
 import ChartActions from 'actions/ChartActions'
 import DashboardNewActions from 'actions/DashboardNewActions'
 import DatapointActions from 'actions/DatapointActions'
-import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
+import format from 'utilities/format'
 import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import DashboardNewStoreHelpers from 'stores/DashboardNewStoreHelpers'
-import uuid from 'uuid'
 
 import palettes from 'components/molecules/charts/utils/palettes'
 
@@ -39,21 +39,6 @@ var DashboardNewStore = Reflux.createStore({
   },
 
   charts: [
-    {
-      uuid: uuid.v4(),
-      type: 'RawData',
-      title: 'Untitled',
-      data: null,
-      data_format: 'pct',
-      selected_campaigns: [],
-      selected_indicators: [],
-      selected_locations: [],
-      end_date: moment().format('YYYY-MM-DD'),
-      start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-      features: [],
-      loading: false,
-      fetching: false
-    },
     {
       uuid: uuid.v4(),
       type: 'RawData',
@@ -100,14 +85,18 @@ var DashboardNewStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   // =================================  Charts  ================================ //
-  onAddChart () { console.info('- Store.onAddChart')
+  onAddChart (type) { console.info('- Store.onAddChart')
     const new_chart = _.assign({}, this.chart_template)
+    new_chart.type = type
+    new_chart.title = format.unCamelCase(type)
     this.charts.push(new_chart)
     this.trigger(this.charts)
   },
   onRemoveChart (uuid) { console.info('- Store.onRemoveChart')
-    _.remove(this.charts, {uuid: uuid})
-    this.trigger(this.charts)
+    if (confirm('Are you sure you want to remove this chart?')) {
+      _.remove(this.charts, {uuid: uuid})
+      this.trigger(this.charts)
+    }
   },
 
   // =============================  Indicators  ============================ //

@@ -45,3 +45,32 @@ $total-columns: 7;
 		@include block-grid-html-classes($size:large,$include-spacing:false);
 	}
 }
+
+.dashboard {
+	padding-top: 1.5rem;
+	.dropdown-list {
+		padding: 0 10px 10px 10px;
+	}
+	.remove-chart-button {
+    position: absolute;
+    right: 1rem;
+    color: #FF9489;
+    top: -1rem;
+    left: initial;
+	}
+  footer.hideable {
+    position: fixed;
+    bottom: 6.2rem;
+    background: #252525;
+    padding-top: .75rem;
+    &.descended {
+      bottom: -.1rem;
+    }
+    h1, h2, h3, h4, h5, h6, p {
+      color: white;
+    }
+  }
+	.button.fix-to-bottom {
+		z-index: 200;
+	}
+}
