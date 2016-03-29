@@ -7,6 +7,7 @@ from rhizome.models import *
 
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
+from setup_helpers import TestSetupHelpers
 
 
 class AggRefreshTestCase(TestCase):
@@ -22,6 +23,7 @@ class AggRefreshTestCase(TestCase):
 
     def setUp(self):
 
+        self.ts = TestSetupHelpers()
         data_df = read_csv('rhizome/tests/_data/calc_data.csv')
         self.create_metadata()
         self.user = User.objects.get(username="test")
@@ -29,6 +31,7 @@ class AggRefreshTestCase(TestCase):
         self.test_df = data_df[data_df['is_raw'] == 1]
         self.target_df = data_df[data_df['is_raw'] == 0]
         self.campaign_id = Campaign.objects.all()[0].id
+        self.top_lvl_location = Location.objects.filter(name='Nigeria')[0]
         ltr = LocationTreeCache()
         ltr.main()
 
@@ -45,26 +48,26 @@ class AggRefreshTestCase(TestCase):
 
         user_id = User.objects.create_user('test','john@john.com', 'test').id
 
-        office_id = Office.objects.create(id=1,name='test').id
+        self.office_id = Office.objects.create(id=1,name='test').id
 
         cache_job_id = CacheJob.objects.create(id = -1,date_completed=\
             '2015-01-01',date_attempted = '2015-01-01', is_error = False)
 
-        location_type1 = LocationType.objects.create(admin_level=0,\
+        self.location_type1 = LocationType.objects.create(admin_level=0,\
             name="country",id=1)
-        location_type2 = LocationType.objects.create(admin_level=1,\
+        self.location_type2 = LocationType.objects.create(admin_level=1,\
             name="province",id=2)
 
         campaign_type1 = CampaignType.objects.create(name='test')
 
-        location_ids = self.model_df_to_data(location_df,Location)
-        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        self.locations = self.model_df_to_data(location_df,Location)
+        self.indicators = self.model_df_to_data(indicator_df,Indicator)
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
         sub_tag = IndicatorTag.objects.create(tag_name='Polio Management',\
             parent_tag_id = ind_tag.id)
 
         ind_to_tag_batch = [IndicatorToTag(**{'indicator_tag_id'\
-            :sub_tag.id,'indicator_id':ind.id}) for ind in indicator_ids]
+            :sub_tag.id,'indicator_id':ind.id}) for ind in self.indicators]
         IndicatorToTag.objects.bulk_create(ind_to_tag_batch)
 
         self.campaign_id = Campaign.objects.create(
@@ -73,7 +76,7 @@ class AggRefreshTestCase(TestCase):
             campaign_type_id = campaign_type1.id,
             top_lvl_location_id = 12907,
             top_lvl_indicator_tag_id = ind_tag.id,
-            office_id = office_id,
+            office_id = self.office_id,
         ).id
 
         document = Document.objects.create(
@@ -81,7 +84,7 @@ class AggRefreshTestCase(TestCase):
             created_by_id = user_id,
             guid = 'test')
 
-        ss = SourceSubmission.objects.create(
+        self.ss = SourceSubmission.objects.create(
             document_id = document.id,
             submission_json = '',
             row_number = 0,
@@ -247,7 +250,7 @@ class AggRefreshTestCase(TestCase):
             campaign_id = self.campaign_id,
             data_date = data_date,
             value = .2,
-            source_submission_id = 1
+            source_submission_id = self.ss
         )
 
         dp_2 = DataPoint.objects.create(
@@ -256,7 +259,7 @@ class AggRefreshTestCase(TestCase):
             campaign_id = self.campaign_id,
             data_date = data_date,
             value = .6,
-            source_submission_id = 1
+            source_submission_id = self.ss
         )
 
         ar = AggRefresh(self.campaign_id)
@@ -721,3 +724,60 @@ class AggRefreshTestCase(TestCase):
         ).value
 
         self.assertEqual(sub_2_target_val,sub_2_actual_val)
+
+    def test_boolean_aggregation(self):
+
+        ## create a boolean indicato
+        boolean_indicator = Indicator.objects.create(
+            name = 'Is Controlled by "Anti Governemnt Elements"',
+            short_name = 'Is at War',
+            data_format = 'bool'
+        )
+
+        ## find the locations for which we should store raw data.. For instance
+        ## if it is 'district is at war', then we dont expect data stored at
+        ## the porivnce level.  Here though, we get all children of a particluar
+        ## parent.
+        locations = Location.objects.filter(parent_location_id=\
+            self.top_lvl_location.id)
+
+        ## split the data into 1 value being fale, the rest being trye.
+        ## this aludes to the fact that the parent location shoul dhave a value
+        ## that is somethign like [ 1 / data.length() ]
+
+        false_loc_id = locations[0].id
+        true_loc_list = locations[1:]
+
+        ## create the true and false datapoints ##
+        false_datapoint = DataPoint.objects.create(
+            campaign_id = self.campaign_id,
+            location_id = false_loc_id,
+            indicator_id = boolean_indicator.id,
+            source_submission_id = self.ss,
+            value = 0
+        )
+
+        true_datapoint_batch = [DataPoint(**{
+            'campaign_id': self.campaign_id,
+            'location_id': loc.id,
+            'indicator_id': boolean_indicator.id,
+            'source_submission_id': self.ss,
+            'value': 1
+        }) for loc in true_loc_list]
+        DataPoint.objects.bulk_create(true_datapoint_batch)
+
+        ## run the agg refresh ( this is the code that will actually transofrm
+        ## the booleans to numerics. )
+        ar = AggRefresh(self.campaign_id)
+
+        ## now get the expected aggrgated data and compare it with the percentage
+        ## value that we expect given how we split up the locations above.
+        dwc_value = DataPointComputed.objects.get(
+            location_id = self.top_lvl_location.id,
+            campaign_id = self.campaign_id,
+            indicator = boolean_indicator.id
+        ).value
+
+        expected_value = 1 - ( 1.0 / len(locations))
+        self.assertEqual(expected_value, dwc_value)
+>>>>>>> 54a22cf... adding the ability to calculate district level booleans as pct for the province

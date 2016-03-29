@@ -7,6 +7,7 @@ from pandas import notnull
 from rhizome.models import *
 from rhizome.cache_meta import IndicatorCache
 from rhizome.models import SourceSubmission
+import numpy as np
 
 class AggRefresh(object):
     '''
@@ -168,18 +169,33 @@ class AggRefresh(object):
             id__in = max_location_lvl_for_indicator_df['indicator_id']
         ).values_list('id', flat=True))
 
+        boolean_indicators = list(Indicator.objects.filter(
+            data_format = 'bool',
+            id__in = max_location_lvl_for_indicator_df['indicator_id']
+        ).values_list('id', flat=True))
+
         ## filter df to keep the data for the highest level per indicator ##
-        prepped_for_sum_df = joined_location_df\
+        prepped_df = joined_location_df\
             .merge(max_location_lvl_for_indicator_df,on=['indicator_id','lvl'])
 
+        prepped_df['value'] = prepped_df['value'].astype(float)
         ## group by parent_location_id and take the sum ##
-        grouped_df = DataFrame(prepped_for_sum_df\
+        grouped_df_sum = DataFrame(prepped_df\
             .groupby(['parent_location_id', 'indicator_id'])\
             ['value'].sum())
 
-        for ix, dp in grouped_df.iterrows():
+        grouped_df_mean = DataFrame(prepped_df\
+            .groupby(['parent_location_id', 'indicator_id'])\
+            ['value'].mean())
+
+        for ix, dp in grouped_df_sum.iterrows():
             ## only aggregate integers ( not boolean or pct )
             if ix[1] in integer_indicators:
+                tuple_dict[ix] = dp.value
+
+        for ix, dp in grouped_df_mean.iterrows():
+            ## get the avg for boolean indicators
+            if ix[1] in boolean_indicators:
                 tuple_dict[ix] = dp.value
 
         ## now add the raw data to the dict ( overriding agregate if exists )
@@ -298,7 +314,7 @@ class AggRefresh(object):
         the raw indicator data will always override the calculated.
         '''
 
-        print len(list(AggDataPoint.objects.filter(campaign_id = self.campaign.id)))
+        # print len(list(AggDataPoint.objects.filter(campaign_id = self.campaign.id)))
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
             adp_tuple = (adp.location_id, adp.indicator_id)
@@ -433,7 +449,6 @@ class AggRefresh(object):
                 'cache_job_id': self.cache_job.id,
                 'document_id': self.document_id
             }
-
             self.dwc_batch.append(DataPointComputed(**dwc_dict))
 
         DataPointComputed.objects.filter(campaign_id=self.campaign.id).delete()
