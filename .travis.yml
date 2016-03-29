@@ -20,8 +20,7 @@ deploy:
   provider: codedeploy
   access_key_id: $AWS_ACCESS_KEY
   secret_access_key: $AWS_SECRET_KEY
-  # bucket: rhizome-dev
-  revision_type: github
+  bucket: rhizome-dev
   application: rhizome_dev
   region: us-east-1
   deployment_group: rhizome_dev_group
