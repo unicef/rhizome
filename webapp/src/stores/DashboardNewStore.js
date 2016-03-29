@@ -16,6 +16,24 @@ import DashboardNewStoreHelpers from 'stores/DashboardNewStoreHelpers'
 
 import palettes from 'components/molecules/charts/utils/palettes'
 
+class ChartState {
+  constructor () {
+    this.uuid = null
+    this.type = 'RawData'
+    this.title = 'Untitled'
+    this.data = null
+    this.data_format = 'pct'
+    this.selected_campaigns = []
+    this.selected_indicators = []
+    this.selected_locations = []
+    this.end_date = moment().format('YYYY-MM-DD')
+    this.start_date = moment().subtract(1, 'y').format('YYYY-MM-DD')
+    this.features = []
+    this.loading = false
+    this.fetching = false
+  }
+}
+
 var DashboardNewStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
@@ -54,17 +72,16 @@ var DashboardNewStore = Reflux.createStore({
   // =========================================================================== //
   // =================================  Charts  ================================ //
   onAddChart (type) { console.info('- Store.onAddChart')
-    const new_chart = _.assign({}, this.chart_template)
+    const new_chart = new ChartState
     new_chart.type = type
     new_chart.title = format.unCamelCase(type)
     new_chart.uuid = uuid.v4()
     this.charts[new_chart.uuid] = new_chart
-    // this.charts.push(new_chart)
     this.trigger(this.charts)
   },
   onRemoveChart (uuid) { console.info('- Store.onRemoveChart')
     if (confirm('Are you sure you want to remove this chart?')) {
-      _.remove(this.charts, {uuid: uuid})
+      delete this.charts[uuid]
       this.trigger(this.charts)
     }
   },
@@ -82,8 +99,6 @@ var DashboardNewStore = Reflux.createStore({
     this.updateChart(uuid)
   },
   onSelectIndicator (id, uuid) { console.info('- Store.onSelectIndicator')
-    console.log('id', id)
-    console.log('uuid', uuid)
     this.toggleLoading(uuid)
     this.charts[uuid].selected_indicators.push(this.indicators.index[id])
     this.updateChart(uuid)
@@ -180,7 +195,7 @@ var DashboardNewStore = Reflux.createStore({
   // ============================  Chart Properties =========================== //
   onSetDateRange (key, value, uuid) { console.info('- Store.onSetDateRange')
     const full_key = key + '_date'
-    this.chart[full_key] = value
+    this.charts[uuid][full_key] = value
     this.updateChart(uuid)
   },
   onSetType (type, uuid) { console.info('- Store.onSetType')
@@ -242,8 +257,8 @@ var DashboardNewStore = Reflux.createStore({
 
   onDatapointStore (datapoints) {
     console.info('--- Store.onDatapointStore')
-    const index = this.charts.filter(chart => chart.fetching)
-    console.log('index', index)
+    const currently_fetching_charts = _.toArray(this.charts).filter(chart => chart.fetching)
+    const uuid = currently_fetching_charts[0].uuid
     if (_.isEmpty(datapoints.raw)) {
       this.charts[uuid].data = []
       return this.trigger(this.charts)

@@ -38,7 +38,7 @@ const Dashboard = React.createClass({
     DashboardNewActions.addChart('RawData')
   },
 
-  _showHideFooter () { console.info('Dashboard._showHideFooter')
+  _showHideFooter () {
     this.setState({footerHidden: !this.state.footerHidden})
   },
 
@@ -48,9 +48,8 @@ const Dashboard = React.createClass({
   },
 
   render () {
-    console.info('Dashboard.RENDER ==========================================')
     let charts = _.toArray(this.state.charts)
-    console.log('charts', charts)
+    console.info('Dashboard.RENDER ========================================== Charts:', charts)
     charts = charts.map(chart => {
       return (
         <div className='row'>
@@ -60,22 +59,15 @@ const Dashboard = React.createClass({
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
             setTitle={(title) => DashboardNewActions.setTitle(title, chart.uuid)}
-
             setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
-            selectIndicator={(id) => {
-              console.log('id', id)
-              console.log('SleectIndicator')
-              return DashboardNewActions.selectIndicator(id, chart.uuid)}
-            }
+            selectIndicator={(id) => DashboardNewActions.selectIndicator(id, chart.uuid)}
             deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, chart.uuid)}
             reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, chart.uuid)}
             clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(chart.uuid)}
-
             setLocations={(locations) => DashboardNewActions.setLocations(locations, chart.uuid)}
             selectLocation={(id) => DashboardNewActions.selectLocation(id, chart.uuid)}
             deselectLocation={(id) => DashboardNewActions.deselectLocation(id, chart.uuid)}
             clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(chart.uuid)}
-
             setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, chart.uuid)}
             selectCampaign={(id) => DashboardNewActions.selectCampaign(id, chart.uuid)}
             deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, chart.uuid)}

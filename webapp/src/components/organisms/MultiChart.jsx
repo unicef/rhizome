@@ -31,22 +31,18 @@ const MultiChart = React.createClass({
   ],
 
   getInitialState () {
-    console.info('MultiChart.getInitialState')
     return {
       titleEditMode: false
     }
   },
 
   componentDidMount () {
-    console.info('MultiChart.componentDidMount')
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index && state.charts.index) {
         if (this.props.chart_id) {
           this.props.fetchChart.completed(this.state.charts.index[this.props.chart_id])
         } else {
-          this.props.setIndicators(this.state.indicators.index[27])
-          this.props.setLocations(this.state.locations.index[1])
           this.props.setCampaigns(this.state.campaigns.raw[0])
         }
       }
