@@ -5,7 +5,10 @@ os: linux
 files:
   - source: /test.md
   destination: /var/www/apps/rhizome/
-
+permissions:
+  - object: /var/www/apps/rhizome/
+  pattern: "**"
+  mode: 777
 hooks:
   ApplicationStop:
     - location: /bin/auto_deploy/stop_apache
