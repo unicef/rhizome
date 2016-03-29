@@ -284,5 +284,4 @@ class ComplexDocTransform(DocTransform):
 
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
-
         return [x.id for x in ss]
