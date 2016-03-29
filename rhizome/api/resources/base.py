@@ -12,7 +12,8 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import DatapointsException
 
-from rhizome.models import LocationPermission, Location, LocationTree
+from rhizome.models import LocationPermission, Location, LocationTree, \
+    LocationType
 from django.http import HttpResponse
 
 class BaseResource(Resource):
@@ -50,11 +51,16 @@ class BaseResource(Resource):
             location_ids = list(LocationTree.objects\
                         .filter(parent_location_id__in=pl_id_list)
                         .values_list('location_id',flat=True))
-            try: 
+            try:
                 level = int(request.GET['tree_lvl'])
-                if level == 1:
+                province_location_type_id = LocationType.objects\
+                    .get(name = 'Province').id
+
+                if level == 1 and Location.objects.get(id=pl_id_list[0])\
+                    .location_type_id == province_location_type_id:
+
                     return location_ids
-            except Exception:
+            except KeyError:
                 pass
             ## provinces ##
             prov_and_country_ids = Location.objects\
