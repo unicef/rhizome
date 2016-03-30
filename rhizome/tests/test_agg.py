@@ -780,4 +780,3 @@ class AggRefreshTestCase(TestCase):
 
         expected_value = 1 - ( 1.0 / len(locations))
         self.assertEqual(expected_value, dwc_value)
->>>>>>> 54a22cf... adding the ability to calculate district level booleans as pct for the province
