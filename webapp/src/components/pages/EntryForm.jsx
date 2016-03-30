@@ -32,8 +32,9 @@ let EntryForm = React.createClass({
 
     let campaignIdSelected = this.state.campaignIdSelected
     let campaignName = 'Select Campaign'
+    let campaignObj = null;
     if (campaignIdSelected) {
-      var campaignObj = _.find(this.state.campaigns,
+      campaignObj = _.find(this.state.campaigns,
         function (c) { return c.id.toString() === campaignIdSelected })
     }
 
