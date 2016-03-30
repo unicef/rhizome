@@ -16,16 +16,19 @@ const CampaignSelector = React.createClass({
     }).isRequired,
     selected_campaigns: PropTypes.array,
     setCampaigns: PropTypes.func,
+    linkCampaigns: PropTypes.func,
     selectCampaign: PropTypes.func,
     deselectCampaign: PropTypes.func,
     clearSelectedCampaigns: PropTypes.func,
     classes: PropTypes.string,
+    linked: PropTypes.bool,
     multi: PropTypes.bool
   },
 
   getDefaultProps() {
     return {
       multi: false,
+      linked: false,
       selected_campaigns: []
     }
   },
@@ -53,7 +56,9 @@ const CampaignSelector = React.createClass({
     } else {
       return (
         <div className={props.classes}>
-          <h3>Campaign</h3>
+          <h3>
+            Campaign <a onClick={this.props.linkCampaigns}><i className={'fa ' + (this.props.linked ? 'fa-chain ' : 'fa-chain-broken') }/></a>
+          </h3>
           <CampaignTitleMenu
             campaigns={raw_campaigns}
             selected={selected_campaigns[0]}

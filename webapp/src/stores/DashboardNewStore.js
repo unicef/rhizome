@@ -32,6 +32,7 @@ class ChartState {
     this.features = []
     this.loading = false
     this.fetching = false
+    this.linkedCampaigns = false
   }
 }
 
@@ -157,18 +158,17 @@ var DashboardNewStore = Reflux.createStore({
   // =============================  Campaigns  ============================ //
   onSetCampaigns (campaigns, uuid) {console.info('- Store.onSetCampaigns')
     this.toggleLoading(uuid)
-    if (_.isArray(campaigns)) {
-      this.charts[uuid].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
+    if (this.charts[uuid].linkedCampaigns) {
+      _.toArray(this.charts).forEach(chart => {
+        if (chart.linkedCampaigns) {
+          this.assignCampaigns(campaigns, chart.uuid)
+        }
+        this.updateChart(chart.uuid)
+      })
     } else {
-      this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
+      this.assignCampaigns(campaigns, uuid)
+      this.updateChart(uuid)
     }
-    this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
-    this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
-    if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
-      this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
-      this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
-    }
-    this.updateChart(uuid)
   },
   onSelectCampaign (id, uuid) { console.info('- Store.onSelectCampaign')
     this.toggleLoading(uuid)
@@ -184,6 +184,29 @@ var DashboardNewStore = Reflux.createStore({
     this.toggleLoading(uuid)
     this.charts[uuid].selected_campaigns = []
     this.updateChart(uuid)
+  },
+  onToggleCampaignLink (uuid) { console.info('- Store.onToggleCampaignLink')
+    this.toggleLoading(uuid)
+    const current_chart = this.charts[uuid]
+    if (current_chart.linkedCampaigns) {
+      current_chart.linkedCampaigns = false
+      return this.trigger(this.charts)
+    }
+    _.toArray(this.charts).forEach(chart => chart.linkedCampaigns = true)
+    _.toArray(this.charts).forEach(chart => DashboardNewActions.setCampaigns(current_chart.selected_campaigns, chart.uuid))
+  },
+  assignCampaigns (campaigns, uuid) {
+    if (_.isArray(campaigns)) {
+      this.charts[uuid].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
+    } else {
+      this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
+    }
+    this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
+    this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
+    if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
+      this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
+      this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
+    }
   },
 
   // ============================  Chart Properties =========================== //

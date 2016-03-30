@@ -41,6 +41,7 @@ const Dashboard = React.createClass({
         <div className='row'>
           <MultiChart
             chart={chart}
+            linkCampaigns={() => DashboardNewActions.toggleCampaignLink(chart.uuid)}
             duplicateChart={DashboardNewActions.duplicateChart}
             removeChart={DashboardNewActions.removeChart}
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}

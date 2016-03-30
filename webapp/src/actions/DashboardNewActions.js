@@ -5,6 +5,7 @@ import api from 'data/api'
 const DashboardNewActions = Reflux.createActions({
   'fetchChart': { children: ['completed', 'failed'] },
   'fetchMapFeatures': { children: ['completed', 'failed'] },
+  'toggleCampaignLink': 'toggleCampaignLink',
   'addChart': 'addChart',
   'duplicateChart': 'duplicateChart',
   'removeChart': 'removeChart',

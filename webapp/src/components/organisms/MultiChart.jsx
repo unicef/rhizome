@@ -160,7 +160,9 @@ const MultiChart = React.createClass({
         selectCampaign={this.props.selectCampaign}
         deselectCampaign={this.props.deselectCampaign}
         setCampaigns={this.props.setCampaigns}
+        linkCampaigns={this.props.linkCampaigns}
         classes='medium-12 columns'
+        linked={chart.linkedCampaigns}
       />
     ) : ''
 
@@ -191,7 +193,7 @@ const MultiChart = React.createClass({
       />
     )
 
-    const palette_selector = chart.type !== 'RawData' ? (
+    const palette_selector = chart.type !== 'RawData'  && chart.type !== 'LineChart' ? (
       <div className='medium-12 columns'>
         <h3>Colors</h3>
         <DropdownList
