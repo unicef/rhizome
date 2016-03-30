@@ -1,9 +1,11 @@
 import Reflux from 'reflux'
+import DashboardAPI from 'data/requests/DashboardAPI'
 import ChartAPI from 'data/requests/ChartAPI'
 import api from 'data/api'
 
 const DashboardNewActions = Reflux.createActions({
-  'fetchChart': { children: ['completed', 'failed'] },
+  'fetchChart': { children: ['completed', 'failed'] }, // I think we can get rid of this
+  'fetchDashboard': { children: ['completed', 'failed'] },
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'toggleCampaignLink': 'toggleCampaignLink',
   'toggleSelectTypeMode': 'toggleSelectTypeMode',
@@ -42,6 +44,7 @@ const DashboardNewActions = Reflux.createActions({
 // API CALLS
 // ---------------------------------------------------------------------------
 DashboardNewActions.fetchChart.listenAndPromise(chart_id => ChartAPI.getChart(chart_id))
+DashboardNewActions.fetchDashboard.listenAndPromise(dashboard_id => DashboardAPI.getDashboard(dashboard_id))
 
 DashboardNewActions.fetchMapFeatures.listen(location_ids => {
   DashboardNewActions.fetchMapFeatures.promise(

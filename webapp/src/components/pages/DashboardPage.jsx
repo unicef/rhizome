@@ -38,7 +38,11 @@ const Dashboard = React.createClass({
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
-        DashboardNewActions.addChart()
+        if (this.props.dashboard_id) {
+          DashboardNewActions.fetchDashboard(this.props.dashboard_id)
+        } else {
+          DashboardNewActions.addChart()
+        }
       }
     })
   },

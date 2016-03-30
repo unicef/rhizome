@@ -284,6 +284,17 @@ var DashboardNewStore = Reflux.createStore({
   // =========================================================================== //
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
+  // =============================  Fetch Dashboard  =========================== //
+  onFetchDashboard (uuid) { console.log('Store.onFetchDashboard')
+    this.trigger(this.dashboard)
+  },
+  onFetchDashboardCompleted (response) { console.log('Store.onFetchDashboardCompleted')
+    console.log('response', response)
+  },
+  onFetchDashboardFailed (error) { console.log('Store.onFetchDashboardFailed')
+    this.setState({ error: error })
+  },
+
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures (uuid) {
     this.dashboard.charts[uuid].loading = true
