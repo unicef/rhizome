@@ -56,12 +56,22 @@ const Dashboard = React.createClass({
     if (!dashboard.title || dashboard.title === 'Untitled Dashboard') {
       return window.alert('Please add a Title to your dashboard')
     }
+    let allChartsSaved = true
+    _.toArray(dashboard.charts).forEach(chart => {
+      if (!chart.title || chart.title === 'Untitled Chart') {
+       return allChartsSaved = false
+      }
+      this.saveChart(chart)
+    })
+    if (!allChartsSaved) {
+      return window.alert('Please title all of your charts')
+    }
+
     const query = {
       id: dashboard.id || null,
       title: dashboard.title,
       charts: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
-    console.log('query', query)
     DashboardActions.postDashboard(query)
   },
 
@@ -111,7 +121,7 @@ const Dashboard = React.createClass({
             saveChart={this.saveChart}
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
-            setChartTitle={(title) => DashboardNewActions.setChartTitle(title, chart.uuid)}
+            setTitle={(title) => DashboardNewActions.setChartTitle(title, chart.uuid)}
             setType={(type) => DashboardNewActions.setType(type, chart.uuid)}
             setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
             selectIndicator={(id) => DashboardNewActions.selectIndicator(id, chart.uuid)}
