@@ -26,6 +26,7 @@ let EntryFormStore = Reflux.createStore({
     locationMap: null,
     locationSelected: [],
     locations: [],
+    tags: [],
     includeSublocations: false,
     pagination: {
       total_count: 0
@@ -43,11 +44,21 @@ let EntryFormStore = Reflux.createStore({
     // self.data.formIdSelected = self.entryFormDefinitions[0]
 
     Promise.all([
+      api.get_indicator_tag(),
       api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
-      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})])
-    .then(_.spread(function (campaigns, locations, indicators) {
+      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})]),
+    .then(_.spread(function (tags, campaigns, locations, indicators) {
         // campains
+      let tagResult = _(tags.objects)
+        .map(tag => {
+          return {
+            'value': tag.id,
+            'title': tag.tag_name
+          }
+        }).value()
+      self.data.tags = tagResult
+      self.data.tagIdSelected = tagResult[0].id
       let campaignResult = _(campaigns.objects)
           .map(campaign => {
             return {
@@ -55,7 +66,6 @@ let EntryFormStore = Reflux.createStore({
               'name': campaign.name
             }
           }).value()
-
       self.data.campaigns = campaignResult
       self.data.campaignIdSelected = campaignResult[0].id
 
@@ -87,7 +97,7 @@ let EntryFormStore = Reflux.createStore({
   },
 
   _setCouldLoad: function () {
-    this.data.couldLoad = this.data.formIdSelected && this.data.campaignSelected && (this.data.locationSelected.length > 0)
+    this.data.couldLoad = (this.data.formIdSelected !== null && this.data.campaignSelected !== null && (this.data.locationSelected.length > 0))
     if (this.data.couldLoad) {
       this.onGetTableData()
     }
@@ -221,7 +231,6 @@ let EntryFormStore = Reflux.createStore({
 
     this.data.loaded = false
     this.trigger(this.data)
-
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.apiResponseData = response.objects
