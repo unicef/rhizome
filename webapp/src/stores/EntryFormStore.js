@@ -61,7 +61,6 @@ let EntryFormStore = Reflux.createStore({
           }
         }).value()
       self.data.indicatorToTags = indicatorToTagsResult
-      debugger;
       let tagResult = _(tags.objects)
         .map(tag => {
           return {
