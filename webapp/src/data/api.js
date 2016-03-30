@@ -364,6 +364,7 @@ export default {
   get_chart: endPoint('/custom_chart/', 'get', 1),
   get_all_meta: endPoint('/all_meta/', 'get', 1),
   post_chart: endPoint('/custom_chart/', 'post', 1),
+  post_dashboard: endPoint('/custom_dashboard/', 'post', 1),
   delete_chart: emptyResponsePoint('/custom_chart', 'delete', 1, false),
   groups: endPoint('/group/', 'get', 1),
   users: endPoint('/user/', 'get', 1),

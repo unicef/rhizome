@@ -287,6 +287,7 @@ _.extend(TableChart.prototype, {
   },
 
   _onRowOver: function (d) {
+    this.pause(100)
     var seriesName = this._options.seriesName
     this._svg.selectAll('.row')
       .transition().duration(300)
@@ -295,8 +296,10 @@ _.extend(TableChart.prototype, {
   },
   _onRowClick: function (d) {
     // console.log('row clicked', d)
+    this.pause(500)
   },
   _onRowOut: function () {
+    this.pause(100)
     this._svg.selectAll('.row')
       .transition().duration(300)
       .style('opacity', 1)
@@ -315,6 +318,11 @@ _.extend(TableChart.prototype, {
     }
 
     this.update(this._svg.selectAll('.row').data())
+    this.pause(500)
+  },
+  pause: function (timer) {
+    var until = new Date().getTime() + timer;
+    while(new Date().getTime() < until) {};
   }
 })
 

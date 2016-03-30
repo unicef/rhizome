@@ -6,10 +6,11 @@ import StateMixin from'reflux-state-mixin'
 
 import builtins from 'components/organisms/dashboard/builtin'
 import Location from 'data/requests/LocationAPI'
+import DashboardActions from 'actions/DashboardActions'
 
 var DashboardStore = Reflux.createStore({
 
-  listenables: [require('actions/DashboardActions')],
+  listenables: [DashboardActions],
 
   mixins: [StateMixin.store],
 
@@ -145,7 +146,7 @@ var DashboardStore = Reflux.createStore({
   // =========================================================================== //
   // =============================  Fetch Dashboards  ========================== //
   onFetchDashboards () {
-    this.setState({ loading: true })
+    this.trigger({ dashboards: null })
   },
   onFetchDashboardsCompleted (response) {
     const dashboards = response.objects[0].dashboards || response.objects
@@ -163,6 +164,20 @@ var DashboardStore = Reflux.createStore({
     this.trigger(this.dashboards)
   },
   onFetchDashboardsFailed (error) {
+    this.setState({ error: error })
+  },
+
+  // ===============================  Post Chart  ============================= //
+  onPostDashboard () {
+    console.log('DashboardStore.onPostDashboard')
+    this.trigger({ dashboards: null })
+  },
+  onPostDashboardCompleted (response) {
+    console.log('DashboardStore.onPostDashboardCompleted')
+    DashboardActions.fetchDashboards()
+  },
+  onPostDashboardFailed (error) {
+    console.log('DashboardStore.onPostDashboardFailed')
     this.setState({ error: error })
   }
 })
