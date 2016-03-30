@@ -94,12 +94,14 @@ const Dashboard = React.createClass({
     return (
       <section className='dashboard'>
         { charts }
-        <button
-          className='button expand fix-to-bottom'
-          onClick={DashboardNewActions.addChart}
-          style={{paddingTop: '1rem', paddingBottom: '1rem', position: 'fixed', bottom: '2.6rem'}}>
-          Add Chart
-        </button>
+        <div className='row text-center'>
+          <button
+            className='button large'
+            onClick={DashboardNewActions.addChart}
+            style={{marginTop: '1rem'}}>
+            Add Chart
+          </button>
+        </div>
       </section>
     )
   }
