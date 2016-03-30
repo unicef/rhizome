@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
-    Location, LocationType, Office
+    Location, LocationType, Office, ChartToDashboard
 
 import json
 
@@ -49,6 +49,38 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertHttpCreated(resp)
         self.assertEqual(post_data['title'], response_data['title'])
         self.assertEqual(CustomDashboard.objects.count(), 1)
+
+    def test_dashboard_chart_post(self):
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+
+        dashboard_title = '2 Chart Dashboard'
+        chart_uuid_list = ['a','b']
+
+        post_data = {
+            'title': dashboard_title,
+            'chart_uuid_list': chart_uuid_list
+            }
+
+        ## post the dashboard title and the associated charts to the API ##
+        resp = self.api_client.post('/api/v1/custom_dashboard/',\
+            format='json',\
+            data=post_data,\
+            authentication=self.get_credentials()\
+        )
+
+        response_data = self.deserialize(resp)
+
+        ## find the uuids that have been created in association with the dash ##
+        db_chart_uuid_list = CustomChart.objects\
+            .filter(charttodashboard__dashboard_id = response_data['id']).values_list('uuid',flat=True)
+
+        self.assertHttpCreated(resp)
+        # self.assertEqual(response_data['id'], dashboard_id)
+        self.assertEqual(response_data['title'], dashboard_title)
+        self.assertEqual(chart_uuid_list, [str(x) for x in db_chart_uuid_list])
 
     def test_dashboard_name_exist(self):
         dashboard_name = "test the already exists"
