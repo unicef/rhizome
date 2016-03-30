@@ -101,6 +101,35 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(CustomDashboard.objects.count(), 1)
         self.assertEqual('the custom dashboard "{0}" already exists'.format(dashboard_name), response_data['error'])
 
+    def test_dashboard_gets_charts(self):
+        '''
+        @martha plz add logic to ensure that the c1 / c2 chart data is in the
+        response
+        '''
+
+        ## create a dashboard ##
+        d = CustomDashboard.objects.create(title='Dashboard')
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+
+        ## relate the charts to the dashboard ##
+        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c1.id)
+        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c2.id)
+
+        params = {'show_charts':True}
+        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
+                data=params, \
+                format='json', \
+                authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        self.assertValidJSONResponse(resp)
+
+
     ## FIXME! ##
     # def test_delete_dashboard(self):
     #     dashboard_name = "test delete a dashboard"
