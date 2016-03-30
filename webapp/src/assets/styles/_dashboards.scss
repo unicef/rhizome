@@ -121,6 +121,10 @@ $total-columns: 7;
 	}
 	section {
 		display: flex;
+		.dropdown-list.chart-selector {
+			width: 14rem;
+			margin: 0 auto;
+		}
 	}
 	aside {
 		background: #DBDBDB;
