@@ -12,7 +12,8 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import DatapointsException
 
-from rhizome.models import LocationPermission, Location, LocationTree
+from rhizome.models import LocationPermission, Location, LocationTree, \
+    LocationType, Campaign, DataPointComputed, Indicator
 from django.http import HttpResponse
 
 class BaseResource(Resource):
@@ -26,6 +27,40 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
+    def get_worst_performing(self, request, location_ids):
+
+        indicator_id = self.parsed_params['indicator__in'][0]
+        indicator_obj = Indicator.objects\
+            .get(id=indicator_id)
+
+        sub_location_ids = LocationTree.objects\
+            .filter(parent_location_id__in=location_ids)\
+            .values_list('location_id',flat=True)
+
+        print 'sub_location_ids'
+
+        latest_campaign = Campaign.objects\
+            .filter(id__in=self.parsed_params['campaign__in'])\
+            .order_by('-end_date')[0]
+
+        try:
+            if indicator_obj.good_bound > indicator_obj.bad_bound:
+                worst_performing = DataPointComputed.objects.filter(
+                    location_id__in=sub_location_ids,
+                    campaign=latest_campaign,
+                    indicator_id=indicator_id
+                ).order_by('value')[0].location_id
+            else:
+                worst_performing = DataPointComputed.objects.filter(
+                    location_id__in=sub_location_ids,
+                    campaign=latest_campaign,
+                    indicator_id=indicator_id
+                ).order_by('-value')[0].location_id
+        except IndexError:
+            return sub_location_ids[:1]
+
+        return [worst_performing]
+
     def get_locations_to_return_from_url(self, request):
         '''
         This method is used in both the /geo and /datapoint endpoints.  Based
@@ -37,7 +72,14 @@ class BaseResource(Resource):
 
         right now -- this only filters if there is no param.. i should get the
         permitted locations first then do an intersection with the params..
+
+        THIS IS A HOT MESS - NEED CLEAN UP
         '''
+
+        try:
+            chart_type = request.GET['chart_type']
+        except KeyError:
+            chart_type = ''
 
         try:
             location_ids = request.GET['location_id__in'].split(',')
@@ -47,15 +89,27 @@ class BaseResource(Resource):
 
         try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
+
             location_ids = list(LocationTree.objects\
                         .filter(parent_location_id__in=pl_id_list)
                         .values_list('location_id',flat=True))
-            try: 
+
+            if chart_type == 'LineChart':
+                return self.get_worst_performing(request,\
+                    location_ids)
+
+            try:
                 level = int(request.GET['tree_lvl'])
-                if level == 1:
+                province_location_type_id = LocationType.objects\
+                    .get(name = 'Province').id
+
+                if level == 1 and Location.objects.get(id=pl_id_list[0])\
+                    .location_type_id == province_location_type_id:
+
                     return location_ids
-            except Exception:
+            except KeyError:
                 pass
+
             ## provinces ##
             prov_and_country_ids = Location.objects\
                 .filter(location_type__name__in=['Province','Country'])\

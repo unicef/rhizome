@@ -22,8 +22,6 @@ class CustomDashboardResource(BaseModelResource):
         except KeyError:
             dash_id = None
 
-        default_office_id = 1  # FIXME int(post_data['default_office_id'][0])
-
         title = post_data['title']
 
         try:
@@ -40,7 +38,6 @@ class CustomDashboardResource(BaseModelResource):
             'id': dash_id,
             'title': title,
             'description': description,
-            'default_office_id': default_office_id,
             'layout': layout
         }
 

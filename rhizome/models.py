@@ -445,6 +445,7 @@ class CustomChart(models.Model):
     '''
     '''
 
+    uuid = models.CharField(max_length=255, unique=True)
     title = models.CharField(max_length=255, unique=True)
     chart_json = JSONField()
 
@@ -461,12 +462,20 @@ class CustomDashboard(models.Model):
 
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=1000)
-    default_office = models.ForeignKey(Office, null=True)
     layout = models.IntegerField(default=0, null=True)
 
     class Meta:
         db_table = 'custom_dashboard'
 
+class ChartToDashboard(models.Model):
+
+    chart = models.ForeignKey(CustomChart)
+    dashboard = models.ForeignKey(CustomDashboard)
+    sort_order = models.IntegerField(default=0)
+
+    class Meta:
+        db_table = 'chart_to_dashboard'
+        unique_together = (('chart', 'dashboard'))
 
 #===========================================================================#
 #                              SOURCE DATA MODELS                           #
