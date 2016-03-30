@@ -48,7 +48,7 @@ let EntryForm = React.createClass({
             <br />
             <label htmlFor='forms'><h3>Form</h3></label>
             <DropdownMenu
-              items={this.state.entryFormDefinitions}
+              items={this.state.tags}
               sendValue={EntryFormActions.setForm}
               item_plural_name='Forms'
               text={formName}
