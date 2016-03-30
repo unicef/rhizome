@@ -109,11 +109,11 @@ Binding store directly on state is easily overriden therefore not stable. It's b
 
 Use
 
-`mixins: [Reflux.connect(ChartWizardStore, 'data')]`
+`mixins: [Reflux.connect(DataExplorerStore, 'data')]`
 
 instead of
 
-`mixins: [Reflux.connect(DataStore)]`
+`mixins: [Reflux.connect(DataExplorerStore)]`
 
 **Write React in ES6+**
 
@@ -166,10 +166,10 @@ There is two kinds dashboard, one is the built-in dashboard, one is the custom d
 #### Custom Dashboard
 The custom dashboard is created by a user, click the url /datapoints/dashboards/create and select a layout, a new custom dashboard will be created, and you can list it in /datapoints/dashboards/ and display a custom dashboard. The code at webapp/src/view/dashboard-builder, and custom dashbaord is rendered by webapp/src/dashboard/CustomDashboard.jsx component.
 
-## ChartWizard
-When you create a dashboard, you need to add a chart to the dashboard. the ChartWizard will help you to add a chart to your created custom dashboard. The ChartWizard code is at the webapp/src/view/chart-wizard/ the ChartWizard.js defines the whole page UI, you can add the chart settings and actions in this component.
+## DataExplorer
+When you create a dashboard, you need to add a chart to the dashboard. the DataExplorer will help you to add a chart to your created custom dashboard. The DataExplorer code is at the webapp/src/view/data-explorer/ the DataExplorerActions.js defines the whole page UI, you can add the chart settings and actions in this component.
 
-ChartWizard options folder (/webapp/src/view/chart-wizard/options) defines all chart options, you can change or define every different chart options as you want.
+DataExplorer options folder (/webapp/src/view/data-explorer/options) defines all chart options, you can change or define every different chart options as you want.
 
 
 ## UfAdmin

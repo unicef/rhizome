@@ -45,3 +45,39 @@ $total-columns: 7;
 		@include block-grid-html-classes($size:large,$include-spacing:false);
 	}
 }
+
+.dashboard {
+	padding-top: 1.5rem;
+	.dropdown-list {
+		padding: 0 10px 10px 10px;
+	}
+	.remove-chart-button {
+    left: initial;
+    right: 1rem;
+	}
+  footer.hideable {
+    position: fixed;
+    bottom: 6.2rem;
+  }
+	.button.fix-to-bottom {
+		z-index: 200;
+	}
+}
+
+.multi-chart footer, footer.hideable{
+	background: #252525;
+	// position: relative;
+	// bottom: 0;
+  padding-top: .75rem;
+  padding-bottom: .3rem;
+  h1, h2, h3, h4, h5, h6, p {
+    color: white;
+  }
+}
+
+.multi-chart footer {
+	position: relative;
+	bottom: initial;
+	top: 50%;
+	margin-top: -3.2rem;
+}

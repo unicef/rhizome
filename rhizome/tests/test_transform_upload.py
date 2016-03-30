@@ -17,7 +17,6 @@ class TransformUploadTestCase(TestCase):
         self.create_metadata()
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
-
         self.test_file_location = 'ebola_data.csv'
         self.document.docfile = self.test_file_location
         self.document.save()
@@ -58,6 +57,16 @@ class TransformUploadTestCase(TestCase):
         file_line_count = sum(1 for line in test_file) - 1 # for the header!
 
         self.assertEqual(len(source_submissions),file_line_count)
+
+    def test_missing_required_column(self):
+        self.set_up()
+        doc_id = self.ingest_file('missing_campaign.csv')
+        try:
+            ComplexDocTransform(self.user.id, doc_id)
+            fail('should raise an exception')
+        except Exception as err:
+            self.assertEqual('campaign is a required column.', err.message)
+            pass
 
     # def test_boolean_transform(self):
 
@@ -171,6 +180,15 @@ class TransformUploadTestCase(TestCase):
             doc_detail_value = 'submission_date'
         )
 
+    def ingest_file(self, file_name):
+        ## create one doc ##
+        document = Document.objects.create(
+        doc_title = file_name,
+        created_by_id = self.user.id,
+        guid = 'test')
+        document.docfile = file_name
+        document.save()
+        return document.id
 
     def model_df_to_data(self,model_df,model):
 

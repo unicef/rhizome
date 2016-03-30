@@ -30,6 +30,6 @@ class ComputedDataPointResource(BaseModelResource):
 
         queryset = DataPointComputed.objects.filter(
             document_id=document_id
-        ).values('indicator_id', 'indicator__short_name','location__name','campaign__name', 'value')
+        ).values('indicator_id','location__name','campaign__name','indicator__short_name' ,'value')
 
         return queryset

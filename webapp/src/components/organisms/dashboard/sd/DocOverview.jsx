@@ -3,6 +3,7 @@ import React from 'react'
 import api from 'data/api'
 
 import DocOverviewActions from 'actions/DocOverviewActions'
+import DocFormActions from 'actions/DocFormActions'
 import DocOverviewStore from 'stores/DocOverviewStore'
 import DownloadButton from 'components/molecules/DownloadButton.jsx'
 

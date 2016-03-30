@@ -1,62 +1,69 @@
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
-import ChartActions from 'actions/ChartActions'
-import CampaignActions from 'actions/CampaignActions'
+import RootActions from 'actions/RootActions'
 import IndicatorActions from 'actions/IndicatorActions'
 import LocationActions from 'actions/LocationActions'
+import CampaignActions from 'actions/CampaignActions'
 import OfficeActions from 'actions/OfficeActions'
+import DashboardActions from 'actions/DashboardActions'
+import ChartActions from 'actions/ChartActions'
 
 var RootStore = Reflux.createStore({
 
+  listenables: RootActions,
+
   mixins: [StateMixin.store],
+
+  data: {
+    campaigns: [],
+    charts: [],
+    dashboards: [],
+    indicators: [],
+    locations: [],
+    offices: [],
+    loading: false
+  },
+
+  getInitialState () {
+    return this.data
+  },
 
   init () {
     this.getInitialData()
   },
 
-  getInitialState () {
-    return {
-      chartIndex: [],
-      campaignIndex: [],
-      indicatorIndex: [],
-      locationIndex: [],
-      officeIndex: []
-    }
+  getInitialData () {
+    RootActions.fetchAllMeta()
   },
 
-  getInitialData () {
-    const promises = [
-      OfficeActions.fetchOffices(),
-      CampaignActions.fetchCampaigns(),
-      IndicatorActions.fetchIndicators(),
-      LocationActions.fetchLocations(),
-      ChartActions.fetchCharts()
-    ]
-    Promise.all(promises).then(values => {
-      const [offices, campaigns, indicators, locations, charts] = values
-      const officeIndex = []
-      const campaignIndex = []
-      const indicatorIndex = []
-      const locationIndex = []
-      const chartIndex = []
+  // =========================================================================== //
+  //                               API CALL HANDLERS                             //
+  // =========================================================================== //
 
-      offices.forEach(office => { officeIndex[office.id] = office })
-      campaigns.forEach(campaign => { campaignIndex[campaign.id] = campaign })
-      indicators.forEach(indicator => { indicatorIndex[indicator.id] = indicator })
-      locations.forEach(location => { locationIndex[location.id] = location })
-      charts.forEach(chart => { chartIndex[chart.id] = chart })
-
-      this.trigger({
-        officeIndex: officeIndex,
-        campaignIndex: campaignIndex,
-        indicatorIndex: indicatorIndex,
-        locationIndex: locationIndex,
-        chartIndex: chartIndex
-      })
-    })
+  // ===============================  Fetch Meta  ============================= //
+  onFetchAllMeta () {
+    this.setState({ loading: true })
+  },
+  onFetchAllMetaCompleted (response) {
+    this.data.campaigns = response.objects[0].campaigns
+    this.data.charts = response.objects[0].charts
+    this.data.dashboards = response.objects[0].dashboards
+    this.data.indicators = response.objects[0].indicators
+    this.data.locations = response.objects[0].locations
+    this.data.offices = response.objects[0].offices
+    CampaignActions.fetchCampaigns.completed(response)
+    ChartActions.fetchCharts.completed(response)
+    DashboardActions.fetchDashboards.completed(response)
+    IndicatorActions.fetchIndicators.completed(response)
+    IndicatorActions.fetchIndicatorTags.completed(response)
+    LocationActions.fetchLocations.completed(response)
+    OfficeActions.fetchOffices.completed(response)
+    this.trigger(this.data)
+  },
+  onFetchAllMetaFailed (error) {
+    this.setState({ error: error })
   }
-
 })
 
 export default RootStore

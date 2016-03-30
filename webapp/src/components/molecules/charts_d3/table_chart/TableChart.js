@@ -46,7 +46,7 @@ _.extend(TableChart.prototype, {
   update: function (data, options, container) {
     options = _.extend(this._options, options)
 
-    const h = Math.max(data.length * options.cellHeight, 0)
+    const h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
     const w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
@@ -106,7 +106,8 @@ _.extend(TableChart.prototype, {
     // CELLS
     // ---------------------------------------------------------------------------
 
-    const fill = d => scale(targets[d.indicator.id](d.value))
+    // const fill = d => scale(targets[d.indicator.id](d.value))
+    const fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? scale(targets[d.indicator.id](d.value)) : '#FFFFFF'
     const cells = rows.selectAll('.cell').data(options.values)
     cells.exit().transition().duration(300).style('opacity', 0).remove()
     cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
@@ -322,7 +323,12 @@ function _sortValue (s, sortCol) {
   if (sortCol === null) {
     return options.seriesName(s)
   }
-  return options.value(_.find(options.values(s), d => options.column(d) === sortCol))
+  return options.value(_.find(options.values(s), d => {
+    if (d.value === null || !_.isFinite(d.value)) {
+      d.value = this.sortDirection !== 1 ? -Infinity : Infinity
+    }
+    return options.column(d) === sortCol
+  }))
 }
 
 export default TableChart

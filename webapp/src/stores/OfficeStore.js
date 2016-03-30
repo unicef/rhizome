@@ -9,10 +9,6 @@ var OfficeStore = Reflux.createStore({
 
   listenables: OfficeActions,
 
-  init () {
-    OfficeActions.fetchOffices()
-  },
-
   offices: {
     meta: null,
     raw: null,
@@ -32,10 +28,11 @@ var OfficeStore = Reflux.createStore({
     this.setState({ raw: [] })
   },
   onFetchOfficesCompleted (response) {
+    const offices = response.objects[0].offices || response.objects
     this.setState({
       meta: response.meta,
-      raw: response.objects,
-      index: _.indexBy(response.objects, 'id')
+      raw: offices,
+      index: _.indexBy(offices, 'id')
     })
   },
   onFetchOfficesFailed (error) {

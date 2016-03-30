@@ -2,11 +2,11 @@
 *[role="button"] {
   background-color: $rhz-button-bg-color;
   color: $rhz-font-color;
-  text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: .7rem;
   border-style: hidden;
   font-family: adelle;
-	margin: .5rem .5rem .5rem 0;
+  letter-spacing: 1px;
+  margin: .5rem .5rem .5rem 0;
   &:not(.disabled):not(.success):not(.icon-button):hover {
     background-color: #426281;
     color: $rhz-font-color;
@@ -18,16 +18,35 @@
     background: none;
     padding: .1rem;
     font-size: 1rem;
-    color: $rhz-body-color;
+    color: $rhz-button-bg-color;
     margin: 0;
     position: relative;
     top: -.2rem;
     left: .25rem;
     cursor: pointer;
+    &:hover {
+      color: $rhz-body-color;
+    }
   }
   &.expand {
-    font-size: .7rem;
+    font-size: .9rem;
+    padding: .5rem 0 .55rem 0;
   }
+  &:not(.icon-button).expand {
+    i.fa {
+      position: absolute;
+      left: 1rem;
+      top: .6rem;
+      width: auto;
+      text-align: left;
+    }
+  }
+}
+
+h1 .button.icon-button {
+  font-size: .9rem;
+  position: relative;
+  left: 1rem;
 }
 
 
