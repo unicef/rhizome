@@ -78,6 +78,7 @@ var DashboardNewStore = Reflux.createStore({
     new_chart.title = format.unCamelCase(type)
     new_chart.uuid = uuid.v4()
     this.charts[new_chart.uuid] = new_chart
+    DashboardNewActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
     this.trigger(this.charts)
   },
   onRemoveChart (uuid) { console.info('- Store.onRemoveChart')

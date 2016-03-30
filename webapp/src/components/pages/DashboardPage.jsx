@@ -9,6 +9,7 @@ import PalettePicker from 'components/organisms/data-explorer/preview/PalettePic
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
+import RootStore from 'stores/RootStore'
 import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardNewStore from 'stores/DashboardNewStore'
@@ -35,7 +36,12 @@ const Dashboard = React.createClass({
   },
 
   componentDidMount() {
-    DashboardNewActions.addChart('RawData')
+    RootStore.listen(() => {
+      const state = this.state
+      if (state.locations.index && state.indicators.index && state.campaigns.index) {
+        DashboardNewActions.addChart('RawData')
+      }
+    })
   },
 
   _showHideFooter () {
