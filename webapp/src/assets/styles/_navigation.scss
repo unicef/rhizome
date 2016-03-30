@@ -7,7 +7,9 @@ ul.dashboards-nav {
   position: relative;
 
   @include clearfix();
-
+  .cta-menu-item {
+    background: lighten($rhz-button-bg-color, 10%);
+  }
   .log-out {
       text-align: center;
     }

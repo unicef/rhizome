@@ -63,6 +63,9 @@ def export_file(request):
 def dashboards(request):
     return render_to_response('dashboards/index.html',
                               context_instance=RequestContext(request))
+def dashboard_create(request, dashboard_id=None):
+    return render_to_response('dashboards/create.html',
+                              context_instance=RequestContext(request))
 def dashboard(request, dashboard_id=None):
     return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))

@@ -77,17 +77,7 @@ var DashboardNewStore = Reflux.createStore({
   },
   onSelectChart (chart, uuid) { console.info('- Store.onSelectChart')
     this.trigger(this.dashboard)
-    const new_chart = new ChartState
-    new_chart.id = chart.id
-    new_chart.uuid = chart.uuid
-    new_chart.title = chart.title
-    new_chart.type = chart.chart_json.type
-    new_chart.start_date = chart.chart_json.start_date
-    new_chart.end_date = chart.chart_json.end_date
-    new_chart.selected_indicators = chart.chart_json.indicator_ids.map(id => this.indicators.index[id])
-    new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
-    new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
-    new_chart.selectTypeMode = false
+    const new_chart = this.meltChart(chart)
     this.dashboard.charts[new_chart.uuid] = new_chart
     delete this.dashboard.charts[uuid]
     DashboardNewActions.setType(new_chart.type, new_chart.uuid)
@@ -289,7 +279,13 @@ var DashboardNewStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
   onFetchDashboardCompleted (response) { console.log('Store.onFetchDashboardCompleted')
-    console.log('response', response)
+    this.dashboard.title = response.title
+    response.charts.forEach(chart => {
+      const new_chart = this.meltChart(chart)
+      this.dashboard.charts[chart.uuid] = new_chart
+      DashboardNewActions.setType(new_chart.type, new_chart.uuid)
+    })
+    this.trigger(this.dashboard)
   },
   onFetchDashboardFailed (error) { console.log('Store.onFetchDashboardFailed')
     this.setState({ error: error })
@@ -341,6 +337,21 @@ var DashboardNewStore = Reflux.createStore({
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
+  meltChart (chart) {
+    const new_chart = new ChartState
+    new_chart.id = chart.id
+    new_chart.uuid = chart.uuid
+    new_chart.title = chart.title
+    new_chart.type = chart.chart_json.type
+    new_chart.start_date = chart.chart_json.start_date
+    new_chart.end_date = chart.chart_json.end_date
+    new_chart.selected_indicators = chart.chart_json.indicator_ids.map(id => this.indicators.index[id])
+    new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
+    new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
+    new_chart.selectTypeMode = false
+    return new_chart
+  },
+
   updateChart (uuid) {  console.info('-- Store.updateChart' + (this.chartParamsAreReady(uuid) ? ' (Params Ready!)' : ''))
     if (this.dashboard.charts[uuid].data !== null) {
       DatapointActions.clearDatapoints()
