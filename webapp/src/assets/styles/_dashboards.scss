@@ -47,7 +47,15 @@ $total-columns: 7;
 }
 
 .dashboard {
-	padding-top: 1.5rem;
+	.dashboard-header {
+		background: $rhz-footer-bg-color;
+		h1 {
+			padding: .8rem 0 .5rem 1rem;
+		}
+		h1, i {
+			color: white;
+		}
+	}
 	hr {
 		margin-top: 0;
 		margin-bottom: 2rem;
@@ -73,13 +81,13 @@ $total-columns: 7;
   padding-top: .75rem;
   padding-bottom: .3rem;
   h1, h2, h3, h4, h5, h6, p {
-    color: white;
+    color: $rhz-body-color;
   }
 }
 
 .multi-chart {
 	header {
-		background: $rhz-footer-bg-color;
+		background: $rhz-navigation-hover-bg-color;
 		h1, input, .icon-button {
 			position: relative;
 			z-index: 300;
@@ -88,14 +96,18 @@ $total-columns: 7;
 			margin: 0;
 			top: -.1rem;
 		}
-	  h1, h2, h3, h4, h5, h6, p, i {
+	  h1, h2, h3, h4, h5, h6, p {
+	  	text-transform: none;
+	  	position: relative;
 	  	.icon-button {
-	  		top: -.1rem;
+	  		font-size: 1rem;
+	  		top: .025rem;
 	  	}
 	  	margin: 0;
 	    color: white;
 	  }
 		.icon-button {
+			color: white;
 			&:hover i {
 				transform: scale(1.2);
 			}

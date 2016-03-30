@@ -92,11 +92,11 @@ const MultiChart = React.createClass({
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
       :
-      <h1>
+      <h2>
         {chart.title}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
-      </h1>
+      </h2>
 
     const chart_type_selector = (
       <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>

@@ -16,7 +16,7 @@ import ChartActions from 'actions/ChartActions'
 const Dashboard = React.createClass({
 
   mixins: [
-    Reflux.connect(DashboardNewStore, 'charts'),
+    Reflux.connect(DashboardNewStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -37,7 +37,7 @@ const Dashboard = React.createClass({
 
   saveChart (chart) {
     console.info('- Dashboard.saveChart')
-    if (!chart.title || chart.title === 'Untitled') {
+    if (!chart.title || chart.title === 'Untitled Chart') {
       return window.alert('Please add a Title to your chart')
     }
     ChartActions.postChart({
@@ -56,9 +56,19 @@ const Dashboard = React.createClass({
   },
 
   render () {
-    let charts = _.toArray(this.state.charts)
+    const dashboard = this.state.dashboard
+    const charts = _.toArray(dashboard.charts)
     console.info('Dashboard.RENDER ========================================== Charts:', charts)
-    charts = charts.map(chart => {
+    const title_bar = this.state.titleEditMode ?
+      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
+      :
+      <h1 className='left'>
+        {dashboard.title}
+        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
+        <br/ >
+      </h1>
+
+    const chart_components = charts.map(chart => {
       return (
         <div className='row'>
           <MultiChart
@@ -93,7 +103,11 @@ const Dashboard = React.createClass({
 
     return (
       <section className='dashboard'>
-        { charts }
+        <header className='row dashboard-header'>
+          { title_bar }
+          <button className='button right'>Save Dashboard</button>
+        </header>
+        { chart_components }
         <div className='row text-center'>
           <button
             className='button large'
