@@ -41,7 +41,6 @@ class IndicatorToTagResource(BaseModelResource):
                 .filter(indicator_id=indicator_id) \
                 .values(*response_columns)
         elif indicator_tag_id:
-            print 'we made it!'
             qs = IndicatorToTag.objects \
                 .filter(indicator_tag_id=indicator_tag_id) \
                 .values(*response_columns)
