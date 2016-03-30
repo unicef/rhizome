@@ -16,7 +16,6 @@ let EntryForm = React.createClass({
     EntryFormActions.initData()
   },
 
-
   render () {
     let formIdSelected = this.state.formIdSelected
     let formName = 'Select Form'
