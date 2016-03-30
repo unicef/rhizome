@@ -39,8 +39,10 @@ def reset_seq(apps, schema_editor):
                     call_command('sqlsequencereset', label, stdout=commands)
         except Exception as err:
             pass
-    cursor.execute(commands.getvalue())
-
+    try:
+        cursor.execute(commands.getvalue())
+    except Exception:
+        pass
 
 class Migration(migrations.Migration):
 
