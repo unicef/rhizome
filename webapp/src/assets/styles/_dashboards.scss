@@ -55,6 +55,10 @@ $total-columns: 7;
 		h1, i {
 			color: white;
 		}
+		form.title-input {
+			position: relative;
+			top: .8rem;
+		}
 	}
 	hr {
 		margin-top: 0;
@@ -86,6 +90,8 @@ $total-columns: 7;
 }
 
 .multi-chart {
+	border-bottom: 1px solid $rhz-navigation-hover-bg-color;
+	margin-bottom: 2rem;
 	header {
 		background: $rhz-navigation-hover-bg-color;
 		h1, input, .icon-button {
@@ -140,6 +146,7 @@ $total-columns: 7;
 	}
 	aside {
 		background: #DBDBDB;
+		border-left: 1px solid $rhz-navigation-hover-bg-color;
 		padding-top: 1rem;
 		.dropdown-list {
 			background-color: transparent;

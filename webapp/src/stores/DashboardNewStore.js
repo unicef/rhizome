@@ -255,7 +255,11 @@ var DashboardNewStore = Reflux.createStore({
     this.dashboard.charts[uuid].colors = palettes[palette]
     this.trigger(this.dashboard)
   },
-  onSetTitle (title, uuid) { console.info('- Store.onSetTitle')
+  onSetDashboardTitle (title) { console.info('- Store.onSetDashboardTitle')
+    this.dashboard.title = title
+    this.trigger(this.dashboard)
+  },
+  onSetChartTitle (title, uuid) { console.info('- Store.onSetChartTitle')
     this.dashboard.charts[uuid].title = title
     this.trigger(this.dashboard)
   },

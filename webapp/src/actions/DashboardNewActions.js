@@ -7,6 +7,9 @@ const DashboardNewActions = Reflux.createActions({
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'toggleCampaignLink': 'toggleCampaignLink',
   'toggleSelectTypeMode': 'toggleSelectTypeMode',
+  // Dashboard Actions
+  'setDashboardTitle': 'setDashboardTitle',
+  'saveDashboard': 'saveDashboard',
   'addChart': 'addChart',
   'selectChart': 'selectChart',
   'duplicateChart': 'duplicateChart',
@@ -14,7 +17,7 @@ const DashboardNewActions = Reflux.createActions({
   'getChart': 'getChart',
   'saveChart': 'saveChart',
   // Chart Params
-  'setTitle': 'setTitle',
+  'setChartTitle': 'setChartTitle',
   'setPalette': 'setPalette',
   'setType': 'setType',
   'setDateRange': 'setDateRange',
