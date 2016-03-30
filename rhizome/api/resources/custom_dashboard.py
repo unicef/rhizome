@@ -83,9 +83,7 @@ class CustomDashboardResource(BaseModelResource):
 
     def upsert_chart_uuids(self, dashboard_id, chart_uuids):
 
-        if type(chart_uuids) == unicode:
-            chart_uuids = [chart_uuids]
-        chart_ids = CustomChart.objects.filter(uuid__in = chart_uuids)\
+        chart_ids = CustomChart.objects.filter(uuid__in = [chart_uuids])\
             .values_list('id',flat=True)
 
         batch = [ChartToDashboard(**{
@@ -101,7 +99,6 @@ class CustomDashboardResource(BaseModelResource):
         """
 
         obj_id = int(bundle.request.GET[u'id'])
-        CustomChart.objects.filter(dashboard_id=obj_id).delete()
         CustomDashboard.objects.filter(id=obj_id).delete()
 
     def get_object_list(self, request):
