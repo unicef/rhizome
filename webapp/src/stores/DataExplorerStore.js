@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import uuid from 'uuid'
 import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
@@ -245,6 +246,7 @@ var DataExplorerStore = Reflux.createStore({
     ChartActions.postChart({
       id: this.chart.id,
       title: this.chart.title,
+      uuid: uuid.v4(),
       chart_json: JSON.stringify({
         type: this.chart.type,
         start_date: this.chart.start_date,
