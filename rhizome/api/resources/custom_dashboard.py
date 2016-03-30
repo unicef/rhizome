@@ -23,8 +23,12 @@ class CustomDashboardResource(BaseModelResource):
         response_data = CustomDashboard.objects.get(id=requested_id).__dict__
         response_data.pop('_state')
 
-        chart_data = [c for c in CustomChart.objects\
-            .filter(charttodashboard__dashboard_id = requested_id).values()]
+        chart_data = []
+        for c in CustomChart.objects\
+            .filter(charttodashboard__dashboard_id = requested_id)\
+            .values():
+                c['chart_json'] = json.loads(c['chart_json'])
+                chart_data.append(c)
 
         response_data['charts'] = chart_data
         bundle.data = response_data
