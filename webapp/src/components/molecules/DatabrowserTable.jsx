@@ -23,7 +23,9 @@ let DatabrowserTable = React.createClass({
   render: function () {
     console.info('-------- DatabrowserTable.render')
     DataBrowserTableActions.getTableData(this.props.selected_locations, this.props.selected_indicators, this.props.data)
-    if (!this.state || !this.state.data) {
+    console.log('this.state.data', this.state.data)
+    console.log('this.props.data', this.props.data)
+    if (!this.state || !this.props.data) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
       let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
@@ -33,7 +35,6 @@ let DatabrowserTable = React.createClass({
       } else {
         table = <SimpleDataTable>{columns}</SimpleDataTable>
       }
-
       return (
         <LocalDatascope data={this.state.data} schema={this.state.schema} pageSize={10}>
           <Datascope>
