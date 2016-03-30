@@ -5,6 +5,8 @@ from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
+from rhizome.etl_tasks.refresh_master import MasterRefresh
+
 
 class TransformUploadTestCase(TestCase):
 
@@ -12,8 +14,7 @@ class TransformUploadTestCase(TestCase):
 
         super(TransformUploadTestCase, self).__init__(*args, **kwargs)
 
-    def set_up(self):
-
+    def setUp(self):
         self.create_metadata()
         self.user = User.objects.get(username = 'test')
         self.document = Document.objects.get(doc_title = 'test')
@@ -47,8 +48,6 @@ class TransformUploadTestCase(TestCase):
               those created in other documents)
             4. Inserting one record into submission_detail        '''
 
-        self.set_up()
-
         dt = ComplexDocTransform(self.user.id, self.document.id)
 
         source_submissions = dt.process_file()
@@ -59,7 +58,6 @@ class TransformUploadTestCase(TestCase):
         self.assertEqual(len(source_submissions),file_line_count)
 
     def test_missing_required_column(self):
-        self.set_up()
         doc_id = self.ingest_file('missing_campaign.csv')
         try:
             ComplexDocTransform(self.user.id, doc_id)
@@ -67,6 +65,18 @@ class TransformUploadTestCase(TestCase):
         except Exception as err:
             self.assertEqual('campaign is a required column.', err.message)
             pass
+
+    def test_duplicate_rows(self):
+        doc_id = self.ingest_file('dupe_datapoints.csv')
+        dt = ComplexDocTransform(self.user.id, doc_id)
+        source_submissions = dt.main()
+        mr = MasterRefresh(self.user.id, doc_id)
+        mr.main()
+        dps = DataPoint.objects.all()
+        self.assertEqual(len(dps), 1)
+        some_cell_value_from_the_file = 0.9029
+        self.assertEqual(dps[0].value, some_cell_value_from_the_file)
+
 
     # def test_boolean_transform(self):
 
@@ -143,16 +153,16 @@ class TransformUploadTestCase(TestCase):
 
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
-        location_ids = self.model_df_to_data(location_df,Location)
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
-        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        self.locations = self.model_df_to_data(location_df,Location)
+        self.campaigns = self.model_df_to_data(campaign_df,Campaign)
+        self.indicators = self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
 
         ## associate indicators with tag ##
         indicator_to_tag_ids = [IndicatorToTag(**{\
             'indicator_id':ind.id,\
-            'indicator_tag_id': top_lvl_tag.id}) for ind in indicator_ids]
+            'indicator_tag_id': top_lvl_tag.id}) for ind in self.indicators]
 
         IndicatorToTag.objects.bulk_create(indicator_to_tag_ids)
 
@@ -180,6 +190,38 @@ class TransformUploadTestCase(TestCase):
             doc_detail_value = 'submission_date'
         )
 
+        self.mapped_location_id = self.locations[0].id
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code = 'AF001039003000000000',
+            content_type = 'location',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_location_id
+        )
+
+        source_campaign_string = '2016 March NID OPV'
+        self.mapped_campaign_id = self.campaigns[0].id
+        campaign_map = SourceObjectMap.objects.create(
+            source_object_code = source_campaign_string,
+            content_type = 'campaign',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_campaign_id
+        )
+        self.mapped_indicator_id_0 = self.locations[0].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed children_PCA',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_id_0
+        )
+
+
+        self.mapped_indicator_with_data = self.locations[2].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'Percent missed due to other reasons',
+            content_type = 'indicator',
+            mapped_by_id = user_id,
+            master_object_id = self.mapped_indicator_with_data
+        )
     def ingest_file(self, file_name):
         ## create one doc ##
         document = Document.objects.create(

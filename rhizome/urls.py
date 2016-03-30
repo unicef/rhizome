@@ -84,6 +84,7 @@ protected_patterns = [
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/$', views.builtin_dashboard, name='builtin_dashboard'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/$', views.builtin_dashboard, name='dashboards'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/[0-9]+/$', views.builtin_dashboard, name='builtin_dashboard'),
+    url(r'^dashboards/.*$', views.builtin_dashboard, name='builtin_dashboard')
 ]
 
 urlpatterns = patterns(
