@@ -104,7 +104,7 @@ class DashboardResourceTest(ResourceTestCase):
     def test_dashboard_gets_charts(self):
         '''
         @martha plz add logic to ensure that the c1 / c2 chart data is in the
-        response
+        response.
         '''
 
         ## create a dashboard ##
@@ -120,9 +120,7 @@ class DashboardResourceTest(ResourceTestCase):
         ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
             chart_id = c2.id)
 
-        params = {'show_charts':True}
         resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
-                data=params, \
                 format='json', \
                 authentication=self.get_credentials())
 

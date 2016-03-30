@@ -23,12 +23,8 @@ class CustomDashboardResource(BaseModelResource):
         response_data = CustomDashboard.objects.get(id=requested_id).__dict__
         response_data.pop('_state')
 
-        try:
-            chart_flag = request.GET['show_charts']
-            chart_data = [c for c in CustomChart.objects\
-                .filter(charttodashboard__dashboard_id = requested_id).values()]
-        except KeyError:
-            chart_data = []
+        chart_data = [c for c in CustomChart.objects\
+            .filter(charttodashboard__dashboard_id = requested_id).values()]
 
         response_data['charts'] = chart_data
         bundle.data = response_data
