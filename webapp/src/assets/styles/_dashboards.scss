@@ -80,17 +80,43 @@ $total-columns: 7;
 .multi-chart {
 	header {
 		background: $rhz-footer-bg-color;
-		padding-top: .4rem;
-		.icon-button {
-			font-size: 1.2rem;
-			margin-right: .5rem;
-			top: .3rem;
+		h1, input, .icon-button {
+			position: relative;
+			z-index: 300;
+		}
+		input {
+			margin: 0;
+			top: -.1rem;
 		}
 	  h1, h2, h3, h4, h5, h6, p, i {
 	  	.icon-button {
 	  		top: -.1rem;
 	  	}
+	  	margin: 0;
 	    color: white;
+	  }
+		.icon-button {
+			&:hover i {
+				transform: scale(1.2);
+			}
+			i {
+				transition: all .4s;
+			}
+			font-size: 1.2rem;
+			margin-right: .5rem;
+	  	padding: .7rem .3rem;
+		}
+	  .chart-actions {
+			.icon-button {
+				top: 0;
+				&:last-child {
+			    margin-right: 0;
+			    padding-right: 0.3rem;
+			    padding-left: 1rem;
+					border-left: 1px solid #DBDBDB;
+			    right: 0;
+				}
+			}
 	  }
 	}
 	section {

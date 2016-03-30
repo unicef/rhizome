@@ -24,6 +24,8 @@ import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import RootStore from 'stores/RootStore'
 
+import ChartActions from 'actions/ChartActions'
+
 const MultiChart = React.createClass({
   mixins: [
     Reflux.connect(LocationStore, 'locations'),
@@ -134,6 +136,18 @@ const MultiChart = React.createClass({
       </button>
     ) : null
 
+    const export_button = (
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.exportChart(chart.uuid)}>
+        <i className='fa fa-external-link'/>&nbsp;
+      </button>
+    )
+
+    const save_button = (
+      <button className='button icon-button remove-chart-button' onClick={() => ChartActions.saveChart(chart.uuid)}>
+        <i className='fa fa-save'/>&nbsp;
+      </button>
+    )
+
     const duplicate_chart_button = this.props.duplicateChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
         <i className='fa fa-copy'/>&nbsp;
@@ -227,9 +241,11 @@ const MultiChart = React.createClass({
     return (
       <article className='multi-chart'>
         <header className='row'>
-          <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right'>
+          <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
               { change_type_button }
+              { export_button }
               { duplicate_chart_button }
+              { save_button }
               { remove_chart_button }
           </div>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
