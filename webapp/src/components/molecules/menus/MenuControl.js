@@ -35,18 +35,15 @@ var MenuControl = {
       )
 
       if (!this.layer) {
-        this.layer = new Layer(document.body, function () {
-          return menu
-        })
+        this.layer = new Layer(document.body, () => menu)
 
         window.addEventListener('keyup', this)
       } else {
         // Here's a gross way to re-render the menu when its items have changed
         // (due, for example, to them being filtered) without destroying and
         // recreating the layer every time.
-        this.layer._render = function () { return menu }
+        this.layer._render = () => menu
       }
-
       this.layer.render()
     } else if (this.layer) {
       this.layer.destroy()
