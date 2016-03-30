@@ -124,19 +124,19 @@ const MultiChart = React.createClass({
     // ---------------------------------------------------------------------------
     const change_type_button = (
       <button className='button icon-button remove-chart-button' onClick={this._toggleSelectType}>
-        <i className='fa fa-eye fa-2x'/>&nbsp;
+        <i className='fa fa-eye'/>&nbsp;
       </button>
     )
 
     const remove_chart_button = this.props.removeChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times fa-2x'/>&nbsp;
+        <i className='fa fa-times'/>&nbsp;
       </button>
     ) : null
 
     const duplicate_chart_button = this.props.duplicateChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy fa-2x'/>&nbsp;
+        <i className='fa fa-copy'/>&nbsp;
       </button>
     ) : null
 
@@ -225,30 +225,34 @@ const MultiChart = React.createClass({
     }
 
     return (
-      <section className='multi-chart row'>
-        <div className='medium-4 large-2 medium-push-8 large-push-10 columns'>
-          <div className='text-right'>
-            { change_type_button }
-            { duplicate_chart_button }
-            { remove_chart_button }
+      <article className='multi-chart'>
+        <header className='row'>
+          <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right'>
+              { change_type_button }
+              { duplicate_chart_button }
+              { remove_chart_button }
           </div>
-          { palette_selector }
-          { date_range_picker }
-          { campaign_selector }
-          { indicator_selector }
-          { location_selector }
-        </div>
-        <div className='medium-8 large-10 medium-pull-4 large-pull-2 columns'>
-          <div className='row chart-header text-center'>
+          <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
             { title_bar }
           </div>
-          {
-            this.state.selectTypeMode
-              ? chart_type_selector : (!_.isEmpty(chart.data)
-                ? chart_component : chart_placeholder)
-          }
-        </div>
-      </section>
+        </header>
+        <section className='row'>
+          <aside className='medium-4 large-3 medium-push-8 large-push-9 columns'>
+            { palette_selector }
+            { date_range_picker }
+            { campaign_selector }
+            { indicator_selector }
+            { location_selector }
+          </aside>
+          <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns'>
+            {
+              this.state.selectTypeMode
+                ? chart_type_selector : (!_.isEmpty(chart.data)
+                  ? chart_component : chart_placeholder)
+            }
+          </div>
+        </section>
+      </article>
     )
   }
 })
