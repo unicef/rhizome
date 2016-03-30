@@ -224,7 +224,7 @@ let EntryFormStore = Reflux.createStore({
 
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
-      this.data.apiResponseData = response
+      this.data.apiResponseData = response.objects
       // this.data.apiResponseData.meta = response.meta
       // this.data.data.objects
       this.trigger(this.data)

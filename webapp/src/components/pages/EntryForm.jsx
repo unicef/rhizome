@@ -41,7 +41,6 @@ let EntryForm = React.createClass({
     if (campaignObj) {
       campaignName = campaignObj.name
     }
-
     return (
       <div className='row'>
         <form>

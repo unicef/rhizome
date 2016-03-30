@@ -5,9 +5,10 @@ export default [
     'value': 1,
     'indicator_tag_id': 101,
     'title': 'Pre Campaign',
+    'indicator_id_list' :[1,2,3]
     // 'location_level': 1,
     // 'indicator_id_list': [725, 726, 727, 728, 729, 718, 719, 720, 717, 721, 722, 723, 724, 759, 758, 757, 756, 755]
-    'indicator_id_list': [725, 726, 727, 728] //, 729, 718, 719, 720, 717, 721, 722, 723, 724, 759, 758, 757, 756, 755]
+    // 'indicator_id_list': [725, 726, 727, 728] //, 729, 718, 719, 720, 717, 721, 722, 723, 724, 759, 758, 757, 756, 755]
   },
   {
     'form_id': 2,
@@ -17,15 +18,17 @@ export default [
     'form_frequency': 'daily',
     'start_date': '2016-01-01',
     'end_date': '2016-01-04',
+    'indicator_id_list' :[1,2,3]
     // 'location_level': 1,
-    'indicator_id_list': [749, 750, 746, 732, 731, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 747, 748]
+    // 'indicator_id_list': [749, 750, 746, 732, 731, 733, 734, 735, 736, 737, 738, 739, 740, 741, 742, 743, 744, 745, 747, 748]
   },
   {
     'form_id': 3,
     'value': 3,
     'indicator_tag_id': 104,
     'title': 'Post Campaign',
+    'indicator_id_list' :[1,2,3]
     // 'location_level': 1,
-    'indicator_id_list': [164, 167, 158, 166, 274, 754, 475, 752]
+    // 'indicator_id_list': [164, 167, 158, 166, 274, 754, 475, 752]
   }
 ]
