@@ -79,6 +79,8 @@ class CustomDashboardResource(BaseModelResource):
 
     def upsert_chart_uuids(self, dashboard_id, chart_uuids):
 
+        if type(chart_uuids) == unicode:
+            chart_uuids = [chart_uuids]
         chart_ids = CustomChart.objects.filter(uuid__in = chart_uuids)\
             .values_list('id',flat=True)
 
