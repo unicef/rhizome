@@ -1,6 +1,6 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
-from rhizome.models import IndicatorTag, LocationPermission, Location,\
+from rhizome.models import Indicator,IndicatorToTag, IndicatorTag, LocationPermission, Location,\
     LocationType, Office
 
 class IndicatorTagResourceTest(ResourceTestCase):
@@ -68,3 +68,24 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.assertEqual(tag.id, response_data['id'])
         self.assertEqual(IndicatorTag.objects.count(), 1)
         self.assertEqual(new_tag_name, response_data['tag_name'])
+
+
+    def test_remove_tag(self):
+        indicatior = Indicator.objects.create(short_name='Test Indicator', \
+                                              name='Test Indicator for the Tag', \
+                                              data_format='int', \
+                                              description='Test Indicator for the Tag Description', )
+
+        tag = IndicatorTag.objects.create(tag_name='Test tag')
+
+        IndicatorToTag.objects.all().delete()
+
+        indicatior_tag = IndicatorToTag.objects.create(indicator_id=indicatior.id, indicator_tag_id=tag.id)
+
+        self.assertEqual(IndicatorToTag.objects.count(), 1)
+
+        delete_url = '/api/v1/indicator_to_tag/?id=' + str(indicatior_tag.id)
+
+        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+
+        self.assertEqual(IndicatorToTag.objects.count(), 0)

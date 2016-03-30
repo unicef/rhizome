@@ -39,11 +39,15 @@ class ChartResourceTest(ResourceTestCase):
     def test_chart_create(self):
         dash = CustomDashboard.objects.create(title='test')
 
-        post_data = {'title': 'Afghanistan',\
-            'chart_json': json.dumps({'foo': 'bar','title':'sometitle'})}
+        post_data = {
+            'uuid': 'c8eef24a-f696-11e5-9ce9-5e5517507c66',
+            'title': 'Afghanistan',\
+            'chart_json': json.dumps({'foo': 'bar','title':'sometitle'}
+            )}
 
         resp = self.api_client.post('/api/v1/custom_chart/', format='json', \
-                                    data=post_data, authentication=self.get_credentials())
+                                    data=post_data,
+                                    authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
 
@@ -52,8 +56,12 @@ class ChartResourceTest(ResourceTestCase):
 
     def test_chart_delete(self):
 
-        c1 = CustomChart.objects.create(title='L.O.X', chart_json={'hello': 'world'})
-        c2 = CustomChart.objects.create(title='J to the Muah',chart_json={'goodnight': 'moon'})
+        c1 = CustomChart.objects.create(title='L.O.X',\
+            chart_json={'hello': 'world'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        c2 = CustomChart.objects.create(title='J to the Muah',\
+            chart_json={'goodnight': 'moon'},
+            uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
 
         delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
 

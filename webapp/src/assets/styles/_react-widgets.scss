@@ -718,3 +718,14 @@ ul.rw-list.rw-list-grouped > li.rw-list-option,
 .rw-rtl .rw-multiselect-taglist > li {
   float: right;
 }
+
+.rw-input .color-swatch {
+  position: relative;
+  top: .1rem;
+}
+.rw-list-option .color-swatch {
+  display: block;
+  position: relative;
+  top: -.1rem;
+  padding: .2rem 0;
+}

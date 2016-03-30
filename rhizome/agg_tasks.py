@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 
 from pandas import concat
 from pandas import DataFrame
@@ -7,6 +7,7 @@ from pandas import notnull
 from rhizome.models import *
 from rhizome.cache_meta import IndicatorCache
 from rhizome.models import SourceSubmission
+import numpy as np
 
 class AggRefresh(object):
     '''
@@ -47,37 +48,30 @@ class AggRefresh(object):
 
         self.dwc_batch, self.dwc_tuple_dict = [],{}
 
-        if CacheJob.objects.filter(response_msg = 'PENDING'):
-            return
+        # if CacheJob.objects.filter(response_msg = 'PENDING'):
+        #     return
 
         self.campaign = Campaign.objects.get(id = campaign_id)
+
         self.cache_job = CacheJob.objects.create(
             is_error = False,
             response_msg = 'PENDING'
         )
 
-        dp_ids_to_process = self.campaign.get_raw_datapoint_ids()
-        top_lvl_location_id = self.campaign.top_lvl_location_id
 
-        ## update the datapoint table with this cache_job_id
-        DataPoint.objects.filter(id__in = dp_ids_to_process)\
-            .update(cache_job_id = self.cache_job.id)
+        ## set the document_id to the newest for this campaign ##
+        latest_dp_source = DataPoint.objects.filter(campaign_id = \
+            self.campaign.id).order_by('-created_at')[0].source_submission_id
 
-        self.document_id = SourceSubmission.objects.all()[0].document_id
-        ## this is sketchy -- for aggregation we need to figure out how to
-        ## appropriately set the document id of data.. what if for example
-        ## there are two uploads, one for Kandahar, one for Nangahar
-        ## for missed children, and we need to generate one number for the
-        ## afghanistan total missed children number.. we would have two
-        ## document_ids that we would need to attribute here.  For now..
-        ## we don't do any aggregation, so this solution works will have to
-        ## due until we bring back the aggregation / cacluclation framework.
+        self.document_id = SourceSubmission.objects.get(id = latest_dp_source)\
+            .document_id
+
 
 
         response_msg = self.main()
 
         ## mark job as completed and save
-        self.cache_job.date_completed = datetime.now()
+        self.cache_job.date_completed = timezone.now()
         self.cache_job.response_msg = response_msg
         self.cache_job.save()
 
@@ -147,7 +141,7 @@ class AggRefresh(object):
         location_tree_columns = ['location_id','parent_location_id','lvl']
 
         dp_df = DataFrame(list(DataPoint.objects\
-            .filter(cache_job_id = self.cache_job.id)\
+            .filter(campaign_id = self.campaign.id)\
             .values_list(*self.dp_columns)),columns=self.dp_columns)
 
         ## NaN to None
@@ -175,18 +169,33 @@ class AggRefresh(object):
             id__in = max_location_lvl_for_indicator_df['indicator_id']
         ).values_list('id', flat=True))
 
+        boolean_indicators = list(Indicator.objects.filter(
+            data_format = 'bool',
+            id__in = max_location_lvl_for_indicator_df['indicator_id']
+        ).values_list('id', flat=True))
+
         ## filter df to keep the data for the highest level per indicator ##
-        prepped_for_sum_df = joined_location_df\
+        prepped_df = joined_location_df\
             .merge(max_location_lvl_for_indicator_df,on=['indicator_id','lvl'])
 
+        prepped_df['value'] = prepped_df['value'].astype(float)
         ## group by parent_location_id and take the sum ##
-        grouped_df = DataFrame(prepped_for_sum_df\
+        grouped_df_sum = DataFrame(prepped_df\
             .groupby(['parent_location_id', 'indicator_id'])\
             ['value'].sum())
 
-        for ix, dp in grouped_df.iterrows():
+        grouped_df_mean = DataFrame(prepped_df\
+            .groupby(['parent_location_id', 'indicator_id'])\
+            ['value'].mean())
+
+        for ix, dp in grouped_df_sum.iterrows():
             ## only aggregate integers ( not boolean or pct )
             if ix[1] in integer_indicators:
+                tuple_dict[ix] = dp.value
+
+        for ix, dp in grouped_df_mean.iterrows():
+            ## get the avg for boolean indicators
+            if ix[1] in boolean_indicators:
                 tuple_dict[ix] = dp.value
 
         ## now add the raw data to the dict ( overriding agregate if exists )
@@ -304,6 +313,8 @@ class AggRefresh(object):
         Add the raw indicator data to the tuple dict.  This happens last so
         the raw indicator data will always override the calculated.
         '''
+
+        # print len(list(AggDataPoint.objects.filter(campaign_id = self.campaign.id)))
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
             adp_tuple = (adp.location_id, adp.indicator_id)
@@ -438,7 +449,6 @@ class AggRefresh(object):
                 'cache_job_id': self.cache_job.id,
                 'document_id': self.document_id
             }
-
             self.dwc_batch.append(DataPointComputed(**dwc_dict))
 
         DataPointComputed.objects.filter(campaign_id=self.campaign.id).delete()

@@ -8,11 +8,12 @@ var MenuItem = React.createClass({
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
       React.PropTypes.number
-    ]).isRequired,
+    ]),
     classes: React.PropTypes.string,
     ancestryString: React.PropTypes.string,
     children: React.PropTypes.array,
     depth: React.PropTypes.number,
+    disabled: React.PropTypes.bool,
     filtered: React.PropTypes.bool,
     displayTitle: React.PropTypes.string,
     noValue: React.PropTypes.bool
@@ -23,16 +24,7 @@ var MenuItem = React.createClass({
       if (!_.isFinite(depth)) {
         depth = 0
       }
-
-      return arr.map(item => {
-        return (
-          <MenuItem
-            key={item.value}
-            depth={depth}
-            sendValue={sendValue}
-            {...item} />
-        )
-      })
+      return arr.map(item => <MenuItem key={item.value} depth={depth} sendValue={sendValue} {...item} />)
     }
   },
 
@@ -45,7 +37,20 @@ var MenuItem = React.createClass({
   },
 
   getInitialState: function () {
-    return {open: false}
+    return {
+      open: false,
+      disabled: false
+    }
+  },
+
+  componentDidMount() {
+    this.setState({disabled: this.props.disabled})
+  },
+
+  componentWillUpdate(nextProps, nextState) {
+    if (this.props.disabled !== nextProps.disabled) {
+      this.setState({disabled: nextProps.disabled})
+    }
   },
 
   _toggleChildren: function (e) {
@@ -54,8 +59,9 @@ var MenuItem = React.createClass({
   },
 
   _handleClick: function (e) {
-    if (!this.props.noValue) {
+    if (!this.props.noValue && !this.state.disabled) {
       this.props.sendValue(this.props.value)
+      this.setState({disabled: true})
     } else {
       this._toggleChildren(e)
     }
@@ -63,7 +69,10 @@ var MenuItem = React.createClass({
 
   render: function () {
     var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0
-    var itemStyle = {'paddingLeft': (this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px')}
+    var itemStyle = {
+      paddingLeft: this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px',
+      textDecoration: this.state.disabled ? 'line-through' : null
+    }
 
     var children = null
     if (this.props.children && this.state.open) {
@@ -75,7 +84,6 @@ var MenuItem = React.createClass({
 
     var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
     var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
-
     return (
       <li className={this.props.classes}>
         <a

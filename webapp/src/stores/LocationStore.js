@@ -24,10 +24,6 @@ var LocationStore = Reflux.createStore({
     ]
   },
 
-  init () {
-    LocationActions.fetchLocations()
-  },
-
   getInitialState () {
     return this.locations
   },
@@ -36,18 +32,18 @@ var LocationStore = Reflux.createStore({
   //                              API CALL HANDLERS                              //
   // =========================================================================== //
 
-  // ===============================  Fetch Locations  ============================= //
+  // =============================  Fetch Locations  =========================== //
   onFetchLocations () {
     this.setState({ raw: [] })
   },
   onFetchLocationsCompleted (response) {
     this.locations.meta = response.meta
-    this.locations.raw = response.objects
+    this.locations.raw = response.objects[0].locations || response.objects
     this.locations.index = _.indexBy(this.locations.raw, 'id')
     this.locations.list = this.createLocationTree(this.locations.raw)
     this.locations.filtered = this.locations.list
     this.setLocationLpdStatuses(this.locations.raw)
-    this.setState(this.locations)
+    this.trigger(this.locations)
   },
   onFetchLocationsFailed (error) {
     this.setState({ error: error })

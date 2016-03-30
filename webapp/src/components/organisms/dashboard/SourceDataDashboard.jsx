@@ -69,7 +69,7 @@ var SourceDataDashboard = React.createClass({
 
     var doc_tabs = CSVMenuItem.fromArray(
       // _.map(['viewraw', 'results', 'doc_index'], d => {
-      _.map(['viewraw', 'meta-data', 'results', 'doc_index'], d => {
+      _.map(['viewraw', 'meta-data', 'results', 'errors', 'doc_index'], d => {
         return {
           title: d,
           value: d
@@ -102,6 +102,12 @@ var SourceDataDashboard = React.createClass({
         'fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
         'header': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
         'search_fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name']
+      },
+      'errors': {
+        'data_fn': api.docMap,
+        'fields': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
+        'header': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
+        'search_fields': ['content_type', 'source_object_code', 'master_object_name']
       }
       // 'validate': {
       //   'data_fn': api.docDatapoint,

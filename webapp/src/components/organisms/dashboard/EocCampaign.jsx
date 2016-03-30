@@ -31,7 +31,7 @@ var EocPreCampaign = React.createClass({
   getChartFormat (indicator) {
     let d3Format = d3.format('')
     if (indicator.data_format === 'pct') {
-      d3Format =  d3.format(',.1%')
+      d3Format = d3.format(',.1%')
     }
     return d3Format
   },
@@ -42,12 +42,12 @@ var EocPreCampaign = React.createClass({
     }
     return colorScale
   },
-  reverseBounds: function(bounds){
+  reverseBounds: function (bounds) {
     bounds.reversed = false
-    if (bounds.bad_bound > bounds.good_bound){
-      var temp = bounds.bad_bound
-      bounds.bad_bound = bounds.good_bound
-      bounds.good_bound = temp
+    if (bounds.badBound > bounds.goodBound){
+      var temp = bounds.badBound
+      bounds.badBound = bounds.goodBound
+      bounds.goodBound = temp
       bounds.reversed = true
     }
     return bounds
@@ -90,7 +90,7 @@ var EocPreCampaign = React.createClass({
     // ----------------------------------------------------------------------------------------------
     const mapIndicator = indicatorIndex[this.getChartDefFromDashboard('ChoroplethMap').indicators[0]]
 
-    //for legend text
+    // for legend text
     const mapChart = data.mapData
       ? <div>
           <Chart type='ChoroplethMap'
@@ -113,7 +113,7 @@ var EocPreCampaign = React.createClass({
               data_format: mapIndicator.data_format,
               color: this.getColorScale(mapIndicator),
               aspect: 3.5,
-              ticks: this.reverseBounds({bad_bound: mapIndicator.bad_bound, good_bound: mapIndicator.good_bound}),
+              ticks: this.reverseBounds({badBound: mapIndicator.bad_bound, goodBound: mapIndicator.good_bound}),
               yFormat: this.getChartFormat(mapIndicator),
               domain: _.constant([mapIndicator.bad_bound, mapIndicator.good_bound]),
               value: _.property(`properties[${mapIndicator.id}]`),
@@ -139,18 +139,27 @@ var EocPreCampaign = React.createClass({
           </div>
         </div>
         <div className='row'>
-          <div className='medium-8 columns' style={{'marginBottom': '-10px'}}>
+          <div className='medium-1 columns' style={{'marginBottom': '-10px'}}>
+            &nbsp;
+          </div>
+          <div className='medium-6 columns' style={{'marginBottom': '-10px'}}>
+            <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
+            {mapChart}
+          </div>
+          <div className='medium-1 columns' style={{'marginBottom': '-10px'}}>
+            &nbsp;
+          </div>
+        </div>
+        <div className='row'>
+          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
+            <h3 className='chart_header_text'>All Indicators</h3>
             {tableChart}
           </div>
         </div>
         <div className='row'>
-          <div className='medium-5 columns cd-chart-size'>
+          <div className='medium-12 columns' style={{'marginBottom': '-10px'}}>
             <h3 className='chart_header_text'>{trendIndicator.short_name}</h3>
             {trendChart}
-          </div>
-          <div className='medium-3 columns cd-chart-size'>
-            <h3 className='chart_header_text'>{mapIndicator.short_name}</h3>
-            {mapChart}
           </div>
         </div>
       </div>

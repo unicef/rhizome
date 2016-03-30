@@ -46,7 +46,7 @@ _.extend(TableChart.prototype, {
   update: function (data, options, container) {
     options = _.extend(this._options, options)
 
-    const h = Math.max(data.length * options.cellHeight, 0)
+    const h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     const z = 160 //  extra margin space needed to add the "z" (parent) axis"
     const w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     const xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
@@ -99,16 +99,17 @@ _.extend(TableChart.prototype, {
     // ---------------------------------------------------------------------------
     const rows = g.selectAll('.row').data(data)
     rows.enter().append('g').attr({'class': 'row', 'transform': transform})
-    rows.exit().transition().duration(300).style('opacity', 0).remove()
+    rows.exit().transition().duration(300).style('opacity', 1).remove()
     rows.on('click', (d, i) => { this._onRowClick([d, i]) })
     rows.on('mouseover', (d, i) => { this._onRowOver([d, i]) }).transition().duration(750).attr('transform', transform)
 
     // CELLS
     // ---------------------------------------------------------------------------
 
-    const fill = d => scale(targets[d.indicator.id](d.value))
+    // const fill = d => scale(targets[d.indicator.id](d.value))
+    const fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? scale(targets[d.indicator.id](d.value)) : '#FFFFFF'
     const cells = rows.selectAll('.cell').data(options.values)
-    cells.exit().transition().duration(300).style('opacity', 0).remove()
+    cells.exit().transition().duration(300).style('opacity', 1).remove()
     cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
     cells.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
     cells.on('mousemove', options.onMouseMove)
@@ -129,9 +130,9 @@ _.extend(TableChart.prototype, {
         'x': x,
         'width': xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': fill })
+      .style({ 'opacity': 1, 'fill': fill })
       .transition().duration(500)
-      .style('opacity', 1)
+      .styl1('opacity', 1)
 
     cg.append('text')
       .attr({
@@ -199,7 +200,7 @@ _.extend(TableChart.prototype, {
         'x': sourceFlow,
         'width': xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': '#F1F1F1' })
+      .style({ 'opacity': 1, 'fill': '#F1F1F1' })
       .transition().duration(500)
       .style('opacity', 1)
 
@@ -286,6 +287,7 @@ _.extend(TableChart.prototype, {
   },
 
   _onRowOver: function (d) {
+    this.pause(100)
     var seriesName = this._options.seriesName
     this._svg.selectAll('.row')
       .transition().duration(300)
@@ -294,8 +296,10 @@ _.extend(TableChart.prototype, {
   },
   _onRowClick: function (d) {
     // console.log('row clicked', d)
+    this.pause(500)
   },
   _onRowOut: function () {
+    this.pause(100)
     this._svg.selectAll('.row')
       .transition().duration(300)
       .style('opacity', 1)
@@ -314,6 +318,11 @@ _.extend(TableChart.prototype, {
     }
 
     this.update(this._svg.selectAll('.row').data())
+    this.pause(500)
+  },
+  pause: function (timer) {
+    var until = new Date().getTime() + timer;
+    while(new Date().getTime() < until) {};
   }
 })
 
@@ -322,7 +331,12 @@ function _sortValue (s, sortCol) {
   if (sortCol === null) {
     return options.seriesName(s)
   }
-  return options.value(_.find(options.values(s), d => options.column(d) === sortCol))
+  return options.value(_.find(options.values(s), d => {
+    if (d.value === null || !_.isFinite(d.value)) {
+      d.value = this.sortDirection !== 1 ? -Infinity : Infinity
+    }
+    return options.column(d) === sortCol
+  }))
 }
 
 export default TableChart

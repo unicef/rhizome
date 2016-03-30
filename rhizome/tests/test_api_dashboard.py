@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
-    Location, LocationType, Office
+    Location, LocationType, Office, ChartToDashboard
 
 import json
 
@@ -50,6 +50,38 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(post_data['title'], response_data['title'])
         self.assertEqual(CustomDashboard.objects.count(), 1)
 
+    def test_dashboard_chart_post(self):
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+
+        dashboard_title = '2 Chart Dashboard'
+        chart_uuids = ['a','b']
+
+        post_data = {
+            'title': dashboard_title,
+            'chart_uuids': chart_uuids
+            }
+
+        ## post the dashboard title and the associated charts to the API ##
+        resp = self.api_client.post('/api/v1/custom_dashboard/',\
+            format='json',\
+            data=post_data,\
+            authentication=self.get_credentials()\
+        )
+
+        response_data = self.deserialize(resp)
+
+        ## find the uuids that have been created in association with the dash ##
+        db_chart_uuids = CustomChart.objects\
+            .filter(charttodashboard__dashboard_id = response_data['id']).values_list('uuid',flat=True)
+
+        self.assertHttpCreated(resp)
+        # self.assertEqual(response_data['id'], dashboard_id)
+        self.assertEqual(response_data['title'], dashboard_title)
+        self.assertEqual(chart_uuids, [str(x) for x in db_chart_uuids])
+
     def test_dashboard_name_exist(self):
         dashboard_name = "test the already exists"
 
@@ -68,6 +100,33 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertHttpApplicationError(resp)
         self.assertEqual(CustomDashboard.objects.count(), 1)
         self.assertEqual('the custom dashboard "{0}" already exists'.format(dashboard_name), response_data['error'])
+
+    def test_dashboard_gets_charts(self):
+        '''
+        @martha plz add logic to ensure that the c1 / c2 chart data is in the
+        response.
+        '''
+
+        ## create a dashboard ##
+        d = CustomDashboard.objects.create(title='Dashboard')
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+
+        ## relate the charts to the dashboard ##
+        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c1.id)
+        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c2.id)
+
+        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
+                format='json', \
+                authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        self.assertValidJSONResponse(resp)
+
 
     ## FIXME! ##
     # def test_delete_dashboard(self):

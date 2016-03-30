@@ -96,9 +96,9 @@ def update_campaign(request):
 
 # RESOURCES
 #---------------------------------------------------------------------------
-@user_passes_test(lambda u: u.groups.filter(name='chart_builder') or u.is_superuser,
+@user_passes_test(lambda u: u.groups.filter(name='data_explorer') or u.is_superuser,
     login_url='/permissions_needed/', redirect_field_name=None)
-def chart_builder(request):
+def data_explorer(request):
     return render_to_response('charts/create.html',
                               context_instance=RequestContext(request))
 
@@ -108,11 +108,6 @@ def chart_edit(request, chart_id=None):
     return render_to_response('charts/edit.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
-@user_passes_test(lambda u: u.groups.filter(name='explore_data') or u.is_superuser,
-    login_url='/permissions_needed/', redirect_field_name=None)
-def explore_data(request, dashboard_id=None):
-    return render_to_response('dashboards/create.html', {'dashboard_id': dashboard_id},
-                              context_instance=RequestContext(request))
 
 class DashBoardView(generic.ListView):
     paginate_by = 50

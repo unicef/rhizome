@@ -124,7 +124,7 @@ class DatapointEntryResource(BaseModelResource):
             user_id = self.get_user_id(bundle)
             if user_id is None:
                 raise InputException(0, 'Could not get User ID from cookie')
-
+            print("here")
             existing_datapoint = self.get_existing_datapoint(bundle.data)
 
             if existing_datapoint is not None:
@@ -135,7 +135,6 @@ class DatapointEntryResource(BaseModelResource):
             else: # CREATE
 
                 data_to_insert = bundle.data
-
                 # find the campaign object from the parameter
                 campaign_obj = Campaign.objects.get(id=int(\
                     data_to_insert['campaign_id']))

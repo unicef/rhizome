@@ -103,13 +103,13 @@ function _chooseRadius (v, radius) {
   }
 }
 
-function ChoroplethMap () {
+function ChoroplethMap() {
 }
 
 _.extend(ChoroplethMap.prototype, {
   defaults: DEFAULTS,
 
-  initialize: function (el, data, options) {
+  initialize(el, data, options) {
     options = this._options = _.defaults({}, options, DEFAULTS)
 
     var margin = options.margin
@@ -117,7 +117,6 @@ _.extend(ChoroplethMap.prototype, {
     var aspect = _.get(options, 'aspect', 1)
     this._width = _.get(options, 'width', el.clientWidth)
     this._height = _.get(options, 'height', this._width * aspect)
-
     var svg = this._svg = d3.select(el).append('svg')
       .attr({
         'class': 'reds',
@@ -132,8 +131,6 @@ _.extend(ChoroplethMap.prototype, {
     }
 
     var g = svg.append('g')
-      .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')')
-
     g.append('g').attr('class', 'data')
     g.append('g').attr('class', 'legend')
     svg.append('g').attr('class', 'bubbles')
@@ -191,13 +188,20 @@ _.extend(ChoroplethMap.prototype, {
 
     this.update(data)
   },
-  getColor(indicatorValue, location){
+  roundToTwo(num) {
+    //rounds to 99.9
+    //if num is 0.9987, it should = 0.999, which === 99.9%
+    //this logic matchs table chart logic.
+    return +(Math.round(num + "e+3")  + "e-3");
+  },
+  getColor(indicatorValue) {
     const bad_bound = this._options.domain()[0]
     const good_bound = this._options.domain()[1]
     const reverseBounds = bad_bound > good_bound
     const colors = this._options.color
     let mapFillColor = ''
-    if (this._options.data_format === 'bool'){
+    indicatorValue = this.roundToTwo(indicatorValue)
+    if (this._options.data_format === 'bool') {
       if (indicatorValue === 0){
         mapFillColor = colors[0]
       } else {
@@ -209,23 +213,22 @@ _.extend(ChoroplethMap.prototype, {
           mapFillColor = colors[1]
         } else if (indicatorValue <= good_bound) {
           mapFillColor = colors[2]
-        } else if (indicatorValue >= bad_bound){
+        } else if (indicatorValue >= bad_bound) {
           mapFillColor = colors[0]
         }
       } else {
-        if (indicatorValue < good_bound && indicatorValue > bad_bound){
+        if (indicatorValue < good_bound && indicatorValue > bad_bound) {
           mapFillColor = colors[1]
         } else if (indicatorValue >= good_bound) {
           mapFillColor = colors[2]
-        } else if (indicatorValue <= bad_bound){
+        } else if (indicatorValue <= bad_bound) {
           mapFillColor = colors[0]
         }
       }
-
     }
     return mapFillColor
   },
-  update: function (data, options) {
+  update(data, options) {
     options = _.assign(this._options, options)
     var margin = options.margin
     var w = this._width - margin.left - margin.right
@@ -295,9 +298,15 @@ _.extend(ChoroplethMap.prototype, {
       'class': function (d) {
         var v = options.value(d)
         var classNames = ['location']
-
         if (_.isFinite(v)) {
           classNames.push('clickable')
+        }
+        if (d.properties.location_type_id === 1) {
+          classNames.push('country-path')
+        } else if (d.properties.location_type_id === 2) {
+          classNames.push('province-path')
+        } else if (d.properties.location_type_id === 3) {
+          classNames.push('district-path')
         }
         return classNames.join(' ')
       }
@@ -335,12 +344,14 @@ _.extend(ChoroplethMap.prototype, {
     var fontLength = 100
     var stripeLegendStartPosition
 
+
+    // =========================================================================== //
+    //                                 STRIPE DATA                                 //
+    // =========================================================================== //
     if (options.stripeValue) {
-      var stripes = svg.select('.stripes').select('.data')
-      var stripeData = stripes.selectAll('.location')
-        .data(features, function (d, i) {
-          return _.get(d, 'properties.location_id', i)
-        })
+      const stripes = svg.select('.stripes').select('.data')
+      const stripeData = stripes.selectAll('.location')
+        .data(features, (d, i) => _.get(d, 'properties.location_id', i))
 
       stripeData.enter().append('path')
 

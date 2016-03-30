@@ -7,7 +7,7 @@ export default {
     {
       'title': 'tableData',
       'type': 'TableChart',
-      'indicators': [28, 12, 35, 2, 5, 27, 26, 13, 25, 19, 23, 1, 7],
+      'indicators': [1, 28, 12, 35, 2, 5, 27, 26, 13, 25, 19, 23, 7],
       'groupBy': 'indicator',
       'timeRange': {
         months: 0
@@ -17,7 +17,9 @@ export default {
     }, {
       'title': 'trendData',
       'type': 'LineChart',
-      'indicators': [7],
+      'locations': 'sublocations',
+      'groupBy': 'location',
+      'indicators': [1],
       'timeRange': {
         months: 12
       }
@@ -26,7 +28,7 @@ export default {
       'type': 'ChoroplethMap',
       'locations': 'sublocations',
       'timeRange': 0,
-      'indicators': [7]
+      'indicators': [1]
     }
   ]
 }

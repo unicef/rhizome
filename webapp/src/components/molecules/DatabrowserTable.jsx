@@ -14,25 +14,16 @@ let DatabrowserTable = React.createClass({
   ],
 
   propTypes: {
-    data: React.PropTypes.object.isRequired,
+    data: React.PropTypes.object,
     editable: React.PropTypes.bool,
     selected_locations: React.PropTypes.array.isRequired,
     selected_indicators: React.PropTypes.array.isRequired
   },
 
-  componentWillReceiveProps: function (nextProps) {
-    if (nextProps.data) {
-      DataBrowserTableActions.getTableData(nextProps.selected_locations, nextProps.selected_indicators, nextProps.data)
-    }
-  },
-
-  shouldComponentUpdate: function (nextProps, nextState) {
-    let shouldUpdate = nextState !== this.state
-    return shouldUpdate
-  },
-
   render: function () {
-    if (!this.state || !this.state.data) {
+    console.info('-------- DatabrowserTable.render')
+    DataBrowserTableActions.getTableData(this.props.selected_locations, this.props.selected_indicators, this.props.data)
+    if (!this.state || !this.props.data) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
       let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
@@ -42,7 +33,6 @@ let DatabrowserTable = React.createClass({
       } else {
         table = <SimpleDataTable>{columns}</SimpleDataTable>
       }
-
       return (
         <LocalDatascope data={this.state.data} schema={this.state.schema} pageSize={10}>
           <Datascope>

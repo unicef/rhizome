@@ -1,55 +1,85 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-
-import LocationSelectorStore from 'stores/LocationSelectorStore'
-import LocationSelectorActions from 'actions/LocationSelectorActions'
+import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
 
 const LocationSelector = React.createClass({
-  mixins: [
-    Reflux.connect(LocationSelectorStore, 'selected_locations'),
-  ],
 
   propTypes: {
     locations: PropTypes.shape({
-      lpd_statuses: PropTypes.array,
-      filtered: PropTypes.array
+      raw: PropTypes.array,
+      list: PropTypes.array
     }).isRequired,
-    preset_location_ids: PropTypes.array,
-    classes: PropTypes.string
+    selected_locations: PropTypes.array,
+    setLocations: PropTypes.func,
+    selectLocation: PropTypes.func,
+    deselectLocation: PropTypes.func,
+    clearSelectedLocations: PropTypes.func,
+    classes: PropTypes.string,
+    multi: PropTypes.bool
   },
 
-  componentDidMount() {
-    if (this.props.preset_location_ids) {
-      LocationSelectorActions.setSelectedLocations(this.props.preset_location_ids)
+  getDefaultProps() {
+    return {
+      selected_locations: []
     }
+  },
+
+  getAvailableLocations () {
+    const selected_ids = this.props.selected_locations.map(location => location.id)
+    const locations_filtered = this.props.locations.filtered
+    locations_filtered.forEach(country => {
+      country.disabled = selected_ids.indexOf(country.id) > -1
+      country.children.forEach(province => {
+        province.disabled = selected_ids.indexOf(province.value) > -1
+        province.children.forEach(city => city.disabled = selected_ids.indexOf(city.value) > -1)
+      })
+    })
+    return locations_filtered
   },
 
   render () {
     const props = this.props
-    const location_options = [
-      { title: 'by Status', value: props.locations.lpd_statuses },
-      { title: 'by Country', value: props.locations.filtered || [] }
-    ]
+    let location_options = []
+    if (this.props.locations.filtered.length > 0) {
+      location_options = [
+        { title: 'by Status', value: props.locations.lpd_statuses },
+        { title: 'by Country', value: this.getAvailableLocations() || [] }
+      ]
+    }
 
-    return (
-      <div className={props.classes}>
-        <h3>
-          Locations
-          <DropdownMenu
-            items={location_options}
-            sendValue={LocationSelectorActions.selectLocation}
-            item_plural_name='Locations'
-            style='icon-button right'
-            icon='fa-plus'
-            grouped/>
-        </h3>
-        <a className='remove-filters-link' onClick={LocationSelectorActions.clearSelectedLocations}>Remove All </a>
-        <List items={this.state.selected_locations} removeItem={LocationSelectorActions.deselectLocation} />
-        <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
-      </div>
-    )
+    const locations = props.locations.raw || []
+    if (props.multi) {
+      return (
+        <form className={props.classes}>
+          <h3>Locations
+            <DropdownMenu
+              items={location_options}
+              sendValue={this.props.selectLocation}
+              item_plural_name='Locations'
+              style='icon-button right'
+              icon='fa-plus'
+              grouped/>
+          </h3>
+          { props.selected_locations.length > 0 ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
+          <List items={this.props.selected_locations} removeItem={this.props.deselectLocation} />
+          <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+        </form>
+      )
+    } else {
+      return (
+        <div className={props.classes}>
+          <h3>Location</h3>
+          <RegionTitleMenu
+            locations={locations}
+            selected={this.props.selected_locations[0]}
+            sendValue={this.props.setLocations}
+          />
+        </div>
+      )
+    }
   }
 })
 
