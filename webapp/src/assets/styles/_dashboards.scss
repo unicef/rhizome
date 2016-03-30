@@ -48,6 +48,10 @@ $total-columns: 7;
 
 .dashboard {
 	padding-top: 1.5rem;
+	hr {
+		margin-top: 0;
+		margin-bottom: 2rem;
+	}
 	.dropdown-list {
 		padding: 0 10px 10px 10px;
 	}
@@ -66,8 +70,6 @@ $total-columns: 7;
 
 .multi-chart footer, footer.hideable{
 	background: #252525;
-	// position: relative;
-	// bottom: 0;
   padding-top: .75rem;
   padding-bottom: .3rem;
   h1, h2, h3, h4, h5, h6, p {
@@ -75,9 +77,32 @@ $total-columns: 7;
   }
 }
 
-.multi-chart footer {
-	position: relative;
-	bottom: initial;
-	top: 50%;
-	margin-top: -3.2rem;
+.multi-chart {
+	header {
+		background: $rhz-footer-bg-color;
+		padding-top: .4rem;
+		.icon-button {
+			font-size: 1.2rem;
+			margin-right: .5rem;
+			top: .3rem;
+		}
+	  h1, h2, h3, h4, h5, h6, p, i {
+	  	.icon-button {
+	  		top: -.1rem;
+	  	}
+	    color: white;
+	  }
+	}
+	section {
+		display: flex;
+	}
+	aside {
+		background: #DBDBDB;
+		padding-top: 1rem;
+		.dropdown-list {
+			background-color: transparent;
+		}
+	}
 }
+
+
