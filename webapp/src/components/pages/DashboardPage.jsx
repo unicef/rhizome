@@ -72,10 +72,11 @@ const Dashboard = React.createClass({
     }
 
     const query = {
-      id: dashboard.id || null,
+      id: this.props.dashboard_id || null,
       title: dashboard.title,
       chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
+    console.log('query', query)
     DashboardActions.postDashboard(query)
   },
 

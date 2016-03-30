@@ -20,7 +20,7 @@ class ChartState {
   constructor () {
     this.uuid = null
     this.type = 'RawData'
-    this.title = 'Untitled Chart'
+    this.title = ''
     this.data = null
     this.data_format = 'pct'
     this.palette = 'traffic_light'
@@ -44,7 +44,7 @@ var DashboardNewStore = Reflux.createStore({
   listenables: DashboardNewActions,
 
   dashboard: {
-    title: 'Untitled Dashboard',
+    title: '',
     charts: {}
   },
 
