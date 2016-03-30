@@ -108,7 +108,7 @@ const Dashboard = React.createClass({
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
       <h1 className='left'>
-        {dashboard.title}
+        {dashboard.title || 'Untitled Dashboard'}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
       </h1>

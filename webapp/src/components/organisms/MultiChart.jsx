@@ -93,7 +93,7 @@ const MultiChart = React.createClass({
       <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
       :
       <h2>
-        {chart.title}
+        {chart.title || 'Untitled Chart'}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
       </h2>
