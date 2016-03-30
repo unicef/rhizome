@@ -87,11 +87,9 @@ class ChoroplethMapRenderer {
     // Readjust the container height after the size of map is calculated
     const svg = d3.select(this.container)
     svg.attr({
-      'viewBox': '0 0 ' + this.options.width + ' ' + map_height,
-      'width': this.options.width,
       'height': map_height,
     })
-    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-this.legend_height})`)
+    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-offset/4})`)
     location.exit().remove()
   }
 
