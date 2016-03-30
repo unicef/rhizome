@@ -57,8 +57,8 @@ const IndicatorSelector = React.createClass({
               icon='fa-plus'
             />
           </h3>
-          { raw_indicators.length > 0 ? <a className='remove-filters-link' onClick={this.props.clearSelectedIndicators}>Remove All </a> : '' }
-          <ReorderableList items={this.props.selected_indicators} removeItem={this.props.deselectIndicator} dragItem={this.props.reorderIndicator} />
+          { props.selected_indicators.length > 0 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
+          <ReorderableList items={props.selected_indicators} removeItem={props.deselectIndicator} dragItem={props.reorderIndicator} />
         </form>
       )
     } else {
@@ -68,8 +68,8 @@ const IndicatorSelector = React.createClass({
           <IndicatorTitleMenu
             idsToRender={raw_indicators.map(indicator => indicator.id)}
             indicators={raw_indicators}
-            selected={this.props.selected_indicators[0]}
-            sendValue={this.props.setIndicators}
+            selected={props.selected_indicators[0]}
+            sendValue={props.setIndicators}
           />
         </div>
       )

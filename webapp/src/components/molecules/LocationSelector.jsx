@@ -63,7 +63,7 @@ const LocationSelector = React.createClass({
               icon='fa-plus'
               grouped/>
           </h3>
-          { props.locations.raw ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
+          { props.selected_locations.length > 0 ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
           <List items={this.props.selected_locations} removeItem={this.props.deselectLocation} />
           <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
         </form>
