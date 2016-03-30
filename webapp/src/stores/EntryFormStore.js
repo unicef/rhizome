@@ -87,8 +87,7 @@ let EntryFormStore = Reflux.createStore({
   },
 
   _setCouldLoad: function () {
-    this.data.couldLoad = this.data.campaignSelected && this.data.formIdSelected && (this.data.locationSelected.length > 0)
-    debugger;
+    this.data.couldLoad = this.data.locationSelected.length > 0
     if (this.data.couldLoad) {
       this.onGetTableData()
     }
@@ -108,7 +107,6 @@ let EntryFormStore = Reflux.createStore({
   // },
 
   _filterFormDefinition: function (indicatorSetId) {
-    debugger;
     var formDefinition = this.data.entryFormDefinitions[0] // _.find(this.data.entryFormDefinitions, function (d) { return d.id ===
     if (!formDefinition) return null
     //
