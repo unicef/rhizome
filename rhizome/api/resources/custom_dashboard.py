@@ -51,16 +51,16 @@ class CustomDashboardResource(BaseModelResource):
 
         ## optionally add charts to the dashboard ##
         try:
-            chart_uuid_list = post_data['chart_uuid_list']
-            self.upsert_chart_uuid_list(dashboard.id, chart_uuid_list)
+            chart_uuids = post_data['chart_uuids']
+            self.upsert_chart_uuids(dashboard.id, chart_uuids)
         except KeyError:
             pass
 
         return bundle
 
-    def upsert_chart_uuid_list(self, dashboard_id, uuid_list):
+    def upsert_chart_uuids(self, dashboard_id, chart_uuids):
 
-        chart_ids = CustomChart.objects.filter(uuid__in = uuid_list)\
+        chart_ids = CustomChart.objects.filter(uuid__in = chart_uuids)\
             .values_list('id',flat=True)
 
         batch = [ChartToDashboard(**{

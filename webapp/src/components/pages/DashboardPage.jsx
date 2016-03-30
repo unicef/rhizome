@@ -70,7 +70,7 @@ const Dashboard = React.createClass({
     const query = {
       id: dashboard.id || null,
       title: dashboard.title,
-      charts: _.toArray(dashboard.charts).map(chart => chart.uuid)
+      chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
     DashboardActions.postDashboard(query)
   },

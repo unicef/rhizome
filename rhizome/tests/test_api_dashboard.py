@@ -57,11 +57,11 @@ class DashboardResourceTest(ResourceTestCase):
         c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
 
         dashboard_title = '2 Chart Dashboard'
-        chart_uuid_list = ['a','b']
+        chart_uuids = ['a','b']
 
         post_data = {
             'title': dashboard_title,
-            'chart_uuid_list': chart_uuid_list
+            'chart_uuids': chart_uuids
             }
 
         ## post the dashboard title and the associated charts to the API ##
@@ -74,13 +74,13 @@ class DashboardResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
 
         ## find the uuids that have been created in association with the dash ##
-        db_chart_uuid_list = CustomChart.objects\
+        db_chart_uuids = CustomChart.objects\
             .filter(charttodashboard__dashboard_id = response_data['id']).values_list('uuid',flat=True)
 
         self.assertHttpCreated(resp)
         # self.assertEqual(response_data['id'], dashboard_id)
         self.assertEqual(response_data['title'], dashboard_title)
-        self.assertEqual(chart_uuid_list, [str(x) for x in db_chart_uuid_list])
+        self.assertEqual(chart_uuids, [str(x) for x in db_chart_uuids])
 
     def test_dashboard_name_exist(self):
         dashboard_name = "test the already exists"

@@ -146,7 +146,7 @@ var DashboardStore = Reflux.createStore({
   // =========================================================================== //
   // =============================  Fetch Dashboards  ========================== //
   onFetchDashboards () {
-    this.setState({ loading: true })
+    this.trigger({ dashboards: null })
   },
   onFetchDashboardsCompleted (response) {
     const dashboards = response.objects[0].dashboards || response.objects
@@ -170,7 +170,7 @@ var DashboardStore = Reflux.createStore({
   // ===============================  Post Chart  ============================= //
   onPostDashboard () {
     console.log('DashboardStore.onPostDashboard')
-    this.setState({ raw: null, loading: true })
+    this.trigger({ dashboards: null })
   },
   onPostDashboardCompleted (response) {
     console.log('DashboardStore.onPostDashboardCompleted')

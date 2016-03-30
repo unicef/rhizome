@@ -20,6 +20,7 @@ var ChartSelector = React.createClass({
   },
 
   render () {
+    const charts = this.props.charts || []
     const chart_menu_items = this.props.charts.map(chart =>
       <TitleMenuItem
         key={'chart-' + chart.id}

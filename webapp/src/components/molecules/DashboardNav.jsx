@@ -36,6 +36,16 @@ let DashboardNav = React.createClass({
       dashboards = _.slice(dashboards, 0, 14)
     }
 
+    const custom_dashboards = dashboards.map(dashboard => {
+      if (!dashboard.builtin) {
+        return (
+          <NavMenuItem key={dashboard.id} href={'/dashboards/' + dashboard.id}>
+            {dashboard.title}
+          </NavMenuItem>
+        )
+      }
+    })
+
     const premade_dashboards = dashboards.map(dashboard => {
       if (dashboard.builtin && dashboard.dashboardType === 'EocCampaign') {
         return (
@@ -65,6 +75,8 @@ let DashboardNav = React.createClass({
         <li>
           <a href='#'>Dashboards</a>
           <ul className='dashboard-menu'>
+            { custom_dashboards }
+            <li className='separator'><hr /></li>
             { premade_dashboards }
           </ul>
         </li>
