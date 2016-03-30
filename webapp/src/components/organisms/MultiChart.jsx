@@ -175,7 +175,7 @@ const MultiChart = React.createClass({
       <div className='medium-12 columns'>
         <h3>Colors</h3>
         <DropdownList
-          data={_.map(palettes, (key, value) => { return {colors: key, value: value}})}
+          data={ _.map(palettes, (key, value) => ({colors: key, value: value}) )}
           textField='value'
           valueField='value'
           value={chart.palette}

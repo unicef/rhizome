@@ -263,7 +263,7 @@ var DashboardNewStore = Reflux.createStore({
       this.charts[uuid].data = []
       return this.trigger(this.charts)
     }
-    this.datapoints = datapoints
+    this.charts[uuid].datapoints = datapoints
     this.charts[uuid].parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.charts[uuid].default_sort_order = datapoints.meta.default_sort_order
     this.charts[uuid] = this.formatChartByType(uuid)
@@ -302,20 +302,23 @@ var DashboardNewStore = Reflux.createStore({
 
   formatChartByType (uuid) {  console.info('---- Store.formatChartByType')
     const chart = this.charts[uuid]
-    const datapoints = this.datapoints.raw
+    const datapoints = this.charts[uuid].datapoints.raw
+    const melted_datapoints = this.melt(datapoints, chart.selected_indicators)
+    const layout = 1 // hard coded for now
+    console.log('melted_datapoints', melted_datapoints)
     if (chart.type === 'RawData') {
       chart.data = datapoints
       return chart
+    } else if (chart.type === 'LineChart') {
+      chart.data = melted_datapoints
+      return chart
     }
-    const selected_locations_index = _.indexBy(this.charts[uuid].selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(this.charts[uuid].selected_indicators, 'id')
-    const groups = chart.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
-    const layout = 1 // hard coded for now
-    const melted_datapoints = this.melt(datapoints, this.charts[uuid].selected_indicators)
 
     switch (chart.type) {
       case 'LineChart':
-        return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
+        // return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
+        chart.data = melted_datapoints
+        return chart
       // case 'PieChart':
         // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.charts[uuid].selected_indicators, layout)
       case 'ChoroplethMap':

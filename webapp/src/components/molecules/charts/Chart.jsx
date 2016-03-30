@@ -10,6 +10,7 @@ class Chart extends Component {
   constructor (props) {
     super(props)
     this.options = props
+    this.data = props.data
   }
 
   componentDidMount () {
@@ -17,11 +18,11 @@ class Chart extends Component {
     this.container = React.findDOMNode(this)
     const options = this.setOptions()
     if (options.type === 'LineChart') {
-      this.chart = new LineChartRenderer(this.props.data, this.options, this.container)
+      this.chart = new LineChartRenderer(this.data, this.options, this.container)
     } else if (options.type === 'TableChart') {
-      this.chart = new TableChartRenderer(this.props.data, this.options, this.container)
+      this.chart = new TableChartRenderer(this.data, this.options, this.container)
     } else if (options.type === 'ChoroplethMap') {
-      this.chart = new ChoroplethMapRenderer(this.props.data, this.options, this.container)
+      this.chart = new ChoroplethMapRenderer(this.data, this.options, this.container)
     }
     this.chart.render()
   }
@@ -30,7 +31,7 @@ class Chart extends Component {
     console.log('------ Chart.componentDidUpdate')
     this.options = _.defaults({}, this.props, this.options)
     const chart = this.setOptions()
-    this.chart.update(this.props.data, this.options, this.container)
+    this.chart.update(this.data, this.options, this.container)
   }
 
   setOptions () {
