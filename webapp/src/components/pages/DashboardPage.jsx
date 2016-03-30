@@ -25,7 +25,7 @@ const Dashboard = React.createClass({
   ],
 
   propTypes: {
-    chart_id: PropTypes.number
+    dashboard_id: PropTypes.number
   },
 
   getInitialState () {
