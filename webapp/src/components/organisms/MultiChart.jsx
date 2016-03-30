@@ -1,8 +1,11 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
+import {DropdownList} from 'react-widgets'
 import Reflux from 'reflux'
 import moment from 'moment'
 
+import palettes from 'components/molecules/charts/utils/palettes'
+import ColorSwatch from 'components/atoms/ColorSwatch'
 import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
@@ -71,6 +74,10 @@ const MultiChart = React.createClass({
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     }
+  },
+
+  getPalette (palette){
+    console.log('palette', palette)
   },
 
   render () {
@@ -163,14 +170,23 @@ const MultiChart = React.createClass({
           onChange={this.props.setType}/>
       </div>
     )
-    const palette_selector = (
-      <div className='medium-5 columns'>
-        <h3>Color Scheme</h3>
-        <PalettePicker
+
+    const palette_selector = chart.type !== 'RawData' ? (
+      <div className='medium-12 columns'>
+        <h3>Colors</h3>
+        <DropdownList
+          data={_.map(palettes, (key, value) => { return {colors: key, value: value}})}
+          textField='value'
+          valueField='value'
           value={chart.palette}
-          onChange={this.props.setPalette}/>
+          itemComponent={ColorSwatch}
+          valueComponent={ColorSwatch}
+          onChange={item => this.props.setPalette(item.value)}
+        />
+        <br />
       </div>
-    )
+    ) : null
+
     const remove_chart_button = this.props.removeChart ? (
       <button className='button icon-button right remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
         <i className='fa fa-times-circle fa-2x'/>
@@ -191,6 +207,7 @@ const MultiChart = React.createClass({
       <section className='multi-chart row'>
         <div className='medium-4 large-2 medium-push-8 large-push-10 columns'>
           { remove_chart_button }
+          { palette_selector }
           { date_range_picker }
           { campaign_selector }
           { indicator_selector }

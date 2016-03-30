@@ -23,6 +23,7 @@ class ChartState {
     this.title = 'Untitled'
     this.data = null
     this.data_format = 'pct'
+    this.palette = 'traffic_light'
     this.selected_campaigns = []
     this.selected_indicators = []
     this.selected_locations = []
@@ -39,23 +40,6 @@ var DashboardNewStore = Reflux.createStore({
   mixins: [StateMixin.store],
 
   listenables: DashboardNewActions,
-
-  chart_template: {
-    uuid: null,
-    type: 'RawData',
-    title: 'Untitled',
-    data: null,
-    data_format: 'pct',
-    selected_campaigns: [],
-    selected_indicators: [],
-    selected_locations: [],
-    end_date: moment().format('YYYY-MM-DD'),
-    start_date: moment().subtract(1, 'y').format('YYYY-MM-DD'),
-    features: [],
-    loading: false,
-    fetching: false,
-    fetching_map: false,
-  },
 
   charts: {},
 
