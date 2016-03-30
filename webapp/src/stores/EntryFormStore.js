@@ -16,6 +16,7 @@ let EntryFormStore = Reflux.createStore({
     apiResponseData: null,
     indicatorMap: null,
     indicatorSet: null,
+    indicatorToTags: [],
     formIdSelected: null,
     data: null,
     loaded: false,
@@ -45,11 +46,22 @@ let EntryFormStore = Reflux.createStore({
 
     Promise.all([
       api.get_indicator_tag(),
+      api.indicator_to_tag(),
       api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
-      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})]),
-    .then(_.spread(function (tags, campaigns, locations, indicators) {
-        // campains
+      api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})])
+    .then(_.spread(function (tags, indicatorToTags, campaigns, locations, indicators) {
+      let indicatorToTagsResult = _(indicatorToTags.objects)
+        .map(indToTag => {
+          return {
+            'id': indToTag.id,
+            'value': indToTag.indicator_tag_id,
+            'name': indToTag.indicator__short_name,
+            'title': indToTag.indicator_tag__tag_name
+          }
+        }).value()
+      self.data.indicatorToTags = indicatorToTagsResult
+      debugger;
       let tagResult = _(tags.objects)
         .map(tag => {
           return {
