@@ -99,7 +99,7 @@ _.extend(TableChart.prototype, {
     // ---------------------------------------------------------------------------
     const rows = g.selectAll('.row').data(data)
     rows.enter().append('g').attr({'class': 'row', 'transform': transform})
-    rows.exit().transition().duration(300).style('opacity', 0).remove()
+    rows.exit().transition().duration(300).style('opacity', 1).remove()
     rows.on('click', (d, i) => { this._onRowClick([d, i]) })
     rows.on('mouseover', (d, i) => { this._onRowOver([d, i]) }).transition().duration(750).attr('transform', transform)
 
@@ -109,7 +109,7 @@ _.extend(TableChart.prototype, {
     // const fill = d => scale(targets[d.indicator.id](d.value))
     const fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? scale(targets[d.indicator.id](d.value)) : '#FFFFFF'
     const cells = rows.selectAll('.cell').data(options.values)
-    cells.exit().transition().duration(300).style('opacity', 0).remove()
+    cells.exit().transition().duration(300).style('opacity', 1).remove()
     cells.attr('id', d => [d.location.name, d.indicator.short_name].join('-'))
     cells.style('cursor', _.isFunction(options.onClick) ? 'pointer' : 'initial')
     cells.on('mousemove', options.onMouseMove)
@@ -130,9 +130,9 @@ _.extend(TableChart.prototype, {
         'x': x,
         'width': xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': fill })
+      .style({ 'opacity': 1, 'fill': fill })
       .transition().duration(500)
-      .style('opacity', 1)
+      .styl1('opacity', 1)
 
     cg.append('text')
       .attr({
@@ -200,7 +200,7 @@ _.extend(TableChart.prototype, {
         'x': sourceFlow,
         'width': xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': '#F1F1F1' })
+      .style({ 'opacity': 1, 'fill': '#F1F1F1' })
       .transition().duration(500)
       .style('opacity', 1)
 
