@@ -9,7 +9,9 @@ import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardNewStore from 'stores/DashboardNewStore'
+
 import DashboardNewActions from 'actions/DashboardNewActions'
+import ChartActions from 'actions/ChartActions'
 
 const Dashboard = React.createClass({
 
@@ -33,6 +35,26 @@ const Dashboard = React.createClass({
     })
   },
 
+  saveChart (chart) {
+    console.info('- Dashboard.saveChart')
+    if (!chart.title || chart.title === 'Untitled') {
+      return window.alert('Please add a Title to your chart')
+    }
+    ChartActions.postChart({
+      id: chart.id,
+      title: chart.title,
+      uuid: chart.uuid,
+      chart_json: JSON.stringify({
+        type: chart.type,
+        start_date: chart.start_date,
+        end_date: chart.end_date,
+        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
+        location_ids: chart.selected_locations.map(location => location.id),
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+      })
+    })
+  },
+
   render () {
     let charts = _.toArray(this.state.charts)
     console.info('Dashboard.RENDER ========================================== Charts:', charts)
@@ -43,7 +65,10 @@ const Dashboard = React.createClass({
             chart={chart}
             linkCampaigns={() => DashboardNewActions.toggleCampaignLink(chart.uuid)}
             duplicateChart={DashboardNewActions.duplicateChart}
+            selectChart={new_chart => DashboardNewActions.selectChart(new_chart, chart.uuid)}
+            toggleSelectTypeMode={() => DashboardNewActions.toggleSelectTypeMode(chart.uuid)}
             removeChart={DashboardNewActions.removeChart}
+            saveChart={this.saveChart}
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
             setTitle={(title) => DashboardNewActions.setTitle(title, chart.uuid)}
@@ -69,12 +94,14 @@ const Dashboard = React.createClass({
     return (
       <section className='dashboard'>
         { charts }
-        <button
-          className='button expand fix-to-bottom'
-          onClick={DashboardNewActions.addChart}
-          style={{paddingTop: '1rem', paddingBottom: '1rem', position: 'fixed', bottom: '2.6rem'}}>
-          Add Chart
-        </button>
+        <div className='row text-center'>
+          <button
+            className='button large'
+            onClick={DashboardNewActions.addChart}
+            style={{marginTop: '1rem'}}>
+            Add Chart
+          </button>
+        </div>
       </section>
     )
   }

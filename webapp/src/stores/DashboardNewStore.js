@@ -33,6 +33,7 @@ class ChartState {
     this.loading = false
     this.fetching = false
     this.linkedCampaigns = false
+    this.selectTypeMode = true
   }
 }
 
@@ -56,12 +57,37 @@ var DashboardNewStore = Reflux.createStore({
   // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
+  // =================================  Layout  ================================ //
+  onToggleSelectTypeMode (uuid) {
+    const chart = this.charts[uuid]
+    chart.selectTypeMode = !chart.selectTypeMode
+    this.trigger(this.charts)
+  },
+
   // =================================  Charts  ================================ //
   onAddChart () { console.info('- Store.onAddChart')
     const new_chart = new ChartState
     new_chart.uuid = uuid.v4()
     this.charts[new_chart.uuid] = new_chart
     DashboardNewActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
+    this.trigger(this.charts)
+  },
+  onSelectChart (chart, uuid) { console.info('- Store.onSelectChart')
+    this.trigger(this.charts)
+    const new_chart = new ChartState
+    new_chart.id = chart.id
+    new_chart.uuid = chart.uuid
+    new_chart.title = chart.title
+    new_chart.type = chart.chart_json.type
+    new_chart.start_date = chart.chart_json.start_date
+    new_chart.end_date = chart.chart_json.end_date
+    new_chart.selected_indicators = chart.chart_json.indicator_ids.map(id => this.indicators.index[id])
+    new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
+    new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
+    new_chart.selectTypeMode = false
+    this.charts[new_chart.uuid] = new_chart
+    delete this.charts[uuid]
+    DashboardNewActions.setType(new_chart.type, new_chart.uuid)
     this.trigger(this.charts)
   },
   onDuplicateChart (chart_uuid) { console.info('- Store.onDuplicateChart')
@@ -218,6 +244,7 @@ var DashboardNewStore = Reflux.createStore({
   onSetType (type, uuid) { console.info('- Store.onSetType')
     this.toggleLoading(uuid)
     this.charts[uuid].type = type
+    this.charts[uuid].selectTypeMode = false
     this.updateChart(uuid)
   },
   onSetPalette (palette, uuid) { console.info('- Store.onSetPalette')
@@ -326,7 +353,6 @@ var DashboardNewStore = Reflux.createStore({
     const datapoints = this.charts[uuid].datapoints.raw
     const melted_datapoints = this.melt(datapoints, chart.selected_indicators)
     const layout = 1 // hard coded for now
-    console.log('melted_datapoints', melted_datapoints)
     if (chart.type === 'RawData') {
       chart.data = datapoints
       return chart

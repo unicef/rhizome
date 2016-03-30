@@ -111,7 +111,7 @@ $total-columns: 7;
 				top: 0;
 				&:last-child {
 			    margin-right: 0;
-			    padding-right: 0.3rem;
+			    padding-right: 0.5rem;
 			    padding-left: 1rem;
 					border-left: 1px solid #DBDBDB;
 			    right: 0;
@@ -121,6 +121,10 @@ $total-columns: 7;
 	}
 	section {
 		display: flex;
+		.dropdown-list.chart-selector {
+			width: 14rem;
+			margin: 0 auto;
+		}
 	}
 	aside {
 		background: #DBDBDB;

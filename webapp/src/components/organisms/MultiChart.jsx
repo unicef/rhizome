@@ -8,6 +8,7 @@ import palettes from 'components/molecules/charts/utils/palettes'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
+import ChartSelector from 'components/molecules/ChartSelector'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
@@ -19,6 +20,7 @@ import TableChart from 'components/molecules/charts/TableChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
+import ChartStore from 'stores/ChartStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
@@ -28,6 +30,7 @@ import ChartActions from 'actions/ChartActions'
 
 const MultiChart = React.createClass({
   mixins: [
+    Reflux.connect(ChartStore, 'all_charts'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -35,7 +38,6 @@ const MultiChart = React.createClass({
 
   getInitialState () {
     return {
-      selectTypeMode: true,
       titleEditMode: false
     }
   },
@@ -64,15 +66,6 @@ const MultiChart = React.createClass({
       this.props.setTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
-  },
-
-  _toggleSelectType () {
-    this.setState({selectTypeMode: !this.state.selectTypeMode})
-  },
-
-  _setType (type) {
-    this.props.setType(type)
-    this.setState({selectTypeMode: false})
   },
 
   getChartComponentByType (type) {
@@ -106,11 +99,13 @@ const MultiChart = React.createClass({
       </h1>
 
     const chart_type_selector = (
-      <div
-        className='medium-10 medium-centered text-center columns'
-        style={{position: 'relative', trasnform: 'translateY(50%)', marginTop: '-1.5rem', padding: '4rem 0'}}>
+      <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>
         <h4>View Data As</h4>
-        <ChartSelect onChange={this._setType}/>
+        <ChartSelect onChange={this.props.setType}/>
+        <br />
+        <h4>or</h4>
+        <br />
+        <ChartSelector charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
       </div>
     )
 
@@ -125,7 +120,7 @@ const MultiChart = React.createClass({
     // SIDEBAR
     // ---------------------------------------------------------------------------
     const change_type_button = (
-      <button className='button icon-button remove-chart-button' onClick={this._toggleSelectType}>
+      <button className='button icon-button remove-chart-button' onClick={this.props.toggleSelectTypeMode}>
         <i className='fa fa-eye'/>&nbsp;
       </button>
     )
@@ -143,7 +138,7 @@ const MultiChart = React.createClass({
     )
 
     const save_button = (
-      <button className='button icon-button remove-chart-button' onClick={() => ChartActions.saveChart(chart.uuid)}>
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.saveChart(chart)}>
         <i className='fa fa-save'/>&nbsp;
       </button>
     )
@@ -262,7 +257,7 @@ const MultiChart = React.createClass({
           </aside>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns'>
             {
-              this.state.selectTypeMode
+              chart.selectTypeMode
                 ? chart_type_selector : (!_.isEmpty(chart.data)
                   ? chart_component : chart_placeholder)
             }
