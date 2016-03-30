@@ -4,6 +4,8 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
 from rhizome.models import CustomDashboard, CustomChart, ChartToDashboard
 
+import json
+
 class CustomDashboardResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_dashboard'
@@ -11,6 +13,27 @@ class CustomDashboardResource(BaseModelResource):
             "id": ALL,
         }
         always_return_data = True
+
+    def get_detail(self, request, **kwargs):
+
+        requested_id = kwargs['pk']
+
+        bundle = self.build_bundle(request=request)
+
+        response_data = CustomDashboard.objects.get(id=requested_id).__dict__
+        response_data.pop('_state')
+
+        try:
+            chart_flag = request.GET['show_charts']
+            chart_data = [c for c in CustomChart.objects\
+                .filter(charttodashboard__dashboard_id = requested_id).values()]
+        except KeyError:
+            chart_data = []
+
+        response_data['charts'] = chart_data
+        bundle.data = response_data
+
+        return self.create_response(request, bundle)
 
     def obj_create(self, bundle, **kwargs):
 
