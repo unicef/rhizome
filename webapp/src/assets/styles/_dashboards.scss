@@ -58,14 +58,26 @@ $total-columns: 7;
   footer.hideable {
     position: fixed;
     bottom: 6.2rem;
-    background: #252525;
-    padding-top: .75rem;
-    padding-bottom: .3rem;
-    h1, h2, h3, h4, h5, h6, p {
-      color: white;
-    }
   }
 	.button.fix-to-bottom {
 		z-index: 200;
 	}
+}
+
+.multi-chart footer, footer.hideable{
+	background: #252525;
+	// position: relative;
+	// bottom: 0;
+  padding-top: .75rem;
+  padding-bottom: .3rem;
+  h1, h2, h3, h4, h5, h6, p {
+    color: white;
+  }
+}
+
+.multi-chart footer {
+	position: relative;
+	bottom: initial;
+	top: 50%;
+	margin-top: -3.2rem;
 }

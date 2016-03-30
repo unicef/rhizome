@@ -1,16 +1,12 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
-import Notification from 'react-notification'
 
 import MultiChart from 'components/organisms/MultiChart'
 
-import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
-import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
+import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
-import RootStore from 'stores/RootStore'
-import OfficeStore from 'stores/OfficeStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardNewStore from 'stores/DashboardNewStore'
 import DashboardNewActions from 'actions/DashboardNewActions'
@@ -28,29 +24,13 @@ const Dashboard = React.createClass({
     chart_id: PropTypes.number
   },
 
-  getInitialState () {
-    return {
-      notification: true,
-      footerHidden: true
-    }
-  },
-
-  componentDidMount() {
+  componentDidMount () {
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
-        DashboardNewActions.addChart('RawData')
+        DashboardNewActions.addChart()
       }
     })
-  },
-
-  _showHideFooter () {
-    this.setState({footerHidden: !this.state.footerHidden})
-  },
-
-  _addChart (type) {
-    this.setState({footerHidden: true})
-    DashboardNewActions.addChart(type)
   },
 
   render () {
@@ -66,6 +46,7 @@ const Dashboard = React.createClass({
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
             setTitle={(title) => DashboardNewActions.setTitle(title, chart.uuid)}
+            setType={(type) => DashboardNewActions.setType(type, chart.uuid)}
             setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
             selectIndicator={(id) => DashboardNewActions.selectIndicator(id, chart.uuid)}
             deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, chart.uuid)}
@@ -87,15 +68,11 @@ const Dashboard = React.createClass({
     return (
       <section className='dashboard'>
         { charts }
-        <footer className={'row hideable text-center' + (this.state.footerHidden ? ' descended' : '')}>
-            <h4>Select a Chart Type</h4>
-            <ChartSelect onChange={this._addChart}/>
-        </footer>
         <button
           className='button expand fix-to-bottom'
-          onClick={this._showHideFooter}
+          onClick={DashboardNewActions.addChart}
           style={{paddingTop: '1rem', paddingBottom: '1rem', position: 'fixed', bottom: '2.6rem'}}>
-          { this.state.footerHidden ? ' Add Chart' : 'Cancel'}
+          Add Chart
         </button>
       </section>
     )

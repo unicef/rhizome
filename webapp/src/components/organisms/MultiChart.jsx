@@ -6,10 +6,8 @@ import moment from 'moment'
 
 import palettes from 'components/molecules/charts/utils/palettes'
 import ColorSwatch from 'components/atoms/ColorSwatch'
-import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
-import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
@@ -35,6 +33,7 @@ const MultiChart = React.createClass({
 
   getInitialState () {
     return {
+      selectTypeMode: true,
       titleEditMode: false
     }
   },
@@ -50,7 +49,6 @@ const MultiChart = React.createClass({
         }
       }
     })
-    if (this.props.chart_id) { this.setState({footerHidden: true}) }
   },
 
   shouldComponentUpdate (nextProps, nextState) {
@@ -66,6 +64,15 @@ const MultiChart = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
+  _toggleSelectType () {
+    this.setState({selectTypeMode: !this.state.selectTypeMode})
+  },
+
+  _setType (type) {
+    this.props.setType(type)
+    this.setState({selectTypeMode: false})
+  },
+
   getChartComponentByType (type) {
     if (type === 'TableChart') {
       return <TableChart {...this.props.chart} />
@@ -74,10 +81,6 @@ const MultiChart = React.createClass({
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     }
-  },
-
-  getPalette (palette){
-    console.log('palette', palette)
   },
 
   render () {
@@ -100,7 +103,16 @@ const MultiChart = React.createClass({
         <br/ >
       </h1>
 
-    const chart_component = chart.type === 'RawData'?
+    const chart_type_selector = (
+      <div
+        className='medium-10 medium-centered text-center columns'
+        style={{position: 'relative', trasnform: 'translateY(50%)', marginTop: '-1.5rem', padding: '4rem 0'}}>
+        <h4>View Data As</h4>
+        <ChartSelect onChange={this._setType}/>
+      </div>
+    )
+
+    let chart_component = chart.type === 'RawData' ?
       <DatabrowserTable
         data={chart.data}
         selected_locations={chart.selected_locations}
@@ -110,6 +122,24 @@ const MultiChart = React.createClass({
 
     // SIDEBAR
     // ---------------------------------------------------------------------------
+    const change_type_button = (
+      <button className='button icon-button remove-chart-button' onClick={this._toggleSelectType}>
+        <i className='fa fa-eye fa-2x'/>&nbsp;
+      </button>
+    )
+
+    const remove_chart_button = this.props.removeChart ? (
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
+        <i className='fa fa-times fa-2x'/>&nbsp;
+      </button>
+    ) : null
+
+    const duplicate_chart_button = this.props.duplicateChart ? (
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
+        <i className='fa fa-copy fa-2x'/>&nbsp;
+      </button>
+    ) : null
+
     const date_range_picker = chart.type === 'LineChart' || chart.type === 'TableChart' ? (
       <div className='medium-12 columns'>
         <h3>Time</h3>
@@ -161,16 +191,6 @@ const MultiChart = React.createClass({
       />
     )
 
-    const chart_type_selector = (
-      <div className='medium-7 columns'>
-        <h3>View</h3>
-        <ChartSelect
-          charts={builderDefinitions.charts}
-          value={chart.type}
-          onChange={this.props.setType}/>
-      </div>
-    )
-
     const palette_selector = chart.type !== 'RawData' ? (
       <div className='medium-12 columns'>
         <h3>Colors</h3>
@@ -187,32 +207,26 @@ const MultiChart = React.createClass({
       </div>
     ) : null
 
-    const remove_chart_button = this.props.removeChart ? (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times fa-2x'/>&nbsp;
-      </button>
-    ) : ''
-
-    const duplicate_chart_button = this.props.duplicateChart ? (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy fa-2x'/>&nbsp;
-      </button>
-    ) : ''
-
     // PLACEHOLDERS
     // ---------------------------------------------------------------------------
-    const missingParams = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
-    let chart_placeholder = <Placeholder height={400}/>
-    if (!chart.loading && missingParams) {
-      chart_placeholder = <Placeholder height={400} text='Please select an INDICATOR and LOCATION' loading={false}/>
+    const missing_indicators = _.isEmpty(chart.selected_indicators)
+    const missing_locations = _.isEmpty(chart.selected_locations)
+    let chart_placeholder = <Placeholder height={300}/>
+    if (!chart.loading && (missing_indicators || missing_locations)) {
+      let placeholder_text = 'Select a(n) '
+      placeholder_text += missing_indicators ? 'INDICATOR ' : ''
+      placeholder_text += missing_locations && missing_indicators ? 'and ' : ''
+      placeholder_text += missing_locations ? 'LOCATION ' : ''
+      chart_placeholder = <Placeholder height={300} text={placeholder_text} loading={false}/>
     } else if (_.isEmpty(chart.data) && !_.isNull(chart.data) && chart.loading) {
-      chart_placeholder = <Placeholder height={400} text='NO DATA' loading={false}/>
+      chart_placeholder = <Placeholder height={300} text='NO DATA' loading={false}/>
     }
 
     return (
       <section className='multi-chart row'>
         <div className='medium-4 large-2 medium-push-8 large-push-10 columns'>
           <div className='text-right'>
+            { change_type_button }
             { duplicate_chart_button }
             { remove_chart_button }
           </div>
@@ -226,7 +240,11 @@ const MultiChart = React.createClass({
           <div className='row chart-header text-center'>
             { title_bar }
           </div>
-          {!_.isEmpty(chart.data) ? chart_component : chart_placeholder}
+          {
+            this.state.selectTypeMode
+              ? chart_type_selector : (!_.isEmpty(chart.data)
+                ? chart_component : chart_placeholder)
+          }
         </div>
       </section>
     )
