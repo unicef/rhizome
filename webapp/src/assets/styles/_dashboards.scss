@@ -52,18 +52,15 @@ $total-columns: 7;
 		padding: 0 10px 10px 10px;
 	}
 	.remove-chart-button {
-    position: absolute;
-    right: 1rem;
-    color: #FF9489;
-    top: -1rem;
     left: initial;
-    z-index: 100;
+    right: 1rem;
 	}
   footer.hideable {
     position: fixed;
-    bottom: 6rem;
+    bottom: 6.2rem;
     background: #252525;
     padding-top: .75rem;
+    padding-bottom: .3rem;
     h1, h2, h3, h4, h5, h6, p {
       color: white;
     }

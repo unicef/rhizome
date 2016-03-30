@@ -6,6 +6,7 @@ const DashboardNewActions = Reflux.createActions({
   'fetchChart': { children: ['completed', 'failed'] },
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'addChart': 'addChart',
+  'duplicateChart': 'duplicateChart',
   'removeChart': 'removeChart',
   'getChart': 'getChart',
   'saveChart': 'saveChart',

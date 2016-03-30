@@ -59,10 +59,20 @@ var DashboardNewStore = Reflux.createStore({
   onAddChart (type) { console.info('- Store.onAddChart')
     const new_chart = new ChartState
     new_chart.type = type
-    new_chart.title = format.unCamelCase(type)
+    new_chart.title = 'Untitled ' + format.unCamelCase(type)
     new_chart.uuid = uuid.v4()
     this.charts[new_chart.uuid] = new_chart
     DashboardNewActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
+    this.trigger(this.charts)
+  },
+  onDuplicateChart (chart_uuid) { console.info('- Store.onDuplicateChart')
+    const chart = this.charts[chart_uuid]
+    const new_chart = Object.assign(new ChartState, chart)
+    new_chart.uuid = uuid.v4()
+    new_chart.selected_indicators = chart.selected_indicators.slice(0)
+    new_chart.selected_campaigns = chart.selected_campaigns.slice(0)
+    new_chart.selected_locations = chart.selected_locations.slice(0)
+    this.charts[new_chart.uuid] = new_chart
     this.trigger(this.charts)
   },
   onRemoveChart (uuid) { console.info('- Store.onRemoveChart')

@@ -188,8 +188,14 @@ const MultiChart = React.createClass({
     ) : null
 
     const remove_chart_button = this.props.removeChart ? (
-      <button className='button icon-button right remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times-circle fa-2x'/>
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
+        <i className='fa fa-times fa-2x'/>&nbsp;
+      </button>
+    ) : ''
+
+    const duplicate_chart_button = this.props.duplicateChart ? (
+      <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
+        <i className='fa fa-copy fa-2x'/>&nbsp;
       </button>
     ) : ''
 
@@ -206,7 +212,10 @@ const MultiChart = React.createClass({
     return (
       <section className='multi-chart row'>
         <div className='medium-4 large-2 medium-push-8 large-push-10 columns'>
-          { remove_chart_button }
+          <div className='text-right'>
+            { duplicate_chart_button }
+            { remove_chart_button }
+          </div>
           { palette_selector }
           { date_range_picker }
           { campaign_selector }
