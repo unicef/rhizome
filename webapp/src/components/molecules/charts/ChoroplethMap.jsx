@@ -16,7 +16,7 @@ class ChoroplethMap extends Chart {
     domain: _.noop,
     onClick: _.noop,
     value: d => d.properties.value,
-    colors: palettes.orange,
+    colors: palettes.traffic_light,
     height: 0,
     width: 0,
     margin: { top: 0, right: 0, bottom: 20, left: 0 }

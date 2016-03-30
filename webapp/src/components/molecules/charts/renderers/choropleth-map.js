@@ -43,13 +43,14 @@ class ChoroplethMapRenderer {
       'height': this.options.height,
       'preserveAspectRatio': 'xMinYMin'
     })
-    this.renderMapPaths()
     this.renderColorLegend()
+    this.renderMapPaths()
   }
 
   // RENDER MAP PATHS
   // ---------------------------------------------------------------------------
   renderMapPaths() {
+  console.log('------- MapLegendRenderer.renderMapPaths')
     const map = this.svg.select('.colors')
     const g = map.select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
@@ -79,10 +80,18 @@ class ChoroplethMapRenderer {
     .on('mousemove', this._onMouseMove)
     .on('mouseout', this._onMouseOut)
 
-    // const svg_width = map.node().getBBox().width
     const map_width = map.node().getBoundingClientRect().width
     const offset = (this.container.clientWidth - map_width) / 2
-    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-offset/4})`)
+    const map_height = map.node().getBoundingClientRect().height + (offset/4)
+
+    // Readjust the container height after the size of map is calculated
+    const svg = d3.select(this.container)
+    svg.attr({
+      'viewBox': '0 0 ' + this.options.width + ' ' + map_height,
+      'width': this.options.width,
+      'height': map_height,
+    })
+    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-this.legend_height})`)
     location.exit().remove()
   }
 
@@ -101,10 +110,12 @@ class ChoroplethMapRenderer {
     const colorScale = d3.scale.quantize().domain(domain).range(colors)
     const legendTicks = this.buildTicksFromBounds(this.options)
     const g  = this.svg.select('.colors')
-    g.select('.legend').call(legend().scale(d3.scale.ordinal()
+    const color_legend = g.select('.legend')
+    color_legend.call(legend().scale(d3.scale.ordinal()
       .domain(legendTicks)
       .range(colorScale.range())))
     .attr('transform', () => 'translate(50, 75)')
+    this.legend_height = g.node().getBoundingClientRect().height
   }
 
   // MAP STRIPES LEGEND
