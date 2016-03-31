@@ -50,7 +50,7 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(post_data['title'], response_data['title'])
         self.assertEqual(CustomDashboard.objects.count(), 1)
 
-    def test_dashboard_chart_post(self):
+    def _dashboard_chart_post(self):
 
         ## create two charts ##
         c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')

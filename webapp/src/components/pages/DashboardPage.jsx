@@ -72,10 +72,11 @@ const Dashboard = React.createClass({
     }
 
     const query = {
-      id: dashboard.id || null,
+      id: this.props.dashboard_id || null,
       title: dashboard.title,
       chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
+    console.log('query', query)
     DashboardActions.postDashboard(query)
   },
 
@@ -107,7 +108,7 @@ const Dashboard = React.createClass({
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
       <h1 className='left'>
-        {dashboard.title}
+        {dashboard.title || 'Untitled Dashboard'}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
       </h1>

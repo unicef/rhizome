@@ -67,14 +67,14 @@ let DashboardNav = React.createClass({
         <li>
           <a href='/charts'>Charts</a>
           <ul className='dashboard-menu'>
+            <li className='cta-menu-item'><a href='/charts/create'>Create a Chart</a></li>
             { custom_charts }
-            <li className='separator'><hr /></li>
-            <li><a href='/charts/create'>Create a Chart</a></li>
           </ul>
         </li>
         <li>
-          <a href='#'>Dashboards</a>
+          <a href='/dashboards'>Dashboards</a>
           <ul className='dashboard-menu'>
+            <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
             { custom_dashboards }
             <li className='separator'><hr /></li>
             { premade_dashboards }

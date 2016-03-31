@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import uuid from 'uuid'
 import orderBy from 'lodash.orderby'
 import React from 'react'
 import Reflux from 'reflux'
@@ -33,6 +34,7 @@ var ChartsPage = React.createClass({
     const chart_def = chart.chart_json
     ChartActions.postChart({
       title: chart.title + ' Copy',
+      uuid: uuid.v4(),
       chart_json: JSON.stringify({
         type: chart_def.type,
         start_date: chart_def.start_date,

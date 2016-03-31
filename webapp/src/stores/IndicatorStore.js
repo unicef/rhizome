@@ -134,14 +134,16 @@ var IndicatorStore = Reflux.createStore({
       indicator.title = indicator.name
       indicator.value = indicator.id
       indicator.displayTitle = indicator.name + ' (' + indicator.id + ')'
+      indicator.parsed_tag_json = JSON.parse(indicator.tag_json)
+
       if (indicatorFilterType) {
         if (!_.isArray(indicator.tag_json) || indicator.tag_json.length === 0) {
           if (indicatorFilterType && indicator.data_format === indicatorFilterType) {
             otherTag.children.push(indicator)
             indicator.parentNode = otherTag
           }
-        } else if (_.isArray(indicator.tag_json)) {
-          indicator.tag_json.forEach(tId => {
+        } else if (_.isArray(indicator.parsed_tag_json)) {
+          indicator.parsed_tag_json.forEach(tId => {
             if (indicatorFilterType && indicator.data_format === indicatorFilterType) {
               let tagParent = tags_map[tId]
               tagParent.children.push(indicator)
@@ -150,11 +152,11 @@ var IndicatorStore = Reflux.createStore({
           })
         }
       } else {
-        if (!_.isArray(indicator.tag_json) || indicator.tag_json.length === 0) {
+        if (!_.isArray(indicator.parsed_tag_json) || indicator.parsed_tag_json.length === 0) {
           otherTag.children.push(indicator)
           indicator.parentNode = otherTag
-        } else if (_.isArray(indicator.tag_json)) {
-          indicator.tag_json.forEach(tId => {
+        } else if (_.isArray(indicator.parsed_tag_json)) {
+          indicator.parsed_tag_json.forEach(tId => {
             let tagParent = tags_map[tId]
             tagParent.children.push(indicator)
             indicator.parentNode = tagParent

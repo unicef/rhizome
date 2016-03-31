@@ -57,7 +57,7 @@ v1_api.register(all_meta.AllMetaResource())
 
 protected_patterns = [
 
-    url(r'^$', RedirectView.as_view(url='dashboards/eoc-post-campaign/'), name='homepage-redirect'),
+    url(r'^$', RedirectView.as_view(url='dashboards/'), name='homepage-redirect'),
 
     url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system/', views.manage_system, name='manage_system'),
@@ -79,6 +79,7 @@ protected_patterns = [
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
 
+    url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
     url(r'^dashboards/eoc-post-campaign/$', views.builtin_dashboard, name='dashboards'),
     url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/$', views.builtin_dashboard, name='builtin_dashboard'),

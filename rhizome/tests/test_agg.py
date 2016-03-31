@@ -467,6 +467,7 @@ class AggRefreshTestCase(TestCase):
         pct_target_value = val_3 / float(sum_target_value)
         self.assertEqual(calc_value_pct,pct_target_value)
 
+
     def test_part_of_difference(self):
         '''
         see here: rhizome.work/manage_system/manage/indicator/187
@@ -552,7 +553,89 @@ class AggRefreshTestCase(TestCase):
         target_value = (x-y) / x
         self.assertEqual(round(calc_value,4),round(target_value,4))
 
-    def _recursive_sum(self):
+    def test_missing_part_of_sum(self):
+        data_date, location_id, agg_location_id = '2016-01-01',12910,12907
+        val_1, val_2 = 101, 102
+        ## create the parent and sub indicators ##
+        parent_indicator = Indicator.objects.create(
+            name = 'Number of Missing Children',
+            short_name = 'Number of Avoidable Deaths',
+            data_format = 'int'
+        )
+        CampaignToIndicator.objects.create(indicator_id = parent_indicator.id,\
+            campaign_id = self.campaign_id)
+
+        sub_indicator_1 = Indicator.objects.create(
+            name = 'Number Missing Due to Refusal',
+            short_name = 'Number Missing Due to Refusal',
+            data_format = 'int'
+        )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_1.id,\
+            campaign_id = self.campaign_id)
+
+        sub_indicator_2 = Indicator.objects.create(
+            name = 'Number Missing Due to Absence',
+            short_name = 'Number Missing Due to Absence',
+            data_format = 'int'
+        )   
+        sub_indicator_3 = Indicator.objects.create(
+            name = 'Number Missing Due to ??',
+            short_name = 'Number Missing Due to ??',
+            data_format = 'int'
+        )
+        CampaignToIndicator.objects.create(indicator_id = sub_indicator_3.id,\
+            campaign_id = self.campaign_id)
+     
+
+        indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_1.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        indicator_calc_2 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_2.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+
+        indicator_calc_3 = CalculatedIndicatorComponent.objects.create(
+            indicator_id = parent_indicator.id,
+            indicator_component_id = sub_indicator_3.id,
+            calculation = 'PART_TO_BE_SUMMED'
+        )
+        ss_id = SourceSubmission.objects.all()[0].id
+        ## create the datapoints. We're only adding data points for ##
+        ## two of the three datapoints that are mapped as parts to be summed ##
+        dp_1 = DataPoint.objects.create(
+            indicator_id = sub_indicator_1.id,
+            data_date = data_date,
+            location_id = location_id,
+            campaign_id = self.campaign_id,
+            value = val_1,
+            source_submission_id = ss_id,
+            cache_job_id = -1,
+        )
+        dp_2 = DataPoint.objects.create(
+            indicator_id = sub_indicator_2.id,
+            data_date = data_date,
+            location_id = location_id,
+            campaign_id = self.campaign_id,
+            value = val_2,
+            source_submission_id = ss_id,
+            cache_job_id = -1,
+        )
+        cr = AggRefresh(self.campaign_id)
+
+        calc_value_sum = DataPointComputed.objects.get(
+            indicator_id = parent_indicator.id,
+            campaign_id = self.campaign_id,
+            location_id = location_id
+        ).value
+
+        sum_target_value = val_1 + val_2
+        self.assertEqual(calc_value_sum,sum_target_value)
+
+    def test_recursive_sum(self):
         '''
         Consider the case in which we have "number of missed children" which is
         the sum of "missed children due to absence", "missed children due to
@@ -707,7 +790,6 @@ class AggRefreshTestCase(TestCase):
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
             location_id = location_id,
-            data_date = data_date,
             indicator_id = parent_indicator,
         ).value
 
@@ -719,7 +801,6 @@ class AggRefreshTestCase(TestCase):
         sub_2_target_val = values_to_insert[sub_indicator_2.id]
         sub_2_actual_val = DataPointComputed.objects.get(
             location_id = location_id,
-            data_date = data_date,
             indicator_id = sub_indicator_2.id,
         ).value
 

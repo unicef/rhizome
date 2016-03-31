@@ -4,10 +4,11 @@ import {DropdownList} from 'react-widgets'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import palettes from 'components/molecules/charts/utils/palettes'
+import ExportIcon from 'components/atoms/ExportIcon'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
 
+import palettes from 'components/molecules/charts/utils/palettes'
 import ChartSelector from 'components/molecules/ChartSelector'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
@@ -93,7 +94,7 @@ const MultiChart = React.createClass({
       <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
       :
       <h2>
-        {chart.title}
+        {chart.title || 'Untitled Chart'}
         <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
         <br/ >
       </h2>
@@ -117,38 +118,35 @@ const MultiChart = React.createClass({
       />
       : this.getChartComponentByType(chart.type)
 
-    // SIDEBAR
+
+    // ACTION ICONS
     // ---------------------------------------------------------------------------
     const change_type_button = (
       <button className='button icon-button remove-chart-button' onClick={this.props.toggleSelectTypeMode}>
-        <i className='fa fa-eye'/>&nbsp;
+        <i className='fa fa-eye'/>
       </button>
     )
-
     const remove_chart_button = this.props.removeChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times'/>&nbsp;
+        <i className='fa fa-times'/>
       </button>
     ) : null
-
     const export_button = (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.exportChart(chart.uuid)}>
-        <i className='fa fa-external-link'/>&nbsp;
-      </button>
+      <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
-
     const save_button = (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.saveChart(chart)}>
-        <i className='fa fa-save'/>&nbsp;
+        <i className='fa fa-save'/>
       </button>
     )
-
     const duplicate_chart_button = this.props.duplicateChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy'/>&nbsp;
+        <i className='fa fa-copy'/>
       </button>
     ) : null
 
+    // SIDEBAR
+    // ---------------------------------------------------------------------------
     const date_range_picker = chart.type === 'LineChart' || chart.type === 'TableChart' ? (
       <div className='medium-12 columns'>
         <h3>Time</h3>
