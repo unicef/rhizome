@@ -124,7 +124,7 @@ var ExportIcon = React.createClass({
     classString += this.props.disabled ? ' disabled ' : ''
 
     return (
-      <span style={{position: 'relative', top: '1px', left: '1px'}}>
+      <span style={{position: 'relative', top: '1px', left: '4px'}}>
         <DropdownIcon classes={classString} searchable={false} icon='fa-external-link'>
           <MenuItem key='jpeg' value='jpeg' title='IMAGE' sendValue={this.selectOption} />
           <MenuItem key='pdf' value='pdf'  title='PDF' sendValue={this.selectOption} />
