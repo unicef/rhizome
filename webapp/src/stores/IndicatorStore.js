@@ -32,6 +32,7 @@ var IndicatorStore = Reflux.createStore({
     this.setState({ raw: [] })
   },
   onFetchIndicatorsCompleted (response) {
+    console.log('fetching indicators')
     this.indicators.meta = response.meta
     this.indicators.raw = response.objects[0].indicators || response.objects
     this.indicators.filtered = this.indicators.raw
@@ -131,30 +132,36 @@ var IndicatorStore = Reflux.createStore({
     }
 
     indicators.forEach(indicator => {
+      console.log('indicatorStore.jxs: ', indicator)
       indicator.title = indicator.name
       indicator.value = indicator.id
       indicator.displayTitle = indicator.name + ' (' + indicator.id + ')'
+      indicator.parsed_tag_json = JSON.parse(indicator.tag_json)
+
       if (indicatorFilterType) {
         if (!_.isArray(indicator.tag_json) || indicator.tag_json.length === 0) {
           if (indicatorFilterType && indicator.data_format === indicatorFilterType) {
             otherTag.children.push(indicator)
             indicator.parentNode = otherTag
           }
-        } else if (_.isArray(indicator.tag_json)) {
-          indicator.tag_json.forEach(tId => {
+        } else if (_.isArray(indicator.parsed_tag_json)) {
+          indicator.parsed_tag_json.forEach(tId => {
+            console.log('indicatorStore.jxs -- indicator.id : indicator.id ')
+            console.log('indicatorStore.jxs -- tId: ', tId)
             if (indicatorFilterType && indicator.data_format === indicatorFilterType) {
               let tagParent = tags_map[tId]
+              console.log('indicatorStore.jxs -- tagParent.children.push(indicator): ', indicator)
               tagParent.children.push(indicator)
               indicator.parentNode = tagParent
             }
           })
         }
       } else {
-        if (!_.isArray(indicator.tag_json) || indicator.tag_json.length === 0) {
+        if (!_.isArray(indicator.parsed_tag_json) || indicator.parsed_tag_json.length === 0) {
           otherTag.children.push(indicator)
           indicator.parentNode = otherTag
-        } else if (_.isArray(indicator.tag_json)) {
-          indicator.tag_json.forEach(tId => {
+        } else if (_.isArray(indicator.parsed_tag_json)) {
+          indicator.parsed_tag_json.forEach(tId => {
             let tagParent = tags_map[tId]
             tagParent.children.push(indicator)
             indicator.parentNode = tagParent
