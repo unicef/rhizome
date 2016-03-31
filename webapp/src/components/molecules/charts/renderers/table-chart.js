@@ -74,7 +74,11 @@ class TableChartRenderer {
     rows.enter().append('g').attr({'class': 'row', 'transform': this.transform})
     rows.exit().transition().duration(300).style('opacity', 0).remove()
     rows.on('click', (d, i) => this.onRowClick([d, i]))
-    rows.on('mouseover', (d, i) => this.onRowOver([d, i])).transition().duration(750).attr('transform', this.transform)
+    rows.on('mouseover', (d, i) => this.onRowOver([d, i]))
+      .transition().duration(750)
+      .attr('transform', this.transform)
+      .attr('pointer-events', 'none')
+      .each('end', () => rows.attr('pointer-events', null))
     this.rows = rows
   }
 
