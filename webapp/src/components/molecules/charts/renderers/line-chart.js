@@ -41,7 +41,7 @@ class LineChartRenderer {
   }
 
   render () {
-    console.info('------- LineChartRenderer.render')
+    // console.info('------- LineChartRenderer.render')
     this.renderLine()
     this.renderLabels()
     this.renderXAxis()
@@ -55,7 +55,7 @@ class LineChartRenderer {
   // =========================================================================== //
 
   prepContainer () {
-    console.info('------- LineChartRenderer.prepContainer')
+    // console.info('------- LineChartRenderer.prepContainer')
     this.svg.attr({
       'class': 'line',
       'viewBox': '0 0 ' + this.width + ' ' + this.height,
@@ -87,7 +87,7 @@ class LineChartRenderer {
   // LINE
   // ---------------------------------------------------------------------------
   renderLine () {
-    console.info('LineChartRenderer.renderLine')
+    // console.info('LineChartRenderer.renderLine')
     const dataColorScale = d3.scale.ordinal()
       .domain(_(this.data)
         .map(this.options.seriesName)
@@ -111,7 +111,7 @@ class LineChartRenderer {
   // X AXIS
   // ---------------------------------------------------------------------------
   renderXAxis () {
-    console.info('LineChartRenderer.renderXAxis')
+    // console.info('LineChartRenderer.renderXAxis')
     this.svg.select('.x.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.xFormat)
@@ -128,7 +128,7 @@ class LineChartRenderer {
   // Y AXIS
   // ---------------------------------------------------------------------------
   renderYAxis () {
-    console.info('LineChartRenderer.renderYAxis')
+    // console.info('LineChartRenderer.renderYAxis')
     const gy = this.svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.yFormat)
@@ -147,7 +147,7 @@ class LineChartRenderer {
   // HOVERLINE
   // ---------------------------------------------------------------------------
   renderHoverline () {
-    console.info('LineChartRenderer.renderHoverline')
+    // console.info('LineChartRenderer.renderHoverline')
     this.svg.attr('class', 'line')
       .call(hoverLine()
         .width(this.width)
@@ -174,7 +174,7 @@ class LineChartRenderer {
   // LABELS
   // ---------------------------------------------------------------------------
   renderLabels () {
-    console.info('LineChartRenderer.renderLabels')
+    // console.info('LineChartRenderer.renderLabels')
     this.labels = _(this.data)
       .map(d => {
         const last = _.max(this.options.values(d), this.options.x)
