@@ -28,10 +28,7 @@ export default React.createClass({
           <tr>
             <td>
               <a href={'/dashboards/' + dashboard.id + '/'}>{dashboard.title} </a>
-              <a href={'/dashboards/' + dashboard.id + '/edit/'}> edit</a>
             </td>
-            <td>{dashboard.description}</td>
-            <td>{dashboard.owner_username}</td>
           </tr>
         )
       })
@@ -39,14 +36,13 @@ export default React.createClass({
 
     return (
       <div className='row'>
-        <div className='medium-12 columns'>
-          <h5 className='all-dashboard'>all custom dashboard</h5>
+        <div className='medium-3 columns'>&nbsp;</div>
+        <div className='medium-6 columns'>
+          <h5 className='all-dashboard'>All Dashboards</h5>
           <table>
             <thead>
               <tr>
                 <th>Title</th>
-                <th>Description</th>
-                <th>Owner</th>
               </tr>
             </thead>
             <tbody>
@@ -54,6 +50,7 @@ export default React.createClass({
             </tbody>
           </table>
         </div>
+        <div className='medium-3 columns'>&nbsp;</div>
       </div>
     )
   }

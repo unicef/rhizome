@@ -57,7 +57,7 @@ v1_api.register(all_meta.AllMetaResource())
 
 protected_patterns = [
 
-    url(r'^$', RedirectView.as_view(url='dashboards/eoc-post-campaign/'), name='homepage-redirect'),
+    url(r'^$', RedirectView.as_view(url='dashboards/'), name='homepage-redirect'),
 
     url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system/', views.manage_system, name='manage_system'),
