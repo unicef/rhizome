@@ -90,14 +90,6 @@ $total-columns: 7;
 	margin-bottom: 2rem;
 	header {
 		background: $rhz-navigation-hover-bg-color;
-		h1, input, .icon-button {
-			position: relative;
-			z-index: 300;
-		}
-		input {
-			margin: 0;
-			top: -.1rem;
-		}
 	  h1, h2, h3, h4, h5, h6, p {
 	  	text-transform: none;
 	  	position: relative;
@@ -108,6 +100,31 @@ $total-columns: 7;
 	  	margin: 0;
 	    color: white;
 	  }
+		h1, input, .icon-button {
+			position: relative;
+			z-index: 300;
+		}
+		h2 {
+			margin-top: 0.4rem;
+			display: inline-block;
+		}
+		input {
+			margin: 0;
+			border: none;
+			top: -.05rem;
+			color: white;
+			text-align: center;
+			margin-left: 6rem;
+			font-size: 1.25rem;
+			&::placeholder {
+				color: rgba(255, 255, 255, 0.5);
+			}
+			&:focus {
+				background-color: rgba(0, 0, 0, 0.2);
+ 		    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+				color: white;
+			}
+		}
 		.icon-button {
 			color: white;
 	    left: initial;

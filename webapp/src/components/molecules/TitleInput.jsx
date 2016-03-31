@@ -43,7 +43,7 @@ export default React.createClass({
           onChange={this._updateText}
           onBlur={this.saveTitle}
           onKeyUp={this.saveTitle}
-          placeholder='Title'/>
+          placeholder='Enter Title'/>
           <button type='reset' className='button icon-button' onClick={() => this.props.save(null)} >
             <i className='fa fa-times'/>
           </button>

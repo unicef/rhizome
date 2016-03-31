@@ -94,9 +94,9 @@ const MultiChart = React.createClass({
       <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
       :
       <h2>
-        {chart.title || 'Untitled Chart'}
-        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
-        <br/ >
+        <a onClick={this._toggleTitleEdit} style={{cursor: 'text'}}>
+          {chart.title || 'Untitled Chart'}
+        </a>
       </h2>
 
     const chart_type_selector = (
@@ -122,7 +122,7 @@ const MultiChart = React.createClass({
     // ACTION ICONS
     // ---------------------------------------------------------------------------
     const change_type_button = (
-      <button className='button icon-button left' onClick={this.props.toggleSelectTypeMode} style={{postion: 'relative', top: '0.1rem'}}>
+      <button className='button icon-button left' onClick={this.props.toggleSelectTypeMode} style={{top: '0.1rem'}}>
         <i className='fa fa-bar-chart'/>
       </button>
     )
@@ -236,10 +236,10 @@ const MultiChart = React.createClass({
       <article className='multi-chart'>
         <header className='row'>
           <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
-              { export_button }
-              { duplicate_chart_button }
-              { save_button }
-              { remove_chart_button }
+            { export_button }
+            { duplicate_chart_button }
+            { save_button }
+            { remove_chart_button }
           </div>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
             { change_type_button }
