@@ -29,7 +29,7 @@ var DropdownIcon = React.createClass({
   render: function () {
     return (
       <button className='button icon-button remove-chart-button' onClick={this._toggleMenu}>
-        <i className={'fa ' + this.props.icon}/>&nbsp;
+        <i className={'fa ' + this.props.icon}/>
       </button>
     )
   }

@@ -9,22 +9,98 @@ var ExportIcon = React.createClass({
     className: React.PropTypes.string,
     button: React.PropTypes.bool,
     disabled: React.PropTypes.bool,
-    iconOnly: React.PropTypes.bool
+    exportPath: React.PropTypes.string
   },
 
-  defaults: {
-    label: 'Export',
-    disabled: false,
-    iconOnly: false,
-    isFetching: false,
-    url: '/export_file/?',
-    interval: 1000,
-    cookieName: 'fileDownloadToken'
+  getDefaultProps() {
+    return {
+      disabled: false,
+      exportPath: window.location.href
+    }
   },
 
   getInitialState () {
-    return this.defaults
+    return {
+      label: 'Export',
+      disabled: false,
+      iconOnly: false,
+      isFetching: false,
+      url: '/export_file/?',
+      interval: 1000,
+      cookieName: 'fileDownloadToken'
+    }
   },
+
+  selectOption (option) {
+    console.log('ExportIcon.selectOption')
+    if (option === 'csv') {
+      this.downloadRawData()
+    } else {
+      this.exportImage(option)
+    }
+  },
+
+  // EXPORT CSV
+  //---------------------------------------------------------------------------
+  downloadRawData () {
+    console.log('ExportIcon.downloadRawData')
+    if (!this.props.enable || this.state.isWorking) return
+    let url = this.props.onClick()
+    this.setState({
+      url: url,
+      isWorking: true
+    })
+    // var self = this
+    var refreshIntervalId = window.setInterval(() => {
+      // var cookieValue = self._getCookie(self.props.cookieName)
+      // if (cookieValue === 'true') {
+        this.completeDownload(refreshIntervalId)
+      // }
+    }, 1000)
+  },
+
+  completeDownload (refreshIntervalId) {
+    console.log('ExportIcon.completeDownload')
+    this.setState({
+      isWorking: false,
+      url: 'about:blank'
+    })
+    document.cookie = this.props.cookieName + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+    window.clearInterval(refreshIntervalId)
+  },
+
+
+  // EXPORT IMAGE
+  //---------------------------------------------------------------------------
+  exportImage (fileType) {
+    console.log('ExportIcon.exportImage')
+    console.log('fileType', fileType)
+    var type = 'type=' + fileType
+    var path = 'path=' + window.location.href
+    this.setState({
+      label: 'Fetching...',
+      isFetching: true,
+      href: this.state.url + type + '&' + this.props.exportPath
+    })
+    var self = this
+    var refreshIntervalId = window.setInterval(() => {
+      var cookieValue = self._getCookie(self.state.cookieName)
+      if (cookieValue === 'true') {
+        this.completeExportImage(refreshIntervalId)
+      }
+    }, this.state.interval)
+  },
+
+  completeExportImage (refreshIntervalId) {
+    this.setState({
+      label: 'Export To ',
+      isFetching: false,
+      href: 'about:blank'
+    })
+    document.cookie = this.state.cookieName + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
+    window.clearInterval(refreshIntervalId)
+  },
+
 
   _getCookie (name) {
     if (document.cookie.length > 0) {
@@ -41,68 +117,6 @@ var ExportIcon = React.createClass({
     return ''
   },
 
-  downloadRawData () {
-    if (!this.props.enable || this.state.isWorking) return
-    let url = this.props.onClick()
-    this.setState({
-      url: url,
-      isWorking: true
-    })
-    // var self = this
-    var refreshIntervalId = window.setInterval(() => {
-      // var cookieValue = self._getCookie(self.props.cookieName)
-      // if (cookieValue === 'true') {
-        this._completeDownload(refreshIntervalId)
-      // }
-    }, 1000)
-  },
-
-  _completeDownload (refreshIntervalId) {
-    this.setState({
-      isWorking: false,
-      url: 'about:blank'
-    })
-    document.cookie = this.props.cookieName + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-    window.clearInterval(refreshIntervalId)
-  },
-
-  exportImage (fileType) {
-    console.log('ExportIcon.onExportDashboard')
-    console.log('fileType', fileType)
-    var type = 'type=' + fileType
-    var path = 'path=' + window.location.href
-    this.setState({
-      label: 'Fetching...',
-      isFetching: true,
-      href: this.state.url + type + '&' + path
-    })
-    var self = this
-    var refreshIntervalId = window.setInterval(() => {
-      var cookieValue = self._getCookie(self.state.cookieName)
-      if (cookieValue === 'true') {
-        this._isCompleteExportDashboard(refreshIntervalId)
-      }
-    }, this.state.interval)
-  },
-
-  _isCompleteExportDashboard (refreshIntervalId) {
-    this.setState({
-      label: 'Export To ',
-      isFetching: false,
-      href: 'about:blank'
-    })
-    document.cookie = this.state.cookieName + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-    window.clearInterval(refreshIntervalId)
-  },
-
-  selectOption (option) {
-    if (option === 'raw') {
-      this.downloadRawData()
-    } else {
-      this.exportImage(option)
-    }
-  },
-
   render () {
     let classString = this.props.button ? ' button success ' : ''
     classString += this.state.isFetching ? ' inactive ' : ''
@@ -110,11 +124,11 @@ var ExportIcon = React.createClass({
     classString += this.props.disabled ? ' disabled ' : ''
 
     return (
-      <span>
-        <DropdownIcon classes={classString} searchable={false} icon='fa-external-link' >
+      <span style={{position: 'relative', top: '1px', left: '1px'}}>
+        <DropdownIcon classes={classString} searchable={false} icon='fa-external-link'>
           <MenuItem key='jpeg' value='jpeg' title='IMAGE' sendValue={this.selectOption} />
           <MenuItem key='pdf' value='pdf'  title='PDF' sendValue={this.selectOption} />
-          <MenuItem key='raw' value='raw'  title='RAW DATA' sendValue={this.selectOption} />
+          <MenuItem key='csv' value='csv'  title='CSV' sendValue={this.selectOption} />
         </DropdownIcon>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
       </span>

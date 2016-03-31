@@ -123,25 +123,25 @@ const MultiChart = React.createClass({
     // ---------------------------------------------------------------------------
     const change_type_button = (
       <button className='button icon-button remove-chart-button' onClick={this.props.toggleSelectTypeMode}>
-        <i className='fa fa-eye'/>&nbsp;
+        <i className='fa fa-eye'/>
       </button>
     )
     const remove_chart_button = this.props.removeChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times'/>&nbsp;
+        <i className='fa fa-times'/>
       </button>
     ) : null
     const export_button = (
-      <ExportIcon />
+      <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
     const save_button = (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.saveChart(chart)}>
-        <i className='fa fa-save'/>&nbsp;
+        <i className='fa fa-save'/>
       </button>
     )
     const duplicate_chart_button = this.props.duplicateChart ? (
       <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy'/>&nbsp;
+        <i className='fa fa-copy'/>
       </button>
     ) : null
 
