@@ -21,14 +21,12 @@ let EntryForm = React.createClass({
     let formName = 'Select Form'
     let indicatorSelected = []
     if (formIdSelected) {
-      let formDef = _.find(this.state.entryFormDefinitions,
-        function (d) { return d.form_id.toString() === formIdSelected })
+      let formDef = _.find(this.state.tags,
+        function (d) { return d.value === formIdSelected })
       formName = formDef.title
-      formDef.indicator_id_list.forEach(indicator_id => {
-        indicatorSelected.push(this.state.indicatorMap[indicator_id])
-      })
+      EntryFormActions.filterIndicators(formName)
+      indicatorSelected = this.state.filteredIndicators
     }
-
     let campaignIdSelected = this.state.campaignIdSelected
     let campaignName = 'Select Campaign'
     let campaignObj = null;
@@ -40,7 +38,6 @@ let EntryForm = React.createClass({
     if (campaignObj) {
       campaignName = campaignObj.name
     }
-    console.log('this.state.apiResponseData', this.state.apiResponseData)
     return (
       <div className='row'>
         <form>
