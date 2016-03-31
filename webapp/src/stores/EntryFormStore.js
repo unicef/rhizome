@@ -16,7 +16,8 @@ let EntryFormStore = Reflux.createStore({
     apiResponseData: null,
     indicatorMap: null,
     indicatorSet: null,
-    indicatorToTags: [],
+    indicatorsToTags: [],
+    filteredIndicators: [],
     formIdSelected: null,
     data: null,
     loaded: false,
@@ -50,17 +51,17 @@ let EntryFormStore = Reflux.createStore({
       api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
       api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})])
-    .then(_.spread(function (tags, indicatorToTags, campaigns, locations, indicators) {
-      let indicatorToTagsResult = _(indicatorToTags.objects)
+    .then(_.spread(function (tags, indicatorsToTags, campaigns, locations, indicators) {
+      let indicatorToTagsResult = _(indicatorsToTags.objects)
         .map(indToTag => {
           return {
             'id': indToTag.id,
-            'value': indToTag.indicator_tag_id,
+            'indicator_tag_id': indToTag.indicator_tag_id,
             'name': indToTag.indicator__short_name,
             'title': indToTag.indicator_tag__tag_name
           }
         }).value()
-      self.data.indicatorToTags = indicatorToTagsResult
+      self.data.indicatorsToTags = indicatorToTagsResult
       let tagResult = _(tags.objects)
         .map(tag => {
           return {
@@ -127,37 +128,37 @@ let EntryFormStore = Reflux.createStore({
   //   this._setCouldLoad()
   // },
 
-  _filterFormDefinition: function (indicatorSetId) {
-    var formDefinition = this.data.entryFormDefinitions[0] // _.find(this.data.entryFormDefinitions, function (d) { return d.id ===
-    if (!formDefinition) return null
-    //
-    var filtered = _.clone(formDefinition)
-    filtered.indicators = [] // formDefinition.indicators.filter(function (n) { return n > 0 })
+  // _filterFormDefinition: function (indicatorSetId) {
+  //   var formDefinition = this.data.entryFormDefinitions[0] // _.find(this.data.entryFormDefinitions, function (d) { return d.id ===
+  //   if (!formDefinition) return null
+  //   //
+  //   var filtered = _.clone(formDefinition)
+  //   filtered.indicators = [] // formDefinition.indicators.filter(function (n) { return n > 0 })
 
-    // []
-    _.each(formDefinition.indicator_id_list, ind_id => {
-    //   if (row.type === 'section-header') { // header
-    //     // remove previous section header if no indicators are included under it
-    //     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-    //       filtered.indicators.splice(filtered.indicators.length - 1, 1)
-    //     }
-    //     filtered.indicators.push(row)
-    //   } else { // indicator
-    //     // filter out indicators the user cannot edit
-      if (ind_id && this.data.indicatorMap[ind_id] !== undefined) {
-    //       row.name = this.data.indicatorMap[row.id].name
-        filtered.indicators.push(this.data.indicatorMap[ind_id])
-    //     }
-      }
-    })
-    //
-    // // remove last row if empty section header
-    // if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-    //   filtered.indicators.pop()
-    // }
-    //
-    return filtered
-  },
+  //   // []
+  //   _.each(formDefinition.indicator_id_list, ind_id => {
+  //   //   if (row.type === 'section-header') { // header
+  //   //     // remove previous section header if no indicators are included under it
+  //   //     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+  //   //       filtered.indicators.splice(filtered.indicators.length - 1, 1)
+  //   //     }
+  //   //     filtered.indicators.push(row)
+  //   //   } else { // indicator
+  //   //     // filter out indicators the user cannot edit
+  //     if (ind_id && this.data.indicatorMap[ind_id] !== undefined) {
+  //   //       row.name = this.data.indicatorMap[row.id].name
+  //       filtered.indicators.push(this.data.indicatorMap[ind_id])
+  //   //     }
+  //     }
+  //   })
+  //   //
+  //   // // remove last row if empty section header
+  //   // if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
+  //   //   filtered.indicators.pop()
+  //   // }
+  //   //
+  //   return filtered
+  // },
 
   _findLocationObject: function (locations, locationId) {
     return _.find(locations, location => {
@@ -198,7 +199,15 @@ let EntryFormStore = Reflux.createStore({
     this._setCouldLoad()
     this.trigger(this.data)
   },
-
+  onFilterIndicators: function(formName){
+    this.data.filteredIndicators = []
+    this.data.indicatorsToTags.forEach(indicator => {
+      if (indicator.title === formName){
+        this.data.filteredIndicators.push(this.data.indicatorMap[indicator.id])
+      }
+    })
+    this.trigger(this.data)
+  },
   onGetTableData: function () {
     let options = {
       campaign__in: parseInt(this.data.campaignIdSelected, 10),
@@ -235,9 +244,13 @@ let EntryFormStore = Reflux.createStore({
 
       this.data.locations = options.location_id__in
     }
+    // this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
+    // this.data.formDefinition = this.data.filteredIndicators
 
-    this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
-    options.indicator__in = this.data.formDefinition.indicator_id_list
+    options.indicator__in = this.data.filteredIndicators.map(function(indicator){
+      return indicator.id
+    })
+
     _.defaults(options, this.data.pagination)
 
     this.data.loaded = false
