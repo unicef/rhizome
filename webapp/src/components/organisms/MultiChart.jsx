@@ -131,6 +131,7 @@ const MultiChart = React.createClass({
         <i className='fa fa-times'/>
       </button>
     ) : null
+
     const export_button = (
       <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
