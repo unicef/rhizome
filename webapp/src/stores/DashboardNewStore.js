@@ -296,12 +296,13 @@ var DashboardNewStore = Reflux.createStore({
     this.dashboard.charts[uuid].loading = true
     this.trigger(this.dashboard)
   },
-  onFetchMapFeaturesCompleted (response) {
+  onFetchMapFeaturesCompleted (response) { console.log('Store.onFetchMapFeaturesCompleted')
     const currently_fetching_charts = _.toArray(this.dashboard.charts).filter(chart => chart.fetching_map)
     const uuid = currently_fetching_charts[0].uuid
     this.dashboard.charts[uuid].features = response.objects.features
     this.dashboard.charts[uuid].loading = true
     this.dashboard.charts[uuid].fetching_map = false
+    this.fetchDatapoints(uuid)
   },
   onFetchMapFeaturesFailed (error) {
     this.setState({ error: error })
@@ -362,19 +363,23 @@ var DashboardNewStore = Reflux.createStore({
       this.dashboard.charts[uuid].fetching = true
       if (this.dashboard.charts[uuid].type === 'ChoroplethMap') {
         this.dashboard.charts[uuid].fetching_map = true
-        DashboardNewActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
+        return DashboardNewActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
       }
-      DatapointActions.fetchDatapoints({
-        indicator_ids: this.dashboard.charts[uuid].selected_indicators.map(indicator => indicator.id),
-        location_ids: this.dashboard.charts[uuid].selected_locations.map(location => location.id),
-        start_date: this.dashboard.charts[uuid].start_date,
-        end_date: this.dashboard.charts[uuid].end_date,
-        type: this.dashboard.charts[uuid].type
-      })
+      this.fetchDatapoints(uuid)
     } else {
       this.dashboard.charts[uuid].loading = false
       this.trigger(this.dashboard)
     }
+  },
+
+  fetchDatapoints (uuid) {
+    DatapointActions.fetchDatapoints({
+      indicator_ids: this.dashboard.charts[uuid].selected_indicators.map(indicator => indicator.id),
+      location_ids: this.dashboard.charts[uuid].selected_locations.map(location => location.id),
+      start_date: this.dashboard.charts[uuid].start_date,
+      end_date: this.dashboard.charts[uuid].end_date,
+      type: this.dashboard.charts[uuid].type
+    })
   },
 
   formatChartByType (uuid) {  console.info('---- Store.formatChartByType')
