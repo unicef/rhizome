@@ -69,12 +69,13 @@ var RegionTitleMenu = React.createClass({
   render () {
     var locations = this._buildLocations(this.props.locations, this.state.pattern)
     var menu_item_components = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue)
+    const selected_text = !this.props.selected.id && locations.length > 0 ? 'Select Location' : this.props.selected.name
 
     return (
       <TitleMenu
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={this.props.selected.name}
+        text={selected_text}
         searchable
         onSearch={this._setPattern}>
         {menu_item_components}

@@ -29,6 +29,7 @@
 @import "react-widgets-core";
 @import "rw-dateTimePicker";
 @import "csv-upload";
+@import "footer";
 
 $break-small: 340px;
 $break-large: 1300px;
@@ -520,4 +521,4 @@ ul {
   }
 }
 
-@import "footer";
+

@@ -29,6 +29,7 @@ var IndicatorTitleMenu = React.createClass({
     this.setState({ pattern: value })
     this.forceUpdate()
   },
+
   indicatorsFilteredBySet(){
     //grab current indicators based on camp/location.
     const currentIndicators = this.props.indicators.filter(indicator =>
@@ -46,8 +47,10 @@ var IndicatorTitleMenu = React.createClass({
       return this.indicators
     }
   },
+
   render () {
     this.indicators = this.indicatorsFilteredBySet()
+    const selected_text = !this.props.selected.id && this.indicators.length > 0 ? 'Select Indicator' : this.props.selected.name
     const indicator_menu_items = this.filteredMenuItems().map(indicator =>
       <TitleMenuItem
         key={'indicator-' + indicator.id}
@@ -61,7 +64,7 @@ var IndicatorTitleMenu = React.createClass({
       <TitleMenu
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={this.props.selected.name}
+        text={selected_text}
         searchable
         onSearch={this.setPattern}>
         {indicator_menu_items}
