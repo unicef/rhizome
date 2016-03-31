@@ -87,7 +87,6 @@ class BaseResource(Resource):
 
         return location_ids
 
-
     def dispatch(self, request_type, request, **kwargs):
         """
         Overrides Tastypie and calls get_list.

@@ -117,18 +117,6 @@ class DatapointResource(BaseNonModelResource):
         except KeyError:
             pass
 
-        if chart_type == 'TableChart':
-
-            sub_location_ids = list(LocationTree.objects\
-                .filter(
-                    parent_location_id__in = self.location_ids,
-                    location__location_type_id = 3,
-                    location__lpd_status__in=[1,2])\
-                .values_list('location_id',flat=True))
-
-            self.location_ids = sub_location_ids
-
-
         # Pivot the data on request instead of caching ##
         # in the datapoint_abstracted table ##
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
