@@ -119,7 +119,8 @@ const DataExplorerStoreHelpers = {
     })
 
     chart.data = chart.features.map(feature => {
-      const datapoint = index[feature.properties.location_id]
+      // const datapoint = index[feature.properties.location_id]
+      const datapoint = locations_index[feature.properties.location_id]
       const properties = _.merge({}, datapoint.location, { value: datapoint['value'] })
       // if (yAxis) {
       //   const bubbleLocation = bubbleIndex[feature.properties.location_id]
