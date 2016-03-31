@@ -32,7 +32,6 @@ var IndicatorStore = Reflux.createStore({
     this.setState({ raw: [] })
   },
   onFetchIndicatorsCompleted (response) {
-    console.log('fetching indicators')
     this.indicators.meta = response.meta
     this.indicators.raw = response.objects[0].indicators || response.objects
     this.indicators.filtered = this.indicators.raw
@@ -132,7 +131,6 @@ var IndicatorStore = Reflux.createStore({
     }
 
     indicators.forEach(indicator => {
-      console.log('indicatorStore.jxs: ', indicator)
       indicator.title = indicator.name
       indicator.value = indicator.id
       indicator.displayTitle = indicator.name + ' (' + indicator.id + ')'
@@ -146,11 +144,8 @@ var IndicatorStore = Reflux.createStore({
           }
         } else if (_.isArray(indicator.parsed_tag_json)) {
           indicator.parsed_tag_json.forEach(tId => {
-            console.log('indicatorStore.jxs -- indicator.id : indicator.id ')
-            console.log('indicatorStore.jxs -- tId: ', tId)
             if (indicatorFilterType && indicator.data_format === indicatorFilterType) {
               let tagParent = tags_map[tId]
-              console.log('indicatorStore.jxs -- tagParent.children.push(indicator): ', indicator)
               tagParent.children.push(indicator)
               indicator.parentNode = tagParent
             }
