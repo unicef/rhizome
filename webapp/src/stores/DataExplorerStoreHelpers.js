@@ -88,6 +88,7 @@ const DataExplorerStoreHelpers = {
     // const zAxis = chart.z
     const groupedDatapoints = _(datapoints).groupBy('indicator.id').value()
     const index = _.indexBy(groupedDatapoints[xAxis], 'location.id')
+
     // let bubbleIndex = null
     // let gradientIndex = null
 
@@ -116,12 +117,17 @@ const DataExplorerStoreHelpers = {
       if (datapoint) {
         feature.properties[datapoint.indicator.id] = datapoint.value
       }
+      // JD -- Ensure that the index has properties for all locaitons,
+      // not just those with data
+      if (!index[feature.properties.location_id]) {
+        index[feature.properties.location_id] = locations_index[feature.properties.location_id]
+      }
     })
 
     chart.data = chart.features.map(feature => {
-      // const datapoint = index[feature.properties.location_id]
-      const datapoint = locations_index[feature.properties.location_id]
-      const properties = _.merge({}, datapoint.location, { value: datapoint['value'] })
+      const datapoint = index[feature.properties.location_id]
+      const properties = _.merge({}, datapoint.location, { value: datapoint['value'] }) || {}
+
       // if (yAxis) {
       //   const bubbleLocation = bubbleIndex[feature.properties.location_id]
       //   properties.bubbleValue = bubbleLocation['value']
