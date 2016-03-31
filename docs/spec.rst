@@ -395,14 +395,15 @@ ETL - Source Data Backend
 
 
 *Misc Rules*
-  - No datapoint can be the result of data from two documents.  In a case where there is a location/campaign/indicator dupe between two
+  - Duplicate datapoints (i.e. datapoints with an identical location, campaign and indicators) are prohibited. 
+    - If a document is uploaded which contains a duplicate datapoint from a previous document, the datapoint from the new document will override the datapoint from the old document. 
+    - If a single document contains duplicate values for a datapoint, the datapoint that appears later in the document overrides the previous datapoint. For example, if a row on line 4 contains identical location, campaign and indicator values as a row on line 7, line 7 will override line 4.
 
 
 Aggregation and Calculation
 ===========================
-
 - When a value in datapoints exists for location X, populate agg_datapoint with this value and NOT the aggregated values of X's children
-- When a value in datapoint exists for a calculated indicator, chose this value as opposed the calculated value.
+- When a value in datapoint exists for a calculated indicator, choose this value as opposed the calculated value.
 - When there is a recursive relationship bewteen "PART_OF_SUM" indicators, aggregate recursively, but allow for overrides ( as noted in the use case directly above. )
 
 As an example

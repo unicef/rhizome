@@ -552,7 +552,7 @@ class AggRefreshTestCase(TestCase):
         target_value = (x-y) / x
         self.assertEqual(round(calc_value,4),round(target_value,4))
 
-    def _recursive_sum(self):
+    def test_recursive_sum(self):
         '''
         Consider the case in which we have "number of missed children" which is
         the sum of "missed children due to absence", "missed children due to
@@ -707,7 +707,6 @@ class AggRefreshTestCase(TestCase):
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
             location_id = location_id,
-            data_date = data_date,
             indicator_id = parent_indicator,
         ).value
 
@@ -719,7 +718,6 @@ class AggRefreshTestCase(TestCase):
         sub_2_target_val = values_to_insert[sub_indicator_2.id]
         sub_2_actual_val = DataPointComputed.objects.get(
             location_id = location_id,
-            data_date = data_date,
             indicator_id = sub_indicator_2.id,
         ).value
 
