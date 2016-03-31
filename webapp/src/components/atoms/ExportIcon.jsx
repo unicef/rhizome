@@ -15,7 +15,7 @@ var ExportIcon = React.createClass({
   getDefaultProps() {
     return {
       disabled: false,
-      exportPath: window.location.href
+      exportPath: window.location.pathname
     }
   },
 
@@ -76,11 +76,14 @@ var ExportIcon = React.createClass({
     console.log('ExportIcon.exportImage')
     console.log('fileType', fileType)
     var type = 'type=' + fileType
-    var path = 'path=' + window.location.href
+    var path = 'path=' + window.location.origin + this.props.exportPath
+    console.log('window.location', window.location)
+    console.log('window.location.href', window.location.href)
+    console.log('path', path)
     this.setState({
       label: 'Fetching...',
       isFetching: true,
-      href: this.state.url + type + '&' + this.props.exportPath
+      href: this.state.url + type + '&' + path
     })
     var self = this
     var refreshIntervalId = window.setInterval(() => {
@@ -124,7 +127,7 @@ var ExportIcon = React.createClass({
     classString += this.props.disabled ? ' disabled ' : ''
 
     return (
-      <span style={{position: 'relative', top: '1px', left: '1px'}}>
+      <span style={{position: 'relative', top: '1px', left: '4px'}}>
         <DropdownIcon classes={classString} searchable={false} icon='fa-external-link'>
           <MenuItem key='jpeg' value='jpeg' title='IMAGE' sendValue={this.selectOption} />
           <MenuItem key='pdf' value='pdf'  title='PDF' sendValue={this.selectOption} />

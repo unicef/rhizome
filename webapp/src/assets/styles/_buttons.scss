@@ -26,6 +26,12 @@
     cursor: pointer;
     &:hover {
       color: $rhz-body-color;
+      i {
+        transform: scale(1.2);
+      }
+    }
+    i {
+      transition: all .4s;
     }
   }
   &.expand {

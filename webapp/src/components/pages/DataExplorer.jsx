@@ -251,7 +251,7 @@ const DataExplorer = React.createClass({
             { location_selector }
           </div>
         </div>
-        <div className='medium-9 large-10 medium-pull-3 large-pull-2 columns'>
+        <div className='medium-9 large-10 medium-pull-3 large-pull-2 columns printable'>
           <div className='row chart-header'>
             { title_bar }
           </div>

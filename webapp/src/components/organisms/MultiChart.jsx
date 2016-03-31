@@ -122,25 +122,26 @@ const MultiChart = React.createClass({
     // ACTION ICONS
     // ---------------------------------------------------------------------------
     const change_type_button = (
-      <button className='button icon-button remove-chart-button' onClick={this.props.toggleSelectTypeMode}>
-        <i className='fa fa-eye'/>
+      <button className='button icon-button left' onClick={this.props.toggleSelectTypeMode} style={{postion: 'relative', top: '0.1rem'}}>
+        <i className='fa fa-bar-chart'/>
       </button>
     )
     const remove_chart_button = this.props.removeChart ? (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.removeChart(chart.uuid)}>
+      <button className='button icon-button' onClick={() => this.props.removeChart(chart.uuid)}>
         <i className='fa fa-times'/>
       </button>
     ) : null
+
     const export_button = (
       <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
     const save_button = (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.saveChart(chart)}>
+      <button className='button icon-button' onClick={() => this.props.saveChart(chart)}>
         <i className='fa fa-save'/>
       </button>
     )
     const duplicate_chart_button = this.props.duplicateChart ? (
-      <button className='button icon-button remove-chart-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
+      <button className='button icon-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
         <i className='fa fa-copy'/>
       </button>
     ) : null
@@ -235,13 +236,13 @@ const MultiChart = React.createClass({
       <article className='multi-chart'>
         <header className='row'>
           <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
-              { change_type_button }
               { export_button }
               { duplicate_chart_button }
               { save_button }
               { remove_chart_button }
           </div>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
+            { change_type_button }
             { title_bar }
           </div>
         </header>

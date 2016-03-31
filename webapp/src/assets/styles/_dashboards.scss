@@ -67,10 +67,6 @@ $total-columns: 7;
 	.dropdown-list {
 		padding: 0 10px 10px 10px;
 	}
-	.remove-chart-button {
-    left: initial;
-    right: 1rem;
-	}
   footer.hideable {
     position: fixed;
     bottom: 6.2rem;
@@ -114,25 +110,18 @@ $total-columns: 7;
 	  }
 		.icon-button {
 			color: white;
-			&:hover i {
-				transform: scale(1.2);
-			}
-			i {
-				transition: all .4s;
-			}
+	    left: initial;
 			font-size: 1.2rem;
-			margin-right: .5rem;
-	  	padding: .7rem .3rem;
+			padding: 0.5rem 0.7rem;
 		}
 	  .chart-actions {
 			.icon-button {
 				top: 0;
 				&:last-child {
-			    margin-right: 0;
-			    padding-right: 0.5rem;
+			    padding-right: .9rem;
 			    padding-left: 1rem;
+			    margin-left: .5rem;
 					border-left: 1px solid #DBDBDB;
-			    right: 0;
 				}
 			}
 	  }

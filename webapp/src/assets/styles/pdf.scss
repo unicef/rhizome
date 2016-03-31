@@ -23,6 +23,21 @@ header {
   float: left;
 }
 
+.data-explorer {
+  & > div:not(.printable), & > footer, i.fa {
+    display: none;
+  }
+  div.printable {
+    left: initial;
+    right: initial;
+    width: 100%;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+    }
+  }
+}
+
 #eoc-dashboard-dashboard {
   width: 1425px !important;
 
