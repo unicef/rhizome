@@ -27,39 +27,37 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
-    def get_worst_performing(self, request, location_ids):
-
-        indicator_id = self.parsed_params['indicator__in'][0]
-        indicator_obj = Indicator.objects\
-            .get(id=indicator_id)
-
-        sub_location_ids = LocationTree.objects\
-            .filter(parent_location_id__in=location_ids)\
-            .values_list('location_id',flat=True)
-
-        print 'sub_location_ids'
-
-        latest_campaign = Campaign.objects\
-            .filter(id__in=self.parsed_params['campaign__in'])\
-            .order_by('-end_date')[0]
-
-        try:
-            if indicator_obj.good_bound > indicator_obj.bad_bound:
-                worst_performing = DataPointComputed.objects.filter(
-                    location_id__in=sub_location_ids,
-                    campaign=latest_campaign,
-                    indicator_id=indicator_id
-                ).order_by('value')[0].location_id
-            else:
-                worst_performing = DataPointComputed.objects.filter(
-                    location_id__in=sub_location_ids,
-                    campaign=latest_campaign,
-                    indicator_id=indicator_id
-                ).order_by('-value')[0].location_id
-        except IndexError:
-            return sub_location_ids[:1]
-
-        return [worst_performing]
+    # def get_worst_performing(self, request, location_ids):
+    #
+    #     indicator_id = self.parsed_params['indicator__in'][0]
+    #     indicator_obj = Indicator.objects\
+    #         .get(id=indicator_id)
+    #
+    #     sub_location_ids = LocationTree.objects\
+    #         .filter(parent_location_id__in=location_ids)\
+    #         .values_list('location_id',flat=True)
+    #
+    #     latest_campaign = Campaign.objects\
+    #         .filter(id__in=self.parsed_params['campaign__in'])\
+    #         .order_by('-end_date')[0]
+    #
+    #     try:
+    #         if indicator_obj.good_bound > indicator_obj.bad_bound:
+    #             worst_performing = DataPointComputed.objects.filter(
+    #                 location_id__in=sub_location_ids,
+    #                 campaign=latest_campaign,
+    #                 indicator_id=indicator_id
+    #             ).order_by('value')[0].location_id
+    #         else:
+    #             worst_performing = DataPointComputed.objects.filter(
+    #                 location_id__in=sub_location_ids,
+    #                 campaign=latest_campaign,
+    #                 indicator_id=indicator_id
+    #             ).order_by('-value')[0].location_id
+    #     except IndexError:
+    #         return sub_location_ids[:1]
+    #
+    #     return [worst_performing]
 
     def get_locations_to_return_from_url(self, request):
         '''
@@ -70,70 +68,24 @@ class BaseResource(Resource):
         1. location_id__in =
         2. parent_location_id__in =
 
-        right now -- this only filters if there is no param.. i should get the
-        permitted locations first then do an intersection with the params..
 
-        THIS IS A HOT MESS - NEED CLEAN UP
+        TO DO -- Check Location Permission so that the user can only see
+        What they are permissioned to.
         '''
 
         try:
-            chart_type = request.GET['chart_type']
-        except KeyError:
-            chart_type = ''
-
-        try:
             location_ids = request.GET['location_id__in'].split(',')
-            return location_ids
         except KeyError:
             pass
 
         try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
-
-            location_ids = list(LocationTree.objects\
-                        .filter(parent_location_id__in=pl_id_list)
-                        .values_list('location_id',flat=True))
-
-            if chart_type == 'LineChart':
-                return self.get_worst_performing(request,\
-                    location_ids)
-
-            try:
-                level = int(request.GET['tree_lvl'])
-                province_location_type_id = LocationType.objects\
-                    .get(name = 'Province').id
-
-                if level == 1 and Location.objects.get(id=pl_id_list[0])\
-                    .location_type_id == province_location_type_id:
-
-                    return location_ids
-            except KeyError:
-                pass
-
-            ## provinces ##
-            prov_and_country_ids = Location.objects\
-                .filter(location_type__name__in=['Province','Country'])\
-                .values_list('id',flat=True)
-            ## districts ##
-            dist_ids = Location.objects.filter(lpd_status__in=[1,2])\
-                .values_list('id',flat=True)
-            prov_country_and_district_ids = list(prov_and_country_ids) \
-                + list(dist_ids)
-
-            filtered_location_ids = list(set(location_ids)\
-                .intersection(set(prov_country_and_district_ids)))
-
-            return filtered_location_ids
-
+            location_ids = Location.objects\
+                .filter(parent_location_id__in = pl_id_list)
         except KeyError:
             pass
 
-        location_qs = (
-            LocationTree.objects
-            .filter(parent_location_id=self.top_lvl_location_id)
-            .values_list('location_id', flat=True)
-        )
-        return location_qs
+        return location_ids
 
 
     def dispatch(self, request_type, request, **kwargs):
