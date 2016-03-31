@@ -107,10 +107,10 @@ const Dashboard = React.createClass({
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
-      <h1 className='left'>
-        {dashboard.title || 'Untitled Dashboard'}
-        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
-        <br/ >
+      <h1 onClick={this._toggleTitleEdit} className='left'>
+        <a>
+          {dashboard.title || 'Untitled Dashboard'}
+        </a>
       </h1>
 
     const chart_components = charts.map(chart => {

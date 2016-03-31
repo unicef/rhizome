@@ -35,10 +35,10 @@ export default React.createClass({
 
   render: function () {
     return (
-      <form onSubmit={event => event.preventDefault()} className='title-input'>
+      <form onSubmit={event => event.preventDefault()} >
         <input type='text'
           ref='title_input'
-          className={this.props.className}
+          className={'title-input ' + this.props.className}
           value={this.state.text}
           onChange={this._updateText}
           onBlur={this.saveTitle}
