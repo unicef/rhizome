@@ -20,7 +20,7 @@ class LineChart extends Chart {
     yLabel: null,
     xFormat: format.timeAxis,
     yFormat: d3.format(',d'),
-    colors: palettes.blue,
+    colors: palettes.dark,
     aspect: aspects[1].lineChart,
     height: 0,
     width: 0,

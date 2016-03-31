@@ -254,7 +254,7 @@ const MultiChart = React.createClass({
             { indicator_selector }
             { location_selector }
           </aside>
-          <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns'>
+          <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-zone'>
             {
               chart.selectTypeMode
                 ? chart_type_selector : (!_.isEmpty(chart.data)
