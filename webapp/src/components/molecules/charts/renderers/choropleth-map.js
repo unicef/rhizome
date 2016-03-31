@@ -89,7 +89,7 @@ class ChoroplethMapRenderer {
     svg.attr({
       'height': map_height,
     })
-    map.attr('transform', `translate(${offset + (offset * 0.3)}, ${-offset/4})`)
+    map.attr('transform', `translate(${offset + (offset * 0.3)}, 0)`)
     location.exit().remove()
   }
 
