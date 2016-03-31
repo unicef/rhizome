@@ -604,3 +604,109 @@ url to the application:
 
     errors: {...}
   }
+
+``/api/v1/agg_refresh/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/cache_meta/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/location_map/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/indicator_id/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/chart_type/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/computed_datapoint/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/custom_chart/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/datapointentry/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/doc_datapoint/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/doc_detail_type/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/transform_upload/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/doc_detail/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/geo/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+
+``/api/v1/homepage/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+
+``/api/v1/indicator_to_tag/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/queue_process/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/refresh_master/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/source_object_map/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/source_submission/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+``/api/v1/odk_form_id/``
++++++++++++++++++++
+
+TODO - Needs documentation
+
+
+
+

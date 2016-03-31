@@ -92,7 +92,6 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
 
-        # print(response_data)
         self.assertEqual(response_data['error'], None)
         self.assertEqual(response_data['meta']["total_count"], 1)
 

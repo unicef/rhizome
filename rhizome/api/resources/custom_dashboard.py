@@ -75,7 +75,7 @@ class CustomDashboardResource(BaseModelResource):
         ## optionally add charts to the dashboard ##
         try:
             chart_uuids = post_data['chart_uuids']
-            self.upsert_chart_uuids(dashboard.id, chart_uuids.split(','))
+            self.upsert_chart_uuids(dashboard.id, chart_uuids)
         except KeyError:
             pass
 
