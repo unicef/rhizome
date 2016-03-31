@@ -275,10 +275,10 @@ var DashboardNewStore = Reflux.createStore({
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
   // =============================  Fetch Dashboard  =========================== //
-  onFetchDashboard (uuid) { console.log('Store.onFetchDashboard')
+  onFetchDashboard (uuid) { console.info('Store.onFetchDashboard')
     this.trigger(this.dashboard)
   },
-  onFetchDashboardCompleted (response) { console.log('Store.onFetchDashboardCompleted')
+  onFetchDashboardCompleted (response) { console.info('Store.onFetchDashboardCompleted')
     this.dashboard.title = response.title
     response.charts.forEach(chart => {
       const new_chart = this.meltChart(chart)
@@ -287,7 +287,7 @@ var DashboardNewStore = Reflux.createStore({
     })
     this.trigger(this.dashboard)
   },
-  onFetchDashboardFailed (error) { console.log('Store.onFetchDashboardFailed')
+  onFetchDashboardFailed (error) { console.info('Store.onFetchDashboardFailed')
     this.setState({ error: error })
   },
 
@@ -296,7 +296,7 @@ var DashboardNewStore = Reflux.createStore({
     this.dashboard.charts[uuid].loading = true
     this.trigger(this.dashboard)
   },
-  onFetchMapFeaturesCompleted (response) { console.log('Store.onFetchMapFeaturesCompleted')
+  onFetchMapFeaturesCompleted (response) { console.info('Store.onFetchMapFeaturesCompleted')
     const currently_fetching_charts = _.toArray(this.dashboard.charts).filter(chart => chart.fetching_map)
     const uuid = currently_fetching_charts[0].uuid
     this.dashboard.charts[uuid].features = response.objects.features
@@ -446,7 +446,7 @@ var DashboardNewStore = Reflux.createStore({
     return _.isNumber(value) || _.isString(value)
   },
 
-  toggleLoading (uuid) { console.log('Store.toggleLoading')
+  toggleLoading (uuid) { console.info('Store.toggleLoading')
     this.dashboard.charts[uuid].loading = true
     this.trigger(this.dashboard)
   }

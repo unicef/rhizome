@@ -32,32 +32,32 @@ class LineChart extends Chart {
   }
 
   constructor (props) {
-    console.log('LineChart.constructor')
+    console.info('LineChart.constructor')
     super(props)
     this.options = props
     // this.data = props.data
-    console.log(1)
+    console.info(1)
     const selected_locations_index = _.indexBy(props.selected_locations, 'id')
-    console.log(2)
+    console.info(2)
     const selected_indicators_index = _.indexBy(props.selected_indicators, 'id')
-    console.log(3)
-    console.log('props.groupBy', props.groupBy)
+    console.info(3)
+    console.info('props.groupBy', props.groupBy)
     const groups = props.groupBy === 'indicator' ? selected_indicators_index : selected_locations_index
-    console.log(4)
+    console.info(4)
     this.data = _(props.data).groupBy(props.groupBy)
       .map(datapoint => {
-        console.log('groups', groups)
-        console.log('datapoint', datapoint)
+        console.info('groups', groups)
+        console.info('datapoint', datapoint)
         const first_indicator = datapoint[0].indicator
-        console.log('first_indicator', first_indicator)
+        console.info('first_indicator', first_indicator)
         return {
           name: groups[first_indicator.id].name,
           values: _.sortBy(datapoint, _.method('campaign.start_date.getTime'))
         }
       })
       .value()
-      console.log(5)
-      console.log('6 - this.data', this.data)
+      console.info(5)
+      console.info('6 - this.data', this.data)
   }
 
   setOptions () {

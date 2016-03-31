@@ -14,7 +14,7 @@ class Chart extends Component {
   }
 
   componentDidMount () {
-    console.log('------ Chart.componentDidMount')
+    console.info('------ Chart.componentDidMount')
     this.container = React.findDOMNode(this)
     const options = this.setOptions()
     if (options.type === 'LineChart') {
@@ -28,14 +28,14 @@ class Chart extends Component {
   }
 
   componentDidUpdate () {
-    console.log('------ Chart.componentDidUpdate')
+    console.info('------ Chart.componentDidUpdate')
     this.options = _.defaults({}, this.props, this.options)
     const chart = this.setOptions()
     this.chart.update(this.data, this.options, this.container)
   }
 
   setOptions () {
-    console.log('------ Chart.setOptions')
+    console.info('------ Chart.setOptions')
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
@@ -43,7 +43,7 @@ class Chart extends Component {
   }
 
   render () {
-    console.log('------ Chart.render')
+    console.info('------ Chart.render')
     return (
       <svg></svg>
     )

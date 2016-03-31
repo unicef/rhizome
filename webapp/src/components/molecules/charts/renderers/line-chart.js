@@ -87,7 +87,7 @@ class LineChartRenderer {
   // LINE
   // ---------------------------------------------------------------------------
   renderLine () {
-    console.log('LineChartRenderer.renderLine')
+    console.info('LineChartRenderer.renderLine')
     const dataColorScale = d3.scale.ordinal()
       .domain(_(this.data)
         .map(this.options.seriesName)
@@ -111,7 +111,7 @@ class LineChartRenderer {
   // X AXIS
   // ---------------------------------------------------------------------------
   renderXAxis () {
-    console.log('LineChartRenderer.renderXAxis')
+    console.info('LineChartRenderer.renderXAxis')
     this.svg.select('.x.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.xFormat)
@@ -128,7 +128,7 @@ class LineChartRenderer {
   // Y AXIS
   // ---------------------------------------------------------------------------
   renderYAxis () {
-    console.log('LineChartRenderer.renderYAxis')
+    console.info('LineChartRenderer.renderYAxis')
     const gy = this.svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.yFormat)
@@ -147,7 +147,7 @@ class LineChartRenderer {
   // HOVERLINE
   // ---------------------------------------------------------------------------
   renderHoverline () {
-    console.log('LineChartRenderer.renderHoverline')
+    console.info('LineChartRenderer.renderHoverline')
     this.svg.attr('class', 'line')
       .call(hoverLine()
         .width(this.width)
@@ -174,7 +174,7 @@ class LineChartRenderer {
   // LABELS
   // ---------------------------------------------------------------------------
   renderLabels () {
-    console.log('LineChartRenderer.renderLabels')
+    console.info('LineChartRenderer.renderLabels')
     this.labels = _(this.data)
       .map(d => {
         const last = _.max(this.options.values(d), this.options.x)
