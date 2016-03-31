@@ -51,16 +51,17 @@ let EntryFormStore = Reflux.createStore({
       api.campaign(null, null, {'cache-control': 'no-cache'}),
       api.locations(),
       api.indicators({ read_write: 'w' }, null, {'cache-control': 'no-cache'})])
-    .then(_.spread(function (tags, indicatorsToTags, campaigns, locations, indicators) {
-      let indicatorToTagsResult = _(indicatorsToTags.objects)
+    .then(_.spread(function (tags, indicatorToTags, campaigns, locations, indicators) {
+      let indicatorToTagsResult = _(indicatorToTags.objects)
         .map(indToTag => {
           return {
             'id': indToTag.id,
-            'indicator_tag_id': indToTag.indicator_tag_id,
+            'value': indToTag.indicator_tag_id,
             'name': indToTag.indicator__short_name,
             'title': indToTag.indicator_tag__tag_name
           }
         }).value()
+
       self.data.indicatorsToTags = indicatorToTagsResult
       let tagResult = _(tags.objects)
         .map(tag => {

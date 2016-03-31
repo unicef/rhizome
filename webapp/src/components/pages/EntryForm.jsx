@@ -38,6 +38,7 @@ let EntryForm = React.createClass({
     if (campaignObj) {
       campaignName = campaignObj.name
     }
+    console.log('this.state.apiResponseData', this.state.apiResponseData)
     return (
       <div className='row'>
         <form>
