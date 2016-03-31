@@ -64,6 +64,8 @@ class LocationResourceTest(ResourceTestCase):
         self.assertEqual(self.top_lvl_location.id,\
             response_data['meta']['top_lvl_location_id'])
 
-        self.assertEqual(len(response_data['objects']), 2)
+        # https://trello.com/c/3kxd6hCc/1134-bring-back-ability-to-filter-locations-based-on-user-peromissions
+        # self.assertEqual(len(response_data['objects']), 2)
+        self.assertEqual(len(response_data['objects']), len(Location.objects.all()))
 
         # self.assertNotEqual(IndicatorTag.objects.all()[0].id, -1)
