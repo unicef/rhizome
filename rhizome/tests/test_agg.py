@@ -342,6 +342,7 @@ class AggRefreshTestCase(TestCase):
         2.  We can use the result of #2 as the denominator for a percentage
             calculation.
         '''
+        Indicator.objects.all().delete()
 
         data_date, location_id, agg_location_id = '2016-01-01',12910,12907
         val_1, val_2, val_3 = 303, 808, 909
@@ -635,7 +636,7 @@ class AggRefreshTestCase(TestCase):
         sum_target_value = val_1 + val_2
         self.assertEqual(calc_value_sum,sum_target_value)
 
-    def _recursive_sum(self):
+    def test_recursive_sum(self):
         '''
         Consider the case in which we have "number of missed children" which is
         the sum of "missed children due to absence", "missed children due to
@@ -650,6 +651,8 @@ class AggRefreshTestCase(TestCase):
         '''
 
         data_date, location_id = '2016-01-01',12910
+
+        Indicator.objects.all().delete()
 
         parent_indicator = Indicator.objects.create(
             name = 'Number of Avoidable Deaths',
@@ -773,13 +776,13 @@ class AggRefreshTestCase(TestCase):
         ## create all the datapoints ##
 
         values_to_insert = {
-            sub_indicator_2.id: 22,
-            sub_indicator_3.id: 33,
-            sub_sub_indicator_1.id: 33,
-            sub_sub_indicator_2.id: 44,
-            sub_sub_indicator_3.id: 55,
-            sub_indicator_2_sub_1.id: 66,
-            sub_indicator_2_sub_2.id: 77,
+            sub_indicator_2.id: 33,
+            sub_indicator_3.id: 44,
+            sub_sub_indicator_1.id: 44,
+            sub_sub_indicator_2.id: 55,
+            sub_sub_indicator_3.id: 66,
+            sub_indicator_2_sub_1.id: 77,
+            sub_indicator_2_sub_2.id: 88,
         }
 
         for k,v in values_to_insert.iteritems():
