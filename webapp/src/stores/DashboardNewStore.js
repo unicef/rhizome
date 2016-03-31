@@ -148,13 +148,13 @@ var DashboardNewStore = Reflux.createStore({
   onSelectLocation (id, uuid) {console.info('- Store.onSelectLocation')
     this.toggleLoading(uuid)
     if (typeof id === 'string' && id.indexOf('lpd') > -1) {
-      return this.addLocationsByLpdStatus(id)
+      return this.addLocationsByLpdStatus(id, uuid)
     }
     this.dashboard.charts[uuid].selected_locations.push(this.locations.index[id])
     this.updateChart(uuid)
   },
-  addLocationsByLpdStatus (uuid) {
-    let locations_to_add = this.locations.lpd_statuses.find(lpd_status => lpd_status.value === index)
+  addLocationsByLpdStatus (id, uuid) {
+    let locations_to_add = this.locations.lpd_statuses.find(lpd_status => lpd_status.value === id)
     locations_to_add.location_ids.forEach(location_id => {
       if (this.dashboard.charts[uuid].selected_locations.map(item => item.id).indexOf(location_id) >= 0) {
         return
