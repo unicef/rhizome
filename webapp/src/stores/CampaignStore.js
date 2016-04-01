@@ -18,8 +18,7 @@ var CampaignStore = Reflux.createStore({
     raw: null,
     index: null,
     filtered: [],
-    list: [],
-    selected: []
+    list: []
   },
 
   init () {
