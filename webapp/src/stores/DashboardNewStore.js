@@ -230,6 +230,7 @@ var DashboardNewStore = Reflux.createStore({
 
   // ============================  Chart Properties =========================== //
   onSetDateRange (key, value, uuid) { // console.info('- Store.onSetDateRange')
+    this.toggleLoading(uuid)
     const full_key = key + '_date'
     this.dashboard.charts[uuid][full_key] = value
     this.updateChart(uuid)
