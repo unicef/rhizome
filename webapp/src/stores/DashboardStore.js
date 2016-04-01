@@ -169,15 +169,23 @@ var DashboardStore = Reflux.createStore({
 
   // ===============================  Post Chart  ============================= //
   onPostDashboard () {
-    console.log('DashboardStore.onPostDashboard')
     this.trigger({ dashboards: null })
   },
   onPostDashboardCompleted (response) {
-    console.log('DashboardStore.onPostDashboardCompleted')
     DashboardActions.fetchDashboards()
   },
   onPostDashboardFailed (error) {
-    console.log('DashboardStore.onPostDashboardFailed')
+    this.setState({ error: error })
+  },
+
+  // ===============================  Delete Dashboard  ============================ //
+  onDeleteDashboard () {
+    this.trigger({ dashboards: null })
+  },
+  onDeleteDashboardCompleted (response) {
+    DashboardActions.fetchDashboards()
+  },
+  onDeleteDashboardFailed (error) {
     this.setState({ error: error })
   }
 })

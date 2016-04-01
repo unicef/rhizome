@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
+import DashboardActions from 'actions/DashboardActions'
 import DashboardAPI from 'data/requests/DashboardAPI'
 
 export default React.createClass({
@@ -17,6 +18,12 @@ export default React.createClass({
     })
   },
 
+  deleteDashboard (id) {
+    if (confirm('Are you sure you want to delete this chart?')) {
+      DashboardActions.deleteDashboard(id)
+    }
+  },
+
   render () {
     let rows = <tr><td colSpan='3'>No custom dashboards created yet.</td></tr>
 
@@ -28,6 +35,11 @@ export default React.createClass({
           <tr>
             <td>
               <a href={'/dashboards/' + dashboard.id + '/'}>{dashboard.title} </a>
+            </td>
+            <td>
+              <a onClick={() => this.deleteDashboard(dashboard.id) }>
+                <i className='fa fa-trash'></i> Delete
+              </a>
             </td>
           </tr>
         )
