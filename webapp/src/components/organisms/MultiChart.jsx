@@ -198,6 +198,7 @@ const MultiChart = React.createClass({
         reorderIndicator={this.props.reorderIndicator}
         classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multi_indicator}
+        avoidBooleans={chart.type === 'LineChart'}
       />
     )
 
