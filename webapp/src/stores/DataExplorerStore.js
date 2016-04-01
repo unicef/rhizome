@@ -324,8 +324,9 @@ var DataExplorerStore = Reflux.createStore({
 
     switch (chart.type) {
       case 'LineChart':
-        return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
-      // case 'PieChart':
+        // return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
+        chart.data = melted_datapoints
+        return chart
         // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.chart.selected_indicators, layout)
       case 'ChoroplethMap':
         return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)

@@ -49,12 +49,14 @@ const Dashboard = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    this.allChartsReady = true
-    _.toArray(nextState.dashboard.charts).forEach(chart => {
-      const missing_params = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
-      this.allChartsReady = (chart.data && chart.data.length > 1) || missing_params
-    })
-    return this.allChartsReady
+    const charts = _.toArray(nextState.dashboard.charts)
+    this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
+    this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
+    this.loading_charts = charts.filter(chart => chart.loading).length
+    // console.log('missing_params', this.missing_params)
+    // console.log('missing_data', this.missing_data)
+    // console.log('loading_charts', this.loading_charts)
+    return !this.missing_data || this.missing_params || this.loading_charts
   },
 
   _toggleTitleEdit (title) {
@@ -86,7 +88,6 @@ const Dashboard = React.createClass({
       title: dashboard.title,
       chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
-    console.log('query', query)
     DashboardActions.postDashboard(query)
   },
 
@@ -154,7 +155,7 @@ const Dashboard = React.createClass({
         </div>
       )
     })
-    const loading = !charts.length > 0 || !this.allChartsReady
+    const loading = !charts.length > 0
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>

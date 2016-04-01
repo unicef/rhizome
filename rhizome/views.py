@@ -1,11 +1,10 @@
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.core.urlresolvers import reverse_lazy, reverse, resolve
 from django.views import generic
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.decorators import user_passes_test
 from django.template import Template, context, RequestContext
-from django.shortcuts import get_object_or_404
 from django.conf import settings
 
 from rhizome.models import *
@@ -67,6 +66,12 @@ def dashboard_create(request, dashboard_id=None):
     return render_to_response('dashboards/create.html',
                               context_instance=RequestContext(request))
 def dashboard(request, dashboard_id=None):
+
+    try:
+        CustomDashboard.objects.get(id=dashboard_id)
+    except CustomDashboard.DoesNotExist:
+        return HttpResponseRedirect('/dashboards/create')
+
     return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 def builtin_dashboard(request, dashboard_slug=None):

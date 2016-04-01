@@ -83,7 +83,7 @@ class BaseResource(Resource):
         try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             location_ids = Location.objects\
-                .filter(parent_location_id__in = pl_id_list)
+                .filter(parent_location_id__in = pl_id_list).values_list('id', flat=True)
         except KeyError:
             pass
 

@@ -15,5 +15,12 @@ export default {
         fulfill(dashboard.objects)
       })
     })
+  },
+
+  deleteDashboard (id) {
+    let fetch = api.endPoint('/custom_dashboard/' + id, 'delete', 1)
+    return new Promise(function (fulfill, reject) {
+      fetch(null, null, {'cache-control': 'no-cache'}).then(dashboard => fulfill(dashboard))
+    })
   }
 }
