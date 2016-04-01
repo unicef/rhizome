@@ -51,7 +51,8 @@ const Dashboard = React.createClass({
   shouldComponentUpdate(nextProps, nextState) {
     this.allChartsReady = true
     _.toArray(nextState.dashboard.charts).forEach(chart => {
-      this.allChartsReady = chart.data && chart.data.length > 1
+      const missing_params = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
+      this.allChartsReady = (chart.data && chart.data.length > 1) || missing_params
     })
     return this.allChartsReady
   },
