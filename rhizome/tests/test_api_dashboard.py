@@ -127,6 +127,29 @@ class DashboardResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertValidJSONResponse(resp)
 
+    def test_delete_dashboard(self):
+
+        CustomDashboard.objects.all().delete()
+
+        ## create a dashboard ##
+        d = CustomDashboard.objects.create(title='Dashboard')
+        self.assertEqual(1, len(CustomDashboard.objects.all()))
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+
+        ## relate the charts to the dashboard ##
+        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c1.id)
+        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c2.id)    
+
+        resp = self.api_client.delete('/api/v1/custom_dashboard/?id=%s' %d.id, format='json',
+                                   authentication=self.get_credentials())
+
+        self.assertHttpAccepted(resp)
+        self.assertEqual(0, len(CustomDashboard.objects.all()))
 
     ## FIXME! ##
     # def test_delete_dashboard(self):

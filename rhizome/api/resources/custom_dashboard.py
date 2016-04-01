@@ -95,11 +95,11 @@ class CustomDashboardResource(BaseModelResource):
         ChartToDashboard.objects.bulk_create(batch)
 
     def obj_delete_list(self, bundle, **kwargs):
-        """
-        """
-
         obj_id = int(bundle.request.GET[u'id'])
         CustomDashboard.objects.filter(id=obj_id).delete()
+
+    def obj_delete(self, bundle, **kwargs):
+        CustomDashboard.objects.get(id=kwargs['pk']).delete()
 
     def get_object_list(self, request):
         '''
@@ -110,3 +110,4 @@ class CustomDashboardResource(BaseModelResource):
             return CustomDashboard.objects.filter(id=dash_id).values()
         except KeyError:
             return CustomDashboard.objects.all().values()
+
