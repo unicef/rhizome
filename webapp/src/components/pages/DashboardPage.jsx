@@ -49,12 +49,10 @@ const Dashboard = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    this.allChartsReady = true
-    _.toArray(nextState.dashboard.charts).forEach(chart => {
-      const missing_params = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
-      this.allChartsReady = (chart.data && chart.data.length > 1) || missing_params
-    })
-    return this.allChartsReady
+    const charts = _.toArray(nextState.dashboard.charts)
+    const missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
+    const missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
+    return !missing_data || missing_params
   },
 
   _toggleTitleEdit (title) {
