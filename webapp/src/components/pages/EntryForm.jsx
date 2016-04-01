@@ -17,27 +17,8 @@ let EntryForm = React.createClass({
   },
 
   render () {
-    let formIdSelected = this.state.formIdSelected
-    let formName = 'Select Form'
-    let indicatorSelected = []
-    if (formIdSelected) {
-      let formDef = _.find(this.state.tags,
-        function (d) { return d.value === formIdSelected })
-      formName = formDef.title
-      EntryFormActions.filterIndicators(formName)
-      indicatorSelected = this.state.filteredIndicators
-    }
-    let campaignIdSelected = this.state.campaignIdSelected
-    let campaignName = 'Select Campaign'
-    let campaignObj = null;
-    if (campaignIdSelected) {
-      campaignObj = _.find(this.state.campaigns,
-        function (c) { return c.id.toString() === campaignIdSelected })
-    }
-
-    if (campaignObj) {
-      campaignName = campaignObj.name
-    }
+      console.log('this.state.selected.campaign', this.state.selected.campaign)
+    console.info('Render: EntryForm')
     return (
       <div className='row'>
         <form>
@@ -48,7 +29,7 @@ let EntryForm = React.createClass({
               items={this.state.tags}
               sendValue={EntryFormActions.setForm}
               item_plural_name='Forms'
-              text={formName}
+              text={this.state.selected.form.title}
               icon=''/>
             <br /><br />
             <label htmlFor='campaigns'><h3>Campaign</h3></label>
@@ -56,12 +37,11 @@ let EntryForm = React.createClass({
               items={this.state.campaigns}
               sendValue={EntryFormActions.setCampaign}
               item_plural_name='Campaign'
-              text={campaignName}
-              title_field='name'
+              text={this.state.selected.campaign.title}
               value_field='id'
+              title_field='name'
               icon=''
               uniqueOnly/>
-
             <br /><br />
             <label htmlFor='locations'><h3>Locations</h3></label>
             <DropdownMenu
@@ -85,7 +65,7 @@ let EntryForm = React.createClass({
           <DatabrowserTable
             data={this.state.apiResponseData}
             selected_locations={this.state.locationSelected}
-            selected_indicators={indicatorSelected}
+            selected_indicators={this.state.filteredIndicators}
             editable />
         </div>
       </div>
