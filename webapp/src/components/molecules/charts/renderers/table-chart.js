@@ -11,7 +11,7 @@ class TableChartRenderer {
     this.container = container
     this.options = options
     this.data = data
-    this.h = Math.max(data.length * options.cellHeight, 0)
+    this.h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     this.z = 160 //  extra margin space needed to add the "z" (parent) axis
     this.w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
     this.xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
@@ -55,7 +55,7 @@ class TableChartRenderer {
     const calculatedHeightScale = 1 + (this.options.headers.length - 8) / 10
     const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
     const viewBoxWidth = this.w + this.margin.left + this.margin.right - 150
-    const viewBox = '0 -50 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.margin.bottom + 50)
+    const viewBox = '0 -50 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.h)
     this.svg.attr({
       'viewBox': viewBox,
       'width': (this.w + this.margin.left + this.margin.right),
