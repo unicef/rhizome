@@ -67,6 +67,12 @@ def dashboard_create(request, dashboard_id=None):
     return render_to_response('dashboards/create.html',
                               context_instance=RequestContext(request))
 def dashboard(request, dashboard_id=None):
+
+    try:
+        CustomDashboard.objects.get(id=dashboard_id)
+    except CustomDashboard.DoesNotExist:
+        return render_to_response('dashboards/create.html', context_instance=RequestContext(request))
+
     return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
 def builtin_dashboard(request, dashboard_slug=None):
