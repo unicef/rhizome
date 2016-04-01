@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import Placeholder from 'components/molecules/Placeholder'
 import MultiChart from 'components/organisms/MultiChart'
 import TitleInput from 'components/molecules/TitleInput'
 
@@ -45,6 +46,14 @@ const Dashboard = React.createClass({
         }
       }
     })
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    this.allChartsReady = true
+    _.toArray(nextState.dashboard.charts).forEach(chart => {
+      this.allChartsReady = chart.data && chart.data.length > 1
+    })
+    return this.allChartsReady
   },
 
   _toggleTitleEdit (title) {
@@ -144,7 +153,7 @@ const Dashboard = React.createClass({
         </div>
       )
     })
-
+    const loading = !charts.length > 0 || !this.allChartsReady
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
@@ -155,15 +164,18 @@ const Dashboard = React.createClass({
             <button className='button right' onClick={this.saveDashboard}>Save Dashboard</button>
           </div>
         </header>
-        { chart_components }
-        <div className='row text-center'>
-          <button
-            className='button large'
-            onClick={DashboardNewActions.addChart}
-            style={{marginTop: '1rem'}}>
-            Add Chart
-          </button>
-        </div>
+        { loading ? <Placeholder height={600} /> : chart_components}
+        { loading ? null : (
+            <div className='row text-center'>
+              <button
+                className='button large'
+                onClick={DashboardNewActions.addChart}
+                style={{marginTop: '1rem'}}>
+                Add Chart
+              </button>
+            </div>
+          )
+        }
       </section>
     )
   }
