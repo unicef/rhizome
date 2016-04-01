@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import Placeholder from 'components/molecules/Placeholder'
 import MultiChart from 'components/organisms/MultiChart'
 import TitleInput from 'components/molecules/TitleInput'
 
@@ -45,6 +46,15 @@ const Dashboard = React.createClass({
         }
       }
     })
+  },
+
+  shouldComponentUpdate(nextProps, nextState) {
+    this.allChartsReady = true
+    _.toArray(nextState.dashboard.charts).forEach(chart => {
+      const missing_params = _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)
+      this.allChartsReady = (chart.data && chart.data.length > 1) || missing_params
+    })
+    return this.allChartsReady
   },
 
   _toggleTitleEdit (title) {
@@ -107,10 +117,10 @@ const Dashboard = React.createClass({
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
-      <h1 className='left'>
-        {dashboard.title || 'Untitled Dashboard'}
-        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
-        <br/ >
+      <h1 onClick={this._toggleTitleEdit} className='left'>
+        <a>
+          {dashboard.title || 'Untitled Dashboard'}
+        </a>
       </h1>
 
     const chart_components = charts.map(chart => {
@@ -144,7 +154,7 @@ const Dashboard = React.createClass({
         </div>
       )
     })
-
+    const loading = !charts.length > 0 || !this.allChartsReady
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
@@ -155,15 +165,18 @@ const Dashboard = React.createClass({
             <button className='button right' onClick={this.saveDashboard}>Save Dashboard</button>
           </div>
         </header>
-        { chart_components }
-        <div className='row text-center'>
-          <button
-            className='button large'
-            onClick={DashboardNewActions.addChart}
-            style={{marginTop: '1rem'}}>
-            Add Chart
-          </button>
-        </div>
+        { loading ? <Placeholder height={600} /> : chart_components}
+        { loading ? null : (
+            <div className='row text-center'>
+              <button
+                className='button large'
+                onClick={DashboardNewActions.addChart}
+                style={{marginTop: '1rem'}}>
+                Add Chart
+              </button>
+            </div>
+          )
+        }
       </section>
     )
   }

@@ -49,13 +49,26 @@ $total-columns: 7;
 .dashboard {
 	.dashboard-header {
 		background: $rhz-footer-bg-color;
+		border-top: 1px solid black;
 		h1 {
 			padding: .8rem 0 .5rem 1rem;
+			margin-top: 0;
+			a {
+				cursor: text;
+			}
 		}
 		h1, i {
 			color: white;
 		}
-		form.title-input {
+		form .icon-button {
+	    font-size: 1.3rem;
+	    top: 0.7rem;
+	    margin-right: 0.2rem;
+		}
+		.title-input {
+			margin-left: .55rem;
+			text-align: left;
+			text-transform: uppercase;
 			position: relative;
 			top: .8rem;
 		}
@@ -90,14 +103,6 @@ $total-columns: 7;
 	margin-bottom: 2rem;
 	header {
 		background: $rhz-navigation-hover-bg-color;
-		h1, input, .icon-button {
-			position: relative;
-			z-index: 300;
-		}
-		input {
-			margin: 0;
-			top: -.1rem;
-		}
 	  h1, h2, h3, h4, h5, h6, p {
 	  	text-transform: none;
 	  	position: relative;
@@ -108,6 +113,19 @@ $total-columns: 7;
 	  	margin: 0;
 	    color: white;
 	  }
+		h1, input, .icon-button {
+			position: relative;
+			z-index: 300;
+		}
+		h2 {
+			margin-top: 0.4rem;
+			display: inline-block;
+		}
+		form {
+			.icon-button {
+				top: .1rem;
+			}
+		}
 		.icon-button {
 			color: white;
 	    left: initial;
@@ -137,7 +155,7 @@ $total-columns: 7;
 		padding: 3rem 0;
 	}
 	aside {
-		background: #DBDBDB;
+		background: #F1F1F1;
 		border-left: 1px solid $rhz-navigation-hover-bg-color;
 		padding-top: 1rem;
 		.dropdown-list {

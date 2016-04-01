@@ -214,7 +214,7 @@ function label () {
       labels.enter().append('circle')
         .attr('class', cls.join(' '))
         .attr({
-          'r': 2,
+          'r': 3,
           'cy': y,
           'cx': x
         })

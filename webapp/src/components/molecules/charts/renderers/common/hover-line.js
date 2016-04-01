@@ -298,7 +298,7 @@ function hoverLine () {
     svg.selectAll('.series.label')
       .transition()
       .duration(300)
-      .style('opacity', 0)
+      .style('opacity', 1)
   }
 
   function onMouseOut () {

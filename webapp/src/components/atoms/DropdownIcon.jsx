@@ -1,4 +1,5 @@
 import React from 'react'
+import IconButton from 'components/atoms/IconButton'
 
 var DropdownIcon = React.createClass({
 
@@ -28,9 +29,7 @@ var DropdownIcon = React.createClass({
 
   render: function () {
     return (
-      <button className='button icon-button' onClick={this._toggleMenu}>
-        <i className={'fa ' + this.props.icon}/>
-      </button>
+      <IconButton {...this.props} />
     )
   }
 })

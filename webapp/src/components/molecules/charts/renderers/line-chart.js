@@ -2,6 +2,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import hoverLine from 'components/molecules/charts/renderers/common/hover-line'
 import axisLabel from 'components/molecules/charts/renderers/common/axis-label'
+import label from 'components/molecules/charts/renderers/common/label'
 
 class LineChartRenderer {
   constructor (data, options, container) {
@@ -41,7 +42,7 @@ class LineChartRenderer {
   }
 
   render () {
-    console.info('------- LineChartRenderer.render')
+    // console.info('------- LineChartRenderer.render')
     this.renderLine()
     this.renderLabels()
     this.renderXAxis()
@@ -55,7 +56,7 @@ class LineChartRenderer {
   // =========================================================================== //
 
   prepContainer () {
-    console.info('------- LineChartRenderer.prepContainer')
+    // console.info('------- LineChartRenderer.prepContainer')
     this.svg.attr({
       'class': 'line',
       'viewBox': '0 0 ' + this.width + ' ' + this.height,
@@ -87,7 +88,7 @@ class LineChartRenderer {
   // LINE
   // ---------------------------------------------------------------------------
   renderLine () {
-    console.info('LineChartRenderer.renderLine')
+    // console.info('LineChartRenderer.renderLine')
     const dataColorScale = d3.scale.ordinal()
       .domain(_(this.data)
         .map(this.options.seriesName)
@@ -111,7 +112,7 @@ class LineChartRenderer {
   // X AXIS
   // ---------------------------------------------------------------------------
   renderXAxis () {
-    console.info('LineChartRenderer.renderXAxis')
+    // console.info('LineChartRenderer.renderXAxis')
     this.svg.select('.x.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.xFormat)
@@ -128,13 +129,13 @@ class LineChartRenderer {
   // Y AXIS
   // ---------------------------------------------------------------------------
   renderYAxis () {
-    console.info('LineChartRenderer.renderYAxis')
+    // console.info('LineChartRenderer.renderYAxis')
     const gy = this.svg.select('.y.axis')
       .call(d3.svg.axis()
         .tickFormat(this.options.yFormat)
         .tickSize(this.width - 25)
         .tickPadding(30)
-        .ticks(4)
+        .ticks(5)
         .scale(this.yScale)
         .orient('right'))
     gy.selectAll('line').attr('transform', 'translate(25, 0)')
@@ -147,7 +148,7 @@ class LineChartRenderer {
   // HOVERLINE
   // ---------------------------------------------------------------------------
   renderHoverline () {
-    console.info('LineChartRenderer.renderHoverline')
+    // console.info('LineChartRenderer.renderHoverline')
     this.svg.attr('class', 'line')
       .call(hoverLine()
         .width(this.width)
@@ -174,27 +175,24 @@ class LineChartRenderer {
   // LABELS
   // ---------------------------------------------------------------------------
   renderLabels () {
-    console.info('LineChartRenderer.renderLabels')
-    this.labels = _(this.data)
-      .map(d => {
-        const last = _.max(this.options.values(d), this.options.x)
-        const v = this.options.y(last)
-        return {
-          text: this.options.seriesName(d) + ' ' + this.options.yFormat(v),
-          x: this.x(last),
-          y: this.y(last),
-          defined: _.isFinite(v)
-        }
-      })
-      .filter('defined')
-      .sortBy('y')
-      .value()
-    if (this.options.xLabel || this.options.yLabel) {
-      this.svg.call(axisLabel()
-      .data(this.options.xLabel, this.options.yLabel)
-      .width(this.width)
-      .height(this.height)
-      .margin(this.margin))
+    // console.info('LineChartRenderer.renderLabels')
+    if (this.data.length === 1) {
+      this.labels = _(this.data)
+        .map(d => {
+          return d.values.map(datapoint => {
+            const v = this.options.y(datapoint)
+            return {
+              // text: this.options.seriesName(d) + ' ' + this.options.yFormat(v),
+              x: this.x(datapoint),
+              y: this.y(datapoint),
+              defined: _.isFinite(v)
+            }
+          })
+        })
+        // .filter('defined')
+        .sortBy('y')
+        .value()
+      this.labels = this.labels[0]
     }
   }
 

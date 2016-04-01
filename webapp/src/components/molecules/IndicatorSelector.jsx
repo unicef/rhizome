@@ -20,11 +20,13 @@ const IndicatorSelector = React.createClass({
     clearSelectedIndicators: PropTypes.func,
     reorderIndicator: PropTypes.func,
     classes: PropTypes.string,
-    multi: PropTypes.bool
+    multi: PropTypes.bool,
+    avoidBooleans: PropTypes.bool
   },
 
   getDefaultProps () {
     return {
+      avoidBooleans: false,
       multi: false,
       selected_indicators: []
     }
@@ -67,7 +69,7 @@ const IndicatorSelector = React.createClass({
           <h3>Indicator</h3>
           <IndicatorTitleMenu
             idsToRender={raw_indicators.map(indicator => indicator.id)}
-            indicators={raw_indicators}
+            indicators={props.avoidBooleans ? raw_indicators.filter(i => i.data_format !== 'bool') : raw_indicators}
             selected={props.selected_indicators[0]}
             sendValue={props.setIndicators}
           />

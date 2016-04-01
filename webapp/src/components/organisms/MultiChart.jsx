@@ -4,6 +4,7 @@ import {DropdownList} from 'react-widgets'
 import Reflux from 'reflux'
 import moment from 'moment'
 
+import IconButton from 'components/atoms/IconButton'
 import ExportIcon from 'components/atoms/ExportIcon'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
@@ -80,7 +81,7 @@ const MultiChart = React.createClass({
   },
 
   render () {
-    // console.info('MultiChart.RENDER ==========================================')
+    console.info('MultiChart.'+ this.props.chart.title +'.RENDER ==========================================')
     const chart = this.props.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
@@ -94,9 +95,9 @@ const MultiChart = React.createClass({
       <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
       :
       <h2>
-        {chart.title || 'Untitled Chart'}
-        <a className='button icon-button' onClick={this._toggleTitleEdit}><i className='fa fa-pencil'/></a>
-        <br/ >
+        <a onClick={this._toggleTitleEdit} style={{cursor: 'text'}}>
+          {chart.title || 'Untitled Chart'}
+        </a>
       </h2>
 
     const chart_type_selector = (
@@ -122,28 +123,36 @@ const MultiChart = React.createClass({
     // ACTION ICONS
     // ---------------------------------------------------------------------------
     const change_type_button = (
-      <button className='button icon-button left' onClick={this.props.toggleSelectTypeMode} style={{postion: 'relative', top: '0.1rem'}}>
-        <i className='fa fa-bar-chart'/>
-      </button>
+      <IconButton
+        icon='fa-bar-chart'
+        text='Change chart type'
+        onClick={this.props.toggleSelectTypeMode}
+        className='left'
+      />
     )
-    const remove_chart_button = this.props.removeChart ? (
-      <button className='button icon-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times'/>
-      </button>
-    ) : null
-
     const export_button = (
       <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
-    const save_button = (
-      <button className='button icon-button' onClick={() => this.props.saveChart(chart)}>
-        <i className='fa fa-save'/>
-      </button>
-    )
     const duplicate_chart_button = this.props.duplicateChart ? (
-      <button className='button icon-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy'/>
-      </button>
+      <IconButton
+        icon='fa-copy'
+        text='Duplicate'
+        onClick={() => this.props.duplicateChart(chart.uuid)}
+      />
+    ) : null
+    const save_button = (
+      <IconButton
+        icon='fa-save'
+        text='Save'
+        onClick={() => this.props.saveChart(chart.uuid)}
+      />
+    )
+    const remove_chart_button = this.props.removeChart ? (
+      <IconButton
+        icon='fa-times'
+        text='Remove'
+        onClick={() => this.props.removeChart(chart.uuid)}
+      />
     ) : null
 
     // SIDEBAR
@@ -198,6 +207,7 @@ const MultiChart = React.createClass({
         reorderIndicator={this.props.reorderIndicator}
         classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multi_indicator}
+        avoidBooleans={chart.type === 'LineChart'}
       />
     )
 
@@ -236,10 +246,10 @@ const MultiChart = React.createClass({
       <article className='multi-chart'>
         <header className='row'>
           <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
-              { export_button }
-              { duplicate_chart_button }
-              { save_button }
-              { remove_chart_button }
+            { export_button }
+            { duplicate_chart_button }
+            { save_button }
+            { remove_chart_button }
           </div>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
             { change_type_button }

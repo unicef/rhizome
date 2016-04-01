@@ -116,6 +116,11 @@
 }
 
 .date-range-picker {
+  input {
+    height: auto;
+    padding: .1rem .5rem 0 .5rem;
+    font-size: .8rem;
+  }
   & > span {
     padding: 1.8%;
   }
