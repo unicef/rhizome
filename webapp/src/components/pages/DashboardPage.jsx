@@ -50,9 +50,12 @@ const Dashboard = React.createClass({
 
   shouldComponentUpdate(nextProps, nextState) {
     const charts = _.toArray(nextState.dashboard.charts)
-    const missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
-    const missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
-    return !missing_data || missing_params
+    this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
+    this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
+    // console.log('missing_params', this.missing_params)
+    // console.log('missing_data', this.missing_data)
+    // console.log('!missing_data || missing_params', !this.missing_data || this.missing_params)
+    return !this.missing_data || this.missing_params ? true : false
   },
 
   _toggleTitleEdit (title) {
@@ -84,7 +87,6 @@ const Dashboard = React.createClass({
       title: dashboard.title,
       chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
     }
-    console.log('query', query)
     DashboardActions.postDashboard(query)
   },
 
@@ -152,7 +154,7 @@ const Dashboard = React.createClass({
         </div>
       )
     })
-    const loading = !charts.length > 0 || !this.allChartsReady
+    const loading = !charts.length > 0
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
