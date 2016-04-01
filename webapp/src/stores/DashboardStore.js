@@ -26,10 +26,10 @@ var DashboardStore = Reflux.createStore({
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
   // =============================  Fetch Dashboards  ========================== //
-  onFetchDashboards () {
+  onFetchDashboards () { console.info('DashboardStore.onFetchDashboards')
     this.trigger(this.dashboards)
   },
-  onFetchDashboardsCompleted (response) {
+  onFetchDashboardsCompleted (response) { console.info('DashboardStore.onFetchDashboardsCompleted')
     const dashboards = response.objects[0].dashboards || response.objects
     this.dashboards.raw = dashboards
     this.dashboards.meta = response.meta
@@ -44,29 +44,29 @@ var DashboardStore = Reflux.createStore({
     .value()
     this.trigger(this.dashboards)
   },
-  onFetchDashboardsFailed (error) {
+  onFetchDashboardsFailed (error) { console.info('DashboardStore.onFetchDashboardsFailed')
     this.setState({ error: error })
   },
 
   // ===============================  Post Chart  ============================= //
-  onPostDashboard () {
+  onPostDashboard () { console.info('DashboardStore.onPostDashboard')
     this.trigger(this.dashboards)
   },
-  onPostDashboardCompleted (response) {
+  onPostDashboardCompleted (response) { console.info('DashboardStore.onPostDashboardCompleted')
     DashboardActions.fetchDashboards()
   },
-  onPostDashboardFailed (error) {
+  onPostDashboardFailed (error) { console.info('DashboardStore.onPostDashboardFailed')
     this.setState({ error: error })
   },
 
   // ===============================  Delete Dashboard  ============================ //
-  onDeleteDashboard () {
+  onDeleteDashboard () { console.info('DashboardStore.onDeleteDashboard')
     this.trigger(this.dashboards)
   },
-  onDeleteDashboardCompleted (response) {
+  onDeleteDashboardCompleted (response) { console.info('DashboardStore.onDeleteDashboardCompleted')
     DashboardActions.fetchDashboards()
   },
-  onDeleteDashboardFailed (error) {
+  onDeleteDashboardFailed (error) { console.info('DashboardStore.onDeleteDashboardFailed')
     this.setState({ error: error })
   }
 })
