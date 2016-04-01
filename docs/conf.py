@@ -23,7 +23,7 @@ import os
 sys.path.append('/Users/johndingee_seed/code/UF04/polio')
 sys.path.append('/Users/john/code/seed/polio/')
 sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio')
-
+os.path.abspath('../rhizome/api/resources')
 
 # -- General configuration ------------------------------------------------
 
