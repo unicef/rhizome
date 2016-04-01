@@ -4,6 +4,7 @@ import {DropdownList} from 'react-widgets'
 import Reflux from 'reflux'
 import moment from 'moment'
 
+import IconButton from 'components/atoms/IconButton'
 import ExportIcon from 'components/atoms/ExportIcon'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
@@ -122,28 +123,36 @@ const MultiChart = React.createClass({
     // ACTION ICONS
     // ---------------------------------------------------------------------------
     const change_type_button = (
-      <button className='button icon-button left' onClick={this.props.toggleSelectTypeMode} style={{top: '0.1rem'}}>
-        <i className='fa fa-bar-chart'/>
-      </button>
+      <IconButton
+        icon='fa-bar-chart'
+        text='Change chart type'
+        onClick={this.props.toggleSelectTypeMode}
+        className='left'
+      />
     )
-    const remove_chart_button = this.props.removeChart ? (
-      <button className='button icon-button' onClick={() => this.props.removeChart(chart.uuid)}>
-        <i className='fa fa-times'/>
-      </button>
-    ) : null
-
     const export_button = (
       <ExportIcon exportPath={'/charts/' + chart.id}/>
     )
-    const save_button = (
-      <button className='button icon-button' onClick={() => this.props.saveChart(chart)}>
-        <i className='fa fa-save'/>
-      </button>
-    )
     const duplicate_chart_button = this.props.duplicateChart ? (
-      <button className='button icon-button' onClick={() => this.props.duplicateChart(chart.uuid)}>
-        <i className='fa fa-copy'/>
-      </button>
+      <IconButton
+        icon='fa-copy'
+        text='Duplicate'
+        onClick={() => this.props.duplicateChart(chart.uuid)}
+      />
+    ) : null
+    const save_button = (
+      <IconButton
+        icon='fa-save'
+        text='Save'
+        onClick={() => this.props.saveChart(chart.uuid)}
+      />
+    )
+    const remove_chart_button = this.props.removeChart ? (
+      <IconButton
+        icon='fa-times'
+        text='Remove'
+        onClick={() => this.props.removeChart(chart.uuid)}
+      />
     ) : null
 
     // SIDEBAR
