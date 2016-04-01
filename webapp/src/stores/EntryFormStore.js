@@ -12,13 +12,11 @@ let EntryFormStore = Reflux.createStore({
   locationList: [],
 
   data: {
-    entryFormDefinitions: require('./EntryFormDefinitions'),
     apiResponseData: null,
     indicatorMap: null,
     indicatorSet: null,
     indicatorsToTags: [],
     filteredIndicators: [],
-    formIdSelected: null,
     data: null,
     loaded: false,
     campaigns: [],
@@ -28,6 +26,11 @@ let EntryFormStore = Reflux.createStore({
     locationMap: null,
     locationSelected: [],
     locations: [],
+    selected: {
+      form: { title: 'Select Form', value: null },
+      campaign: { title: 'Select Campaign', value: null },
+      locations: []
+    },
     tags: [],
     includeSublocations: false,
     pagination: {
@@ -41,9 +44,6 @@ let EntryFormStore = Reflux.createStore({
 
   onInitData: function () {
     let self = this
-
-    // self.data.entryFormDefinitions = self.entryFormDefinitions
-    // self.data.formIdSelected = self.entryFormDefinitions[0]
 
     Promise.all([
       api.get_indicator_tag(),
@@ -71,7 +71,7 @@ let EntryFormStore = Reflux.createStore({
           }
         }).value()
       self.data.tags = tagResult
-      self.data.tagIdSelected = tagResult[0].id
+
       let campaignResult = _(campaigns.objects)
           .map(campaign => {
             return {
@@ -80,7 +80,6 @@ let EntryFormStore = Reflux.createStore({
             }
           }).value()
       self.data.campaigns = campaignResult
-      self.data.campaignIdSelected = campaignResult[0].id
 
       // locations
       let locationResult = _(locations.objects)
@@ -110,10 +109,11 @@ let EntryFormStore = Reflux.createStore({
   },
 
   _setCouldLoad: function () {
-    this.data.couldLoad = (this.data.formIdSelected !== null && this.data.campaignSelected !== null && (this.data.locationSelected.length > 0))
-    if (this.data.couldLoad) {
-      this.onGetTableData()
-    }
+    this.data.couldLoad = (this.data.selected.form.value !== null &&
+                           this.data.selected.campaign.value !== null &&
+                           this.data.locationSelected.length > 0)
+
+    if (this.data.couldLoad) { this.onGetTableData() }
   },
 
   // _filterLocationsByCampaign: function () {
@@ -178,14 +178,17 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
 
-  onSetForm: function (formId) {
-    this.data.formIdSelected = formId
+  onSetForm: function (formValue) {
+    this.data.selected.form.value = formValue
+    this.data.selected.form.title = this.data.tags.find(function (tag) { return tag.value === formValue }).title
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
-    this.data.campaignIdSelected = campaignId
-    // this._filterLocationsByCampaign()
+    this.data.selected.campaign.value = campaignId
+    this.data.selected.campaign.title = this.data.campaigns.find(function(campaign){
+      return campaign.id === campaignId
+    }).title
     this.trigger(this.data)
   },
 
@@ -200,18 +203,26 @@ let EntryFormStore = Reflux.createStore({
     this._setCouldLoad()
     this.trigger(this.data)
   },
-  onFilterIndicators: function(formName){
+  _filterIndicators: function(){
     this.data.filteredIndicators = []
     this.data.indicatorsToTags.forEach(indicator => {
-      if (indicator.title === formName){
+      if (indicator.title === this.data.selected.form.title){
         this.data.filteredIndicators.push(this.data.indicatorMap[indicator.id])
       }
     })
     this.trigger(this.data)
   },
+
+  _getIndicatorIds: function (){
+    return this.data.filteredIndicators.map(function(indicator){
+      return indicator.id
+    })
+  },
+
   onGetTableData: function () {
+    this._filterIndicators()
     let options = {
-      campaign__in: parseInt(this.data.campaignIdSelected, 10),
+      campaign__in: parseInt(this.data.selected.campaign.value, 10),
       indicator__in: [],
       location_id__in: []
     }
@@ -245,22 +256,17 @@ let EntryFormStore = Reflux.createStore({
 
       this.data.locations = options.location_id__in
     }
-    // this.data.formDefinition = this._filterFormDefinition(this.data.formIdSelected)
-    // this.data.formDefinition = this.data.filteredIndicators
 
-    options.indicator__in = this.data.filteredIndicators.map(function(indicator){
-      return indicator.id
-    })
+    options.indicator__in = this._getIndicatorIds()
 
     _.defaults(options, this.data.pagination)
 
     this.data.loaded = false
     this.trigger(this.data)
+
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.apiResponseData = response.objects
-      // this.data.apiResponseData.meta = response.meta
-      // this.data.data.objects
       this.trigger(this.data)
     }, function (err) {
       console.error(err)
