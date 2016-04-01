@@ -52,15 +52,22 @@ class LineChart extends Chart {
     const options = this.options
     const props = this.props
     const aspect = options.aspect || 1
-    options.width = props.width || this.container.clientWidth
-    options.height = props.height || options.width / aspect
-    options.colors = props.colors || props.color
+    this.options.width = props.width || this.container.clientWidth
+    this.options.height = props.height || this.options.width / aspect
+    this.options.colors = props.colors || props.color
+    if (options.groupBy === 'indicator') {
+      if (this.props.selected_indicators[0].data_format === 'pct') {
+        this.options.yFormat = d3.format(',.1%')
+      }
+    } else if (options.groupBy === 'location') {
+      // To do
+    }
     if (props.xLabel || props.yLabel) {
       let marginLeft = props.yLabel ? 15 : props.margin.left || 0
       let marginBottom = props.xLabel ? 30 : props.margin.bottom || 0
       let marginTop = props.margin.top || 0
       let marginRight = props.margin.right || 0
-      options.margin = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
+      this.options.margin = {top: marginTop, right: marginRight, bottom: marginBottom, left: marginLeft}
     }
   }
 }
