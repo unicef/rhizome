@@ -1,22 +1,15 @@
 import _ from 'lodash'
 import React from 'react'
+import Reflux from 'reflux'
 
+import DashboardStore from 'stores/DashboardStore'
 import DashboardActions from 'actions/DashboardActions'
-import DashboardAPI from 'data/requests/DashboardAPI'
 
 export default React.createClass({
 
-  getInitialState () {
-    return {
-      customDashboards: []
-    }
-  },
-
-  componentWillMount () {
-    DashboardAPI.getDashboards().then(dashboards => {
-      this.setState({customDashboards: dashboards})
-    })
-  },
+  mixins: [
+    Reflux.connect(DashboardStore, 'dashboards'),
+  ],
 
   deleteDashboard (id) {
     if (confirm('Are you sure you want to delete this chart?')) {
@@ -25,12 +18,12 @@ export default React.createClass({
   },
 
   render () {
+    const dashboards = this.state.dashboards.raw || []
     let rows = <tr><td colSpan='3'>No custom dashboards created yet.</td></tr>
-
-    if (_.isNull(this.state.customDashboards)) {
+    if (_.isNull(dashboards)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
-    } else if (this.state.customDashboards.length > 0) {
-      rows = this.state.customDashboards.map(dashboard => {
+    } else if (dashboards.length > 0) {
+      rows = dashboards.map(dashboard => {
         return (
           <tr>
             <td>
@@ -55,6 +48,7 @@ export default React.createClass({
             <thead>
               <tr>
                 <th>Title</th>
+                <th>&nbsp;</th>
               </tr>
             </thead>
             <tbody>
