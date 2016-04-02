@@ -51,6 +51,7 @@ class MetaDataGenerator:
         self.top_lvl_location = Location.objects\
             .create(
                 name = self.country,
+                location_code = self.country,
                 office_id = self.office.id,
                 location_type_id = LocationType.objects.get(name='Country').id,
         )
@@ -83,6 +84,9 @@ class MetaDataGenerator:
         indicator_ids = self.build_indicator_meta()
         campaign_ids = self.build_campaign_meta()
         location_ids = self.build_location_meta()
+
+        print ' == LOCATION LIST == '
+        pprint(Location.objects.all().values())
 
     def build_indicator_meta(self):
 

@@ -21,7 +21,6 @@ def populate_initial_data(apps, schema_editor):
     '''
 
     process_meta_data()
-    process_geo_json()
 
 def process_meta_data():
 
@@ -59,20 +58,6 @@ def process_meta_data():
     ltc = LocationTreeCache()
     ltc.main()
 
-def process_geo_json():
-
-    try:
-        geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
-    except IOError:
-        return
-
-    geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
-    location_df = pd.DataFrame(list(Location.objects.all()\
-        .values_list('id','location_code')),columns=['location_id','location_code'])
-    merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
-    model_df_to_data(merged_df, LocationPolygon)
-
-    minify_geo_json()
 
 def model_df_to_data(model_df,model):
 
