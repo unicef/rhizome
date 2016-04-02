@@ -61,7 +61,6 @@ class MetaDataGenerator:
             'province_column': 'RRM_Distribution/Governorate',
             'district_column': 'RRM_Distribution/District',
             'city_column': 'RRM_Distribution/Site_City'
-            # u'RRM_Distribution/Site_City',
         }
 
         self.admin_level_parent_lookup = {
@@ -70,7 +69,8 @@ class MetaDataGenerator:
             'City' : 'RRM_Distribution/District'
         }
 
-        self.parent_location_map = {self.country : self.top_lvl_location.id}
+        ## add location_ids here when inserting and use to find the parent ##
+        self.existing_location_map = {self.country : self.top_lvl_location.id}
 
     def main(self):
 
@@ -144,24 +144,22 @@ class MetaDataGenerator:
         province_df['parent'] = self.country
         province_df.drop_duplicates(inplace=True)
 
-        print 'P R O V I N C E  D F '
-        print province_df[:10]
-        print '===\n' * 5
-
         self.process_location_df(province_df, 'Province')
 
-        ## DISTRICT ##
-        # district_df = pd.DataFrame(self.odk_file_map['district_column']\
-        #     .unique())
-        #
-        # district_df = pd.DataFrame(self.source_sheet_df[\
-        #     self.odk_file_map['province_column']].unique())
-        #
+        # DISTRICT ##
+        district_column = self.odk_file_map['district_column']
+        district_df = pd.DataFrame(\
+            self.source_sheet_df[[district_column,province_column]])
+
+        # province_df['parent'] = self.country
+        district_df.drop_duplicates(inplace=True)
+
+        self.process_location_df(district_df, 'District')
+
         # district_column = self.odk_file_map['district_column']
         # district_df = pd.DataFrame(self.source_sheet_df[district_column])
         # district_df.drop_duplicates(inplace=True)
         #
-        # self.process_location_df(province_df, 'District', country_name)
 
 
         ## CITY ##
@@ -181,8 +179,6 @@ class MetaDataGenerator:
         location_name_column = self.odk_file_map[admin_level.lower() + '_column']
 
         batch = []
-        print location_df[:4]
-        print '==' + admin_level + 'DF ==\n' * 4
 
         try:
             parent_column = self.admin_level_parent_lookup[admin_level]
@@ -194,17 +190,49 @@ class MetaDataGenerator:
 
             loc_dict = loc.to_dict()
 
+            try:
+                ## If a district comes in but there is a province with that
+                ## name as well, we concat the name with the admin level in the
+                ## except.
+                existing_location_id = \
+                    self.existing_location_map[loc[location_name_column]]
+                location_code = loc[location_name_column] + ' - ' + \
+                    admin_level
+            except KeyError:
+                location_code = loc[location_name_column]
+
+            print '====\n' * 4
+            print 'ADMIN LEVEL!!!'
+            print admin_level
+            pprint(self.existing_location_map)
+            print '====\n' * 4
+
             batch.append(Location(**{
-                'name': loc[location_name_column],
-                'location_code': loc[location_name_column],
-                'parent_location_id': self.parent_location_map[loc['parent']],
+                'name': location_code,
+                'location_code': location_code,
+                'parent_location_id': self.existing_location_map[loc['parent']],
                 'location_type_id': location_type_id,
                 'office_id': self.office.id
-                # 'parent_location_type_id'
             }))
 
         Location.objects.filter(location_type__name=admin_level).delete()
         Location.objects.bulk_create(batch)
+
+        ## now add these ids to the parent map for later lookups ##
+        location_name_to_id_list_of_lists = list(Location.objects\
+            .filter(location_type_id=location_type_id)\
+            .values_list('location_code','id'))
+
+        print 'NOW location_name_to_id_list_of_lists == '
+        print location_name_to_id_list_of_lists
+
+        for locName, locId in location_name_to_id_list_of_lists:
+            print 'locName: %s ====' % locName
+            print 'locId: %s ====' % locId
+
+            self.existing_location_map[locName] = locId
+            print 'existing_location_map'
+            print self.existing_location_map
 
         print '==LOCATION LENGTH -- HOW MANY LOCATOINS ARE THERE==\n' * 10
         pprint(Location.objects.count())
