@@ -17,8 +17,7 @@ let EntryForm = React.createClass({
   },
 
   render () {
-      console.log('this.state.selected.campaign', this.state.selected.campaign)
-    console.info('Render: EntryForm')
+    console.info('EntryForm: render()')
     return (
       <div className='row'>
         <form>
