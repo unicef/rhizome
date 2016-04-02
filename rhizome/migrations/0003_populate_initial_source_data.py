@@ -11,7 +11,7 @@ import pandas as pd
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, LocationPolygon, Indicator, Campaign,\
-    LocationType
+    LocationType, Office, CampaignType, IndicatorTag, SourceObjectMap
 from rhizome.models import Document, DocumentDetail, DocDetailType
 from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
@@ -39,7 +39,19 @@ class MetaDataGenerator:
 
     def __init__(self, source_sheet_df):
 
+        self.country = 'Iraq'
+        self.campaign_type = CampaignType.objects.create(name='IDP Survey')
+        self.tag = IndicatorTag.objects.create(tag_name='IDP Survey')
         self.source_sheet_df = source_sheet_df
+        self.office = Office.objects\
+            .create(name = self.country)
+        self.top_lvl_location = Location.objects\
+            .create(
+                name = self.country,
+                office_id = self.office.id,
+                location_type_id = LocationType.objects.get(name='Country').id,
+        )
+
         self.odk_file_map = {
             'date_column': 'RRM_Distribution/date_assessdistro',
             'lat_column': '',
@@ -57,7 +69,7 @@ class MetaDataGenerator:
     def build_meta_data_from_source(self):
 
         indicator_ids = self.build_indicator_meta()
-        # campaign_ids = self.build_campaign_meta()
+        campaign_ids = self.build_campaign_meta()
         # location_ids = self.build_location_meta()
 
     def build_indicator_meta(self):
@@ -70,9 +82,6 @@ class MetaDataGenerator:
 
         for ind in indicators:
 
-            print '=ind='
-            print ind
-
             batch.append(Indicator(**{
                 'name':ind,
                 'short_name':ind,
@@ -82,18 +91,41 @@ class MetaDataGenerator:
         Indicator.objects.all().delete()
         Indicator.objects.bulk_create(batch)
 
-        print '=made indicators=\n' * 5
-        print Indicator.objects.all().values()
-
     def build_campaign_meta(self):
 
+        Campaign.objects.all().delete()
         date_column = self.odk_file_map['date_column']
 
         all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
 
-        all_date_df['week_of_month'] = all_date_df[date_column]\
+        all_date_df['week_of_year'] = all_date_df[date_column]\
             .apply(lambda x: x.weekofyear)
 
+        gb_df = pd.DataFrame(all_date_df\
+            .groupby(['week_of_year'])[date_column].min())
+        gb_df.reset_index(level=0, inplace=True)
+
+        for ix, week in gb_df.iterrows():
+
+            week_dict = week.to_dict()
+            c = Campaign.objects.create(**{
+                'start_date':week_dict[date_column],
+                'end_date':week_dict[date_column],
+                'name': week_dict[date_column],
+                'campaign_type_id': self.campaign_type.id,
+                'office_id': self.office.id,
+                'top_lvl_indicator_tag_id': self.tag.id,
+                'top_lvl_location_id': self.top_lvl_location.id
+            })
+
+            SourceObjectMap.objects.create(
+                master_object_id = c.id,
+                source_object_code = week_dict['week_of_year'],
+                content_type = 'campaign'
+            )
+
+        print 'CAMPAING RESULTS'
+        print Campaign.objects.all().values()
 
     def build_location_meta(self):
 
