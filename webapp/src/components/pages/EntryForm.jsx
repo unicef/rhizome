@@ -15,9 +15,7 @@ let EntryForm = React.createClass({
   componentWillMount: function () {
     EntryFormActions.initData()
   },
-
   render () {
-    console.info('EntryForm: render()')
     return (
       <div className='row'>
         <form>
