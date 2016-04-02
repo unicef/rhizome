@@ -246,13 +246,18 @@ const MultiChart = React.createClass({
       <article className='multi-chart'>
         <header className='row'>
           <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
+            <div className='hide-for-medium-up'>
+              { change_type_button }
+            </div>
             { export_button }
             { duplicate_chart_button }
             { save_button }
             { remove_chart_button }
           </div>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
-            { change_type_button }
+            <div className='hide-for-small'>
+              { change_type_button }
+            </div>
             { title_bar }
           </div>
         </header>

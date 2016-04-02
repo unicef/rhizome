@@ -32,8 +32,8 @@ var TitleMenu = React.createClass({
           {
             this.props.icon ? (
               <div className='row'>
-                <div className='medium-10 columns dashboard-nav__text'>{this.props.text}</div>
-                <div className='medium-2 columns'>
+                <div className='small-10 medium-10 columns dashboard-nav__text'>{this.props.text}</div>
+                <div className='small-2 medium-2 columns'>
                   <a className='menu-button fa-stack'>
                     <i className={'fa fa-stack-1x ' + this.props.icon}></i>
                   </a>

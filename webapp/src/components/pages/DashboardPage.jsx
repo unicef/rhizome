@@ -118,7 +118,7 @@ const Dashboard = React.createClass({
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
-      <h1 onClick={this._toggleTitleEdit} className='left'>
+      <h1 onClick={this._toggleTitleEdit}>
         <a>
           {dashboard.title || 'Untitled Dashboard'}
         </a>
@@ -159,11 +159,11 @@ const Dashboard = React.createClass({
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
-          <div className='medium-6 columns'>
+          <div className='medium-6 columns medium-text-left small-text-center'>
             { title_bar }
           </div>
-          <div className='medium-6 columns'>
-            <button className='button right' onClick={this.saveDashboard}>Save Dashboard</button>
+          <div className='medium-6 columns medium-text-right small-text-center'>
+            <button className='button' onClick={this.saveDashboard}>Save Dashboard</button>
           </div>
         </header>
         { loading ? <Placeholder height={600} /> : chart_components}

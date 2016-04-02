@@ -22,11 +22,27 @@ footer.main-footer {
       }
     }
     &.actions {
+      float: left;
       text-align: left;
       margin-left: 0;
     }
     &.static-links {
       text-align: right;
+    }
+    @media #{$small-only} {
+      &.actions {
+        float: none;
+        text-align: center
+      }
+      li {
+        display: inline-block;
+        float: none;
+      }
+      a {
+        text-align: center;
+        font-size: 0.7rem;
+        padding: 15px 10px;
+      }
     }
   }
   .fa {
