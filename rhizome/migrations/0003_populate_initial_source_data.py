@@ -56,9 +56,10 @@ class MetaDataGenerator:
             'date_column': 'RRM_Distribution/date_assessdistro',
             'lat_column': '',
             'lon_column': '',
-            'province_column': '',
-            'district_column': '',
-            'city_column': ''
+            'province_column': 'RRM_Distribution/Governorate',
+            'district_column': 'RRM_Distribution/District',
+            'city_column': 'RRM_Distribution/Site_City'
+            # u'RRM_Distribution/Site_City',
         }
 
     def main(self):
@@ -70,7 +71,7 @@ class MetaDataGenerator:
 
         indicator_ids = self.build_indicator_meta()
         campaign_ids = self.build_campaign_meta()
-        # location_ids = self.build_location_meta()
+        location_ids = self.build_location_meta()
 
     def build_indicator_meta(self):
 
@@ -93,7 +94,6 @@ class MetaDataGenerator:
 
     def build_campaign_meta(self):
 
-        Campaign.objects.all().delete()
         date_column = self.odk_file_map['date_column']
 
         all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
@@ -124,40 +124,52 @@ class MetaDataGenerator:
                 content_type = 'campaign'
             )
 
-        print 'CAMPAING RESULTS'
-        print Campaign.objects.all().values()
-
     def build_location_meta(self):
 
         country_name = 'Iraq'
 
-        province_df = pd.DataFrame(self.odk_file_map['province_column']\
-            .unique())
+        province_df = pd.DataFrame(self.source_sheet_df[\
+            self.odk_file_map['province_column']].unique())
+
+        province_column = self.odk_file_map['province_column']
+        province_df = pd.DataFrame(self.source_sheet_df[province_column])
+        province_df.drop_duplicates(inplace=True)
 
         self.process_location_df(province_df, 'Province')
 
-        district_df = pd.DataFrame(self.odk_file_map['district_column']\
-            .unique())
-        city_df = pd.DataFrame(self.odk_file_map['city_column'])
+        print '==LOCATION==\n' * 10
+        print Location.objects.all().values()
 
-
-        all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
-
-        all_date_df['week_of_month'] = all_date_df[date_column]\
-            .apply(lambda x: x.weekofyear)
+        # district_df = pd.DataFrame(self.odk_file_map['district_column']\
+        #     .unique())
+        # city_df = pd.DataFrame(self.odk_file_map['city_column'])
+        #
+        #
+        # all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
+        #
+        # all_date_df['week_of_month'] = all_date_df[date_column]\
+        #     .apply(lambda x: x.weekofyear)
 
     def process_location_df(self, province_df, admin_level):
 
+        location_type_id = LocationType.objects.get(name = admin_level).id
+        location_name_column = self.odk_file_map[admin_level.lower() + '_column']
+
         batch = []
         for ix, loc in province_df.iterrows():
+
+            loc_dict = loc.to_dict()
+
             batch.append(Location(**{
-                'name': loc.location_name,
-                'code': loc.location_code,
+                'name': loc[location_name_column],
+                'location_code': loc[location_name_column],
+                'location_type_id': location_type_id,
+                'office_id': self.office.id
                 # 'parent_location_type_id'
             }))
 
         Location.objects.filter(location_type__name=admin_level).delete()
-        Location.objecst.bulk_create(batch)
+        Location.objects.bulk_create(batch)
 
     def model_df_to_data(model_df,model):
 
@@ -224,3 +236,71 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(populate_source_data),
     ]
+
+# u'start',
+# u'end',
+# u'deviceid',
+# u'RRM_Distribution/date_assessdistro',
+# u'RRM_Distribution/Governorate',
+# u'RRM_Distribution/District',
+# u'RRM_Distribution/Site_City',
+# u'RRM_Distribution/Enumerator',
+# u'RRM_Distribution/Enumerator_Organisation',
+# u'RRM_Distribution/Enumerator_LocalOrg',
+# u'RRM_Distribution/Enumerator_Phone',
+# u'RRM_Distribution/GPS_coord',
+# u'RRM_Distribution/_GPS_coord_latitude',
+# u'RRM_Distribution/_GPS_coord_longitude',
+# u'RRM_Distribution/_GPS_coord_altitude',
+# u'RRM_Distribution/_GPS_coord_precision',
+# u'RRM_Distribution/group_photo/photoreceiver',
+# u'RRM_Distribution/group_photo/onemorephoto',
+# u'RRM_Distribution/group_photo/photoreceiver2',
+# u'RRM_Distribution/community_focal_person/Name_community_focalp',
+# u'RRM_Distribution/community_focal_person/telephone_number',
+# u'RRM_Distribution/community_origin/Governorate_origin1',
+# u'RRM_Distribution/community_origin/District_origin1',
+# u'RRM_Distribution/community_origin/Site_City_origin1',
+# u'RRM_Distribution/community_origin/Governorate_origin2',
+# u'RRM_Distribution/community_origin/District_origin2',
+# u'RRM_Distribution/community_origin/Site_City_origin2',
+# u'RRM_Distribution/community_origin/leave_Date',
+# u'RRM_Distribution/group_distribution/idp_refugee',
+# u'RRM_Distribution/group_distribution/area',
+# u'RRM_Distribution/group_distribution/rrmtype/RRM_IRR',
+# u'RRM_Distribution/group_distribution/rrmtype/RRM_only',
+# u'RRM_Distribution/group_distribution/rrmtype/IRR_only',
+# u'RRM_Distribution/group_distribution/rrmtype/Dignity_kits',
+# u'RRM_Distribution/group_distribution/rrm_kits',
+# u'RRM_Distribution/group_distribution/irr_kits',
+# u'RRM_Distribution/group_distribution/dignity_kits',
+# u'RRM_Distribution/group_distribution/plumpy',
+# u'RRM_Distribution/group_distribution/families',
+# u'RRM_Distribution/group_distribution/singles',
+# u'RRM_Distribution/other_needs/the_1st_Need',
+# u'RRM_Distribution/other_needs/the_2nd_Need',
+# u'RRM_Distribution/other_needs/the_3rd_Need',
+# u'RRM_Distribution/other_needs/other_need',
+# u'RRM_Distribution/group_destination/moving1',
+# u'RRM_Distribution/group_destination/moving1_gov',
+# u'RRM_Distribution/group_destination/moving1_dist',
+# u'RRM_Distribution/group_destination/moving1_loc',
+# u'RRM_Distribution/group_destination/moving2',
+# u'RRM_Distribution/group_destination/moving2_gov',
+# u'RRM_Distribution/group_destination/moving2_dist',
+# u'RRM_Distribution/group_destination/moving2_loc',
+# u'RRM_Distribution/group_destination/moving_why/safety',
+# u'RRM_Distribution/group_destination/moving_why/services',
+# u'RRM_Distribution/group_destination/moving_why/family_friends',
+# u'RRM_Distribution/group_destination/moving_why/job',
+# u'RRM_Distribution/group_destination/moving_why/othermov',
+# u'RRM_Distribution/group_destination/moving_whyot',
+# u'RRM_Distribution/group_comments/comments',
+# u'meta/instanceID',
+# u'_uuid',
+# u'_submission_time',
+# u'_tags',
+# u'_notes',
+# u'_version',
+# u'_duration',
+# u'_submitted_by'],
