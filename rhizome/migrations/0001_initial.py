@@ -497,11 +497,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='rhizome.SourceSubmission'),
         ),
         migrations.AddField(
-            model_name='customdashboard',
-            name='default_office',
-            field=models.ForeignKey(to='rhizome.Office', null=True),
-        ),
-        migrations.AddField(
             model_name='campaigntoindicator',
             name='indicator',
             field=models.ForeignKey(to='rhizome.Indicator'),
@@ -604,5 +599,67 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='aggdatapoint',
             unique_together=set([('location', 'campaign', 'indicator')]),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='campaign',
+            field=models.ForeignKey(default=1, to='rhizome.Campaign'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='docdatapoint',
+            name='campaign',
+            field=models.ForeignKey(default=1, to='rhizome.Campaign'),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='historicaldatapointentry',
+            name='campaign',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='rhizome.Campaign', null=True),
+        ),
+        migrations.AlterField(
+            model_name='datapoint',
+            name='data_date',
+            field=models.DateTimeField(null=True),
+        ),
+        migrations.AlterField(
+            model_name='docdatapoint',
+            name='data_date',
+            field=models.DateTimeField(null=True),
+        ),
+        migrations.AlterField(
+            model_name='historicaldatapointentry',
+            name='data_date',
+            field=models.DateTimeField(null=True),
+        ),
+        migrations.CreateModel(
+            name='ChartToDashboard',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('sort_order', models.IntegerField(default=0)),
+            ],
+            options={
+                'db_table': 'chart_to_dashboard',
+            },
+        ),
+        migrations.AddField(
+            model_name='customchart',
+            name='uuid',
+            field=models.CharField(default=1, unique=True, max_length=255),
+            preserve_default=False,
+        ),
+        migrations.AddField(
+            model_name='charttodashboard',
+            name='chart',
+            field=models.ForeignKey(to='rhizome.CustomChart'),
+        ),
+        migrations.AddField(
+            model_name='charttodashboard',
+            name='dashboard',
+            field=models.ForeignKey(to='rhizome.CustomDashboard'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='charttodashboard',
+            unique_together=set([('chart', 'dashboard')]),
         ),
     ]

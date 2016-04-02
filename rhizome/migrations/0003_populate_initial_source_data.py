@@ -13,7 +13,7 @@ from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, LocationPolygon, Indicator, Campaign,\
     LocationType, Office, CampaignType, IndicatorTag, SourceObjectMap
 from rhizome.models import Document, DocumentDetail, DocDetailType
-from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
@@ -27,6 +27,7 @@ def populate_source_data(apps, schema_editor):
     We need to ingest the data itself in the same order as the excel
     sheet otherwise we will have foreign key constraint issues.
     '''
+
     odk_form_sheet_name = 'source-data_idp_odk_form'
     xl = pd.ExcelFile('initial_data.xlsx')
 
@@ -136,9 +137,7 @@ class MetaDataGenerator:
 
     def build_location_meta(self):
 
-
         ## PROVINCE ##
-
         province_column = self.odk_file_map['province_column']
         province_df = pd.DataFrame(self.source_sheet_df[province_column])
         province_df['parent'] = self.country
@@ -150,28 +149,24 @@ class MetaDataGenerator:
         district_column = self.odk_file_map['district_column']
         district_df = pd.DataFrame(\
             self.source_sheet_df[[district_column,province_column]])
-
-        # province_df['parent'] = self.country
         district_df.drop_duplicates(inplace=True)
-
         self.process_location_df(district_df, 'District')
 
-        # district_column = self.odk_file_map['district_column']
-        # district_df = pd.DataFrame(self.source_sheet_df[district_column])
-        # district_df.drop_duplicates(inplace=True)
-        #
-
-
         ## CITY ##
+        city_column = self.odk_file_map['city_column']
+        city_df = pd.DataFrame(\
+            self.source_sheet_df[[city_column,district_column]])
 
+        city_df.drop_duplicates(inplace=True,subset=[city_column])
+        self.process_location_df(city_df, 'City')
 
-        # city_df = pd.DataFrame(self.odk_file_map['city_column'])
-        #
-        #
-        # all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
-        #
-        # all_date_df['week_of_month'] = all_date_df[date_column]\
-        #     .apply(lambda x: x.weekofyear)
+        ## this wil lmake it so we can ingest data
+        source_object_map_batch = [SourceObjectMap(**{
+            'master_object_id': loc.id,
+            'content_type': 'location',
+            'source_object_code': loc.location_code
+        }) for loc in Location.objects.all()]
+        SourceObjectMap.objects.bulk_create(source_object_map_batch)
 
     def process_location_df(self, location_df, admin_level):
 
@@ -201,12 +196,6 @@ class MetaDataGenerator:
             except KeyError:
                 location_code = loc[location_name_column]
 
-            print '====\n' * 4
-            print 'ADMIN LEVEL!!!'
-            print admin_level
-            pprint(self.existing_location_map)
-            print '====\n' * 4
-
             batch.append(Location(**{
                 'name': location_code,
                 'location_code': location_code,
@@ -223,25 +212,10 @@ class MetaDataGenerator:
             .filter(location_type_id=location_type_id)\
             .values_list('location_code','id'))
 
-        print 'NOW location_name_to_id_list_of_lists == '
-        print location_name_to_id_list_of_lists
-
         for locName, locId in location_name_to_id_list_of_lists:
-            print 'locName: %s ====' % locName
-            print 'locId: %s ====' % locId
-
             self.existing_location_map[locName] = locId
-            print 'existing_location_map'
-            print self.existing_location_map
-
-        print '==LOCATION LENGTH -- HOW MANY LOCATOINS ARE THERE==\n' * 10
-        pprint(Location.objects.count())
-        print '==\n' * 5
-
 
     ## make source object maps ##
-
-
     def model_df_to_data(model_df,model):
 
         meta_ids = []
@@ -260,12 +234,13 @@ class MetaDataGenerator:
     def process_source_sheet(self):
 
         user_id = -1
-
-        sheet_name = 'initial_source_data'
+        sheet_name = 'source-data_idp_odk_form'
         # file_loc = settings.MEDIA_ROOT + sheet_name
-        saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
-        self.source_sheet_df.to_csv(saved_csv_file_location)
+        # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
+
         doc_file_text = sheet_name + '.csv'
+        # self.source_sheet_df.to_csv(doc_file_text)
+        # doc_file_text = sheet_name + '.csv'
 
         new_doc = Document.objects.create(
             doc_title = doc_file_text,
@@ -276,15 +251,15 @@ class MetaDataGenerator:
         create_doc_details(new_doc.id)
 
         ## document -> source_submissions ##
-        dt = DocTransform(user_id, new_doc.id)
+        dt = ComplexDocTransform(user_id, new_doc.id)
         dt.main()
 
         ## source_submissions -> datapoints ##
-        mr = MasterRefresh(user_id, new_doc.id)
-        mr.main()
+        # mr = MasterRefresh(user_id, new_doc.id)
+        # mr.main()
 
         ## datapoints -> computed datapoints ##
-        ar = AggRefresh()
+        # ar = AggRefresh()
 
 def create_doc_details(doc_id):
 

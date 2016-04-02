@@ -21,16 +21,23 @@ class DocTransform(object):
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
-            ['geocode', 'campaign', 'unique_key']
+            ['RRM_Distribution/Site_City', 'RRM_Distribution/date_assessdistro'\
+            , '_uuid']
 
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
         raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+
+        print '==CSV DF=='
+        print csv_df
+
         try:
             csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
         except Exception as err:
             dp_error_message = '%s is a required column.' %err.message
+            print 'dp_error_message'
+            print dp_error_message
             raise DatapointsException(message=dp_error_message)
         self.csv_df = csv_df
         self.file_header = csv_df.columns
