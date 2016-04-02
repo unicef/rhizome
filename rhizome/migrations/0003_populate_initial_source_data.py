@@ -17,6 +17,7 @@ from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+from pprint import pprint
 
 def populate_source_data(apps, schema_editor):
     '''
@@ -43,6 +44,7 @@ class MetaDataGenerator:
         self.campaign_type = CampaignType.objects.create(name='IDP Survey')
         self.tag = IndicatorTag.objects.create(tag_name='IDP Survey')
         self.source_sheet_df = source_sheet_df
+        self.source_sheet_df['COUNTRY'] = self.country
         self.office = Office.objects\
             .create(name = self.country)
         self.top_lvl_location = Location.objects\
@@ -61,6 +63,14 @@ class MetaDataGenerator:
             'city_column': 'RRM_Distribution/Site_City'
             # u'RRM_Distribution/Site_City',
         }
+
+        self.admin_level_parent_lookup = {
+            # 'Province' : 'COUNTRY',
+            'District' : 'RRM_Distribution/Governorate',
+            'City' : 'RRM_Distribution/District'
+        }
+
+        self.parent_location_map = {self.country : self.top_lvl_location.id}
 
     def main(self):
 
@@ -126,22 +136,37 @@ class MetaDataGenerator:
 
     def build_location_meta(self):
 
-        country_name = 'Iraq'
 
-        province_df = pd.DataFrame(self.source_sheet_df[\
-            self.odk_file_map['province_column']].unique())
+        ## PROVINCE ##
 
         province_column = self.odk_file_map['province_column']
         province_df = pd.DataFrame(self.source_sheet_df[province_column])
+        province_df['parent'] = self.country
         province_df.drop_duplicates(inplace=True)
+
+        print 'P R O V I N C E  D F '
+        print province_df[:10]
+        print '===\n' * 5
 
         self.process_location_df(province_df, 'Province')
 
-        print '==LOCATION==\n' * 10
-        print Location.objects.all().values()
-
+        ## DISTRICT ##
         # district_df = pd.DataFrame(self.odk_file_map['district_column']\
         #     .unique())
+        #
+        # district_df = pd.DataFrame(self.source_sheet_df[\
+        #     self.odk_file_map['province_column']].unique())
+        #
+        # district_column = self.odk_file_map['district_column']
+        # district_df = pd.DataFrame(self.source_sheet_df[district_column])
+        # district_df.drop_duplicates(inplace=True)
+        #
+        # self.process_location_df(province_df, 'District', country_name)
+
+
+        ## CITY ##
+
+
         # city_df = pd.DataFrame(self.odk_file_map['city_column'])
         #
         #
@@ -150,19 +175,29 @@ class MetaDataGenerator:
         # all_date_df['week_of_month'] = all_date_df[date_column]\
         #     .apply(lambda x: x.weekofyear)
 
-    def process_location_df(self, province_df, admin_level):
+    def process_location_df(self, location_df, admin_level):
 
         location_type_id = LocationType.objects.get(name = admin_level).id
         location_name_column = self.odk_file_map[admin_level.lower() + '_column']
 
         batch = []
-        for ix, loc in province_df.iterrows():
+        print location_df[:4]
+        print '==' + admin_level + 'DF ==\n' * 4
+
+        try:
+            parent_column = self.admin_level_parent_lookup[admin_level]
+            location_df['parent'] = location_df[parent_column]
+        except KeyError:
+            location_df['parent'] == self.country
+
+        for ix, loc in location_df.iterrows():
 
             loc_dict = loc.to_dict()
 
             batch.append(Location(**{
                 'name': loc[location_name_column],
                 'location_code': loc[location_name_column],
+                'parent_location_id': self.parent_location_map[loc['parent']],
                 'location_type_id': location_type_id,
                 'office_id': self.office.id
                 # 'parent_location_type_id'
@@ -170,6 +205,14 @@ class MetaDataGenerator:
 
         Location.objects.filter(location_type__name=admin_level).delete()
         Location.objects.bulk_create(batch)
+
+        print '==LOCATION LENGTH -- HOW MANY LOCATOINS ARE THERE==\n' * 10
+        pprint(Location.objects.count())
+        print '==\n' * 5
+
+
+    ## make source object maps ##
+
 
     def model_df_to_data(model_df,model):
 
