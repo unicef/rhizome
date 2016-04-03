@@ -58,15 +58,15 @@ class AggRefresh(object):
             response_msg = 'PENDING'
         )
 
-
-        ## set the document_id to the newest for this campaign ##
-        latest_dp_source = DataPoint.objects.filter(campaign_id = \
-            self.campaign.id).order_by('-created_at')[0].source_submission_id
+        try:
+            ## set the document_id to the newest for this campaign ##
+            latest_dp_source = DataPoint.objects.filter(campaign_id = \
+                self.campaign.id).order_by('-created_at')[0].source_submission_id
+        except IndexError:
+            return # no datapoint for the campaign
 
         self.document_id = SourceSubmission.objects.get(id = latest_dp_source)\
             .document_id
-
-
 
         response_msg = self.main()
 

@@ -11,7 +11,9 @@ import pandas as pd
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, LocationPolygon, Indicator, Campaign,\
-    LocationType, Office, CampaignType, IndicatorTag, SourceObjectMap
+    LocationType, Office, CampaignType, IndicatorTag, SourceObjectMap,\
+    DataPointComputed
+
 from rhizome.models import Document, DocumentDetail, DocDetailType
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
@@ -271,8 +273,35 @@ class MetaDataGenerator:
         mr = MasterRefresh(user_id, new_doc.id)
         mr.main()
 
-        ## datapoints -> computed datapoints ##
-        # ar = AggRefresh()
+        qs = DataPointComputed.objects.raw('''
+            INSERT INTO datapoint_with_computed
+            (location_id, indicator_id, campaign_id, value, cache_job_id, document_id)
+
+            SELECT
+                d.location_id
+                , d.indicator_id
+                , d.campaign_id
+                , d.value
+                , d.cache_job_id
+                , x.document_id
+            FROM datapoint d
+            INNER JOIN (
+                SELECT id as document_id from source_doc LIMIT 1
+            ) x
+            ON 1=1;
+
+        SELECT id from datapoint_with_computed LIMIT 5;
+        ''')
+
+        for row in qs:
+            print row.id
+
+        # datapoints -> computed datapoints ##
+        # for c in Campaign.objects.all():
+        #     print 'processing campaign id: %s' % c.id
+        #     ar = AggRefresh(c.id)
+        #     print 'DWC COUNT %s' % len(DataPointComputed.objects\
+        #         .filter(campaign_id = c.id))
 
 def create_doc_details(doc_id):
 
