@@ -23,11 +23,13 @@ class RefreshMasterResource(BaseModelResource):
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 
-        doc_campaign_ids = set(list(DataPoint.objects\
-            .filter(source_submission__document_id = doc_id)\
-            .values_list('campaign_id',flat=True)))
-
-        for c_id in doc_campaign_ids:
-            ar = AggRefresh(c_id)
+        print 'DONE WITH MASTER REFR'
+        #
+        # doc_campaign_ids = set(list(DataPoint.objects\
+        #     .filter(source_submission__document_id = doc_id)\
+        #     .values_list('campaign_id',flat=True)))
+        #
+        # for c_id in doc_campaign_ids:
+        #     ar = AggRefresh(c_id)
 
         return Document.objects.filter(id=doc_id).values()

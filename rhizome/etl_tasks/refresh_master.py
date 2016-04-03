@@ -1,5 +1,6 @@
 import locale
 from django.utils import timezone
+from pprint import pprint
 
 from collections import defaultdict
 import json
@@ -114,7 +115,7 @@ class MasterRefresh(object):
         # if len(self.ss_ids_to_process) == 0:
         #     return
 
-        self.refresh_submission_details()
+        # self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
@@ -207,14 +208,20 @@ class MasterRefresh(object):
         worry about old data that should have been blown away hanging around.
         '''
 
+        ## to do -- only handle source submission rows that have associated
+        ## source object map rows that have been updated .. i.e. a new user
+        ## mapping and a refresh touches only relevant data -- we dont check
+        ## every row every time ##
+
         ss_id_list_to_process, all_ss_ids = [],[]
 
         ## find soure_submission_ids based of location_codes to process
         ## then get the json of all of the related submissions .
         submission_qs = SourceSubmission.objects\
-            .filter(document_id = self.document_id)
+            .filter(document_id = self.document_id)[:10]
 
         for submission in submission_qs:
+
             all_ss_ids.append(submission.id)
 
             location_id = submission.get_location_id()
@@ -237,17 +244,25 @@ class MasterRefresh(object):
 
         # ss_ids_in_batch = self.submission_data.keys()
 
-        for row in SourceSubmission.objects.filter(document_id = self.document_id):
+        for row in SourceSubmission.objects.filter(document_id = self.document_id)[:10]:
 
-            row.location_id = row.get_location_id()
-            row.campaign_id = row.get_campaign_id()
+            row.location_id = row.get_location_id() or -1
+            row.campaign_id = row.get_campaign_id() or -1
+
             ## if no mapping for campaign / location -- dont process
             if row.campaign_id == -1:
                 row.process_status = 'missing campaign'
             elif row.location_id == -1:
                 row.process_status = 'missing location'
             else:
+                # doc_dps, process_status = self.process_source_submission(row)
                 doc_dps = self.process_source_submission(row)
+                row.process_status = 'doc_dp_len: %s' % len(doc_dps)
+
+            print 'ROW PROCESS STATUS'
+            print row.process_status
+            # row.save()
+
 
     def sync_datapoint(self, ss_id_list = None):
 
@@ -330,8 +345,11 @@ class MasterRefresh(object):
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
+
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
+
+        return doc_dp_batch
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):
@@ -341,18 +359,20 @@ class MasterRefresh(object):
         row at once in process_source_submission.
         '''
 
-        ## if i can't clean the value, i.e. its a string not a number, dont process
-
-        try:
-            cleaned_val = self.clean_val(value)
-        except ValueError:
-            return None
-
         ## it no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
+            result = 'NO INDICATOR'
             return None
+
+        ## if i can't clean the value, i.e. its a string not a number, dont process
+        try:
+            cleaned_val = self.clean_val(value)
+        except ValueError:
+            result = 'NO CLEAN VALUE'
+            return None
+
 
         doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
@@ -366,7 +386,6 @@ class MasterRefresh(object):
             })
 
         return doc_dp
-
 
     def clean_val(self, val):
         '''

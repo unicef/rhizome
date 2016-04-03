@@ -23,8 +23,7 @@ class DocTransform(object):
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
-            ['RRM_Distribution/Site_City', 'RRM_Distribution/date_assessdistro'\
-            , '_uuid']
+            ['RRM_Distribution/Site_City','week_and_year', '_uuid']
 
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
@@ -34,14 +33,6 @@ class DocTransform(object):
             raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
 
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-        # print '--csv_df --\n' * 4
-        # print csv_df[:10]
-        # print '---lencsvdf---'
-        # print len(csv_df)
-        # print self.uq_id_column
-        # print self.location_column
-        # print self.campaign_column
-        # print '--csv_df --\n' * 4
 
         ## if there is no uq id column -- make one ##
         if not self.uq_id_column in raw_csv_df.columns:
@@ -54,9 +45,6 @@ class DocTransform(object):
 
         self.csv_df = csv_df
         self.file_header = csv_df.columns
-
-        print 'self.csv_df==\n' * 5
-        print self.csv_df[:5]
 
         self.meta_lookup = {
             'location':{},
@@ -288,14 +276,6 @@ class ComplexDocTransform(DocTransform):
         ## transform the raw data based on the documents configurations ##
         doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
         # doc_df = self.process_date_column(doc_df)
-
-
-        print ' == DOC self.csv_df == '
-        print len(self.csv_df)
-
-        print ' == DOC DF LEN == '
-        print len(doc_df)
-
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)

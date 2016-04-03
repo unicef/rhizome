@@ -77,6 +77,12 @@ class MetaDataGenerator:
     def main(self):
 
         self.build_meta_data_from_source()
+
+        ## hack - fixme ##
+        self.source_sheet_df['week_and_year'] = \
+            self.source_sheet_df[self.odk_file_map['date_column']]\
+            .apply(lambda x: unicode(x.year) + '-' + unicode(x.weekofyear))
+
         self.process_source_sheet()
 
     def build_meta_data_from_source(self):
@@ -104,17 +110,24 @@ class MetaDataGenerator:
         Indicator.objects.all().delete()
         Indicator.objects.bulk_create(batch)
 
+        source_object_map_batch = [SourceObjectMap(**{
+            'master_object_id': ind.id,
+            'content_type': 'indicator',
+            'source_object_code': ind.name
+        }) for ind in Indicator.objects.all()]
+        SourceObjectMap.objects.bulk_create(source_object_map_batch)
+
     def build_campaign_meta(self):
 
         date_column = self.odk_file_map['date_column']
 
         all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
 
-        all_date_df['week_of_year'] = all_date_df[date_column]\
-            .apply(lambda x: x.weekofyear)
+        all_date_df['week_and_year'] = all_date_df[date_column]\
+            .apply(lambda x: unicode(x.year) + '-' + unicode(x.weekofyear))
 
         gb_df = pd.DataFrame(all_date_df\
-            .groupby(['week_of_year'])[date_column].min())
+            .groupby(['week_and_year'])[date_column].min())
         gb_df.reset_index(level=0, inplace=True)
 
         for ix, week in gb_df.iterrows():
@@ -132,7 +145,7 @@ class MetaDataGenerator:
 
             SourceObjectMap.objects.create(
                 master_object_id = c.id,
-                source_object_code = week_dict['week_of_year'],
+                source_object_code = week_dict['week_and_year'],
                 content_type = 'campaign'
             )
 

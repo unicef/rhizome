@@ -8,6 +8,7 @@ from pandas import DataFrame
 from simple_history.models import HistoricalRecords
 from jsonfield import JSONField
 
+from datetime import datetime
 
 class CacheJob(models.Model):
     '''
