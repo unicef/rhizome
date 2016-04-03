@@ -22,26 +22,27 @@ from rhizome.models import *
 
 def process_geo_json(apps, schema_editor):
 
-    try:
-        geo_json_df = pd.read_csv('geo_json.txt',delimiter = ",")
-    except IOError:
-        return
-
-    location_df = pd.DataFrame(list(Location.objects.all()\
-        .values_list('id','location_code')),columns=['location_id','location_code'])
-
-    # print 'geo_json_df'
-    # print geo_json_df[:2]
+    pass
+    # try:
+    #     geo_json_df = pd.read_csv('geo_json.txt',delimiter = ",")
+    # except IOError:
+    #     return
     #
-    # print '===\n' * 10
+    # location_df = pd.DataFrame(list(Location.objects.all()\
+    #     .values_list('id','location_code')),columns=['location_id','location_code'])
     #
-    # print 'location_df'
-    # print location_df[:2]
-
-    merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
-    model_df_to_data(merged_df, LocationPolygon)
-
-    minify_geo_json()
+    # # print 'geo_json_df'
+    # # print geo_json_df[:2]
+    #
+    # # print '===\n' * 10
+    #
+    # # print 'location_df'
+    # # print location_df[:2]
+    #
+    # merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
+    # model_df_to_data(merged_df, LocationPolygon)
+    #
+    # minify_geo_json()
 
 
 class Migration(migrations.Migration):

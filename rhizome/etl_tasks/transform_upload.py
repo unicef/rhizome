@@ -1,6 +1,8 @@
 from pandas import read_csv
 from pandas import notnull
 from pandas import to_datetime
+from pandas import DataFrame
+
 import json
 from rhizome.api.exceptions import DatapointsException
 from django.conf import settings
@@ -16,7 +18,7 @@ class BadFileHeaderException(Exception):
 
 class DocTransform(object):
 
-    def __init__(self, user_id, document_id):
+    def __init__(self, user_id, document_id, raw_csv_df = None):
 
         self.user_id = user_id
 
@@ -26,21 +28,35 @@ class DocTransform(object):
 
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
-        raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+
+
+        if not isinstance(raw_csv_df, DataFrame):
+            raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+        # print '--csv_df --\n' * 4
+        # print csv_df[:10]
+        # print '---lencsvdf---'
+        # print len(csv_df)
+        # print self.uq_id_column
+        # print self.location_column
+        # print self.campaign_column
+        # print '--csv_df --\n' * 4
 
-        print '==CSV DF=='
-        print csv_df
+        ## if there is no uq id column -- make one ##
+        if not self.uq_id_column in raw_csv_df.columns:
 
-        try:
-            csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
-        except Exception as err:
-            dp_error_message = '%s is a required column.' %err.message
-            print 'dp_error_message'
-            print dp_error_message
-            raise DatapointsException(message=dp_error_message)
+            try:
+                csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
+            except Exception as err:
+                dp_error_message = '%s is a required column.' %err.message
+                raise DatapointsException(message=dp_error_message)
+
         self.csv_df = csv_df
         self.file_header = csv_df.columns
+
+        print 'self.csv_df==\n' * 5
+        print self.csv_df[:5]
 
         self.meta_lookup = {
             'location':{},
@@ -169,9 +185,9 @@ class ComplexDocTransform(DocTransform):
         indicators - indicators are columns.
     '''
 
-    def __init__(self,user_id,document_id):
+    def __init__(self,user_id,document_id,raw_csv_df=None):
 
-        super(ComplexDocTransform, self).__init__(user_id, document_id)
+        super(ComplexDocTransform, self).__init__(user_id, document_id, raw_csv_df)
 
         ## if we allow for user input to choose column definitinos
         ## we can pull the data frmo the below calls.  Since we are hard
@@ -272,6 +288,14 @@ class ComplexDocTransform(DocTransform):
         ## transform the raw data based on the documents configurations ##
         doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
         # doc_df = self.process_date_column(doc_df)
+
+
+        print ' == DOC self.csv_df == '
+        print len(self.csv_df)
+
+        print ' == DOC DF LEN == '
+        print len(doc_df)
+
 
         doc_obj = Document.objects.get(id = self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)

@@ -85,9 +85,6 @@ class MetaDataGenerator:
         campaign_ids = self.build_campaign_meta()
         location_ids = self.build_location_meta()
 
-        print ' == LOCATION LIST == '
-        pprint(Location.objects.all().values())
-
     def build_indicator_meta(self):
 
         batch = []
@@ -248,19 +245,18 @@ class MetaDataGenerator:
 
         new_doc = Document.objects.create(
             doc_title = doc_file_text,
-            guid = 'test',
-            docfile=doc_file_text
+            guid = 'test'
         )
 
         create_doc_details(new_doc.id)
 
         ## document -> source_submissions ##
-        dt = ComplexDocTransform(user_id, new_doc.id)
+        dt = ComplexDocTransform(user_id, new_doc.id, self.source_sheet_df)
         dt.main()
 
         ## source_submissions -> datapoints ##
-        # mr = MasterRefresh(user_id, new_doc.id)
-        # mr.main()
+        mr = MasterRefresh(user_id, new_doc.id)
+        mr.main()
 
         ## datapoints -> computed datapoints ##
         # ar = AggRefresh()
