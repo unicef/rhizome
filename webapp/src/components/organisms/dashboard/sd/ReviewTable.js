@@ -56,9 +56,7 @@ var ReviewTable = React.createClass({
 
   _callApi: function () {
     this.props.getData({
-      document_id: this.props.doc_id,
-      location_id: this.props.location.id,
-      campaign_id: this.props.campaign.id
+      document_id: this.props.doc_id
     }, null, {'cache-control': 'no-cache'})
     .then(response => {
       this.setState({
@@ -78,9 +76,6 @@ var ReviewTable = React.createClass({
 
   componentWillUpdate: function (nextProps, nextState) {
     // FIXME -> needs cleanup
-    if (nextProps.location !== this.props.location) {
-      return
-    }
     if (nextProps.getData !== this.props.getData) {
       return
     }
@@ -90,9 +85,6 @@ var ReviewTable = React.createClass({
   },
 
   render () {
-    let location = _.get(this.props.location, 'location', this.props.location.name)
-    let campaign = _.get(this.props.campaign, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-
     const fields = {
       edit_link: {
         title: 'Edit',
@@ -105,7 +97,7 @@ var ReviewTable = React.createClass({
               source_submission_id={id}
               key={id}/>
           } else if (this.props.doc_tab === 'doc_index') {
-            return <a href={'/source-data/' + [location, campaign].join('/') + '/viewraw/' + id}>View Raw Data</a>
+            return <a href={'/source-data/viewraw/' + id}>View Raw Data</a>
           } else if (this.props.doc_tab === 'meta-data') {
             return <MapForm
               source_object_map_id={id}
