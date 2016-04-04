@@ -157,7 +157,7 @@ const MultiChart = React.createClass({
 
     // SIDEBAR
     // ---------------------------------------------------------------------------
-    const date_range_picker = chart.type === 'LineChart' || chart.type === 'TableChart' ? (
+    const date_range_picker = chart.type === 'LineChart' || chart.type === 'RawData' ? (
       <div className='medium-12 columns'>
         <h3>Time</h3>
         <DateRangePicker
@@ -170,7 +170,7 @@ const MultiChart = React.createClass({
       </div>
     ) : null
 
-    const campaign_selector = chart.type !== 'LineChart' ? (
+    const campaign_selector = chart.type !== 'LineChart' && chart.type !== 'RawData' ? (
       <CampaignSelector
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
