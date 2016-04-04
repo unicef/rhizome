@@ -3,7 +3,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DashboardStore from 'stores/DashboardStore'
+import DashboardStoreOld from 'stores/DashboardStoreOld'
 
 import DashboardActions from 'actions/DashboardActions'
 
@@ -31,7 +31,7 @@ var ReviewTable = React.createClass({
     children: React.PropTypes.string
   },
 
-  mixins: [Reflux.connect(DashboardStore, 'dashboardStore')],
+  mixins: [Reflux.connect(DashboardStoreOld, 'dashboardStore')],
 
   getInitialState: function () {
     return {

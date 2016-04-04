@@ -13,7 +13,7 @@ import api from 'data/api'
 import DashboardAPI from 'data/requests/DashboardAPI'
 import DashboardInit from 'data/dashboardInit'
 
-import DashboardStore from 'stores/DashboardStore'
+import DashboardStoreOld from 'stores/DashboardStoreOld'
 import DataStore from 'stores/DataStore'
 import GeoStore from 'stores/GeoStore'
 import NavigationStore from 'stores/NavigationStore'
@@ -71,7 +71,7 @@ var Dashboard = React.createClass({
   },
 
   componentDidMount () {
-    this.listenTo(DashboardStore, this._onDashboardChange)
+    this.listenTo(DashboardStoreOld, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
     this.listenTo(DashboardActions.navigate, this._navigate)
     this.listenTo(GeoStore, () => this.forceUpdate())
@@ -83,7 +83,7 @@ var Dashboard = React.createClass({
     this.setState(state)
 
     if (fetchData) {
-      let q = DashboardStore.getQueries()
+      let q = DashboardStoreOld.getQueries()
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
