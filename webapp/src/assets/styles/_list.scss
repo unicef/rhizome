@@ -10,18 +10,17 @@ ul.list, .reorderable-list {
     border: 1px solid #BBC6D1;
     background-color: #fafafa;
     color: #333;
-
     .clear-btn {
       position: absolute;
       top: 5px;
       right: 5px;
       font-size: 14px;
     }
-  }
-  div.reorderable-item {
-    cursor: grab;
     .fa-times-circle {
       font-size: 1.1rem;
     }
+  }
+  div.reorderable-item {
+    cursor: grab;
   }
 }
