@@ -80,6 +80,5 @@ const IndicatorSelector = React.createClass({
     }
   }
 })
-            // indicators={props.avoidBooleans ? raw_indicators.filter(i => i.data_format !== 'bool') : raw_indicators}
 
 export default IndicatorSelector
