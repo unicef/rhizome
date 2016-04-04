@@ -6,6 +6,7 @@ from pandas import read_csv, notnull, to_datetime
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
 from rhizome.etl_tasks.refresh_master import MasterRefresh
+from rhizome.agg_tasks import AggRefresh
 
 
 class TransformUploadTestCase(TestCase):

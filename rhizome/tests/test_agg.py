@@ -879,39 +879,43 @@ class AggRefreshTestCase(TestCase):
     #         self.top_lvl_location.id)
 
     #     mapping_1 = IndicatorClassMap.objects.create(
-    #         indicator = lqs_indicator,
-    #         string_value = "High Pass",
-    #         enum_value = 4,
-    #         is_display =true)        
+    #         indicator = lqas_indicator,
+    #         string_value = "Fail",
+    #         enum_value = 1,
+    #         is_display =True)        
 
     #     mapping_2 = IndicatorClassMap.objects.create(
-    #         indicator = lqs_indicator,
-    #         string_value = "HP",
-    #         enum_value = 4,
-    #         is_display =false)        
+    #         indicator = lqas_indicator,
+    #         string_value = "Pass",
+    #         enum_value = 2,
+    #         is_display =False)        
+
+    #     mapping_3 = IndicatorClassMap.objects.create(
+    #         indicator = lqas_indicator,
+    #         string_value = "High Pass",
+    #         enum_value = 3,
+    #         is_display =False)        
 
 
     #     random.seed(12345)
-    #     sum =0
+    #     lqas_vals_dict ={}
     #     for location in locations:
-    #         lpd_val = random.randrange(1, 10)
-    #         sum += lpd_val
+    #         lqas_val = random.randrange(1, 3)
     #         DataPoint.objects.create(
     #             campaign_id = self.campaign_id,
     #             location_id = location.id,
-    #             indicator_id = lpd_indicator.id,
+    #             indicator_id = lqas_indicator.id,
     #             source_submission_id = self.ss,
-    #             value = lpd_val
+    #             value = lqas_val
     #         )
+    #         if lqas_val not in lqas_vals_dict:
+    #             lqas_vals_dict[lqas_val] = 0
+    #         lqas_vals_dict[lqas_val] = lqas_vals_dict[lqas_val] + 1
 
     #     ar = AggRefresh(self.campaign_id)
 
-    #     try:
-    #         dwc_value = DataPointComputed.objects.get(
-    #             location_id = self.top_lvl_location.id,
-    #             campaign_id = self.campaign_id,
-    #             indicator = lpd_indicator.id
-    #         ).value
-    #         self.fail('datapoint should not exist')
-    #     except ObjectDoesNotExist:
-    #         pass
+    #     dwc_value = DataPointComputed.objects.get(
+    #         location_id = self.top_lvl_location.id,
+    #         campaign_id = self.campaign_id,
+    #         indicator = lqas_indicator.id
+    #     ).value
