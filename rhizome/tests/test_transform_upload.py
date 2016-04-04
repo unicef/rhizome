@@ -77,6 +77,19 @@ class TransformUploadTestCase(TestCase):
         some_cell_value_from_the_file = 0.9029
         self.assertEqual(dps[0].value, some_cell_value_from_the_file)
 
+    # test bad percent values for upload. for instance if a user uploads "95%" instead of '.95'
+    #and make sure that the value has been correctly converted
+    def test_percent_vals(self):
+        doc_id = self.ingest_file('percent_vals.csv')
+        ComplexDocTransform(self.user.id, doc_id).main()
+        MasterRefresh(self.user.id, doc_id).main()
+        dps = DataPoint.objects.all()
+        self.assertEqual(len(dps), 2)
+        expected_dp_val = 0.8267
+        dp = DataPoint.objects.get(indicator_id = self.mapped_indicator_with_data)
+        self.assertEqual(expected_dp_val, dp.value)
+
+        #also add test to make sure that the value is correct
 
     # def test_boolean_transform(self):
 
