@@ -394,13 +394,16 @@ var DashboardNewStore = Reflux.createStore({
     } else if (chart.type === 'LineChart') {
       chart.data = melted_datapoints
       return chart
+    } else if (chart.type === 'ColumnChart') {
+      chart.data = datapoints
+      return chart
     }
 
     switch (chart.type) {
-      case 'LineChart':
+      // case 'LineChart':
         // return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
-        chart.data = melted_datapoints
-        return chart
+        // chart.data = melted_datapoints
+        // return chart
       // case 'PieChart':
         // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.dashboard.charts[uuid].selected_indicators, layout)
       case 'ChoroplethMap':
