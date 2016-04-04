@@ -80,7 +80,7 @@ $total-columns: 7;
 		margin-top: 0;
 		margin-bottom: 2rem;
 	}
-	.dropdown-list {
+	.dropdown-list:not(.button) {
 		padding: 0 10px 10px 10px;
 	}
   footer.hideable {

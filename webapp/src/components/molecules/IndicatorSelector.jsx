@@ -46,8 +46,8 @@ const IndicatorSelector = React.createClass({
   render () {
     const props = this.props
     const raw_indicators = props.indicators.raw || []
+    const available_indicators = this.getAvailableIndicators()
     if (props.multi) {
-      const available_indicators = this.getAvailableIndicators()
       return (
         <form className={props.classes}>
           <h3>Indicators
@@ -64,19 +64,22 @@ const IndicatorSelector = React.createClass({
         </form>
       )
     } else {
+      const selected_indicator = _.isEmpty(this.props.selected_indicators) ? {name: 'Select Indicator'} : this.props.selected_indicators[0]
       return (
-        <div className={props.classes}>
+        <form className={props.classes}>
           <h3>Indicator</h3>
-          <IndicatorTitleMenu
-            idsToRender={raw_indicators.map(indicator => indicator.id)}
-            indicators={props.avoidBooleans ? raw_indicators.filter(i => i.data_format !== 'bool') : raw_indicators}
-            selected={props.selected_indicators[0]}
-            sendValue={props.setIndicators}
+          <DropdownMenu
+            items={available_indicators}
+            sendValue={this.props.setIndicators}
+            item_plural_name='Indicators'
+            style='dropdown-list'
+            text={selected_indicator.name}
           />
-        </div>
+        </form>
       )
     }
   }
 })
+            // indicators={props.avoidBooleans ? raw_indicators.filter(i => i.data_format !== 'bool') : raw_indicators}
 
 export default IndicatorSelector
