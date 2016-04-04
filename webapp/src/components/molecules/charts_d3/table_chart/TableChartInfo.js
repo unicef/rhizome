@@ -15,7 +15,7 @@ const TableChartInfo = {
     return {
       cellHeight: 36,
       fontSize: 14,
-      margin: { top: 40, right: 40, bottom: 40, left: 40 },
+      margin: { top: 100, right: 40, bottom: 100, left: 40 },
       cellFontSize: 14,
       headers: [],
       parentLocationMap: _.indexBy(datapoints.meta.parent_location_map, 'name'),
