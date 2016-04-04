@@ -32,7 +32,7 @@ class MasterRefresh(object):
 
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
-
+        self.class_map_dict = self.get_class_indicator_mappings()
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
         # self.to_process_ss_ids = SourceSubmission.objects\
@@ -108,6 +108,24 @@ class MasterRefresh(object):
                 .to_dict()['master_object_id']
 
         return source_map_dict
+
+    def get_class_indicator_mappings(self):
+        '''
+        Using the meta mappings, map indicator ids to another dict, which maps all 
+        of the class indicator string values to their corresponding enum values.
+        '''
+        
+        indicator_ids = self.source_map_dict.values()
+        query_results = IndicatorClassMap.objects.filter(
+            indicator_id__in = indicator_ids).values_list('indicator', 'string_value', 'enum_value')
+        class_map_dict ={}
+
+        for query in query_results:
+            if query[0] not in class_map_dict:
+                class_map_dict[query[0]] = {}
+            class_map_dict[query[0]][query[1]] = query[2]  
+
+        return class_map_dict
 
     def main(self):
 
@@ -341,12 +359,7 @@ class MasterRefresh(object):
         row at once in process_source_submission.
         '''
 
-        ## if i can't clean the value, i.e. its a string not a number, dont process
 
-        try:
-            cleaned_val = self.clean_val(value)
-        except ValueError:
-            return None
 
         ## it no indicator row dont process ##
         try:
@@ -354,7 +367,22 @@ class MasterRefresh(object):
         except KeyError:
             return None
 
-        doc_dp = DocDataPoint(**{
+        cleaned_val = None
+        #handle string 'class' type indicators
+        if indicator_id in self.class_map_dict:
+            try:
+                cleaned_val = self.class_map_dict[indicator_id][value]
+            except KeyError:
+                return None
+        #handle numbers
+        else:
+            try:
+                cleaned_val = self.clean_val(value)
+            except ValueError:
+                return None
+
+        if cleaned_val:
+            doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
                 'location_id': row.location_id,
@@ -365,8 +393,9 @@ class MasterRefresh(object):
                 'agg_on_location': True,
             })
 
-        return doc_dp
-
+            return doc_dp
+        else:
+            return None
 
     def clean_val(self, val):
         '''
