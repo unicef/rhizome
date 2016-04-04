@@ -17,7 +17,9 @@ var SourceDataStore = Reflux.createStore({
 
   getInitialState () {
     var initialState = {
-      tableDef: this.getTableDef()
+      tableDef: this.getTableDef(),
+      doc_id: null,
+      doc_tab: 'doc_index'
     }
     return initialState
   },

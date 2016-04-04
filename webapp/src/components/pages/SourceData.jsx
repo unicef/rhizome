@@ -1,30 +1,11 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-// import page from 'page'
-// import moment from 'moment'
+import page from 'page'
 
-// import randomHash from 'utilities/randomHash'
-
-// import builtins from 'components/organisms/dashboard/builtin'
 import ReviewTable from 'components/organisms/dashboard/sd/ReviewTable.js'
-import DocForm from 'components/organisms/dashboard/sd/DocForm.jsx'
 import DocOverview from 'components/organisms/dashboard/sd/DocOverview.jsx'
-
 import CSVMenuItem from 'components/molecules/CSVMenuItem.jsx'
-
-// import api from 'data/api'
-// import DashboardAPI from 'data/requests/DashboardAPI'
-// import DashboardInit from 'data/dashboardInit'
-
-// import DashboardStoreOld from 'stores/DashboardStoreOld'
-// import DataStore from 'stores/DataStore'
-// import GeoStore from 'stores/GeoStore'
-// import NavigationStore from 'stores/NavigationStore'
-
-// import DashboardActions from 'actions/DashboardActions'
-// import DataActions from 'actions/DataActions'
-// import GeoActions from 'actions/GeoActions'
 
 import SourceDataStore from 'stores/SourceDataStore'
 // import SourceDataActions from 'actions/SourceDataActions'
@@ -39,28 +20,38 @@ var SourceData = React.createClass({
     Reflux.connect(SourceDataStore)
   ],
 
-  // var loading = this.props.loading
-  // var doc_id = this.props.doc_id
+  _setDocId: function (doc_id) {
+    page('/source-data/' + this.state.doc_tab + '/' + doc_id)
+  },
+  _setDocTab: function (doc_tab) {
+    page('/source-data/' + doc_tab + '/' + this.state.doc_id)
+  },
+
+  componentWillMount () {
+    // http://localhost:8000/source-data/viewraw/76 //
+    let currentPath = window.location.pathname
+    let cleanPath = currentPath.replace('/source-data/', '')
+    let urlParams = cleanPath.split('/')
+
+    let newState = {
+      'doc_tab': 'doc_index',
+      'doc_id': null
+    }
+
+    if (urlParams.length === 2) {
+      newState = {
+        'doc_tab': urlParams[0],
+        'doc_id': urlParams[1]
+      }
+    }
+
+    this.setState(newState)
+  },
+
   render () {
-    // if (this.state.loading) {
-    //   let style = {
-    //     fontSize: '2rem',
-    //     zIndex: 9999
-    //   }
-    //
-    //   return (
-    //     <div style={style} className='overlay'>
-    //       <div>
-    //         <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
-    //       </div>
-    //     </div>
-    //   )
-
-    // } // END OF LOADING CONDITION //
-
     var table_definition = this.state.tableDef
     var doc_tab = this.state.doc_tab || 'doc_index'
-    var doc_id = 2
+    var doc_id = this.state.doc_id
     var doc_tabs = CSVMenuItem.fromArray(
       _.map(['viewraw', 'meta-data', 'results', 'doc_index'], d => {
         return {
@@ -100,9 +91,6 @@ var SourceData = React.createClass({
         </div>
       </div>
     )
-    // <DocForm
-    //   doc_title = 'something'
-    //   reviewTable={review_table}/>
 
     var reviewData = (
       <div>
@@ -128,72 +116,21 @@ var SourceData = React.createClass({
     // if it is doc index, then show the upload component, else show the doc review //
     var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
 
-    // return (
-    //   <div className='row upload__csv'>
-    //     {docForm}
-    //   </div>
-    // )
-    // },
-
     return (
-      <div>
-        <div>
-          {docForm}
-        </div>
-        <div className='medium-12 columns'>
-          {review_table}
-        </div>
-    </div>
-
+      <div className='row'>
+        <div className='medium-1 columns'>&nbsp;</div>
+          <div className='medium-10 columns'>
+            <div>
+              {docForm}
+            </div>
+            <div className='medium-12 columns'>
+              {review_table}
+            </div>
+          </div>
+        <div className='medium-1 columns'>&nbsp;</div>
+      </div>
     )
   }
 })
 
 export default SourceData
-
-//
-// var doc_obj = this.state.doc_obj
-// if (!doc_obj) {
-//   return <div className='admin-loading'> Source Dashboard Loading...</div>
-// }
-//
-// if (!doc_tab) {
-//   doc_tab = 'doc_index'
-// }
-//
-// var doc_tabs = CSVMenuItem.fromArray(
-//   // _.map(['viewraw', 'results', 'doc_index'], d => {
-//   _.map(['viewraw', 'meta-data', 'results', 'errors', 'doc_index'], d => {
-//     return {
-//       title: d,
-//       value: d
-//     }
-//   }),
-//   this._setDocTab)
-//
-//
-//
-// _setDocId: function (doc_id) {
-// this._navigate({doc_id: doc_id})
-// this.forceUpdate()
-// },
-//
-// _setDocTab: function (doc_tab) {
-// this._navigate({doc_tab: doc_tab})
-// this.forceUpdate()
-// },
-//
-// _navigate: function (params) {
-// var slug = _.get(params, 'dashboard', _.kebabCase(this.props.dashboard.title))
-// var location = _.get(params, 'location', this.props.location.name)
-// var campaign = _.get(params, 'campaign', moment(this.props.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-// var doc_tab = _.get(params, 'doc_tab', this.props.doc_tab)
-// var doc_id = _.get(params, 'doc_id', this.props.doc_id)
-//
-// if (_.isNumber(location)) {
-//   location = _.find(this.state.locations, r => r.id === location).name
-// }
-//
-// page('/' + [slug, location, campaign].join('/') + '/' + doc_tab + '/' + doc_id)
-// }
-// })

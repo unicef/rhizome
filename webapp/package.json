@@ -18,7 +18,7 @@
     "moment": "^2.10.6",
     "nuka-carousel": "0.0.9",
     "object-assign": "^4.0.1",
-    "page": "^1.6.3",
+    "page": "^1.7.1",
     "react": "^0.13.3",
     "react-datascope": "file:./external_modules/react-datascope",
     "react-dropzone": "^2.1.0",
