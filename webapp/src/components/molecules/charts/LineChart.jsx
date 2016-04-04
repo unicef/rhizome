@@ -31,7 +31,7 @@ class LineChart extends Chart {
     y: d => d.value
   }
 
-  setData () {
+  setData () { console.info('------ LineChart.setData')
     const props = this.props
     const selected_locations_index = _.indexBy(props.selected_locations, 'id')
     const selected_indicators_index = _.indexBy(props.selected_indicators, 'id')
@@ -47,8 +47,7 @@ class LineChart extends Chart {
       .value()
   }
 
-  setOptions () {
-    console.info('------ LineChart.setOptions')
+  setOptions () { console.info('------ LineChart.setOptions')
     const options = this.options
     const props = this.props
     const aspect = options.aspect || 1
