@@ -89,6 +89,8 @@ class TransformUploadTestCase(TestCase):
         dp = DataPoint.objects.get(indicator_id = self.mapped_indicator_with_data)
         self.assertEqual(expected_dp_val, dp.value)
 
+    
+
         #also add test to make sure that the value is correct
 
     # def test_boolean_transform(self):
