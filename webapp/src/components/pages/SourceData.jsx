@@ -2,240 +2,135 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import page from 'page'
-import moment from 'moment'
 
-import randomHash from 'utilities/randomHash'
+import ReviewTable from 'components/organisms/source-data/ReviewTable.js'
+import DocOverview from 'components/organisms/source-data/DocOverview.jsx'
+import CSVMenuItem from 'components/molecules/CSVMenuItem.jsx'
 
-import builtins from 'components/organisms/dashboard/builtin'
-import SourceData from 'components/organisms/dashboard/SourceDataDashboard'
+import SourceDataStore from 'stores/SourceDataStore'
+// import SourceDataActions from 'actions/SourceDataActions'
 
-import api from 'data/api'
-import DashboardAPI from 'data/requests/DashboardAPI'
-import DashboardInit from 'data/dashboardInit'
+var {
+  SimpleDataTable, SimpleDataTableColumn,
+  Paginator, SearchBar
+} = require('react-datascope')
 
-import DashboardStore from 'stores/DashboardStore'
-import DataStore from 'stores/DataStore'
-import GeoStore from 'stores/GeoStore'
-import NavigationStore from 'stores/NavigationStore'
-
-import DashboardActions from 'actions/DashboardActions'
-import DataActions from 'actions/DataActions'
-import GeoActions from 'actions/GeoActions'
-
-var Dashboard = React.createClass({
+var SourceData = React.createClass({
   mixins: [
-    Reflux.ListenerMixin,
-    Reflux.connect(DataStore)
+    Reflux.connect(SourceDataStore)
   ],
 
-  getInitialState () {
-    return {
-      locations: [],
-      campaigns: [],
-      allCampaigns: [],
-      location: null,
-      campaign: null,
-      dashboard: null,
-      allDashboards: []
-    }
+  _setDocId: function (doc_id) {
+    page('/source-data/' + this.state.doc_tab + '/' + doc_id)
   },
-
-  getallDashboards () {
-    api.get_dashboard().then(res => {
-      let customDashboards = _(res.objects).sortBy('id').reverse().value()
-      let allDashboards = builtins.concat(customDashboards)
-      this.setState({allDashboards: allDashboards})
-    })
+  _setDocTab: function (doc_tab) {
+    page('/source-data/' + doc_tab + '/' + this.state.doc_id)
   },
 
   componentWillMount () {
-    this.getallDashboards()
-    page('/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
-    page('/:dashboard/:location/:year/:month', this._show)
-    page('/:dashboard', this._showDefault)
-  },
+    // http://localhost:8000/source-data/viewraw/76 //
+    let currentPath = window.location.pathname
+    let cleanPath = currentPath.replace('/source-data/', '')
+    let urlParams = cleanPath.split('/')
 
-  componentWillUpdate (nextProps, nextState) {
-    if (!(nextState.campaign && nextState.location && nextState.dashboard)) {
-      return
+    let newState = {
+      'doc_tab': 'doc_index',
+      'doc_id': null
     }
 
-    let campaign = moment(nextState.campaign.start_date).format('MM/YYYY')
-    let title = [
-      nextState.dashboard.title,
-      [nextState.location.name, campaign].join(' '),
-      'RhizomeDB'
-    ].join(' - ')
-
-    document.title = title
-  },
-
-  componentDidMount () {
-    this.listenTo(DashboardStore, this._onDashboardChange)
-    this.listenTo(NavigationStore, this._onNavigationChange)
-    this.listenTo(DashboardActions.navigate, this._navigate)
-    this.listenTo(GeoStore, () => this.forceUpdate())
-  },
-
-  _onDashboardChange (state) {
-    let fetchData = this.state.loaded
-
-    this.setState(state)
-
-    if (fetchData) {
-      let q = DashboardStore.getQueries()
-      if (_.isEmpty(q)) {
-        DataActions.clear()
-      } else {
-        if (state.dashboard.builtin) {
-          DataActions.fetch(this.state.campaign, this.state.location, q)
-        } else {
-          DataActions.fetchForDashboard(this.state.dashboard)
-        }
+    if (urlParams.length === 2) {
+      newState = {
+        'doc_tab': urlParams[0],
+        'doc_id': urlParams[1]
       }
-
-      if (this.state.hasMap) { GeoActions.fetch(this.state.location) }
-    } else if (NavigationStore.loaded) {
-      page({ click: false })
-    }
-  },
-
-  _onNavigationChange (nav) {
-    if (NavigationStore.loaded) {
-      page({ click: false })
-    }
-  },
-
-  _setCampaign (id) {
-    let campaign = _.find(this.state.campaigns, c => c.id === id)
-    if (!campaign) { return }
-    this._navigate({ campaign: moment(campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM') })
-  },
-
-  _setLocation (id) {
-    let location = _.find(this.state.locations, r => r.id === id)
-    if (!location) { return }
-    this._navigate({ location: location.name })
-  },
-
-  _setDashboard (slug) {
-    this._navigate({ dashboard: slug })
-  },
-
-  _getDashboard (slug) {
-    let dashboard = _.find(this.state.allDashboards, d => _.kebabCase(d.title) === slug)
-    if (dashboard.id <= 0) {
-      return new Promise(resolve => {
-        resolve(dashboard)
-      })
-    } else {
-      return api.get_chart({ dashboard_id: dashboard.id, _: randomHash() }, null, {'cache-control': 'no-cache'}).then(res => {
-        let charts = res.objects.map(chart => {
-          let result = chart.chart_json
-          result.id = chart.id
-          return result
-        })
-        dashboard.charts = _.sortBy(charts, _.property('id'))
-        return dashboard
-      }, err => {
-        console.log(err)
-        dashboard.charts = []
-      })
-    }
-  },
-
-  _navigate (params) {
-    let slug = _.get(params, 'dashboard', _.kebabCase(this.state.dashboard.title))
-    if (params.dashboard) {
-      window.location.pathname = '/' + slug
     }
 
-    let location = _.get(params, 'location', this.state.location.name)
-    let campaign = _.get(params, 'campaign', moment(this.state.campaign.start_date, 'YYYY-MM-DD').format('YYYY/MM'))
-    if (_.isNumber(location)) {
-      location = _.find(this.state.locations, r => r.id === location).name
-    }
-    page('/' + [slug, location, campaign].join('/'))
-  },
-
-  _showDefault (ctx) {
-    api.get_dashboard().then(res => {
-      let customDashboards = _(res.objects).sortBy('id').reverse().value()
-      let allDashboards = builtins.concat(customDashboards)
-      this.setState({ allDashboards: allDashboards })
-      this._getDashboard(ctx.params.dashboard).then(dashboard => {
-        DashboardActions.setDashboard({
-          dashboard
-        })
-      })
-    })
-  },
-
-  _show (ctx) {
-    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      DashboardActions.setDashboard({
-        dashboard,
-        location: ctx.params.location,
-        date: [ctx.params.year, ctx.params.month].join('-')
-      })
-    })
-  },
-
-  _showSourceData (ctx) {
-    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      let doc_tab = ctx.params.doc_tab
-
-      this.setState({
-        doc_id: ctx.params.doc_id,
-        doc_tab: doc_tab
-      })
-
-      DashboardActions.setDashboard({
-        dashboard,
-        location: ctx.params.location,
-        date: [ctx.params.year, ctx.params.month].join('-')
-      })
-    })
+    this.setState(newState)
   },
 
   render () {
-    if (!(this.state.loaded && this.state.dashboard)) {
-      let style = {
-        fontSize: '2rem',
-        zIndex: 9999
-      }
+    var table_definition = this.state.tableDef
+    var doc_tab = this.state.doc_tab || 'doc_index'
+    var doc_id = this.state.doc_id
+    var doc_tabs = CSVMenuItem.fromArray(
+      _.map(['viewraw', 'meta-data', 'results', 'doc_index'], d => {
+        return {
+          title: d,
+          value: d
+        }
+      }),
+      this._setDocTab)
 
-      return (
-        <div style={style} className='overlay'>
-          <div>
-            <div><i className='fa fa-spinner fa-spin'></i>&ensp;Loading</div>
-          </div>
+    var search_fields = table_definition[doc_tab]['search_fields']
+    var datascopeFilters = <SearchBar fieldNames={search_fields} placeholder='Search for uploaded data' />
+    var table_key = doc_id + '-' + doc_tab
+
+    // data table //
+
+    var review_table = (<ReviewTable
+      title='sample title' // sup w this
+      getData={table_definition[doc_tab]['data_fn']}
+      fields={table_definition[doc_tab]['fields']}
+      header={table_definition[doc_tab]['header']}
+      key={table_key}
+      doc_id={doc_id}
+      doc_tab={doc_tab}
+      datascopeFilters={datascopeFilters}>
+      <Paginator />
+      <SimpleDataTable>
+        {table_definition[doc_tab]['fields'].map(fieldName => {
+          return <SimpleDataTableColumn name={fieldName}/>
+        })}
+      </SimpleDataTable>
+    </ReviewTable>)
+
+    var uploadData = (
+      <div>
+        <div className='medium-12 columns upload__csv--load'>
+          upload data
         </div>
-      )
-    }
+      </div>
+    )
 
-    let {campaign, loading, location, doc_id, doc_tab} = this.state
+    var reviewData = (
+      <div>
+        <div className='medium-12 columns upload__csv--load'>
+          Review Data
+        </div>
+        <div className='medium-12 columns upload__csv--step'>
+          You can review raw data, map indicators, validate data and view results.
+        </div>
+        <div>
+          <DocOverview
+              key={table_key + 'breakdown'}
+              doc_id={doc_id}
+              doc_title='something'/>
+        </div>
+        <div className='large-8 medium-12 small-12 columns csv-upload__title'>
+          {doc_tabs}
+        </div>
+        <hr />
+      </div>
+    )
 
-    let dashboardDef = this.state.dashboard
-
-    let dashboardProps = {
-      campaign: campaign,
-      dashboard: dashboardDef,
-      data: [],
-      loading: loading,
-      location: location,
-      doc_tab: doc_tab,
-      doc_id: doc_id
-    }
-    let dashboard = React.createElement(SourceData, dashboardProps)
+    // if it is doc index, then show the upload component, else show the doc review //
+    var docForm = doc_tab === 'doc_index' ? uploadData : reviewData
 
     return (
-      <div>
-        <div classNameName='clearfix'></div>
-        {dashboard}
+      <div className='row'>
+        <div className='medium-1 columns'>&nbsp;</div>
+          <div className='medium-10 columns'>
+            <div>
+              {docForm}
+            </div>
+            <div className='medium-12 columns'>
+              {review_table}
+            </div>
+          </div>
+        <div className='medium-1 columns'>&nbsp;</div>
       </div>
     )
   }
 })
 
-export default Dashboard
+export default SourceData

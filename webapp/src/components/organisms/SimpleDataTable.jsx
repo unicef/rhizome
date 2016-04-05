@@ -89,7 +89,6 @@ let SimpleDataTable = React.createClass({
           value={row[cell_key].value}
           onSave={this.saveCellValue}
           formatValue={this._numberFormatter}
-          tooltip={row[cell_key]}
           classes={'numeric'} />
       } else {
         return <TableCell
@@ -97,7 +96,6 @@ let SimpleDataTable = React.createClass({
           row={row}
           value={row[cell_key].value}
           formatValue={this._numberFormatter}
-          tooltip={row[cell_key]}
           classes={'numeric'} />
       }
     })

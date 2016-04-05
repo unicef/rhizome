@@ -14,13 +14,14 @@ let EntryFormStore = Reflux.createStore({
   data: {
     apiResponseData: null,
     indicatorMap: null,
-    indicatorSet: null,
+    // indicatorSet: null,
     indicatorsToTags: [],
     filteredIndicators: [],
     data: null,
     loaded: false,
     campaigns: [],
-    campaignIdSelected: null,
+    // campaignIdSelected: null,
+    campaignNames: [],
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -32,6 +33,7 @@ let EntryFormStore = Reflux.createStore({
       locations: []
     },
     tags: [],
+    tagNames: [],
     includeSublocations: false,
     pagination: {
       total_count: 0
@@ -71,6 +73,10 @@ let EntryFormStore = Reflux.createStore({
           }
         }).value()
       self.data.tags = tagResult
+      self.data.tagNames = _(tags.objects)
+        .map(tag => {
+          return tag.tag_name
+        }).value()
 
       let campaignResult = _(campaigns.objects)
           .map(campaign => {
@@ -80,7 +86,11 @@ let EntryFormStore = Reflux.createStore({
             }
           }).value()
       self.data.campaigns = campaignResult
-
+      //map names
+      self.data.campaignNames = _(campaigns.objects)
+          .map(campaign => {
+            return campaign.name
+          }).value()
       // locations
       let locationResult = _(locations.objects)
           .map(location => {
@@ -112,8 +122,7 @@ let EntryFormStore = Reflux.createStore({
     this.data.couldLoad = (this.data.selected.form.value !== null &&
                            this.data.selected.campaign.value !== null &&
                            this.data.locationSelected.length > 0)
-
-    if (this.data.couldLoad) { this.onGetTableData() }
+    if (this.data.couldLoad) { this._getTableData() }
   },
 
   // _filterLocationsByCampaign: function () {
@@ -180,15 +189,15 @@ let EntryFormStore = Reflux.createStore({
 
   onSetForm: function (formValue) {
     this.data.selected.form.value = formValue
-    this.data.selected.form.title = this.data.tags.find(function (tag) { return tag.value === formValue }).title
+    this.data.selected.form.title = this.data.tagNames[formValue-1]
+    this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
     this.data.selected.campaign.value = campaignId
-    this.data.selected.campaign.title = this.data.campaigns.find(function(campaign){
-      return campaign.id === campaignId
-    }).title
+    this.data.selected.campaign.title = this.data.campaignNames[campaignId-1]
+    this._setCouldLoad()
     this.trigger(this.data)
   },
 
@@ -219,7 +228,7 @@ let EntryFormStore = Reflux.createStore({
     })
   },
 
-  onGetTableData: function () {
+  _getTableData: function () {
     this._filterIndicators()
     let options = {
       campaign__in: parseInt(this.data.selected.campaign.value, 10),
@@ -263,7 +272,6 @@ let EntryFormStore = Reflux.createStore({
 
     this.data.loaded = false
     this.trigger(this.data)
-
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.apiResponseData = response.objects

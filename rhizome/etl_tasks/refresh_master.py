@@ -4,7 +4,7 @@ from pprint import pprint
 
 from collections import defaultdict
 import json
-
+import re
 from pandas import DataFrame, concat
 from bulk_update.helper import bulk_update
 
@@ -394,9 +394,18 @@ class MasterRefresh(object):
         '''
         str_lookup = {'yes':1,'no':0}
 
-
         if val is None:
             return None
+
+        #deal with percentages
+        convert_percent = False
+        if type(val) == unicode and '%' in val:
+            try:
+                val = float(re.sub('%','', val))
+                convert_percent =True
+            except ValueError:
+                pass
+
 
         ## clean!  i am on a deadline rn :-/  ##
 
@@ -407,10 +416,12 @@ class MasterRefresh(object):
         except AttributeError:
             cleaned_val = float(val)
         except ValueError:
-
             try:
                 cleaned_val = str_lookup[val.lower()]
+
             except KeyError:
                 raise ValueError('Bad Value!')
 
+        if convert_percent:
+            cleaned_val = cleaned_val/100.0
         return cleaned_val

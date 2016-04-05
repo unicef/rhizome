@@ -51,18 +51,15 @@ class TableChartRenderer {
   //                                    RENDER                                   //
   // =========================================================================== //
   prepContainer () {
-    // hacky way to scale the view box.. this should be done by taking into account the user's screen size
-    const calculatedHeightScale = 1 + (this.options.headers.length - 8) / 10
-    const viewBoxHeightScale = calculatedHeightScale < 1 ? calculatedHeightScale : 1
-    const viewBoxWidth = this.w + this.margin.left + this.margin.right - 150
-    const viewBox = '0 -50 ' + viewBoxWidth + ' ' + ((this.h * viewBoxHeightScale) + this.margin.top + this.h)
+    const svgHeight = this.margin.top + this.margin.bottom + this.h
+    const viewBox = '0 0 ' + this.w + ' ' + svgHeight
     this.svg.attr({
       'viewBox': viewBox,
-      'width': (this.w + this.margin.left + this.margin.right),
-      'height': (this.h + this.margin.top + this.margin.bottom)
+      'width': this.w,
+      'height': this.margin.top + this.margin.bottom + this.h
     })
    .datum(this.data)
-    this.svg.select('.margin').attr('transform', 'translate(-75, ' + this.margin.top + ')')
+    this.svg.select('.margin').attr('transform', 'translate(0, ' + this.margin.top + ')')
   }
 
   // ROWS

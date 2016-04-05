@@ -58,6 +58,10 @@ input.title-input {
   font-size: 1.25rem;
   width: 20rem;
   display: inline-block;
+  @media #{$small-only} {
+    margin: 0 auto;
+    width: 18rem;
+  }
   &::placeholder {
     color: rgba(255, 255, 255, 0.5);
   }

@@ -15,7 +15,7 @@ import DataActions from 'actions/DataActions'
 import GeoActions from 'actions/GeoActions'
 
 import DashboardBuilderStore from 'stores/DashboardBuilderStore'
-import DashboardStore from 'stores/DashboardStore'
+import DashboardStoreOld from 'stores/DashboardStoreOld'
 import DataStore from 'stores/DataStore'
 
 window.perf = React.addons.Perf
@@ -28,7 +28,7 @@ export default React.createClass({
   mixins: [
     Reflux.connect(DashboardBuilderStore, 'store'),
     Reflux.connect(DataStore, 'dataStore'),
-    Reflux.connect(DashboardStore, 'dashboardStore'),
+    Reflux.connect(DashboardStoreOld, 'dashboardStore'),
     Reflux.ListenerMixin
   ],
 
@@ -43,8 +43,8 @@ export default React.createClass({
 
   componentDidMount () {
     DashboardBuilderActions.initialize(this.props.dashboard_id)
-    this.listenTo(DashboardStore, this._onDataLoaded)
-    this.listenTo(DashboardStore, this._onDashboardChange)
+    this.listenTo(DashboardStoreOld, this._onDataLoaded)
+    this.listenTo(DashboardStoreOld, this._onDashboardChange)
   },
 
   editChart (index) {
@@ -115,7 +115,7 @@ export default React.createClass({
   _onDashboardChange (state) {
     let dashboardSet = this.state.dashboardStore.dashboard
     if (dashboardSet) {
-      let q = DashboardStore.getQueries()
+      let q = DashboardStoreOld.getQueries()
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {

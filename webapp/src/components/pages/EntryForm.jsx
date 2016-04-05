@@ -15,10 +15,7 @@ let EntryForm = React.createClass({
   componentWillMount: function () {
     EntryFormActions.initData()
   },
-
   render () {
-      console.log('this.state.selected.campaign', this.state.selected.campaign)
-    console.info('Render: EntryForm')
     return (
       <div className='row'>
         <form>

@@ -10,6 +10,14 @@ function num (value, format = 'n') {
   return d3.format(format)(value)
 }
 
+function autoFormat (value, format) {
+  if (format === 'pct') {
+    return Math.floor(value * 100) + '%'
+  } else {
+    return value
+  }
+}
+
 function timeAxis (value) {
   var m = moment(value)
 
@@ -31,6 +39,7 @@ function unCamelCase (str) {
 
 export default {
   general: general,
+  autoFormat: autoFormat,
   num: num,
   timeAxis: timeAxis,
   unCamelCase: unCamelCase

@@ -18,7 +18,7 @@ import IndicatorAPI from 'data/requests/IndicatorAPI'
 import api from 'data/api'
 import DashboardInit from 'data/dashboardInit'
 
-import DashboardStore from 'stores/DashboardStore'
+import DashboardStoreOld from 'stores/DashboardStoreOld'
 import DataStore from 'stores/DataStore'
 import GeoStore from 'stores/GeoStore'
 import NavigationStore from 'stores/NavigationStore'
@@ -31,7 +31,6 @@ const LAYOUT = {
   'Management Dashboard': require('components/organisms/dashboard/ManagementDashboard'),
   'NGA Campaign Monitoring': require('components/organisms/dashboard/NCODashboard'),
   'District Dashboard': require('components/organisms/dashboard/District'),
-  'Source Data': require('components/organisms/dashboard/SourceDataDashboard'),
   'EOC Pre Campaign': require('components/organisms/dashboard/EocCampaign'),
   'EOC Intra Campaign': require('components/organisms/dashboard/EocCampaign'),
   'EOC Post Campaign': require('components/organisms/dashboard/EocCampaign')
@@ -67,7 +66,6 @@ var BuiltinDashboardPage = React.createClass({
     this.getAllDashboards()
     this.initIndicators()
 
-    page('/dashboards/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/dashboards/:dashboard/:location/:campaign_id', this._show)
     page('/dashboards/:dashboard', this._showDefault)
   },
@@ -83,7 +81,7 @@ var BuiltinDashboardPage = React.createClass({
   },
 
   componentDidMount () {
-    this.listenTo(DashboardStore, this._onDashboardChange)
+    this.listenTo(DashboardStoreOld, this._onDashboardChange)
     this.listenTo(NavigationStore, this._onNavigationChange)
     this.listenTo(DashboardActions.navigate, this._navigate)
     this.listenTo(GeoStore, () => this.forceUpdate())
@@ -110,7 +108,7 @@ var BuiltinDashboardPage = React.createClass({
     this.setState(state)
 
     if (fetchData) {
-      let q = DashboardStore.getQueries()
+      let q = DashboardStoreOld.getQueries()
       if (_.isEmpty(q)) {
         DataActions.clear()
       } else {
@@ -222,23 +220,6 @@ var BuiltinDashboardPage = React.createClass({
         dashboard,
         location: ctx.params.location,
         campaign: ctx.params.campaign_id
-      })
-    })
-  },
-
-  _showSourceData (ctx) {
-    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      let doc_tab = ctx.params.doc_tab
-
-      this.setState({
-        doc_id: ctx.params.doc_id,
-        doc_tab: doc_tab
-      })
-
-      DashboardActions.setDashboard({
-        dashboard,
-        location: ctx.params.location,
-        date: [ctx.params.year, ctx.params.month].join('-')
       })
     })
   },

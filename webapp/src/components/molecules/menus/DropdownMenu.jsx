@@ -25,7 +25,6 @@ var DropdownMenu = React.createClass({
 
   getDefaultProps: function () {
     return {
-      icon: 'fa-bars',
       uniqueOnly: false,
       multi: false,
       grouped: false,
