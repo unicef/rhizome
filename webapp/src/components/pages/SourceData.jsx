@@ -10,10 +10,10 @@ import CSVMenuItem from 'components/molecules/CSVMenuItem'
 import SourceDataStore from 'stores/SourceDataStore'
 // import SourceDataActions from 'actions/SourceDataActions'
 
-var {
-  SimpleDataTable, SimpleDataTableColumn,
-  Paginator, SearchBar
-} = require('react-datascope')
+import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import SearchBar from 'components/organisms/datascope/SearchBar'
 
 var SourceData = React.createClass({
   mixins: [

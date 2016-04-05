@@ -1,5 +1,5 @@
 import React from 'react'
-import InterfaceMixin from 'utilities/tech_debt/InterfaceMixin'
+import InterfaceMixin from 'utilities/InterfaceMixin'
 
 let SimpleDataTableColumn = React.createClass({
 

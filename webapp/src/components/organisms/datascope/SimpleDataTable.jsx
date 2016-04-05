@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import cx from 'classnames'
 import d3 from 'd3'
 
-import InterfaceMixin from 'utilities/tech_debt/InterfaceMixin'
+import InterfaceMixin from 'utilities/InterfaceMixin'
 import TableCell from 'components/atoms/TableCell'
 import EditableTableCell from 'components/atoms/EditableTableCell.jsx'
 import TableHeaderCell from 'components/atoms/TableHeaderCell.jsx'
