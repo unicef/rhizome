@@ -24,7 +24,6 @@ import TableChart from 'components/molecules/charts/TableChart'
 import BarChart from 'components/molecules/highcharts/BarChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
 import TrendChart from 'components/molecules/highcharts/TrendChart'
-import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import ChartStore from 'stores/ChartStore'
@@ -207,8 +206,8 @@ const MultiChart = React.createClass({
 
     const multiIndicator = chart.type === 'TableChart' || chart.type === 'RawData'
     const multiLocation = chart.type === 'TableChart' || chart.type === 'RawData'
-    const groupByIndicator = chart.groupBy === 'location'
-    const groupByLocation = chart.groupBy === 'indicator'
+    const groupByIndicator = chart.type === 'LineChart'  && chart.groupBy === 'location'
+    const groupByLocation = chart.type === 'LineChart'  && chart.groupBy === 'indicator'
 
     const location_selector = (
       <LocationSelector
