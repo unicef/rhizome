@@ -9,9 +9,8 @@ import CSVMenuItem from 'components/molecules/CSVMenuItem'
 import DocForm from 'components/organisms/source-data/DocForm.jsx'
 
 import SourceDataStore from 'stores/SourceDataStore'
-// import SourceDataActions from 'actions/SourceDataActions'
 
-import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
@@ -78,11 +77,11 @@ var SourceData = React.createClass({
       doc_tab={doc_tab}
       datascopeFilters={datascopeFilters}>
       <Paginator />
-      <SimpleDataTable>
+      <TableToRefactor>
         {table_definition[doc_tab]['fields'].map(fieldName => {
           return <SimpleDataTableColumn name={fieldName}/>
         })}
-      </SimpleDataTable>
+      </TableToRefactor>
     </ReviewTable>)
 
     var uploadData = (

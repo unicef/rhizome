@@ -5,12 +5,11 @@ import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 
-var { SimpleDataTableColumn, Paginator, LocalDatascope, Datascope } = require('react-datascope')
-
-// import Datascope from 'components/organisms/datascope/Datascope'
-// import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
-// import Paginator from 'components/organisms/datascope/Paginator'
-// import LocalDatascope from 'components/organisms/datascope/SearchBar'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+var { LocalDatascope, Datascope } = require('react-datascope')
+// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+// import Datascope from 'components/organisms/datascope/LocalDatascope'
 
 let DatabrowserTable = React.createClass({
 
@@ -32,8 +31,6 @@ let DatabrowserTable = React.createClass({
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
     } else {
       let columns = this.state.columns.map(column => (<SimpleDataTableColumn name={column}/>))
-      console.log('columns:', columns)
-
       let table = ''
       if (this.props.editable) {
         table = <SimpleDataTable editable>{columns}</SimpleDataTable>
