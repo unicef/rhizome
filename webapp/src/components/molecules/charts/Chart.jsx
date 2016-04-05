@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
@@ -17,9 +16,7 @@ class Chart extends Component {
     this.container = React.findDOMNode(this)
     this.setData()
     this.setOptions()
-    if (this.options.type === 'LineChart') {
-      this.chart = new LineChartRenderer(this.data, this.options, this.container)
-    } else if (this.options.type === 'TableChart') {
+    if (this.options.type === 'TableChart') {
       this.chart = new TableChartRenderer(this.data, this.options, this.container)
     } else if (this.options.type === 'ChoroplethMap') {
       this.chart = new ChoroplethMapRenderer(this.data, this.options, this.container)
