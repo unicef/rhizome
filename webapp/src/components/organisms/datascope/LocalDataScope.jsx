@@ -54,11 +54,16 @@ var LocalDatascope = React.createClass({
     componentWillMount: function componentWillMount() {
         var query = this.state.query;
 
-        if (this.props.paginated) {
-            // initialize pagination
-            query = React.addons.update(query, { pagination: { $set: { page: 1, offset: 0, limit: this.props.pageSize, total: this.props.data.length }
-                } });
-        }
+        ////////////////////////////////////////
+        // had to comment out this code below //
+        ///// in order to get this working /////
+        ////////////////////////////////////////
+
+        // if (this.props.paginated) {
+        //     // initialize pagination
+        //     query = React.addons.update(query, { pagination: { $set: { page: 1, offset: 0, limit: this.props.pageSize, total: this.props.data.length }
+        //         } });
+        // }
 
         this.setState(this._getDisplayData(query));
     },
