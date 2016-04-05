@@ -3,13 +3,13 @@ import React from 'react'
 import api from 'data/api'
 
 // import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
-// import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
-// import Paginator from 'components/organisms/datascope/Paginator'
-// import SearchBar from 'components/organisms/datascope/SearchBar'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import SearchBar from 'components/organisms/datascope/SearchBar'
 
 import AdminPage from 'components/organisms/ufadmin/AdminPage'
 
-var { SearchBar, Paginator, SimpleDataTableColumn, SimpleDataTable } = require('react-datascope')
+var { SimpleDataTable } = require('react-datascope')
 
 const fields = {
   edit_link: {

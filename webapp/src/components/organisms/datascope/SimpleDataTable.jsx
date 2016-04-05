@@ -9,7 +9,7 @@ import InterfaceMixin from 'utilities/InterfaceMixin'
 import TableCell from 'components/atoms/TableCell'
 import EditableTableCell from 'components/atoms/EditableTableCell.jsx'
 import TableHeaderCell from 'components/atoms/TableHeaderCell.jsx'
-import SimpleDataTableColumn from 'components/molecules/tables/SimpleDataTableColumn'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 
@@ -89,6 +89,7 @@ let SimpleDataTable = React.createClass({
           value={row[cell_key].value}
           onSave={this.saveCellValue}
           formatValue={this._numberFormatter}
+          tooltip={row[cell_key]}
           classes={'numeric'} />
       } else {
         return <TableCell
@@ -96,6 +97,7 @@ let SimpleDataTable = React.createClass({
           row={row}
           value={row[cell_key].value}
           formatValue={this._numberFormatter}
+          tooltip={row[cell_key]}
           classes={'numeric'} />
       }
     })
@@ -119,7 +121,6 @@ let SimpleDataTable = React.createClass({
     // if no data, and no "empty" message to show, hide table entirely
     let hasData = this.props.data && this.props.data.length
     if (!hasData && _.isNull(this.props.emptyContent)) return null
-
 
     let children = this.props.children
     children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children]
@@ -156,4 +157,4 @@ let SimpleDataTable = React.createClass({
   }
 })
 
-export default  SimpleDataTable
+export default SimpleDataTable
