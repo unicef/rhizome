@@ -3,10 +3,8 @@ import React from 'react'
 
 import ClearQueryLink from 'components/organisms/datascope/ClearQueryLink'
 
-// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
-// import Datascope from 'components/organisms/datascope/Datascope'
-
-var { LocalDatascope, Datascope } = require('react-datascope')
+import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+import Datascope from 'components/organisms/datascope/Datascope'
 
 import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 
