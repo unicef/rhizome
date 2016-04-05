@@ -10,16 +10,16 @@ import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
-import DashboardNewStore from 'stores/DashboardNewStore'
+import DashboardPageStore from 'stores/DashboardPageStore'
 
-import DashboardNewActions from 'actions/DashboardNewActions'
+import DashboardPageActions from 'actions/DashboardPageActions'
 import ChartActions from 'actions/ChartActions'
 import DashboardActions from 'actions/DashboardActions'
 
 const Dashboard = React.createClass({
 
   mixins: [
-    Reflux.connect(DashboardNewStore, 'dashboard'),
+    Reflux.connect(DashboardPageStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -40,9 +40,9 @@ const Dashboard = React.createClass({
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
         if (this.props.dashboard_id) {
-          DashboardNewActions.fetchDashboard(this.props.dashboard_id)
+          DashboardPageActions.fetchDashboard(this.props.dashboard_id)
         } else {
-          DashboardNewActions.addChart()
+          DashboardPageActions.addChart()
         }
       }
     })
@@ -61,7 +61,7 @@ const Dashboard = React.createClass({
 
   _toggleTitleEdit (title) {
     if (_.isString(title)) {
-      DashboardNewActions.setDashboardTitle(title)
+      DashboardPageActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
@@ -117,29 +117,29 @@ const Dashboard = React.createClass({
         <div className={(row.length === 2 ? 'medium-12' : 'medium-12') + ' columns'}>
           <MultiChart
             chart={chart}
-            linkCampaigns={() => DashboardNewActions.toggleCampaignLink(chart.uuid)}
-            duplicateChart={DashboardNewActions.duplicateChart}
-            selectChart={new_chart => DashboardNewActions.selectChart(new_chart, chart.uuid)}
-            toggleSelectTypeMode={() => DashboardNewActions.toggleSelectTypeMode(chart.uuid)}
-            removeChart={DashboardNewActions.removeChart}
+            linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
+            duplicateChart={DashboardPageActions.duplicateChart}
+            selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
+            toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+            removeChart={DashboardPageActions.removeChart}
             saveChart={this.saveChart}
-            setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
-            setGroupBy={(grouping) => DashboardNewActions.setGroupBy(grouping, chart.uuid)}
-            setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
-            setTitle={(title) => DashboardNewActions.setChartTitle(title, chart.uuid)}
-            setType={(type) => DashboardNewActions.setType(type, chart.uuid)}
-            setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
-            selectIndicator={(id) => DashboardNewActions.selectIndicator(id, chart.uuid)}
-            deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, chart.uuid)}
-            reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, chart.uuid)}
-            clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(chart.uuid)}
-            setLocations={(locations) => DashboardNewActions.setLocations(locations, chart.uuid)}
-            selectLocation={(id) => DashboardNewActions.selectLocation(id, chart.uuid)}
-            deselectLocation={(id) => DashboardNewActions.deselectLocation(id, chart.uuid)}
-            clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(chart.uuid)}
-            setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, chart.uuid)}
-            selectCampaign={(id) => DashboardNewActions.selectCampaign(id, chart.uuid)}
-            deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, chart.uuid)}
+            setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
+            setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
+            setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
+            setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
+            setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
+            setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
+            selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
+            deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
+            reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
+            clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
+            setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
+            selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
+            deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
+            clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
+            setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
+            selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
+            deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
           />
         </div>
       )
@@ -187,7 +187,7 @@ const Dashboard = React.createClass({
             <div className='row text-center'>
               <button
                 className='button large'
-                onClick={DashboardNewActions.addChart}
+                onClick={DashboardPageActions.addChart}
                 style={{marginTop: '1rem'}}>
                 Add Chart
               </button>

@@ -3,7 +3,7 @@ import DashboardAPI from 'data/requests/DashboardAPI'
 import ChartAPI from 'data/requests/ChartAPI'
 import api from 'data/api'
 
-const DashboardNewActions = Reflux.createActions({
+const DashboardPageActions = Reflux.createActions({
   'fetchChart': { children: ['completed', 'failed'] }, // I think we can get rid of this
   'fetchDashboard': { children: ['completed', 'failed'] },
   'fetchMapFeatures': { children: ['completed', 'failed'] },
@@ -44,13 +44,13 @@ const DashboardNewActions = Reflux.createActions({
 
 // API CALLS
 // ---------------------------------------------------------------------------
-DashboardNewActions.fetchChart.listenAndPromise(chart_id => ChartAPI.getChart(chart_id))
-DashboardNewActions.fetchDashboard.listenAndPromise(dashboard_id => DashboardAPI.getDashboard(dashboard_id))
+DashboardPageActions.fetchChart.listenAndPromise(chart_id => ChartAPI.getChart(chart_id))
+DashboardPageActions.fetchDashboard.listenAndPromise(dashboard_id => DashboardAPI.getDashboard(dashboard_id))
 
-DashboardNewActions.fetchMapFeatures.listen(location_ids => {
-  DashboardNewActions.fetchMapFeatures.promise(
+DashboardPageActions.fetchMapFeatures.listen(location_ids => {
+  DashboardPageActions.fetchMapFeatures.promise(
     api.geo({parent_location_id__in: location_ids}, null, {'cache-control': 'max-age=604800, public'})
   )
 })
 
-export default DashboardNewActions
+export default DashboardPageActions

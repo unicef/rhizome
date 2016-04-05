@@ -5,9 +5,8 @@ import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
 import ChartActions from 'actions/ChartActions'
-import DashboardNewActions from 'actions/DashboardNewActions'
+import DashboardPageActions from 'actions/DashboardPageActions'
 import DatapointActions from 'actions/DatapointActions'
-import format from 'utilities/format'
 import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
@@ -38,11 +37,11 @@ class ChartState {
   }
 }
 
-var DashboardNewStore = Reflux.createStore({
+var DashboardPageStore = Reflux.createStore({
 
   mixins: [StateMixin.store],
 
-  listenables: DashboardNewActions,
+  listenables: DashboardPageActions,
 
   dashboard: {
     title: '',
@@ -73,7 +72,7 @@ var DashboardNewStore = Reflux.createStore({
     const new_chart = new ChartState
     new_chart.uuid = uuid.v4()
     this.dashboard.charts[new_chart.uuid] = new_chart
-    DashboardNewActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
+    DashboardPageActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
     this.trigger(this.dashboard)
   },
   onSelectChart (chart, uuid) { // console.info('- Store.onSelectChart')
@@ -81,7 +80,7 @@ var DashboardNewStore = Reflux.createStore({
     const new_chart = this.meltChart(chart)
     this.dashboard.charts[new_chart.uuid] = new_chart
     delete this.dashboard.charts[uuid]
-    DashboardNewActions.setType(new_chart.type, new_chart.uuid)
+    DashboardPageActions.setType(new_chart.type, new_chart.uuid)
     this.trigger(this.dashboard)
   },
   onDuplicateChart (chart_uuid) { // console.info('- Store.onDuplicateChart')
@@ -213,7 +212,7 @@ var DashboardNewStore = Reflux.createStore({
       return this.trigger(this.dashboard)
     }
     _.toArray(this.dashboard.charts).forEach(chart => chart.linkedCampaigns = true)
-    _.toArray(this.dashboard.charts).forEach(chart => DashboardNewActions.setCampaigns(current_chart.selected_campaigns, chart.uuid))
+    _.toArray(this.dashboard.charts).forEach(chart => DashboardPageActions.setCampaigns(current_chart.selected_campaigns, chart.uuid))
   },
   assignCampaigns (campaigns, uuid) {
     if (_.isArray(campaigns)) {
@@ -292,7 +291,7 @@ var DashboardNewStore = Reflux.createStore({
     response.charts.forEach(chart => {
       const new_chart = this.meltChart(chart)
       this.dashboard.charts[chart.uuid] = new_chart
-      DashboardNewActions.setType(new_chart.type, new_chart.uuid)
+      DashboardPageActions.setType(new_chart.type, new_chart.uuid)
     })
     this.trigger(this.dashboard)
   },
@@ -372,7 +371,7 @@ var DashboardNewStore = Reflux.createStore({
       this.dashboard.charts[uuid].fetching = true
       if (this.dashboard.charts[uuid].type === 'ChoroplethMap') {
         this.dashboard.charts[uuid].fetching_map = true
-        return DashboardNewActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
+        return DashboardPageActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
       }
       this.fetchDatapoints(uuid)
     } else {
@@ -446,4 +445,4 @@ var DashboardNewStore = Reflux.createStore({
 
 })
 
-export default DashboardNewStore
+export default DashboardPageStore
