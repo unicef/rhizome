@@ -6,8 +6,7 @@ import MapForm from 'components/organisms/source-data/MapForm.jsx'
 
 // import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 import Datascope from 'components/organisms/datascope/Datascope'
-
-var { LocalDatascope } = require('react-datascope')
+import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 
 import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 
