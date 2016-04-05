@@ -1,11 +1,5 @@
 import _ from 'lodash'
 import React from 'react'
-import Reflux from 'reflux'
-import moment from 'moment'
-
-import DashboardStoreOld from 'stores/DashboardStoreOld'
-
-import DashboardActions from 'actions/DashboardActions'
 
 import SubmissionModal from 'components/organisms/source-data/SubmissionModal.jsx'
 import MapForm from 'components/organisms/source-data/MapForm.jsx'
@@ -30,8 +24,6 @@ var ReviewTable = React.createClass({
     datascopeFilters: React.PropTypes.string,
     children: React.PropTypes.string
   },
-
-  mixins: [Reflux.connect(DashboardStoreOld, 'dashboardStore')],
 
   getInitialState: function () {
     return {
@@ -68,10 +60,6 @@ var ReviewTable = React.createClass({
 
   componentWillMount: function () {
     this._callApi()
-  },
-
-  componentDidMount () {
-    DashboardActions.initialize()
   },
 
   componentWillUpdate: function (nextProps, nextState) {
