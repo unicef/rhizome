@@ -8,6 +8,8 @@ import SimpleDataTableCell from 'components/organisms/datascope/SimpleDataTableC
 
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 
+// NOTE! REMOVE THIS COMPONENT AND REPLACE ALL REFERENCES TO -- SimpleDataTable.jsx ///
+
 var TableToRefactor = React.createClass({
     displayName: 'SimpleDataTable',
 
