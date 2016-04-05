@@ -4,6 +4,8 @@ import {DropdownList} from 'react-widgets'
 import Reflux from 'reflux'
 import moment from 'moment'
 
+import RadioGroup from 'react-radio-group'
+
 import IconButton from 'components/atoms/IconButton'
 import ExportIcon from 'components/atoms/ExportIcon'
 import ColorSwatch from 'components/atoms/ColorSwatch'
@@ -93,8 +95,7 @@ const MultiChart = React.createClass({
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
     const disableSave = _.isEmpty(chart.selected_locations) || _.isEmpty(chart.selected_indicators)
-    const multi_indicator = chart.type === 'TableChart' || chart.type === 'RawData'
-    const multi_location = chart.type === 'TableChart' || chart.type === 'RawData'
+
 
     // CHART
     // ---------------------------------------------------------------------------
@@ -177,6 +178,20 @@ const MultiChart = React.createClass({
       </div>
     ) : null
 
+    const group_by_selector = chart.type === 'LineChart' ? (
+      <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
+        <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={this.props.setGroupBy}>
+          {Radio => (
+            <div>
+              <Radio value='indicator' /> Multiple Indicators
+              <span>&nbsp;&nbsp;</span>
+              <Radio value='location' /> Multiple Locations
+            </div>
+          )}
+        </RadioGroup>
+      </div>
+    ) : null
+
     const campaign_selector = chart.type !== 'LineChart' && chart.type !== 'RawData' ? (
       <CampaignSelector
         campaigns={this.state.campaigns}
@@ -190,6 +205,11 @@ const MultiChart = React.createClass({
       />
     ) : ''
 
+    const multiIndicator = chart.type === 'TableChart' || chart.type === 'RawData'
+    const multiLocation = chart.type === 'TableChart' || chart.type === 'RawData'
+    const groupByIndicator = chart.groupBy === 'location'
+    const groupByLocation = chart.groupBy === 'indicator'
+
     const location_selector = (
       <LocationSelector
         locations={this.state.locations}
@@ -198,8 +218,8 @@ const MultiChart = React.createClass({
         deselectLocation={this.props.deselectLocation}
         setLocations={this.props.setLocations}
         clearSelectedLocations={this.props.clearSelectedLocations}
-        classes={multi_location ? 'medium-6 columns' : 'medium-12 columns'}
-        multi={multi_location}
+        classes={multiLocation && !groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
+        multi={multiLocation || groupByIndicator}
       />
     )
 
@@ -212,8 +232,8 @@ const MultiChart = React.createClass({
         deselectIndicator={this.props.deselectIndicator}
         clearSelectedIndicators={this.props.clearSelectedIndicators}
         reorderIndicator={this.props.reorderIndicator}
-        classes={multi_indicator ? 'medium-6 columns' : 'medium-12 columns'}
-        multi={multi_indicator}
+        classes={multiIndicator && !groupByLocation ? 'medium-6 columns' : 'medium-12 columns'}
+        multi={multiIndicator || groupByLocation}
         avoidBooleans={chart.type === 'LineChart'}
       />
     )
@@ -275,6 +295,7 @@ const MultiChart = React.createClass({
             { campaign_selector }
             { indicator_selector }
             { location_selector }
+            { group_by_selector }
           </aside>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-zone'>
             {

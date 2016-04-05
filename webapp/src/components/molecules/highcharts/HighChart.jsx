@@ -51,10 +51,7 @@ class HighChart extends Component {
           }
         }
       },
-      series: [{
-        name: first_indicator.name,
-        data: props.data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value]),
-      }],
+      series: this.getData(),
       tooltip: {
          pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format)
@@ -62,6 +59,21 @@ class HighChart extends Component {
         }
       }
     }
+  }
+
+  getData () {
+    const data = this.props.data
+    const groupByIndicator = this.props.groupBy === 'indicator'
+    const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
+    const series = []
+    _.forEach(grouped_data, group => {
+      _.sortBy(group, _.method('campaign.start_date.getTime'))
+      series.push({
+        name: groupByIndicator ? group[0].indicator.name : group[0].location.name,
+        data: group.map(datapoint => datapoint.value) // Needs to be sorted by date
+      })
+    })
+    return series
   }
 
   getChartType (type) {
@@ -73,7 +85,7 @@ class HighChart extends Component {
   render () { console.info('------ HighChart.render')
     return (
       <div id='highchart-container'>
-        <Highcharts config={this.data} />
+        <Highcharts config={this.data} isPureConfig/>
       </div>
     )
   }

@@ -136,6 +136,7 @@ const Dashboard = React.createClass({
             removeChart={DashboardNewActions.removeChart}
             saveChart={this.saveChart}
             setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
+            setGroupBy={(grouping) => DashboardNewActions.setGroupBy(grouping, chart.uuid)}
             setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
             setTitle={(title) => DashboardNewActions.setChartTitle(title, chart.uuid)}
             setType={(type) => DashboardNewActions.setType(type, chart.uuid)}

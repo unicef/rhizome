@@ -21,6 +21,7 @@ const DashboardNewActions = Reflux.createActions({
   // Chart Params
   'setChartTitle': 'setChartTitle',
   'setPalette': 'setPalette',
+  'setGroupBy': 'setGroupBy',
   'setType': 'setType',
   'setDateRange': 'setDateRange',
   // Locations

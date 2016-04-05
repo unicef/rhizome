@@ -23,6 +23,7 @@ class ChartState {
     this.title = ''
     this.data = null
     this.data_format = 'pct'
+    this.groupBy = 'indicator'
     this.palette = 'traffic_light'
     this.selected_campaigns = []
     this.selected_indicators = []
@@ -245,6 +246,13 @@ var DashboardNewStore = Reflux.createStore({
     this.dashboard.charts[uuid].palette = palette
     this.dashboard.charts[uuid].colors = palettes[palette]
     this.trigger(this.dashboard)
+  },
+  onSetGroupBy (grouping, uuid) { // console.info('- Store.onSetGroupBy')
+    this.toggleLoading(uuid)
+    this.dashboard.charts[uuid].groupBy = grouping
+    this.dashboard.charts[uuid].selected_indicators = [this.dashboard.charts[uuid].selected_indicators[0]]
+    this.dashboard.charts[uuid].selected_locations = [this.dashboard.charts[uuid].selected_locations[0]]
+    this.updateChart(uuid)
   },
   onSetDashboardTitle (title) { // console.info('- Store.onSetDashboardTitle')
     this.dashboard.title = title
