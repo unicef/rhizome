@@ -5,10 +5,7 @@ import DashboardAPI from 'data/requests/DashboardAPI'
 const DashboardActions = Reflux.createActions({
   'fetchDashboards': { children: ['completed', 'failed'] },
   'postDashboard': { children: ['completed', 'failed'] },
-  'deleteDashboard': { children: ['completed', 'failed'] },
-  'initialize': 'initialize',
-  'setDashboard': 'setDashboard',
-  'navigate': 'navigate'
+  'deleteDashboard': { children: ['completed', 'failed'] }
 })
 
 // API CALLS

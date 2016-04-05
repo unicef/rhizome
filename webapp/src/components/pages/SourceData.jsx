@@ -3,9 +3,9 @@ import React from 'react'
 import Reflux from 'reflux'
 import page from 'page'
 
-import ReviewTable from 'components/organisms/source-data/ReviewTable.js'
-import DocOverview from 'components/organisms/source-data/DocOverview.jsx'
-import CSVMenuItem from 'components/molecules/CSVMenuItem.jsx'
+import ReviewTable from 'components/organisms/source-data/ReviewTable'
+import DocOverview from 'components/organisms/source-data/DocOverview'
+import CSVMenuItem from 'components/molecules/CSVMenuItem'
 
 import SourceDataStore from 'stores/SourceDataStore'
 // import SourceDataActions from 'actions/SourceDataActions'
