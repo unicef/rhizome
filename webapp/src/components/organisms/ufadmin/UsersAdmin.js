@@ -2,7 +2,7 @@ import React from 'react'
 
 import AdminPage from 'components/organisms/ufadmin/AdminPage'
 
-import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
@@ -40,7 +40,6 @@ const UsersAdmin = React.createClass({
   },
 
   render () {
-
     var datascopeFilters = (
       <div>
         <SearchBar
@@ -50,11 +49,6 @@ const UsersAdmin = React.createClass({
       </div>
     )
 
-    var myVar = fieldNamesOnTable.map(fieldName => {
-      return <SimpleDataTableColumn name={fieldName}/>
-    })
-
-    console.log('users admin render: ')
     return (
       <AdminPage
         title='Users'
@@ -63,9 +57,11 @@ const UsersAdmin = React.createClass({
         schema={schema}
         datascopeFilters={datascopeFilters} >
         <Paginator />
-        <SimpleDataTable>
-          {myVar}
-        </SimpleDataTable>
+        <TableToRefactor>
+          { fieldNamesOnTable.map(fieldName => {
+            return <SimpleDataTableColumn name={fieldName}/>
+          })}
+        </TableToRefactor>
       </AdminPage>
     )
   }
