@@ -162,7 +162,7 @@ const Dashboard = React.createClass({
     var temp = charts.slice();
     var arr = [];
     while (temp.length) {
-      arr.push(temp.splice(0,2));
+      arr.push(temp.splice(0,1));
     }
     const chart_components = arr.map(row => {
       return (
