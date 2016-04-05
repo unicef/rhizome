@@ -391,32 +391,13 @@ var DashboardNewStore = Reflux.createStore({
     if (chart.type === 'RawData') {
       chart.data = datapoints
       return chart
-    } else if (chart.type === 'LineChart') {
+    } else if (chart.type === 'ChoroplethMap') {
+      return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
+    } else if (chart.type === 'TableChart') {
+      return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
+    } else {
       chart.data = melted_datapoints
       return chart
-    } else if (chart.type === 'ColumnChart') {
-      chart.data = datapoints
-      return chart
-    }
-
-    switch (chart.type) {
-      // case 'LineChart':
-        // return DataExplorerStoreHelpers.formatLineChart(melted_datapoints, chart, groups, layout)
-        // chart.data = melted_datapoints
-        // return chart
-      // case 'PieChart':
-        // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.dashboard.charts[uuid].selected_indicators, layout)
-      case 'ChoroplethMap':
-        return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
-      // case 'ColumnChart':
-        // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart, layout)
-      // case 'ScatterChart':
-        // return DataExplorerStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
-      // case 'BarChart':
-        // return DataExplorerStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
-      case 'TableChart':
-        return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
-      default:
     }
   },
 

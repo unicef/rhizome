@@ -19,6 +19,8 @@ import DateRangePicker from 'components/molecules/DateRangePicker'
 import Placeholder from 'components/molecules/Placeholder'
 import TitleInput from 'components/molecules/TitleInput'
 import TableChart from 'components/molecules/charts/TableChart'
+import BarChart from 'components/molecules/highcharts/BarChart'
+import ColumnChart from 'components/molecules/highcharts/ColumnChart'
 import TrendChart from 'components/molecules/highcharts/TrendChart'
 import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
@@ -75,11 +77,13 @@ const MultiChart = React.createClass({
     if (type === 'TableChart') {
       return <TableChart {...this.props.chart} />
     } else if (type === 'LineChart') {
-      return <LineChart {...this.props.chart} />
+      return <TrendChart {...this.props.chart} />
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     } else if (type === 'ColumnChart') {
-      return <TrendChart {...this.props.chart} />
+      return <ColumnChart {...this.props.chart} />
+    } else if (type === 'BarChart') {
+      return <BarChart {...this.props.chart} />
     }
   },
 

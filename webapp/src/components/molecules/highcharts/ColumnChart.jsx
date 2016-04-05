@@ -7,7 +7,7 @@ import format from 'components/molecules/charts/utils/format'
 import palettes from 'components/molecules/charts/utils/palettes'
 import aspects from 'components/molecules/charts/utils/aspects'
 
-class TrendChart extends HighChart {
+class ColumnChart extends HighChart {
   static defaultProps = {
     data: [],
     domain: null,
@@ -30,20 +30,20 @@ class TrendChart extends HighChart {
     y: d => d.value
   }
 
-  setData () { console.info('------ TrendChart.setData')
+  setData () { console.info('------ ColumnChart.setData')
     const props = this.props
     const selected_locations_index = _.indexBy(props.selected_locations, 'id')
     const selected_indicators_index = _.indexBy(props.selected_indicators, 'id')
 
   }
 
-  setOptions () { console.info('------ TrendChart.setOptions')
+  setOptions () { console.info('------ ColumnChart.setOptions')
     const options = this.options
     const props = this.props
   }
 }
 
-TrendChart.propTypes = {
+ColumnChart.propTypes = {
   data: PropTypes.array,
   domain: PropTypes.array,
   range: PropTypes.array,
@@ -70,5 +70,5 @@ TrendChart.propTypes = {
   y: PropTypes.func,
 }
 
-export default TrendChart
+export default ColumnChart
 
