@@ -33,21 +33,15 @@ def reset_seq(apps, schema_editor):
     cursor = connection.cursor()
 
     for app in ['rhizome', 'django.contrib.auth']:
-        try:
-            label = app.split('.')[-1]
-            if get_app(label):
-                    call_command('sqlsequencereset', label, stdout=commands)
-        except Exception as err:
-            pass
-    try:
+        label = app.split('.')[-1]
+        if get_app(label):
+                call_command('sqlsequencereset', label, stdout=commands)
         cursor.execute(commands.getvalue())
-    except Exception:
-        pass
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0003_populate_initial_source_data'),
+        ('rhizome', '0002_populate_initial_meta_data'),
     ]
 
     operations = [

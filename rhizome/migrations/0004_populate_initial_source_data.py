@@ -81,9 +81,9 @@ class MetaDataGenerator:
         self.build_meta_data_from_source()
 
         ## hack - fixme ##
-        self.source_sheet_df['week_and_year'] = \
+        self.source_sheet_df['month_and_year'] = \
             self.source_sheet_df[self.odk_file_map['date_column']]\
-            .apply(lambda x: unicode(x.year) + '-' + unicode(x.weekofyear))
+            .apply(lambda x: unicode(x.year) + '-' + unicode(x.month))
 
         self.process_source_sheet()
 
@@ -125,20 +125,20 @@ class MetaDataGenerator:
 
         all_date_df = pd.DataFrame(self.source_sheet_df[date_column], columns = [date_column])
 
-        all_date_df['week_and_year'] = all_date_df[date_column]\
-            .apply(lambda x: unicode(x.year) + '-' + unicode(x.weekofyear))
+        all_date_df['month_and_year'] = all_date_df[date_column]\
+            .apply(lambda x: unicode(x.year) + '-' + unicode(x.month))
 
         gb_df = pd.DataFrame(all_date_df\
-            .groupby(['week_and_year'])[date_column].min())
+            .groupby(['month_and_year'])[date_column].min())
         gb_df.reset_index(level=0, inplace=True)
 
-        for ix, week in gb_df.iterrows():
+        for ix, month in gb_df.iterrows():
 
-            week_dict = week.to_dict()
+            month_dict = month.to_dict()
             c = Campaign.objects.create(**{
-                'start_date':week_dict[date_column],
-                'end_date':week_dict[date_column],
-                'name': week_dict[date_column],
+                'start_date':month_dict[date_column] ,
+                'end_date':month_dict[date_column] ,
+                'name': month_dict['month_and_year'],
                 'campaign_type_id': self.campaign_type.id,
                 'office_id': self.office.id,
                 'top_lvl_indicator_tag_id': self.tag.id,
@@ -147,7 +147,7 @@ class MetaDataGenerator:
 
             SourceObjectMap.objects.create(
                 master_object_id = c.id,
-                source_object_code = week_dict['week_and_year'],
+                source_object_code = month_dict['month_and_year'],
                 content_type = 'campaign'
             )
 
@@ -273,35 +273,12 @@ class MetaDataGenerator:
         mr = MasterRefresh(user_id, new_doc.id)
         mr.main()
 
-        qs = DataPointComputed.objects.raw('''
-            INSERT INTO datapoint_with_computed
-            (location_id, indicator_id, campaign_id, value, cache_job_id, document_id)
-
-            SELECT
-                d.location_id
-                , d.indicator_id
-                , d.campaign_id
-                , d.value
-                , d.cache_job_id
-                , x.document_id
-            FROM datapoint d
-            INNER JOIN (
-                SELECT id as document_id from source_doc LIMIT 1
-            ) x
-            ON 1=1;
-
-        SELECT id from datapoint_with_computed LIMIT 5;
-        ''')
-
-        for row in qs:
-            print row.id
-
-        # datapoints -> computed datapoints ##
-        # for c in Campaign.objects.all():
-        #     print 'processing campaign id: %s' % c.id
-        #     ar = AggRefresh(c.id)
-        #     print 'DWC COUNT %s' % len(DataPointComputed.objects\
-        #         .filter(campaign_id = c.id))
+        ## datapoints -> computed datapoints ##
+        for c in Campaign.objects.all():
+            print 'processing campaign id: %s' % c.id
+            ar = AggRefresh(c.id)
+            print 'DWC COUNT %s' % len(DataPointComputed.objects\
+                .filter(campaign_id = c.id))
 
 def create_doc_details(doc_id):
 
@@ -318,7 +295,7 @@ def create_doc_details(doc_id):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0002_populate_initial_meta_data'),
+        ('rhizome', '0003_reset_sql_sequence'),
     ]
 
     operations = [

@@ -23,7 +23,7 @@ class DocTransform(object):
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
-            ['RRM_Distribution/Site_City','week_and_year', '_uuid']
+            ['RRM_Distribution/Site_City','month_and_year', '_uuid']
 
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)

@@ -48,7 +48,7 @@ def process_geo_json(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0004_reset_sql_sequence'),
+        ('rhizome', '0004_populate_initial_source_data'),
     ]
 
     operations = [
