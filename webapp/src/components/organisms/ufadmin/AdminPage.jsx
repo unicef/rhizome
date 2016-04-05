@@ -2,8 +2,11 @@ import _ from 'lodash'
 import React from 'react'
 
 import ClearQueryLink from 'components/organisms/datascope/ClearQueryLink'
-import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
-import Datascope from 'components/organisms/datascope/Datascope'
+
+// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+// import Datascope from 'components/organisms/datascope/Datascope'
+
+var { LocalDatascope, Datascope } = require('react-datascope')
 
 import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 
@@ -57,12 +60,11 @@ var AdminPage = React.createClass({
   },
 
   onToggleFilterContainer () {
-    this.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible }))
+    var self = this
+    self.setState(prevState => ({ areFiltersVisible: !prevState.areFiltersVisible }))
   },
 
   render () {
-
-    console.log('this.props: ', this.props)
 
     // render loading indicator until data has loaded
     var isLoaded = _.isArray(this.state.data) && this.state.schema

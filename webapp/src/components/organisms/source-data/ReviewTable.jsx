@@ -4,8 +4,10 @@ import React from 'react'
 import SubmissionModal from 'components/organisms/source-data/SubmissionModal.jsx'
 import MapForm from 'components/organisms/source-data/MapForm.jsx'
 
-import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 import Datascope from 'components/organisms/datascope/Datascope'
+
+var { LocalDatascope } = require('react-datascope')
 
 import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 
@@ -21,7 +23,7 @@ var ReviewTable = React.createClass({
     doc_tab: React.PropTypes.string.isRequired,
     doc_id: React.PropTypes.number,
     datascopeFilters: React.PropTypes.string,
-    children: React.PropTypes.string
+    children: React.PropTypes.array
   },
 
   getInitialState: function () {
@@ -72,6 +74,7 @@ var ReviewTable = React.createClass({
   },
 
   render () {
+
     const fields = {
       edit_link: {
         title: 'Edit',

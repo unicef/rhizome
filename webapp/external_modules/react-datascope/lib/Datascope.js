@@ -80,6 +80,13 @@ var Datascope = React.createClass({
     },
 
     render: function render() {
+
+        console.log('THIS IS THE RENDER OF DATA SCOPE`')
+        console.log('THIS IS THE RENDER OF DATA SCOPE`')
+        console.log('THIS IS THE RENDER OF DATA SCOPE`')
+        console.log('THIS IS THE RENDER OF DATA SCOPE`')
+        console.log('THIS IS THE RENDER OF DATA SCOPE`')
+      
         var query = this.props.query;
         var onChangeSearch = this.onChangeSearch;
         var onChangeSort = this.onChangeSort;

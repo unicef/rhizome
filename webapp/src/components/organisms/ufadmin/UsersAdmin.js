@@ -54,10 +54,11 @@ const UsersAdmin = React.createClass({
       return <SimpleDataTableColumn name={fieldName}/>
     })
 
+    console.log('users admin render: ')
     return (
       <AdminPage
         title='Users'
-        getData={api.campaigns}
+        getData={api.users}
         fields={fields}
         schema={schema}
         datascopeFilters={datascopeFilters} >
