@@ -53,26 +53,6 @@ const DataExplorerStoreHelpers = {
   },
 
   // =========================================================================== //
-  //                                  LINE CHART                                 //
-  // =========================================================================== //
-  formatLineChart (datapoints, chart, groups, layout) {
-    if (!datapoints || datapoints.length === 0) {
-      return chart
-    }
-
-    chart.data = _(datapoints).groupBy(chart.groupBy)
-      .map(datapoint => {
-        return {
-          name: groups[datapoint[0].indicator.id].name,
-          values: _.sortBy(datapoint, _.method('campaign.start_date.getTime'))
-        }
-      })
-      .value()
-
-    return chart
-  },
-
-  // =========================================================================== //
   //                                CHOROPLETH MAP                               //
   // =========================================================================== //
   formatChoroplethMap (datapoints, chart, locations_index, indicators_index, layout) {
@@ -142,28 +122,7 @@ const DataExplorerStoreHelpers = {
     return chart
   },
 
-  // =========================================================================== //
-  //                                   PIE CHART                                 //
-  // =========================================================================== //
-  formatPieChart (meltPromise, selected_indicators, layout) {
-    // TO DO
-    return null
-  },
 
-  formatColumnChart (meltPromise, lower, upper, groups, chart_def, layout) {
-    // TO DO
-    return null
-  },
-
-  formatScatterChart (datapoints, selected_locations_index, selected_indicators_index, chart_def, layout) {
-    // TO DO
-    return null
-  },
-
-  formatBarChart () {
-    // TO DO
-    return null
-  }
 }
 
 export default DataExplorerStoreHelpers

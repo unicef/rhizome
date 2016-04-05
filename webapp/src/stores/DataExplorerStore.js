@@ -330,13 +330,7 @@ var DataExplorerStore = Reflux.createStore({
         // return DataExplorerStoreHelpers.formatPieChart(melted_datapoints, this.chart.selected_indicators, layout)
       case 'ChoroplethMap':
         return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
-      // case 'ColumnChart':
-        // return DataExplorerStoreHelpers.formatColumnChart(melted_datapoints, lower, upper, groups, chart, layout)
-      // case 'ScatterChart':
-        // return DataExplorerStoreHelpers.formatScatterChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
-      // case 'BarChart':
-        // return DataExplorerStoreHelpers.formatBarChart(datapoints, selected_locations_index, selected_indicators_index, chart, layout)
-      case 'TableChart':
+       case 'TableChart':
         return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
       default:
     }
