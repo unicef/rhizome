@@ -95,30 +95,29 @@ var TableToRefactor = React.createClass({
                   { React.Children.map(columns, this.renderColumnHeader) }
                 </tr>
               </thead>
+              <tbody>
+                { hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
+              </tbody>
           </table>
         )
       } else {
         return this.props.emptyContent
       }
     },
-    //
-    //   <tbody>
-    //     { hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-    //   </tbody>
-    
-    renderColumnHeader: function (column) {
-        //console.log('sortKey', this.props.sortKey);
-        var propsToPass = _.assign({}, _.clone(column.props), { // todo _.omit or _.pick
-            field: this.props.fields[column.props.name],
-            schema: this.props.schema.items.properties[column.props.name],
-            onClick: this.props.sortable ? this.onClickColumnHeader.bind(this, column.props.name) : null,
-            isSortedBy: column.props.name === this.props.sortKey,
-            sortOrder: this.props.sortOrder,
-            sortIndicatorAscending: this.props.sortIndicatorAscending,
-            sortIndicatorDescending: this.props.sortIndicatorDescending
-        });
-        return React.createElement(TableHeaderCell, propsToPass);
-    },
+
+  renderColumnHeader: function (column) {
+    // console.log('sortKey', this.props.sortKey);
+    var propsToPass = _.assign({}, _.clone(column.props), { // todo _.omit or _.pick
+      field: this.props.fields[column.props.name],
+      schema: this.props.schema.items.properties[column.props.name],
+      onClick: this.props.sortable ? this.onClickColumnHeader.bind(this, column.props.name) : null,
+      isSortedBy: column.props.name === this.props.sortKey,
+      sortOrder: this.props.sortOrder,
+      sortIndicatorAscending: this.props.sortIndicatorAscending,
+      sortIndicatorDescending: this.props.sortIndicatorDescending
+    })
+  return React.createElement(TableHeaderCell, propsToPass);
+  },
     renderRow: function (columns, row) {
         var _this = this;
 

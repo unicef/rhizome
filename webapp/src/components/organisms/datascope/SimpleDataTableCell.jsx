@@ -20,3 +20,5 @@ var SimpleDataTableCell = React.createClass({
         );
     }
 });
+
+export default SimpleDataTableCell
