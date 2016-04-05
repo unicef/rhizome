@@ -4,7 +4,6 @@ import moment from 'moment'
 import api from 'data/api'
 import StateMixin from'reflux-state-mixin'
 
-import builtins from 'components/organisms/dashboard/builtin'
 import Location from 'data/requests/LocationAPI'
 import DashboardActions from 'actions/DashboardActions'
 

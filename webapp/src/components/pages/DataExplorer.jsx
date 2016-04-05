@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import PaletteSelector from 'components/molecules/PaletteSelector'
-import ChartTypeSelect from 'components/molecules/ChartTypeSelect'
+import ChartTypeSelector from 'components/molecules/ChartTypeSelector'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import CampaignSelector from 'components/molecules/CampaignSelector'
@@ -18,7 +18,6 @@ import Placeholder from 'components/molecules/Placeholder'
 import ExportPdf from 'components/molecules/ExportPdf'
 import TitleInput from 'components/molecules/TitleInput'
 import TableChart from 'components/molecules/charts/TableChart'
-import LineChart from 'components/molecules/charts/LineChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import AsyncButton from 'components/atoms/AsyncButton'
@@ -95,7 +94,7 @@ const DataExplorer = React.createClass({
     if (type === 'TableChart') {
       return <TableChart {...this.state.chart} />
     } else if (type === 'LineChart') {
-      return <LineChart {...this.state.chart} />
+      // return <LineChart {...this.state.chart} />
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.state.chart} />
     }
@@ -212,7 +211,7 @@ const DataExplorer = React.createClass({
       <footer className={'row hideable' + (this.state.footerHidden ? ' descended' : '')}>
         <div className='medium-7 columns'>
           <h3>View</h3>
-          <ChartTypeSelect
+          <ChartTypeSelector
             charts={builderDefinitions.charts}
             value={chart.type}
             onChange={DataExplorerActions.setType}/>

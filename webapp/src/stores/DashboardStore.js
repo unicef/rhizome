@@ -2,7 +2,6 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
-import builtins from 'components/organisms/dashboard/builtin'
 import DashboardActions from 'actions/DashboardActions'
 
 var DashboardStore = Reflux.createStore({
@@ -34,9 +33,8 @@ var DashboardStore = Reflux.createStore({
     this.dashboards.raw = dashboards
     this.dashboards.meta = response.meta
     this.dashboards.index = _.indexBy(this.dashboards.raw, 'id')
-    const all_dashboards = builtins.concat(_(dashboards).sortBy('id').reverse().value())
     // Patch the non-comformant API response
-    this.dashboards.list = _(all_dashboards).map(dashboard => {
+    this.dashboards.list = _(dashboards).map(dashboard => {
       dashboard.charts = dashboard.charts || dashboard.dashboard_json
       return dashboard
     })

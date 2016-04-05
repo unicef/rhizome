@@ -3,9 +3,6 @@ import Highcharts from 'react-highcharts/dist/bundle/highcharts'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
 
-
-import LineChartRenderer from 'components/molecules/highcharts/renderers/line-chart'
-
 class HighChart extends Component {
 
   static propTypes = {
