@@ -1,6 +1,6 @@
 import React from 'react'
 
-import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
@@ -46,11 +46,11 @@ var RegionAdmin = React.createClass({
       schema={schema}
       >
       <Paginator />
-      <SimpleDataTable>
+      <TableToRefactor>
         {fieldNamesOnTable.map(fieldName => {
           return <SimpleDataTableColumn name={fieldName}/>
         })}
-      </SimpleDataTable>
+      </TableToRefactor>
     </AdminPage>
   }
 })
