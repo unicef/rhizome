@@ -85,6 +85,7 @@ class AggRefresh(object):
         try:
             self.agg_datapoints()
             self.calc_datapoints()
+
         except Exception as err:
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
@@ -94,7 +95,6 @@ class AggRefresh(object):
 
         ic = IndicatorCache()
         ic.main()
-
         return 'SUCCESS'
 
     def get_campaign_ids_to_process(self):
@@ -146,7 +146,6 @@ class AggRefresh(object):
 
         ## NaN to None
         no_nan_dp_df = dp_df.where((notnull(dp_df)), None)
-
         ## represents the location heirarchy as a cache from the location table
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in=list(dp_df['location_id'].unique()))
