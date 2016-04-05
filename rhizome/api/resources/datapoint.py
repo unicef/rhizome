@@ -133,9 +133,7 @@ class DatapointResource(BaseNonModelResource):
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
 
-        print dwc_df
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        print dwc_df
         try:
             p_table = pivot_table(
                 dwc_df, values='value', index=['indicator_id'],\
