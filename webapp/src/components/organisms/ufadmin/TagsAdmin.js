@@ -2,12 +2,12 @@ import React from 'react'
 
 import api from 'data/api'
 
-// import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
 import AdminPage from 'components/organisms/ufadmin/AdminPage'
+// import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 
 var { SimpleDataTable } = require('react-datascope')
 
@@ -38,6 +38,11 @@ var TagsAdmin = React.createClass({
       </div>
     )
 
+    // <TableToRefactor>
+    //   {fieldNamesOnTable.map(fieldName => {
+    //     return <SimpleDataTableColumn name={fieldName} />
+    //   })}
+    // </TableToRefactor>
     return (
       <AdminPage
         title='Tags'
@@ -47,7 +52,7 @@ var TagsAdmin = React.createClass({
         <Paginator />
         <SimpleDataTable>
           {fieldNamesOnTable.map(fieldName => {
-            return <SimpleDataTableColumn name={fieldName} />
+            return <SimpleDataTableColumn name={fieldName}/>
           })}
         </SimpleDataTable>
       </AdminPage>

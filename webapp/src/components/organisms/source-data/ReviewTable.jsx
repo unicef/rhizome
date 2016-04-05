@@ -4,7 +4,6 @@ import React from 'react'
 import SubmissionModal from 'components/organisms/source-data/SubmissionModal.jsx'
 import MapForm from 'components/organisms/source-data/MapForm.jsx'
 
-// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 import Datascope from 'components/organisms/datascope/Datascope'
 import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 
