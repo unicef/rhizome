@@ -4,8 +4,8 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import PalettePicker from 'components/organisms/data-explorer/preview/PalettePicker'
-import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
+import PaletteSelector from 'components/molecules/PaletteSelector'
+import ChartTypeSelect from 'components/molecules/ChartTypeSelect'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import CampaignSelector from 'components/molecules/CampaignSelector'
@@ -212,14 +212,14 @@ const DataExplorer = React.createClass({
       <footer className={'row hideable' + (this.state.footerHidden ? ' descended' : '')}>
         <div className='medium-7 columns'>
           <h3>View</h3>
-          <ChartSelect
+          <ChartTypeSelect
             charts={builderDefinitions.charts}
             value={chart.type}
             onChange={DataExplorerActions.setType}/>
         </div>
         <div className='medium-5 columns'>
           <h3>Color Scheme</h3>
-          <PalettePicker
+          <PaletteSelector
             value={chart.palette}
             onChange={DataExplorerActions.setPalette}/>
           <button className='footer-toggle-button' onClick={this._showHideFooter}>

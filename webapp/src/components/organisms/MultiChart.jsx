@@ -9,7 +9,7 @@ import RadioGroup from 'react-radio-group'
 import IconButton from 'components/atoms/IconButton'
 import ExportIcon from 'components/atoms/ExportIcon'
 import ColorSwatch from 'components/atoms/ColorSwatch'
-import ChartSelect from 'components/organisms/data-explorer/ChartSelect'
+import ChartTypeSelect from 'components/molecules/ChartTypeSelect'
 
 import palettes from 'components/molecules/charts/utils/palettes'
 import ChartSelector from 'components/molecules/ChartSelector'
@@ -110,7 +110,7 @@ const MultiChart = React.createClass({
     const chart_type_selector = (
       <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>
         <h4>View Data As</h4>
-        <ChartSelect onChange={this.props.setType}/>
+        <ChartTypeSelect onChange={this.props.setType}/>
         <br />
         <h4>or</h4>
         <br />
