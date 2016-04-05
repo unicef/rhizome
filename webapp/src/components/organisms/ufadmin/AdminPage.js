@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import React from 'react'
-const {
-  Datascope, LocalDatascope,
-  ClearQueryLink
-  } = require('react-datascope')
 
-import parseSchema from './utils/parseSchema'
+import ClearQueryLink from 'components/organisms/datascope/ClearQueryLink'
+import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+import Datascope from 'components/organisms/datascope/Datascope'
+
+import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 
 const urlMap = {
   'Users': '/users/create/',
@@ -61,6 +61,9 @@ var AdminPage = React.createClass({
   },
 
   render () {
+
+    console.log('this.props: ', this.props)
+
     // render loading indicator until data has loaded
     var isLoaded = _.isArray(this.state.data) && this.state.schema
     if (!isLoaded) return this.renderLoading()

@@ -4,9 +4,8 @@ import React from 'react'
 import SubmissionModal from 'components/organisms/source-data/SubmissionModal.jsx'
 import MapForm from 'components/organisms/source-data/MapForm.jsx'
 
-const {
-  Datascope, LocalDatascope
-} = require('react-datascope')
+import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+import Datascope from 'components/organisms/datascope/Datascope'
 
 import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
 

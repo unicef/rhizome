@@ -106,7 +106,8 @@ var SimpleFormStore = Reflux.createStore({
             settings: {options: [
               { value: 'pct', label: 'pct' },
               { value: 'bool', label: 'bool' },
-              { value: 'int', label: 'int' }
+              { value: 'int', label: 'int' },
+              { value: 'class', label: 'class' }
             ]}
           },
           'description': {type: 'string'}
