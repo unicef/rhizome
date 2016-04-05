@@ -91,7 +91,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-
+        print response_data
         self.assertEqual(response_data['error'], None)
         self.assertEqual(response_data['meta']["total_count"], 1)
 
@@ -100,7 +100,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(response_data['objects'][0]['campaign'], campaign.id)
         self.assertEqual(response_data['objects'][0]['location'], location.id)
         self.assertEqual(len(response_data['objects'][0]['indicators']), 1)
-        self.assertEqual(float(response_data['objects'][0]['indicators'][0]['indicator']), float(indicator.id))
+        self.assertEqual(int(response_data['objects'][0]['indicators'][0]['indicator']), indicator.id)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], value)
 
 
