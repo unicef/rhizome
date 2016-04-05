@@ -111,22 +111,10 @@ const Dashboard = React.createClass({
     })
   },
 
-  render () {
-    const dashboard = this.state.dashboard
-    const charts = _.toArray(dashboard.charts)
-    console.info('Dashboard.RENDER ========================================== Charts:', charts)
-    const title_bar = this.state.titleEditMode ?
-      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
-      :
-      <h1 onClick={this._toggleTitleEdit}>
-        <a>
-          {dashboard.title || 'Untitled Dashboard'}
-        </a>
-      </h1>
-
-    const chart_components = charts.map(chart => {
-      return (
-        <div className='row'>
+  renderChartRow (row) {
+    return (
+      row.map(chart =>
+        <div className={(row.length === 2 ? 'medium-12' : 'medium-12') + ' columns'}>
           <MultiChart
             chart={chart}
             linkCampaigns={() => DashboardNewActions.toggleCampaignLink(chart.uuid)}
@@ -153,6 +141,33 @@ const Dashboard = React.createClass({
             selectCampaign={(id) => DashboardNewActions.selectCampaign(id, chart.uuid)}
             deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, chart.uuid)}
           />
+        </div>
+      )
+    )
+  },
+
+  render () {
+    const dashboard = this.state.dashboard
+    const charts = _.toArray(dashboard.charts)
+    console.info('Dashboard.RENDER ========================================== Charts:', charts)
+    const title_bar = this.state.titleEditMode ?
+      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
+      :
+      <h1 onClick={this._toggleTitleEdit}>
+        <a>
+          {dashboard.title || 'Untitled Dashboard'}
+        </a>
+      </h1>
+
+    var temp = charts.slice();
+    var arr = [];
+    while (temp.length) {
+      arr.push(temp.splice(0,2));
+    }
+    const chart_components = arr.map(row => {
+      return (
+        <div className='row collapse'>
+          { this.renderChartRow(row) }
         </div>
       )
     })
