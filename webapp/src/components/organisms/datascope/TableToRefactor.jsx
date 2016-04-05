@@ -40,7 +40,7 @@ var TableToRefactor = React.createClass({
         sortIndicatorAscending: React.PropTypes.string,
         sortIndicatorDescending: React.PropTypes.string
     },
-    getDefaultProps: function getDefaultProps() {
+    getDefaultProps: function () {
         return {
             sortable: true,
             emptyContent: React.createElement(
@@ -54,7 +54,7 @@ var TableToRefactor = React.createClass({
         };
     },
 
-    onClickColumnHeader: function onClickColumnHeader(dataKey) {
+    onClickColumnHeader: function (dataKey) {
         var isSortedOnColumn = dataKey === this.props.sortKey;
         var isSortAscending = (this.props.sortOrder || '').toLowerCase().indexOf('asc') === 0;
 
@@ -67,46 +67,46 @@ var TableToRefactor = React.createClass({
         this.props.onChangeSort(sortKey, sortOrder);
     },
 
-    render: function render() {
-        // if no data, and no "empty" message to show, hide table entirely
-        var hasData = this.props.data && this.props.data.length;
-        if (!hasData && _.isNull(this.props.emptyContent)) return null;
+    render: function () {
 
-        var children = this.props.children;
-        children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children];
-        var hasColumns = false;
-        var columns = React.Children.map(this.props.children, function (child) {
-            var isColumn = _.isFunction(child.type.implementsInterface) && child.type.implementsInterface('DataTableColumn');
-            if (isColumn) hasColumns = true;
-            return isColumn ? child : null;
-        });
+      // if no data, and no "empty" message to show, hide table entirely
+      var hasData = this.props.data && this.props.data.length;
 
-        if (!hasColumns) columns = _.map(this.props.orderedFields, function (field) {
-            return React.createElement(SimpleDataTableColumn, { name: field.key });
-        });
+      var children = this.props.children;
+      children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children];
+      var hasColumns = false;
+      var columns = React.Children.map(this.props.children, function (child) {
+          var isColumn = _.isFunction(child.type.implementsInterface) && child.type.implementsInterface('DataTableColumn');
+          if (isColumn) hasColumns = true;
+          return isColumn ? child : null;
+      });
 
-        var renderRow = _.partial(this.renderRow, columns);
-        return hasData || this.props.isEmptyContentInTable ? React.createElement(
-            'table',
-            { className: cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }]) },
-            React.createElement(
-                'thead',
-                null,
-                React.createElement(
-                    'tr',
-                    null,
-                    React.Children.map(columns, this.renderColumnHeader)
-                )
-            ),
-            React.createElement(
-                'tbody',
-                null,
-                hasData ? this.props.data.map(renderRow) : this.props.emptyContent
-            )
-        ) : this.props.emptyContent;
+      if (!hasColumns) columns = _.map(this.props.orderedFields, function (field) {
+          return React.createElement(SimpleDataTableColumn, { name: field.key });
+      })
+
+        var renderRow = _.partial(this.renderRow, columns)
+
+      if (hasData || this.props.isEmptyContentInTable) {
+        return (
+          <table className={cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }])}>
+              <thead>
+                <tr>
+                  { React.Children.map(columns, this.renderColumnHeader) }
+                </tr>
+              </thead>
+          </table>
+        )
+      } else {
+        return this.props.emptyContent
+      }
     },
-
-    renderColumnHeader: function renderColumnHeader(column) {
+    //
+    //   <tbody>
+    //     { hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
+    //   </tbody>
+    
+    renderColumnHeader: function (column) {
         //console.log('sortKey', this.props.sortKey);
         var propsToPass = _.assign({}, _.clone(column.props), { // todo _.omit or _.pick
             field: this.props.fields[column.props.name],
@@ -119,7 +119,7 @@ var TableToRefactor = React.createClass({
         });
         return React.createElement(TableHeaderCell, propsToPass);
     },
-    renderRow: function renderRow(columns, row) {
+    renderRow: function (columns, row) {
         var _this = this;
 
         return React.createElement(
