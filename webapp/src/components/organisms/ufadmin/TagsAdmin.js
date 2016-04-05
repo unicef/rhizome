@@ -9,8 +9,6 @@ import SearchBar from 'components/organisms/datascope/SearchBar'
 import AdminPage from 'components/organisms/ufadmin/AdminPage'
 import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 
-var { SimpleDataTable } = require('react-datascope')
-
 const fields = {
   edit_link: {
     title: 'Edit',
@@ -38,21 +36,6 @@ var TagsAdmin = React.createClass({
       </div>
     )
 
-    var toRefactorComponent = <TableToRefactor>
-      {fieldNamesOnTable.map(fieldName => {
-        return <SimpleDataTableColumn name={fieldName} />
-      })}
-    </TableToRefactor>
-
-    var somethingThatWorks = <SimpleDataTable>
-          {fieldNamesOnTable.map(fieldName => {
-            return <SimpleDataTableColumn name={fieldName}/>
-          })}
-        </SimpleDataTable>
-
-    console.log('toRefactorComponent: ', toRefactorComponent)
-    console.log('somethingThatWorks: ', somethingThatWorks)
-
     return (
       <AdminPage
         title='Tags'
@@ -60,7 +43,11 @@ var TagsAdmin = React.createClass({
         datascopeFilters={datascopeFilters}
         fields={fields} >
         <Paginator />
-        {toRefactorComponent}
+          <TableToRefactor>
+            {fieldNamesOnTable.map(fieldName => {
+              return <SimpleDataTableColumn name={fieldName} />
+            })}
+          </TableToRefactor>
       </AdminPage>
     )
   }
