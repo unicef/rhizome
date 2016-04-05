@@ -12,7 +12,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree
+    LocationPermission, LocationTree, IndicatorClassMap
 
 
 class ResultObject(object):
@@ -99,6 +99,8 @@ class DatapointResource(BaseNonModelResource):
         response.
         '''
         self.error = None
+        self.class_indicator_map = self.build_class_indicator_map();
+        
 
         results = []
 
@@ -122,6 +124,7 @@ class DatapointResource(BaseNonModelResource):
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
 
+
         computed_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
@@ -129,6 +132,8 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
+
+        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
         try:
             p_table = pivot_table(
@@ -148,6 +153,7 @@ class DatapointResource(BaseNonModelResource):
                 None)
             pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
 
+
         except KeyError: ## there is no data
             if len(self.parsed_params['campaign__in']) > 1:
                 ## implicit way to only do this for data entry - i.e. a hack.
@@ -158,6 +164,7 @@ class DatapointResource(BaseNonModelResource):
                 tupl = (location_id, self.parsed_params['campaign__in'][0])
                 pivoted_data[tupl] = {}
                 pivoted_data_for_id[tupl] = {}
+
 
         for row, indicator_dict in pivoted_data.iteritems():
 
@@ -322,3 +329,23 @@ class DatapointResource(BaseNonModelResource):
         campaign__in = [c.id for c in campaign_qs]
 
         return campaign__in
+
+    def build_class_indicator_map(self):
+        query_results = IndicatorClassMap.objects.filter(is_display=True) \
+            .values_list('indicator','enum_value','string_value')
+        class_indicator_map ={}
+        for query in query_results:
+            if query[0] not in class_indicator_map:
+                class_indicator_map[query[0]] ={}
+            class_indicator_map[query[0]][query[1]] = query[2]
+
+        return class_indicator_map
+
+    def add_class_indicator_val(self, x):
+        ind_id = x['indicator_id']
+        ind_val = x['value']
+        if ind_id in self.class_indicator_map and ind_val in self.class_indicator_map[ind_id]:
+            new_val = self.class_indicator_map[ind_id][ind_val]
+            x['value'] = new_val            
+        return x
+
