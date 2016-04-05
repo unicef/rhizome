@@ -125,51 +125,6 @@ let EntryFormStore = Reflux.createStore({
     if (this.data.couldLoad) { this._getTableData() }
   },
 
-  // _filterLocationsByCampaign: function () {
-  //   let campaign = _(this.data.campaigns).find(campaign => {
-  //     return campaign.id === parseInt(this.data.campaignSelected, 10)
-  //   })
-  //
-  //   this.data.filterLocations = this.locationList.filter(location => {
-  //     return location.value === campaign.office_id
-  //   })
-  //
-  //   this.data.locationSelected = []
-  //   this._setCouldLoad()
-  // },
-
-  // _filterFormDefinition: function (indicatorSetId) {
-  //   var formDefinition = this.data.entryFormDefinitions[0] // _.find(this.data.entryFormDefinitions, function (d) { return d.id ===
-  //   if (!formDefinition) return null
-  //   //
-  //   var filtered = _.clone(formDefinition)
-  //   filtered.indicators = [] // formDefinition.indicators.filter(function (n) { return n > 0 })
-
-  //   // []
-  //   _.each(formDefinition.indicator_id_list, ind_id => {
-  //   //   if (row.type === 'section-header') { // header
-  //   //     // remove previous section header if no indicators are included under it
-  //   //     if (filtered.indicators.length > 0 && filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-  //   //       filtered.indicators.splice(filtered.indicators.length - 1, 1)
-  //   //     }
-  //   //     filtered.indicators.push(row)
-  //   //   } else { // indicator
-  //   //     // filter out indicators the user cannot edit
-  //     if (ind_id && this.data.indicatorMap[ind_id] !== undefined) {
-  //   //       row.name = this.data.indicatorMap[row.id].name
-  //       filtered.indicators.push(this.data.indicatorMap[ind_id])
-  //   //     }
-  //     }
-  //   })
-  //   //
-  //   // // remove last row if empty section header
-  //   // if (filtered.indicators[filtered.indicators.length - 1].type === 'section-header') {
-  //   //   filtered.indicators.pop()
-  //   // }
-  //   //
-  //   return filtered
-  // },
-
   _findLocationObject: function (locations, locationId) {
     return _.find(locations, location => {
       return location.value === locationId
