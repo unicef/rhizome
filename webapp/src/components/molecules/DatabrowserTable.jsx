@@ -5,7 +5,10 @@ import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 
-const {Datascope, LocalDatascope, SimpleDataTableColumn, Paginator} = require('react-datascope')
+import Datascope from 'components/organisms/datascope/Datascope'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import LocalDatascope from 'components/organisms/datascope/SearchBar'
 
 let DatabrowserTable = React.createClass({
 

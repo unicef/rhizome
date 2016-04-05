@@ -1,13 +1,13 @@
-const React = require('react')
-const {
-  SimpleDataTable, SimpleDataTableColumn,
-  Paginator,
-  SearchBar
-} = require('react-datascope')
+import React from 'react'
 
-const AdminPage = require('./AdminPage')
+import AdminPage from 'components/organisms/ufadmin/AdminPage'
 
-const api = require('data/api')
+import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import SearchBar from 'components/organisms/datascope/SearchBar'
+
+import api from 'data/api'
 
 // display rules for datascope fields
 const checkmarkRenderer = (val) => val ? '✓' : ''
@@ -40,6 +40,7 @@ const UsersAdmin = React.createClass({
   },
 
   render () {
+
     var datascopeFilters = (
       <div>
         <SearchBar
@@ -49,18 +50,20 @@ const UsersAdmin = React.createClass({
       </div>
     )
 
+    var myVar = fieldNamesOnTable.map(fieldName => {
+      return <SimpleDataTableColumn name={fieldName}/>
+    })
+
     return (
       <AdminPage
         title='Users'
-        getData={api.users}
+        getData={api.campaigns}
         fields={fields}
         schema={schema}
         datascopeFilters={datascopeFilters} >
         <Paginator />
         <SimpleDataTable>
-          {fieldNamesOnTable.map(fieldName => {
-            return <SimpleDataTableColumn name={fieldName}/>
-          })}
+          {myVar}
         </SimpleDataTable>
       </AdminPage>
     )

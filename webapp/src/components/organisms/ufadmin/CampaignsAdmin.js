@@ -1,11 +1,13 @@
 import React from 'react'
 import api from 'data/api'
 
-var {
-  SimpleDataTable, SimpleDataTableColumn,
-  Paginator, SearchBar
-} = require('react-datascope')
-import AdminPage from './AdminPage'
+
+import AdminPage from 'components/organisms/ufadmin/AdminPage'
+
+import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import SearchBar from 'components/organisms/datascope/SearchBar'
 
 const fields = {
   edit_link: {
