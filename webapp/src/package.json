@@ -1,6 +1,7 @@
 {
   "browser": {
     "react": "react",
+    "react-datascope": "react-datascope",
     "d3": "d3",
     "reflux": "reflux",
     "superagent": "superagent",

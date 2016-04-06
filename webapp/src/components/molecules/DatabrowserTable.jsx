@@ -7,8 +7,9 @@ import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
-import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
-import Datascope from 'components/organisms/datascope/LocalDatascope'
+var { LocalDatascope, Datascope } = require('react-datascope')
+// import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+// import Datascope from 'components/organisms/datascope/LocalDatascope'
 
 let DatabrowserTable = React.createClass({
 
