@@ -1,16 +1,12 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 
-// var ReactHighcharts = require('react-highcharts/dist/bundle/highcharts');
-// var Highmaps = require('react-highcharts/dist/highmaps');
-// var Map = require('react-highcharts/dist/modules/map');
-import ChartFactory from 'components/molecules/highcharts/ChartFactory'
-
+import HighChart from 'components/molecules/highcharts/HighChart'
 
 import format from 'utilities/format'
-// import maps from './map_data'
+import maps from './map_data'
 
-class MapChart extends Component {
+class MapChart extends HighChart {
 
   constructor (props) {
     super(props)
@@ -39,7 +35,7 @@ class MapChart extends Component {
               fontWeight: 'bold'
             }
           },
-          // mapData: maps,
+          mapData: maps,
           tooltip: {
             headerFormat: '',
             pointFormat: '{point.name}: <b>{series.name}</b>'
@@ -61,13 +57,6 @@ class MapChart extends Component {
     }
   }
 
-  render () { console.info('------ MapChart.render')
-    return (
-      <div id='highchart-container'>
-        <ChartFactory chartType='Map' config={this.data} isPureConfig/>
-      </div>
-    )
-  }
 }
 
 export default MapChart

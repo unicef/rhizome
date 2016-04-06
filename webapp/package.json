@@ -24,7 +24,6 @@
     "react": "^0.13.3",
     "react-datascope": "file:./external_modules/react-datascope",
     "react-dropzone": "^2.1.0",
-    "react-highcharts": "^3.0.0",
     "react-json": "file:./external_modules/react-json",
     "react-layer": "^1.1.0",
     "react-modal": "^0.3.0",

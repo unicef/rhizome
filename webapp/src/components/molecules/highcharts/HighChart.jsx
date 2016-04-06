@@ -2,39 +2,12 @@ import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
 
-var HighchartsMore = require('highcharts-more');
-var ReactHighcharts = require('react-highcharts/dist/bundle/highcharts');
-var HighchartsExporting = require('react-highcharts/dist/modules/exporting');
+import ChartFactory from 'components/molecules/highcharts/ChartFactory'
 
 class HighChart extends Component {
 
-  static propTypes = {
-    chart: PropTypes.object,
-    colors: PropTypes.array,
-    credits: PropTypes.object,
-    data: PropTypes.object,
-    drilldown: PropTypes.object,
-    exporting: PropTypes.object,
-    labels: PropTypes.object,
-    legend: PropTypes.object,
-    loading: PropTypes.object,
-    navigation: PropTypes.object,
-    noData: PropTypes.object,
-    pane: PropTypes.object,
-    plotOptions: PropTypes.object,
-    series: PropTypes.arrayOf(PropTypes.object),
-    subtitle: PropTypes.object,
-    title: PropTypes.object,
-    tooltip: PropTypes.object,
-    xAxis: PropTypes.object,
-    yAxis: PropTypes.object
-  }
-
   constructor (props) {
     super(props)
-    ReactHighcharts.Highcharts.win = window
-    HighchartsExporting(ReactHighcharts.Highcharts);
-    HighchartsMore(ReactHighcharts.Highcharts);
     const first_indicator = props.selected_indicators[0]
     this.data = {
       chart: { type: this.getChartType(props.type) },
@@ -67,6 +40,12 @@ class HighChart extends Component {
     }
   }
 
+  getChartType (type) {
+    if (type === 'ColumnChart') { return 'column' }
+    if (type === 'LineChart') { return 'line' }
+    if (type === 'BarChart') { return 'bar' }
+  }
+
   getData () {
     const data = this.props.data
     const groupByIndicator = this.props.groupBy === 'indicator'
@@ -82,16 +61,10 @@ class HighChart extends Component {
     return series
   }
 
-  getChartType (type) {
-    if (type === 'ColumnChart') { return 'column' }
-    if (type === 'LineChart') { return 'line' }
-    if (type === 'BarChart') { return 'bar' }
-  }
-
   render () { console.info('------ HighChart.render')
     return (
       <div id='highchart-container'>
-        <ReactHighcharts config={this.data} isPureConfig/>
+        <ChartFactory config={this.data} map={this.props.type === 'MapChart'} isPureConfig/>
       </div>
     )
   }
