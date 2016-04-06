@@ -40,20 +40,20 @@ var LocalDatascope = React.createClass({
     return true
   },
 
-  getDefaultProps: function getDefaultProps () {
+  getDefaultProps () {
     return {
       paginated: true,
       pageSize: 200
     }
   },
-  getInitialState: function getInitialState () {
+  getInitialState () {
     return {
       displayData: _.clone(this.props.data),
       query: this.props.initialQuery || {}
     }
   },
 
-  componentWillMount: function componentWillMount () {
+  componentWillMount () {
     var query = this.state.query
 
     // //////////////////////////////////////
@@ -63,20 +63,26 @@ var LocalDatascope = React.createClass({
 
     if (this.props.paginated) {
       // initialize pagination
-
-      query = React.addons.update(query, { pagination: { $set: { page: 1, offset: 0, limit: this.props.pageSize, total: this.props.data.length }
+      debugger;
+      query = React.addons.update(query, { pagination:
+                                          { $set:
+                                            { page: 1,
+                                              offset: 0,
+                                              limit: this.props.pageSize,
+                                              total: this.props.data.length
+                                            }
       } })
     }
 
     this.setState(this._getDisplayData(query))
   },
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps (nextProps) {
     this.props = nextProps
     this.setState(this._getDisplayData(this.state.query))
   },
 
-  _getDisplayData: function _getDisplayData (query) {
+  _getDisplayData (query) {
     var hasFilter = _.isObject(query.filter) && _.keys(query.filter).length
     var hasSearch = _.isObject(query.search) && _.keys(query.search).length
     var hasSort = query.sort && !_.isUndefined(query.sort.key)
@@ -96,14 +102,14 @@ var LocalDatascope = React.createClass({
     return { query: query, displayData: displayData }
   },
 
-  _filterData: function _filterData (data, filterQuery) {
+  _filterData (data, filterQuery) {
     return _.filter(data, function (d) {
       return _.all(filterQuery, function (filterObj, key) {
         return this.matchesFilter(d, filterObj, key)
       })
     })
   },
-  _searchData: function _searchData (data, searchQueries) {
+  _searchData (data, searchQueries) {
     var propSchemas = this.props.schema.items.properties
     var stringyFieldKeys = _(propSchemas).keys().filter(function (key) {
       return _.includes(['string', 'number'], propSchemas[key].type)
@@ -117,7 +123,7 @@ var LocalDatascope = React.createClass({
       })
     })
   },
-  _sortData: function _sortData (data, sortQuery) {
+  _sortData (data, sortQuery) {
     var _this = this
 
     // WARNING this mutates the data array so call it with a copy
@@ -130,7 +136,7 @@ var LocalDatascope = React.createClass({
       return comparator(a[key], b[key]) * order
     })
   },
-  _paginateData: function _paginateData (data, query) {
+  _paginateData (data, query) {
     var pagination = query.pagination
 
     var prevQuery = this.state.query
@@ -149,13 +155,13 @@ var LocalDatascope = React.createClass({
     return { data: data, pagination: pagination }
   },
 
-  onChangeQuery: function onChangeQuery (query) {
+  onChangeQuery (query) {
     // console.log('new query', query)
     var newState = this._getDisplayData(query)
     this.setState(newState)
   },
 
-  render: function render () {
+  render () {
     var _this2 = this
 
     return React.createElement(
