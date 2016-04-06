@@ -1,7 +1,10 @@
 import _ from 'lodash'
-import Highcharts from 'react-highcharts/dist/bundle/highcharts'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
+
+var HighchartsMore = require('highcharts-more');
+var ReactHighcharts = require('react-highcharts/dist/bundle/highcharts');
+var HighchartsExporting = require('react-highcharts/dist/modules/exporting');
 
 class HighChart extends Component {
 
@@ -29,11 +32,17 @@ class HighChart extends Component {
 
   constructor (props) {
     super(props)
+    ReactHighcharts.Highcharts.win = window
+    HighchartsExporting(ReactHighcharts.Highcharts);
+    HighchartsMore(ReactHighcharts.Highcharts);
     const first_indicator = props.selected_indicators[0]
     this.data = {
       chart: { type: this.getChartType(props.type) },
       credits: { enabled: false },
       title: '',
+      exporting: {
+        enabled: true
+      },
       xAxis: {
         type: 'datetime',
         labels: {
@@ -82,7 +91,7 @@ class HighChart extends Component {
   render () { console.info('------ HighChart.render')
     return (
       <div id='highchart-container'>
-        <Highcharts config={this.data} isPureConfig/>
+        <ReactHighcharts config={this.data} isPureConfig/>
       </div>
     )
   }

@@ -284,6 +284,7 @@ var DashboardPageStore = Reflux.createStore({
   // =========================================================================== //
   // =============================  Fetch Dashboard  =========================== //
   onFetchDashboard (uuid) { // console.info('Store.onFetchDashboard')
+    //supposed to fetch dashboard?
     this.trigger(this.dashboard)
   },
   onFetchDashboardCompleted (response) { // console.info('Store.onFetchDashboardCompleted')

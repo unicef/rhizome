@@ -24,6 +24,7 @@ import TableChart from 'components/molecules/charts/TableChart'
 import BarChart from 'components/molecules/highcharts/BarChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
 import TrendChart from 'components/molecules/highcharts/TrendChart'
+import MapChart from 'components/molecules/highcharts/MapChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
 import ChartStore from 'stores/ChartStore'
@@ -81,6 +82,8 @@ const MultiChart = React.createClass({
       return <TrendChart {...this.props.chart} />
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
+    } else if (type === 'MapChart') {
+      return <MapChart {...this.props.chart} />
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
     } else if (type === 'BarChart') {
