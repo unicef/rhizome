@@ -2,7 +2,9 @@ import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
 
-import ReactHighcharts from 'react-highcharts/dist/bundle/highcharts'
+var HighchartsMore = require('highcharts-more');
+var ReactHighcharts = require('react-highcharts/dist/bundle/highcharts');
+var HighchartsExporting = require('react-highcharts/dist/modules/exporting');
 
 class HighChart extends Component {
 
@@ -30,6 +32,9 @@ class HighChart extends Component {
 
   constructor (props) {
     super(props)
+    ReactHighcharts.Highcharts.win = window
+    HighchartsExporting(ReactHighcharts.Highcharts);
+    HighchartsMore(ReactHighcharts.Highcharts);
     const first_indicator = props.selected_indicators[0]
     this.data = {
       chart: { type: this.getChartType(props.type) },
