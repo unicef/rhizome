@@ -6,6 +6,7 @@ import page from 'page'
 import ReviewTable from 'components/organisms/source-data/ReviewTable'
 import DocOverview from 'components/organisms/source-data/DocOverview'
 import CSVMenuItem from 'components/molecules/CSVMenuItem'
+import DocForm from 'components/organisms/source-data/DocForm.jsx'
 
 import SourceDataStore from 'stores/SourceDataStore'
 // import SourceDataActions from 'actions/SourceDataActions'
@@ -89,6 +90,7 @@ var SourceData = React.createClass({
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
+        <DocForm/>
       </div>
     )
 
