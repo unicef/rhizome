@@ -1,26 +1,23 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 
-// import Highmaps from 'highcharts/highmaps'
-// import Highmaps from 'react-highcharts/dist/highmaps'
-// import Highmaps from 'highcharts'
-// import ReactHighchart from 'react-highcharts/dist/highcharts'
-// import ReactHighmap from 'react-highcharts/dist/highmaps'
-// var HighchartsMore = require('highcharts-more');
-// import Map from 'react-highcharts/dist/modules/map'
-// We tell HighchartsMore to use the same Highcharts object as ReactHighcharts
+// var ReactHighcharts = require('react-highcharts/dist/bundle/highcharts');
+// var Highmaps = require('react-highcharts/dist/highmaps');
+// var Map = require('react-highcharts/dist/modules/map');
+import ChartFactory from 'components/molecules/highcharts/ChartFactory'
+
 
 import format from 'utilities/format'
-import maps from './map_data'
+// import maps from './map_data'
 
 class MapChart extends Component {
 
   constructor (props) {
     super(props)
+
     const first_indicator = props.selected_indicators[0]
     this.data = {
       chart: {
-        // type: 'map',
         spacingBottom: 20
       },
       title: {
@@ -42,7 +39,7 @@ class MapChart extends Component {
               fontWeight: 'bold'
             }
           },
-          mapData: maps,
+          // mapData: maps,
           tooltip: {
             headerFormat: '',
             pointFormat: '{point.name}: <b>{series.name}</b>'
@@ -67,7 +64,7 @@ class MapChart extends Component {
   render () { console.info('------ MapChart.render')
     return (
       <div id='highchart-container'>
-        <ReactHighchart config={this.data} isPureConfig/>
+        <ChartFactory chartType='Map' config={this.data} isPureConfig/>
       </div>
     )
   }
