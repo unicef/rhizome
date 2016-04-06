@@ -97,7 +97,7 @@ var SimpleForm = React.createClass({
   componentWillUpdate: function (nextProps, nextState) {
     if (nextProps.params !== this.props.params) {
       return
-  }
+    }
     if (nextState.store.dataObject !== this.state.store.dataObject) {
       return
     }
@@ -110,7 +110,7 @@ var SimpleForm = React.createClass({
     var errorMessage = {}
     var maxLength = 255
     for (var key in data) {
-    if (!data[key] && data[key] != 0) {
+      if (!data[key] && data[key] !== 0) {
         errorMessage[key] = key.toUpperCase() + ' can not be blank.'
       }
       if (data[key].length > maxLength) {
@@ -119,7 +119,9 @@ var SimpleForm = React.createClass({
     }
 
     if (!errorMessage['name'] & !this.props.params.id) {
-      var result = _.find(indicators, d => { return d === data.name })
+      var result = _.find(indicators, d => {
+        return d === data.name
+      })
       if (result) {
         errorMessage['name'] = 'The indicator of this NAME already exists.'
       }
@@ -160,19 +162,23 @@ var SimpleForm = React.createClass({
 
     let message = this.state.store.displayMsg
       ? (
-        <div className={`message${this.state.store.saveSuccess ? ' success' : ' error'}`}>
-          {this.state.store.message}
-        </div>
+      <div className={`message${this.state.store.saveSuccess ? ' success' : ' error'}`}>
+        {this.state.store.message}
+      </div>
       )
       : null
 
     if (objectId && !dataObject) {
       if (this.state.store.loading) {
-        return <div>Loading MetaData Manager</div>
+        return <div>
+                 Loading MetaData Manager
+               </div>
       } else {
         page('/manage_system/' + contentType + '/')
         return (
-          <div>Error. There is no data received.</div>
+        <div>
+          Error. There is no data received.
+        </div>
         )
       }
     }
@@ -193,14 +199,16 @@ var SimpleForm = React.createClass({
 
       additionalFormComponents = (
         <div>
-          <p>{`Parent Tag: ${selected}`}</p>
+          <p>
+            {`Parent Tag: ${selected}`}
+          </p>
           <br />
           <DropdownMenu
             items={tagTree}
-            sendValue={ this.setParentTag }
+            sendValue={this.setParentTag}
             item_plural_name='Parent Tags'
             text='Parent tag'
-            icon='fa-tag'/>
+            icon='fa-tag' />
         </div>
       )
     } else if (contentType === 'indicator') {
@@ -262,22 +270,28 @@ var SimpleForm = React.createClass({
     }
 
     return (
-      <div className='row'>
-        <div className='small-8 columns'>
-          <div>
-            <h2>Manage Admin Page</h2>
-            {idInfo}
-            {message}
-            <ReactJson value={formData} settings={formSettings} errorMessage={this.state.errorMessage} ref='form_data'/>
-            {additionalFormComponents}
-            <br />
-            <button className='tiny' onClick={ this.onSubmit }>Save</button>
-          </div>
-        </div>
-        <div className='small-4 columns'>
-          {subFormList}
+    <div className='row'>
+      <div className='small-8 columns'>
+        <div>
+          <h2>Manage Admin Page</h2>
+          {idInfo}
+          {message}
+          <ReactJson
+            value={formData}
+            settings={formSettings}
+            errorMessage={this.state.errorMessage}
+            ref='form_data' />
+          {additionalFormComponents}
+          <br />
+          <button className='tiny' onClick={this.onSubmit}>
+            Save
+          </button>
         </div>
       </div>
+      <div className='small-4 columns'>
+        {subFormList}
+      </div>
+    </div>
     )
   }
 })
