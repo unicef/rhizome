@@ -103,9 +103,9 @@ class DatapointResource(BaseNonModelResource):
         in the url parameters, and creating a ResultObject for each row in the
         response.
         '''
+
         self.error = None
         self.class_indicator_map = self.build_class_indicator_map();
-
 
         results = []
 
@@ -116,15 +116,9 @@ class DatapointResource(BaseNonModelResource):
             return []
 
         self.location_ids = self.get_locations_to_return_from_url(request)
+        self.base_data = self.base_transform()
 
-
-        # chart_type = 'rawData' ## make this the default
-        # try:
-        #     fn = self.chart_type_fn_lookup[request.GET['chart_type']]
-        # except KeyError:
-
-        base_data =  self.base_transform()
-        return base_data
+        return self.base_data
 
 
     def obj_get_list(self, bundle, **kwargs):
@@ -369,37 +363,61 @@ class DatapointResource(BaseNonModelResource):
 
     def transform_map_data(self):
 
-        return [{'hc-key': 'af-kt', 'value': 0 },
-           {'hc-key': 'af-pk', 'value': 1 },
-           {'hc-key': 'af-gz', 'value': 2 },
-           {'hc-key': 'af-bd', 'value': 3 },
-           {'hc-key': 'af-nr', 'value': 4 },
-           {'hc-key': 'af-kr', 'value': 5 },
-           {'hc-key': 'af-kz', 'value': 6 },
-           {'hc-key': 'af-ng', 'value': 7 },
-           {'hc-key': 'af-tk', 'value': 8 },
-           {'hc-key': 'af-bl', 'value': 9 },
-           {'hc-key': 'af-kb', 'value': 10 },
-           {'hc-key': 'af-kp', 'value': 11 },
-           {'hc-key': 'af-2030', 'value': 12 },
-           {'hc-key': 'af-la', 'value': 13 },
-           {'hc-key': 'af-lw', 'value': 14 },
-           {'hc-key': 'af-pv', 'value': 15 },
-           {'hc-key': 'af-sm', 'value': 16 },
-           {'hc-key': 'af-vr', 'value': 17 },
-           {'hc-key': 'af-pt', 'value': 18 },
-           {'hc-key': 'af-bg', 'value': 19 },
-           {'hc-key': 'af-hr', 'value': 20 },
-           {'hc-key': 'af-bk', 'value': 21 },
-           {'hc-key': 'af-jw', 'value': 22 },
-           {'hc-key': 'af-bm', 'value': 23 },
-           {'hc-key': 'af-gr', 'value': 24 },
-           {'hc-key': 'af-fb', 'value': 25 },
-           {'hc-key': 'af-sp', 'value': 26 },
-           {'hc-key': 'af-fh', 'value': 27 },
-           {'hc-key': 'af-hm', 'value': 28 },
-           {'hc-key': 'af-nm', 'value': 29 },
-           {'hc-key': 'af-2014', 'value': 30 },
-           {'hc-key': 'af-oz', 'value': 31 },
-           {'hc-key': 'af-kd', 'value': 320000 },
-           {'hc-key': 'af-zb', 'value': 33 }]
+        # { rhizome_id: high_chart_code }
+        high_chart_lookup = {
+            36:'af-kt',
+            8:'af-pk',
+            27:'af-gz',
+            36:'af-bd',
+            7:'af-nr',
+            19:'af-kr',
+            2:'af-kz',
+            5:'af-ng',
+            14:'af-tk',
+            21:'af-bl',
+            32:'af-kb',
+            34:'af-kp',
+            10:'af-2030',
+            3:'af-la',
+            4:'af-lw',
+            11:'af-pv',
+            12:'af-sm',
+            16:'af-vr',
+            9:'af-pt',
+            20:'af-bg',
+            30:'af-hr',
+            22:'af-bk',
+            31:'af-jw',
+            23:'af-bm',
+            28:'af-gr',
+            26:'af-fb',
+            13:'af-sp',
+            25:'af-fh',
+            29:'af-hm',
+            6:'af-nm',
+            15:'af-2014',
+            24:'af-oz',
+            33:'af-kd',
+            17:'af-zb',
+            35:'af-kt',
+            18:'af-kt',
+        }
+
+        high_chart_data = []
+
+
+        for obj in self.base_data:
+            dp_dict = obj.__dict__
+            indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
+            indicator_value = indicator_dict['value']
+            location = dp_dict['location']
+
+            high_chart_code = high_chart_lookup[dp_dict['location']]
+
+            object_dict = {
+                'hc-key' : high_chart_code,
+                'value' : indicator_value
+            }
+            high_chart_data.append(object_dict)
+
+        return high_chart_data
