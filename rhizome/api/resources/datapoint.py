@@ -64,6 +64,11 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
+        self.chart_type_fn_lookup = {
+            'MapChart': self.transform_map_data
+        }
+
+
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
         """
@@ -100,7 +105,7 @@ class DatapointResource(BaseNonModelResource):
         '''
         self.error = None
         self.class_indicator_map = self.build_class_indicator_map();
-        
+
 
         results = []
 
@@ -113,80 +118,14 @@ class DatapointResource(BaseNonModelResource):
         self.location_ids = self.get_locations_to_return_from_url(request)
 
 
-        chart_type = 'rawData' ## make this the default
-        try:
-            chart_type = request.GET['chart_type']
-        except KeyError:
-            pass
+        # chart_type = 'rawData' ## make this the default
+        # try:
+        #     fn = self.chart_type_fn_lookup[request.GET['chart_type']]
+        # except KeyError:
 
-        # Pivot the data on request instead of caching ##
-        # in the datapoint_abstracted table ##
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
+        base_data =  self.base_transform()
+        return base_data
 
-
-        computed_datapoints = DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])
-
-        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
-            columns=df_columns)
-
-        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        try:
-            p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-
-            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-            pivoted_data = no_nan_pivoted_df.to_dict()
-
-            ## we need two dictionaries, one that has the value of the
-            ## datapoint_computed object and one with the id ##
-
-            p_table_for_id = pivot_table(
-                dwc_df, values='id', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
-                None)
-            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
-
-
-        except KeyError: ## there is no data
-            if len(self.parsed_params['campaign__in']) > 1:
-                ## implicit way to only do this for data entry - i.e. a hack.
-                return
-
-            pivoted_data, pivoted_data_for_id = {}, {}
-            for location_id in self.location_ids:
-                tupl = (location_id, self.parsed_params['campaign__in'][0])
-                pivoted_data[tupl] = {}
-                pivoted_data_for_id[tupl] = {}
-
-
-        for row, indicator_dict in pivoted_data.iteritems():
-
-            indicator_objects = [{
-                'indicator': k,
-                'computed': pivoted_data_for_id[row][k],
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
-
-            # avail_indicators = set([x for x,y in indicator_dict.keys()])
-            missing_indicators = list(set(self.parsed_params['indicator__in']))
-            for ind in missing_indicators:
-                if ind not in indicator_dict.keys():
-                    indicator_objects.append({'indicator': ind, 'value': None,\
-                    'computed_id': None})
-
-            r = ResultObject()
-            r.location = row[0]
-            r.campaign = row[1]
-            r.indicators = indicator_objects
-            results.append(r)
-
-        return results
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -238,6 +177,13 @@ class DatapointResource(BaseNonModelResource):
             data['error'] = self.error
         else:
             data['error'] = None
+
+
+        try:
+            chart_data_fn = self.chart_type_fn_lookup[request.GET['chart_type']]
+            data['meta']['chart_data'] = chart_data_fn()
+        except KeyError:
+            data['meta']['chart_data'] = []
 
         return data
 
@@ -345,6 +291,115 @@ class DatapointResource(BaseNonModelResource):
         ind_val = x['value']
         if ind_id in self.class_indicator_map and ind_val in self.class_indicator_map[ind_id]:
             new_val = self.class_indicator_map[ind_id][ind_val]
-            x['value'] = new_val            
+            x['value'] = new_val
         return x
 
+    def base_transform(self):
+
+        results = []
+
+        # Pivot the data on request instead of caching ##
+        # in the datapoint_abstracted table ##
+        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+            'value']
+
+
+        computed_datapoints = DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=self.location_ids,
+                indicator__in=self.parsed_params['indicator__in'])
+
+        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
+            columns=df_columns)
+
+        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+        try:
+            p_table = pivot_table(
+                dwc_df, values='value', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+
+            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+            pivoted_data = no_nan_pivoted_df.to_dict()
+
+            ## we need two dictionaries, one that has the value of the
+            ## datapoint_computed object and one with the id ##
+
+            p_table_for_id = pivot_table(
+                dwc_df, values='id', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
+                None)
+            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
+
+
+        except KeyError: ## there is no data
+            if len(self.parsed_params['campaign__in']) > 1:
+                ## implicit way to only do this for data entry - i.e. a hack.
+                return
+
+            pivoted_data, pivoted_data_for_id = {}, {}
+            for location_id in self.location_ids:
+                tupl = (location_id, self.parsed_params['campaign__in'][0])
+                pivoted_data[tupl] = {}
+                pivoted_data_for_id[tupl] = {}
+
+
+        for row, indicator_dict in pivoted_data.iteritems():
+
+            indicator_objects = [{
+                'indicator': k,
+                'computed': pivoted_data_for_id[row][k],
+                'value': v
+            } for k, v in indicator_dict.iteritems()]
+
+            # avail_indicators = set([x for x,y in indicator_dict.keys()])
+            missing_indicators = list(set(self.parsed_params['indicator__in']))
+            for ind in missing_indicators:
+                if ind not in indicator_dict.keys():
+                    indicator_objects.append({'indicator': ind, 'value': None,\
+                    'computed_id': None})
+
+            r = ResultObject()
+            r.location = row[0]
+            r.campaign = row[1]
+            r.indicators = indicator_objects
+            results.append(r)
+
+        return results
+
+    def transform_map_data(self):
+
+        return [{'hc-key': 'af-kt', 'value': 0 },
+           {'hc-key': 'af-pk', 'value': 1 },
+           {'hc-key': 'af-gz', 'value': 2 },
+           {'hc-key': 'af-bd', 'value': 3 },
+           {'hc-key': 'af-nr', 'value': 4 },
+           {'hc-key': 'af-kr', 'value': 5 },
+           {'hc-key': 'af-kz', 'value': 6 },
+           {'hc-key': 'af-ng', 'value': 7 },
+           {'hc-key': 'af-tk', 'value': 8 },
+           {'hc-key': 'af-bl', 'value': 9 },
+           {'hc-key': 'af-kb', 'value': 10 },
+           {'hc-key': 'af-kp', 'value': 11 },
+           {'hc-key': 'af-2030', 'value': 12 },
+           {'hc-key': 'af-la', 'value': 13 },
+           {'hc-key': 'af-lw', 'value': 14 },
+           {'hc-key': 'af-pv', 'value': 15 },
+           {'hc-key': 'af-sm', 'value': 16 },
+           {'hc-key': 'af-vr', 'value': 17 },
+           {'hc-key': 'af-pt', 'value': 18 },
+           {'hc-key': 'af-bg', 'value': 19 },
+           {'hc-key': 'af-hr', 'value': 20 },
+           {'hc-key': 'af-bk', 'value': 21 },
+           {'hc-key': 'af-jw', 'value': 22 },
+           {'hc-key': 'af-bm', 'value': 23 },
+           {'hc-key': 'af-gr', 'value': 24 },
+           {'hc-key': 'af-fb', 'value': 25 },
+           {'hc-key': 'af-sp', 'value': 26 },
+           {'hc-key': 'af-fh', 'value': 27 },
+           {'hc-key': 'af-hm', 'value': 28 },
+           {'hc-key': 'af-nm', 'value': 29 },
+           {'hc-key': 'af-2014', 'value': 30 },
+           {'hc-key': 'af-oz', 'value': 31 },
+           {'hc-key': 'af-kd', 'value': 320000 },
+           {'hc-key': 'af-zb', 'value': 33 }]
