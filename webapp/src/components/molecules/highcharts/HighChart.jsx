@@ -1,7 +1,8 @@
 import _ from 'lodash'
-import Highcharts from 'react-highcharts/dist/bundle/highcharts'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
+
+import ReactHighcharts from 'react-highcharts/dist/bundle/highcharts'
 
 class HighChart extends Component {
 
@@ -34,6 +35,9 @@ class HighChart extends Component {
       chart: { type: this.getChartType(props.type) },
       credits: { enabled: false },
       title: '',
+      exporting: {
+        enabled: true
+      },
       xAxis: {
         type: 'datetime',
         labels: {
@@ -82,7 +86,7 @@ class HighChart extends Component {
   render () { console.info('------ HighChart.render')
     return (
       <div id='highchart-container'>
-        <Highcharts config={this.data} isPureConfig/>
+        <ReactHighcharts config={this.data} isPureConfig/>
       </div>
     )
   }
