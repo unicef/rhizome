@@ -3,10 +3,10 @@ version: 0.1
 os: linux
 
 files:
-  - source: /dist/rhizome.zip
-  destination: /var/www/apps/rhizome/
+  - source: /rhizome
+  destination: /rhizome
 permissions:
-  - object: /var/www/apps/rhizome/
+  - object: /rhizome
   pattern: "**"
   mode: 777
 hooks:
