@@ -415,7 +415,7 @@ class DatapointResource(BaseNonModelResource):
             high_chart_code = high_chart_lookup[dp_dict['location']]
 
             object_dict = {
-                'hc-key' : high_chart_code,
+                'hc-key' : location, ## high_chart_code,
                 'value' : indicator_value
             }
             high_chart_data.append(object_dict)
