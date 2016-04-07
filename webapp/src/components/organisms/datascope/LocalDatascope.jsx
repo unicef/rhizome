@@ -149,7 +149,6 @@ var LocalDatascope = React.createClass({
 
   render () {
     var self = this
-    //this MUST be refactored.
     return React.createElement(
       'div',
       { className: 'local-datascope' },
