@@ -70,7 +70,7 @@ var Datascope = React.createClass({
         return { fields: fields, orderedFields: orderedFields };
     },
 
-    fieldsFromSchema(schema) {
+    fieldsFromSchema (schema) {
         var fieldDefaults = {
             numberFormat: '0,0',
             dateFormat: '',
@@ -118,14 +118,14 @@ var Datascope = React.createClass({
         }).object().value();
     },
 
-    getDefaultProps: function getDefaultProps() {
+    getDefaultProps () {
         return {
             query: {},
             onChangeQuery: function onChangeQuery() {}
         };
     },
 
-    componentWillMount: function componentWillMount() {
+    componentWillMount () {
         // generate fields from schema properties, but override them with any passed in this.props.fields
         //var fields = _.assign({}, fieldsFromSchema(this.props.schema), this.props.fields);
 
@@ -137,30 +137,31 @@ var Datascope = React.createClass({
         this.setState({ fields: fields, orderedFields: orderedFields });
     },
 
-    onChangeSearch: function onChangeSearch(searchId, value, fields) {
+    onChangeSearch (searchId, value, fields) {
         var query = !_.isObject(this.props.query.search) ? React.addons.update(this.props.query, { search: { $set: _defineProperty({}, searchId, { value: value, fields: fields }) } }) : React.addons.update(this.props.query, { search: _defineProperty({}, searchId, { $set: { value: value, fields: fields } }) });
 
         this.props.onChangeQuery(query);
     },
-    onChangeSort: function onChangeSort(key, order) {
+    onChangeSort (key, order) {
         order = order || 'descending';
         var sortObj = _.isUndefined(key) || _.isNull(key) ? undefined : { key: key, order: order };
         var query = React.addons.update(this.props.query, { sort: { $set: sortObj } });
 
         this.props.onChangeQuery(query);
     },
-    onChangeFilter: function onChangeFilter(key, filterObj) {
+    onChangeFilter (key, filterObj) {
         var query = !_.isObject(this.props.query.filter) ? React.addons.update(this.props.query, { filter: { $set: _defineProperty({}, key, filterObj) } }) : React.addons.update(this.props.query, { filter: { $merge: _defineProperty({}, key, filterObj) } });
 
         this.props.onChangeQuery(query);
     },
-    onChangePagination: function onChangePagination(pagination) {
+    onChangePagination (pagination) {
         // todo keep all the pagination things in sync - let paginator just change page and auto update the rest
-        var query = React.addons.update(this.props.query, { pagination: { $set: pagination } });
+        var query = this.props.query
+        query.pagination = pagination
         this.props.onChangeQuery(query);
     },
 
-    render: function render() {
+    render () {
 
         var query = this.props.query;
         var onChangeSearch = this.onChangeSearch;
@@ -194,7 +195,7 @@ var Datascope = React.createClass({
             this.recursiveCloneChildren(this.props.children, datascopeProps, sortProps, filterProps, searchProps, paginationProps)
         );
     },
-    recursiveCloneChildren: function recursiveCloneChildren(children, datascopeProps, sortProps, filterProps, searchProps, paginationProps) {
+    recursiveCloneChildren (children, datascopeProps, sortProps, filterProps, searchProps, paginationProps) {
         var _this = this;
 
         return React.Children.map(children, function (child) {
