@@ -1,26 +1,37 @@
-import _ from 'lodash'
-import d3 from 'd3'
-import React, { PropTypes } from 'react'
+import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
-import format from 'components/molecules/charts/utils/format'
-import palettes from 'utilities/palettes'
-import aspects from 'components/molecules/charts/utils/aspects'
+
+import format from 'utilities/format'
 
 class LineChart extends HighChart {
-
-  setData () { console.info('------ LineChart.setData')
-    const props = this.props
-    const selected_locations_index = _.indexBy(props.selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(props.selected_indicators, 'id')
-
-  }
-
-  setOptions () { console.info('------ LineChart.setOptions')
-    const options = this.options
-    const props = this.props
+  constructor (props) {
+    super(props)
+    const first_indicator = props.selected_indicators[0]
+    this.data = {
+      chart: { type: 'line' },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          format: '{value:%b %d, %Y}'
+        }
+      },
+      yAxis: {
+        title: { text: '' },
+        labels: {
+          formatter: function () {
+            return format.autoFormat(this.value, first_indicator.data_format)
+          }
+        }
+      },
+      tooltip: {
+        pointFormatter: function (point) {
+          const value = format.autoFormat(this.y, first_indicator.data_format)
+          return `${this.series.name}: <b>${value}</b><br/>`
+        }
+      }
+    }
   }
 }
 
 export default LineChart
-
