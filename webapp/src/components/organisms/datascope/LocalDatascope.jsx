@@ -62,7 +62,6 @@ var LocalDatascope = React.createClass({
                              total: this.props.data.length
                            }
     }
-
     this.setState(this._getDisplayData(query))
   },
 
@@ -113,15 +112,14 @@ var LocalDatascope = React.createClass({
     })
   },
   _sortData (data, sortQuery) {
-    var _this = this
-
+    var self = this
     // WARNING this mutates the data array so call it with a copy
     // return _.sortBy(data, sortQuery.key)
     return data.sort(function (a, b) {
       var key = sortQuery.key
       var order = sortQuery.order.toLowerCase().indexOf('asc') === 0 ? -1 : 1
-      var field = _this.props.schema.items.properties[key]
-      var comparator = field.type === 'string' ? this.stringComparator : this.numberComparator
+      var field = self.props.schema.items.properties[key]
+      var comparator = field.type === 'string' ? self.stringComparator : self.numberComparator
       return comparator(a[key], b[key]) * order
     })
   },
