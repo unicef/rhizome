@@ -55,23 +55,12 @@ var LocalDatascope = React.createClass({
 
   componentWillMount () {
     var query = this.state.query
-
-    // //////////////////////////////////////
-    // had to comment out this code below //
-    // /// in order to get this working /////
-    // //////////////////////////////////////
-
     if (this.props.paginated) {
-      // initialize pagination
-      debugger;
-      query = React.addons.update(query, { pagination:
-                                          { $set:
-                                            { page: 1,
-                                              offset: 0,
-                                              limit: this.props.pageSize,
-                                              total: this.props.data.length
-                                            }
-      } })
+        query.pagination = { page: 1,
+                             offset: 0,
+                             limit: this.props.pageSize,
+                             total: this.props.data.length
+                           }
     }
 
     this.setState(this._getDisplayData(query))
@@ -83,6 +72,7 @@ var LocalDatascope = React.createClass({
   },
 
   _getDisplayData (query) {
+
     var hasFilter = _.isObject(query.filter) && _.keys(query.filter).length
     var hasSearch = _.isObject(query.search) && _.keys(query.search).length
     var hasSort = query.sort && !_.isUndefined(query.sort.key)
@@ -98,7 +88,6 @@ var LocalDatascope = React.createClass({
       displayData = paginated.data
       query = _.assign({}, query, { pagination: paginated.pagination })
     }
-
     return { query: query, displayData: displayData }
   },
 
@@ -156,22 +145,21 @@ var LocalDatascope = React.createClass({
   },
 
   onChangeQuery (query) {
-    // console.log('new query', query)
     var newState = this._getDisplayData(query)
     this.setState(newState)
   },
 
   render () {
-    var _this2 = this
-
+    var self = this
+    //this MUST be refactored.
     return React.createElement(
       'div',
       { className: 'local-datascope' },
       React.Children.map(this.props.children, function (child) {
-        return React.cloneElement(child, _.assign({}, _.omit(_this2.props, ['children']), {
-          onChangeQuery: _this2.onChangeQuery,
-          data: _this2.state.displayData,
-          query: _this2.state.query
+        return React.cloneElement(child, _.assign({}, _.omit(self.props, ['children']), {
+          onChangeQuery: self.onChangeQuery,
+          data: self.state.displayData,
+          query: self.state.query
         }))
       })
     )
