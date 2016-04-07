@@ -85,7 +85,7 @@ let Paginator = React.createClass({
                                </div>
     return (
         <div className="datascope-paginator">
-          {previousButton}{pageNumbers}{nextButton}
+          {paginationCountLabel} {previousButton}{pageNumbers}{nextButton}
         </div>
       )
   }
