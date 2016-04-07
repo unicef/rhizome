@@ -4,7 +4,6 @@ from rhizome.models import *
 import string
 import random
 from rhizome.cache_meta import LocationTreeCache
-from rhizome.agg_tasks import AggRefresh
 
 def add_regions(apps, schema_editor):
 
