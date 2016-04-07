@@ -46,7 +46,6 @@ const MultiChartControls = React.createClass({
   },
 
   render () {
-    console.info('MultiChartControlsControls.RENDER ==========================================')
     const props = this.props
     const chart = props.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()

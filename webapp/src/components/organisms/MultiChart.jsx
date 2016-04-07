@@ -65,14 +65,18 @@ const MultiChart = React.createClass({
   render () {
     const chart = this.props.chart
 
+    const chart_selector = (
+      <div>
+        <br/><h4>or</h4><br/>
+        <ChartSelector charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
+      </div>
+    )
+
     const chart_type_selector = (
       <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>
         <h4>View Data As</h4>
         <ChartTypeSelector onChange={this.props.setType}/>
-        <br />
-        <h4>or</h4>
-        <br />
-        <ChartSelector charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
+        { this.props.selectChart ? chart_selector : null }
       </div>
     )
 

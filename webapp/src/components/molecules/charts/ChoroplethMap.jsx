@@ -6,7 +6,6 @@ import Chart from 'components/molecules/charts/Chart'
 
 import palettes from 'utilities/palettes'
 import aspects from 'components/molecules/charts/utils/aspects'
-import DataExplorerActions from 'actions/DataExplorerActions'
 
 class ChoroplethMap extends Chart {
 
@@ -80,7 +79,7 @@ class ChoroplethMap extends Chart {
     options.value = d => d.properties[mapIndicator.id]
     options.xFormat = mapIndicator.data_format === 'pct' ? d3.format(',.1%') : d3.format('')
     options.ticks = this.reverseBounds({bad: mapIndicator.bad_bound, good: mapIndicator.good_bound})
-    options.onClick = id => DataExplorerActions.setLocations(id)
+    options.onClick = id => this.props.primaryClick(id)
     return options
   }
 

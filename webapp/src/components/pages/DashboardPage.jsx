@@ -108,10 +108,21 @@ const Dashboard = React.createClass({
     })
   },
 
-  renderChartRow (row) {
-    return (
-      row.map(chart =>
-        <div className={(row.length === 2 ? 'medium-12' : 'medium-12') + ' columns'}>
+  render () {
+    const dashboard = this.state.dashboard
+    const charts = _.toArray(dashboard.charts)
+    console.info('Dashboard.RENDER ========================================== Charts:', charts)
+    const title_bar = this.state.titleEditMode ?
+      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
+      :
+      <h1 onClick={this._toggleTitleEdit}>
+        <a>
+          {dashboard.title || 'Untitled Dashboard'}
+        </a>
+      </h1>
+
+    const chart_components = charts.map(chart => (
+        <div className='row'>
           <MultiChart
             chart={chart}
             linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
@@ -141,33 +152,6 @@ const Dashboard = React.createClass({
         </div>
       )
     )
-  },
-
-  render () {
-    const dashboard = this.state.dashboard
-    const charts = _.toArray(dashboard.charts)
-    console.info('Dashboard.RENDER ========================================== Charts:', charts)
-    const title_bar = this.state.titleEditMode ?
-      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
-      :
-      <h1 onClick={this._toggleTitleEdit}>
-        <a>
-          {dashboard.title || 'Untitled Dashboard'}
-        </a>
-      </h1>
-
-    var temp = charts.slice();
-    var arr = [];
-    while (temp.length) {
-      arr.push(temp.splice(0,1));
-    }
-    const chart_components = arr.map(row => {
-      return (
-        <div className='row collapse'>
-          { this.renderChartRow(row) }
-        </div>
-      )
-    })
     const loading = !charts.length > 0
     return (
       <section className='dashboard'>

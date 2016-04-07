@@ -7,12 +7,10 @@ import legend from 'components/molecules/charts/renderers/legend'
 
 class ChoroplethMapRenderer {
   constructor (data, options, container) {
-    console.log('------- MapRenderer.constructor')
     this.setMapParams(data, options, container)
   }
 
   setMapParams (data, options, container) {
-    console.log('------- MapRenderer.setMapParams')
     this.container = container
     this.options = options
     this.data = data
@@ -25,7 +23,6 @@ class ChoroplethMapRenderer {
   }
 
   update (data, options, container) {
-    console.log('------- MapRenderer.update')
     this.setMapParams(data, options, container)
     this.render()
   }
@@ -35,7 +32,6 @@ class ChoroplethMapRenderer {
   //===========================================================================//
 
   render () {
-    console.log('------- MapRenderer.render')
     const svg = d3.select(this.container)
     svg.attr({
       'viewBox': '0 0 ' + this.options.width + ' ' + this.options.height,
@@ -50,7 +46,6 @@ class ChoroplethMapRenderer {
   // RENDER MAP PATHS
   // ---------------------------------------------------------------------------
   renderMapPaths() {
-  console.log('------- MapLegendRenderer.renderMapPaths')
     const map = this.svg.select('.colors')
     const g = map.select('.data')
     const location = g.selectAll('.location').data(this.features, (d, i) => d['properties.location_id'] || i)
@@ -96,7 +91,6 @@ class ChoroplethMapRenderer {
   // MAP COLOR LEGEND
   // ---------------------------------------------------------------------------
   renderColorLegend () {
-    console.log('------- MapLegendRenderer.renderColorLegend')
     const features = _.reject(this.data, 'properties.isBorder')
     let domain = this.options.domain(features)
     if (!_.isArray(domain)) {
@@ -119,7 +113,6 @@ class ChoroplethMapRenderer {
   // MAP STRIPES LEGEND
   // ---------------------------------------------------------------------------
   // renderStripesLegend () {
-  //   console.log('------- MapLegendRenderer.renderStripesLegend')
   //   if (this.options.stripeValue) {
   //     const stripeLegendColor = d3.scale.ordinal().range(['#FFFFFF', 'url(#stripe)'])
   //     const stripeLegendText = this.options.stripeLegendText
@@ -149,7 +142,6 @@ class ChoroplethMapRenderer {
   // MAP BUBBLES LEGEND
   // ---------------------------------------------------------------------------
   // renderBubbleLegend () {
-  //   console.log('------- MapLegendRenderer.renderBubbleLegend')
   //   if (this.options.bubbleValue) {
   //     const radius = d3.scale.sqrt().domain([0, this.options.maxBubbleValue]).range([0, this.options.maxBubbleRadius])
   //     const bubbleLegendText = _.map(this.options.bubbleLegendRatio, d => Math.ceil(d * this.options.maxBubbleValue, -1))

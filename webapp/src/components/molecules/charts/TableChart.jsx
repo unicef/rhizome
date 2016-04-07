@@ -21,10 +21,8 @@ class TableChart extends Chart {
   }
 
   setData () {
-    console.log('----- DataExplorerStoreHelpers.formatTableChart')
-    const datapoints = this.props.datapoints.raw
     const selected_campaign_id = this.props.selected_campaigns[0].id
-    const filtered_datapoints = datapoints.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
+    const filtered_datapoints = this.props.data.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
     this.data = filtered_datapoints.map(datapoint => {
       const values = []
       datapoint.indicators.forEach(i => {

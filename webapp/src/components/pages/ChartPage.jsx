@@ -1,94 +1,110 @@
 import _ from 'lodash'
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
-import Chart from 'components/molecules/charts/Chart'
-import ExportPdf from 'components/molecules/ExportPdf'
 import Placeholder from 'components/molecules/Placeholder'
-import DatabrowserTable from 'components/molecules/DatabrowserTable'
+import MultiChart from 'components/organisms/MultiChart'
+import TitleInput from 'components/molecules/TitleInput'
 
-import DropdownList from 'react-widgets/lib/DropdownList'
 import RootStore from 'stores/RootStore'
-import IndicatorStore from 'stores/IndicatorStore'
 import LocationStore from 'stores/LocationStore'
-import DataExplorerStore from 'stores/DataExplorerStore'
-import DatapointStore from 'stores/DatapointStore'
+import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
-import DataExplorerActions from 'actions/DataExplorerActions'
+import DashboardPageStore from 'stores/DashboardPageStore'
 
-var ChartPage = React.createClass({
+import DashboardPageActions from 'actions/DashboardPageActions'
+import ChartActions from 'actions/ChartActions'
+import DashboardActions from 'actions/DashboardActions'
+
+const ChartPage = React.createClass({
 
   mixins: [
-    Reflux.ListenerMixin,
-    Reflux.connect(DataExplorerStore, 'chart'),
+    Reflux.connect(DashboardPageStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
-    Reflux.connect(IndicatorStore, 'indicators'),
     Reflux.connect(CampaignStore, 'campaigns'),
-    Reflux.connect(DatapointStore, 'datapoints')
+    Reflux.connect(IndicatorStore, 'indicators')
   ],
 
   propTypes: {
-    chart_id: React.PropTypes.number
+    chart_id: PropTypes.number
   },
 
-  componentWillMount () {
-    Reflux.connect(LocationStore, 'chart')
-    LocationStore.listen(this.getChart)
-    IndicatorStore.listen(this.getChart)
-  },
-
-  getChart (locations, indicators) {
-    if (this.state.locations.index && this.state.indicators.index) {
-      DataExplorerActions.getChart(this.props.chart_id)
+  getInitialState () { console.log('ChartPage.getInitialState')
+    return {
+      titleEditMode: false
     }
   },
 
-  render () {
-    const chart = this.state.chart
-    const campaigns = this.state.campaigns.raw || []
-    let chart_component = <Placeholder height={200}/>
+  componentDidMount () { console.log('ChartPage.componentDidMount')
+    RootStore.listen(() => {
+      const state = this.state
+      if (state.locations.index && state.indicators.index && state.campaigns.index) {
+        if (this.props.chart_id) {
+          DashboardPageActions.fetchChart(this.props.chart_id)
+        } else {
+          DashboardPageActions.addChart()
+        }
+      }
+    })
+  },
 
-    if (!_.isEmpty(chart.data)) {
-      chart_component = chart.type === 'RawData'
-        ? <DatabrowserTable
-            data={this.state.datapoints.raw}
-            selected_locations={chart.selected_locations}
-            selected_indicators={chart.selected_indicators}
-          />
-        : <Chart type={chart.type} data={chart.data} options={chart.def} />
+  shouldComponentUpdate(nextProps, nextState) { console.log('ChartPage.shouldComponentUpdate')
+    const charts = _.toArray(nextState.dashboard.charts)
+    this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
+    this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
+    this.loading_charts = charts.filter(chart => chart.loading).length
+    return !this.missing_data || this.missing_params || this.loading_charts
+  },
+
+  saveChart (chart) { console.log('ChartPage.saveChart')
+    console.info('- Dashboard.saveChart')
+    if (!chart.title || chart.title === 'Untitled Chart') {
+      return window.alert('Please add a Title to your chart')
     }
+    ChartActions.postChart({
+      id: chart.id,
+      title: chart.title,
+      uuid: chart.uuid,
+      chart_json: JSON.stringify({
+        type: chart.type,
+        start_date: chart.start_date,
+        end_date: chart.end_date,
+        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
+        location_ids: chart.selected_locations.map(location => location.id),
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+      })
+    })
+  },
 
-    return (
-      <div>
-        <form className='row no-print cd-titlebar'>
-          <div className='medium-4 columns'>
-            <a href={'/charts/' + this.props.chart_id + '/edit'} className='button small'>
-              <i className='fa fa-pencil'></i> Edit Chart
-            </a>
-          </div>
-          <div className='medium-4 columns'>
-            <DropdownList
-              data={campaigns}
-              defaultValue={!_.isEmpty(campaigns) ? campaigns[0].id : null}
-              textField='name'
-              valueField='id'
-              onChange={campaign => DataExplorerActions.setCampaigns([campaign.id])}
-            />
-          </div>
-          <div className='medium-4 columns'>
-            <ExportPdf className='button small' />
-          </div>
-        </form>
-        <div className='row layout-basic'>
-          <div className='medium-12 columns text-center'>
-            <h1>{ chart.title }</h1>
-          </div>
-          <div className='medium-12 columns'>
-            { chart_component }
-          </div>
-        </div>
-      </div>
-    )
+  render () { console.log('ChartPage.render')
+    const loading = !this.state.dashboard.charts.length > 0
+    const chart = _.toArray(this.state.dashboard.charts)[0]
+
+    return chart ? (
+      <MultiChart
+        chart={chart}
+        linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
+        toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+        saveChart={this.saveChart}
+        setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
+        setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
+        setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
+        setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
+        setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
+        setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
+        selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
+        deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
+        reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
+        clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
+        setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
+        selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
+        deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
+        clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
+        setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
+        selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
+        deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
+      />
+    ) : <Placeholder height={600} />
   }
 })
 

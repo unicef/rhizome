@@ -284,7 +284,6 @@ var DashboardPageStore = Reflux.createStore({
   // =========================================================================== //
   // =============================  Fetch Dashboard  =========================== //
   onFetchDashboard (uuid) { // console.info('Store.onFetchDashboard')
-    // supposed to fetch dashboard?
     this.trigger(this.dashboard)
   },
   onFetchDashboardCompleted (response) { // console.info('Store.onFetchDashboardCompleted')
@@ -297,6 +296,20 @@ var DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
   onFetchDashboardFailed (error) { // console.info('Store.onFetchDashboardFailed')
+    this.setState({ error: error })
+  },
+
+  // =============================  Fetch Chart  =========================== //
+  onFetchChart (id) {
+    this.trigger(this.dashboard)
+  },
+  onFetchChartCompleted (chart) {
+    const new_chart = this.meltChart(chart)
+    this.dashboard.charts[chart.uuid] = new_chart
+    DashboardPageActions.setType(new_chart.type, new_chart.uuid)
+    this.trigger(this.dashboard)
+  },
+  onFetchChartFailed (error) {
     this.setState({ error: error })
   },
 

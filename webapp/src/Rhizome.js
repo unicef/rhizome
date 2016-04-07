@@ -26,11 +26,8 @@ export default {
   Charts: function (el) {
     React.render(React.createElement(require('components/pages/ChartsPage')), el)
   },
-  Chart: function (el, chart_id) {
+  ChartPage: function (el, chart_id) {
     React.render(React.createElement(require('components/pages/ChartPage'), { chart_id: chart_id }), el)
-  },
-  DataExplorer: function (el, chart_id) {
-    React.render(React.createElement(require('components/pages/DataExplorer'), { chart_id: chart_id }), el)
   },
   CampaignsPage: function (el, campaignId) {
     React.render(React.createElement(require('components/pages/CampaignsPage'), {campaignId: campaignId}), el)
