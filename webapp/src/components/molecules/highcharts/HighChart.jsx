@@ -41,8 +41,8 @@ class HighChart extends Component {
     if (type === 'BarChart') { return 'bar' }
   }
 
-  getData () {
-    const data = this.props.data
+  getData () { console.info('------ HighChart.getData')
+    const data = this.props.datapoints.melted
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
