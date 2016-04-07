@@ -4,7 +4,7 @@ import React, { PropTypes } from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
 import format from 'components/molecules/charts/utils/format'
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 import aspects from 'components/molecules/charts/utils/aspects'
 
 class ColumnChart extends HighChart {

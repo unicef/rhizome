@@ -13,7 +13,7 @@ import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import DataExplorerStoreHelpers from 'stores/DataExplorerStoreHelpers'
 
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 
 class ChartState {
   constructor () {

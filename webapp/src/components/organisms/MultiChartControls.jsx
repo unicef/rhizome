@@ -6,7 +6,7 @@ import {DropdownList} from 'react-widgets'
 import RadioGroup from 'react-radio-group'
 
 import ColorSwatch from 'components/atoms/ColorSwatch'
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'

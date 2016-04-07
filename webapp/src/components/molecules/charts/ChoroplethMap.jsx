@@ -4,7 +4,7 @@ import React, { PropTypes } from 'react'
 
 import Chart from 'components/molecules/charts/Chart'
 
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 import aspects from 'components/molecules/charts/utils/aspects'
 import DataExplorerActions from 'actions/DataExplorerActions'
 
