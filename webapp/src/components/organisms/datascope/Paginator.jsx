@@ -67,19 +67,11 @@ let Paginator = React.createClass({
         return result
       }, [])
     }
-
-    return React.createElement(
-      'div',
-      { className: 'datascope-paginator' },
-      this.props.previousLabel && thisPage != 1 ? React.createElement(
-        'span',
-        {
-          className: 'page-link page-link-previous',
-          onClick: _.partial(this.onClickPage, previousPage)
-        },
-        this.props.previousLabel
-        ) : '',
-      pageNums.map(page => {
+    let previousButton = this.props.previousLabel && thisPage != 1 ? <span className="page-link page-link-previous"
+                                                                    onClick={_.partial(this.onClickPage, previousPage)}>
+                                                                    {this.props.previousLabel}</span>
+                                                                  : ''
+    let pageNumbers = pageNums.map(page => {
         return _.isString(page) ? React.createElement(
           'span',
           { className: 'pagination-truncate' },
@@ -93,16 +85,16 @@ let Paginator = React.createClass({
           },
           page
           )
-      }),
-      this.props.nextLabel && thisPage !== lastPage ? React.createElement(
+      })
+    let nextButton = this.props.nextLabel && thisPage !== lastPage ? React.createElement(
         'span',
         {
           className: 'page-link page-link-next',
           onClick: _.partial(this.onClickPage, nextPage)
         },
         this.props.nextLabel
-        ) : '',
-      React.createElement(
+        ) : ''
+    let paginationCountLabel = React.createElement(
         'div',
         { className: 'pagination-count' },
         minResult,
@@ -111,6 +103,10 @@ let Paginator = React.createClass({
         ' of ',
         pagination.total
         )
+    return (
+        <div className="datascope-paginator">
+          {previousButton}{pageNumbers}{nextButton}
+        </div>
       )
   }
 })
