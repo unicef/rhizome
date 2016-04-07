@@ -69,11 +69,7 @@ def add_regions(apps, schema_editor):
 					parent_location_id = region_id
 				)
     
-	ltr = LocationTreeCache()
-	ltr.main()
-	# ensure that aggregation works by running the agg refresh in the migration itself.
-	agg = AggRefresh(3)
-	agg.main()
+
 
 
 class Migration(migrations.Migration):
