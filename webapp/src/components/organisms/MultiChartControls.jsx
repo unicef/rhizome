@@ -52,7 +52,7 @@ const MultiChartControls = React.createClass({
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
 
-    const palette_selector = chart.type !== 'RawData'  && chart.type !== 'LineChart' ? (
+    const palette_selector = chart.type !== 'RawData' ? (
       <div className='medium-12 columns'>
         <h3>Colors</h3>
         <DropdownList

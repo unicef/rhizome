@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
+import palettes from 'utilities/palettes'
 
 import ChartFactory from 'components/molecules/highcharts/ChartFactory'
 
@@ -25,7 +26,6 @@ class HighChart extends Component {
           }
         }
       },
-      series: this.getData(),
       tooltip: {
          pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format)
@@ -57,6 +57,8 @@ class HighChart extends Component {
   }
 
   render () { console.info('------ HighChart.render')
+    this.data.colors = palettes[this.props.palette]
+    this.data.series = this.getData()
     return (
       <div id='highchart-container'>
         <ChartFactory config={this.data} map={this.props.type === 'MapChart'} isPureConfig/>
