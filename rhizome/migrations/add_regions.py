@@ -10,14 +10,15 @@ def add_regions(apps, schema_editor):
 	#increment current location admin levels
 	locations_to_increment = LocationType.objects.filter(admin_level__gte =1).order_by('-admin_level')
 
-	for location in locations_to_increment:
-		location.admin_level = location.admin_level + 1
-		location.save()
+	if not LocationType.objects.filter(name="Region").exists():
+		for location in locations_to_increment:
+			location.admin_level = location.admin_level + 1
+			location.save()
 
-	# Add Location Type "Region"
-	LocationType.objects.create(
-		name="Region",
-		admin_level = 1)
+		# Add Location Type "Region"
+		LocationType.objects.create(
+			name="Region",
+			admin_level = 1)
 
 	regions_dict = {
 	'North East':['Baghlan', 'Kunduz', 'Takhar', 'Badakhshan'],
