@@ -9,7 +9,7 @@ import Placeholder from 'components/molecules/Placeholder'
 import TableChart from 'components/molecules/charts/TableChart'
 import BarChart from 'components/molecules/highcharts/BarChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
-import TrendChart from 'components/molecules/highcharts/TrendChart'
+import LineChart from 'components/molecules/highcharts/LineChart'
 import MapChart from 'components/molecules/highcharts/MapChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
@@ -54,7 +54,7 @@ const MultiChart = React.createClass({
     if (type === 'TableChart') {
       return <TableChart {...this.props.chart} />
     } else if (type === 'LineChart') {
-      return <TrendChart {...this.props.chart} />
+      return <LineChart {...this.props.chart} />
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     } else if (type === 'MapChart') {
