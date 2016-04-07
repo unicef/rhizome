@@ -141,14 +141,14 @@ const MultiChartControls = React.createClass({
     )
 
     return (
-      <aside className={this.props.className}>
+      <div className={this.props.className}>
         { palette_selector }
         { date_range_picker }
         { campaign_selector }
         { indicator_selector }
         { location_selector }
         { group_by_selector }
-      </aside>
+      </div>
     )
   }
 })

@@ -94,10 +94,12 @@ const MultiChart = React.createClass({
     }
 
     return (
-      <article className='multi-chart'>
+      <article className='multi-chart medium-12 columns'>
         <MultiChartHeader {...this.props}/>
         <section className='row'>
-          <MultiChartControls {...this.props} className='medium-4 large-3 medium-push-8 large-push-9 columns' />
+          <aside className='medium-4 large-3 medium-push-8 large-push-9 columns'>
+            <MultiChartControls {...this.props} className='row collapse' />
+          </aside>
           <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-zone'>
             {
               chart.selectTypeMode ? chart_type_selector : (

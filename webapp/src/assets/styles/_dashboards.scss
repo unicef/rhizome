@@ -163,13 +163,18 @@ $total-columns: 7;
 		}
 	}
 	.chart-zone {
-		padding: 3rem 0;
+
+		padding-top: 3rem;
+		padding-bottom: 3rem;
 	}
 	aside {
 		background: #F1F1F1;
 		border-left: 1px solid $rhz-navigation-hover-bg-color;
 		padding-top: 1rem;
 		padding-bottom: 2rem;
+		.row.collapse .medium-6:last-of-type {
+			padding-left: 0.5rem;
+		}
 		.dropdown-list {
 		  letter-spacing: 1;
 			background-color: transparent;

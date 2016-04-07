@@ -81,29 +81,31 @@ const ChartPage = React.createClass({
     const chart = _.toArray(this.state.dashboard.charts)[0]
 
     return chart ? (
-      <MultiChart
-        chart={chart}
-        linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
-        toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
-        saveChart={this.saveChart}
-        setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
-        setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
-        setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
-        setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
-        setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
-        setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
-        selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
-        deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
-        reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
-        clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
-        setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
-        selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
-        deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
-        clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
-        setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
-        selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
-        deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
-      />
+      <div className='row'>
+        <MultiChart
+          chart={chart}
+          linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
+          toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+          saveChart={this.saveChart}
+          setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
+          setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
+          setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
+          setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
+          setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
+          setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
+          selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
+          deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
+          reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
+          clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
+          setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
+          selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
+          deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
+          clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
+          setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
+          selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
+          deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
+        />
+      </div>
     ) : <Placeholder height={600} />
   }
 })
