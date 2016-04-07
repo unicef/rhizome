@@ -5,12 +5,15 @@ import format from 'utilities/format'
 import Highcharts from 'highcharts'
 import Exporting from 'highcharts/modules/exporting'
 import Map from 'highcharts/modules/map'
+import themes from 'components/molecules/highcharts/themes'
+
 Exporting(Highcharts)
 Map(Highcharts)
 
 class ChartFactory extends Component {
   constructor (props) {
     super(props)
+    Highcharts.setOptions(themes.standard)
   }
 
   propTypes: {

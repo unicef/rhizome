@@ -11,11 +11,6 @@ class HighChart extends Component {
     const first_indicator = props.selected_indicators[0]
     this.data = {
       chart: { type: this.getChartType(props.type) },
-      credits: { enabled: false },
-      title: '',
-      exporting: {
-        enabled: true
-      },
       xAxis: {
         type: 'datetime',
         labels: {

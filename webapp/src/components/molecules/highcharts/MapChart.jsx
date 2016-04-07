@@ -14,12 +14,6 @@ class MapChart extends HighChart {
     console.log('chart_data : ', chart_data)
 
     this.data = {
-      title: {
-        text: 'Highmaps basic demo'
-      },
-      subtitle: {
-        text: 'Maps'
-      },
       mapNavigation: {
         enabled: true,
         buttonOptions: {
