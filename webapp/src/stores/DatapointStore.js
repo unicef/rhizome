@@ -16,8 +16,8 @@ var DatapointStore = Reflux.createStore({
   datapoints: {
     meta: null,
     raw: null,
-    melted: null,
-    melted_further: null
+    flattened: null,
+    melted: null
   },
 
   init () {
@@ -45,8 +45,8 @@ var DatapointStore = Reflux.createStore({
     this.setState({
       meta: response.meta,
       raw: response.objects,
-      melted: this.melt(response.objects),
-      melted_further: this.deepMelt(response.objects, response.meta.indicator_ids)
+      flattened: this.flatten(response.objects),
+      melted: this.melt(response.objects, response.meta.indicator_ids)
     })
   },
 
@@ -64,7 +64,7 @@ var DatapointStore = Reflux.createStore({
   // =========================================================================== //
   //                                  UTILITIES                                  //
   // =========================================================================== //
-  melt (datapoints) {
+  flatten (datapoints) {
     return _(datapoints)
       .flatten()
       .sortBy(_.method('campaign.start_date.getTime'))
@@ -82,7 +82,7 @@ var DatapointStore = Reflux.createStore({
       .value()
   },
 
-  deepMelt (datapoints, indicator_ids) {
+  melt (datapoints, indicator_ids) {
     const selected_indicator_ids = indicator_ids.split(',')
     const baseIndicators = selected_indicator_ids.map(id => ({ indicator: parseInt(id, 0), value: 0 }))
     const melted_datapoints = _(datapoints).map(datapoint => {

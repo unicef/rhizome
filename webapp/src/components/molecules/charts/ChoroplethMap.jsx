@@ -23,7 +23,7 @@ class ChoroplethMap extends Chart {
   }
 
   setData () { console.log('ChoroplethMap.setData')
-    const datapoints = this.props.datapoints.melted_further
+    const datapoints = this.props.datapoints.melted
     if (!datapoints || datapoints.length === 0) {
       return this.data = this.props.features
     }

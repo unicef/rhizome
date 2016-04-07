@@ -1,11 +1,11 @@
 import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
+import format from 'utilities/format'
 
 class MapChart extends HighChart {
-  constructor (props) {
-    super(props)
-    this.data = {
+  setConfig () {
+    this.config = {
       mapNavigation: {
         enabled: true,
         buttonOptions: {
@@ -14,11 +14,12 @@ class MapChart extends HighChart {
       },
       colorAxis: {
         min: 0
-      }
+      },
+      series: this.setSeries()
     }
   }
 
-  getSeries () {
+  setSeries () {
     return [{
       data: this.props.datapoints.meta.chart_data,
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
