@@ -3,6 +3,20 @@ from rhizome.models import Indicator, Location, Campaign
 from rhizome.models import SourceObjectMap, DocumentSourceObjectMap
 
 class SourceObjectMapResource(BaseModelResource):
+    '''
+    **GET Request** Returns all Source Object Maps
+        - *Optional Parameters:* 
+            'id': return only the id(s) specified
+            'document_id': returns only Source Object Maps associated with the given document id(s)
+        - *Errors:*
+            If an error occurs, the API returns 200 code and an empty list of Source Object Maps
+    
+    **POST Request** Changes the master object for an existing source object map
+        - *Required Parameters:* 
+           'master_object_id' 'mapped_by_id' 'id'
+        - *Errors:* 
+            if any of the required fields are missing or incorrect, the API returns a 500 error code.
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_object_map'
 

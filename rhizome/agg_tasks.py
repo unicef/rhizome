@@ -107,11 +107,9 @@ class AggRefresh(object):
 
         location_id = one_dp_that_needs_agg.location_id
         data_date = one_dp_that_needs_agg.data_date
-
         date_no_datetime = data_date.date()
         campaigns_in_date_range = Campaign.objects.filter(
             start_date__lte = date_no_datetime, end_date__gte = data_date)
-
         parent_location_list = LocationTree.objects\
             .filter(location_id = location_id)\
             .values_list('parent_location_id',flat=True)

@@ -3,21 +3,17 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to polio's documentation!
-=================================
+Rhizome Documentation
+*********************
 
 Contents:
 
 .. toctree::
    :maxdepth: 2
 
-   spec
-   specs/dataExplorer
+   userGuide
+   backendComponents
    api
-   backend
-   project
-   odk
-
 
 
 Indices and tables

@@ -3,6 +3,14 @@ from rhizome.models import DataPointComputed
 from rhizome.models import SourceObjectMap, DocumentSourceObjectMap
 
 class ComputedDataPointResource(BaseModelResource):
+    '''
+    **GET Request** Returns computed datapoints for a given document
+        - *Required Parameters:* 
+            'document_id'
+        - *Errors:*
+            Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified    
+        '''
+
     class Meta(BaseModelResource.Meta):
         resource_name = 'computed_datapoint'
         queryset =  DataPointComputed.objects.all()
