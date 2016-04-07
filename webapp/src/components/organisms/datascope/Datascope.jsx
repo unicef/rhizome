@@ -145,7 +145,8 @@ var Datascope = React.createClass({
     onChangeSort (key, order) {
         order = order || 'descending';
         var sortObj = _.isUndefined(key) || _.isNull(key) ? undefined : { key: key, order: order };
-        var query = React.addons.update(this.props.query, { sort: { $set: sortObj } });
+        var query = this.props.query
+        query.sort = sortObj
 
         this.props.onChangeQuery(query);
     },
