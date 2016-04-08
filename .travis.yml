@@ -12,14 +12,10 @@ before_script:
 - npm install -g npm@latest
 - npm install -g babel-eslint@4.1.6
 - cd webapp/ && npm install && npm install -g gulp && cd ..
-
 script:
-  - python manage.py test --settings=rhizome.settings.test
-  - cd webapp && gulp build && gulp mocha
-
-
-
-notifications:
+- python manage.py test --settings=rhizome.settings.test
+- cd webapp && gulp build && gulp mocha
+>>>>>>> encrypted keys in file
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 deploy:
   provider: codedeploy
