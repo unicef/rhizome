@@ -1,9 +1,13 @@
-from django.db import models, migrations
-from django.core.exceptions import ObjectDoesNotExist
-from rhizome.models import *
 import string
 import random
+
+from django.db import models, migrations
+from django.core.exceptions import ObjectDoesNotExist
+
+from rhizome.models import *
 from rhizome.cache_meta import LocationTreeCache
+from rhizome.etl_tasks.refresh_master import MasterRefresh
+
 
 def add_regions(apps, schema_editor):
 
@@ -68,7 +72,45 @@ def add_regions(apps, schema_editor):
 					office_id = 1,
 					parent_location_id = region_id
 				)
-    
+
+	passed_test = test_migration(regions_dict)
+
+	if not passed_test:
+		raise Exception('that failed')
+
+def test_migration(regions_dict):
+
+	expected_region_length = len(regions_dict.keys())
+
+	regions = Location.objects.filter(
+		location_type__name = 'Region'
+	)
+
+	afg_childen = Location.objects.filter(
+		parent_location__name = 'Afghanistan'
+	)
+
+	first_condition = len(regions) == expected_region_length
+	second_condition = len(afg_childen) == expected_region_length
+
+	test_result = first_condition and second_condition
+
+	return test_result
+
+def run_agg(apps, schema_editor):
+	ltr = LocationTreeCache()
+	ltr.main()
+
+	# ensure that aggregation works by running the agg refresh in the migration itself.
+	for doc in Document.objects.all():
+		mr = MasterRefresh(1, doc.id)
+		mr.main()
+
+	campaigns = Campaign.objects.all()
+	for campaign in campaigns:
+		if DataPoint.objects.filter(campaign_id = campaign.id).exists():
+			agg = AggRefresh(campaign.id)
+			agg.main()
 
 
 
@@ -76,9 +118,9 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.RunPython(add_regions),
+		migrations.RunPython(run_agg)
     ]
 
     dependencies = [
         ('rhizome', '0008_auto_20160404_1258'),
     ]
-
