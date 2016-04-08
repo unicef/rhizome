@@ -1,6 +1,6 @@
 import React from 'react'
 
-import AdminPage from 'components/organisms/ufadmin/AdminPage'
+import AdminPage from 'components/organisms/manage-system/AdminPage'
 
 import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'

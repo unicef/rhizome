@@ -6,7 +6,7 @@ import ClearQueryLink from 'components/organisms/datascope/ClearQueryLink'
 import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 import Datascope from 'components/organisms/datascope/Datascope'
 
-import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
+import parseSchema from 'components/organisms/manage-system/utils/parseSchema'
 
 const urlMap = {
   'Users': '/users/create/',

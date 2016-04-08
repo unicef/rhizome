@@ -6,7 +6,7 @@ import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTabl
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
-import AdminPage from 'components/organisms/ufadmin/AdminPage'
+import AdminPage from 'components/organisms/manage-system/AdminPage'
 import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 
 const fields = {
