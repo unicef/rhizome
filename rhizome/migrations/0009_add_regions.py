@@ -26,12 +26,13 @@ def add_regions(apps, schema_editor):
 
 	regions_dict = {
 	'North East':['Baghlan', 'Kunduz', 'Takhar', 'Badakhshan'],
-	'South East':['Ghazni', 'Paktia', 'Paktika', 'Khost'],
+	'South East':['Ghazni', 'Paktya', 'Paktika', 'Khost'],
 	'East':['Nangarhar', 'Laghman', 'Kunar', 'Nuristan'],
-	'Central':['Kabul', 'Parwan', 'Panjshir', 'Wardak', 'Kapisa', 'Logar'],
-	'South':['Kandahar', 'Hilmand', 'Urozgan', 'Nimroz', 'Zabul'],
-	'West':['Badghis', 'Farah', 'Ghor', 'Herat', ],
-	'North':['Balkh', 'Samangan', 'Sar-e-Pul', 'Jawzjan', 'Faryab']
+	'Central':['Kabul', 'Parwan', 'Panjsher', 'Wardak', 'Kapisa', 'Logar'],
+	'Central Highlands':['Daykundi', 'Bamyan'],
+	'South':['Kandahar (Province)', 'Hilmand', 'Uruzgan', 'Nimroz', 'Zabul'],
+	'West':['Badghis', 'Farah', 'Ghor', 'Hirat', ],
+	'North':['Balkh', 'Samangan', 'Sari Pul (Province)', 'Sar-E-Pul', 'Jawzjan', 'Faryab']
 
 	}
 
@@ -85,13 +86,18 @@ def test_migration(regions_dict):
 	regions = Location.objects.filter(
 		location_type__name = 'Region'
 	)
+	print 'regions'
+	print regions
 
-	afg_childen = Location.objects.filter(
+	afg_children = Location.objects.filter(
 		parent_location__name = 'Afghanistan'
 	)
 
+	print 'afg_children'
+	print afg_children
+
 	first_condition = len(regions) == expected_region_length
-	second_condition = len(afg_childen) == expected_region_length
+	second_condition = len(afg_children) == expected_region_length
 
 	test_result = first_condition and second_condition
 
@@ -102,9 +108,6 @@ def run_agg(apps, schema_editor):
 	ltr.main()
 
 	# ensure that aggregation works by running the agg refresh in the migration itself.
-	for doc in Document.objects.all():
-		mr = MasterRefresh(1, doc.id)
-		mr.main()
 
 	campaigns = Campaign.objects.all()
 	for campaign in campaigns:
