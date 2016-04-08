@@ -86,15 +86,10 @@ def test_migration(regions_dict):
 	regions = Location.objects.filter(
 		location_type__name = 'Region'
 	)
-	print 'regions'
-	print regions
 
 	afg_children = Location.objects.filter(
 		parent_location__name = 'Afghanistan'
 	)
-
-	print 'afg_children'
-	print afg_children
 
 	first_condition = len(regions) == expected_region_length
 	second_condition = len(afg_children) == expected_region_length
