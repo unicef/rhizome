@@ -37,23 +37,6 @@
   }
 }
 
-.dropdown-list {
-  background-color: #fff;
-  color: $rhz-background-color;
-  font-size: 0.825rem;
-  position: relative;
-  padding: 10px;
-  cursor: pointer;
-  text-transform: uppercase;
-
-  a {
-  position: absolute;
-  right: 0;
-  top: -10px;
-  color: $rhz-background-color;
-  }
-}
-
 .dashboard-nav__text {
   overflow: hidden;
   text-overflow: ellipsis;

@@ -59,8 +59,8 @@ const IndicatorSelector = React.createClass({
               icon='fa-plus'
             />
           </h3>
-          { props.selected_indicators.length > 0 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
           <ReorderableList items={props.selected_indicators} removeItem={props.deselectIndicator} dragItem={props.reorderIndicator} />
+          { props.selected_indicators.length > 0 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
         </form>
       )
     } else {

@@ -80,9 +80,6 @@ $total-columns: 7;
 		margin-top: 0;
 		margin-bottom: 2rem;
 	}
-	.dropdown-list:not(.button) {
-		padding: 0 0 10px 0;
-	}
   footer.hideable {
     position: fixed;
     bottom: 6.2rem;
@@ -157,13 +154,8 @@ $total-columns: 7;
 		@media #{$small-only} {
 			flex-direction: column;
 		}
-		.dropdown-list.chart-selector {
-			width: 14rem;
-			margin: 0 auto;
-		}
 	}
 	.chart-zone {
-
 		padding-top: 3rem;
 		padding-bottom: 3rem;
 	}
@@ -174,12 +166,15 @@ $total-columns: 7;
 		padding-bottom: 2rem;
 		position: relative;
 		z-index: 150;
+		.remove-filters-link {
+			text-decoration: underline;
+			text-align: center;
+			width: 100%;
+	    margin-top: 0.4rem;
+	    display: inline-block;
+		}
 		.row.collapse .medium-6:last-of-type {
 			padding-left: 0.5rem;
-		}
-		.dropdown-list {
-		  letter-spacing: 1;
-			background-color: transparent;
 		}
 		@media #{$small-only} {
 			padding-top: 0;
