@@ -117,7 +117,6 @@ class DatapointResource(BaseNonModelResource):
 
         self.location_ids = self.get_locations_to_return_from_url(request)
         self.base_data = self.base_transform()
-
         return self.base_data
 
 
@@ -130,7 +129,6 @@ class DatapointResource(BaseNonModelResource):
         objects = self.get_object_list(bundle.request)
         if not objects:
             objects = []
-
         return objects
 
     def obj_get(self, bundle, **kwargs):
