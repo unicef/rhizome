@@ -35,6 +35,7 @@ class ChartState {
     this.fetching = false
     this.linkedCampaigns = false
     this.selectTypeMode = true
+    this.editMode = false
   }
 }
 
@@ -61,6 +62,12 @@ var DashboardPageStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   // =================================  Layout  ================================ //
+  onToggleEditMode (uuid) {
+    const chart = this.dashboard.charts[uuid]
+    chart.editMode = !chart.editMode
+    this.trigger(this.dashboard)
+  },
+
   onToggleSelectTypeMode (uuid) {
     const chart = this.dashboard.charts[uuid]
     chart.selectTypeMode = !chart.selectTypeMode

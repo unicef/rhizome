@@ -172,6 +172,8 @@ $total-columns: 7;
 		border-left: 1px solid $rhz-navigation-hover-bg-color;
 		padding-top: 1rem;
 		padding-bottom: 2rem;
+		position: relative;
+		z-index: 150;
 		.row.collapse .medium-6:last-of-type {
 			padding-left: 0.5rem;
 		}
