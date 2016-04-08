@@ -1,19 +1,11 @@
-// import { Component } from 'react'
+import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
+import format from 'utilities/format'
 
 class MapChart extends HighChart {
-
-  constructor (props) {
-    super(props)
-
-    const chart_data = this.props.datapoints.meta.chart_data
-    const db_map_data = {'features': this.props.features, 'type': 'FeatureCollection'}
-
-    console.log('rh maps : ', db_map_data)
-    console.log('chart_data : ', chart_data)
-
-    this.data = {
+  setConfig () {
+    this.config = {
       mapNavigation: {
         enabled: true,
         buttonOptions: {
@@ -23,24 +15,27 @@ class MapChart extends HighChart {
       colorAxis: {
         min: 0
       },
-      series: [{
-        data: chart_data, // pass transformed datapoints \\
-        mapData: db_map_data, // map parameters
-        joinBy: 'location_id',
-        name: 'Random data',
-        states: {
-          hover: {
-            color: '#BADA55'
-          }
-        },
-        dataLabels: {
-          enabled: true,
-          format: '{point.name}'
-        }
-      }]
+      series: this.setSeries()
     }
   }
 
+  setSeries () {
+    return [{
+      data: this.props.datapoints.meta.chart_data,
+      mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
+      joinBy: 'location_id',
+      name: 'Random data',
+      states: {
+        hover: {
+          color: '#BADA55'
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        format: '{point.name}'
+      }
+    }]
+  }
 }
 
 export default MapChart

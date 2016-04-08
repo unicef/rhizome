@@ -36,21 +36,6 @@ header {
   display: none !important;
 }
 
-.data-explorer {
-  & > div:not(.printable), & > footer, i.fa {
-    display: none;
-  }
-  div.printable {
-    left: initial;
-    right: initial;
-    width: 100%;
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 2rem;
-    }
-  }
-}
-
 @include grid-html-classes($size: small);
 @include block-grid-html-classes($size: small, $include-spacing: false);
 

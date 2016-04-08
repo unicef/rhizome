@@ -147,6 +147,24 @@ class DatapointResource(BaseNonModelResource):
         '''
 
         try:
+            location_ids = request.GET['location_id__in']
+            data['meta']['location_ids'] = location_ids
+        except KeyError:
+            location_ids = None
+
+        try:
+            parent_location_ids = request.GET['parent_location_id__in']
+            data['meta']['parent_location_ids'] = parent_location_ids
+        except KeyError:
+            parent_location_ids = None
+
+        try:
+            indicator_ids = request.GET['indicator__in']
+            data['meta']['indicator_ids'] = indicator_ids
+        except KeyError:
+            indicator_ids = None
+
+        try:
             chart_type = request.GET['chart_type']
             data['meta']['chart_type'] = chart_type
         except KeyError:

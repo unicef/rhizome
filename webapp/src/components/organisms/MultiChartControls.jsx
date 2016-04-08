@@ -6,7 +6,7 @@ import {DropdownList} from 'react-widgets'
 import RadioGroup from 'react-radio-group'
 
 import ColorSwatch from 'components/atoms/ColorSwatch'
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
@@ -46,15 +46,13 @@ const MultiChartControls = React.createClass({
   },
 
   render () {
-    console.info('MultiChartControlsControls.RENDER ==========================================')
     const props = this.props
     const chart = props.chart
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
 
-    const palette_selector = chart.type !== 'RawData'  && chart.type !== 'LineChart' ? (
-      <div className='medium-12 columns'>
-        <h3>Colors</h3>
+    const palette_selector = chart.type !== 'RawData' ? (
+      <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
         <DropdownList
           data={ _.map(palettes, (key, value) => ({colors: key, value: value}) )}
           textField='value'
@@ -70,7 +68,7 @@ const MultiChartControls = React.createClass({
 
     const date_range_picker = chart.type === 'LineChart' || chart.type === 'RawData' ? (
       <div className='medium-12 columns'>
-        <h3>Time</h3>
+        <h3>Date Range</h3>
         <DateRangePicker
           sendValue={this.props.setDateRange}
           start={start_date}
@@ -78,11 +76,12 @@ const MultiChartControls = React.createClass({
           fromComponent='MultiChartControls'
         />
         <br/>
+        <br/>
       </div>
     ) : null
 
     const group_by_selector = chart.type === 'LineChart' ? (
-      <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
+      <div className='medium-12 columns radio-group'>
         <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={this.props.setGroupBy}>
           {Radio => (
             <div>
@@ -142,14 +141,14 @@ const MultiChartControls = React.createClass({
     )
 
     return (
-      <aside className={this.props.className}>
-        { palette_selector }
+      <div className={this.props.className}>
         { date_range_picker }
         { campaign_selector }
-        { indicator_selector }
-        { location_selector }
         { group_by_selector }
-      </aside>
+        { location_selector }
+        { indicator_selector }
+        { palette_selector }
+      </div>
     )
   }
 })

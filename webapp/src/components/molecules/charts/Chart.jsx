@@ -14,6 +14,7 @@ class Chart extends Component {
   componentDidMount () {
     console.info('------ Chart.componentDidMount')
     this.container = React.findDOMNode(this)
+    console.log('this.props.data', this.props.data)
     this.setData()
     this.setOptions()
     if (this.options.type === 'TableChart') {

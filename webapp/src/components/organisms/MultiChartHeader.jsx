@@ -10,6 +10,7 @@ const MultiChartHeader = React.createClass({
   propTypes: {
     chart: PropTypes.object,
     setTitle: PropTypes.func,
+    toggleEditMode: PropTypes.func,
     toggleSelectTypeMode: PropTypes.func,
     duplicateChart: PropTypes.func,
     saveChart: PropTypes.func,
@@ -33,6 +34,14 @@ const MultiChartHeader = React.createClass({
     const props = this.props
     const chart = props.chart
 
+    const remove_button = props.removeChart ? (
+      <IconButton onClick={() => props.removeChart(chart.uuid)} icon='fa-times' text='Remove' />
+    ) : null
+
+    const duplicate_button = props.duplicateChart ? (
+      <IconButton onClick={() => props.duplicateChart(chart.uuid)} icon='fa-copy' text='Duplicate' />
+    ) : null
+
     return (
       <header className='row'>
         <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
@@ -40,9 +49,10 @@ const MultiChartHeader = React.createClass({
             <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
           </div>
           <ExportIcon exportPath={'/charts/' + chart.id}/>
-          <IconButton onClick={() => props.duplicateChart(chart.uuid)} icon='fa-copy' text='Duplicate' />
           <IconButton onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' />
-          <IconButton onClick={() => props.removeChart(chart.uuid)} icon='fa-times' text='Remove' />
+          { duplicate_button }
+          <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' />
+          { remove_button }
         </div>
         <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
           <div className='hide-for-small left'>
