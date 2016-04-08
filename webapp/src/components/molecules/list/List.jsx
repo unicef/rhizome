@@ -10,7 +10,7 @@ export default React.createClass({
     var listItems = this.props.items.map(item => {
       return (
         <li className='animated slideInRight' key={item.id}>{item.name}
-          <IconButton className='clear-btn' onClick={() => props.removeFunction(item.id)} icon='fa-times-circle'/>
+          <IconButton className='clear-btn' onClick={() => this.props.removeItem(item.id)} icon='fa-times-circle'/>
         </li>
       )
     })
