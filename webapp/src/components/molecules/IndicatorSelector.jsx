@@ -50,17 +50,17 @@ const IndicatorSelector = React.createClass({
     if (props.multi) {
       return (
         <form className={props.classes}>
-          <h3>Indicators
+          <h3 style={{marginBottom: '.1rem'}}>Indicators
             <DropdownMenu
               items={available_indicators}
               sendValue={this.props.selectIndicator}
               item_plural_name='Indicators'
-              style='icon-button right'
+              style='icon-button right pad-right'
               icon='fa-plus'
             />
           </h3>
           <ReorderableList items={props.selected_indicators} removeItem={props.deselectIndicator} dragItem={props.reorderIndicator} />
-          { props.selected_indicators.length > 0 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
+          { props.selected_indicators.length > 1 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
         </form>
       )
     } else {

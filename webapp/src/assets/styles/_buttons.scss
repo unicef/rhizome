@@ -36,6 +36,9 @@
     i {
       transition: all .4s;
     }
+    &.pad-right {
+      padding-right: 0.425rem;
+    }
   }
   &.expand {
     font-size: .9rem;

@@ -1,4 +1,5 @@
 import React from 'react'
+import IconButton from 'components/atoms/IconButton'
 
 export default React.createClass({
   propTypes: {
@@ -8,9 +9,7 @@ export default React.createClass({
     let item = this.props.item
     return (
       <div key={item.id}>{item.name}
-        <a className='clear-btn' onClick={item.removeFunction.bind(this, item.id)}>
-          <i className='fa fa-times-circle'></i>
-        </a>
+        <IconButton className='clear-btn' onClick={() => props.removeFunction(item.id)} icon='fa-times-circle' />
       </div>
     )
   }

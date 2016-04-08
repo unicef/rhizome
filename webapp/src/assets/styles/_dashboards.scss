@@ -163,9 +163,12 @@ $total-columns: 7;
 		background: #F1F1F1;
 		border-left: 1px solid $rhz-navigation-hover-bg-color;
 		padding-top: 1rem;
-		padding-bottom: 2rem;
+		padding-bottom: 5rem;
 		position: relative;
 		z-index: 150;
+		.rw-dropdownlist {
+			margin-right: 1.3rem;
+		}
 		.remove-filters-link {
 			text-decoration: underline;
 			text-align: center;

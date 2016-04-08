@@ -3,7 +3,7 @@ export default {
     credits: { enabled: false },
     chart: {
       style: {
-        fontFamily: "'proxima', 'Helvetica', sans-serif'"
+        fontFamily: "'proxima', 'Helvetica', sans-serif' "
       }
     },
     title: ''
