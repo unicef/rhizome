@@ -129,6 +129,7 @@ const Dashboard = React.createClass({
             duplicateChart={DashboardPageActions.duplicateChart}
             selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
             toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+            toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
             removeChart={DashboardPageActions.removeChart}
             saveChart={this.saveChart}
             setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}

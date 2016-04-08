@@ -7,7 +7,7 @@ import MapForm from 'components/organisms/source-data/MapForm.jsx'
 import Datascope from 'components/organisms/datascope/Datascope'
 import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
 
-import parseSchema from 'components/organisms/ufadmin/utils/parseSchema'
+import parseSchema from 'components/organisms/manage-system/utils/parseSchema'
 
 var ReviewTable = React.createClass({
   propTypes: {

@@ -10,6 +10,7 @@ const MultiChartHeader = React.createClass({
   propTypes: {
     chart: PropTypes.object,
     setTitle: PropTypes.func,
+    toggleEditMode: PropTypes.func,
     toggleSelectTypeMode: PropTypes.func,
     duplicateChart: PropTypes.func,
     saveChart: PropTypes.func,
@@ -50,6 +51,7 @@ const MultiChartHeader = React.createClass({
           <ExportIcon exportPath={'/charts/' + chart.id}/>
           <IconButton onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' />
           { duplicate_button }
+          <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' />
           { remove_button }
         </div>
         <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>

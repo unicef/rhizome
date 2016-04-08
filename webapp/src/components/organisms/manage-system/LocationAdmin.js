@@ -7,7 +7,7 @@ import SearchBar from 'components/organisms/datascope/SearchBar'
 
 import api from 'data/api'
 
-import AdminPage from 'components/organisms/ufadmin/AdminPage'
+import AdminPage from 'components/organisms/manage-system/AdminPage'
 
 const fields = {
   edit_link: {

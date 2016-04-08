@@ -1,45 +1,50 @@
 import React from 'react'
-
 import api from 'data/api'
+
+import AdminPage from 'components/organisms/manage-system/AdminPage'
 
 import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
-import AdminPage from 'components/organisms/ufadmin/AdminPage'
-
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/manage_system/manage/indicator/${id}`}>Edit Indicator</a>
+      return <a href={`/campaign/${id}`}>Edit Campaign</a>
     }
   },
   id: { title: 'ID', name: 'id' },
-  short_name: { title: 'Short Name', name: 'short_name' },
-  name: { title: 'Name', name: 'name' },
-  description: { title: 'Description', name: 'description' }
+  name: { title: 'Display Name', name: 'name' },
+  start_date: { title: 'Start Date', name: 'start_date' },
+  end_date: { title: 'End Date', name: 'end_date' },
+  created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
 }
 
-const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link']
+const schema = {
+  created_at: { type: 'string', format: 'date-time' }
+}
 
-var IndicatorsAdmin = React.createClass({
+const fieldNamesOnTable = ['id', 'name', 'start_date', 'end_date', 'created_at', 'edit_link']
+
+var CampaignsAdmin = React.createClass({
   render () {
     var datascopeFilters = (
       <div>
         <SearchBar
-          fieldNames={fieldNamesOnTable}
-          placeholder='Search indicators ...'
-        />
+          placeholder='Search campaigns ...'
+          fieldNames={['id', 'slug', 'edit_link']}
+          />
       </div>
     )
 
     return (
       <AdminPage
-        title='Indicators'
-        getData={api.indicators}
+        title='Campaigns'
+        getData={api.campaign}
+        schema={schema}
         datascopeFilters={datascopeFilters}
         fields={fields} >
         <Paginator />
@@ -53,4 +58,4 @@ var IndicatorsAdmin = React.createClass({
   }
 })
 
-export default IndicatorsAdmin
+export default CampaignsAdmin

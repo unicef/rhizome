@@ -86,6 +86,7 @@ const ChartPage = React.createClass({
           chart={chart}
           linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
           toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+          toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
           saveChart={this.saveChart}
           setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
           setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}

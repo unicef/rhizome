@@ -2,6 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import RefluxPromise from 'reflux-promise'
 import AdminApp from 'components/pages/AdminApp'
+// import SourceDataApp from 'components/pages/SourceDataApp'
 
 Reflux.use(RefluxPromise(window.Promise))
 
@@ -10,9 +11,6 @@ React.render(React.createElement(require('components/molecules/DashboardNav')), 
 export default {
   EntryForm: function (el) {
     React.render(React.createElement(require('components/pages/EntryForm')), el)
-  },
-  SourceData: function (el) {
-    React.render(React.createElement(require('components/pages/SourceData')), el)
   },
   UserAccount: function (el, userId) {
     React.render(React.createElement(require('components/pages/UserAccount'), {userId: userId}), el)
@@ -32,7 +30,11 @@ export default {
   CampaignsPage: function (el, campaignId) {
     React.render(React.createElement(require('components/pages/CampaignsPage'), {campaignId: campaignId}), el)
   },
-  UFAdmin: function (el) {
+  SourceData: function (el) {
+    React.render(React.createElement(require('components/pages/SourceData')), el)
+    // SourceDataApp.render(document.getElementById('main'))
+  },
+  ManageSystem: function (el) {
     AdminApp.render(document.getElementById('main'))
   }
 }

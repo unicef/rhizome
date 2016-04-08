@@ -38,7 +38,7 @@ class HighChart extends Component {
   }
 
   shouldComponentUpdate(nextProps) { console.info('HighChart - shouldComponentUpdate')
-    if (this.props.neverReflow || (this.props.isPureConfig)) {
+    if ((this.props.neverReflow || (this.props.isPureConfig)) && (nextProps.editMode === this.props.editMode))  {
       return true
     }
     this.renderChart()

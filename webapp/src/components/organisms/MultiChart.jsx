@@ -93,14 +93,20 @@ const MultiChart = React.createClass({
       chart_placeholder = <Placeholder height={300} text='NO DATA' loading={false}/>
     }
 
+    const sidebar = (
+      <aside className='medium-4 large-3 medium-push-8 large-push-9 columns animated slideInRight'>
+        <MultiChartControls {...this.props} className='row collapse' />
+      </aside>
+    )
+
+    const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-9 medium-pull-4 large-pull-3 '
+
     return (
       <article className='multi-chart medium-12 columns'>
         <MultiChartHeader {...this.props}/>
         <section className='row'>
-          <aside className='medium-4 large-3 medium-push-8 large-push-9 columns'>
-            <MultiChartControls {...this.props} className='row collapse' />
-          </aside>
-          <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-zone'>
+          { chart.editMode ? sidebar : null }
+          <div className={chart_classes + ' columns chart-zone'} style={{minHeight: chart.type === 'RawData' ? '10rem' : '31rem'}}>
             {
               chart.selectTypeMode ? chart_type_selector : (
                 !_.isEmpty(chart.data) ? this.getChartComponentByType(chart.type) : chart_placeholder

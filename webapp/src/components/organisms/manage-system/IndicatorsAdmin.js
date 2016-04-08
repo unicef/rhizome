@@ -1,50 +1,45 @@
 import React from 'react'
-import api from 'data/api'
 
-import AdminPage from 'components/organisms/ufadmin/AdminPage'
+import api from 'data/api'
 
 import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
+import AdminPage from 'components/organisms/manage-system/AdminPage'
+
 const fields = {
   edit_link: {
     title: 'Edit',
     key: 'id',
     renderer: (id) => {
-      return <a href={`/campaign/${id}`}>Edit Campaign</a>
+      return <a href={`/manage_system/manage/indicator/${id}`}>Edit Indicator</a>
     }
   },
   id: { title: 'ID', name: 'id' },
-  name: { title: 'Display Name', name: 'name' },
-  start_date: { title: 'Start Date', name: 'start_date' },
-  end_date: { title: 'End Date', name: 'end_date' },
-  created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
+  short_name: { title: 'Short Name', name: 'short_name' },
+  name: { title: 'Name', name: 'name' },
+  description: { title: 'Description', name: 'description' }
 }
 
-const schema = {
-  created_at: { type: 'string', format: 'date-time' }
-}
+const fieldNamesOnTable = ['id', 'short_name', 'name', 'description', 'edit_link']
 
-const fieldNamesOnTable = ['id', 'name', 'start_date', 'end_date', 'created_at', 'edit_link']
-
-var CampaignsAdmin = React.createClass({
+var IndicatorsAdmin = React.createClass({
   render () {
     var datascopeFilters = (
       <div>
         <SearchBar
-          placeholder='Search campaigns ...'
-          fieldNames={['id', 'slug', 'edit_link']}
-          />
+          fieldNames={fieldNamesOnTable}
+          placeholder='Search indicators ...'
+        />
       </div>
     )
 
     return (
       <AdminPage
-        title='Campaigns'
-        getData={api.campaign}
-        schema={schema}
+        title='Indicators'
+        getData={api.indicators}
         datascopeFilters={datascopeFilters}
         fields={fields} >
         <Paginator />
@@ -58,4 +53,4 @@ var CampaignsAdmin = React.createClass({
   }
 })
 
-export default CampaignsAdmin
+export default IndicatorsAdmin

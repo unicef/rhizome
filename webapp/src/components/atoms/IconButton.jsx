@@ -8,13 +8,15 @@ var DropdownIcon = React.createClass({
     icon: React.PropTypes.string.isRequired,
     text: React.PropTypes.string,
     onClick: React.PropTypes.func,
-    className: React.PropTypes.string
+    className: React.PropTypes.string,
+    style: React.PropTypes.object
   },
 
   getDefaultProps: function () {
     return {
       icon: 'info-circle',
-      text: null
+      text: null,
+      style: {fontSize: '2rem'}
     }
   },
 
@@ -47,7 +49,6 @@ var DropdownIcon = React.createClass({
         onClick={this.props.onClick}
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
-        style={{top: '.1rem'}}
         className={'button icon-button ' + this.props.className}
       >
         <i className={'fa ' + this.props.icon}/>
