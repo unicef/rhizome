@@ -37,13 +37,6 @@
   }
 }
 
-.dashboard-nav__text {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-left: 0;
-  line-height: 1.2;
-}
-
 .export-file {
   $export-button-width: 90%;
   width: $export-button-width;

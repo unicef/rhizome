@@ -25,3 +25,12 @@
   }
 }
 
+.dropdown-list-text{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 0;
+  line-height: 1.2;
+  .icon-button.right {
+    padding-right: .4rem;
+  }
+}

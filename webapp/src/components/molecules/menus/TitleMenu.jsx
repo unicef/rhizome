@@ -1,4 +1,5 @@
 import React from 'react'
+import IconButton from 'components/atoms/IconButton'
 
 var TitleMenu = React.createClass({
 
@@ -31,13 +32,9 @@ var TitleMenu = React.createClass({
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
           {
             this.props.icon ? (
-              <div className='row'>
-                <div className='small-10 medium-10 columns dashboard-nav__text'>{this.props.text}</div>
-                <div className='small-2 medium-2 columns'>
-                  <a className='menu-button fa-stack'>
-                    <i className={'fa fa-stack-1x ' + this.props.icon}></i>
-                  </a>
-                </div>
+              <div className='row dropdown-list-text'>
+                {this.props.text}
+                <IconButton onClick={this._toggleMenu} icon={this.props.icon} className='right'/>
               </div>
             ) : (
               <div className='row'>
