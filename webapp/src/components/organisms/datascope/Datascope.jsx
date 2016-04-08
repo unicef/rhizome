@@ -138,7 +138,8 @@ var Datascope = React.createClass({
   },
 
   onChangeSearch (searchId, value, fields) {
-  var query = !_.isObject(this.props.query.search) ? React.addons.update(this.props.query, { search: { $set: _defineProperty({}, searchId, { value: value, fields: fields }) } }) : React.addons.update(this.props.query, { search: _defineProperty({}, searchId, { $set: { value: value, fields: fields } }) });
+    var query = this.props.query
+    query.search = { value: value, fields: fields }
     this.props.onChangeQuery(query);
   },
 
@@ -152,7 +153,13 @@ var Datascope = React.createClass({
   },
 
   onChangeFilter (key, filterObj) {
-    var query = !_.isObject(this.props.query.filter) ? React.addons.update(this.props.query, { filter: { $set: _defineProperty({}, key, filterObj) } }) : React.addons.update(this.props.query, { filter: { $merge: _defineProperty({}, key, filterObj) } });
+    //used in FilterPanel component but not being used anywhere. waiting for refactor or omition?
+    var query = this.props.query
+    if (!_.isObject(this.props.query.filter)){
+      query.filter = filterObj
+    } else {
+      _.merge(query.filter, filterObj)
+    }
     this.props.onChangeQuery(query);
   },
 
@@ -175,10 +182,10 @@ var Datascope = React.createClass({
 
     var datascopeProps = _.assign({}, _.pick(this.props, ['data', 'schema', 'query', 'onChangeQuery']), { fields: fields, orderedFields: orderedFields });
     var sortProps = { onChangeSort: onChangeSort,
-      sort: _.isObject(query.sort) ? query.sort : {},
-      sortKey: query.sort ? query.sort.key : null,
-      sortOrder: query.sort ? query.sort.order : null
-    };
+                      sort: _.isObject(query.sort) ? query.sort : {},
+                      sortKey: query.sort ? query.sort.key : null,
+                      sortOrder: query.sort ? query.sort.order : null
+                    }
     var filterProps = { onChangeFilter: onChangeFilter, filter: _.isObject(query.filter) ? query.filter : {} };
     var searchProps = { onChangeSearch: onChangeSearch };
 
