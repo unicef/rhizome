@@ -83,7 +83,20 @@ class BaseResource(Resource):
         try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             location_ids = Location.objects\
-                .filter(parent_location_id__in = pl_id_list).values_list('id', flat=True)
+                .filter(parent_location_id__in = pl_id_list)\
+                .values_list('id', flat=True)
+
+            ## begin hack ##
+            if pl_id_list == [u'1']: ## super hack way to
+                                  ## fix this long term with a "admin_levevel"
+                                  ## parameter that wll allow us to query for
+                                  ## all ancestors of the parent at a particluar
+                                  ## level
+                location_ids = Location.objects\
+                    .filter(parent_location_id__in = location_ids)\
+                    .values_list('id', flat=True)
+            ## end hack ##
+
         except KeyError:
             pass
 
