@@ -144,7 +144,7 @@ class DataPointResourceTest(ResourceTestCase):
         indicator = indicator,
         string_value = "Fail",
         enum_value = 1,
-        is_display =True) 
+        is_display =True)
 
         # 7 Request To The API
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\

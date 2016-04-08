@@ -65,7 +65,7 @@ class DatapointResource(BaseNonModelResource):
         self.parsed_params = None
 
         self.chart_type_fn_lookup = {
-            'MapChart': self.transform_map_data
+            'MapChart': self.transform_map_data,
         }
 
 
@@ -379,61 +379,25 @@ class DatapointResource(BaseNonModelResource):
 
     def transform_map_data(self):
 
-        # { rhizome_id: high_chart_code }
-        high_chart_lookup = {
-            36:'af-kt',
-            8:'af-pk',
-            27:'af-gz',
-            36:'af-bd',
-            7:'af-nr',
-            19:'af-kr',
-            2:'af-kz',
-            5:'af-ng',
-            14:'af-tk',
-            21:'af-bl',
-            32:'af-kb',
-            34:'af-kp',
-            10:'af-2030',
-            3:'af-la',
-            4:'af-lw',
-            11:'af-pv',
-            12:'af-sm',
-            16:'af-vr',
-            9:'af-pt',
-            20:'af-bg',
-            30:'af-hr',
-            22:'af-bk',
-            31:'af-jw',
-            23:'af-bm',
-            28:'af-gr',
-            26:'af-fb',
-            13:'af-sp',
-            25:'af-fh',
-            29:'af-hm',
-            6:'af-nm',
-            15:'af-2014',
-            24:'af-oz',
-            33:'af-kd',
-            17:'af-zb',
-            35:'af-kt',
-            18:'af-kt',
-        }
-
         high_chart_data = []
-
 
         for obj in self.base_data:
             dp_dict = obj.__dict__
+
             indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
             indicator_value = indicator_dict['value']
             location = dp_dict['location']
-
-            high_chart_code = high_chart_lookup[dp_dict['location']]
 
             object_dict = {
                 'location_id' : location, ## high_chart_code,
                 'value' : indicator_value
             }
+
             high_chart_data.append(object_dict)
+
+        print '==='
+        print 'high chart data'
+        print high_chart_data
+        print '====='
 
         return high_chart_data
