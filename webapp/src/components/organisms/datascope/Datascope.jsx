@@ -36,7 +36,15 @@ var Datascope = React.createClass({
 
 
 
-  _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; },
+  _defineProperty(obj, key, value) {
+    if (key in obj) {
+      Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true })
+      // React.addons.update(this.props.query, { search: { $set: _defineProperty({}, searchId, { value: value, fields: fields }) } })
+    } else {
+      obj[key] = value
+    }
+    return obj
+  },
 
   initFields (definedFields, schema) {
     var fields = this.fieldsFromSchema(schema);
@@ -103,6 +111,7 @@ var Datascope = React.createClass({
 
     if (!schema || !schema.items || !schema.items.properties) return [];
 
+
     return _(schema.items.properties).map(function (propSchema, key) {
       return [key, {
         title: propSchema.title || key,
@@ -139,7 +148,8 @@ var Datascope = React.createClass({
 
   onChangeSearch (searchId, value, fields) {
     var query = this.props.query
-    query.search = { value: value, fields: fields }
+    query.search = this._defineProperty({}, searchId, { value: value, fields: fields })
+
     this.props.onChangeQuery(query);
   },
 
@@ -148,12 +158,12 @@ var Datascope = React.createClass({
     var sortObj = _.isUndefined(key) || _.isNull(key) ? undefined : { key: key, order: order };
     var query = this.props.query
     query.sort = sortObj
-
     this.props.onChangeQuery(query);
   },
 
   onChangeFilter (key, filterObj) {
     //used in FilterPanel component but not being used anywhere. waiting for refactor or omition?
+    //check with Ersan if broken
     var query = this.props.query
     if (!_.isObject(this.props.query.filter)){
       query.filter = filterObj
