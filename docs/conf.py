@@ -23,8 +23,9 @@ import os
 sys.path.append('/Users/johndingee_seed/code/UF04/polio')
 sys.path.append('/Users/john/code/seed/polio/')
 sys.path.append('/var/www/clients.seedscientific.com/uf/UF04/polio')
-os.path.abspath('../rhizome/api/resources')
 
+print os.path.dirname(__file__) + "/../rhizome"
+sys.path.append(os.path.dirname(__file__) + "/../")
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -45,7 +46,7 @@ extensions = [
 
 # DJANGO_SETTINGS_MODULE = '/Users/johndingee_seed/code/polio/polio/settings.py'
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "polio.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rhizome.settings.test")
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -85,7 +86,7 @@ html_show_copyright = False
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', 'backend.rst', 'odk.rst', 'newInstall.rst', 'project.rst', 'spec.rst', 'specs']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

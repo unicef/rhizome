@@ -15,7 +15,7 @@ class ComputedDatapointResourceTest(ResourceTestCase):
         self.doc_id = self.ts.ingest_file('eoc_post_campaign.csv')
 
     #GET request: pass in a 'document_id' field to retrieve all computed data points for that
-    #document. Returns 200 code with an empty set of objects if the id is invalid
+    #document. Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified
     def test_get_computed_datapoint(self):
         get_data = {'document_id':self.doc_id}
     	resp = self.ts.get(self, '/api/v1/computed_datapoint/', get_data)
@@ -23,6 +23,7 @@ class ComputedDatapointResourceTest(ResourceTestCase):
     	resp_data = self.deserialize(resp)
         db_data = DataPointComputed.objects.filter(document_id = self.doc_id).values()
     	self.assertEqual(len(resp_data['objects']), len(db_data))
+
 
     def create_metadata(self):
         '''

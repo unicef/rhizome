@@ -144,7 +144,7 @@ class DataPointResourceTest(ResourceTestCase):
         indicator = indicator,
         string_value = "Fail",
         enum_value = 1,
-        is_display =True) 
+        is_display =True)
 
         # 7 Request To The API
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\
@@ -156,3 +156,41 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
+
+    def _map_transform(self):
+
+        indicator_id = 1
+        campaign_id = 2
+        parent_location_id = 3 ## make sure the locations arw children of this..
+
+        data = [{
+            'location_id': 421,
+            'value': 0.054
+        },
+        {
+            'location_id': 115,
+            'value': 0.118
+        },
+        {
+            'location_id': 65,
+            'value': 0.084
+        }]
+
+        for row in data:
+            DataPointComputed.objects.create(
+                location_id = row['location_id'],
+                value = row['value'],
+                campaign_id = campaign_id,
+                indicator_id = indicator_id
+            )
+
+        get_parameter = 'indicator__in={0}&campaign_id={2}&parent_location_id__in={3}&chart_type=MapChart'\
+            .format(indicator_id, campaign_id, parent_location_id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        chart_data = response_data['meta']['chart_data']
+
+        self.assertEqual(data, chart_data)

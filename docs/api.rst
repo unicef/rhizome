@@ -29,24 +29,11 @@ The following response format applies for GET and POST requests.
   An object mapping an error type to an error message
 
 
-Want Pull Data from Rhizome?
-----------------------------
+Want to Pull Data from Rhizome?
++++++++++++++++++++++++++++++++
 
-Step 1. Contact dingeej@gmail.com to get an API key
+Contact dingeej@gmail.com to get an API key
 
-.. code-block:: json
-
-   {
-       meta: {},
-       objects: [],
-       errors: {}
-   }
-
-
-
-
-GET
-===
 
 Global Parameters and Query Filters
 -----------------------------------
@@ -109,7 +96,10 @@ filter resources with simple string functions.
 
 * Note - These query parameters are taken directly from the Django ORM.  For
   more on how these work see here:*
-    https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
+  https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
+
+API Methods
+-----------
 
 ``/api/v1/datapoint/``
 ++++++++++++++++++++++
@@ -245,55 +235,10 @@ Return a list of campaign definitions.
 ``/api/v1/indicator/``
 ++++++++++++++++++++++
 
-Return a list of indicator definitions, as well as their Bounds, and Tags.
-The indicator_bound json tells the application what the low and high bounds are
-of a particular indicator's value.  For instance, if we want to say that
-> 20% missed childredn is 'Bad', between 10-20% is 'Ok' and less than t0% is
-'Good' we would incode that in the database as such and return that json data
-in the indicator bound object.
-
-The indicator Tag json, simply contains a list of IDs, the display name for
-each can be found via the ``indicator_tag`` endpoint.
-
-The Indicator endpoint is one of the meta data models that relies on a
-transformation of the data from its original state ( the indicator table) into
-a more abstracted and prepared data structure which is found in the
-indicator_abstracted table.
-
-Custom Parameters
-~~~~~~~~~~~~~~~~~
-
-`read_write``
-  - default = r
-  - This controls whether or not the application needs to see data a user can
-    READ or WRITE to.
-  - This comes in handy for the data entry page, in that we only want to pull
-    indicators a user can write to.  This way we save the use case of the user
-    getting indicators in the drop down that they can read from but not write
-    to, only to get an error message when they try to enter data for that
-    indicator
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      source_name: <Text>,
-      name: <Text>,
-      short_name: <Text>,
-      bound_json: <Json>,
-      id: <Number>,
-      tag_json: <Json>
-      slug: <Text>,
-      description: <Text>,
-    }],
-
-    errors: {...}
-  }
+.. autoclass:: rhizome.api.resources.indicator.IndicatorResource
 
 ``/api/v1/location/``
-+++++++++++++++++++
++++++++++++++++++++++
 
 Return a list of location definitions in accordance to the schema melow.
 
@@ -313,9 +258,9 @@ Custom Parameters
     traverse when returning location data.
   - a parameter of 0 returns ALL data, while a parameter of 1 retreives
     locations at most one level underneath the locations avaliable to that user.
-      -> that is if a user has permission to see Nigeria only, and they pass
-         a depth=1 parameter, they will see data Nigeria, as well as for the
-         provinces but not for districts, sub-districts and settlemnts.
+    -> that is if a user has permission to see Nigeria only, and they pass
+    a depth=1 parameter, they will see data Nigeria, as well as for the
+    provinces but not for districts, sub-districts and settlemnts.
 
 ``read_write``
   - default = r
@@ -374,7 +319,7 @@ sub-locations, would be associated with the Nigeria office.
   }
 
 ``/api/v1/campaign_type/``
-+++++++++++++++++++
+++++++++++++++++++++++++++
 
 A key to the 'campaign' resource, while all campaigns in the system are
 "National Immunication Days" UNICEF/WHO do implement different types of
@@ -395,7 +340,7 @@ campaigns ( for instance a mop-up in the area surrounding a new case ).
   }
 
 ``/api/v1/location_type/``
-+++++++++++++++++++
+++++++++++++++++++++++++++
 
 List of location types ( each location must have a location type ).  For now we are
 dealing with Country, Province, District, Sub-District and Settlement.
@@ -437,13 +382,13 @@ implemented in the group edit page.
 
 
 ``/api/v1/location_map/``
-+++++++++++++++++++
++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 
 ``/api/v1/source_doc/``
-+++++++++++++++++++
++++++++++++++++++++++++
 TODO - Needs documentation
 
 
@@ -560,7 +505,7 @@ here to all of the fields included in the response.
 
 
 ``/api/v1/location_responsiblity/``
-++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++
 
 This endpoint tells which locations a user is responsible for. 
 
@@ -606,104 +551,104 @@ url to the application:
   }
 
 ``/api/v1/agg_refresh/``
-+++++++++++++++++++
+++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/cache_meta/``
-+++++++++++++++++++
++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/location_map/``
-+++++++++++++++++++
++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/indicator_id/``
-+++++++++++++++++++
++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/chart_type/``
-+++++++++++++++++++
++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/computed_datapoint/``
-+++++++++++++++++++
++++++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.computed_datapoint.ComputedDataPointResource
 
 ``/api/v1/custom_chart/``
-+++++++++++++++++++
++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/datapointentry/``
-+++++++++++++++++++
++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/doc_datapoint/``
-+++++++++++++++++++
+++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/doc_detail_type/``
-+++++++++++++++++++
+++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/transform_upload/``
-+++++++++++++++++++
++++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/doc_detail/``
-+++++++++++++++++++
++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/geo/``
-+++++++++++++++++++
+++++++++++++++++
 
 TODO - Needs documentation
 
 
 ``/api/v1/homepage/``
-+++++++++++++++++++
++++++++++++++++++++++
 
 TODO - Needs documentation
 
 
 ``/api/v1/indicator_to_tag/``
-+++++++++++++++++++
++++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/queue_process/``
-+++++++++++++++++++
+++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/refresh_master/``
-+++++++++++++++++++
++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/source_object_map/``
-+++++++++++++++++++
+++++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.source_object_map.SourceObjectMapResource
 
 ``/api/v1/source_submission/``
-+++++++++++++++++++
+++++++++++++++++++++++++++++++
 
 TODO - Needs documentation
 
 ``/api/v1/odk_form_id/``
-+++++++++++++++++++
+++++++++++++++++++++++++
 
 TODO - Needs documentation
 
