@@ -395,9 +395,4 @@ class DatapointResource(BaseNonModelResource):
 
             high_chart_data.append(object_dict)
 
-        print '==='
-        print 'high chart data'
-        print high_chart_data
-        print '====='
-
         return high_chart_data

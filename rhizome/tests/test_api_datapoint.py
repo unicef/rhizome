@@ -157,34 +157,36 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
 
-    def _map_transform(self):
+    def test_map_transform(self):
 
         indicator_id = 1
         campaign_id = 2
         parent_location_id = 3 ## make sure the locations arw children of this..
+        document = Document.objects.create(doc_title='some doc')
 
-        data = [{
-            'location_id': 421,
-            'value': 0.054
-        },
-        {
-            'location_id': 115,
-            'value': 0.118
-        },
-        {
-            'location_id': 65,
-            'value': 0.084
-        }]
+        loc_and_value ={'Zamfara':0.054, 'Yobe':0.118, 'Taraba':0.221, 'Sokoto':0.032}
+        data =[]
+        for location, value in loc_and_value.iteritems():
+            loc = Location.objects.create(
+                name = location,
+                location_code = location,
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+                parent_location_id = self.top_lvl_location.id
+            )
+            loc_dict = {'location_id': loc.id, 'value':value}
+            data.append(loc_dict)
 
         for row in data:
             DataPointComputed.objects.create(
                 location_id = row['location_id'],
                 value = row['value'],
                 campaign_id = campaign_id,
-                indicator_id = indicator_id
+                indicator_id = indicator_id,
+                document_id = document.id
             )
 
-        get_parameter = 'indicator__in={0}&campaign_id={2}&parent_location_id__in={3}&chart_type=MapChart'\
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type=MapChart'\
             .format(indicator_id, campaign_id, parent_location_id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
@@ -193,4 +195,11 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         chart_data = response_data['meta']['chart_data']
 
-        self.assertEqual(data, chart_data)
+        self.assertEqual(len(chart_data), len(data))
+        #since ordering can vary, check that each of the items is in the list
+        all_values_in_list = True
+        for datapoint in chart_data:
+            if datapoint not in data:
+                all_values_in_list = False
+
+        self.assertEqual(True, all_values_in_list)
