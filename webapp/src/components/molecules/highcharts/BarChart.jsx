@@ -1,74 +1,53 @@
 import _ from 'lodash'
-import d3 from 'd3'
-import React, { PropTypes } from 'react'
+import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
-import format from 'components/molecules/charts/utils/format'
-import palettes from 'components/molecules/charts/utils/palettes'
-import aspects from 'components/molecules/charts/utils/aspects'
+import format from 'utilities/format'
 
 class BarChart extends HighChart {
-  static defaultProps = {
-    data: [],
-    domain: null,
-    groupBy: 'indicator',
-    range: null,
-    annotated: true,
-    hasDots: true,
-    scale: d3.scale.linear,
-    xLabel: null,
-    yLabel: null,
-    xFormat: format.timeAxis,
-    yFormat: d3.format(',d'),
-    colors: palettes.dark,
-    height: 0,
-    width: 0,
-    margin: { top: 20, right: 30, bottom: 30, left: 20 },
-    seriesName: d => d.name,
-    values: d => d.values,
-    x: d => d.campaign.start_date,
-    y: d => d.value
+
+  setConfig () {
+    const first_indicator = this.props.selected_indicators[0]
+    this.config = {
+      chart: { type: 'bar' },
+      xAxis: {
+        type: 'datetime',
+        labels: {
+          format: '{value:%b %d, %Y}'
+        }
+      },
+      yAxis: {
+        title: { text: '' },
+        labels: {
+          formatter: function () {
+            return format.autoFormat(this.value, first_indicator.data_format)
+          }
+        }
+      },
+      tooltip: {
+        pointFormatter: function (point) {
+          const value = format.autoFormat(this.y, first_indicator.data_format)
+          return `${this.series.name}: <b>${value}</b><br/>`
+        }
+      },
+      series: this.setSeries()
+    }
   }
 
-  setData () { console.info('------ BarChart.setData')
-    const props = this.props
-    const selected_locations_index = _.indexBy(props.selected_locations, 'id')
-    const selected_indicators_index = _.indexBy(props.selected_indicators, 'id')
-
+  setSeries () { console.info('------ BarChart.setSeries')
+    const data = this.props.datapoints.melted
+    const groupByIndicator = this.props.groupBy === 'indicator'
+    const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
+    const series = []
+    _.forEach(grouped_data, group => {
+      _.sortBy(group, _.method('campaign.start_date.getTime'))
+      series.push({
+        name: groupByIndicator ? group[0].indicator.name : group[0].location.name,
+        data: group.map(datapoint => datapoint.value) // Needs to be sorted by date
+      })
+    })
+    return series
   }
-
-  setOptions () { console.info('------ BarChart.setOptions')
-    const options = this.options
-    const props = this.props
-  }
-}
-
-BarChart.propTypes = {
-  data: PropTypes.array,
-  domain: PropTypes.array,
-  range: PropTypes.array,
-  annotated: PropTypes.bool,
-  hasDots: PropTypes.bool,
-  scale: PropTypes.func,
-  xLabel: PropTypes.string,
-  yLabel: PropTypes.string,
-  xFormat: PropTypes.func,
-  yFormat: PropTypes.func,
-  colors: PropTypes.array,
-  aspect: PropTypes.number,
-  height: PropTypes.number,
-  width: PropTypes.number,
-  margin: PropTypes.shape({
-     top: PropTypes.number,
-     right: PropTypes.number,
-     bottom: PropTypes.number,
-     left: PropTypes.number,
-  }),
-  seriesName: PropTypes.func,
-  values: PropTypes.func,
-  x: PropTypes.func,
-  y: PropTypes.func,
 }
 
 export default BarChart
-

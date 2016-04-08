@@ -63,6 +63,7 @@ const CampaignSelector = React.createClass({
             campaigns={raw_campaigns}
             selected={selected_campaigns[0]}
             sendValue={this.props.setCampaigns}/>
+          <br/>
         </div>
       )
     }

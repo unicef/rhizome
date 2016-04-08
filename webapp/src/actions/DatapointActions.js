@@ -23,7 +23,7 @@ const _prepDatapointsQuery = (params) => {
     chart_type: params.type
   }
 
-  if (params.type === 'ChoroplethMap') {
+  if (params.type === 'ChoroplethMap' || params.type === 'MapChart') {
     query['parent_location_id__in'] = params.location_ids
   } else {
     query['location_id__in'] = params.location_ids

@@ -53,9 +53,6 @@ const Dashboard = React.createClass({
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
-    // console.log('missing_params', this.missing_params)
-    // console.log('missing_data', this.missing_data)
-    // console.log('loading_charts', this.loading_charts)
     return !this.missing_data || this.missing_params || this.loading_charts
   },
 
@@ -111,16 +108,28 @@ const Dashboard = React.createClass({
     })
   },
 
-  renderChartRow (row) {
-    return (
-      row.map(chart =>
-        <div className={(row.length === 2 ? 'medium-12' : 'medium-12') + ' columns'}>
+  render () {
+    const dashboard = this.state.dashboard
+    const charts = _.toArray(dashboard.charts)
+    console.info('Dashboard.RENDER ========================================== Charts:', charts)
+    const title_bar = this.state.titleEditMode ?
+      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
+      :
+      <h1 onClick={this._toggleTitleEdit}>
+        <a>
+          {dashboard.title || 'Untitled Dashboard'}
+        </a>
+      </h1>
+
+    const chart_components = charts.map(chart => (
+        <div className='row'>
           <MultiChart
             chart={chart}
             linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
             duplicateChart={DashboardPageActions.duplicateChart}
             selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
             toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+            toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
             removeChart={DashboardPageActions.removeChart}
             saveChart={this.saveChart}
             setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
@@ -144,33 +153,6 @@ const Dashboard = React.createClass({
         </div>
       )
     )
-  },
-
-  render () {
-    const dashboard = this.state.dashboard
-    const charts = _.toArray(dashboard.charts)
-    console.info('Dashboard.RENDER ========================================== Charts:', charts)
-    const title_bar = this.state.titleEditMode ?
-      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
-      :
-      <h1 onClick={this._toggleTitleEdit}>
-        <a>
-          {dashboard.title || 'Untitled Dashboard'}
-        </a>
-      </h1>
-
-    var temp = charts.slice();
-    var arr = [];
-    while (temp.length) {
-      arr.push(temp.splice(0,1));
-    }
-    const chart_components = arr.map(row => {
-      return (
-        <div className='row collapse'>
-          { this.renderChartRow(row) }
-        </div>
-      )
-    })
     const loading = !charts.length > 0
     return (
       <section className='dashboard'>

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import uuid from 'uuid'
 import moment from 'moment'
 import Reflux from 'reflux'
-import StateMixin from'reflux-state-mixin'
+import StateMixin from 'reflux-state-mixin'
 
 import ChartActions from 'actions/ChartActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
@@ -11,9 +11,8 @@ import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
-import DataExplorerStoreHelpers from 'stores/DataExplorerStoreHelpers'
 
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 
 class ChartState {
   constructor () {
@@ -24,6 +23,8 @@ class ChartState {
     this.data_format = 'pct'
     this.groupBy = 'indicator'
     this.palette = 'traffic_light'
+    this.location_index = null
+    this.indicator_index = null
     this.selected_campaigns = []
     this.selected_indicators = []
     this.selected_locations = []
@@ -34,11 +35,11 @@ class ChartState {
     this.fetching = false
     this.linkedCampaigns = false
     this.selectTypeMode = true
+    this.editMode = false
   }
 }
 
 var DashboardPageStore = Reflux.createStore({
-
   mixins: [StateMixin.store],
 
   listenables: DashboardPageActions,
@@ -61,6 +62,12 @@ var DashboardPageStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   // =================================  Layout  ================================ //
+  onToggleEditMode (uuid) {
+    const chart = this.dashboard.charts[uuid]
+    chart.editMode = !chart.editMode
+    this.trigger(this.dashboard)
+  },
+
   onToggleSelectTypeMode (uuid) {
     const chart = this.dashboard.charts[uuid]
     chart.selectTypeMode = !chart.selectTypeMode
@@ -69,7 +76,7 @@ var DashboardPageStore = Reflux.createStore({
 
   // =================================  Charts  ================================ //
   onAddChart () { // console.info('- Store.onAddChart')
-    const new_chart = new ChartState
+    const new_chart = new ChartState()
     new_chart.uuid = uuid.v4()
     this.dashboard.charts[new_chart.uuid] = new_chart
     DashboardPageActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
@@ -85,7 +92,7 @@ var DashboardPageStore = Reflux.createStore({
   },
   onDuplicateChart (chart_uuid) { // console.info('- Store.onDuplicateChart')
     const chart = this.dashboard.charts[chart_uuid]
-    const new_chart = Object.assign(new ChartState, chart)
+    const new_chart = Object.assign(new ChartState(), chart)
     new_chart.uuid = uuid.v4()
     new_chart.selected_indicators = chart.selected_indicators.slice(0)
     new_chart.selected_campaigns = chart.selected_campaigns.slice(0)
@@ -299,6 +306,20 @@ var DashboardPageStore = Reflux.createStore({
     this.setState({ error: error })
   },
 
+  // =============================  Fetch Chart  =========================== //
+  onFetchChart (id) {
+    this.trigger(this.dashboard)
+  },
+  onFetchChartCompleted (chart) {
+    const new_chart = this.meltChart(chart)
+    this.dashboard.charts[chart.uuid] = new_chart
+    DashboardPageActions.setType(new_chart.type, new_chart.uuid)
+    this.trigger(this.dashboard)
+  },
+  onFetchChartFailed (error) {
+    this.setState({ error: error })
+  },
+
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures (uuid) {
     this.dashboard.charts[uuid].loading = true
@@ -325,29 +346,48 @@ var DashboardPageStore = Reflux.createStore({
     this.campaigns = campaigns[0]
   },
 
-  onDatapointStore (datapoints) {
-   // console.info('--- Store.onDatapointStore')
+  onDatapointStore (datapoints) { // console.info('--- Store.onDatapointStore')
     const currently_fetching_charts = _.toArray(this.dashboard.charts).filter(chart => chart.fetching)
     const uuid = currently_fetching_charts[0].uuid
-
     if (_.isEmpty(datapoints.raw)) {
       this.dashboard.charts[uuid].data = []
       return this.trigger(this.dashboard)
     }
     this.dashboard.charts[uuid].datapoints = datapoints
+    this.dashboard.charts[uuid].data = datapoints.raw
     this.dashboard.charts[uuid].parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
     this.dashboard.charts[uuid].default_sort_order = datapoints.meta.default_sort_order
-    this.dashboard.charts[uuid] = this.formatChartByType(uuid)
     this.dashboard.charts[uuid].loading = false
     this.dashboard.charts[uuid].fetching = false
+    this.dashboard.charts[uuid].locations_index = this.locations.index
+    this.dashboard.charts[uuid].indicators_index = this.indicators.index
     this.trigger(this.dashboard)
   },
 
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
+  updateChart (uuid) { // console.info('-- Store.updateChart' + (this.chartParamsAreReady(uuid) ? ' (Params Ready!)' : ''))
+    if (this.dashboard.charts[uuid].data !== null) {
+      DatapointActions.clearDatapoints()
+      this.dashboard.charts[uuid].data = null
+      this.trigger(this.dashboard)
+    }
+    if (this.chartParamsAreReady(uuid)) {
+      this.dashboard.charts[uuid].fetching = true
+      if (this.dashboard.charts[uuid].type === 'ChoroplethMap' || this.dashboard.charts[uuid].type === 'MapChart') {
+        this.dashboard.charts[uuid].fetching_map = true
+        return DashboardPageActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
+      }
+      this.fetchDatapoints(uuid)
+    } else {
+      this.dashboard.charts[uuid].loading = false
+      this.trigger(this.dashboard)
+    }
+  },
+
   meltChart (chart) {
-    const new_chart = new ChartState
+    const new_chart = new ChartState()
     new_chart.id = chart.id
     new_chart.uuid = chart.uuid
     new_chart.title = chart.title
@@ -361,25 +401,6 @@ var DashboardPageStore = Reflux.createStore({
     return new_chart
   },
 
-  updateChart (uuid) {  // console.info('-- Store.updateChart' + (this.chartParamsAreReady(uuid) ? ' (Params Ready!)' : ''))
-    if (this.dashboard.charts[uuid].data !== null) {
-      DatapointActions.clearDatapoints()
-      this.dashboard.charts[uuid].data = null
-      this.trigger(this.dashboard)
-    }
-    if (this.chartParamsAreReady(uuid)) {
-      this.dashboard.charts[uuid].fetching = true
-      if (this.dashboard.charts[uuid].type === 'ChoroplethMap') {
-        this.dashboard.charts[uuid].fetching_map = true
-        return DashboardPageActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
-      }
-      this.fetchDatapoints(uuid)
-    } else {
-      this.dashboard.charts[uuid].loading = false
-      this.trigger(this.dashboard)
-    }
-  },
-
   fetchDatapoints (uuid) {
     DatapointActions.fetchDatapoints({
       indicator_ids: this.dashboard.charts[uuid].selected_indicators.map(indicator => indicator.id),
@@ -388,24 +409,6 @@ var DashboardPageStore = Reflux.createStore({
       end_date: this.dashboard.charts[uuid].end_date,
       type: this.dashboard.charts[uuid].type
     })
-  },
-
-  formatChartByType (uuid) {  // console.info('---- Store.formatChartByType')
-    const chart = this.dashboard.charts[uuid]
-    const datapoints = this.dashboard.charts[uuid].datapoints.raw
-    const melted_datapoints = this.melt(datapoints, chart.selected_indicators)
-    const layout = 1 // hard coded for now
-    if (chart.type === 'RawData') {
-      chart.data = datapoints
-      return chart
-    } else if (chart.type === 'ChoroplethMap') {
-      return DataExplorerStoreHelpers.formatChoroplethMap(melted_datapoints, chart, this.locations.index, this.indicators.index, layout)
-    } else if (chart.type === 'TableChart') {
-      return DataExplorerStoreHelpers.formatTableChart(datapoints, chart, this.locations.index, this.indicators.index)
-    } else {
-      chart.data = melted_datapoints
-      return chart
-    }
   },
 
   chartParamsAreReady (uuid) {
@@ -417,32 +420,14 @@ var DashboardPageStore = Reflux.createStore({
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady && campaignsReady
   },
 
-  melt (datapoints, selected_indicators) {
-    const selected_indicator_ids = selected_indicators.map(_.property('id'))
-    const baseIndicators = selected_indicator_ids.map(id => ({ indicator: id + '', value: 0 }))
-    const melted_datapoints = _(datapoints).map(datapoint => {
-      const base = _.omit(datapoint, 'indicators')
-      const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), datapoint.indicators)
-      return indicatorFullList.map(indicator => _.assign({}, base, indicator))
-    })
-    .flatten()
-    .value()
-    melted_datapoints.forEach(melted_datapoint => {
-      melted_datapoint.indicator = this.indicators.index[parseInt(melted_datapoint.indicator, 0)]
-      melted_datapoint.location = this.locations.index[melted_datapoint.location]
-    })
-    return melted_datapoints
+  toggleLoading (uuid) { // console.info('Store.toggleLoading')
+    this.dashboard.charts[uuid].loading = true
+    this.trigger(this.dashboard)
   },
 
   couldBeId (value) {
     return _.isNumber(value) || _.isString(value)
-  },
-
-  toggleLoading (uuid) { // console.info('Store.toggleLoading')
-    this.dashboard.charts[uuid].loading = true
-    this.trigger(this.dashboard)
   }
-
 })
 
 export default DashboardPageStore

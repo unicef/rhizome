@@ -9,7 +9,7 @@ import InterfaceMixin from 'utilities/InterfaceMixin'
 import TableCell from 'components/atoms/TableCell'
 import EditableTableCell from 'components/atoms/EditableTableCell.jsx'
 import TableHeaderCell from 'components/atoms/TableHeaderCell.jsx'
-import SimpleDataTableColumn from 'components/molecules/tables/SimpleDataTableColumn'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 
@@ -120,7 +120,6 @@ let SimpleDataTable = React.createClass({
     let hasData = this.props.data && this.props.data.length
     if (!hasData && _.isNull(this.props.emptyContent)) return null
 
-
     let children = this.props.children
     children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children]
     let hasColumns = false
@@ -156,4 +155,4 @@ let SimpleDataTable = React.createClass({
   }
 })
 
-export default  SimpleDataTable
+export default SimpleDataTable

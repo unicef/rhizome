@@ -10,11 +10,25 @@ ul.list, .reorderable-list {
     border: 1px solid #BBC6D1;
     background-color: #fafafa;
     color: #333;
+    border: none;
+    padding-left: 0;
+    background: none;
+    border-bottom: 1px solid rgba(0, 0, 0, .05);
+    font-size: 0.85rem;
+    &:last-child {
+      border-bottom: none;
+    }
     .clear-btn {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      right: 0;
+      left: initial;
       font-size: 14px;
+      color: rgba(0, 0, 0, .5);
+      transform: translateY(100%);
+      margin-top: -.6rem;
+      &:hover {
+        color: rgba(0, 0, 0, .65);
+      }
     }
     .fa-times-circle {
       font-size: 1.1rem;
@@ -22,5 +36,9 @@ ul.list, .reorderable-list {
   }
   div.reorderable-item {
     cursor: grab;
+    &.placeholder {
+      padding-left: 5px;
+      background-color: rgba(0, 0, 0, .05);
+    }
   }
 }

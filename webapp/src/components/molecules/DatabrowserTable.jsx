@@ -5,7 +5,10 @@ import DataBrowserTableStore from 'stores/DataBrowserTableStore'
 import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 
-const {Datascope, LocalDatascope, SimpleDataTableColumn, Paginator} = require('react-datascope')
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import LocalDatascope from 'components/organisms/datascope/LocalDatascope'
+import Datascope from 'components/organisms/datascope/Datascope'
 
 let DatabrowserTable = React.createClass({
 
@@ -21,7 +24,7 @@ let DatabrowserTable = React.createClass({
   },
 
   render: function () {
-    console.info('-------- DatabrowserTable.render')
+    console.info('DataBrowserTable.jsx-------- DatabrowserTable.render')
     DataBrowserTableActions.getTableData(this.props.selected_locations, this.props.selected_indicators, this.props.data)
     if (!this.state || !this.props.data) {
       return (<div className='medium-12 columns ds-data-table-empty'>No data.</div>)
