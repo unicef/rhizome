@@ -13,24 +13,24 @@ let SearchBar = React.createClass({
     value: React.PropTypes.string
   },
 
-  getDefaultProps: function () {
+  getDefaultProps () {
     return { id: 'searchbar' } // pass unique id to have multiple independent search bars within one Datascope
   },
 
-  onChangeSearch: function (e) {
+  onChangeSearch (e) {
     this.props.onChangeSearch(this.props.id, e.target.value, this.props.fieldNames)
   },
 
-  render: function () {
-    let propsToPass = _.omit(this.props, ['id', 'fieldNames', 'value', 'onChangeSearch'])
-    return React.createElement(
-      'div',
-      null,
-      React.createElement('input', _.noop({
-        type: 'text',
-        value: this.props.value,
-        onChange: this.onChangeSearch
-      }, propsToPass))
+  render () {
+    let propsToPass = _.noop({ type: 'text',
+                               value: this.props.value,
+                               onChange: this.onChangeSearch
+                              },
+                              _.omit(this.props, ['id', 'fieldNames', 'value', 'onChangeSearch']))
+    return (
+        <div>
+          <input type={'text'} value={this.props.value} onChange={this.onChangeSearch} {...propsToPass}/>
+        </div>
       )
   }
 })

@@ -71,7 +71,6 @@ var LocalDatascope = React.createClass({
   },
 
   _getDisplayData (query) {
-
     var hasFilter = _.isObject(query.filter) && _.keys(query.filter).length
     var hasSearch = _.isObject(query.search) && _.keys(query.search).length
     var hasSort = query.sort && !_.isUndefined(query.sort.key)
