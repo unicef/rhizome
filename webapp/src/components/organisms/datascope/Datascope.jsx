@@ -207,15 +207,14 @@ var Datascope = React.createClass({
     // Recursively traverse children, cloning Datascope modules and adding their required props
     // React 0.14 should introduce a new feature: parent-based contexts
     // When 0.14 lands, we may be able to use context for this instead
-    return React.createElement(
-      'div',
-      null,
-      this.recursiveCloneChildren(this.props.children, datascopeProps, sortProps, filterProps, searchProps, paginationProps)
-    );
+    return (
+      <div>
+        {this.recursiveCloneChildren(this.props.children, datascopeProps, sortProps, filterProps, searchProps, paginationProps)}
+      </div>
+    )
   },
   recursiveCloneChildren (children, datascopeProps, sortProps, filterProps, searchProps, paginationProps) {
-    var _this = this;
-
+    var self = this;
     return React.Children.map(children, function (child) {
       if (!_.isObject(child)) return child;
 
@@ -236,7 +235,7 @@ var Datascope = React.createClass({
         childProps = _.extend(childProps, datascopeProps, childImplements('DatascopeSort') ? sortProps : null, childImplements('DatascopeFilter') ? filterProps : null, childImplements('DatascopeSearch') ? searchProps : null, childImplements('DatascopePagination') ? paginationProps : null);
       }
 
-      childProps.children = _this.recursiveCloneChildren(child.props.children, datascopeProps, sortProps, filterProps, searchProps);
+      childProps.children = self.recursiveCloneChildren(child.props.children, datascopeProps, sortProps, filterProps, searchProps);
 
       return React.cloneElement(child, childProps);
     });

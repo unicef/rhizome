@@ -147,17 +147,18 @@ var LocalDatascope = React.createClass({
   },
 
   render () {
-    var self = this
-    return React.createElement(
-      'div',
-      { className: 'local-datascope' },
-      React.Children.map(this.props.children, function (child) {
+    let self = this
+    const children = React.Children.map(self.props.children, function (child) {
         return React.cloneElement(child, _.assign({}, _.omit(self.props, ['children']), {
           onChangeQuery: self.onChangeQuery,
           data: self.state.displayData,
           query: self.state.query
         }))
       })
+    return (
+      <div className={'local-datascope'}>
+        {children}
+      </div>
     )
   }
 })
