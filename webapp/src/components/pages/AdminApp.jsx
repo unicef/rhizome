@@ -18,7 +18,7 @@ var AdminApp = React.createClass({
         <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator'}} >Manage Indicators</Link></li>
         <li><Link to='manage' params={{'id': q_params['id'], 'contentType': 'indicator_tag'}} >Manage Tags</Link></li>
         <li><Link to='users'>Users</Link></li>
-        <li><Link to='locations'>locations</Link></li>
+        <li><Link to='locations'>Locations</Link></li>
         <li><Link to='campaigns'>Campaigns</Link></li>
         <li><Link to='indicators'>Indicators</Link></li>
         <li><Link to='tags'>Tags</Link></li>
