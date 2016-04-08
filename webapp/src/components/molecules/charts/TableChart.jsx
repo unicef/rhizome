@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 
 import Chart from 'components/molecules/charts/Chart'
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 
 class TableChart extends Chart {
 
@@ -18,6 +18,51 @@ class TableChart extends Chart {
     sortDirection: 1,
     value: d => d ? d.value : null,
     values: d => d.values
+  }
+
+  setData () {
+    const selected_campaign_id = this.props.selected_campaigns[0].id
+    const filtered_datapoints = this.props.data.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
+    this.data = filtered_datapoints.map(datapoint => {
+      const values = []
+      datapoint.indicators.forEach(i => {
+        const indicator_id = i.indicator
+        if (i.value != null) {
+          let displayValue = i.value
+          if (this.props.indicators_index[indicator_id].data_format === 'pct') {
+            displayValue = (i.value * 100).toFixed(1) + ' %'
+          } else if (this.props.indicators_index[indicator_id].data_format === 'bool' && i.value === 0) {
+            displayValue = 'No'
+            i.value = -1 // temporary hack to deal with coloring the booleans.
+          } else if (this.props.indicators_index[indicator_id].data_format === 'bool' && i.value > 0) {
+            displayValue = 'Yes'
+            i.value = 2 // temporary hack to deal with coloring the booleans.
+          }
+          values.push({
+            indicator: this.props.indicators_index[indicator_id],
+            value: i.value,
+            campaign: datapoint.campaign,
+            displayValue: displayValue,
+            location: this.props.locations_index[datapoint.location]
+          })
+        } else {
+          values.push({
+            indicator: this.props.indicators_index[indicator_id],
+            value: null,
+            campaign: datapoint.campaign,
+            displayValue: '',
+            location: this.props.locations_index[datapoint.location]
+          })
+        }
+      })
+      return {
+        name: this.props.locations_index[datapoint.location].name,
+        parent_location_id: this.props.locations_index[datapoint.location].parent_location_id,
+        values: values,
+        campaign_id: datapoint.campaign.id
+      }
+    })
+    return this.data
   }
 
   setOptions () {

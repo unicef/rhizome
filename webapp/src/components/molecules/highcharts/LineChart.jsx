@@ -4,12 +4,12 @@ import React from 'react'
 import HighChart from 'components/molecules/highcharts/HighChart'
 import format from 'utilities/format'
 
-class BarChart extends HighChart {
+class LineChart extends HighChart {
 
   setConfig () {
     const first_indicator = this.props.selected_indicators[0]
     this.config = {
-      chart: { type: 'bar' },
+      chart: { type: 'line' },
       xAxis: {
         type: 'datetime',
         labels: {
@@ -34,7 +34,7 @@ class BarChart extends HighChart {
     }
   }
 
-  setSeries () { console.info('------ BarChart.setSeries')
+  setSeries () { console.info('------ LineChart.setSeries')
     const data = this.props.datapoints.melted
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
@@ -50,4 +50,4 @@ class BarChart extends HighChart {
   }
 }
 
-export default BarChart
+export default LineChart

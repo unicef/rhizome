@@ -4,9 +4,8 @@ import React, { PropTypes } from 'react'
 
 import Chart from 'components/molecules/charts/Chart'
 
-import palettes from 'components/molecules/charts/utils/palettes'
+import palettes from 'utilities/palettes'
 import aspects from 'components/molecules/charts/utils/aspects'
-import DataExplorerActions from 'actions/DataExplorerActions'
 
 class ChoroplethMap extends Chart {
 
@@ -20,6 +19,42 @@ class ChoroplethMap extends Chart {
     height: 0,
     width: 0,
     margin: { top: 0, right: 0, bottom: 20, left: 0 }
+  }
+
+  setData () { console.log('ChoroplethMap.setData')
+    const datapoints = this.props.datapoints.melted
+    if (!datapoints || datapoints.length === 0) {
+      return this.data = this.props.features
+    }
+
+    const selected_indicators = this.props.selected_indicators
+    const xAxis  = selected_indicators[0] ? selected_indicators[0].id : 0
+    const groupedDatapoints = _(datapoints).groupBy('indicator.id').value()
+    const index = _.indexBy(groupedDatapoints[xAxis], 'location.id')
+
+    // Make sure we only get data for the current campaign maps can't
+    // display historical data. Index by location for quick lookup.
+    const dataIdx = _(datapoints)
+      .filter(d => d.campaign.id === this.props.selected_campaigns[0])
+      .indexBy('location.id')
+      .value()
+
+    this.props.features.forEach(feature => {
+      var datapoint = dataIdx[feature.properties.location_id]
+      if (datapoint) {
+        feature.properties[datapoint.indicator.id] = datapoint.value
+      }
+      // JD -- Ensure that the index has properties for all locations, not just those with data
+      if (!index[feature.properties.location_id]) {
+        index[feature.properties.location_id] = this.props.locations_index[feature.properties.location_id]
+      }
+    })
+
+    this.data  = this.props.features.map(feature => {
+      const datapoint = index[feature.properties.location_id]
+      const properties = _.merge({}, datapoint.location, { value: datapoint['value'] }) || {}
+      return _.merge({}, feature, {properties: properties}, datapoint.location)
+    })
   }
 
   setOptions () {
@@ -44,7 +79,7 @@ class ChoroplethMap extends Chart {
     options.value = d => d.properties[mapIndicator.id]
     options.xFormat = mapIndicator.data_format === 'pct' ? d3.format(',.1%') : d3.format('')
     options.ticks = this.reverseBounds({bad: mapIndicator.bad_bound, good: mapIndicator.good_bound})
-    options.onClick = id => DataExplorerActions.setLocations(id)
+    options.onClick = id => this.props.primaryClick(id)
     return options
   }
 

@@ -63,7 +63,7 @@ protected_patterns = [
     url(r'^manage_system/', views.manage_system, name='manage_system'),
     url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
     url(r'^export_file/?$', views.export_file, name='export_file'),
-    url(r'^explore$', views.data_explorer, name='chart_create'),
+    url(r'^explore$', views.chart_create, name='chart_create'),
     url(r'^entry/$', views.data_entry, name='datapoint_entry'),
 
     url(r'^users/create/$', views.UserCreateView.as_view(), name='create_user'),
@@ -72,19 +72,13 @@ protected_patterns = [
     url(r'^source-data/', views.source_data, name='source_data'),
 
     url(r'^charts/$', views.charts, name='charts'),
-    url(r'^charts/create$', views.data_explorer, name='chart_create'),
+    url(r'^charts/create$', views.chart_create, name='chart_create'),
     url(r'^charts/(?P<chart_id>[0-9]+)/$', views.chart, name='chart'),
     url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
-
     url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
-    url(r'^dashboards/eoc-post-campaign/$', views.builtin_dashboard, name='dashboards'),
-    url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/$', views.builtin_dashboard, name='builtin_dashboard'),
-    url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/$', views.builtin_dashboard, name='dashboards'),
-    url(r'^dashboards/(?P<dashboard_slug>[-a-zA-Z]+)/[-a-zA-Z]+/[0-9]+/$', views.builtin_dashboard, name='builtin_dashboard'),
-    # url(r'^dashboards/.*$', views.builtin_dashboard, name='builtin_dashboard')
 ]
 
 urlpatterns = patterns(

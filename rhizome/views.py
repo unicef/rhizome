@@ -74,11 +74,11 @@ def dashboard(request, dashboard_id=None):
 
     return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
-def builtin_dashboard(request, dashboard_slug=None):
-    return render_to_response('dashboards/show_builtin.html', {'dashboard_slug': dashboard_slug},
-                              context_instance=RequestContext(request))
 def charts(request):
     return render_to_response('charts/index.html',
+                              context_instance=RequestContext(request))
+def chart_create(request):
+    return render_to_response('charts/create.html',
                               context_instance=RequestContext(request))
 def chart(request, chart_id=None):
     return render_to_response('charts/show.html', {'chart_id': chart_id},
@@ -104,12 +104,6 @@ def update_campaign(request):
 
 # RESOURCES
 #---------------------------------------------------------------------------
-@user_passes_test(lambda u: u.groups.filter(name='data_explorer') or u.is_superuser,
-    login_url='/permissions_needed/', redirect_field_name=None)
-def data_explorer(request):
-    return render_to_response('charts/create.html',
-                              context_instance=RequestContext(request))
-
 @user_passes_test(lambda u: u.groups.filter(name='chart_edit') or u.is_superuser,
     login_url='/permissions_needed/', redirect_field_name=None)
 def chart_edit(request, chart_id=None):

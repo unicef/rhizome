@@ -1,63 +1,41 @@
-import _ from 'lodash'
-import React, { Component, PropTypes } from 'react'
+import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
-
 import format from 'utilities/format'
-import maps from './map_data'
 
 class MapChart extends HighChart {
-
-  constructor (props) {
-    super(props)
-
-    const first_indicator = props.selected_indicators[0]
-    this.data = {
-      chart: {
-        spacingBottom: 20
-      },
-      title: {
-        text: 'Europe time zones'
-      },
-
-      legend: {
-        enabled: true
-      },
-
-      plotOptions: {
-        map: {
-          allAreas: false,
-          joinBy: ['iso-a2', 'code'],
-          dataLabels: {
-            enabled: true,
-            color: 'white',
-            style: {
-              fontWeight: 'bold'
-            }
-          },
-          mapData: maps,
-          tooltip: {
-            headerFormat: '',
-            pointFormat: '{point.name}: <b>{series.name}</b>'
-          }
-
+  setConfig () {
+    this.config = {
+      mapNavigation: {
+        enabled: true,
+        buttonOptions: {
+          verticalAlign: 'bottom'
         }
       },
-      series: [{
-        name: 'UTC',
-        data: ['IE', 'IS', 'GB', 'PT'].map(function (code) {
-          return { code: code };
-        })
-      }, {
-        name: 'UTC + 1',
-        data: ['NO', 'SE', 'DK', 'DE', 'NL', 'BE', 'LU', 'ES', 'FR', 'PL', 'CZ', 'AT', 'CH', 'LI', 'SK', 'HU', 'SI', 'IT', 'SM', 'HR', 'BA', 'YF', 'ME', 'AL', 'MK'].map(function (code) {
-          return { code: code };
-        })
-      }]
+      colorAxis: {
+        min: 0
+      },
+      series: this.setSeries()
     }
   }
 
+  setSeries () {
+    return [{
+      data: this.props.datapoints.meta.chart_data,
+      mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
+      joinBy: 'location_id',
+      name: 'Random data',
+      states: {
+        hover: {
+          color: '#BADA55'
+        }
+      },
+      dataLabels: {
+        enabled: true,
+        format: '{point.name}'
+      }
+    }]
+  }
 }
 
 export default MapChart
-
