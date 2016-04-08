@@ -110,7 +110,6 @@ let EditableTableCell = React.createClass({
         row={this.props.row}
         value={this.display_value}
         formatValue={this.props.formatValue}
-        tooltip={this.tooltip}
         classes={classes}
         onClick={this.enterEditMode}
         hideValue={hideValue}>
