@@ -49,7 +49,7 @@ const MultiChartHeader = React.createClass({
             <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
           </div>
           <ExportIcon exportPath={'/charts/' + chart.id}/>
-          <IconButton onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' />
+          <IconButton isBusy={chart.saving} onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' alt_text='Saving ...'/>
           { duplicate_button }
           <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' />
           { remove_button }

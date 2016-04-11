@@ -4,9 +4,11 @@ import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from 'reflux-state-mixin'
 
+import DashboardActions from 'actions/DashboardActions'
 import ChartActions from 'actions/ChartActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DatapointActions from 'actions/DatapointActions'
+import DashboardStore from 'stores/DashboardStore'
 import DatapointStore from 'stores/DatapointStore'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
@@ -36,6 +38,7 @@ class ChartState {
     this.linkedCampaigns = false
     this.selectTypeMode = true
     this.editMode = true
+    this.saving = false
   }
 }
 
@@ -51,6 +54,8 @@ var DashboardPageStore = Reflux.createStore({
 
   init () {
     this.listenTo(DatapointStore, this.onDatapointStore)
+    this.listenTo(DashboardActions.postDashboard.completed, this.onPostDashboardCompleted)
+    this.listenTo(ChartActions.postChart.completed, this.onPostChartCompleted)
     this.joinTrailing(LocationStore, IndicatorStore, CampaignStore, this.onGetInintialStores)
   },
 
@@ -61,6 +66,36 @@ var DashboardPageStore = Reflux.createStore({
   // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
+  // ===============================  Dashboard  =============================== //
+  onSetDashboardTitle (title) { // console.info('- Store.onSetDashboardTitle')
+    this.dashboard.title = title
+    this.trigger(this.dashboard)
+  },
+  onSaveDashboard (dashboard_id = null) {
+    if (!this.dashboard.title || this.dashboard.title === 'Untitled Dashboard') {
+      return window.alert('Please add a Title to your dashboard')
+    }
+    let allChartsSaved = true
+    _.toArray(this.dashboard.charts).forEach(chart => {
+      if (!chart.title || chart.title === 'Untitled Chart') {
+        allChartsSaved = false
+        return
+      }
+      DashboardPageActions.saveChart(chart.uuid)
+    })
+    if (!allChartsSaved) {
+      return window.alert('Please title all of your charts')
+    }
+    this.dashboard.saving = true
+    this.trigger(this.dashboard)
+    const query = {
+      id: dashboard_id,
+      title: this.dashboard.title,
+      chart_uuids: _.toArray(this.dashboard.charts).map(chart => chart.uuid)
+    }
+    DashboardActions.postDashboard(query)
+  },
+
   // =================================  Layout  ================================ //
   onToggleEditMode (uuid) {
     const chart = this.dashboard.charts[uuid]
@@ -93,7 +128,7 @@ var DashboardPageStore = Reflux.createStore({
   },
   _hideSelectChartMenu () {
     let menus = document.getElementsByClassName('menu')
-    for (let menu of menus) {menu.style.display = 'none'}
+    for (let menu of menus) { menu.style.display = 'none' }
   },
   onDuplicateChart (chart_uuid) { // console.info('- Store.onDuplicateChart')
     const chart = this.dashboard.charts[chart_uuid]
@@ -110,6 +145,27 @@ var DashboardPageStore = Reflux.createStore({
       delete this.dashboard.charts[uuid]
       this.trigger(this.dashboard)
     }
+  },
+  onSaveChart (uuid) { // console.info('- Store.saveChart')
+    const chart = this.dashboard.charts[uuid]
+    if (!chart.title) {
+      return window.alert('Please add a Title to your chart')
+    }
+    this.dashboard.charts[uuid].saving = true
+    this.trigger(this.dashboard)
+    ChartActions.postChart({
+      id: chart.id,
+      title: chart.title,
+      uuid: chart.uuid,
+      chart_json: JSON.stringify({
+        type: chart.type,
+        start_date: chart.start_date,
+        end_date: chart.end_date,
+        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
+        location_ids: chart.selected_locations.map(location => location.id),
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+      })
+    })
   },
 
   // =============================  Indicators  ============================ //
@@ -267,30 +323,9 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[uuid].selected_locations = first_location ? [first_location] : []
     this.updateChart(uuid)
   },
-  onSetDashboardTitle (title) { // console.info('- Store.onSetDashboardTitle')
-    this.dashboard.title = title
-    this.trigger(this.dashboard)
-  },
   onSetChartTitle (title, uuid) { // console.info('- Store.onSetChartTitle')
     this.dashboard.charts[uuid].title = title
     this.trigger(this.dashboard)
-  },
-  onSaveChart (uuid) { // console.info('- Store.saveChart')
-    if (!this.dashboard.charts[uuid].title) {
-      return window.alert('Please add a Title to your chart')
-    }
-    ChartActions.postChart({
-      id: this.dashboard.charts[uuid].id,
-      title: this.dashboard.charts[uuid].title,
-      chart_json: JSON.stringify({
-        type: this.dashboard.charts[uuid].type,
-        start_date: this.dashboard.charts[uuid].start_date,
-        end_date: this.dashboard.charts[uuid].end_date,
-        campaign_ids: this.dashboard.charts[uuid].selected_campaigns.map(campaign => campaign.id),
-        location_ids: this.dashboard.charts[uuid].selected_locations.map(location => location.id),
-        indicator_ids: this.dashboard.charts[uuid].selected_indicators.map(indicator => indicator.id)
-      })
-    })
   },
 
   // =========================================================================== //
@@ -368,6 +403,17 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[uuid].fetching = false
     this.dashboard.charts[uuid].locations_index = this.locations.index
     this.dashboard.charts[uuid].indicators_index = this.indicators.index
+    this.trigger(this.dashboard)
+  },
+
+  onPostDashboardCompleted (response) {
+    this.dashboard.saving = false
+    this.trigger(this.dashboard)
+  },
+
+  onPostChartCompleted (response) {
+    const uuid = response.objects.uuid
+    this.dashboard.charts[uuid].saving = false
     this.trigger(this.dashboard)
   },
 
