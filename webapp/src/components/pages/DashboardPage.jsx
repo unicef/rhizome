@@ -14,6 +14,7 @@ import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
 
+import DashboardActions from 'actions/DashboardActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
 
 const Dashboard = React.createClass({
@@ -36,6 +37,7 @@ const Dashboard = React.createClass({
   },
 
   componentDidMount () {
+    // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
@@ -44,6 +46,13 @@ const Dashboard = React.createClass({
         } else {
           DashboardPageActions.addChart()
         }
+      }
+    })
+    // If the dashboard is saved for the first time, redirect to the dashboard page
+    this.listenTo(DashboardActions.postDashboard.completed, (response) => {
+      if (!this.props.dashboard_id) {
+        const dashboard_id = response.objects.id
+        window.location = window.location.origin + '/dashboards/' + dashboard_id
       }
     })
   },

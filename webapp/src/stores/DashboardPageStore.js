@@ -72,8 +72,6 @@ var DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
   onSaveDashboard (dashboard_id = null) {
-    this.dashboard.saving = true
-    this.trigger(this.dashboard)
     if (!this.dashboard.title || this.dashboard.title === 'Untitled Dashboard') {
       return window.alert('Please add a Title to your dashboard')
     }
@@ -88,6 +86,8 @@ var DashboardPageStore = Reflux.createStore({
     if (!allChartsSaved) {
       return window.alert('Please title all of your charts')
     }
+    this.dashboard.saving = true
+    this.trigger(this.dashboard)
     const query = {
       id: dashboard_id,
       title: this.dashboard.title,
@@ -406,7 +406,7 @@ var DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
-  onPostDashboardCompleted () {
+  onPostDashboardCompleted (response) {
     this.dashboard.saving = false
     this.trigger(this.dashboard)
   },
