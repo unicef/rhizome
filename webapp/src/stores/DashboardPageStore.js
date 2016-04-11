@@ -35,7 +35,7 @@ class ChartState {
     this.fetching = false
     this.linkedCampaigns = false
     this.selectTypeMode = true
-    this.editMode = false
+    this.editMode = true
   }
 }
 
