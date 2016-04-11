@@ -81,7 +81,7 @@ Regarding POLIO-205 - How are we to determine the semantic identities of locatio
 Consider the following wikipedia page:
 
 
-  http://en.wikipedia.org/wiki/Killa_Abdullah_District
+http://en.wikipedia.org/wiki/Killa_Abdullah_District
 
   *"Killa Abdullah or Qilla Abdullah or Abdullah Qilla (Pashto: قلعہ عبد الله‎)"...*
 

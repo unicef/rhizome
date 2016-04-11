@@ -206,31 +206,7 @@ Response Format
 ``/api/v1/campaign/``
 +++++++++++++++++++++
 
-Return a list of campaign definitions.
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      name: <String>,
-      slug: <String>,
-      start_date: "YYYY-MM-DD",
-      end_date: "YYYY-MM-DD",
-      office: <reference>,
-      resource_uri: <String>,
-      created_at: "YYYY-MM-DDTHH:MM:SS.sss"
-    }],
-
-    errors: {...}
-  }
-
-``office``
-  A reference to the office under which the campaign was conducted. This will be
-  an ID (``Number``), name (``String``), slug (``String``), or URI (``String``)
-  for the office depending on the value of the ``uri_format`` parameter
+.. autoclass:: rhizome.api.resources.campaign.CampaignResource
 
 ``/api/v1/indicator/``
 ++++++++++++++++++++++
@@ -653,5 +629,14 @@ TODO - Needs documentation
 TODO - Needs documentation
 
 
+``/api/v1/all_meta/``
++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.all_meta.AllMetaResource
+
+``/api/v1/indicator_calculation/``
+++++++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource
 
 
