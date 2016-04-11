@@ -451,6 +451,7 @@ var DashboardPageStore = Reflux.createStore({
     new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
     new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
     new_chart.selectTypeMode = false
+    new_chart.editMode = false
     return new_chart
   },
 
