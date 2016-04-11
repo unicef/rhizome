@@ -20,19 +20,21 @@ class MapChart extends HighChart {
   }
 
   setSeries () {
+    const currentIndicator = this.props.selected_indicators[0]
     return [{
       data: this.props.datapoints.meta.chart_data,
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
-      name: 'Random data',
+      name: currentIndicator.name,
       states: {
         hover: {
           color: '#BADA55'
         }
       },
-      dataLabels: {
-        enabled: true,
-        format: '{point.name}'
+      tooltip: {
+        pointFormatter: function(){
+          return "<span><b>" + format.autoFormat(this.value, currentIndicator.data_format) + "</b></span>"
+        }
       }
     }]
   }
