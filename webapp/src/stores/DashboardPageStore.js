@@ -147,12 +147,12 @@ var DashboardPageStore = Reflux.createStore({
     }
   },
   onSaveChart (uuid) { // console.info('- Store.saveChart')
-    this.dashboard.charts[uuid].saving = true
-    this.trigger(this.dashboard)
     const chart = this.dashboard.charts[uuid]
     if (!chart.title) {
       return window.alert('Please add a Title to your chart')
     }
+    this.dashboard.charts[uuid].saving = true
+    this.trigger(this.dashboard)
     ChartActions.postChart({
       id: chart.id,
       title: chart.title,
