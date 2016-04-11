@@ -319,9 +319,11 @@ class DatapointResource(BaseNonModelResource):
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
 
+        if len(computed_datapoints) < 1:
+            return results
+
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
-
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
         try:
             p_table = pivot_table(
@@ -380,10 +382,8 @@ class DatapointResource(BaseNonModelResource):
     def transform_map_data(self):
 
         high_chart_data = []
-
         for obj in self.base_data:
             dp_dict = obj.__dict__
-
             indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
             indicator_value = indicator_dict['value']
             location = dp_dict['location']

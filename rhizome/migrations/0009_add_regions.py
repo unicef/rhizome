@@ -120,5 +120,5 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ('rhizome', '0008_auto_20160404_1258'),
+        ('rhizome', '0008_indicator_class_map_table'),
     ]

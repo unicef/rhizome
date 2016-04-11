@@ -83,7 +83,7 @@ class DataPointResourceTest(ResourceTestCase):
             campaign=campaign, document=document)
 
         # 6 Request To The API
-        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
             .format(indicator.id, start_date,end_date, location.id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
@@ -147,7 +147,7 @@ class DataPointResourceTest(ResourceTestCase):
         is_display =True)
 
         # 7 Request To The API
-        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&parent_location_id__in={3}'\
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
             .format(indicator.id, start_date,end_date, location.id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
@@ -161,9 +161,75 @@ class DataPointResourceTest(ResourceTestCase):
 
         indicator_id = 1
         campaign_id = 2
-        parent_location_id = 3 ## make sure the locations arw children of this..
+        parent_location_id =3
         document = Document.objects.create(doc_title='some doc')
 
+        loc_and_value ={'Zamfara':0.054, 'Yobe':0.118, 'Taraba':0.221, 'Sokoto':0.032}
+        data =[]
+        for location, value in loc_and_value.iteritems():
+            loc = Location.objects.create(
+                name = location,
+                location_code = location,
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+                parent_location_id = parent_location_id
+            )
+            loc_dict = {'location_id': loc.id, 'value':value}
+            data.append(loc_dict)
+
+        for row in data:
+            DataPointComputed.objects.create(
+                location_id = row['location_id'],
+                value = row['value'],
+                campaign_id = campaign_id,
+                indicator_id = indicator_id,
+                document_id = document.id
+            )
+
+    # add another location and datapoint that shouldn't be retrieved
+        nyc = Location.objects.create(
+            name = 'New York',
+            location_code = 'New York',
+            location_type_id = self.lt.id,
+            office_id = self.o.id,
+            parent_location_id = 2345
+        )
+
+        DataPointComputed.objects.create(
+            location_id = nyc.id,
+            value = 0.0432,
+            campaign_id = campaign_id,
+            indicator_id = indicator_id,
+            document_id = document.id
+        )
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type=MapChart'\
+            .format(indicator_id, campaign_id, parent_location_id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        chart_data = response_data['meta']['chart_data']
+
+        self.assertEqual(len(chart_data), len(data))
+        #since ordering can vary, check that each of the items is in the list
+        all_values_in_list = True
+        for datapoint in chart_data:
+            if datapoint not in data:
+                all_values_in_list = False
+
+        self.assertEqual(True, all_values_in_list)
+
+    # make sure that the api returns an empty list if the parent location has no children
+    def test_map_transform_no_children(self):
+        indicator_id = 1
+        campaign_id = 2
+        parent_location_id = 3
+
+        document = Document.objects.create(doc_title='some doc')
+
+
+        # add a bunch of children for parent_location_id
         loc_and_value ={'Zamfara':0.054, 'Yobe':0.118, 'Taraba':0.221, 'Sokoto':0.032}
         data =[]
         for location, value in loc_and_value.iteritems():
@@ -186,20 +252,17 @@ class DataPointResourceTest(ResourceTestCase):
                 document_id = document.id
             )
 
+        child_id = Location.objects.filter(name='Zamfara')[0].id
+
         get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type=MapChart'\
-            .format(indicator_id, campaign_id, parent_location_id)
+            .format(indicator_id, campaign_id, child_id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
-        chart_data = response_data['meta']['chart_data']
+        self.assertEqual(len(response_data['objects']), 0)
 
-        self.assertEqual(len(chart_data), len(data))
-        #since ordering can vary, check that each of the items is in the list
-        all_values_in_list = True
-        for datapoint in chart_data:
-            if datapoint not in data:
-                all_values_in_list = False
+        self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
-        self.assertEqual(True, all_values_in_list)
+

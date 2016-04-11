@@ -73,19 +73,13 @@ class BaseResource(Resource):
         What they are permissioned to.
         '''
 
-        location_ids = None
-
-        try:
-            location_ids = request.GET['location_id__in'].split(',')
-        except KeyError:
-            pass
-
-        try:
+        if 'location_id__in' in request.GET:
+            return request.GET['location_id__in'].split(',')
+        elif 'parent_location_id__in' in request.GET:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             location_ids = Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
-
             ## begin hack ##
             if pl_id_list == [u'1']: ## super hack way to
                                   ## fix this long term with a "admin_levevel"
@@ -96,14 +90,10 @@ class BaseResource(Resource):
                     .filter(parent_location_id__in = location_ids)\
                     .values_list('id', flat=True)
             ## end hack ##
+            return location_ids
+        else:
+            return Location.objects.all().values_list('id', flat=True)
 
-        except KeyError:
-            pass
-
-        if not location_ids:
-            location_ids = Location.objects.all().values_list('id', flat=True)
-
-        return location_ids
 
     def dispatch(self, request_type, request, **kwargs):
         """

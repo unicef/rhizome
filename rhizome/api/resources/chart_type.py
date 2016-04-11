@@ -6,6 +6,10 @@ class ChartTypeResult(object):
     name = unicode()
 
 class ChartTypeResource(BaseNonModelResource):
+    '''
+    **GET Request** Returns all Chart type names and ids
+    '''
+
     id = fields.IntegerField(attribute='id')
     name = fields.CharField(attribute='name')
 
