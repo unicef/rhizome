@@ -45,7 +45,6 @@ class LineChart extends HighChart {
         name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
         data: group_collection.map(datapoint => { return [datapoint.campaign.start_date.getTime(), datapoint.value] })
       })
-      // dateTimes: group_collection.map(datapoint => datapoint.campaign.start_date.getTime())
     })
     return series
   }
