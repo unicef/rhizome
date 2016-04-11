@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import AsyncButton from 'components/atoms/AsyncButton'
+
 import Placeholder from 'components/molecules/Placeholder'
 import MultiChart from 'components/organisms/MultiChart'
 import TitleInput from 'components/molecules/TitleInput'
@@ -13,8 +15,6 @@ import CampaignStore from 'stores/CampaignStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
 
 import DashboardPageActions from 'actions/DashboardPageActions'
-import ChartActions from 'actions/ChartActions'
-import DashboardActions from 'actions/DashboardActions'
 
 const Dashboard = React.createClass({
 
@@ -48,7 +48,7 @@ const Dashboard = React.createClass({
     })
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate (nextProps, nextState) {
     const charts = _.toArray(nextState.dashboard.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
@@ -61,51 +61,6 @@ const Dashboard = React.createClass({
       DashboardPageActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
-  },
-
-  saveDashboard () {
-    const dashboard = this.state.dashboard
-    console.info('- Dashboard.saveChart', dashboard.title)
-    if (!dashboard.title || dashboard.title === 'Untitled Dashboard') {
-      return window.alert('Please add a Title to your dashboard')
-    }
-    let allChartsSaved = true
-    _.toArray(dashboard.charts).forEach(chart => {
-      if (!chart.title || chart.title === 'Untitled Chart') {
-       return allChartsSaved = false
-      }
-      this.saveChart(chart)
-    })
-    if (!allChartsSaved) {
-      return window.alert('Please title all of your charts')
-    }
-
-    const query = {
-      id: this.props.dashboard_id || null,
-      title: dashboard.title,
-      chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
-    }
-    DashboardActions.postDashboard(query)
-  },
-
-  saveChart (chart) {
-    console.info('- Dashboard.saveChart')
-    if (!chart.title || chart.title === 'Untitled Chart') {
-      return window.alert('Please add a Title to your chart')
-    }
-    ChartActions.postChart({
-      id: chart.id,
-      title: chart.title,
-      uuid: chart.uuid,
-      chart_json: JSON.stringify({
-        type: chart.type,
-        start_date: chart.start_date,
-        end_date: chart.end_date,
-        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
-        location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
-      })
-    })
   },
 
   render () {
@@ -131,7 +86,7 @@ const Dashboard = React.createClass({
             toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
             toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
             removeChart={DashboardPageActions.removeChart}
-            saveChart={this.saveChart}
+            saveChart={() => DashboardPageActions.saveChart(chart.uuid)}
             setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
             setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
             setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
@@ -161,7 +116,12 @@ const Dashboard = React.createClass({
             { title_bar }
           </div>
           <div className='medium-6 columns medium-text-right small-text-center'>
-            <button className='button' onClick={this.saveDashboard}>Save Dashboard</button>
+            <AsyncButton
+              text='Save Dashboard'
+              alt_text='Saving ...'
+              isBusy={dashboard.saving}
+              onClick={() => DashboardPageActions.saveDashboard(this.props.dashboard_id)}
+            />
           </div>
         </header>
         { loading ? <Placeholder height={600} /> : chart_components}
