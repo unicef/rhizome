@@ -549,7 +549,7 @@ TODO - Needs documentation
 ``/api/v1/chart_type/``
 +++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.chart_type.ChartTypeResource
 
 ``/api/v1/computed_datapoint/``
 +++++++++++++++++++++++++++++++
