@@ -261,8 +261,10 @@ var DashboardPageStore = Reflux.createStore({
   onSetGroupBy (grouping, uuid) { // console.info('- Store.onSetGroupBy')
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].groupBy = grouping
-    this.dashboard.charts[uuid].selected_indicators = [this.dashboard.charts[uuid].selected_indicators[0]]
-    this.dashboard.charts[uuid].selected_locations = [this.dashboard.charts[uuid].selected_locations[0]]
+    const first_indicator = this.dashboard.charts[uuid].selected_indicators[0]
+    const first_location = this.dashboard.charts[uuid].selected_locations[0]
+    this.dashboard.charts[uuid].selected_indicators = first_indicator ? [first_indicator] : []
+    this.dashboard.charts[uuid].selected_locations = first_location ? [first_location] : []
     this.updateChart(uuid)
   },
   onSetDashboardTitle (title) { // console.info('- Store.onSetDashboardTitle')
