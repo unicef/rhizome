@@ -15,6 +15,11 @@ class AllMetaResult(object):
 
 
 class AllMetaResource(BaseNonModelResource):
+    '''
+    **GET Request** Returns all camapaigns, charts, dashboards, indicators,indicator_tags, locations and offices in the database.
+        - *Required Parameters:* 
+            none
+    '''
     campaigns = fields.ListField(attribute='campaigns')
     charts = fields.ListField(attribute='charts')
     dashboards = fields.ListField(attribute='dashboards')

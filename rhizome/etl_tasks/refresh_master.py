@@ -268,7 +268,6 @@ class MasterRefresh(object):
                 doc_dps = self.process_source_submission(row)
 
     def sync_datapoint(self, ss_id_list = None):
-
         dp_batch = []
 
         if not ss_id_list:
@@ -277,7 +276,6 @@ class MasterRefresh(object):
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
-
         if len(doc_dp_df) == 0:
             return
 
@@ -335,7 +333,6 @@ class MasterRefresh(object):
 
 
     def process_source_submission(self,row):
-
         doc_dp_batch = []
         submission  = row.submission_json
 
@@ -392,7 +389,6 @@ class MasterRefresh(object):
                 'source_submission_id': row.id,
                 'agg_on_location': True,
             })
-
             return doc_dp
         else:
             return None
@@ -405,7 +401,6 @@ class MasterRefresh(object):
         keep the size of the database manageable, we only accept non zero values.
         '''
         str_lookup = {'yes':1,'no':0}
-
         if val is None:
             return None
 
@@ -417,8 +412,6 @@ class MasterRefresh(object):
                 convert_percent =True
             except ValueError:
                 pass
-
-
         ## clean!  i am on a deadline rn :-/  ##
 
         locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
@@ -429,10 +422,12 @@ class MasterRefresh(object):
             cleaned_val = float(val)
         except ValueError:
             try:
-                cleaned_val = str_lookup[val.lower()]
-
-            except KeyError:
-                raise ValueError('Bad Value!')
+                cleaned_val = float(val)
+            except ValueError:
+                try:
+                    cleaned_val = str_lookup[val.lower()]
+                except KeyError:
+                    raise ValueError('Bad Value!')
 
         if convert_percent:
             cleaned_val = cleaned_val/100.0

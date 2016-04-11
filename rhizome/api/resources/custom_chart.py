@@ -6,6 +6,9 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import CustomChart
 
 class CustomChartResource(BaseModelResource):
+    '''
+    **GET Requests:** 
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
         queryset =  CustomChart.objects.all()
