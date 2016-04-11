@@ -86,8 +86,19 @@ class IndicatorCalculationResourceTest(ResourceTestCase):
 
         self.assertEqual(CalculatedIndicatorComponent.objects.count(), 0)
 
-    #GET function-- pass parameter indicator_id. If indicator ID is incorrect 
-    # or not included, will return 200 with an empty list.
+    def test_remove_calculation_wrong_id(self):
+
+        delete_url = '/api/v1/indicator_calculation/?id=' + str(123456)
+
+        resp = self.api_client.delete(delete_url, format='json', data={}, authentication=self.ts.get_credentials(self))
+        self.assertEqual(resp.status_code, 204)
+       
+    def test_remove_calculation_no_id(self):
+        delete_url = '/api/v1/indicator_calculation/'
+
+        resp = self.api_client.delete(delete_url, format='json', data={}, authentication=self.ts.get_credentials(self))
+        self.assertEqual(resp.status_code, 500)
+
     def test_get_calculation(self):
         ind = Indicator.objects.create(short_name='Test Indicator 1', \
                          name='Test Indicator for the Tag 1', \

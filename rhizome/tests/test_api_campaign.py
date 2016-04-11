@@ -68,8 +68,6 @@ class CampaignResourceTest(ResourceTestCase):
         ltr = LocationTreeCache()
         ltr.main()
 
-    #GET request: if there are no parameters, return all campaigns.
-    #if id__in is set, returns a list of campaigns. and 200 code
     def test_campaign_get(self):
 
         resp = self.ts.get(self, '/api/v1/campaign/')
@@ -85,7 +83,6 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 2)
 
-    #if id__in contains an invalid id, returns 200 with an empty list
     def test_campaign_get_id_list_invalid(self):
         data = {'id__in':12345}
         resp = self.ts.get(self, '/api/v1/campaign/', data=data)
@@ -100,16 +97,11 @@ class CampaignResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(self.can_see_campaign.name, response_data['name'])
 
-    #if an id is invalid for get_detail, 500 response
     def test_get_detail_invalid_id(self):
         detailURL = '/api/v1/campaign/12345/'
         resp = self.ts.get(self, detailURL)
         self.assertHttpApplicationError(resp)
 
-    #POST request requires fields: 'name','top_lvl_location_id',
-    #'top_lvl_indicator_tag_id', 'office_id','campaign_type_id',
-    #'start_date','end_date','pct_complete'
-    #Returns 201 
     def test_post_campaign(self):
         data={
             'name': 'something',
@@ -126,7 +118,6 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['name'], 'something')
 
-    #if any of the fields are missing, returns a 500 error
     def test_post_campaign_missing_field(self):
         data={
             'top_lvl_indicator_tag_id': self.it.id,
