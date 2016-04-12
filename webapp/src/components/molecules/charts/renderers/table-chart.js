@@ -177,14 +177,12 @@ class TableChartRenderer {
         'x': this.sourceFlow,
         'width': this.xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': '#F1F1F1' })
-      .transition().duration(500)
-      .style('opacity', 1)
+      .style({ 'opacity': 0 })
 
     sourceG.append('text')
       .attr({
         'height': this.yScale.rangeBand(),
-        'transform': `translate(${this.z}, ${this.h})`,
+        'transform': `translate(${this.z + 16}, ${this.h + 5})`,
         'x': d => this.sourceFlow(d) + this.options.cellHeight * 1.33,
         'y': this.options.cellHeight / 2,
         'width': this.xScale.rangeBand(),
