@@ -45,11 +45,11 @@ var MenuItem = React.createClass({
     }
   },
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({disabled: this.props.disabled})
   },
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate (nextProps, nextState) {
     if (this.props.disabled !== nextProps.disabled) {
       this.setState({disabled: nextProps.disabled})
     }
@@ -71,26 +71,21 @@ var MenuItem = React.createClass({
 
   render: function () {
     const props = this.props
-    var hasChildren = !props.filtered && _.isArray(props.children) && props.children.length > 0
-    var isLastParent = props.children && props.children.filter(child => child.children).length < 1
-    console.log('------------------------------------------------------')
-    console.log('isLastParent', isLastParent)
-    console.log('this.propsHideLastLevel', props.hideLastLevel)
+    const hasChildren = !props.filtered && _.isArray(props.children) && props.children.length > 0
+    const isLastParent = props.children && props.children.filter(child => child.children).length < 1
     const hideArrow = isLastParent && props.hideLastLevel
-    console.log('hideArrow', hideArrow)
-    var prefix = props.filtered ? _.get(this.props, 'ancestryString', '') : ''
-    var title = prefix + (props.displayTitle === null ? props.title : props.displayTitle)
+    const prefix = props.filtered ? _.get(this.props, 'ancestryString', '') : ''
+    const title = prefix + (props.displayTitle === null ? props.title : props.displayTitle)
 
     var children = null
     if (props.children && this.state.open) {
       children = props.children.map(item => {
-        return <MenuItem key={item.value} depth={props.depth+1} sendValue={props.sendValue} {...item} hideLastLevel={props.hideLastLevel}/>
+        return <MenuItem key={item.value} depth={props.depth + 1} sendValue={props.sendValue} {...item} hideLastLevel={props.hideLastLevel}/>
       })
     }
 
     var arrowStyle = {
       paddingLeft: this.state.filtered ? '5px' : (5 + (17 * props.depth)) + 'px',
-      textDecoration: this.state.disabled ? 'line-through' : null,
       display: 'inline-block'
     }
     const arrow_button = hasChildren ? (
@@ -99,13 +94,12 @@ var MenuItem = React.createClass({
       </a>
     ) : null
 
-    var itemStyle = {
-      textDecoration: this.state.disabled ? 'line-through' : null,
-      display: 'inline-block'
-    }
-    !hasChildren || hideArrow ?  itemStyle.paddingLeft = this.state.filtered ? '5px' : (15 + (18 * props.depth)) + 'px' : null
+    let itemStyle = { display: 'inline-block' }
+    let classes = this.state.disabled ? ' disabled ' : ''
+    classes += hasChildren ? 'folder' : ''
+    !hasChildren || hideArrow ? itemStyle.paddingLeft = this.state.filtered ? '5px' : (15 + (18 * props.depth)) + 'px' : null
     const item_button = (
-      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={hasChildren ? 'folder' : null} >
+      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={classes} >
         {title}
       </a>
     )

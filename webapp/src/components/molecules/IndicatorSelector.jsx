@@ -33,14 +33,22 @@ const IndicatorSelector = React.createClass({
   },
 
   getAvailableIndicators () {
-    const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
     const indicators_list = this.props.indicators.list
+    const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
     indicators_list.forEach(indicator_group => {
-      indicator_group.children.forEach(indicator => {
-        indicator.disabled = selected_ids.indexOf(indicator.id) > -1
-      })
+      this.markDisabledIndicators(indicator_group.children, selected_ids)
     })
     return indicators_list
+  },
+
+  markDisabledIndicators (items, selected_ids) {
+    items.forEach(item => {
+      item.disabled = selected_ids.indexOf(item.id) > -1
+      if (item.children && item.children.length > 0) {
+        this.markDisabledIndicators(item.children, selected_ids)
+      }
+    })
+    return items
   },
 
   render () {
