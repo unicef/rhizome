@@ -32,7 +32,8 @@ const Dashboard = React.createClass({
 
   getInitialState () {
     return {
-      titleEditMode: false
+      titleEditMode: false,
+      readOnlyMode: true
     }
   },
 
@@ -72,7 +73,12 @@ const Dashboard = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
+  _toggleReadOnlyMode (title) {
+    this.setState({readOnlyMode: !this.state.readOnlyMode})
+  },
+
   render () {
+    const readOnlyMode = this.state.readOnlyMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(dashboard.charts)
     console.info('Dashboard.RENDER ========================================== Charts:', charts)
@@ -80,15 +86,14 @@ const Dashboard = React.createClass({
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
       <h1 onClick={this._toggleTitleEdit}>
-        <a>
-          {dashboard.title || 'Untitled Dashboard'}
-        </a>
+        <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
     const chart_components = charts.map(chart => (
         <div className='row'>
           <MultiChart
             chart={chart}
+            readOnlyMode={readOnlyMode}
             linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
             duplicateChart={DashboardPageActions.duplicateChart}
             selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
@@ -117,34 +122,44 @@ const Dashboard = React.createClass({
         </div>
       )
     )
+
+    const save_dashboard_button = !readOnlyMode ? (
+      <AsyncButton
+        text='Save Dashboard'
+        alt_text='Saving ...'
+        isBusy={dashboard.saving}
+        onClick={() => DashboardPageActions.saveDashboard(this.props.dashboard_id)}
+      />
+    ) : null
+
+    const add_chart_button = loading || !readOnlyMode ? (
+      <div className='row text-center'>
+        <button
+          className='button large'
+          onClick={DashboardPageActions.addChart}
+          style={{marginTop: '1rem'}}>
+          Add Chart
+        </button>
+      </div>
+    ) : null
+
     const loading = !charts.length > 0
+
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
           <div className='medium-6 columns medium-text-left small-text-center'>
-            { title_bar }
+            { !readOnlyMode ? title_bar : <h1>{dashboard.title || 'Untitled Dashboard'}</h1> }
           </div>
           <div className='medium-6 columns medium-text-right small-text-center'>
-            <AsyncButton
-              text='Save Dashboard'
-              alt_text='Saving ...'
-              isBusy={dashboard.saving}
-              onClick={() => DashboardPageActions.saveDashboard(this.props.dashboard_id)}
-            />
+            { save_dashboard_button }
+            <button className='button' onClick={this._toggleReadOnlyMode}>
+              { readOnlyMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
+            </button>
           </div>
         </header>
         { loading ? <Placeholder height={600} /> : chart_components}
-        { loading ? null : (
-            <div className='row text-center'>
-              <button
-                className='button large'
-                onClick={DashboardPageActions.addChart}
-                style={{marginTop: '1rem'}}>
-                Add Chart
-              </button>
-            </div>
-          )
-        }
+        { add_chart_button }
       </section>
     )
   }
