@@ -15,7 +15,6 @@ before_script:
 script:
 - python manage.py test --settings=rhizome.settings.test
 - cd webapp && gulp build && gulp mocha
->>>>>>> encrypted keys in file
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 deploy:
   provider: codedeploy
