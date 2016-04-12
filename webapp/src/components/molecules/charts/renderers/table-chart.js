@@ -13,7 +13,7 @@ class TableChartRenderer {
     this.data = data
     this.h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     this.z = 160 //  extra margin space needed to add the "z" (parent) axis
-    this.w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
+    this.w = 3.5 * Math.max(options.headers.length * options.cellHeight, 0)
     this.xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
     this.xDomain = this.xDomainProvided ? options.xDomain : options.headers.map(ind => ind.short_name)
     this.xScale = d3.scale.ordinal().domain(this.xDomain).rangeBands([0, this.w], 0.1)
@@ -131,7 +131,6 @@ class TableChartRenderer {
       .call(d3.svg.axis().scale(this.xScale).orient('top').outerTickSize(0))
     this.svg.selectAll('.x.axis text').on('click', (d, i) => this.onSetSort(d, i))
     this.svg.selectAll('.x.axis text')
-      .attr({'transform': 'rotate(-45)'})
       .call(this.wrap, this.xScale.rangeBand())
   }
 
