@@ -25,6 +25,7 @@ class LineChart extends HighChart {
         }
       },
       tooltip: {
+        xDateFormat: '%b %d',
         pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format)
           return `${this.series.name}: <b>${value}</b><br/>`
