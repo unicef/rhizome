@@ -1,6 +1,5 @@
-# cd webapp &&
-# npm install &&
-# # npm run package &&
+cd webapp &&
+npm install &&
 mkdir -p ~/deploy/rhizome-work &&
 mv dist/rhizome.zip ~/deploy/rhizome-work/rhizome.zip &&
 cd ~/deploy/rhizome-work &&
