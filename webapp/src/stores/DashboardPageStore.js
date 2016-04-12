@@ -396,10 +396,11 @@ var DashboardPageStore = Reflux.createStore({
       this.dashboard.charts[uuid].data = []
       return this.trigger(this.dashboard)
     }
-    this.dashboard.charts[uuid].datapoints = datapoints
-    this.dashboard.charts[uuid].data = datapoints.raw
-    this.dashboard.charts[uuid].parent_location_map = _.indexBy(datapoints.meta.parent_location_map, 'name')
-    this.dashboard.charts[uuid].default_sort_order = datapoints.meta.default_sort_order
+    const chart_datapoints = Object.assign({}, datapoints)
+    this.dashboard.charts[uuid].datapoints = chart_datapoints
+    this.dashboard.charts[uuid].data = chart_datapoints.raw
+    this.dashboard.charts[uuid].parent_location_map = _.indexBy(chart_datapoints.meta.parent_location_map, 'name')
+    this.dashboard.charts[uuid].default_sort_order = chart_datapoints.meta.default_sort_order
     this.dashboard.charts[uuid].loading = false
     this.dashboard.charts[uuid].fetching = false
     this.dashboard.charts[uuid].locations_index = this.locations.index
