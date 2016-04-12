@@ -94,13 +94,12 @@ var MenuItem = React.createClass({
       </a>
     ) : null
 
-    var itemStyle = {
-      textDecoration: this.state.disabled ? 'line-through' : null,
-      display: 'inline-block'
-    }
+    let itemStyle = { display: 'inline-block' }
+    let classes = this.state.disabled ? ' disabled ' : ''
+    classes += hasChildren ? 'folder' : ''
     !hasChildren || hideArrow ? itemStyle.paddingLeft = this.state.filtered ? '5px' : (15 + (18 * props.depth)) + 'px' : null
     const item_button = (
-      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={hasChildren ? 'folder' : null} >
+      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={classes} >
         {title}
       </a>
     )
