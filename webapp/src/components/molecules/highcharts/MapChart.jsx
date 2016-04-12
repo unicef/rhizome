@@ -20,7 +20,13 @@ class MapChart extends HighChart {
   }
 
   setSeries () {
+    const self = this
     const currentIndicator = this.props.selected_indicators[0]
+    const currentLocation = this.props.selected_locations[0]
+    let locationNames = {}
+    this.props.datapoints.meta.chart_data.forEach(datapoint => {
+      locationNames[datapoint.location_id] = self.props.locations_index[datapoint.location_id].name
+    })
     return [{
       data: this.props.datapoints.meta.chart_data,
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
@@ -33,7 +39,8 @@ class MapChart extends HighChart {
       },
       tooltip: {
         pointFormatter: function(){
-          return "<span><b>" + format.autoFormat(this.value, currentIndicator.data_format) + "</b></span>"
+          return ("<span><b>" + format.autoFormat(this.value, currentIndicator.data_format) +
+                  "</b></span><br>" + locationNames[this.location_id])
         }
       }
     }]

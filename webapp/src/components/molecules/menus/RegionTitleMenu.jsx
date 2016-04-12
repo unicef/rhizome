@@ -8,7 +8,8 @@ var RegionTitleMenu = React.createClass({
   propTypes: {
     locations: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired
+    sendValue: React.PropTypes.func.isRequired,
+    hideLastLevel: React.PropTypes.bool
   },
 
   getInitialState () {
@@ -44,9 +45,7 @@ var RegionTitleMenu = React.createClass({
     })
 
     if (pattern.length > 2) {
-      locations = locations.filter(r => {
-        return new RegExp(pattern, 'i').test(r.title)
-      })
+      locations = locations.filter(r => new RegExp(pattern, 'i').test(r.title))
     } else {
       var idx = _.indexBy(locations, 'value')
       locations = []
@@ -67,9 +66,13 @@ var RegionTitleMenu = React.createClass({
   },
 
   render () {
-    var locations = this._buildLocations(this.props.locations, this.state.pattern)
-    var menu_item_components = MenuItem.fromArray(_.sortBy(locations, 'title'), this.props.sendValue)
-    const selected_text = !this.props.selected.id && locations.length > 0 ? 'Select Location' : this.props.selected.name
+    const props = this.props
+    const locations = this._buildLocations(props.locations, this.state.pattern)
+    const sorted_locations = _.sortBy(locations, 'title')
+    const selected_text = !props.selected.id && locations.length > 0 ? 'Select Location' : props.selected.name
+    const menu_items = sorted_locations.map(location => {
+      return <MenuItem key={location.value} sendValue={props.sendValue} {...location} hideLastLevel={props.hideLastLevel}/>
+    })
 
     return (
       <TitleMenu
@@ -78,7 +81,7 @@ var RegionTitleMenu = React.createClass({
         text={selected_text}
         searchable
         onSearch={this._setPattern}>
-        {menu_item_components}
+        {menu_items}
       </TitleMenu>
     )
   }
