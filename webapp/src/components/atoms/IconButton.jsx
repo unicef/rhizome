@@ -31,7 +31,8 @@ var IconButton = React.createClass({
   },
 
   showTooltip: function (event) {
-     if (typeof this.props.text === 'undefined' || this.props.text === null) return
+    if (typeof this.props.text === 'undefined' || this.props.text === null) return
+
 
     let render = () => {
       return <Tooltip left={event.pageX} top={event.pageY}>{ this.props.isBusy ? this.props.alt_text : this.props.text}</Tooltip>

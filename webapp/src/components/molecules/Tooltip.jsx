@@ -23,9 +23,10 @@ var Tooltip = React.createClass({
 
   render: function () {
     var position = {}
+    const againstWindowEdge = document.body.clientWidth - this.props.left < 50
 
     if (this.state.align === 'left') {
-      position.left = this.props.left
+      position.left = againstWindowEdge ? this.props.left - 50 : this.props.left
     } else {
       position.right = document.body.clientWidth - this.props.left
     }
