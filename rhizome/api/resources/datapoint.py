@@ -28,7 +28,16 @@ class ResultObject(object):
 
 class DatapointResource(BaseNonModelResource):
     '''
-    This is the class that coincides with the /api/v1/datapoint endpoint.
+    - **GET Requests:**
+        - *Required Parameters:*
+            'indicator__in' A comma-separated list of indicator IDs to fetch. By default, all indicators
+        - *Optional Parameters:*
+            'location__in' A comma-separated list of location IDs
+            'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
+            'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
+            'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
+    - **Errors:**
+        - 
     '''
 
     error = None

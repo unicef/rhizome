@@ -8,9 +8,21 @@ import json
 
 class CustomDashboardResource(BaseModelResource):
     '''
-    **GET Requests:**
-        -
-    **POST Requests:**
+    **GET Requests:** Get a dashboard. If no params are passed, returns all the dashboards
+        - *Optional Parameters:*
+            'id'
+    **GET Request get detail:**
+        - to access a specific chart, send a get request to /api/v1/custom_dashboard/<dashboard_id>/
+    **POST Requests:** Create a dashboard
+        - *Required Parameters:*
+            'title'
+        - *Optional Parameters:*
+            'chart_uuids': this associates the given chart() with a dashboard
+        - *Errors:*
+            If a title is not supplied. The API will return a 500 error.
+    **DELETE Requests:** There are two ways to submit a delete request to API
+        - to delete a resource, HTTP delete request to /api/v1/custom_dashboard/<dashboard_id>/
+        - or delete request to /api/v1/custom_dashboard/ with param 'id'
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_dashboard'
@@ -107,11 +119,8 @@ class CustomDashboardResource(BaseModelResource):
         CustomDashboard.objects.get(id=kwargs['pk']).delete()
 
     def get_object_list(self, request):
-        '''
-        '''
-
-        try:
+        if 'id' in request.GET:
             dash_id = request.GET['id']
             return CustomDashboard.objects.filter(id=dash_id).values()
-        except KeyError:
+        else:
             return CustomDashboard.objects.all().values()

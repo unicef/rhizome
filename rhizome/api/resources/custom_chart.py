@@ -7,7 +7,6 @@ from rhizome.models import CustomChart,ChartToDashboard
 
 class CustomChartResource(BaseModelResource):
     '''
-    Create, retrieve, or delete a chart resource object
     **GET Requests:** returns charts from the API. If no parameters are given, returns all the charts
         - *Optional Parameters:* 
             'id' -- returns the chart with the given id
@@ -20,7 +19,7 @@ class CustomChartResource(BaseModelResource):
     **POST Requests:**
         - *Required Parameters:* 
             'uuid', 'title', 'chart_json'
-        -*Errors:*
+        - *Errors:*
             If any of the required parameters are missing, the API returns a 500 error
 
     '''

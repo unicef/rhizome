@@ -10,6 +10,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 from rhizome.cache_meta import LocationTreeCache
 
 class DataPointResourceTest(ResourceTestCase):
+
     def setUp(self):
         super(DataPointResourceTest, self).setUp()
 

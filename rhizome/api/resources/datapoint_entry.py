@@ -15,7 +15,21 @@ from rhizome.api.serialize import CustomJSONSerializer
 from rhizome.models import Campaign, Location, Indicator, DataPointEntry, DataPoint
 
 class DatapointEntryResource(BaseModelResource):
+    '''
+    **GET Request:**
+        - *Required Parameters:*
+            'campaign__in' A list of campaign ids
+            'indicator__in' A list of indicator ids
+        - *Errors:*
+            if a campaign or indicator id is invalid, the API will return a 500 status code
+    **POST Request:** Create a new datapoint or update an existing one. 
+        - *Required Parameters:*
+            'campaign_id'
+            'location_id'
+            'indicator_id'
+            'value'
 
+    '''
     required_keys = [
         # 'datapoint_id',
         'indicator_id', 'location_id',
@@ -119,41 +133,29 @@ class DatapointEntryResource(BaseModelResource):
             self.validate_object(bundle.data)
 
             # Determine what kind of request this is: create, update, or delete
-
             # throw error if can't get a real user id
             user_id = self.get_user_id(bundle)
             if user_id is None:
                 raise InputException(0, 'Could not get User ID from cookie')
-            print("here")
             existing_datapoint = self.get_existing_datapoint(bundle.data)
-
             if existing_datapoint is not None:
 
                 bundle.response = self.success_response() ##?
                 return self.obj_update(bundle, **{'id': existing_datapoint.id})
 
             else: # CREATE
-
                 data_to_insert = bundle.data
                 # find the campaign object from the parameter
                 campaign_obj = Campaign.objects.get(id=int(\
                     data_to_insert['campaign_id']))
-
                 ## create the dictionary used to insert into datapoint ##
                 data_to_insert['data_date'] = campaign_obj.start_date
                 data_to_insert['source_submission_id'] = -1 # data_entry
                 data_to_insert['cache_job_id'] = -1 # to process
-                data_to_insert['cache_job_id'] = -1 # to process
-
-                ## remove campaign id from dict to insert
-                data_to_insert.pop('campaign_id',None)
-
                 ## insert into datpaoint table ##
                 bundle.obj = DataPoint.objects.create(**data_to_insert)
-
                 bundle.data['id'] = bundle.obj.id
                 bundle.obj.campaign_id = campaign_obj.id
-
                 return bundle
 
         except Exception, e:
