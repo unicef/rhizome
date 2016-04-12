@@ -559,7 +559,7 @@ TODO - Needs documentation
 ``/api/v1/custom_chart/``
 +++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.custom_chart.CustomChartResource
 
 ``/api/v1/datapointentry/``
 +++++++++++++++++++++++++++
