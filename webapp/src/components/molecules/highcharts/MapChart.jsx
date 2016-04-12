@@ -8,6 +8,7 @@ class MapChart extends HighChart {
     this.config = {
       mapNavigation: {
         enabled: true,
+        enableMouseWheelZoom: false,
         buttonOptions: {
           verticalAlign: 'bottom'
         }
