@@ -12,9 +12,7 @@ class Chart extends Component {
   }
 
   componentDidMount () {
-    console.info('------ Chart.componentDidMount')
     this.container = React.findDOMNode(this)
-    console.log('this.props.data', this.props.data)
     this.setData()
     this.setOptions()
     if (this.options.type === 'TableChart') {
@@ -26,7 +24,6 @@ class Chart extends Component {
   }
 
   componentDidUpdate () {
-    console.info('------ Chart.componentDidUpdate')
     this.options = _.defaults({}, this.props, this.options)
     this.setData()
     this.setOptions()
@@ -34,12 +31,10 @@ class Chart extends Component {
   }
 
   setData () {
-    console.info('------ Chart.setData')
     this.data = this.props.data
   }
 
   setOptions () {
-    console.info('------ Chart.setOptions')
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
@@ -47,7 +42,6 @@ class Chart extends Component {
   }
 
   render () {
-    console.info('------ Chart.render')
     return (
       <svg></svg>
     )

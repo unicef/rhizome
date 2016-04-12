@@ -81,7 +81,6 @@ const Dashboard = React.createClass({
     const readOnlyMode = this.state.readOnlyMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(dashboard.charts)
-    console.info('Dashboard.RENDER ========================================== Charts:', charts)
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :

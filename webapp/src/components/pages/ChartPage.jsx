@@ -29,13 +29,13 @@ const ChartPage = React.createClass({
     chart_id: PropTypes.number
   },
 
-  getInitialState () { console.log('ChartPage.getInitialState')
+  getInitialState () {
     return {
       titleEditMode: false
     }
   },
 
-  componentDidMount () { console.log('ChartPage.componentDidMount')
+  componentDidMount () {
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
@@ -54,7 +54,7 @@ const ChartPage = React.createClass({
     })
   },
 
-  shouldComponentUpdate(nextProps, nextState) { console.log('ChartPage.shouldComponentUpdate')
+  shouldComponentUpdate(nextProps, nextState) {
     const charts = _.toArray(nextState.dashboard.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
@@ -62,8 +62,7 @@ const ChartPage = React.createClass({
     return !this.missing_data || this.missing_params || this.loading_charts
   },
 
-  saveChart (chart) { console.log('ChartPage.saveChart')
-    console.info('- Dashboard.saveChart')
+  saveChart (chart) {
     if (!chart.title || chart.title === 'Untitled Chart') {
       return window.alert('Please add a Title to your chart')
     }
@@ -82,7 +81,7 @@ const ChartPage = React.createClass({
     })
   },
 
-  render () { console.log('ChartPage.render')
+  render () {
     const loading = !this.state.dashboard.charts.length > 0
     const chart = _.toArray(this.state.dashboard.charts)[0]
 
