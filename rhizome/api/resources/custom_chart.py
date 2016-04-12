@@ -3,11 +3,25 @@ import json
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import CustomChart
+from rhizome.models import CustomChart,ChartToDashboard
 
 class CustomChartResource(BaseModelResource):
     '''
-    **GET Requests:** 
+    Create, retrieve, or delete a chart resource object
+    **GET Requests:**
+        - *Required Parameters:* 
+            'id'
+        - *Errors:*
+            If an invalid id is passed, the API returns an empty list of objects and a status code of 200
+    **DELETE Requests:**
+        - *Required Parameters:* 
+            'id'
+    **POST Requests:**
+        - *Required Parameters:* 
+            'uuid', 'title', 'chart_json'
+        -*Errors:*
+            If any of the required parameters are missing, the API returns a 500 error
+
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
@@ -67,8 +81,10 @@ class CustomChartResource(BaseModelResource):
 
         try:
             dashboard_id = request.GET['dashboard_id']
-            chart_id_list = CustomChart.objects\
-                .filter(dashboard_id=dashboard_id).values_list('id', flat=True)
+            chart_id_list = ChartToDashboard.objects\
+                .filter(dashboard_id=dashboard_id).values_list('chart_id', flat=True)
+            print 'chart_id_list'
+            print chart_id_list
         except KeyError:
             pass
 
