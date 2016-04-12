@@ -18,7 +18,8 @@ const LocationSelector = React.createClass({
     deselectLocation: PropTypes.func,
     clearSelectedLocations: PropTypes.func,
     classes: PropTypes.string,
-    multi: PropTypes.bool
+    multi: PropTypes.bool,
+    hideLastLevel: React.PropTypes.bool // Don't show any locations if they have no sub locations themselves
   },
 
   getDefaultProps() {
@@ -77,6 +78,7 @@ const LocationSelector = React.createClass({
             locations={locations}
             selected={this.props.selected_locations[0]}
             sendValue={this.props.setLocations}
+            hideLastLevel={this.props.hideLastLevel}
           />
           <br/>
         </div>

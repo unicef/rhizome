@@ -122,6 +122,7 @@ const MultiChartControls = React.createClass({
         clearSelectedLocations={this.props.clearSelectedLocations}
         classes={multiLocation && !groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiLocation || groupByIndicator}
+        hideLastLevel={chart.type === 'MapChart'}
       />
     )
 
