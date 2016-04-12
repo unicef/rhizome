@@ -46,6 +46,12 @@ const ChartPage = React.createClass({
         }
       }
     })
+    this.listenTo(ChartActions.postChart.completed, (response) => {
+      if (!this.props.chart_id) {
+        const chart_id = response.objects.id
+        window.location = window.location.origin + '/charts/' + chart_id
+      }
+    })
   },
 
   shouldComponentUpdate(nextProps, nextState) { console.log('ChartPage.shouldComponentUpdate')
@@ -87,7 +93,7 @@ const ChartPage = React.createClass({
           linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
           toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
           toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
-          saveChart={this.saveChart}
+          saveChart={() => this.saveChart(chart)}
           setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
           setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
           setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}

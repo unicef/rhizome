@@ -50,6 +50,11 @@
 						}
 					}
 				}
+				a[role="menuitem"]:hover {
+					background: none;
+					font-family: proxima-bold;
+					color: initial;
+				}
 			}
 		}
 

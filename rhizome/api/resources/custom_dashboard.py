@@ -7,6 +7,11 @@ from rhizome.models import CustomDashboard, CustomChart, ChartToDashboard
 import json
 
 class CustomDashboardResource(BaseModelResource):
+    '''
+    **GET Requests:**
+        -
+    **POST Requests:**
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_dashboard'
         filtering = {

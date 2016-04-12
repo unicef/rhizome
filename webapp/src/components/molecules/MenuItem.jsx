@@ -69,10 +69,8 @@ var MenuItem = React.createClass({
 
   render: function () {
     var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0
-    var itemStyle = {
-      paddingLeft: this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px',
-      textDecoration: this.state.disabled ? 'line-through' : null
-    }
+    var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
+    var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
 
     var children = null
     if (this.props.children && this.state.open) {
@@ -82,24 +80,32 @@ var MenuItem = React.createClass({
         this.props.depth + 1)
     }
 
-    var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
-    var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
+    var arrowStyle = {
+      paddingLeft: this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px',
+      textDecoration: this.state.disabled ? 'line-through' : null,
+      display: 'inline-block'
+    }
+    const arrow_button = hasChildren ? (
+      <a onClick={this._toggleChildren} className={hasChildren ? 'folder' : null} style={arrowStyle}>
+        <i className={'fa fa-lg fa-fw fa-caret-' + (this.state.open ? 'down' : 'right')}></i>
+      </a>
+    ) : null
+
+    var itemStyle = {
+      textDecoration: this.state.disabled ? 'line-through' : null,
+      display: 'inline-block'
+    }
+    !hasChildren ?  itemStyle.paddingLeft = this.state.filtered ? '5px' : (15 + (18 * this.props.depth)) + 'px' : null
+    const item_button = (
+      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={hasChildren ? 'folder' : null} >
+        {title}
+      </a>
+    )
+
     return (
       <li className={this.props.classes}>
-        <a
-          role='menuitem'
-          onClick={this._handleClick}
-          style={itemStyle}
-          className={hasChildren ? 'folder' : null}
-          tabIndex='-1'>
-
-          <i
-            className={'fa fa-lg fa-fw ' + (this.state.open ? 'fa-caret-down' : 'fa-caret-right')}
-            onClick={this._toggleChildren}></i>
-
-          {title}
-        </a>
-
+        { arrow_button }
+        { item_button }
         <div>
           {children}
         </div>
