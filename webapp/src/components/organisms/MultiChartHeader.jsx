@@ -42,6 +42,17 @@ const MultiChartHeader = React.createClass({
       <IconButton onClick={() => props.duplicateChart(chart.uuid)} icon='fa-copy' text='Duplicate' />
     ) : null
 
+    if (props.readOnlyMode) {
+      return (
+        <header className='row'>
+          <div className='medium-12 columns chart-header chart-actions text-center'>
+            <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' className='right'/>
+            <h2>{chart.title || 'Untitled Chart'}</h2>
+          </div>
+        </header>
+      )
+    }
+
     return (
       <header className='row'>
         <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>

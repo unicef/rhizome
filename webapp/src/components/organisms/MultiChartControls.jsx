@@ -147,7 +147,7 @@ const MultiChartControls = React.createClass({
         { group_by_selector }
         { location_selector }
         { indicator_selector }
-        { palette_selector }
+        { !this.props.readOnlyMode ? palette_selector : null }
       </div>
     )
   }
