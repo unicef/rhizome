@@ -45,5 +45,4 @@ class MapChart extends HighChart {
   }
 }
 
-                  // "</b></span><br>" + location_names[this.location_id])
 export default MapChart
