@@ -8,9 +8,10 @@ from rhizome.models import CustomChart,ChartToDashboard
 class CustomChartResource(BaseModelResource):
     '''
     Create, retrieve, or delete a chart resource object
-    **GET Requests:**
-        - *Required Parameters:* 
-            'id'
+    **GET Requests:** returns charts from the API. If no parameters are given, returns all the charts
+        - *Optional Parameters:* 
+            'id' -- returns the chart with the given id
+            'dashboard_id' -- returns a chart associated with the given dashboard id
         - *Errors:*
             If an invalid id is passed, the API returns an empty list of objects and a status code of 200
     **DELETE Requests:**
@@ -76,7 +77,6 @@ class CustomChartResource(BaseModelResource):
         CustomChart.objects.filter(id=obj_id).delete()
 
     def get_object_list(self, request):
-
         chart_id_list = []
         if 'dashboard_id' in request.GET:
             try:
@@ -85,7 +85,7 @@ class CustomChartResource(BaseModelResource):
                     .filter(dashboard_id=dashboard_id).values_list('chart_id', flat=True)
             except KeyError:
                 pass
-        elif 'id' in request.GET['id']:
+        elif 'id' in request.GET:
             try:
                 chart_id_list = [request.GET['id']]
             except KeyError:

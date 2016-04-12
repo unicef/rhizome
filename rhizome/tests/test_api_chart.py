@@ -81,6 +81,21 @@ class ChartResourceTest(ResourceTestCase):
         self.assertEqual(len(resp_data['objects']), 1)
         self.assertEqual(resp_data['objects'][0]['title'], title)
 
+    def test_chart_get_all(self):
+        c1 = CustomChart.objects.create(title='chart 1',\
+            chart_json={'hello': 'world'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        c2 = CustomChart.objects.create(title='chart 2',\
+            chart_json={'goodnight': 'moon'},
+            uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data={},
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(resp_data['objects']), 2)
+
+
     def test_chart_get_invalid_id(self):
         title = 'awesome chart 2'
         c1 = CustomChart.objects.create(title=title,\
