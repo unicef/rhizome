@@ -129,9 +129,9 @@ var ExportIcon = React.createClass({
     return (
       <span style={{position: 'relative', top: '1px', left: '4px'}}>
         <DropdownIcon classes={classString} searchable={false} icon='fa-external-link' text='Export'>
-          <MenuItem key='jpeg' value='jpeg' title='IMAGE' sendValue={this.selectOption} />
-          <MenuItem key='pdf' value='pdf'  title='PDF' sendValue={this.selectOption} />
-          <MenuItem key='csv' value='csv'  title='CSV' sendValue={this.selectOption} />
+          <MenuItem key='jpeg' value='jpeg' title='Export as IMAGE' sendValue={this.selectOption} />
+          <MenuItem key='pdf' value='pdf'  title='Export as PDF' sendValue={this.selectOption} />
+          <MenuItem key='csv' value='csv'  title='Export as CSV' sendValue={this.selectOption} />
         </DropdownIcon>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
       </span>
