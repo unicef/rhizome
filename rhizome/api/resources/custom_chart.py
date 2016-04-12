@@ -78,23 +78,19 @@ class CustomChartResource(BaseModelResource):
     def get_object_list(self, request):
 
         chart_id_list = []
-
-        try:
-            dashboard_id = request.GET['dashboard_id']
-            chart_id_list = ChartToDashboard.objects\
-                .filter(dashboard_id=dashboard_id).values_list('chart_id', flat=True)
-            print 'chart_id_list'
-            print chart_id_list
-        except KeyError:
-            pass
-
-        try:
-            chart_id_list = [request.GET['id']]
-        except KeyError:
-            pass
-
-        if len(chart_id_list) == 0:
+        if 'dashboard_id' in request.GET:
+            try:
+                dashboard_id = request.GET['dashboard_id']
+                chart_id_list = ChartToDashboard.objects\
+                    .filter(dashboard_id=dashboard_id).values_list('chart_id', flat=True)
+            except KeyError:
+                pass
+        elif 'id' in request.GET['id']:
+            try:
+                chart_id_list = [request.GET['id']]
+            except KeyError:
+                pass
+        else:
             return CustomChart.objects.all().values()
-
         return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()
