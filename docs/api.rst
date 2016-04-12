@@ -210,7 +210,7 @@ Response Format
 
 ``/api/v1/indicator/``
 ++++++++++++++++++++++
-
+.. autoclass:: rhizome.api.resources.campaign.CampaignResource
 .. autoclass:: rhizome.api.resources.indicator.IndicatorResource
 
 ``/api/v1/location/``
@@ -377,37 +377,7 @@ TODO - Needs documentation
 ``/api/v1/custom_dashboard/``
 +++++++++++++++++++++++++++++
 
-A list of custom dashboards, along with the JSON that allows the application
-to build the dashboard as well as owner information.
-
-*Permissions*
-
-the ``apply_cust_dashboard_permissions`` function is less of a permission filter
-than it is an opportunity for the API to add the data needed for the front end.
-Specifically that refers to the owned_by_current_user and owner_username fields.
-This function adds this information in addition to the data that comes
-directly from the model ( which in this case is CustomDashboard ).
-
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      default_office_id: <Number>,
-      description: <Text>,
-      title: <Text>,
-      dashboard_json: <json>
-      owned_by_current_user: <Boolean>,
-      owner_username: <Text>,
-      owner_id: <Number>,
-    }],
-
-    errors: {...}
-  }
-
+.. autoclass:: rhizome.api.resources.custom_dashboard.CustomDashboardResource
 
 ``/api/v1/group_permission/``
 +++++++++++++++++++++++++++++
