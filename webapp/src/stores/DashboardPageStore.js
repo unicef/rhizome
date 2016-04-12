@@ -22,6 +22,7 @@ class ChartState {
     this.type = 'RawData'
     this.title = ''
     this.data = null
+    this.datapoints = null
     this.data_format = 'pct'
     this.groupBy = 'indicator'
     this.palette = 'traffic_light'
