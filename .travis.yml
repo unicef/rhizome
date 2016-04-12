@@ -8,7 +8,9 @@ before_script:
 - cd webapp/ && npm install && npm install -g gulp && cd ..
 script:
 - python manage.py test --settings=rhizome.settings.test
-- cd webapp && gulp build && gulp mocha
+- cd webapp && gulp build && gulp mocha && cd ..
+after_script:
+- cd webapp && npm run package
 notifications:
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
 deploy:
