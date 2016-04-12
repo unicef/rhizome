@@ -128,7 +128,7 @@ var DashboardPageStore = Reflux.createStore({
   },
   _hideSelectChartMenu () {
     let menus = document.getElementsByClassName('menu')
-    for (let menu of menus) { menu.style.display = 'none' }
+    for (let menu of menus) { menu.parentNode.removeChild(menu) }
   },
   onDuplicateChart (chart_uuid) { // console.info('- Store.onDuplicateChart')
     const chart = this.dashboard.charts[chart_uuid]
