@@ -16,21 +16,23 @@ let EntryForm = React.createClass({
   },
 
   render () {
+    let sourceSelector = ''
+    // let sourceSelector = (<br/><br/>
+    //   <label htmlFor='source'><h3>Source</h3></label>
+    //   <DropdownMenu
+    //     items={this.state.sourceList}
+    //     sendValue={EntryFormActions.setSource}
+    //     value_field='id'
+    //     item_plural_name='Source'
+    //     text={this.state.selected.source.title}
+    //     icon=''
+    //     uniqueOnly/>)
+
     return (
       <div className='row'>
         <form>
           <div className='medium-2 columns'>
             <br />
-            <label htmlFor='source'><h3>Source</h3></label>
-            <DropdownMenu
-              items={this.state.sourceList}
-              sendValue={EntryFormActions.setSource}
-              value_field='id'
-              item_plural_name='Source'
-              text={this.state.selected.source.title}
-              icon=''
-              uniqueOnly/>
-            <br /><br />
             <label htmlFor='forms'><h3>Form</h3></label>
             <DropdownMenu
               items={this.state.tags}
@@ -41,7 +43,8 @@ let EntryForm = React.createClass({
               text={this.state.selected.form.title}
               icon=''
               uniqueOnly/>
-            <br /><br />
+              {sourceSelector}
+              <br /><br />
             <label htmlFor='campaigns'><h3>Campaign</h3></label>
             <DropdownMenu
               items={this.state.campaigns}
