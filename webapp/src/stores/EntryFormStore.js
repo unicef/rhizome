@@ -19,7 +19,6 @@ let EntryFormStore = Reflux.createStore({
     data: null,
     loaded: false,
     campaigns: [],
-    campaignNames: [],
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -33,7 +32,6 @@ let EntryFormStore = Reflux.createStore({
       locations: []
     },
     tags: [],
-    tagNames: [],
     includeSublocations: false,
     pagination: {
       total_count: 0
@@ -68,16 +66,13 @@ let EntryFormStore = Reflux.createStore({
         let tagResult = _(tags.objects)
           .map(tag => {
             return {
-              'value': tag.id,
-              'title': tag.tag_name
+              'id': tag.id,
+              'name': tag.tag_name
             }
           }).value()
         self.data.tags = tagResult
-        self.data.tagNames = _(tags.objects)
-          .map(tag => {
-            return tag.tag_name
-          }).value()
 
+        // CAMPAIGNS
         let campaignResult = _(campaigns.objects)
           .map(campaign => {
             return {
@@ -86,12 +81,8 @@ let EntryFormStore = Reflux.createStore({
             }
           }).value()
         self.data.campaigns = campaignResult
-        // map names
-        self.data.campaignNames = _(campaigns.objects)
-          .map(campaign => {
-            return campaign.name
-          }).value()
-        // locations
+
+        // LOCATIONS
         let locationResult = _(locations.objects)
           .map(location => {
             return {
@@ -114,7 +105,6 @@ let EntryFormStore = Reflux.createStore({
         self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
 
         // Sources
-
         self.data.sourceList = [
           {'id': 1, 'title': 'PEMT'},
           {'id': 2, 'title': 'ICM'},
@@ -162,14 +152,18 @@ let EntryFormStore = Reflux.createStore({
 
   onSetForm: function (formValue) {
     this.data.selected.form.value = formValue
-    this.data.selected.form.title = this.data.tagNames[formValue - 1]
+    this.data.selected.form.title = _.filter(this.data.tags, {value: formValue})[0].title
     this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaignId) {
+    console.log('campaignId', campaignId)
+    console.log('campaigns: ', this.data.campaigns)
+
     this.data.selected.campaign.value = campaignId
-    this.data.selected.campaign.title = this.data.campaignNames[campaignId - 1]
+    this.data.selected.campaign.title = this.data.camp
+    this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaignId})[0].name
     this._setCouldLoad()
     this.trigger(this.data)
   },
@@ -253,8 +247,6 @@ let EntryFormStore = Reflux.createStore({
 
     this.data.loaded = false
     this.trigger(this.data)
-
-    console.log('options: ', options)
 
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true

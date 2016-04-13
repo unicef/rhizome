@@ -14,20 +14,13 @@ let EntryForm = React.createClass({
   componentWillMount: function () {
     EntryFormActions.initData()
   },
+
   render () {
     return (
       <div className='row'>
         <form>
           <div className='medium-2 columns'>
             <br />
-            <label htmlFor='forms'><h3>Form</h3></label>
-            <DropdownMenu
-              items={this.state.tags}
-              sendValue={EntryFormActions.setForm}
-              item_plural_name='Forms'
-              text={this.state.selected.form.title}
-              icon=''/>
-            <br /><br />
             <label htmlFor='source'><h3>Source</h3></label>
             <DropdownMenu
               items={this.state.sourceList}
@@ -35,6 +28,17 @@ let EntryForm = React.createClass({
               value_field='id'
               item_plural_name='Source'
               text={this.state.selected.source.title}
+              icon=''
+              uniqueOnly/>
+            <br /><br />
+            <label htmlFor='forms'><h3>Form</h3></label>
+            <DropdownMenu
+              items={this.state.tags}
+              sendValue={EntryFormActions.setForm}
+              value_field='id'
+              title_field='name'
+              item_plural_name='Form'
+              text={this.state.selected.form.title}
               icon=''
               uniqueOnly/>
             <br /><br />
