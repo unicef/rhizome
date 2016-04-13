@@ -42,33 +42,17 @@ const MultiChartHeader = React.createClass({
       <IconButton onClick={() => props.duplicateChart(chart.uuid)} icon='fa-copy' text='Duplicate' />
     ) : null
 
-    if (props.readOnlyMode) {
-      return (
-        <header className='row'>
-          <div className='medium-12 columns chart-header chart-actions text-center'>
-            <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' className='right'/>
-            <h2>{chart.title || 'Untitled Chart'}</h2>
-          </div>
-        </header>
-      )
-    }
+    const show_options_button = (
+      <IconButton
+        onClick={props.toggleEditMode}
+        icon='fa-angle-double-left'
+        text='Show Options'
+        className={'chart-options-button ' + (chart.editMode ? 'hidden' : null) } />
+    )
 
     return (
       <header className='row'>
-        <div className='medium-4 large-3 medium-push-8 large-push-9 columns text-right chart-actions'>
-          <div className='hide-for-medium-up left'>
-            <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
-          </div>
-          <ExportIcon exportPath={'/charts/' + chart.id}/>
-          <IconButton isBusy={chart.saving} onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' alt_text='Saving ...'/>
-          { duplicate_button }
-          <IconButton onClick={props.toggleEditMode} icon='fa-gear' text='Show Options' />
-          { remove_button }
-        </div>
-        <div className='medium-8 large-9 medium-pull-4 large-pull-3 columns chart-header text-center'>
-          <div className='hide-for-small left'>
-            <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
-          </div>
+        <div className='medium-12 columns chart-header text-center'>
           {
             this.state.titleEditMode ?
             <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
@@ -79,6 +63,20 @@ const MultiChartHeader = React.createClass({
               </a>
             </h2>
           }
+         <div className='chart-actions'>
+            {
+              !props.readOnlyMode ?
+                <span className='animated fadeInRight'>
+                  <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
+                  <ExportIcon exportPath={'/charts/' + chart.id}/>
+                  <IconButton isBusy={chart.saving} onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' alt_text='Saving ...'/>
+                  { /* duplicate_button */ }
+                  { remove_button }
+                </span>
+              : null
+            }
+            { show_options_button }
+          </div>
         </div>
       </header>
     )
