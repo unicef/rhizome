@@ -33,7 +33,7 @@ const Dashboard = React.createClass({
   getInitialState () {
     return {
       titleEditMode: false,
-      readOnlyMode: true
+      readOnlyMode: this.props.dashboard_id ? true : false
     }
   },
 
