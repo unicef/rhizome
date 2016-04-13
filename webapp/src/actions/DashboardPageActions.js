@@ -9,6 +9,7 @@ const DashboardPageActions = Reflux.createActions({
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'toggleCampaignLink': 'toggleCampaignLink',
   'toggleEditMode': 'toggleEditMode',
+  'toggleChartEditMode': 'toggleChartEditMode',
   'toggleSelectTypeMode': 'toggleSelectTypeMode',
   // Dashboard Actions
   'setDashboardTitle': 'setDashboardTitle',
