@@ -62,7 +62,7 @@ const MultiChart = React.createClass({
     }
   },
 
-  render: function () {
+  render: function () { console.info('MultiChart - render '+ this.props.chart.title)
     const chart = this.props.chart
 
     const chart_selector = (

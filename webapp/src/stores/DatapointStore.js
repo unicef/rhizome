@@ -39,7 +39,7 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints () {
-    this.setState({ raw: null })
+    this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
   onFetchDatapointsCompleted (response) {
     this.setState({
@@ -58,7 +58,7 @@ var DatapointStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onClearDatapoints () {
-    this.setState({ meta: null, melted: null, raw: null })
+    this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
 
   // =========================================================================== //

@@ -66,7 +66,7 @@ var DashboardPageStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   // ===============================  Dashboard  =============================== //
-  onSetDashboardTitle: function (title) { // console.info('- Store.onSetDashboardTitle')
+  onSetDashboardTitle: function (title) {
     this.dashboard.title = title
     this.trigger(this.dashboard)
   },
@@ -109,14 +109,14 @@ var DashboardPageStore = Reflux.createStore({
   },
 
   // =================================  Charts  ================================ //
-  onAddChart: function () { // console.info('- Store.onAddChart')
+  onAddChart: function () {
     const new_chart = new ChartState()
     new_chart.uuid = uuid.v4()
     this.dashboard.charts[new_chart.uuid] = new_chart
     DashboardPageActions.setCampaigns(this.campaigns.raw[0], new_chart.uuid)
     this.trigger(this.dashboard)
   },
-  onSelectChart: function (chart, uuid) { // console.info('- Store.onSelectChart')
+  onSelectChart: function (chart, uuid) {
     this.trigger(this.dashboard)
     const new_chart = this.meltChart(chart)
     this.dashboard.charts[new_chart.uuid] = new_chart
@@ -129,7 +129,7 @@ var DashboardPageStore = Reflux.createStore({
     let menus = document.getElementsByClassName('menu')
     for (let menu of menus) { menu.parentNode.removeChild(menu) }
   },
-  onDuplicateChart: function (chart_uuid) { // console.info('- Store.onDuplicateChart')
+  onDuplicateChart: function (chart_uuid) {
     const chart = this.dashboard.charts[chart_uuid]
     const new_chart = Object.assign(new ChartState(), chart)
     new_chart.uuid = uuid.v4()
@@ -139,13 +139,13 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[new_chart.uuid] = new_chart
     this.trigger(this.dashboard)
   },
-  onRemoveChart: function (uuid) { // console.info('- Store.onRemoveChart')
+  onRemoveChart: function (uuid) {
     if (confirm('Are you sure you want to remove this chart?')) {
       delete this.dashboard.charts[uuid]
       this.trigger(this.dashboard)
     }
   },
-  onSaveChart: function (uuid) { // console.info('- Store.saveChart')
+  onSaveChart: function (uuid) {
     const chart = this.dashboard.charts[uuid]
     if (!chart.title) {
       return window.alert('Please add a Title to your chart')
@@ -168,7 +168,7 @@ var DashboardPageStore = Reflux.createStore({
   },
 
   // =============================  Indicators  ============================ //
-  onSetIndicators: function (indicators, uuid) { // console.info('- Store.onSetIndicators')
+  onSetIndicators: function (indicators, uuid) {
     this.toggleLoading(uuid)
     if (_.isNull(indicators)) {
       this.dashboard.charts[uuid].selected_indicators = []
@@ -179,29 +179,29 @@ var DashboardPageStore = Reflux.createStore({
     }
     this.updateChart(uuid)
   },
-  onSelectIndicator: function (id, uuid) { // console.info('- Store.onSelectIndicator')
+  onSelectIndicator: function (id, uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_indicators.push(this.indicators.index[id])
     this.updateChart(uuid)
   },
-  onDeselectIndicator: function (id, uuid) { // console.info('- Store.onDeselectIndicator')
+  onDeselectIndicator: function (id, uuid) {
     this.toggleLoading(uuid)
     _.remove(this.dashboard.charts[uuid].selected_indicators, {id: id})
     this.updateChart(uuid)
   },
-  onReorderIndicator: function (selected_indicators, uuid) { // console.info('- Store.onReorderIndicator')
+  onReorderIndicator: function (selected_indicators, uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_indicators = selected_indicators
     this.updateChart(uuid)
   },
-  onClearSelectedIndicators: function (uuid) { // console.info('- Store.onClearSelectedIndicators')
+  onClearSelectedIndicators: function (uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_indicators = []
     this.updateChart(uuid)
   },
 
   // =============================  Locations  ============================ //
-  onSetLocations: function (locations, uuid) { // console.info('- Store.onSetLocations')
+  onSetLocations: function (locations, uuid) {
     this.toggleLoading(uuid)
     if (_.isNull(locations)) {
       this.dashboard.charts[uuid].selected_locations = []
@@ -212,7 +212,7 @@ var DashboardPageStore = Reflux.createStore({
     }
     this.updateChart(uuid)
   },
-  onSelectLocation: function (id, uuid) { // console.info('- Store.onSelectLocation')
+  onSelectLocation: function (id, uuid) {
     this.toggleLoading(uuid)
     if (typeof id === 'string' && id.indexOf('lpd') > -1) {
       return this.addLocationsByLpdStatus(id, uuid)
@@ -230,19 +230,19 @@ var DashboardPageStore = Reflux.createStore({
     })
     this.updateChart(uuid)
   },
-  onDeselectLocation: function (id, uuid) { // console.info('- Store.onDeselectLocation')
+  onDeselectLocation: function (id, uuid) {
     this.toggleLoading(uuid)
     _.remove(this.dashboard.charts[uuid].selected_locations, {id: id})
     this.updateChart(uuid)
   },
-  onClearSelectedLocations: function (uuid) { // console.info('- Store.onClearSelectedLocations')
+  onClearSelectedLocations: function (uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_locations = []
     this.updateChart(uuid)
   },
 
   // =============================  Campaigns  ============================ //
-  onSetCampaigns: function (campaigns, uuid) { // console.info('- Store.onSetCampaigns')
+  onSetCampaigns: function (campaigns, uuid) {
     this.toggleLoading(uuid)
     if (this.dashboard.charts[uuid].linkedCampaigns) {
       _.toArray(this.dashboard.charts).forEach(chart => {
@@ -256,22 +256,22 @@ var DashboardPageStore = Reflux.createStore({
       this.updateChart(uuid)
     }
   },
-  onSelectCampaign: function (id, uuid) { // console.info('- Store.onSelectCampaign')
+  onSelectCampaign: function (id, uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_campaigns.push(this.campaigns.index[id])
     this.updateChart(uuid)
   },
-  onDeselectCampaign: function (id, uuid) { // console.info('- Store.onDeselectCampaign')
+  onDeselectCampaign: function (id, uuid) {
     this.toggleLoading(uuid)
     _.remove(this.dashboard.charts[uuid].selected_campaigns, {id: id})
     this.updateChart(uuid)
   },
-  onClearSelectedCampaigns: function (uuid) { // console.info('- Store.onClearSelectedCampaigns')
+  onClearSelectedCampaigns: function (uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].selected_campaigns = []
     this.updateChart(uuid)
   },
-  onToggleCampaignLink: function (uuid) { // console.info('- Store.onToggleCampaignLink')
+  onToggleCampaignLink: function (uuid) {
     this.toggleLoading(uuid)
     const current_chart = this.dashboard.charts[uuid]
     if (current_chart.linkedCampaigns) {
@@ -296,24 +296,24 @@ var DashboardPageStore = Reflux.createStore({
   },
 
   // ============================  Chart Properties =========================== //
-  onSetDateRange: function (key, value, uuid) { // console.info('- Store.onSetDateRange')
+  onSetDateRange: function (key, value, uuid) {
     this.toggleLoading(uuid)
     const full_key = key + '_date'
     this.dashboard.charts[uuid][full_key] = value
     this.updateChart(uuid)
   },
-  onSetType: function (type, uuid) { // console.info('- Store.onSetType')
+  onSetType: function (type, uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].type = type
     this.dashboard.charts[uuid].selectTypeMode = false
     this.updateChart(uuid)
   },
-  onSetPalette: function (palette, uuid) { // console.info('- Store.onSetPalette')
+  onSetPalette: function (palette, uuid) {
     this.dashboard.charts[uuid].palette = palette
     this.dashboard.charts[uuid].colors = palettes[palette]
     this.trigger(this.dashboard)
   },
-  onSetGroupBy: function (grouping, uuid) { // console.info('- Store.onSetGroupBy')
+  onSetGroupBy: function (grouping, uuid) {
     this.toggleLoading(uuid)
     this.dashboard.charts[uuid].groupBy = grouping
     const first_indicator = this.dashboard.charts[uuid].selected_indicators[0]
@@ -322,7 +322,7 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[uuid].selected_locations = first_location ? [first_location] : []
     this.updateChart(uuid)
   },
-  onSetChartTitle: function (title, uuid) { // console.info('- Store.onSetChartTitle')
+  onSetChartTitle: function (title, uuid) {
     this.dashboard.charts[uuid].title = title
     this.trigger(this.dashboard)
   },
@@ -331,10 +331,10 @@ var DashboardPageStore = Reflux.createStore({
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
   // =============================  Fetch Dashboard  =========================== //
-  onFetchDashboard: function (uuid) { // console.info('Store.onFetchDashboard')
+  onFetchDashboard: function (uuid) {
     this.trigger(this.dashboard)
   },
-  onFetchDashboardCompleted: function (response) { // console.info('Store.onFetchDashboardCompleted')
+  onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.title
     response.charts.forEach(chart => {
       const new_chart = this.meltChart(chart)
@@ -343,7 +343,7 @@ var DashboardPageStore = Reflux.createStore({
     })
     this.trigger(this.dashboard)
   },
-  onFetchDashboardFailed: function (error) { // console.info('Store.onFetchDashboardFailed')
+  onFetchDashboardFailed: function (error) {
     this.setState({ error: error })
   },
 
@@ -366,7 +366,7 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[uuid].loading = true
     this.trigger(this.dashboard)
   },
-  onFetchMapFeaturesCompleted: function (response) { // console.info('Store.onFetchMapFeaturesCompleted')
+  onFetchMapFeaturesCompleted: function (response) {
     const currently_fetching_charts = _.toArray(this.dashboard.charts).filter(chart => chart.fetching_map)
     const uuid = currently_fetching_charts[0].uuid
     this.dashboard.charts[uuid].features = response.objects.features
@@ -387,7 +387,7 @@ var DashboardPageStore = Reflux.createStore({
     this.campaigns = campaigns[0]
   },
 
-  onDatapointStore: function (datapoints) { // console.info('--- Store.onDatapointStore')
+  onDatapointStore: function (datapoints) {
     const uuid = datapoints.meta.chart_uuid
     if (_.isEmpty(datapoints.raw)) {
       this.dashboard.charts[uuid].data = []
@@ -418,7 +418,7 @@ var DashboardPageStore = Reflux.createStore({
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
-  updateChart: function (uuid) { // console.info('-- Store.updateChart' + (this.chartParamsAreReady(uuid) ? ' (Params Ready!)' : ''))
+  updateChart: function (uuid) {
     if (this.dashboard.charts[uuid].data !== null) {
       DatapointActions.clearDatapoints()
       this.dashboard.charts[uuid].data = null
@@ -472,7 +472,7 @@ var DashboardPageStore = Reflux.createStore({
     return selectedLocationsReady && selectedIndicatorsReady && startDateReady && endDateReady && campaignsReady
   },
 
-  toggleLoading: function (uuid) { // console.info('Store.toggleLoading')
+  toggleLoading: function (uuid) {
     this.dashboard.charts[uuid].loading = true
     this.trigger(this.dashboard)
   },
