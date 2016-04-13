@@ -63,20 +63,18 @@ table {
     }
   }
 
-
-
-
   tfoot {
     td {
-      background-color: #DDDDDD;
+      background-color: #FFFFFF;
       padding: 0;
+      margin-top: 10;
 
       &.more {
         font-size: rem-calc(10);
         text-align: center;
 
         &:hover {
-          background-color: #DDDDDD;
+          background-color: #FFFFFF;
         }
 
         a {

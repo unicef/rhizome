@@ -150,7 +150,7 @@ let SimpleDataTable = React.createClass({
         </thead>
         <tbody>
           {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-          <tr><td></td> <td></td> {sourceRow} </tr>
+          <tfoot><td></td> <td></td> {sourceRow} </tfoot>
         </tbody>
       </table>
       )
