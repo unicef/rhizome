@@ -49,9 +49,11 @@ class MapChart extends HighChart {
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
       name: current_indicator.name,
+      borderColor: 'black',
+      nullColor: '#D3D3D3',
       states: {
         hover: {
-          color: '#BADA55'
+          color: '#ADD8E6'
         }
       },
       tooltip: {
