@@ -30,10 +30,15 @@ const Dashboard = React.createClass({
     dashboard_id: PropTypes.number
   },
 
+  getDefaultProps: function () {
+    return {
+      dashboard_id: null
+    }
+  },
+
   getInitialState: function () {
     return {
-      titleEditMode: false,
-      readOnlyMode: this.props.dashboard_id ? true : false
+      titleEditMode: false
     }
   },
 
@@ -46,6 +51,7 @@ const Dashboard = React.createClass({
           DashboardPageActions.fetchDashboard(this.props.dashboard_id)
         } else {
           DashboardPageActions.addChart()
+          DashboardPageActions.toggleEditMode()
         }
       }
     })
@@ -73,12 +79,8 @@ const Dashboard = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  _toggleReadOnlyMode: function (title) {
-    this.setState({readOnlyMode: !this.state.readOnlyMode})
-  },
-
   render: function () {
-    const readOnlyMode = this.state.readOnlyMode
+    const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(dashboard.charts)
     const title_bar = this.state.titleEditMode ?
@@ -92,12 +94,12 @@ const Dashboard = React.createClass({
         <div className='row'>
           <MultiChart
             chart={chart}
-            readOnlyMode={readOnlyMode}
+            readOnlyMode={!editMode}
             linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
             duplicateChart={DashboardPageActions.duplicateChart}
             selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
             toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
-            toggleEditMode={() => DashboardPageActions.toggleEditMode(chart.uuid)}
+            toggleEditMode={() => DashboardPageActions.toggleChartEditMode(chart.uuid)}
             removeChart={DashboardPageActions.removeChart}
             saveChart={() => DashboardPageActions.saveChart(chart.uuid)}
             setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
@@ -122,7 +124,7 @@ const Dashboard = React.createClass({
       )
     )
 
-    const save_dashboard_button = !readOnlyMode ? (
+    const save_dashboard_button = editMode ? (
       <AsyncButton
         text='Save Dashboard'
         alt_text='Saving ...'
@@ -131,7 +133,7 @@ const Dashboard = React.createClass({
       />
     ) : null
 
-    const add_chart_button = loading || !readOnlyMode ? (
+    const add_chart_button = loading || editMode ? (
       <div className='row text-center'>
         <button
           className='button large'
@@ -148,12 +150,12 @@ const Dashboard = React.createClass({
       <section className='dashboard'>
         <header className='row dashboard-header'>
           <div className='medium-6 columns medium-text-left small-text-center'>
-            { !readOnlyMode ? title_bar : <h1>{dashboard.title || 'Untitled Dashboard'}</h1> }
+            { editMode ? title_bar : <h1>{dashboard.title || 'Untitled Dashboard'}</h1> }
           </div>
           <div className='medium-6 columns medium-text-right small-text-center'>
             { save_dashboard_button }
-            <button className='button' onClick={this._toggleReadOnlyMode}>
-              { readOnlyMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
+            <button className='button' onClick={DashboardPageActions.toggleEditMode}>
+              { !editMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
             </button>
           </div>
         </header>

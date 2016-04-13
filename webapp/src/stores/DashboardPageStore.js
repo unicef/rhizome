@@ -25,8 +25,8 @@ class ChartState {
     this.data_format = 'pct'
     this.groupBy = 'indicator'
     this.palette = 'traffic_light'
-    this.location_index = null
-    this.indicator_index = null
+    this.locations_index = null
+    this.indicators_index = null
     this.selected_campaigns = []
     this.selected_indicators = []
     this.selected_locations = []
@@ -48,6 +48,7 @@ var DashboardPageStore = Reflux.createStore({
 
   dashboard: {
     title: '',
+    editMode: false,
     charts: {}
   },
 
@@ -96,7 +97,12 @@ var DashboardPageStore = Reflux.createStore({
   },
 
   // =================================  Layout  ================================ //
-  onToggleEditMode: function (uuid) {
+  onToggleEditMode: function () {
+    this.dashboard.editMode = !this.dashboard.editMode
+    this.trigger(this.dashboard)
+  },
+
+  onToggleChartEditMode: function (uuid) {
     const chart = this.dashboard.charts[uuid]
     chart.editMode = !chart.editMode
     this.trigger(this.dashboard)
@@ -406,6 +412,7 @@ var DashboardPageStore = Reflux.createStore({
 
   onPostDashboardCompleted: function (response) {
     this.dashboard.saving = false
+    this.dashboard.editMode = false
     this.trigger(this.dashboard)
   },
 
