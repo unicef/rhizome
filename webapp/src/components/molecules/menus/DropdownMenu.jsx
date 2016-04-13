@@ -65,6 +65,7 @@ var DropdownMenu = React.createClass({
   _getMenuItemComponents: function (items, pattern) {
     const filtered_items = this.filterMenu(items, pattern)
     let menu_items = this.props.uniqueOnly ? _.uniq(filtered_items, item => item.id) : filtered_items
+    console.log('_getMenuItemComponents -- MENU ITEMS: ', menu_items)
     menu_items = menu_items.map(item => {
       item.title = item[this.props.title_field]
       item.value = item[this.props.value_field].toString()

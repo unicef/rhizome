@@ -28,6 +28,16 @@ let EntryForm = React.createClass({
               text={this.state.selected.form.title}
               icon=''/>
             <br /><br />
+            <label htmlFor='source'><h3>Source</h3></label>
+            <DropdownMenu
+              items={this.state.sourceList}
+              sendValue={EntryFormActions.setSource}
+              value_field='id'
+              item_plural_name='Source'
+              text={'Hello'}
+              icon=''
+              uniqueOnly/>
+            <br /><br />
             <label htmlFor='campaigns'><h3>Campaign</h3></label>
             <DropdownMenu
               items={this.state.campaigns}

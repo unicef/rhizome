@@ -14,22 +14,22 @@ let EntryFormStore = Reflux.createStore({
   data: {
     apiResponseData: null,
     indicatorMap: null,
-    // indicatorSet: null,
     indicatorsToTags: [],
     filteredIndicators: [],
     data: null,
     loaded: false,
     campaigns: [],
-    // campaignIdSelected: null,
     campaignNames: [],
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
     locationSelected: [],
     locations: [],
+    sourceList: [],
     selected: {
       form: { title: 'Select Form', value: null },
       campaign: { title: 'Select Campaign', value: null },
+      source: { title: 'Select Source', value: null },
       locations: []
     },
     tags: [],
@@ -112,7 +112,25 @@ let EntryFormStore = Reflux.createStore({
 
         // Indicators
         self.data.indicatorMap = _.indexBy(indicators.objects, 'id')
-        // self._filterLocationsByCampaign()
+
+        // Sources
+
+        self.data.sourceList = [
+          {'id': 1, 'title': 'PEMT'},
+          {'id': 2, 'title': 'ICM'},
+          {'id': 3, 'title': 'PEMT / DMT'},
+          {'id': 4, 'title': 'District Team'},
+          {'id': 5, 'title': 'UNICEF'},
+          {'id': 6, 'title': 'AFP'},
+          {'id': 7, 'title': 'Provincial Governors Office'},
+          {'id': 8, 'title': 'PEMT / WHO / UNICEF'},
+          {'id': 9, 'title': 'Joint Access reports'},
+          {'id': 10, 'title': 'Finger Mark Survey'},
+          {'id': 11, 'title': 'PEMT/WHO/UNICEF'},
+          {'id': 12, 'title': 'DMT'},
+          {'id': 13, 'title': 'PCA'}
+        ]
+
         self.trigger(self.data)
       })
     )
