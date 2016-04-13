@@ -37,7 +37,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
             'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
     - **Errors:**
-        - 
+        -
     '''
 
     error = None
@@ -327,9 +327,6 @@ class DatapointResource(BaseNonModelResource):
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
 
-        if len(computed_datapoints) < 1:
-            return results
-
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
@@ -402,6 +399,7 @@ class DatapointResource(BaseNonModelResource):
         '''
 
         for loc in self.location_ids:
+
             for camp in self.parsed_params['campaign__in']:
 
                 tuple_dict_key = (float(loc), float(camp))

@@ -62,13 +62,7 @@ let EntryForm = React.createClass({
               icon=''
               uniqueOnly/>
             <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
-
             <br /><br />
-            <label className={this.state.couldLoad ? '' : 'disabled'}>
-              <input type='checkbox' onClick={EntryFormActions.changeSelect}
-                checked={this.state.includeSublocations && this.state.couldLoad}/>
-              Include Sublocations
-            </label>
           </div>
         </form>
         <div className='medium-10 columns'>

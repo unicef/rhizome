@@ -141,15 +141,6 @@ let EntryFormStore = Reflux.createStore({
     })
   },
 
-  onChangeSelect: function () {
-    if (this.data.includeSublocations) {
-      this.data.includeSublocations = false
-    } else {
-      this.data.includeSublocations = true
-    }
-    this.trigger(this.data)
-  },
-
   onSetForm: function (formValue) {
     this.data.selected.form.value = formValue
     this.data.selected.form.title = _.filter(this.data.tags, {value: formValue})[0].title
