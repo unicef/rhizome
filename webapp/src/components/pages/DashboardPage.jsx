@@ -30,14 +30,14 @@ const Dashboard = React.createClass({
     dashboard_id: PropTypes.number
   },
 
-  getInitialState () {
+  getInitialState: function () {
     return {
       titleEditMode: false,
       readOnlyMode: this.props.dashboard_id ? true : false
     }
   },
 
-  componentDidMount () {
+  componentDidMount: function () {
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
     RootStore.listen(() => {
       const state = this.state
@@ -58,7 +58,7 @@ const Dashboard = React.createClass({
     })
   },
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     const charts = _.toArray(nextState.dashboard.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
@@ -66,18 +66,18 @@ const Dashboard = React.createClass({
     return !this.missing_data || this.missing_params || this.loading_charts
   },
 
-  _toggleTitleEdit (title) {
+  _toggleTitleEdit: function (title) {
     if (_.isString(title)) {
       DashboardPageActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  _toggleReadOnlyMode (title) {
+  _toggleReadOnlyMode: function (title) {
     this.setState({readOnlyMode: !this.state.readOnlyMode})
   },
 
-  render () {
+  render: function () {
     const readOnlyMode = this.state.readOnlyMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(dashboard.charts)
