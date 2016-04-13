@@ -31,7 +31,7 @@ let EditableTableCell = React.createClass({
 
   componentWillMount() {
     this.display_value = this.props.value
-    this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
+    // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
 
   enterEditMode: function (event) {
