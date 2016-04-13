@@ -322,7 +322,6 @@ class DatapointResource(BaseNonModelResource):
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
 
-
         computed_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
@@ -364,7 +363,7 @@ class DatapointResource(BaseNonModelResource):
                 pivoted_data[tupl] = {}
                 pivoted_data_for_id[tupl] = {}
 
-
+        all_pivoted_data = self.add_missing_data(pivoted_data)
         for row, indicator_dict in pivoted_data.iteritems():
 
             indicator_objects = [{
@@ -387,6 +386,32 @@ class DatapointResource(BaseNonModelResource):
             results.append(r)
 
         return results
+
+    def add_missing_data(self, pivoted_data):
+        '''
+        If the campaign / locaiton cobination has no related datapoitns, we
+        add the keys here so that we can see the row of data in data entry
+        or data browser.
+
+        This in the future can be controlled with a parameter so that for
+        instance with a table chart for a large number of districts, we only
+        show those with data.
+
+        This is largely for Data entry so that we can see a row in the form
+        even when there is no existing data.
+        '''
+
+        for loc in self.location_ids:
+            for camp in self.parsed_params['campaign__in']:
+
+                tuple_dict_key = (float(loc), float(camp))
+
+                try:
+                    existing_data = pivoted_data[tuple_dict_key]
+                except KeyError:
+                    pivoted_data[tuple_dict_key] = {}
+
+        return pivoted_data
 
     def transform_map_data(self):
 
