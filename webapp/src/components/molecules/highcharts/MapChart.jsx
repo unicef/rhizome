@@ -16,6 +16,23 @@ class MapChart extends HighChart {
           verticalAlign: 'bottom'
         }
       },
+      legend: {
+        layout: 'vertical',
+        align: 'right',
+        labelFormatter: function () {
+          const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
+          const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
+          const isBool = current_indicator.data_format === 'bool'
+          return (
+                (boundFrom || (isBool ? '' : '0')) +
+                (isBool ? '': boundTo ? ' - ' : ' ') +
+                (boundTo || (isBool ? '' : '+'))
+          )
+        },
+        itemStyle: {
+          'fontSize': '16px'
+        }
+      },
       colorAxis: {
         dataClasses: this.getDataClasses(current_indicator, palette),
         reversed: current_indicator.good_bound < current_indicator.bad_bound
@@ -58,8 +75,8 @@ class MapChart extends HighChart {
     }
     let dataClasses = null
     if (current_indicator.data_format === 'bool') {
-      dataClasses = [{from: current_indicator.bad_bound, to: current_indicator.bad_bound,color: palette[0]},
-                     {from: current_indicator.good_bound,to: current_indicator.good_bound,color: palette[2]}]
+      dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
+                     {from: current_indicator.good_bound,color: palette[2]}]
     } else {
       dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
                      {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
