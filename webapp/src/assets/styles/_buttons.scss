@@ -30,7 +30,12 @@
     &:hover {
       color: $rhz-body-color;
       i {
-        transform: scale(1.2);
+        transform: scale(1.1);
+      }
+    }
+    &:active {
+      i {
+        transform: translateY(1px);
       }
     }
     i {

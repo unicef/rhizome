@@ -9,7 +9,7 @@ export default React.createClass({
   render: function () {
     var listItems = this.props.items.map(item => {
       return (
-        <li className='animated slideInRight' key={item.id}>{item.name}
+        <li className='animated fadeInDown' key={item.id}>{item.name}
           <IconButton className='clear-btn' onClick={() => this.props.removeItem(item.id)} icon='fa-times-circle'/>
         </li>
       )

@@ -5,6 +5,7 @@ import Reflux from 'reflux'
 import {DropdownList} from 'react-widgets'
 import RadioGroup from 'react-radio-group'
 
+import IconButton from 'components/atoms/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
 import CampaignSelector from 'components/molecules/CampaignSelector'
@@ -143,6 +144,7 @@ const MultiChartControls = React.createClass({
 
     return (
       <div className={this.props.className}>
+        <IconButton onClick={props.toggleEditMode} icon='fa-angle-double-right' className='chart-options-button' />
         { date_range_picker }
         { campaign_selector }
         { group_by_selector }

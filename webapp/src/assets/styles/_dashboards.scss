@@ -100,10 +100,17 @@ $total-columns: 7;
 }
 
 .multi-chart {
-	border-bottom: 1px solid $rhz-navigation-hover-bg-color;
+	border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
+	border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
+	border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
+	margin-top: 1rem;
 	margin-bottom: 2rem;
+	margin-left: 1%;
+	margin-right: 1%;
+	width: 98%;
+	box-shadow: -1px 2px 3px grey;
 	header {
-		background: $rhz-navigation-hover-bg-color;
+		background: $rhz-navigation-hover-bg-color-glass;
 	  h1, h2, h3, h4, h5, h6, p {
 	  	text-transform: none;
 	  	position: relative;
@@ -119,13 +126,14 @@ $total-columns: 7;
 			z-index: 300;
 		}
 		h2 {
-			margin-top: 0.4rem;
+			font-size: 1.25rem;
+			margin: 0.4rem auto;
+			display: block;
 			@media #{$small-only} {
 				border-top: 1px solid #DBDBDB;
 				width: 100%;
 				padding: .8rem 0;
 			}
-			display: inline-block;
 		}
 		form {
 			.icon-button {
@@ -139,16 +147,16 @@ $total-columns: 7;
 			padding: 0.5rem 0.7rem;
 		}
 	  .chart-actions {
-			.icon-button {
-				top: 0;
-				&:not(.left):last-child {
-			    padding-right: .9rem;
-			    padding-left: 1rem;
-			    margin-left: .5rem;
-					border-left: 1px solid #DBDBDB;
-				}
-			}
+			position: absolute;
+			right: 0;
+			top: 0;
 	  }
+	  .chart-options-button {
+    	color: $rhz-body-color;
+	  	position: absolute;
+	    padding: 1rem 0.3rem;
+	    padding-left: 0.6rem;
+    }
 	}
 	section {
 		display: flex;
@@ -162,11 +170,12 @@ $total-columns: 7;
 	}
 	aside {
 		background: #F1F1F1;
-		border-left: 1px solid $rhz-navigation-hover-bg-color;
+		box-shadow: -1px 2px 4px grey;
 		padding-top: 1rem;
 		padding-bottom: 5rem;
 		position: relative;
 		z-index: 150;
+		top: -3px;
 		.rw-dropdownlist {
 			margin-right: 1.3rem;
 		}
@@ -187,7 +196,27 @@ $total-columns: 7;
 				font-size: 1rem;
 			}
 		}
+	  .chart-options-button {
+	    right: initial;
+	    top: 0rem;
+	    left: -1.7rem;
+	    padding: 1rem 0.3rem;
+  	  padding-left: 0.6rem;
+	  }
 	}
+  .chart-options-button {
+  	z-index: 140;
+  	position: absolute;
+  	right: 0;
+    top: 2.3rem;
+    background: #f1f1f1;
+	  box-shadow: -1px 1px 1px grey;
+    padding: 1rem 0.3rem;
+    padding-left: 0.6rem;
+    i {
+    	font-size: 1.4rem;
+    }
+  }
 }
 
 
