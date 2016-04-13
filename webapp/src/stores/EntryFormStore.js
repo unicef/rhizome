@@ -55,10 +55,8 @@ let EntryFormStore = Reflux.createStore({
         let indicatorToTagsResult = _(indicatorToTags.objects)
           .map(indToTag => {
             return {
-              'id': indToTag.id,
-              'value': indToTag.indicator_tag_id,
-              'name': indToTag.indicator__short_name,
-              'title': indToTag.indicator_tag__tag_name
+              'indicator_id': indToTag.indicator_id,
+              'tag_id': indToTag.indicator_tag_id
             }
           }).value()
 
@@ -149,9 +147,6 @@ let EntryFormStore = Reflux.createStore({
   },
 
   onSetCampaign: function (campaignId) {
-    console.log('campaignId', campaignId)
-    console.log('campaigns: ', this.data.campaigns)
-
     this.data.selected.campaign.value = campaignId
     this.data.selected.campaign.title = this.data.camp
     this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaignId})[0].name
@@ -177,12 +172,28 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
   _filterIndicators: function () {
-    this.data.filteredIndicators = []
-    this.data.indicatorsToTags.forEach(indicator => {
-      if (indicator.title === this.data.selected.form.title) {
-        this.data.filteredIndicators.push(this.data.indicatorMap[indicator.id])
-      }
+    // console.log('this.data.selected.form.value ', this.data.selected.form.value)
+    // console.log('this.data.indicatorsToTags ', this.data.indicatorsToTags)
+
+    let tagId = parseInt(this.data.selected.form.value, 10)
+    console.log('tagId: ', tagId)
+    let filteredData = _.filter(this.data.indicatorsToTags, {tag_id: tagId})
+    filteredData.forEach(indicatorToTag => {
+      console.log('indicatorId: ', indicatorToTag.indicator_id)
+      this.data.filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
     })
+    // console.log('filteredData: ', filteredData)
+    // this.data.filteredIndicators = filteredData
+
+    // this.data.indicatorsToTags.forEach(indicatorToTag => {
+    //   console.log('indicatorToTag: ', indicatorToTag)
+    //   console.log('SELECTED FORM ID: ', this.data.selected.form.value)
+    //   if (indicatorToTag.tag_id === this.data.selected.form.value) {
+    //     console.log('THAT MATCHEDDD:', indicatorToTag.indicator_id)
+    //     this.data.filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
+    //   }
+    // })
+    console.log('filteredIndicators: ', this.data.filteredIndicators)
     this.trigger(this.data)
   },
 
