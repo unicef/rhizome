@@ -50,31 +50,30 @@ const MultiChartHeader = React.createClass({
         className={'chart-options-button ' + (chart.editMode ? 'hidden' : null) } />
     )
 
+    const chart_actions = !props.readOnlyMode ? (
+      <span className='animated fadeInRight'>
+        <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
+        <ExportIcon exportPath={'/charts/' + chart.id}/>
+        <IconButton isBusy={chart.saving} onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' alt_text='Saving ...'/>
+        { /* duplicate_button */ }
+        { remove_button }
+      </span>
+    ) : null
+
+    const editable_title = this.state.titleEditMode ? (
+      <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
+    ) : (
+      <h2>
+        <a onClick={this._toggleTitleEdit} style={{cursor: 'text'}}>{chart.title || 'Untitled Chart'}</a>
+      </h2>
+    )
+
     return (
       <header className='row'>
         <div className='medium-12 columns chart-header text-center'>
-          {
-            this.state.titleEditMode ?
-            <TitleInput initialText={chart.title} save={this._toggleTitleEdit}/>
-            :
-            <h2>
-              <a onClick={this._toggleTitleEdit} style={{cursor: 'text'}}>
-                {chart.title || 'Untitled Chart'}
-              </a>
-            </h2>
-          }
+          { props.readOnlyMode ? <h2>{chart.title || 'Untitled Chart'}</h2> : editable_title }
          <div className='chart-actions'>
-            {
-              !props.readOnlyMode ?
-                <span className='animated fadeInRight'>
-                  <IconButton onClick={props.toggleSelectTypeMode} icon='fa-bar-chart' text='Change chart type' />
-                  <ExportIcon exportPath={'/charts/' + chart.id}/>
-                  <IconButton isBusy={chart.saving} onClick={() => props.saveChart(chart.uuid)} icon='fa-save' text='Save' alt_text='Saving ...'/>
-                  { /* duplicate_button */ }
-                  { remove_button }
-                </span>
-              : null
-            }
+            { chart_actions }
             { show_options_button }
           </div>
         </div>
