@@ -2,12 +2,12 @@ import _ from 'lodash'
 import d3 from 'd3'
 
 class TableChartRenderer {
+
   constructor (data, options, container) {
     this.setTableParams(data, options, container)
   }
 
   setTableParams (data, options, container) {
-    console.info('-------- TableChartRenderer.setTableParams')
     this.container = container
     this.options = options
     this.data = data
@@ -36,7 +36,6 @@ class TableChartRenderer {
   }
 
   render () {
-    console.info('-------- TableChartRenderer.render')
     this.prepContainer()
     this.renderRows()
     this.renderCells()

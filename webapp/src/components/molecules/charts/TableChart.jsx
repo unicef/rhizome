@@ -20,7 +20,7 @@ class TableChart extends Chart {
     values: d => d.values
   }
 
-  setData () {
+  setData = function () {
     const selected_campaign_id = this.props.selected_campaigns[0].id
     const filtered_datapoints = this.props.data.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
     this.data = filtered_datapoints.map(datapoint => {
@@ -65,7 +65,7 @@ class TableChart extends Chart {
     return this.data
   }
 
-  setOptions () {
+  setOptions = function () {
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
@@ -77,7 +77,7 @@ class TableChart extends Chart {
     return this.options
   }
 
-  render () {
+  render = function () {
     return (
       <svg className='heatmap sortable'>
         <g className='margin'>

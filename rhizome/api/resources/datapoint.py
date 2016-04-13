@@ -175,6 +175,12 @@ class DatapointResource(BaseNonModelResource):
             indicator_ids = None
 
         try:
+            chart_uuid = request.GET['chart_uuid']
+            data['meta']['chart_uuid'] = chart_uuid
+        except KeyError:
+            indicator_ids = None
+
+        try:
             chart_type = request.GET['chart_type']
             data['meta']['chart_type'] = chart_type
         except KeyError:

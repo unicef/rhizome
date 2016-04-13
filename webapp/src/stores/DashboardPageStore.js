@@ -35,7 +35,6 @@ class ChartState {
     this.start_date = moment().subtract(1, 'y').format('YYYY-MM-DD')
     this.features = []
     this.loading = false
-    this.fetching = false
     this.linkedCampaigns = false
     this.selectTypeMode = true
     this.editMode = true
@@ -390,8 +389,7 @@ var DashboardPageStore = Reflux.createStore({
   },
 
   onDatapointStore (datapoints) { // console.info('--- Store.onDatapointStore')
-    const currently_fetching_charts = _.toArray(this.dashboard.charts).filter(chart => chart.fetching)
-    const uuid = currently_fetching_charts[0].uuid
+    const uuid = datapoints.meta.chart_uuid
     if (_.isEmpty(datapoints.raw)) {
       this.dashboard.charts[uuid].data = []
       return this.trigger(this.dashboard)
@@ -402,7 +400,6 @@ var DashboardPageStore = Reflux.createStore({
     this.dashboard.charts[uuid].parent_location_map = _.indexBy(chart_datapoints.meta.parent_location_map, 'name')
     this.dashboard.charts[uuid].default_sort_order = chart_datapoints.meta.default_sort_order
     this.dashboard.charts[uuid].loading = false
-    this.dashboard.charts[uuid].fetching = false
     this.dashboard.charts[uuid].locations_index = this.locations.index
     this.dashboard.charts[uuid].indicators_index = this.indicators.index
     this.trigger(this.dashboard)
@@ -429,7 +426,6 @@ var DashboardPageStore = Reflux.createStore({
       this.trigger(this.dashboard)
     }
     if (this.chartParamsAreReady(uuid)) {
-      this.dashboard.charts[uuid].fetching = true
       if (this.dashboard.charts[uuid].type === 'ChoroplethMap' || this.dashboard.charts[uuid].type === 'MapChart') {
         this.dashboard.charts[uuid].fetching_map = true
         return DashboardPageActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
@@ -463,7 +459,8 @@ var DashboardPageStore = Reflux.createStore({
       location_ids: this.dashboard.charts[uuid].selected_locations.map(location => location.id),
       start_date: this.dashboard.charts[uuid].start_date,
       end_date: this.dashboard.charts[uuid].end_date,
-      type: this.dashboard.charts[uuid].type
+      type: this.dashboard.charts[uuid].type,
+      uuid: uuid
     })
   },
 

@@ -20,7 +20,8 @@ const _prepDatapointsQuery = (params) => {
     indicator__in: params.indicator_ids,
     campaign_start: params.start_date,
     campaign_end: params.end_date,
-    chart_type: params.type
+    chart_type: params.type,
+    chart_uuid: params.uuid
   }
 
   if (params.type === 'ChoroplethMap' || params.type === 'MapChart') {

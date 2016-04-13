@@ -6,7 +6,7 @@ import format from 'utilities/format'
 
 class LineChart extends HighChart {
 
-  setConfig () {
+  setConfig = function () {
     const first_indicator = this.props.selected_indicators[0]
     this.config = {
       chart: { type: 'line' },
@@ -35,7 +35,7 @@ class LineChart extends HighChart {
     }
   }
 
-  setSeries () { console.info('------ LineChart.setSeries')
+  setSeries = function () {
     const data = this.props.datapoints.melted
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
