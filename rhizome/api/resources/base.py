@@ -72,10 +72,10 @@ class BaseResource(Resource):
         TO DO -- Check Location Permission so that the user can only see
         What they are permissioned to.
         '''
-
         if 'location_id__in' in request.GET:
             return request.GET['location_id__in'].split(',')
         elif 'parent_location_id__in' in request.GET:
+
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             location_ids = Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\

@@ -31,6 +31,7 @@ class DatapointResource(BaseNonModelResource):
     - **GET Requests:**
         - *Required Parameters:*
             'indicator__in' A comma-separated list of indicator IDs to fetch. By default, all indicators
+            'chart_type' 
         - *Optional Parameters:*
             'location__in' A comma-separated list of location IDs
             'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
@@ -321,12 +322,10 @@ class DatapointResource(BaseNonModelResource):
         # in the datapoint_abstracted table ##
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
-
         computed_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
-
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
@@ -352,7 +351,7 @@ class DatapointResource(BaseNonModelResource):
         except KeyError: ## there is no data
             if len(self.parsed_params['campaign__in']) > 1:
                 ## implicit way to only do this for data entry - i.e. a hack.
-                return
+                return []
 
             pivoted_data, pivoted_data_for_id = {}, {}
             for location_id in self.location_ids:
