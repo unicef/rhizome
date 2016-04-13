@@ -28,7 +28,7 @@ const MultiChart = React.createClass({
     Reflux.connect(CampaignStore, 'campaigns'),
   ],
 
-  componentDidMount () {
+  componentDidMount: function () {
     RootStore.listen(() => {
       if (this.props.chart_id) {
         this.props.fetchChart.completed(this.state.charts.index[this.props.chart_id])
@@ -38,13 +38,13 @@ const MultiChart = React.createClass({
     })
   },
 
-  shouldComponentUpdate (nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     const missing_params = _.isEmpty(nextProps.chart.selected_indicators) || _.isEmpty(nextProps.chart.selected_locations)
     const chart_data = !_.isEmpty(nextProps.chart.data)
     return chart_data || nextProps.chart.loading || missing_params
   },
 
-  getChartComponentByType (type) {
+  getChartComponentByType: function (type) {
     if (type === 'TableChart') {
       return <TableChart {...this.props.chart} />
     } else if (type === 'LineChart') {
@@ -62,7 +62,7 @@ const MultiChart = React.createClass({
     }
   },
 
-  render () {
+  render: function () { console.info('MultiChart - render '+ this.props.chart.title)
     const chart = this.props.chart
 
     const chart_selector = (

@@ -29,15 +29,15 @@ class HighChart extends Component {
     isPureConfig: true
   }
 
-  componentDidMount () { console.info('HighChart - componentDidMount')
+  componentDidMount = function () {
     this.renderChart()
   }
 
-  componentWillUnmount() { console.info('HighChart - componentWillUnmount')
+  componentWillUnmount = function () {
     this.chart.destroy()
   }
 
-  shouldComponentUpdate(nextProps) { console.info('HighChart - shouldComponentUpdate')
+  shouldComponentUpdate = function (nextProps)  {
     if ((this.props.neverReflow || (this.props.isPureConfig)) && (nextProps.editMode === this.props.editMode))  {
       return true
     }
@@ -45,18 +45,18 @@ class HighChart extends Component {
     return false
   }
 
-  setConfig () {
+  setConfig = function () {
     this.config = {}
   }
 
-  getChart () { console.info('HighChart - getChart')
+  getChart = function () {
     if (!this.chart) {
       throw new Error('getChart() should not be called before the component is mounted')
     }
     return this.chart
   }
 
-  renderChart () { console.info('HighChart - renderChart')
+  renderChart = function () {
     this.setConfig()
     this.config.colors = palettes[this.props.palette]
     let chartConfig = this.config.chart
@@ -74,7 +74,7 @@ class HighChart extends Component {
     })
   }
 
-  render () { console.info('HighChart - renderChart')
+  render = function () {
     let props = this.props
     props = {
       ...props,

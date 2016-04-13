@@ -4,7 +4,7 @@ import HighChart from 'components/molecules/highcharts/HighChart'
 import format from 'utilities/format'
 
 class MapChart extends HighChart {
-  setConfig () {
+  setConfig = function () {
     this.config = {
       mapNavigation: {
         enabled: true,
@@ -20,7 +20,7 @@ class MapChart extends HighChart {
     }
   }
 
-  setSeries () {
+  setSeries = function () {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
     return [{
