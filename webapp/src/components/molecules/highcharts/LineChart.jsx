@@ -41,10 +41,10 @@ class LineChart extends HighChart {
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
     _.forEach(grouped_data, group_collection => {
-      group_collection = _.sortBy(group_collection, group => { return group.campaign.start_date.getTime() })
+      group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
       series.push({
         name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
-        data: group_collection.map(datapoint => { return [datapoint.campaign.start_date.getTime(), datapoint.value] })
+        data: group_collection.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
       })
     })
     return series
