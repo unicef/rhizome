@@ -1,14 +1,14 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DataPointComputed
-from rhizome.models import SourceObjectMap, DocumentSourceObjectMap
+from rhizome.models import SourceObjectMap, DocumentSourceObjectMap, Document
 
 class ComputedDataPointResource(BaseModelResource):
     '''
     **GET Request** Returns computed datapoints for a given document
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'document_id'
         - *Errors:*
-            Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified    
+            Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified
         '''
 
     class Meta(BaseModelResource.Meta):
@@ -19,15 +19,13 @@ class ComputedDataPointResource(BaseModelResource):
         """
         A ORM-specific implementation of ``obj_create``.
         """
-        bundle.obj = self._meta.object_class()
 
-        # for key, value in kwargs.items():
-        for key, value in bundle.data.iteritems():
-              setattr(bundle.obj, key, value)
+        bundle.data['document_id'] = Document.objects.get(doc_title = 'Data Entry').id
+        dwc_obj = DataPointComputed.objects.create(**bundle.data)
+        bundle.data['id'] = dwc_obj.id
+        bundle.obj = dwc_obj
 
-        bundle = self.full_hydrate(bundle)
-
-        return self.save(bundle)
+        return bundle
 
     def get_object_list(self, request):
 
