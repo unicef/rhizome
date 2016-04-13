@@ -38,7 +38,6 @@ class HighChart extends Component {
   }
 
   shouldComponentUpdate = function (nextProps)  {
-    if ((this.props.neverReflow || (this.props.isPureConfig)) && (nextProps.editMode === this.props.editMode))  {
     const toggledEditMode = nextProps.editMode !== this.props.editMode
     if ((this.props.neverReflow || (this.props.isPureConfig)) && !toggledEditMode)  {
       return true
