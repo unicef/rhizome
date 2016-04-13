@@ -1,4 +1,3 @@
-import api from 'data/api'
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
@@ -14,34 +13,36 @@ import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTabl
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 
 let SimpleDataTable = React.createClass({
-
   mixins: [
     InterfaceMixin('Datascope', 'DatascopeSort'), Reflux.connect(EditableTableCellStore, 'editedCell')
   ],
 
   propTypes: {
-    data: React.PropTypes.array,                    // data displayed on the table, from Datascope
-    schema: React.PropTypes.object,                 // data schema, from Datascope
-    fields: React.PropTypes.object,                 // fields (display rules)
+    data: React.PropTypes.array, // data displayed on the table, from Datascope
+    schema: React.PropTypes.object, // data schema, from Datascope
+    fields: React.PropTypes.object, // fields (display rules)
     orderedFields: React.PropTypes.array,
-    query: React.PropTypes.object,                  // query (search, sort, filter)
-    sortable: React.PropTypes.bool,                 // if true, can sort table by clicking header
-    editable: React.PropTypes.bool,                 // if true, clicking on cells allows you to change the values
+    query: React.PropTypes.object, // query (search, sort, filter)
+    sortable: React.PropTypes.bool, // if true, can sort table by clicking header
+    editable: React.PropTypes.bool, // if true, clicking on cells allows you to change the values
     sortKey: React.PropTypes.oneOfType([React.PropTypes.string, React.PropTypes.number]), // key for the column on which the data is sorted (eg. 'age')
-    sortOrder: React.PropTypes.string,              // order for the sort ('ascending' or 'descending')
-    onChangeSort: React.PropTypes.func,             // callback to call when user changes sort, passed implicitly by Datascope
-    emptyContent: React.PropTypes.node,             // if null, table will hide on no data // content to show in the table if there is no data
-    isEmptyContentInTable: React.PropTypes.bool,    // if true, puts emptyContent inside the tbody, otherwise shown instead of the table
+    sortOrder: React.PropTypes.string, // order for the sort ('ascending' or 'descending')
+    onChangeSort: React.PropTypes.func, // callback to call when user changes sort, passed implicitly by Datascope
+    emptyContent: React.PropTypes.node, // if null, table will hide on no data // content to show in the table if there is no data
+    isEmptyContentInTable: React.PropTypes.bool, // if true, puts emptyContent inside the tbody, otherwise shown instead of the table
     sortIndicatorAscending: React.PropTypes.string, // sort up and down arrows
     sortIndicatorDescending: React.PropTypes.string,
-    children: React.PropTypes.array
+    children: React.PropTypes.array,
+    sourceRow: React.PropTypes.array
   },
 
   getDefaultProps: function () {
     return {
       sortable: true,
       editable: false,
-      emptyContent: <div className="ds-data-table-empty">No results found</div>,
+      emptyContent: <div className='ds-data-table-empty'>
+                      No results found
+                    </div>,
       isEmptyContentInTable: false,
       sortIndicatorAscending: ' ▲',
       sortIndicatorDescending: ' ▼'
@@ -49,10 +50,10 @@ let SimpleDataTable = React.createClass({
   },
 
   _withResponse: function (error) {
-      if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
-      console.log(error)
-      this.hasError = true
-    },
+    if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
+    console.log(error)
+    this.hasError = true
+  },
 
   _withError: function (error) {
     if (error.msg && error.msg.message) { window.alert('Error: ' + error.msg.message) }
@@ -64,9 +65,7 @@ let SimpleDataTable = React.createClass({
     return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
   },
 
-  saveCellValue: function() {
-
-  },
+  saveCellValue: function () {},
 
   sortColumns: function (dataKey) {
     let isSortedOnColumn = dataKey === this.props.sortKey
@@ -84,22 +83,24 @@ let SimpleDataTable = React.createClass({
       let cell_key = column.props.name
       if (this.props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
         return <EditableTableCell
-          field={this.props.fields[cell_key]}
-          row={row}
-          value={row[cell_key].value}
-          onSave={this.saveCellValue}
-          formatValue={this._numberFormatter}
-          classes={'numeric'} />
+                 field={this.props.fields[cell_key]}
+                 row={row}
+                 value={row[cell_key].value}
+                 onSave={this.saveCellValue}
+                 formatValue={this._numberFormatter}
+                 classes={'numeric'} />
       } else {
         return <TableCell
-          field={this.props.fields[cell_key]}
-          row={row}
-          value={row[cell_key].value}
-          formatValue={this._numberFormatter}
-          classes={'numeric'} />
+                 field={this.props.fields[cell_key]}
+                 row={row}
+                 value={row[cell_key].value}
+                 formatValue={this._numberFormatter}
+                 classes={'numeric'} />
       }
     })
-    return <tr>{ table_cells }</tr>
+    return <tr>
+             {table_cells}
+           </tr>
   },
 
   renderColumnHeader: function (column) {
@@ -135,19 +136,23 @@ let SimpleDataTable = React.createClass({
     }
 
     let renderRow = _.partial(this.renderRow, columns)
+    let sourceRow = _.map(this.props.schema.items.properties, function (field) {
+      return <td>{field.source_name}</td>
+    })
 
     if (hasData || this.props.isEmptyContentInTable) {
       return (
-        <table className={cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }])}>
-          <thead>
-            <tr>
-              { React.Children.map(columns, this.renderColumnHeader) }
-            </tr>
-          </thead>
-          <tbody>
-            { hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-          </tbody>
-        </table>
+      <table className={cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }])}>
+        <thead>
+          <tr>
+            {React.Children.map(columns, this.renderColumnHeader)}
+          </tr>
+        </thead>
+        <tbody>
+          {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
+          <tr><td></td> <td></td> {sourceRow} </tr>
+        </tbody>
+      </table>
       )
     } else {
       return this.props.emptyContent
