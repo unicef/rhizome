@@ -34,7 +34,7 @@ let EntryForm = React.createClass({
               sendValue={EntryFormActions.setSource}
               value_field='id'
               item_plural_name='Source'
-              text={'Hello'}
+              text={this.state.selected.source.title}
               icon=''
               uniqueOnly/>
             <br /><br />

@@ -173,6 +173,12 @@ let EntryFormStore = Reflux.createStore({
     this._setCouldLoad()
     this.trigger(this.data)
   },
+  onSetSource: function (sourceId) {
+    this.data.selected.source.value = sourceId
+    this.data.selected.source.title = _.filter(this.data.sourceList, { value: sourceId })[0].title
+    this._setCouldLoad()
+    this.trigger(this.data)
+  },
 
   onAddLocations: function (id) {
     this.data.locationSelected.push(this.data.locationMap[id])
@@ -206,7 +212,8 @@ let EntryFormStore = Reflux.createStore({
     let options = {
       campaign__in: parseInt(this.data.selected.campaign.value, 10),
       indicator__in: [],
-      location_id__in: []
+      location_id__in: [],
+      source_name: ''
     }
 
     if (this.data.locationSelected.length > 0) {
@@ -240,11 +247,15 @@ let EntryFormStore = Reflux.createStore({
     }
 
     options.indicator__in = this._getIndicatorIds()
+    options.source_name = this.data.selected.source.title
 
     _.defaults(options, this.data.pagination)
 
     this.data.loaded = false
     this.trigger(this.data)
+
+    console.log('options: ', options)
+
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
       this.data.apiResponseData = response.objects
