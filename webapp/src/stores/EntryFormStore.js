@@ -25,6 +25,7 @@ let EntryFormStore = Reflux.createStore({
     locationSelected: [],
     locations: [],
     sourceList: [],
+    campaignIx: {},
     selected: {
       form: { title: 'Select Form', value: null },
       campaign: { title: 'Select Campaign', value: null },
@@ -172,28 +173,11 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
   _filterIndicators: function () {
-    // console.log('this.data.selected.form.value ', this.data.selected.form.value)
-    // console.log('this.data.indicatorsToTags ', this.data.indicatorsToTags)
-
     let tagId = parseInt(this.data.selected.form.value, 10)
-    console.log('tagId: ', tagId)
     let filteredData = _.filter(this.data.indicatorsToTags, {tag_id: tagId})
     filteredData.forEach(indicatorToTag => {
-      console.log('indicatorId: ', indicatorToTag.indicator_id)
       this.data.filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
     })
-    // console.log('filteredData: ', filteredData)
-    // this.data.filteredIndicators = filteredData
-
-    // this.data.indicatorsToTags.forEach(indicatorToTag => {
-    //   console.log('indicatorToTag: ', indicatorToTag)
-    //   console.log('SELECTED FORM ID: ', this.data.selected.form.value)
-    //   if (indicatorToTag.tag_id === this.data.selected.form.value) {
-    //     console.log('THAT MATCHEDDD:', indicatorToTag.indicator_id)
-    //     this.data.filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
-    //   }
-    // })
-    console.log('filteredIndicators: ', this.data.filteredIndicators)
     this.trigger(this.data)
   },
 
@@ -252,7 +236,15 @@ let EntryFormStore = Reflux.createStore({
 
     DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
       this.data.loaded = true
-      this.data.apiResponseData = response.objects
+      this.data.campaignIx = _.indexBy(response.meta.campaign_list, 'id')
+      this.data.apiResponseData = _(response.objects)
+        .map(datapoint => {
+          return {
+            'campaign': this.data.campaignIx[datapoint.campaign],
+            'location': datapoint.location,
+            'indicators': datapoint.indicators
+          }
+        }).value()
       this.trigger(this.data)
     }, function (err) {
       console.error(err)
