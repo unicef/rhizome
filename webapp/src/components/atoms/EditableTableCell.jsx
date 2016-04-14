@@ -25,6 +25,7 @@ let EditableTableCell = React.createClass({
     classes: React.PropTypes.string
   },
 
+  isBool: false,
   cell_id: 'edit_id_' + randomHash(),
   display_value: null,
   tooltip: null,
@@ -73,12 +74,12 @@ let EditableTableCell = React.createClass({
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = false
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       }, reject => {
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
     this.display_value = new_value
@@ -111,6 +112,7 @@ let EditableTableCell = React.createClass({
 
     let cell = ''
     if (data_format === 'bool') {
+      this.isBool = true
       let items = [
         {
           'value': 0,
@@ -124,8 +126,9 @@ let EditableTableCell = React.createClass({
       cell = (<td>
                 <DropdownMenu
                   items={items}
-                  sendValue={this.props.selectCampaign}
+                  sendValue={this.updateCellValue}
                   text={items[this.display_value].title}
+                  onChange={this.updateCellValue}
                   item_plural_name='placeholder'
                   style='icon-button left'
                   icon='fa-circle-o'
