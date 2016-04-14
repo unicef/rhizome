@@ -13,7 +13,8 @@ let EditableTableCell = React.createClass({
 
   propTypes: {
     key: React.PropTypes.string,
-    fields: React.PropTypes.object,
+    field: React.PropTypes.object,
+    row: React.PropTypes.object,
     value: React.PropTypes.string,
     formatValue: React.PropTypes.func,
     validateValue: React.PropTypes.func,
@@ -27,7 +28,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount() {
+  componentWillMount () {
     this.display_value = this.props.value
   // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
@@ -103,22 +104,42 @@ let EditableTableCell = React.createClass({
                       id={this.cell_id} />
     }
 
-    if (this.isSaving)
+    if (this.isSaving) {
       spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
+    }
 
-    return (
-    <TableCell
-      field={this.props.field}
-      row={this.props.row}
-      value={this.display_value}
-      formatValue={this.props.formatValue}
-      classes={classes}
-      onClick={this.enterEditMode}
-      hideValue={hideValue}>
-      {spinner}
-      {input_field}
-    </TableCell>
-    )
+    let data_format = this.props.field.schema.data_format
+
+    let cell = ''
+    if (data_format === 'bool') {
+      cell = (<td>
+                <select style={{'max-width': '30%'}}>
+                  <option value=''>
+                    No Data
+                  </option>
+                  <option value='yes'>
+                    Yes
+                  </option>
+                  <option value='no'>
+                    no
+                  </option>
+                </select>
+              </td>)
+    } else {
+      cell = (<TableCell
+                field={this.props.field}
+                row={this.props.row}
+                value={this.display_value}
+                formatValue={this.props.formatValue}
+                classes={classes}
+                onClick={this.enterEditMode}
+                hideValue={hideValue}>
+                {spinner}
+                {input_field}
+              </TableCell>)
+    }
+
+    return (cell)
   }
 })
 

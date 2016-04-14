@@ -45,10 +45,6 @@ var Datascope = React.createClass({
   },
 
   initFields (definedFields, schema) {
-
-    // console.log('definedFields: ', definedFields)
-    // console.log('schema: ', schema)
-
     var fields = this.fieldsFromSchema(schema)
 
     _.each(definedFields, function (definedField, fieldName) {
@@ -57,7 +53,7 @@ var Datascope = React.createClass({
       if (!fieldKey) throw 'Datascope: could not match field ' + fieldName + 'to a schema property'
       // fill in unknown (implicit) parts of defined fields
       var fieldSchema = schema.items.properties[fieldKey]
-      var fieldProps = _.pick(definedField, ['title', 'weight', 'renderer', 'format', 'source_name'])
+      var fieldProps = _.pick(definedField, ['title', 'weight', 'renderer', 'format', 'source_name', 'data_format'])
       fieldProps.name = fieldName
       fieldProps.key = fieldKey
       if (fieldProps.format && !fieldProps.renderer) {
@@ -120,7 +116,7 @@ var Datascope = React.createClass({
         name: key,
         schema: propSchema,
         renderer: propSchema.oneOf && _.every(propSchema.oneOf, function (s) {
-          return s.title && s['enum'] && s['enum'].length == 1
+          return s.title && s['enum'] && s['enum'].length === 1
         }) ? fieldDefaults.renderers.oneOf : propSchema.type && propSchema.type in fieldDefaults.renderers ? fieldDefaults.renderers[propSchema.type] : function (v) {
           return v + ''
         }
