@@ -82,6 +82,11 @@ let SimpleDataTable = React.createClass({
     let table_cells = React.Children.map(columns, column => {
       let cell_key = column.props.name
       if (this.props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
+        // console.log('Entry Form ERROR HAPPENING: ')
+        // console.log('Entry Form row: ', row)
+        // console.log('Entry Form cell_key: ', cell_key)
+        // console.log('Entry Form value={row[cell_key].value}')
+
         return <EditableTableCell
                  field={this.props.fields[cell_key]}
                  row={row}
@@ -106,6 +111,7 @@ let SimpleDataTable = React.createClass({
   renderColumnHeader: function (column) {
     let propsToPass = _.assign({}, _.clone(column.props), { // todo _.omit or _.pick
       field: this.props.fields[column.props.name],
+      title: this.props.fields[column.props.name],
       schema: this.props.schema.items.properties[column.props.name],
       onClick: this.props.sortable ? this.sortColumns.bind(this, column.props.name) : null,
       isSortedBy: column.props.name === this.props.sortKey,
@@ -137,7 +143,9 @@ let SimpleDataTable = React.createClass({
 
     let renderRow = _.partial(this.renderRow, columns)
     let sourceRow = _.map(this.props.schema.items.properties, function (field) {
-      return <td>{field.source_name}</td>
+      return <td>
+               {field.source_name}
+             </td>
     })
 
     if (hasData || this.props.isEmptyContentInTable) {
@@ -150,7 +158,11 @@ let SimpleDataTable = React.createClass({
         </thead>
         <tbody>
           {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-          <tfoot><td></td> <td></td> {sourceRow} </tfoot>
+          <tfoot>
+            <td></td>
+            <td></td>
+            {sourceRow}
+          </tfoot>
         </tbody>
       </table>
       )
