@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import uuid from 'uuid'
 import Reflux from 'reflux'
 
 import DashboardChartsStore from 'stores/DashboardChartsStore'
@@ -7,6 +8,13 @@ import DashboardActions from 'actions/DashboardActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 
+class Row {
+  constructor () {
+    this.layout = null
+    this.charts = []
+  }
+}
+
 const DashboardPageStore = Reflux.createStore({
 
   listenables: DashboardPageActions,
@@ -14,8 +22,8 @@ const DashboardPageStore = Reflux.createStore({
   dashboard: {
     title: '',
     editMode: false,
-    layout: 1,
-    chart_uuids: []
+    chart_uuids: [],
+    rows: []
   },
 
   charts: {},
@@ -45,6 +53,35 @@ const DashboardPageStore = Reflux.createStore({
   onSetDashboardTitle: function (title) {
     this.dashboard.title = title
     this.trigger(this.dashboard)
+  },
+
+  onAddRow: function () {
+    const row = new Row()
+    this.dashboard.rows.push(row)
+    this.trigger(this.dashboard)
+  },
+
+  onSelectRowLayout: function (layout) {
+    console.info('')
+    console.info('------------------------------------------------------------')
+    console.info('DashboardPageStore - onSelectRowLayout')
+    const row_index = this.dashboard.rows.length - 1
+    this.dashboard.rows[row_index].layout = layout
+    this._addChartToRow(row_index)
+    if (layout === 2) {
+      this._addChartToRow(row_index)
+    } else if (layout === 3 || layout === 4) {
+      this._addChartToRow(row_index)
+      this._addChartToRow(row_index)
+    }
+    console.log('this.dashboard.rows', this.dashboard.rows)
+    this.trigger(this.dashboard)
+  },
+
+  _addChartToRow: function (row_index) { console.info('DashboardPageStore - _addChartToRow')
+    const chart_uuid = uuid.v4()
+    this.dashboard.rows[row_index].charts.push(chart_uuid)
+    DashboardChartsActions.addChart(chart_uuid)
   },
 
   onSaveDashboard: function (dashboard_id = null) {
