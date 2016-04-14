@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -10,7 +9,6 @@ import EditableTableCellActions from 'actions/EditableTableCellActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
 
 let EditableTableCell = React.createClass({
-
   mixins: [Reflux.connect(EditableTableCellStore)],
 
   propTypes: {
@@ -31,7 +29,7 @@ let EditableTableCell = React.createClass({
 
   componentWillMount() {
     this.display_value = this.props.value
-    // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
+  // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
 
   enterEditMode: function (event) {
@@ -40,8 +38,8 @@ let EditableTableCell = React.createClass({
   },
 
   exitEditMode: function (event) {
-    if (event.type === 'blur' || event.keyCode === 13 ) { // Keycode for 'Enter' key
-      if (event.target.value !== this.display_value ) {
+    if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
+      if (event.target.value !== this.display_value) {
         this.updateCellValue(event.target.value)
       }
       this.setState({editMode: false})
@@ -56,7 +54,7 @@ let EditableTableCell = React.createClass({
       this.isSaving = true
       let query_params = {
         location_id: this.props.row.location_id,
-        campaign_id: this.props.row.campaign_id,
+        campaign_id: this.props.row.campaign_id.id,
         indicator_id: this.props.field.key,
         computed_id: this.props.row[this.props.field.key].computed,
         value: new_value
@@ -68,7 +66,7 @@ let EditableTableCell = React.createClass({
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
       }
       api_response.then(response => {
-        console.log('response',response)
+        console.log('response', response)
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
         this.display_value = query_params.value
@@ -76,7 +74,7 @@ let EditableTableCell = React.createClass({
         this.hasError = false
         this.setState({editMode: false})
       }, reject => {
-        console.log('reject',reject)
+        console.log('reject', reject)
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
@@ -98,24 +96,28 @@ let EditableTableCell = React.createClass({
     let spinner = ''
 
     if (this.state.editMode) {
-      input_field = <input type='text' onBlur={this.exitEditMode} onKeyUp={this.exitEditMode} id={this.cell_id}/>
+      input_field = <input
+                      type='text'
+                      onBlur={this.exitEditMode}
+                      onKeyUp={this.exitEditMode}
+                      id={this.cell_id} />
     }
 
     if (this.isSaving)
       spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
 
     return (
-      <TableCell
-        field={this.props.field}
-        row={this.props.row}
-        value={this.display_value}
-        formatValue={this.props.formatValue}
-        classes={classes}
-        onClick={this.enterEditMode}
-        hideValue={hideValue}>
-          { spinner }
-          { input_field }
-      </TableCell>
+    <TableCell
+      field={this.props.field}
+      row={this.props.row}
+      value={this.display_value}
+      formatValue={this.props.formatValue}
+      classes={classes}
+      onClick={this.enterEditMode}
+      hideValue={hideValue}>
+      {spinner}
+      {input_field}
+    </TableCell>
     )
   }
 })
