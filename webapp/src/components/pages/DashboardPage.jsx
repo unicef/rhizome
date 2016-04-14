@@ -85,6 +85,7 @@ const Dashboard = React.createClass({
   render: function () {
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
+    const chart_uuids = this.state.dashboard.chart_uuids
     const charts = _.toArray(this.state.charts)
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
@@ -93,7 +94,9 @@ const Dashboard = React.createClass({
         <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
-    const chart_components = charts.map(chart => (
+    const chart_components = chart_uuids.map(uuid => {
+      const chart = this.state.charts[uuid]
+      return (
         <div className='row'>
           <MultiChart
             chart={chart}
@@ -125,7 +128,7 @@ const Dashboard = React.createClass({
           />
         </div>
       )
-    )
+    })
 
     const save_dashboard_button = editMode ? (
       <AsyncButton

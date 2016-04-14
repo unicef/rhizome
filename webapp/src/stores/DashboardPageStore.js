@@ -13,7 +13,9 @@ const DashboardPageStore = Reflux.createStore({
 
   dashboard: {
     title: '',
-    editMode: false
+    editMode: false,
+    layout: 1,
+    chart_uuids: []
   },
 
   charts: {},
@@ -80,6 +82,7 @@ const DashboardPageStore = Reflux.createStore({
   onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.title
     response.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
+    this.dashboard.chart_uuids = response.charts.map(chart => chart.uuid)
     this.trigger(this.dashboard)
   },
   onFetchDashboardFailed: function (error) {
