@@ -25,6 +25,7 @@ let EditableTableCell = React.createClass({
     classes: React.PropTypes.string
   },
 
+  isBool: false,
   cell_id: 'edit_id_' + randomHash(),
   display_value: null,
   tooltip: null,
@@ -68,19 +69,17 @@ let EditableTableCell = React.createClass({
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
       }
       api_response.then(response => {
-        console.log('response', response)
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = false
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       }, reject => {
-        console.log('reject', reject)
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
     this.display_value = new_value
@@ -113,22 +112,27 @@ let EditableTableCell = React.createClass({
 
     let cell = ''
     if (data_format === 'bool') {
-      let items = [{
-        'value': 1,
-        'title': 'yes'
-      },
+      this.isBool = true
+      let items = [
         {
-          'value': 2,
-          'title': 'no'
+          'value': 0,
+          'title': 'No'
+        },
+        {
+          'value': 1,
+          'title': 'Yes'
         }
       ]
       cell = (<td>
                 <DropdownMenu
                   items={items}
                   sendValue={this.updateCellValue}
-                  item_plural_name='Form'
-                  text={'test'}
-                  uniqueOnly/>
+                  text={items[this.display_value].title}
+                  onChange={this.updateCellValue}
+                  item_plural_name='placeholder'
+                  style='icon-button left'
+                  icon='fa-circle-o'
+                />
               </td>)
     } else {
       cell = (<TableCell
@@ -143,7 +147,6 @@ let EditableTableCell = React.createClass({
                 {input_field}
               </TableCell>)
     }
-
     return (cell)
   }
 })
