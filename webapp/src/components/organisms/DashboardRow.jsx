@@ -63,14 +63,14 @@ const DashboardRow = React.createClass({
     const charts = this.state.charts
     if (layout === 2) {
       return (
-        <div className='row'>
+        <div className='row animated fadeInDown'>
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[1]]) : chart_slot}</div>
         </div>
       )
     } else if (layout === 3) {
       return (
-        <div className='row'>
+        <div className='row animated fadeInDown'>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[1]]) : chart_slot}</div>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[2]]) : chart_slot}</div>
@@ -78,7 +78,7 @@ const DashboardRow = React.createClass({
       )
     } else if (layout === 4) {
       return (
-        <div className='row'>
+        <div className='row animated fadeInDown'>
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
           <div className='medium-6 columns'>
             <div className='row'>
@@ -92,7 +92,7 @@ const DashboardRow = React.createClass({
       )
     }
     return (
-      <div className='row'>
+      <div className='row animated fadeInDown'>
         <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
       </div>
     )

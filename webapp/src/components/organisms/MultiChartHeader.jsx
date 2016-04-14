@@ -70,7 +70,7 @@ const MultiChartHeader = React.createClass({
 
     return (
       <header className='row'>
-        <div className='medium-12 columns chart-header text-center'>
+        <div className='medium-12 columns chart-header'>
           { props.readOnlyMode ? <h2>{chart.title || 'Untitled Chart'}</h2> : editable_title }
          <div className='chart-actions'>
             { chart_actions }

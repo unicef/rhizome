@@ -54,8 +54,9 @@ const DashboardLayout = React.createClass({
         if (this.props.dashboard_id) {
           DashboardPageActions.fetchDashboard(this.props.dashboard_id)
         } else {
-          DashboardChartsActions.addChart()
+          DashboardPageActions.addRow()
           DashboardPageActions.toggleEditMode()
+          DashboardChartsActions.addChart()
         }
       }
     })
@@ -163,6 +164,7 @@ const DashboardLayout = React.createClass({
 
     const add_row_button = loading || editMode ? (
       <div className='row text-center'>
+        <br/><br/><br/><br/><br/><br/>
         <button
           className='button large'
           onClick={DashboardPageActions.addRow}
