@@ -31,7 +31,7 @@ class DatapointResource(BaseNonModelResource):
     - **GET Requests:**
         - *Required Parameters:*
             'indicator__in' A comma-separated list of indicator IDs to fetch. By default, all indicators
-            'chart_type' 
+            'chart_type'
         - *Optional Parameters:*
             'location__in' A comma-separated list of location IDs
             'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
@@ -242,7 +242,7 @@ class DatapointResource(BaseNonModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None}
+            'campaign__in': None, 'location__in': None,}
 
         for k, v in optional_params.iteritems():
             try:
@@ -332,9 +332,11 @@ class DatapointResource(BaseNonModelResource):
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])
+
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+
         try:
             p_table = pivot_table(
                 dwc_df, values='value', index=['indicator_id'],\
@@ -353,12 +355,7 @@ class DatapointResource(BaseNonModelResource):
                 None)
             pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
 
-
-        except KeyError: ## there is no data
-            if len(self.parsed_params['campaign__in']) > 1:
-                ## implicit way to only do this for data entry - i.e. a hack.
-                return []
-
+        except KeyError: ## there is no data, so fill it with empty indicator data ##
             pivoted_data, pivoted_data_for_id = {}, {}
             for location_id in self.location_ids:
                 tupl = (location_id, self.parsed_params['campaign__in'][0])
