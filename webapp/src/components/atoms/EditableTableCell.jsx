@@ -7,6 +7,7 @@ import TableCell from 'components/atoms/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
+import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
 let EditableTableCell = React.createClass({
   mixins: [Reflux.connect(EditableTableCellStore)],
@@ -28,7 +29,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount () {
+  componentWillMount() {
     this.display_value = this.props.value
   // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
@@ -112,18 +113,22 @@ let EditableTableCell = React.createClass({
 
     let cell = ''
     if (data_format === 'bool') {
+      let items = [{
+        'value': 1,
+        'title': 'yes'
+      },
+        {
+          'value': 2,
+          'title': 'no'
+        }
+      ]
       cell = (<td>
-                <select style={{'max-width': '30%'}}>
-                  <option value=''>
-                    No Data
-                  </option>
-                  <option value='yes'>
-                    Yes
-                  </option>
-                  <option value='no'>
-                    no
-                  </option>
-                </select>
+                <DropdownMenu
+                  items={items}
+                  sendValue={this.updateCellValue}
+                  item_plural_name='Form'
+                  text={'test'}
+                  uniqueOnly/>
               </td>)
     } else {
       cell = (<TableCell
