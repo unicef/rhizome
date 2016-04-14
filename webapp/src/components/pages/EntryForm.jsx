@@ -28,6 +28,8 @@ let EntryForm = React.createClass({
     //     icon=''
     //     uniqueOnly/>)
 
+    let tableData = this.state.apiResponseData
+
     return (
       <div className='row'>
         <form>
@@ -70,7 +72,7 @@ let EntryForm = React.createClass({
         </form>
         <div className='medium-10 columns'>
           <DatabrowserTable
-            data={this.state.apiResponseData}
+            data={tableData}
             selected_locations={this.state.locationSelected}
             selected_indicators={this.state.filteredIndicators}
             editable />

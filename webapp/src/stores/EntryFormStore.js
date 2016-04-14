@@ -143,6 +143,7 @@ let EntryFormStore = Reflux.createStore({
   onSetForm: function (formValue) {
     this.data.selected.form.value = formValue
     this.data.selected.form.title = _.filter(this.data.tags, {value: formValue})[0].title
+    this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
   },
@@ -193,7 +194,6 @@ let EntryFormStore = Reflux.createStore({
 
   _getTableData: function () {
     let indicatorIds = this._getIndicatorIds()
-    console.log('ENTRY -- indicatorIds: ', indicatorIds)
 
     let options = {
       campaign__in: parseInt(this.data.selected.campaign.value, 10),
