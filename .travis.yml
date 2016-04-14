@@ -41,3 +41,4 @@ deploy:
   skip_cleanup: true
   on:
     branch: rhizome_dev_autodeploy
+  wait-until-deployed: true
