@@ -10,16 +10,16 @@ import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
-import DashboardPageStore from 'stores/DashboardPageStore'
+import DashboardChartsStore from 'stores/DashboardChartsStore'
 
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardChartsActions from 'actions/DashboardChartsActions'
 import ChartActions from 'actions/ChartActions'
 import DashboardActions from 'actions/DashboardActions'
 
 const ChartPage = React.createClass({
 
   mixins: [
-    Reflux.connect(DashboardPageStore, 'dashboard'),
+    Reflux.connect(DashboardChartsStore, 'charts'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -40,9 +40,9 @@ const ChartPage = React.createClass({
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
         if (this.props.chart_id) {
-          DashboardPageActions.fetchChart(this.props.chart_id)
+          DashboardChartsActions.fetchChart(this.props.chart_id)
         } else {
-          DashboardPageActions.addChart()
+          DashboardChartsActions.addChart()
         }
       }
     })
@@ -55,7 +55,7 @@ const ChartPage = React.createClass({
   },
 
   shouldComponentUpdate(nextProps, nextState) {
-    const charts = _.toArray(nextState.dashboard.charts)
+    const charts = _.toArray(nextState.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
@@ -82,34 +82,34 @@ const ChartPage = React.createClass({
   },
 
   render () {
-    const loading = !this.state.dashboard.charts.length > 0
-    const chart = _.toArray(this.state.dashboard.charts)[0]
+    const loading = !this.state.charts.length > 0
+    const chart = _.toArray(this.state.charts)[0]
 
     return chart ? (
       <div className='row'>
         <MultiChart
           chart={chart}
-          linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
-          toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
-          toggleEditMode={() => DashboardPageActions.toggleChartEditMode(chart.uuid)}
+          linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
+          toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
+          toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
           saveChart={() => this.saveChart(chart)}
-          setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
-          setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
-          setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
-          setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
-          setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
-          setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
-          selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
-          deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
-          reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
-          clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
-          setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
-          selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
-          deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
-          clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
-          setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
-          selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
-          deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
+          setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
+          setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
+          setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
+          setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
+          setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
+          setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
+          selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
+          deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
+          reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
+          clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
+          setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
+          selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
+          deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}
+          clearSelectedLocations={() => DashboardChartsActions.clearSelectedLocations(chart.uuid)}
+          setCampaigns={(campaigns) => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
+          selectCampaign={(id) => DashboardChartsActions.selectCampaign(id, chart.uuid)}
+          deselectCampaign={(id) => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
         />
       </div>
     ) : <Placeholder height={600} />
