@@ -152,6 +152,7 @@ let EntryFormStore = Reflux.createStore({
     this.data.selected.campaign.value = campaignId
     this.data.selected.campaign.title = this.data.camp
     this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaignId})[0].name
+    this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
   },
