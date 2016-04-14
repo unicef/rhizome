@@ -2,11 +2,15 @@
 *[role="button"] {
   background-color: $rhz-button-bg-color;
   color: $rhz-font-color;
-  font-size: .7rem;
   border-style: hidden;
   font-family: adelle;
   letter-spacing: 1px;
   margin: .5rem;
+  font-size: .7rem;
+  &.boolColor {
+    background-color: #FFFFFF;
+    color: #000000;
+  }
   &:not(.disabled):not(.success):not(.icon-button):hover {
     background-color: #426281;
     color: $rhz-font-color;

@@ -129,9 +129,7 @@ let EditableTableCell = React.createClass({
                   sendValue={this.updateCellValue}
                   text={items[this.display_value].title}
                   onChange={this.updateCellValue}
-                  item_plural_name='placeholder'
-                  style='icon-button left'
-                  icon='fa-circle-o'
+                  style=' .boolColor'
                 />
               </td>)
     } else {
