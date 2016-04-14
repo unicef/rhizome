@@ -21,7 +21,8 @@ deploy:
     bucket: rhizome-dev
     skip_cleanup: true
     local_dir: webapp/dist
-
+    on:
+      branch: rhizome_dev_autodeploy
   - provider: codedeploy
     access_key_id:
       secure: 6zcKV7v7evmqyvyIo3p/QjXKXudzsDQxeDcf3gl35+uBFakPJv7bykKctO0x6/MPzGrgSFi3jSRxpnbWN/vbeK22ST0wokXAby3ivgk0184PbeqyUiyMpORxwVfCkEi624DoBFTgpAnnmCXBq93cnJhxXxrlvou4qWPgT4JpEqKDKMTG3AS+4mcVCM9uDVFMkuaelXTRQk5bjFBaI0MXk38nhWQMSsqBkDabP9NpK12sP0cQeAjdIQOGbjtV/cIPGjV/xWk5D0iVwoih1MBG73lT+YWTlShYPZxNABUkpD7jPAcZ2QoepsHGSbNv05AIB8WZA1fJfqEbA8sUAufm6UASx19hejPw8EyfMUDMkIZXWsFI7/EQks7Rk1jxNuQrk6fHjke1/vlxzsN2mnAEIc+a5Es6iV0RgiipbGSiAlso6OM/HeXmKb03kUqRJ5TKxH5eITHycwHCn7ubKkFoUbLAHxAuMMyQoM38SO7sFU4z8yc9zi9kAlwC/1+SfCdmxuLKhsBlhhzMfy27YYOFQcX+Uz064QTfRwWx+Sm4GkQ15xD1d50ECCcFzWsgVou7yuH9ocmXwbBQ6B5hzWpiPHog+cVpC7Y0Usa+VbkD+XD4vWTPDdHegAYJ4huN/FPY1NQPEYQ+Od1zvv17cp5J7eZb3AAQ8Uq1VDz4Fxlu0x0=
