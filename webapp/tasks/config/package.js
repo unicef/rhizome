@@ -6,6 +6,7 @@ export default {
     'webapp*/public*/**/*.*',
     'docs*/_build/**/*.*',
     'manage.py',
+    'appspec.yml',
     'requirements.txt',
     'settings.py',
     'initial_data.xlsx'
