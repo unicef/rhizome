@@ -120,7 +120,6 @@ class DatapointResource(BaseNonModelResource):
         results = []
 
         err = self.parse_url_params(request.GET)
-
         if err:
             self.error = err
             return []
@@ -242,7 +241,7 @@ class DatapointResource(BaseNonModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None,}
+            'campaign__in': None, 'location__in': None, 'filter_indicator':None, 'filter_value': None}
 
         for k, v in optional_params.iteritems():
             try:
@@ -335,6 +334,19 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
+        # do an inner join on the filter indicator
+        if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
+            merge_columns = ['campaign_id', 'location_id']
+            filter_datapoints = DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=self.location_ids,
+                indicator_id=self.parsed_params['filter_indicator'],
+                value = self.parsed_params['filter_value']
+                )
+            filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
+            columns=merge_columns)
+            dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
+
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
         try:

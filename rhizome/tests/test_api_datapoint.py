@@ -8,6 +8,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationPermission, Document, IndicatorClassMap
 
 from rhizome.cache_meta import LocationTreeCache
+from random import randint
 
 class DataPointResourceTest(ResourceTestCase):
 
@@ -26,6 +27,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.top_lvl_location = Location.objects.create(
                 name = 'Nigeria',
                 location_code = 'Nigeria',
+                id=1234,
                 location_type_id = self.lt.id,
                 office_id = self.o.id,
             )
@@ -265,5 +267,88 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(len(response_data['objects']), 0)
 
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
+
+
+    def test_indicator_filter(self):
+        campaign_id = 2
+        province_lt = LocationType.objects.create(name='Province',admin_level = 1)
+        document = Document.objects.create(doc_title='some doc')
+
+        #make a couple different types of indicators, and indicators with different values
+        indicator_names_to_values = {"LPD Status":[1,2], 
+            'LQAS':[0, 1, 2]
+        }
+
+        indicator_ids_to_values ={}
+
+        for indicator_name, values in indicator_names_to_values.iteritems():
+            indicator = Indicator.objects.create(short_name=indicator_name, \
+                                     name=indicator_name, \
+                                     description=indicator_name,
+                                     data_format ='class' )
+            indicator_ids_to_values[indicator.id] = values
+
+
+
+        some_provinces = ['Kandahar', 'Kunar', 'Hilmand', 'Nimroz', 'Sari-Pul', 'Kabul', 'Paktika', 'Ghazni']
+       
+        ind_id_keys = indicator_ids_to_values.keys()
+        indicator_to_query = ind_id_keys[1]
+
+       # choose which indicator/value pair to filter by, and keep track of dps that match this as they're created
+        indicator_to_filter = ind_id_keys[0]
+        indicator_val_to_filter = indicator_ids_to_values[indicator_to_filter][0]
+        dps_to_track =[]
+
+        for province in some_provinces:
+            # create the province
+            prov = Location.objects.create(
+                name = province,
+                location_code = province,
+                location_type_id = province_lt.id,
+                office_id = self.o.id,
+                parent_location_id = self.top_lvl_location.id
+            )
+
+            # create a random dp for each indicator
+            for indicator_id, values in indicator_ids_to_values.iteritems():
+                idx = randint(0, len(values)-1)
+                value_to_use = values[idx]
+                dp = DataPointComputed.objects.create(
+                    location_id = prov.id,
+                    value = value_to_use,
+                    campaign_id = campaign_id,
+                    indicator_id = indicator_id,
+                    document_id = document.id
+                )
+                if indicator_id == indicator_to_filter and value_to_use == indicator_val_to_filter:
+                    dps_to_track.append(dp)
+
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=MapChart'\
+            .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_to_filter, indicator_val_to_filter)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), len(dps_to_track))
+
+        # oof, nested for loop is okay since it's a small dataset
+        # makes sure that all the campaign and location ids match
+        for dp in dps_to_track:
+            found_dp = False
+            for resp_dp in response_data['objects']:
+                same_campaign = int(resp_dp['campaign']) == dp.campaign_id
+                same_location = int(resp_dp['location']) == dp.location_id
+                if same_location and same_campaign:
+                    found_dp = True
+            if not found_dp:
+                fail("the datapoints from the respnse do not match the system")
+                break
+        pass
+        #  make sure the chart data isn't empty
+
+
+
 
 
