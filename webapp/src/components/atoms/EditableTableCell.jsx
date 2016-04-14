@@ -68,7 +68,6 @@ let EditableTableCell = React.createClass({
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
       }
       api_response.then(response => {
-        console.log('response', response)
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
         this.display_value = query_params.value
@@ -76,7 +75,6 @@ let EditableTableCell = React.createClass({
         this.hasError = false
         this.setState({editMode: false})
       }, reject => {
-        console.log('reject', reject)
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
@@ -113,22 +111,25 @@ let EditableTableCell = React.createClass({
 
     let cell = ''
     if (data_format === 'bool') {
-      let items = [{
-        'value': 1,
-        'title': 'yes'
-      },
+      let items = [
         {
-          'value': 2,
-          'title': 'no'
+          'value': 0,
+          'title': 'No'
+        },
+        {
+          'value': 1,
+          'title': 'Yes'
         }
       ]
       cell = (<td>
                 <DropdownMenu
                   items={items}
-                  sendValue={this.updateCellValue}
-                  item_plural_name='Form'
-                  text={'test'}
-                  uniqueOnly/>
+                  sendValue={this.props.selectCampaign}
+                  text={items[this.display_value].title}
+                  item_plural_name='placeholder'
+                  style='icon-button left'
+                  icon='fa-circle-o'
+                />
               </td>)
     } else {
       cell = (<TableCell
@@ -143,7 +144,6 @@ let EditableTableCell = React.createClass({
                 {input_field}
               </TableCell>)
     }
-
     return (cell)
   }
 })
