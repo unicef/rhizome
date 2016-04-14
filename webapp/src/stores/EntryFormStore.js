@@ -172,23 +172,29 @@ let EntryFormStore = Reflux.createStore({
     this._setCouldLoad()
     this.trigger(this.data)
   },
+
   _filterIndicators: function () {
     let tagId = parseInt(this.data.selected.form.value, 10)
     let filteredData = _.filter(this.data.indicatorsToTags, {tag_id: tagId})
+    let filteredIndicators = []
     filteredData.forEach(indicatorToTag => {
-      this.data.filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
+      filteredIndicators.push(this.data.indicatorMap[indicatorToTag.indicator_id])
     })
+    this.data.filteredIndicators = filteredIndicators
     this.trigger(this.data)
   },
 
   _getIndicatorIds: function () {
+    this._filterIndicators()
     return this.data.filteredIndicators.map(function (indicator) {
       return indicator.id
     })
   },
 
   _getTableData: function () {
-    this._filterIndicators()
+    let indicatorIds = this._getIndicatorIds()
+    console.log('ENTRY -- indicatorIds: ', indicatorIds)
+
     let options = {
       campaign__in: parseInt(this.data.selected.campaign.value, 10),
       indicator__in: [],
@@ -226,7 +232,7 @@ let EntryFormStore = Reflux.createStore({
       this.data.locations = options.location_id__in
     }
 
-    options.indicator__in = this._getIndicatorIds()
+    options.indicator__in = indicatorIds
     options.source_name = this.data.selected.source.title
 
     _.defaults(options, this.data.pagination)
