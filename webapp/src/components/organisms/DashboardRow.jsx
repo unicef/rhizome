@@ -14,6 +14,7 @@ const DashboardRow = React.createClass({
   propTypes: {
     charts: PropTypes.array,
     layout: PropTypes.number,
+    editMode: PropTypes.bool,
     selectRowLayout: PropTypes.func
   },
 
@@ -25,11 +26,10 @@ const DashboardRow = React.createClass({
   },
 
   renderChart: function (chart) { console.info('DashboardRow - renderChart')
-    console.log('chart', chart)
     return (
       <MultiChart
         chart={chart}
-        readOnlyMode={!chart.editMode}
+        readOnlyMode={!this.props.editMode}
         linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
         duplicateChart={DashboardChartsActions.duplicateChart}
         selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}

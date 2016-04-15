@@ -7,6 +7,7 @@ const DashboardChartsActions = Reflux.createActions({
   'fetchMapFeatures': { children: ['completed', 'failed'] },
   'toggleCampaignLink': 'toggleCampaignLink',
   'toggleChartEditMode': 'toggleChartEditMode',
+  'exitEditMode': 'exitEditMode',
   'toggleSelectTypeMode': 'toggleSelectTypeMode',
   // Dashboard Actions
   'addChart': 'addChart',

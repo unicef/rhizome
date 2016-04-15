@@ -129,41 +129,7 @@ const DashboardLayout = React.createClass({
         <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
-    const chart_components = chart_uuids.map(uuid => {
-      const chart = this.state.charts[uuid]
-      return (
-        <MultiChart
-          chart={chart}
-          readOnlyMode={!editMode}
-          linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
-          duplicateChart={DashboardChartsActions.duplicateChart}
-          selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}
-          toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
-          toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
-          removeChart={DashboardChartsActions.removeChart}
-          saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
-          setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
-          setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
-          setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
-          setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
-          setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
-          setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
-          selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
-          deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
-          reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
-          clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
-          setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
-          selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
-          deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}
-          clearSelectedLocations={() => DashboardChartsActions.clearSelectedLocations(chart.uuid)}
-          setCampaigns={(campaigns) => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
-          selectCampaign={(id) => DashboardChartsActions.selectCampaign(id, chart.uuid)}
-          deselectCampaign={(id) => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
-        />
-      )
-    })
-
-    const rows = dashboard.rows.map(row => <DashboardRow {...row} />)
+    const rows = dashboard.rows.map(row => <DashboardRow {...row} editMode={editMode}/>)
 
     const add_chart_button = loading || editMode ? (
       <div className='row text-center'>
