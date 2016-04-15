@@ -160,6 +160,7 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
 
+    # this tests for both MapChart and BubbleMap
     def test_map_transform(self):
 
         indicator_id = 1
@@ -223,6 +224,17 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(True, all_values_in_list)
 
+        # test BubbleMap
+        # map_type ='BubbleMap'
+        # get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type={3}'\
+        #     .format(indicator_id, campaign_id, child_id, map_type)
+
+        # resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        #     format='json', authentication=self.get_credentials())
+
+        # response_data = self.deserialize(resp)
+        # print response_data
+
     # make sure that the api returns an empty list if the parent location has no children
     def test_map_transform_no_children(self):
         indicator_id = 1
@@ -257,16 +269,18 @@ class DataPointResourceTest(ResourceTestCase):
 
         child_id = Location.objects.filter(name='Zamfara')[0].id
 
-        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type=MapChart'\
-            .format(indicator_id, campaign_id, child_id)
+        # test MapChart
+        map_type = 'MapChart'
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type={3}'\
+            .format(indicator_id, campaign_id, child_id, map_type)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 0)
-
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
+
 
 
     def test_indicator_filter(self):

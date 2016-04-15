@@ -50,6 +50,21 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(post_data['title'], response_data['title'])
         self.assertEqual(CustomDashboard.objects.count(), 1)
 
+    def test_dashboard_post_rows(self):        
+        dboard_title = 'the dashboard title'
+        dboard_rows = json.dumps([{'charts':['fdfdf'], 'layout':1}, {'charts':['ddsds'], 'layout':2}])
+        post_data = {
+        'title': dboard_title,
+        'rows' : dboard_rows
+        }
+        resp = self.api_client.post('/api/v1/custom_dashboard/', format='json', \
+                                    data=post_data, authentication=self.get_credentials())
+        self.assertHttpCreated(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(CustomDashboard.objects.count(), 1)
+        dboard = CustomDashboard.objects.get(title = dboard_title)
+        self.assertEqual(json.dumps(dboard.rows), dboard_rows)
+
     def test_dashboard_post_no_params(self):
         resp = self.api_client.post('/api/v1/custom_dashboard/', format='json', \
                                     data={}, authentication=self.get_credentials())
@@ -114,6 +129,17 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         resp_data = self.deserialize(resp)
         self.assertEqual(len(resp_data['objects']), 2)
+
+    def test_dashboard_get_rows(self):
+        dboard_rows = json.dumps([{'charts':['fdfdf'], 'layout':1}, {'charts':['ddsds'], 'layout':2}])
+        d1 = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
+        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d1.id,
+                format='json', \
+                authentication=self.get_credentials())
+
+        self.assertValidJSONResponse(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['rows'], dboard_rows)
 
 
     def test_dashboard_gets_charts(self):

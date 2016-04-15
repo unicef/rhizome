@@ -74,6 +74,11 @@ class CustomDashboardResource(BaseModelResource):
         except KeyError:
             layout = 0
 
+        try:
+            rows = json.loads(post_data['rows'])
+        except KeyError:
+            rows =None
+
         defaults = {
             'id': dash_id,
             'title': title,
@@ -84,7 +89,7 @@ class CustomDashboardResource(BaseModelResource):
         if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
             raise DatapointsException('the custom dashboard "{0}" already exists'.format(title))
 
-        dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
+        dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults, rows=rows)
 
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
