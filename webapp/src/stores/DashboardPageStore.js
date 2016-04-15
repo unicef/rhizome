@@ -432,7 +432,9 @@ var DashboardPageStore = Reflux.createStore({
       this.trigger(this.dashboard)
     }
     if (this.chartParamsAreReady(uuid)) {
-      if (this.dashboard.charts[uuid].type === 'ChoroplethMap' || this.dashboard.charts[uuid].type === 'MapChart') {
+      if (this.dashboard.charts[uuid].type === 'ChoroplethMap' ||
+          this.dashboard.charts[uuid].type === 'MapChart' ||
+          this.dashboard.charts[uuid].type === 'BubbleMap') {
         this.dashboard.charts[uuid].fetching_map = true
         return DashboardPageActions.fetchMapFeatures(this.dashboard.charts[uuid].selected_locations.map(location => location.id))
       }
