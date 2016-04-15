@@ -8,6 +8,7 @@ import Placeholder from 'components/molecules/Placeholder'
 
 import BarChart from 'components/molecules/highcharts/BarChart'
 import MapChart from 'components/molecules/highcharts/MapChart'
+import BubbleMap from 'components/molecules/highcharts/BubbleMapChart'
 import LineChart from 'components/molecules/highcharts/LineChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
 import TableChart from 'components/molecules/charts/TableChart'
@@ -55,6 +56,8 @@ const MultiChart = React.createClass({
       return <MapChart {...this.props.chart} />
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
+    } else if (type === 'BubbleMap') {
+      return <BubbleMap {...this.props.chart} />
     } else if (type === 'BarChart') {
       return <BarChart {...this.props.chart} />
     } else {
@@ -100,7 +103,6 @@ const MultiChart = React.createClass({
     )
 
     const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-9 medium-pull-4 large-pull-3 '
-
     return (
       <article className='multi-chart medium-12 columns'>
         <MultiChartHeader {...this.props}/>
