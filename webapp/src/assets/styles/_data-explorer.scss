@@ -10,30 +10,24 @@
     margin: 0;
     margin-right: .5rem;
     border: 2px solid transparent;
-    // width: 100%;
-
     .chart-box {
       border-radius: 2px;
       text-align: center;
-      // padding: 2px 3px;
       cursor: pointer;
       opacity: 0.6;
     }
-
     .chart-icon {
-      width: 40px;
+      width: 3.5rem;
       display: block;
       margin: 0 auto;
       text-align: center;
     }
-
     &.active {
       border-color: #344B61;
       .chart-box {
         opacity: 1.0;
       }
     }
-
     &:hover:not(.active) {
       border-color: lighten(#344B61, 50%);
       .chart-box {
@@ -46,7 +40,6 @@
 .palette-picker__palette-group {
   text-align: center;
   border: 2px solid transparent;
-  // width: 100%;
   display: inline-block;
   &.active {
     border-color: #344B61;

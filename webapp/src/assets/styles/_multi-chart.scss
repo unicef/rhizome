@@ -1,0 +1,129 @@
+// .multi-chart footer, footer.hideable{
+// 	background: #252525;
+//   padding-top: .75rem;
+//   padding-bottom: .3rem;
+//   h1, h2, h3, h4, h5, h6, p {
+//     color: $rhz-body-color;
+//   }
+// }
+
+.multi-chart {
+	background: white;
+	border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
+	border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
+	border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
+	margin-top: 1rem;
+	margin-bottom: 2rem;
+	margin-left: 1%;
+	margin-right: 1%;
+	width: 98%;
+	box-shadow: -1px 2px 3px grey;
+	header {
+		background: $rhz-navigation-hover-bg-color-glass;
+	  h1, h2, h3, h4, h5, h6, p {
+	  	text-transform: none;
+	  	position: relative;
+	  	.icon-button {
+	  		font-size: 1rem;
+	  		top: .025rem;
+	  	}
+	  	margin: 0;
+	    color: white;
+	  }
+		h1, input, .icon-button {
+			position: relative;
+			z-index: 300;
+		}
+		h2 {
+			font-size: 1.25rem;
+			margin: 0.4rem auto;
+			display: block;
+			@media #{$small-only} {
+				border-top: 1px solid #DBDBDB;
+				width: 100%;
+				padding: .8rem 0;
+			}
+		}
+		form {
+			.icon-button {
+				top: .1rem;
+			}
+		}
+		.icon-button {
+			color: white;
+	    left: initial;
+			font-size: 1.2rem;
+			padding: 0.5rem 0.7rem;
+		}
+	  .chart-actions {
+			position: absolute;
+			right: 0;
+			top: 0;
+	  }
+	  .chart-options-button {
+    	color: $rhz-body-color;
+	  	position: absolute;
+	    padding: 1rem 0.3rem;
+	    padding-left: 0.6rem;
+    }
+	}
+	section {
+		display: flex;
+		@media #{$small-only} {
+			flex-direction: column;
+		}
+	}
+	.chart-zone {
+		padding-top: 1rem;
+		padding-bottom: 1rem;
+	}
+	aside {
+		background: #F1F1F1;
+		box-shadow: -1px 2px 4px grey;
+		padding-top: 1rem;
+		padding-bottom: 5rem;
+		position: relative;
+		z-index: 150;
+		top: -3px;
+		.rw-dropdownlist {
+			margin-right: 1.3rem;
+		}
+		.remove-filters-link {
+			text-decoration: underline;
+			text-align: center;
+			width: 100%;
+	    margin-top: 0.4rem;
+	    display: inline-block;
+		}
+		.row.collapse .medium-6:last-of-type {
+			padding-left: 0.5rem;
+		}
+		@media #{$small-only} {
+			padding-top: 0;
+			h3 {
+				margin-top: 1rem;
+				font-size: 1rem;
+			}
+		}
+	  .chart-options-button {
+	    right: initial;
+	    top: 0rem;
+	    left: -1.7rem;
+	    padding: 1rem 0.3rem;
+  	  padding-left: 0.6rem;
+	  }
+	}
+  .chart-options-button {
+  	z-index: 140;
+  	position: absolute;
+  	right: 0;
+    top: 2.3rem;
+    background: #f1f1f1;
+	  box-shadow: -1px 1px 1px grey;
+    padding: 1rem 0.3rem;
+    padding-left: 0.6rem;
+    i {
+    	font-size: 1.4rem;
+    }
+  }
+}
