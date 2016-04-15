@@ -142,13 +142,13 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(response_data['rows'], dboard_rows)
 
 
-    def test_dashboard_gets_charts(self):
+    def test_dashboard_get_detail(self):
         ## create a dashboard ##
         d = CustomDashboard.objects.create(title='Dashboard')
 
         ## create two charts ##
-        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
-        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = json.dumps({'foo': 'bar','title':'sometitle'}))
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
 
         ## relate the charts to the dashboard ##
         ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
@@ -163,6 +163,32 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertValidJSONResponse(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['charts']), 2)
+
+    def test_dashboard_get(self):
+        ## create a dashboard ##
+        dashboard_title = 'Another one of these Dashboards'
+        d = CustomDashboard.objects.create(title= dashboard_title)
+
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = '1',title = 'bbbbb',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
+        c2 = CustomChart.objects.create(uuid = '2',title = 'aaaa',chart_json = json.dumps({'foo2': 'bar2','title2':'sometitle2'}))
+
+        ## relate the charts to the dashboard ##
+        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c1.id)
+        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c2.id)
+        get_data = {
+            'id' : d.id
+            }
+        resp = self.api_client.get('/api/v1/custom_dashboard/',\
+            format='json',\
+            data=get_data,\
+            authentication=self.get_credentials()\
+        )
+        self.assertHttpOK(resp)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(resp_data['objects'][0]['title'], dashboard_title)
 
     def test_delete_dashboard(self):
 

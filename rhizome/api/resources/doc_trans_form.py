@@ -9,6 +9,8 @@ from django.db import transaction
 from django.db.transaction import TransactionManagementError
 
 class DocTransFormResource(BaseModelResource):
+    '''
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'transform_upload'
 

@@ -26,7 +26,7 @@ class DatapointEntryResourceTest(ResourceTestCase):
         self.doc = self.ts.create_arbitrary_document()
         self.ss = self.ts.create_arbitrary_ss(self.doc.id)
         
-    def _get(self):
+    def test_get(self):
         dp = DataPointEntry.objects.create(
             location_id = self.top_lvl_location.id,
             data_date = '2016-01-01',
@@ -34,12 +34,12 @@ class DatapointEntryResourceTest(ResourceTestCase):
             value = 1234,
             cache_job_id = -1,
             source_submission_id = self.ss.id,
-            campaign_id = self.ct.id
+            campaign_id = self.c.id
         )
-        data = {'campaign__in': self.ct.id, 'indicator__in': self.ind.id}
+        data = {'campaign__in': self.c.id, 'indicator__in': self.ind.id}
         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
-        self.assertHttpOK(resp)
         resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         self.assertEqual(len(resp_data['objects']), 1)
 
     def test_get_invalid_request(self):
@@ -47,10 +47,10 @@ class DatapointEntryResourceTest(ResourceTestCase):
         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
         self.assertHttpApplicationError(resp)
 
-    def _post_new_dp(self):
+    def test_post_new_dp(self):
         dp_value = 4567
         data={
-        'campaign_id': self.ct.id,
+        'campaign_id': self.c.id,
         'location_id': self.top_lvl_location.id,
         'indicator_id': self.ind.id,
         'value': dp_value
@@ -61,10 +61,10 @@ class DatapointEntryResourceTest(ResourceTestCase):
         self.assertEqual(resp_data['value'], dp_value)
 
 # what happens when we create a duplicate datapoint
-    def _post_update_dp(self):
+    def test_post_update_dp(self):
         dp_value = 4567
         data={
-        'campaign_id': self.ct.id,
+        'campaign_id': self.c.id,
         'location_id': self.top_lvl_location.id,
         'indicator_id': self.ind.id,
         'value': dp_value
@@ -81,7 +81,7 @@ class DatapointEntryResourceTest(ResourceTestCase):
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['success'], 1)
         #make sure the api returns the new dp
-        data = {'campaign__in': self.ct.id, 'indicator__in': self.ind.id}
+        data = {'campaign__in': self.c.id, 'indicator__in': self.ind.id}
         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['objects'][0]['value'], new_val)
