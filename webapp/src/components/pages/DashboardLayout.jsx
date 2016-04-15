@@ -46,7 +46,12 @@ const DashboardLayout = React.createClass({
     }
   },
 
+
   componentDidMount: function () {
+    document.getElementsByTagName('body')[0].className+=' dashboard-page'
+    const header = document.getElementsByClassName('dashboard-header')[0]
+    window.addEventListener('scroll', () => this._stickyHeader(header), false);
+
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
     RootStore.listen(() => {
       const state = this.state
@@ -75,6 +80,15 @@ const DashboardLayout = React.createClass({
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
     return !this.missing_data || this.missing_params || this.loading_charts
+  },
+
+  _stickyHeader: function (header) {
+    if ( window.pageYOffset > 93 ) {
+      header.classList.add('fixed')
+    }
+    if ( window.pageYOffset < 92 ) {
+      header.classList.remove('fixed')
+    }
   },
 
   _toggleTitleEdit: function (title) {
