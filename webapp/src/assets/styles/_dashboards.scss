@@ -55,6 +55,10 @@ $total-columns: 7;
 		background: $rhz-header-bg-color;
 		border-top: 1px solid black;
 		margin-bottom: 2rem;
+		&.fixed {
+			transition: all .4s ease 0s;
+			background: black;
+		}
 		h1 {
 			position: relative;
 			top: .1rem;
