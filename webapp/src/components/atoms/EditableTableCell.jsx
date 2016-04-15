@@ -129,7 +129,7 @@ let EditableTableCell = React.createClass({
                   sendValue={this.updateCellValue}
                   text={items[this.display_value].title}
                   onChange={this.updateCellValue}
-                  style=' .boolColor'
+                  style='boolColor'
                 />
               </td>)
     } else {

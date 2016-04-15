@@ -53,7 +53,7 @@ class MapChart extends HighChart {
       nullColor: '#D3D3D3',
       states: {
         hover: {
-          color: '#ADD8E6'
+          color: "rgba(163, 232, 255,1.0)"
         }
       },
       tooltip: {
