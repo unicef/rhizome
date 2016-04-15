@@ -48,7 +48,10 @@ const DashboardPageStore = Reflux.createStore({
   onToggleEditMode: function () {
     this.dashboard.editMode = !this.dashboard.editMode
     this.dashboard.rows.forEach(row => {
-      row.charts.forEach(chart_uuid => DashboardChartsActions.exitEditMode(chart_uuid))
+      row.charts.forEach(chart_uuid => {
+        DashboardChartsActions.exitEditMode(chart_uuid)
+        DashboardChartsActions.exitSelectTypeMode(chart_uuid)
+      })
     })
     this.trigger(this.dashboard)
   },

@@ -8,6 +8,7 @@ const DashboardChartsActions = Reflux.createActions({
   'toggleCampaignLink': 'toggleCampaignLink',
   'toggleChartEditMode': 'toggleChartEditMode',
   'exitEditMode': 'exitEditMode',
+  'exitSelectTypeMode': 'exitSelectTypeMode',
   'toggleSelectTypeMode': 'toggleSelectTypeMode',
   // Dashboard Actions
   'addChart': 'addChart',

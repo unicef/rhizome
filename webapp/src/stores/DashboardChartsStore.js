@@ -67,14 +67,18 @@ var DashboardChartsStore = Reflux.createStore({
   },
 
   onExitEditMode: function (uuid) {
-    const chart = this.charts[uuid]
-    chart.editMode = false
+    this.charts[uuid].editMode = false
     this.trigger(this.charts)
   },
 
   onToggleSelectTypeMode: function (uuid) {
     const chart = this.charts[uuid]
     chart.selectTypeMode = !chart.selectTypeMode
+    this.trigger(this.charts)
+  },
+
+  onExitSelectTypeMode: function (uuid) {
+    this.charts[uuid].selectTypeMode = false
     this.trigger(this.charts)
   },
 
