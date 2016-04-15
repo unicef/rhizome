@@ -80,7 +80,6 @@ let SimpleDataTable = React.createClass({
 
   renderRow: function (columns, row) {
     let table_cells = React.Children.map(columns, column => {
-      console.log('RENDER ROW COLUMN: ', column)
       let cell_key = column.props.name
       if (this.props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
         return <EditableTableCell
