@@ -67,6 +67,21 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onRemoveChart: function (row_index, chart_index) { console.info('DashboardPageStore - onRemoveChart')
+    const row = this.dashboard.rows[row_index]
+    const uuid_to_remove = row.charts[chart_index]
+    row.charts.splice(chart_index, 1)
+    DashboardChartsActions.removeChart(uuid_to_remove)
+    if (row.layout === 3 || row.layout === 4) {
+      this.dashboard.rows[row_index].layout = 2
+    } else if (row.layout === 2) {
+      this.dashboard.rows[row_index].layout = 1
+    } else if (row.layout === 1) {
+      this.dashboard.rows.splice(row_index, 1)
+    }
+    this.trigger(this.dashboard)
+  },
+
   onSelectRowLayout: function (layout) {
     console.info('')
     console.info('------------------------------------------------------------')
@@ -125,7 +140,7 @@ const DashboardPageStore = Reflux.createStore({
   onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.title
     response.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
-    this.dashboard.chart_uuids = response.charts.map(chart => chart.uuid)
+    this.dashboard.chart_uuids = response.charts.map(chart => chart.uuid) // UPDATE HERE
     this.trigger(this.dashboard)
   },
   onFetchDashboardFailed: function (error) {

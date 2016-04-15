@@ -15,17 +15,19 @@ const DashboardRow = React.createClass({
     charts: PropTypes.array,
     layout: PropTypes.number,
     editMode: PropTypes.bool,
+    rowIndex: PropTypes.number,
     selectRowLayout: PropTypes.func
   },
 
   getDefaultProps: function () {
     return {
+      rowIndex: null,
       charts: null,
       layout: null
     }
   },
 
-  renderChart: function (chart) { console.info('DashboardRow - renderChart')
+  renderChart: function (chart, chart_index) { console.info('DashboardRow - renderChart')
     return (
       <MultiChart
         chart={chart}
@@ -35,7 +37,7 @@ const DashboardRow = React.createClass({
         selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}
         toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
         toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
-        removeChart={DashboardChartsActions.removeChart}
+        removeChart={() => DashboardPageActions.removeChart(this.props.rowIndex, chart_index)}
         saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
         setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
         setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
@@ -64,28 +66,28 @@ const DashboardRow = React.createClass({
     if (layout === 2) {
       return (
         <div className='row animated fadeInDown'>
-          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
-          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[1]]) : chart_slot}</div>
+          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
+          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
         </div>
       )
     } else if (layout === 3) {
       return (
         <div className='row animated fadeInDown'>
-          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
-          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[1]]) : chart_slot}</div>
-          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[2]]) : chart_slot}</div>
+          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
+          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
+          <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[2]], 2) : chart_slot}</div>
         </div>
       )
     } else if (layout === 4) {
       return (
         <div className='row animated fadeInDown'>
-          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
+          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>
             <div className='row'>
-              <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[1]]) : chart_slot}</div>
+              <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
             </div>
             <div className='row'>
-              <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[2]]) : chart_slot}</div>
+              <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[2]], 2) : chart_slot}</div>
             </div>
           </div>
         </div>
@@ -93,7 +95,7 @@ const DashboardRow = React.createClass({
     }
     return (
       <div className='row animated fadeInDown'>
-        <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[0]]) : chart_slot}</div>
+        <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
       </div>
     )
   },
@@ -101,7 +103,6 @@ const DashboardRow = React.createClass({
   render: function () {
     const props = this.props
     const layouts = [1,2,3,4]
-
 
     const layout_options = layouts.map(layout =>
       <button className='layout-preview' onClick={() => DashboardPageActions.selectRowLayout(layout)}>

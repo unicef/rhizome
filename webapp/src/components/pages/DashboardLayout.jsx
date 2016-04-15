@@ -129,7 +129,7 @@ const DashboardLayout = React.createClass({
         <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
-    const rows = dashboard.rows.map(row => <DashboardRow {...row} editMode={editMode}/>)
+    const rows = dashboard.rows.map((row, index) => <DashboardRow {...row} editMode={editMode} rowIndex={index}/>)
 
     const add_chart_button = loading || editMode ? (
       <div className='row text-center'>
