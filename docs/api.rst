@@ -438,7 +438,7 @@ TODO - Needs documentation
 ``/api/v1/datapointentry/``
 +++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.datapoint_entry.DatapointEntryResource
 
 ``/api/v1/doc_datapoint/``
 ++++++++++++++++++++++++++

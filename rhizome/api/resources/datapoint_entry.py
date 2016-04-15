@@ -28,7 +28,6 @@ class DatapointEntryResource(BaseModelResource):
             'location_id'
             'indicator_id'
             'value'
-
     '''
     required_keys = [
         # 'datapoint_id',
