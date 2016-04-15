@@ -12,6 +12,10 @@ script:
 - cd webapp && npm run package && cd ..
 notifications:
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
+before_deploy:
+  - pushd webapp
+  - find . # list the content of webapp recursively
+  - popd
 deploy:
   - provider: s3
     access_key_id:
