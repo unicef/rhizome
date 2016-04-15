@@ -22,7 +22,6 @@ const DashboardPageStore = Reflux.createStore({
   dashboard: {
     title: '',
     editMode: false,
-    chart_uuids: [],
     rows: []
   },
 

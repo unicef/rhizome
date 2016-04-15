@@ -51,7 +51,6 @@ const DashboardLayout = React.createClass({
         } else {
           DashboardPageActions.addRow()
           DashboardPageActions.toggleEditMode()
-          DashboardChartsActions.addChart()
         }
       }
     })
@@ -65,11 +64,12 @@ const DashboardLayout = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
+    const first_row_charts = nextState.dashboard.rows[0].charts
     const charts = _.toArray(nextState.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
-    return !this.missing_data || this.missing_params || this.loading_charts
+    return !this.missing_data || this.missing_params || this.loading_charts || _.isEmpty(first_row_charts)
   },
 
   _stickyHeader: function (header) {
@@ -85,9 +85,14 @@ const DashboardLayout = React.createClass({
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
-    const loading = !charts.length > 0
-
+    const selected_locations = charts[0] ? charts[0].selected_locations : []
     const rows = dashboard.rows.map((row, index) => <DashboardRow {...row} editMode={editMode} rowIndex={index}/>)
+
+    let loading = !charts.length > 0 || (!dashboard.rows.length > 0)
+
+    if (!this.props.dashboard_id && dashboard.rows.length > 0) {
+      loading = false
+    }
 
     const add_row_button = loading || editMode ? (
       <div className='row text-center'>
@@ -103,8 +108,8 @@ const DashboardLayout = React.createClass({
 
     return (
       <section className='dashboard'>
-        <DashboardHeader {...dashboard} dashboard_id={this.props.dashboard_id} />
-        { loading ? <Placeholder height={600} /> : rows}
+        <DashboardHeader {...dashboard} dashboard_id={this.props.dashboard_id} selected_locations={selected_locations} />
+        { loading ? <Placeholder height={600} /> : rows }
         { add_row_button }
       </section>
     )

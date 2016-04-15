@@ -1,11 +1,19 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
+import Reflux from 'reflux'
 
 import AsyncButton from 'components/atoms/AsyncButton'
 import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardChartsActions from 'actions/DashboardChartsActions'
+import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
+import LocationStore from 'stores/LocationStore'
 
 const DashboardHeader = React.createClass({
+
+  mixins: [
+    Reflux.connect(LocationStore, 'locations'),
+  ],
 
   propTypes: {
     dashboard_id: PropTypes.number,
@@ -24,6 +32,12 @@ const DashboardHeader = React.createClass({
       DashboardPageActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
+  },
+
+  _setLocation: function (location) {
+    this.props.rows.forEach(row => {
+      row.charts.forEach(uuid => DashboardChartsActions.setLocations(location, uuid))
+    })
   },
 
   render () {
@@ -47,7 +61,14 @@ const DashboardHeader = React.createClass({
     ) : null
 
     const dashboard_filters = (
-      <div></div>
+      <div>
+        <RegionTitleMenu
+          locations={this.state.locations.raw || []}
+          selected={props.selected_locations[0]}
+          sendValue={this._setLocation}
+          hideLastLevel
+        />
+      </div>
     )
 
     return (
@@ -61,7 +82,7 @@ const DashboardHeader = React.createClass({
         <div className='medium-3 columns medium-text-right small-text-center'>
           { save_dashboard_button }
           <button className='button' onClick={DashboardPageActions.toggleEditMode}>
-            { !editMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
+            { !editMode ? 'Edit' : 'Exit Edit Mode' }
           </button>
         </div>
       </header>
