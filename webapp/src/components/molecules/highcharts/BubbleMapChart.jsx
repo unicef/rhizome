@@ -5,27 +5,29 @@ import format from 'utilities/format'
 
 class BubbleMapChart extends HighChart {
 
-      // legend: {
-      //   layout: 'vertical',
-      //   align: 'right',
-      //   labelFormatter: function () {
-      //     const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
-      //     const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
-      //     const isBool = current_indicator.data_format === 'bool'
-      //     return (
-      //           (boundFrom || (isBool ? '' : '0')) +
-      //           (isBool ? '': boundTo ? ' - ' : ' ') +
-      //           (boundTo || (isBool ? '' : '+'))
-      //     )
-      //   },
-      //   itemStyle: {
-      //     'fontSize': '16px'
-      //   }
-      // },
-      // colorAxis: {
-      //   dataClasses: this.getDataClasses(current_indicator, palette),
-      //   reversed: current_indicator.good_bound < current_indicator.bad_bound
-      // },
+  //move back into setConfig when bubble map is working
+  //modify legend or remove
+  // legend: {
+  //   layout: 'vertical',
+  //   align: 'right',
+  //   labelFormatter: function () {
+  //     const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
+  //     const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
+  //     const isBool = current_indicator.data_format === 'bool'
+  //     return (
+  //           (boundFrom || (isBool ? '' : '0')) +
+  //           (isBool ? '': boundTo ? ' - ' : ' ') +
+  //           (boundTo || (isBool ? '' : '+'))
+  //     )
+  //   },
+  //   itemStyle: {
+  //     'fontSize': '16px'
+  //   }
+  // },
+  // colorAxis: {
+  //   dataClasses: this.getDataClasses(current_indicator, palette),
+  //   reversed: current_indicator.good_bound < current_indicator.bad_bound
+  // },
 
   setConfig = function () {
     const current_indicator = this.props.selected_indicators[0]
@@ -46,12 +48,14 @@ class BubbleMapChart extends HighChart {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
     return [{
+      color: '#BAD355',
       data: this.props.datapoints.meta.chart_data,
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
       name: current_indicator.name
     }]
   }
+  //move back into setSeries when bubblemap is working
   // tooltip: {
   //       pointFormatter: function() {
   //         return (
