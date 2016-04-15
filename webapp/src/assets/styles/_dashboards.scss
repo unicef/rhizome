@@ -46,9 +46,12 @@ $total-columns: 7;
 	}
 }
 
+.dashboard-page {
+	background: $rhz-footer-bg-color;
+}
+
 .dashboard {
 	.dashboard-header {
-		background: $rhz-footer-bg-color;
 		border-top: 1px solid black;
 		h1 {
 			padding: .8rem 0 .5rem 1rem;
@@ -100,6 +103,7 @@ $total-columns: 7;
 }
 
 .multi-chart {
+	background: white;
 	border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
 	border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
 	border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
@@ -219,8 +223,10 @@ $total-columns: 7;
   }
 }
 
-
 .layout-options {
+	& > h1, & > h2, & > h3 , & > h4, & > h5, & > h6, & > p {
+		color: white;
+	}
 	width: 75%;
 	margin: 2rem auto;
 	h4 {
@@ -228,7 +234,7 @@ $total-columns: 7;
 		font-size: 1.2rem;
 	}
 	.layout-preview {
-		background: #f1f1f1;
+		background: #F8F8F8;
 		cursor: pointer;
 		border: none;
 		display: inline-block;
@@ -238,7 +244,7 @@ $total-columns: 7;
 		width: 20%;
     transition: all .4s ease 0s;
 		&:hover {
-			background: grey;
+			background: white;
 		}
 		.row > .columns > .row > .columns .chart-preview {
 			height: 2.5rem;
