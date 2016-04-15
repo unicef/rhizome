@@ -225,15 +225,22 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(True, all_values_in_list)
 
         # test BubbleMap
-        # map_type ='BubbleMap'
-        # get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type={3}'\
-        #     .format(indicator_id, campaign_id, child_id, map_type)
+        map_type ='BubbleMap'
 
-        # resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
-        #     format='json', authentication=self.get_credentials())
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type={3}'\
+            .format(indicator_id, campaign_id, parent_location_id, map_type)
 
-        # response_data = self.deserialize(resp)
-        # print response_data
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        chart_data = response_data['meta']['chart_data']
+        self.assertEqual(len(chart_data), len(data))
+        if 'z' in chart_data[0].keys():
+            pass
+        else:
+            fail('returned object didn\'t contain a \'z\' for value')
+
 
     # make sure that the api returns an empty list if the parent location has no children
     def test_map_transform_no_children(self):

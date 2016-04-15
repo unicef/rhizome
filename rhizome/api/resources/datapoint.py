@@ -76,6 +76,7 @@ class DatapointResource(BaseNonModelResource):
 
         self.chart_type_fn_lookup = {
             'MapChart': self.transform_map_data,
+            'BubbleMap': self.transform_map_data
         }
 
 
@@ -180,12 +181,12 @@ class DatapointResource(BaseNonModelResource):
             indicator_ids = None
 
         try:
-            chart_type = request.GET['chart_type']
-            data['meta']['chart_type'] = chart_type
+            self.chart_type = request.GET['chart_type']
+            data['meta']['chart_type'] = self.chart_type
         except KeyError:
-            chart_type = None
+            self.chart_type = None
 
-        if chart_type == 'TableChart':
+        if self.chart_type == 'TableChart':
 
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
@@ -205,7 +206,7 @@ class DatapointResource(BaseNonModelResource):
 
 
         try:
-            chart_data_fn = self.chart_type_fn_lookup[request.GET['chart_type']]
+            chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
             data['meta']['chart_data'] = chart_data_fn()
         except KeyError:
             data['meta']['chart_data'] = []
@@ -434,11 +435,17 @@ class DatapointResource(BaseNonModelResource):
             indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
             indicator_value = indicator_dict['value']
             location = dp_dict['location']
+            if self.chart_type == 'MapChart':
+                object_dict = {
+                    'location_id' : location, ## high_chart_code,
+                    'value' : indicator_value
+                }
+            elif self.chart_type == 'BubbleMap':
+                object_dict = {
+                    'location_id' : location, ## high_chart_code,
+                    'z' : indicator_value
+                }
 
-            object_dict = {
-                'location_id' : location, ## high_chart_code,
-                'value' : indicator_value
-            }
 
             high_chart_data.append(object_dict)
 
