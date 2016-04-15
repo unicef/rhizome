@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
 import AsyncButton from 'components/atoms/AsyncButton'
+import IconButton from 'components/atoms/IconButton'
 import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
@@ -71,17 +72,23 @@ const DashboardHeader = React.createClass({
       </div>
     )
 
+    const edit_mode_toggle =  editMode ? (
+      <IconButton onClick={DashboardPageActions.toggleEditMode} icon='fa-times' />
+    ) : (
+      <button className='button' onClick={DashboardPageActions.toggleEditMode}>
+        Edit
+      </button>
+    )
+
     return (
       <header className='row dashboard-header'>
-        <div className='medium-6 columns medium-text-left small-text-center'>
+        <div className='medium-5 columns medium-text-left small-text-center'>
           { editMode ? title_bar : <h1>{props.title || 'Untitled Dashboard'}</h1> }
         </div>
-        <div className='medium-6 columns medium-text-right small-text-center'>
+        <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
           { dashboard_filters }
           { save_dashboard_button }
-          <button className='button' onClick={DashboardPageActions.toggleEditMode}>
-            { !editMode ? 'Edit' : 'Exit Edit Mode' }
-          </button>
+          { edit_mode_toggle }
         </div>
       </header>
     )
