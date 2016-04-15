@@ -377,7 +377,8 @@ var DashboardChartsStore = Reflux.createStore({
       this.trigger(this.charts)
     }
     if (this.chartParamsAreReady(uuid)) {
-      if (this.charts[uuid].type === 'ChoroplethMap' || this.charts[uuid].type === 'MapChart') {
+      const type = this.charts[uuid].type
+      if (type === 'ChoroplethMap' || type === 'MapChart' || type === 'BubbleMap') {
         this.charts[uuid].fetching_map = true
         return DashboardChartsActions.fetchMapFeatures(this.charts[uuid].selected_locations.map(location => location.id))
       }
