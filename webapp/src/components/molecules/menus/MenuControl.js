@@ -56,7 +56,8 @@ var MenuControl = {
     }
   },
 
-  _toggleMenu: function () {
+  _toggleMenu: function (e) {
+    e.preventDefault()
     this.setState({ open: !this.state.open })
   },
 

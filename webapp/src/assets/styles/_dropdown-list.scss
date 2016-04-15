@@ -1,4 +1,4 @@
-.dropdown-list, .button.dropdown-list {
+.dropdown-list, button.dropdown-list, [role="button"].dropdown-list {
   background-color: transparent;
   color: $rhz-background-color;
   padding: 0 0 10px 0;
@@ -17,8 +17,8 @@
     color: $rhz-background-color;
   }
   &:hover, &:focus {
-    background-color: transparent !important;
-    color: initial !important;
+    background-color: transparent;
+    color: initial;
   }
   &.chart-selector {
     width: 14rem;

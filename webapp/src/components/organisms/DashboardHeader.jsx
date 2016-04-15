@@ -61,7 +61,7 @@ const DashboardHeader = React.createClass({
     ) : null
 
     const dashboard_filters = (
-      <div>
+      <div className='dashboard-filters'>
         <RegionTitleMenu
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
@@ -76,10 +76,8 @@ const DashboardHeader = React.createClass({
         <div className='medium-6 columns medium-text-left small-text-center'>
           { editMode ? title_bar : <h1>{props.title || 'Untitled Dashboard'}</h1> }
         </div>
-        <div className='medium-3 columns'>
+        <div className='medium-6 columns medium-text-right small-text-center'>
           { dashboard_filters }
-        </div>
-        <div className='medium-3 columns medium-text-right small-text-center'>
           { save_dashboard_button }
           <button className='button' onClick={DashboardPageActions.toggleEditMode}>
             { !editMode ? 'Edit' : 'Exit Edit Mode' }
