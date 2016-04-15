@@ -108,7 +108,7 @@ const MultiChart = React.createClass({
         <MultiChartHeader {...this.props}/>
         <section className='row'>
           { chart.editMode ? sidebar : null }
-          <div className={chart_classes + ' columns chart-zone'} style={{minHeight: chart.type === 'RawData' ? '10rem' : '31rem'}}>
+          <div className={chart_classes + ' columns chart-zone'}>
             {
               chart.selectTypeMode ? chart_type_selector : (
                 !_.isEmpty(chart.data) ? this.getChartComponentByType(chart.type) : chart_placeholder
