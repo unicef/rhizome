@@ -61,7 +61,7 @@ class HighChart extends Component {
     this.setConfig()
     this.config.colors = palettes[this.props.palette]
     let chartConfig = this.config.chart
-    const chartType = this.props.type === 'MapChart' ? 'Map' : 'Chart'
+    const chartType = this.props.type === 'MapChart' || 'BubbleMap' ? 'Map' : 'Chart'
     this.chart = new Highcharts[chartType]({
       ...this.config,
       chart: {
