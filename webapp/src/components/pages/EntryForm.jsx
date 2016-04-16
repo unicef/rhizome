@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -15,7 +14,22 @@ let EntryForm = React.createClass({
   componentWillMount: function () {
     EntryFormActions.initData()
   },
+
   render () {
+    let sourceSelector = ''
+    // let sourceSelector = (<br/><br/>
+    //   <label htmlFor='source'><h3>Source</h3></label>
+    //   <DropdownMenu
+    //     items={this.state.sourceList}
+    //     sendValue={EntryFormActions.setSource}
+    //     value_field='id'
+    //     item_plural_name='Source'
+    //     text={this.state.selected.source.title}
+    //     icon=''
+    //     uniqueOnly/>)
+
+    let tableData = this.state.apiResponseData
+
     return (
       <div className='row'>
         <form>
@@ -25,10 +39,14 @@ let EntryForm = React.createClass({
             <DropdownMenu
               items={this.state.tags}
               sendValue={EntryFormActions.setForm}
-              item_plural_name='Forms'
+              value_field='id'
+              title_field='name'
+              item_plural_name='Form'
               text={this.state.selected.form.title}
-              icon=''/>
-            <br /><br />
+              icon=''
+              uniqueOnly/>
+              {sourceSelector}
+              <br /><br />
             <label htmlFor='campaigns'><h3>Campaign</h3></label>
             <DropdownMenu
               items={this.state.campaigns}
@@ -49,18 +67,12 @@ let EntryForm = React.createClass({
               icon=''
               uniqueOnly/>
             <List items={this.state.locationSelected} removeItem={EntryFormActions.removeLocation} />
-
             <br /><br />
-            <label className={this.state.couldLoad ? '' : 'disabled'}>
-              <input type='checkbox' onClick={EntryFormActions.changeSelect}
-                checked={this.state.includeSublocations && this.state.couldLoad}/>
-              Include Sublocations
-            </label>
           </div>
         </form>
         <div className='medium-10 columns'>
           <DatabrowserTable
-            data={this.state.apiResponseData}
+            data={tableData}
             selected_locations={this.state.locationSelected}
             selected_indicators={this.state.filteredIndicators}
             editable />

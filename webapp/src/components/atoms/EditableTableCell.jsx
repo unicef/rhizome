@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -8,14 +7,15 @@ import TableCell from 'components/atoms/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
+import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 
 let EditableTableCell = React.createClass({
-
   mixins: [Reflux.connect(EditableTableCellStore)],
 
   propTypes: {
     key: React.PropTypes.string,
-    fields: React.PropTypes.object,
+    field: React.PropTypes.object,
+    row: React.PropTypes.object,
     value: React.PropTypes.string,
     formatValue: React.PropTypes.func,
     validateValue: React.PropTypes.func,
@@ -25,13 +25,14 @@ let EditableTableCell = React.createClass({
     classes: React.PropTypes.string
   },
 
+  isBool: false,
   cell_id: 'edit_id_' + randomHash(),
   display_value: null,
   tooltip: null,
 
   componentWillMount() {
     this.display_value = this.props.value
-    this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
+  // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
 
   enterEditMode: function (event) {
@@ -40,8 +41,8 @@ let EditableTableCell = React.createClass({
   },
 
   exitEditMode: function (event) {
-    if (event.type === 'blur' || event.keyCode === 13 ) { // Keycode for 'Enter' key
-      if (event.target.value !== this.display_value ) {
+    if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
+      if (event.target.value !== this.display_value) {
         this.updateCellValue(event.target.value)
       }
       this.setState({editMode: false})
@@ -56,7 +57,7 @@ let EditableTableCell = React.createClass({
       this.isSaving = true
       let query_params = {
         location_id: this.props.row.location_id,
-        campaign_id: this.props.row.campaign_id,
+        campaign_id: this.props.row.campaign_id.id,
         indicator_id: this.props.field.key,
         computed_id: this.props.row[this.props.field.key].computed,
         value: new_value
@@ -68,19 +69,17 @@ let EditableTableCell = React.createClass({
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
       }
       api_response.then(response => {
-        console.log('response',response)
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = false
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       }, reject => {
-        console.log('reject',reject)
         this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
-        this.setState({editMode: false})
+        if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
     this.display_value = new_value
@@ -98,26 +97,55 @@ let EditableTableCell = React.createClass({
     let spinner = ''
 
     if (this.state.editMode) {
-      input_field = <input type='text' onBlur={this.exitEditMode} onKeyUp={this.exitEditMode} id={this.cell_id}/>
+      input_field = <input
+                      type='text'
+                      onBlur={this.exitEditMode}
+                      onKeyUp={this.exitEditMode}
+                      id={this.cell_id} />
     }
 
-    if (this.isSaving)
+    if (this.isSaving) {
       spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
+    }
 
-    return (
-      <TableCell
-        field={this.props.field}
-        row={this.props.row}
-        value={this.display_value}
-        formatValue={this.props.formatValue}
-        tooltip={this.tooltip}
-        classes={classes}
-        onClick={this.enterEditMode}
-        hideValue={hideValue}>
-          { spinner }
-          { input_field }
-      </TableCell>
-    )
+    let data_format = this.props.field.schema.data_format
+
+    let cell = ''
+    if (data_format === 'bool') {
+      this.isBool = true
+      let items = [
+        {
+          'value': 0,
+          'title': 'No'
+        },
+        {
+          'value': 1,
+          'title': 'Yes'
+        }
+      ]
+      cell = (<td>
+                <DropdownMenu
+                  items={items}
+                  sendValue={this.updateCellValue}
+                  text={items[this.display_value].title}
+                  onChange={this.updateCellValue}
+                  style='boolColor'
+                />
+              </td>)
+    } else {
+      cell = (<TableCell
+                field={this.props.field}
+                row={this.props.row}
+                value={this.display_value}
+                formatValue={this.props.formatValue}
+                classes={classes}
+                onClick={this.enterEditMode}
+                hideValue={hideValue}>
+                {spinner}
+                {input_field}
+              </TableCell>)
+    }
+    return (cell)
   }
 })
 

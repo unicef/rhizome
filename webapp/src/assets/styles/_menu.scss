@@ -24,15 +24,20 @@
 				margin  : 0;
 				&.menu-group-title {
 					a {
+						width: 100%;
+						padding-left: 5px;
+						padding-bottom: .15rem;
+						border-bottom: 1px solid #CCCCCC;
+						cursor: default;
+						font-family: proxima-bold;
 						&:hover {
 							color: #333333;
 							background: none;
 						}
-						font-weight: 800;
-						padding-bottom: .15rem;
-				    margin-left: -15px;
-						border-bottom: 1px solid #CCCCCC;
-						cursor: default;
+						&.disabled {
+							opacity: 1;
+							text-decoration: none;
+						}
 					}
 				}
 				.fa {
@@ -49,6 +54,14 @@
 							visibility: visible;
 						}
 					}
+					&.disabled {
+						text-decoration: line-through;
+					}
+				}
+				a[role="menuitem"]:hover {
+					background: none;
+					font-family: proxima-bold;
+					color: initial;
 				}
 			}
 		}

@@ -43,3 +43,11 @@ class GeoResourceTest(ResourceTestCase):
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['features']), 5)
+
+    # make sure that the api returns the parent location
+    def test_check_parent_location(self):
+        get_data ={'parent_location_id__in':6, 'tree_lvl':1}
+        resp = self.ts.get(self, '/api/v1/geo/', get_data)
+        self.assertHttpOK(resp)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(int(resp_data['parent_location_id__in']), 6)

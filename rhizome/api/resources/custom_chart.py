@@ -3,9 +3,26 @@ import json
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import CustomChart
+from rhizome.models import CustomChart,ChartToDashboard
 
 class CustomChartResource(BaseModelResource):
+    '''
+    **GET Requests:** returns charts from the API. If no parameters are given, returns all the charts
+        - *Optional Parameters:* 
+            'id' -- returns the chart with the given id
+            'dashboard_id' -- returns a chart associated with the given dashboard id
+        - *Errors:*
+            If an invalid id is passed, the API returns an empty list of objects and a status code of 200
+    **DELETE Requests:**
+        - *Required Parameters:* 
+            'id'
+    **POST Requests:**
+        - *Required Parameters:* 
+            'uuid', 'title', 'chart_json'
+        - *Errors:*
+            If any of the required parameters are missing, the API returns a 500 error
+
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
         queryset =  CustomChart.objects.all()
@@ -59,23 +76,20 @@ class CustomChartResource(BaseModelResource):
         CustomChart.objects.filter(id=obj_id).delete()
 
     def get_object_list(self, request):
-
         chart_id_list = []
-
-        try:
-            dashboard_id = request.GET['dashboard_id']
-            chart_id_list = CustomChart.objects\
-                .filter(dashboard_id=dashboard_id).values_list('id', flat=True)
-        except KeyError:
-            pass
-
-        try:
-            chart_id_list = [request.GET['id']]
-        except KeyError:
-            pass
-
-        if len(chart_id_list) == 0:
+        if 'dashboard_id' in request.GET:
+            try:
+                dashboard_id = request.GET['dashboard_id']
+                chart_id_list = ChartToDashboard.objects\
+                    .filter(dashboard_id=dashboard_id).values_list('chart_id', flat=True)
+            except KeyError:
+                pass
+        elif 'id' in request.GET:
+            try:
+                chart_id_list = [request.GET['id']]
+            except KeyError:
+                pass
+        else:
             return CustomChart.objects.all().values()
-
         return CustomChart.objects.filter(id__in=chart_id_list) \
             .values()

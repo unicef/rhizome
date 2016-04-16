@@ -6,6 +6,7 @@ from pandas import read_csv, notnull, to_datetime
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
 from rhizome.etl_tasks.refresh_master import MasterRefresh
+from rhizome.agg_tasks import AggRefresh
 
 
 class TransformUploadTestCase(TestCase):
@@ -89,9 +90,40 @@ class TransformUploadTestCase(TestCase):
         dp = DataPoint.objects.get(indicator_id = self.mapped_indicator_with_data)
         self.assertEqual(expected_dp_val, dp.value)
 
-    
 
-        #also add test to make sure that the value is correct
+    def test_class_indicator_mapping(self):
+
+        lqas_indicator = Indicator.objects.create(
+            name = 'LQAS',
+            short_name = 'LQAS',
+            data_format = 'class'
+        )
+
+        mapping_1 = IndicatorClassMap.objects.create(
+        indicator = lqas_indicator,
+        string_value = "High Pass",
+        enum_value = 4,
+        is_display =True)        
+
+        mapping_2 = IndicatorClassMap.objects.create(
+        indicator = lqas_indicator,
+        string_value = "HP",
+        enum_value = 4,
+        is_display =False)
+
+        lqas_som = SourceObjectMap.objects.create(
+            source_object_code = 'LQAS',
+            content_type = 'indicator',
+            mapped_by_id = self.user_id,
+            master_object_id = lqas_indicator.id
+        )
+
+        doc_id = self.ingest_file('class_indicator.csv')
+        ComplexDocTransform(self.user.id, doc_id).main()
+        MasterRefresh(self.user.id, doc_id).main()
+        dps = DataPoint.objects.all()
+        self.assertEqual(len(dps), 1)
+        self.assertEqual(dps[0].value, 4)
 
     # def test_boolean_transform(self):
 
@@ -146,6 +178,7 @@ class TransformUploadTestCase(TestCase):
             ('rhizome/tests/_data/calculated_indicator_component.csv')
 
         user_id = User.objects.create_user('test','test@test.com', 'test').id
+        self.user_id = user_id
         office_id = Office.objects.create(id=1,name='test').id
 
         cache_job_id = CacheJob.objects.create(id = -2, \

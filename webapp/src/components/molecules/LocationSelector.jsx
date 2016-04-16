@@ -18,7 +18,8 @@ const LocationSelector = React.createClass({
     deselectLocation: PropTypes.func,
     clearSelectedLocations: PropTypes.func,
     classes: PropTypes.string,
-    multi: PropTypes.bool
+    multi: PropTypes.bool,
+    hideLastLevel: React.PropTypes.bool // Don't show any locations if they have no sub locations themselves
   },
 
   getDefaultProps() {
@@ -54,18 +55,19 @@ const LocationSelector = React.createClass({
     if (props.multi) {
       return (
         <form className={props.classes}>
-          <h3>Locations
+          <h3 style={{marginBottom: '.1rem'}}>Locations
             <DropdownMenu
               items={location_options}
               sendValue={this.props.selectLocation}
               item_plural_name='Locations'
-              style='icon-button right'
+              style='icon-button right pad-right'
               icon='fa-plus'
               grouped/>
           </h3>
-          { props.selected_locations.length > 0 ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
           <List items={this.props.selected_locations} removeItem={this.props.deselectLocation} />
+          { props.selected_locations.length > 1 ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
           <div id='locations' placeholder='0 selected' multi='true' searchable='true' className='search-button'></div>
+          <br/>
         </form>
       )
     } else {
@@ -76,7 +78,9 @@ const LocationSelector = React.createClass({
             locations={locations}
             selected={this.props.selected_locations[0]}
             sendValue={this.props.setLocations}
+            hideLastLevel={this.props.hideLastLevel}
           />
+          <br/>
         </div>
       )
     }

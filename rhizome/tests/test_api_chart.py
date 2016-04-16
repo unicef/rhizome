@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
- Location, LocationType, Office
+ Location, LocationType, Office, ChartToDashboard
 
 import json
 
@@ -50,12 +50,107 @@ class ChartResourceTest(ResourceTestCase):
                                     authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
-
         self.assertHttpCreated(resp)
         # self.assertEqual(post_data['chart_json'], json.loads(response_data['chart_json']))
 
-    def test_chart_delete(self):
+    def test_chart_create_missing_field(self):
+        dash = CustomDashboard.objects.create(title='test')
 
+        post_data = {
+            'uuid': 'c8eef24a-f696-11e5-9ce9-5e5517507c66'}
+
+        resp = self.api_client.post('/api/v1/custom_chart/', format='json', \
+                                    data=post_data,
+                                    authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+
+        self.assertHttpApplicationError(resp)
+
+    def test_chart_get(self):
+        title = 'Some awesome chart!'
+        c1 = CustomChart.objects.create(title=title,\
+            chart_json={'yep': 'something'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        get_data = {'id' : c1.id}
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data=get_data,
+                                    authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        resp_data = self.deserialize(resp)
+        self.assertEqual(len(resp_data['objects']), 1)
+        self.assertEqual(resp_data['objects'][0]['title'], title)
+
+    def test_chart_get_all(self):
+        c1 = CustomChart.objects.create(title='chart 1',\
+            chart_json={'hello': 'world'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        c2 = CustomChart.objects.create(title='chart 2',\
+            chart_json={'goodnight': 'moon'},
+            uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data={},
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(resp_data['objects']), 2)
+
+    def test_chart_get_detail(self):
+        title = 'just another chart'
+        c1 = CustomChart.objects.create(title=title,\
+            chart_json={'yep': 'something'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        uri = '/api/v1/custom_chart/%d/'%c1.id
+        resp = self.api_client.get(uri, format='json', \
+                                    data={},
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertEqual(resp_data['title'], title )
+
+
+    def test_chart_get_invalid_id(self):
+        title = 'awesome chart 2'
+        c1 = CustomChart.objects.create(title=title,\
+            chart_json={'yep': 'something'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        get_data = {'id' : 12345}
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data=get_data,
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(resp_data['objects']), 0)
+
+    def test_get_dashboard_id(self):
+        dash = CustomDashboard.objects.create(title='test')
+        title = 'NOW that\'s what I call a chart: Volume 3'
+        c1 = CustomChart.objects.create(title=title,\
+            chart_json={'yep': 'something'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        ChartToDashboard.objects.create(chart=c1, dashboard=dash)
+        get_data = {'dashboard_id' : dash.id}
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data=get_data,
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+
+    def test_get_dashboard_id_invalid(self):
+        dash = CustomDashboard.objects.create(title='test2')
+        title = 'NOW that\'s what I call a chart: Volume 4'
+        c1 = CustomChart.objects.create(title=title,\
+            chart_json={'yep': 'something'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+        ChartToDashboard.objects.create(chart=c1, dashboard=dash)
+        get_data = {'dashboard_id' : 1234}
+        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
+                                    data=get_data,
+                                    authentication=self.get_credentials())
+        resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(resp_data['objects']), 0)
+
+    def test_chart_delete(self):
         c1 = CustomChart.objects.create(title='L.O.X',\
             chart_json={'hello': 'world'},
             uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
@@ -69,3 +164,4 @@ class ChartResourceTest(ResourceTestCase):
                                authentication=self.get_credentials())
 
         self.assertEqual(CustomChart.objects.count(), 1)
+

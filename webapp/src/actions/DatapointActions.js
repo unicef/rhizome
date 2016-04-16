@@ -20,10 +20,11 @@ const _prepDatapointsQuery = (params) => {
     indicator__in: params.indicator_ids,
     campaign_start: params.start_date,
     campaign_end: params.end_date,
-    chart_type: params.type
+    chart_type: params.type,
+    chart_uuid: params.uuid
   }
 
-  if (params.type === 'ChoroplethMap') {
+  if (params.type === 'ChoroplethMap' || params.type === 'MapChart' || params.type === 'BubbleMap') {
     query['parent_location_id__in'] = params.location_ids
   } else {
     query['location_id__in'] = params.location_ids

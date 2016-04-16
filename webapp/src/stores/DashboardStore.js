@@ -2,7 +2,6 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
-import builtins from 'components/organisms/dashboard/builtin'
 import DashboardActions from 'actions/DashboardActions'
 
 var DashboardStore = Reflux.createStore({
@@ -26,17 +25,16 @@ var DashboardStore = Reflux.createStore({
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
   // =============================  Fetch Dashboards  ========================== //
-  onFetchDashboards () { console.info('DashboardStore.onFetchDashboards')
+  onFetchDashboards () {
     this.trigger(this.dashboards)
   },
-  onFetchDashboardsCompleted (response) { console.info('DashboardStore.onFetchDashboardsCompleted')
+  onFetchDashboardsCompleted (response) {
     const dashboards = response.objects[0].dashboards || response.objects
     this.dashboards.raw = dashboards
     this.dashboards.meta = response.meta
     this.dashboards.index = _.indexBy(this.dashboards.raw, 'id')
-    const all_dashboards = builtins.concat(_(dashboards).sortBy('id').reverse().value())
     // Patch the non-comformant API response
-    this.dashboards.list = _(all_dashboards).map(dashboard => {
+    this.dashboards.list = _(dashboards).map(dashboard => {
       dashboard.charts = dashboard.charts || dashboard.dashboard_json
       return dashboard
     })
@@ -44,29 +42,29 @@ var DashboardStore = Reflux.createStore({
     .value()
     this.trigger(this.dashboards)
   },
-  onFetchDashboardsFailed (error) { console.info('DashboardStore.onFetchDashboardsFailed')
+  onFetchDashboardsFailed (error) {
     this.setState({ error: error })
   },
 
   // ===============================  Post Chart  ============================= //
-  onPostDashboard () { console.info('DashboardStore.onPostDashboard')
+  onPostDashboard () {
     this.trigger(this.dashboards)
   },
-  onPostDashboardCompleted (response) { console.info('DashboardStore.onPostDashboardCompleted')
+  onPostDashboardCompleted (response) {
     DashboardActions.fetchDashboards()
   },
-  onPostDashboardFailed (error) { console.info('DashboardStore.onPostDashboardFailed')
+  onPostDashboardFailed (error) {
     this.setState({ error: error })
   },
 
   // ===============================  Delete Dashboard  ============================ //
-  onDeleteDashboard () { console.info('DashboardStore.onDeleteDashboard')
+  onDeleteDashboard () {
     this.trigger(this.dashboards)
   },
-  onDeleteDashboardCompleted (response) { console.info('DashboardStore.onDeleteDashboardCompleted')
+  onDeleteDashboardCompleted (response) {
     DashboardActions.fetchDashboards()
   },
-  onDeleteDashboardFailed (error) { console.info('DashboardStore.onDeleteDashboardFailed')
+  onDeleteDashboardFailed (error) {
     this.setState({ error: error })
   }
 })

@@ -2,18 +2,18 @@ import _ from 'lodash'
 import d3 from 'd3'
 
 class TableChartRenderer {
+
   constructor (data, options, container) {
     this.setTableParams(data, options, container)
   }
 
   setTableParams (data, options, container) {
-    console.info('-------- TableChartRenderer.setTableParams')
     this.container = container
     this.options = options
     this.data = data
     this.h = Math.max(options.default_sort_order.length * options.cellHeight, 0)
     this.z = 160 //  extra margin space needed to add the "z" (parent) axis
-    this.w = 3 * Math.max(options.headers.length * options.cellHeight, 0)
+    this.w = 3.5 * Math.max(options.headers.length * options.cellHeight, 0)
     this.xDomainProvided = typeof (options.xDomain) !== 'undefined' && options.xDomain.length > 0
     this.xDomain = this.xDomainProvided ? options.xDomain : options.headers.map(ind => ind.short_name)
     this.xScale = d3.scale.ordinal().domain(this.xDomain).rangeBands([0, this.w], 0.1)
@@ -36,7 +36,6 @@ class TableChartRenderer {
   }
 
   render () {
-    console.info('-------- TableChartRenderer.render')
     this.prepContainer()
     this.renderRows()
     this.renderCells()
@@ -131,7 +130,6 @@ class TableChartRenderer {
       .call(d3.svg.axis().scale(this.xScale).orient('top').outerTickSize(0))
     this.svg.selectAll('.x.axis text').on('click', (d, i) => this.onSetSort(d, i))
     this.svg.selectAll('.x.axis text')
-      .attr({'transform': 'rotate(-45)'})
       .call(this.wrap, this.xScale.rangeBand())
   }
 
@@ -178,14 +176,12 @@ class TableChartRenderer {
         'x': this.sourceFlow,
         'width': this.xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': '#F1F1F1' })
-      .transition().duration(500)
-      .style('opacity', 1)
+      .style({ 'opacity': 0 })
 
     sourceG.append('text')
       .attr({
         'height': this.yScale.rangeBand(),
-        'transform': `translate(${this.z}, ${this.h})`,
+        'transform': `translate(${this.z + 16}, ${this.h + 5})`,
         'x': d => this.sourceFlow(d) + this.options.cellHeight * 1.33,
         'y': this.options.cellHeight / 2,
         'width': this.xScale.rangeBand(),

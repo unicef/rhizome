@@ -1,93 +1,88 @@
 import _ from 'lodash'
-import Highcharts from 'react-highcharts/dist/bundle/highcharts'
 import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
 
+import Highcharts from 'highcharts'
+import Exporting from 'highcharts/modules/exporting'
+import Map from 'highcharts/modules/map'
+import themes from 'components/molecules/highcharts/themes'
+import palettes from 'utilities/palettes'
 
-import LineChartRenderer from 'components/molecules/highcharts/renderers/line-chart'
+Exporting(Highcharts)
+Map(Highcharts)
 
 class HighChart extends Component {
 
-  static propTypes = {
-    chart: PropTypes.object,
-    colors: PropTypes.array,
-    credits: PropTypes.object,
-    data: PropTypes.object,
-    drilldown: PropTypes.object,
-    exporting: PropTypes.object,
-    labels: PropTypes.object,
-    legend: PropTypes.object,
-    loading: PropTypes.object,
-    navigation: PropTypes.object,
-    noData: PropTypes.object,
-    pane: PropTypes.object,
-    plotOptions: PropTypes.object,
-    series: PropTypes.arrayOf(PropTypes.object),
-    subtitle: PropTypes.object,
-    title: PropTypes.object,
-    tooltip: PropTypes.object,
-    xAxis: PropTypes.object,
-    yAxis: PropTypes.object
-  }
-
   constructor (props) {
     super(props)
-    const first_indicator = props.selected_indicators[0]
-    this.data = {
-      chart: { type: this.getChartType(props.type) },
-      credits: { enabled: false },
-      title: '',
-      xAxis: {
-        type: 'datetime',
-        labels: {
-          format: '{value:%b %d, %Y}'
-        }
-      },
-      yAxis: {
-        title: { text: '' },
-        labels: {
-          formatter: function () {
-            return format.autoFormat(this.value, first_indicator.data_format)
-          }
-        }
-      },
-      series: this.getData(),
-      tooltip: {
-         pointFormatter: function (point) {
-          const value = format.autoFormat(this.y, first_indicator.data_format)
-          return `${this.series.name}: <b>${value}</b><br/>`
-        }
-      }
+    Highcharts.setOptions(themes.standard)
+  }
+
+  static propTypes = {
+    config: React.PropTypes.object.isRequired,
+    map: React.PropTypes.bool,
+    isPureConfig: React.PropTypes.bool,
+    neverReflow: React.PropTypes.bool
+  }
+
+  static defaultProps = {
+    isPureConfig: true
+  }
+
+  componentDidMount = function () {
+    this.renderChart()
+  }
+
+  componentWillUnmount = function () {
+    this.chart.destroy()
+  }
+
+  shouldComponentUpdate = function (nextProps)  {
+    const toggledEditMode = nextProps.editMode !== this.props.editMode
+    if ((this.props.neverReflow || this.props.isPureConfig) && !toggledEditMode)  {
+      return true
     }
+    this.renderChart()
+    return false
   }
 
-  getData () {
-    const data = this.props.data
-    const groupByIndicator = this.props.groupBy === 'indicator'
-    const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
-    const series = []
-    _.forEach(grouped_data, group => {
-      _.sortBy(group, _.method('campaign.start_date.getTime'))
-      series.push({
-        name: groupByIndicator ? group[0].indicator.name : group[0].location.name,
-        data: group.map(datapoint => datapoint.value) // Needs to be sorted by date
-      })
+  setConfig = function () {
+    this.config = {}
+  }
+
+  getChart = function () {
+    if (!this.chart) {
+      throw new Error('getChart() should not be called before the component is mounted')
+    }
+    return this.chart
+  }
+
+  renderChart = function () {
+    this.setConfig()
+    this.config.colors = palettes[this.props.palette]
+    let chartConfig = this.config.chart
+    //refactor next line out to more centralized static param, especially if more map types added
+    const chartType = this.props.type === 'MapChart' || 'BubbleMap' ? 'Map' : 'Chart'
+    this.chart = new Highcharts[chartType]({
+      ...this.config,
+      chart: {
+        ...chartConfig,
+        renderTo: this.refs.chart.getDOMNode()
+      }
     })
-    return series
+
+    global.requestAnimationFrame && requestAnimationFrame(()=>{
+      this.chart && this.chart.options && this.chart.reflow()
+    })
   }
 
-  getChartType (type) {
-    if (type === 'ColumnChart') { return 'column' }
-    if (type === 'LineChart') { return 'line' }
-    if (type === 'BarChart') { return 'bar' }
-  }
-
-  render () { console.info('------ HighChart.render')
-    return (
-      <div id='highchart-container'>
-        <Highcharts config={this.data} isPureConfig/>
-      </div>
-    )
+  render = function () {
+    let props = this.props
+    props = {
+      ...props,
+      ref: 'chart'
+    }
+    return <div {...props} />
   }
 }
 

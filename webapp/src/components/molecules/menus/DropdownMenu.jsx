@@ -79,7 +79,7 @@ var DropdownMenu = React.createClass({
 
   render: function () {
     if (!this.props.items || this.props.items.length === 0) {
-      if (this.props.text ) {
+      if (this.props.text) {
         return (
           <button className={'button' + this.props.style }>
             <i className='fa fa-spinner fa-spin'></i>

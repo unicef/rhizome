@@ -1,6 +1,5 @@
 import locale
 from django.utils import timezone
-from pprint import pprint
 
 from collections import defaultdict
 import json
@@ -33,7 +32,7 @@ class MasterRefresh(object):
 
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
-
+        self.class_map_dict = self.get_class_indicator_mappings()
         self.file_header = Document.objects.get(id=self.document_id).file_header
 
         # self.to_process_ss_ids = SourceSubmission.objects\
@@ -110,12 +109,30 @@ class MasterRefresh(object):
 
         return source_map_dict
 
+    def get_class_indicator_mappings(self):
+        '''
+        Using the meta mappings, map indicator ids to another dict, which maps all 
+        of the class indicator string values to their corresponding enum values.
+        '''
+        
+        indicator_ids = self.source_map_dict.values()
+        query_results = IndicatorClassMap.objects.filter(
+            indicator_id__in = indicator_ids).values_list('indicator', 'string_value', 'enum_value')
+        class_map_dict ={}
+
+        for query in query_results:
+            if query[0] not in class_map_dict:
+                class_map_dict[query[0]] = {}
+            class_map_dict[query[0]][query[1]] = query[2]  
+
+        return class_map_dict
+
     def main(self):
 
         # if len(self.ss_ids_to_process) == 0:
         #     return
 
-        # self.refresh_submission_details()
+        self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
@@ -208,11 +225,6 @@ class MasterRefresh(object):
         worry about old data that should have been blown away hanging around.
         '''
 
-        ## to do -- only handle source submission rows that have associated
-        ## source object map rows that have been updated .. i.e. a new user
-        ## mapping and a refresh touches only relevant data -- we dont check
-        ## every row every time ##
-
         ss_id_list_to_process, all_ss_ids = [],[]
 
         ## find soure_submission_ids based of location_codes to process
@@ -221,7 +233,6 @@ class MasterRefresh(object):
             .filter(document_id = self.document_id)
 
         for submission in submission_qs:
-
             all_ss_ids.append(submission.id)
 
             location_id = submission.get_location_id()
@@ -246,24 +257,18 @@ class MasterRefresh(object):
 
         for row in SourceSubmission.objects.filter(document_id = self.document_id):
 
-            row.location_id = row.get_location_id() or -1
-            row.campaign_id = row.get_campaign_id() or -1
-
+            row.location_id = row.get_location_id()
+            row.campaign_id = row.get_campaign_id()
             ## if no mapping for campaign / location -- dont process
             if row.campaign_id == -1:
                 row.process_status = 'missing campaign'
             elif row.location_id == -1:
                 row.process_status = 'missing location'
             else:
-                # doc_dps, process_status = self.process_source_submission(row)
                 doc_dps = self.process_source_submission(row)
                 row.process_status = 'doc_dp_len: %s' % len(doc_dps)
 
-            # row.save()
-
-
     def sync_datapoint(self, ss_id_list = None):
-
         dp_batch = []
 
         if not ss_id_list:
@@ -272,7 +277,6 @@ class MasterRefresh(object):
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
-
         if len(doc_dp_df) == 0:
             return
 
@@ -330,7 +334,6 @@ class MasterRefresh(object):
 
 
     def process_source_submission(self,row):
-
         doc_dp_batch = []
         submission  = row.submission_json
 
@@ -343,11 +346,8 @@ class MasterRefresh(object):
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
-
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
-
-        return doc_dp_batch
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):
@@ -357,22 +357,30 @@ class MasterRefresh(object):
         row at once in process_source_submission.
         '''
 
+
+
         ## it no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
-            result = 'NO INDICATOR'
             return None
 
-        ## if i can't clean the value, i.e. its a string not a number, dont process
-        try:
-            cleaned_val = self.clean_val(value)
-        except ValueError:
-            result = 'NO CLEAN VALUE'
-            return None
+        cleaned_val = None
+        #handle string 'class' type indicators
+        if indicator_id in self.class_map_dict:
+            try:
+                cleaned_val = self.class_map_dict[indicator_id][value]
+            except KeyError:
+                return None
+        #handle numbers
+        else:
+            try:
+                cleaned_val = self.clean_val(value)
+            except ValueError:
+                return None
 
-
-        doc_dp = DocDataPoint(**{
+        if cleaned_val:
+            doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
                 'location_id': row.location_id,
@@ -382,8 +390,9 @@ class MasterRefresh(object):
                 'source_submission_id': row.id,
                 'agg_on_location': True,
             })
-
-        return doc_dp
+            return doc_dp
+        else:
+            return None
 
     def clean_val(self, val):
         '''
@@ -393,7 +402,6 @@ class MasterRefresh(object):
         keep the size of the database manageable, we only accept non zero values.
         '''
         str_lookup = {'yes':1,'no':0}
-
         if val is None:
             return None
 
@@ -405,8 +413,6 @@ class MasterRefresh(object):
                 convert_percent =True
             except ValueError:
                 pass
-
-
         ## clean!  i am on a deadline rn :-/  ##
 
         locale.setlocale( locale.LC_ALL, 'en_US.UTF-8' )
@@ -417,10 +423,12 @@ class MasterRefresh(object):
             cleaned_val = float(val)
         except ValueError:
             try:
-                cleaned_val = str_lookup[val.lower()]
-
-            except KeyError:
-                raise ValueError('Bad Value!')
+                cleaned_val = float(val)
+            except ValueError:
+                try:
+                    cleaned_val = str_lookup[val.lower()]
+                except KeyError:
+                    raise ValueError('Bad Value!')
 
         if convert_percent:
             cleaned_val = cleaned_val/100.0

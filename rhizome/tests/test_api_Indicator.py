@@ -31,9 +31,6 @@ class IndicatorResourceTest(ResourceTestCase):
         self.assertValidJSONResponse(resp)
 
 
-    #GET request. If 'id' is passed in, it returns specific indicator. Otherwise,
-    #returns all indicators
-    #if an error occurs, returns 200 code and an empty list of indicator objects
     def test_get_indicator_id(self):
         get_data ={'id':self.ind.id}
         resp = self.ts.get(self, '/api/v1/indicator/', data= get_data)
@@ -47,12 +44,6 @@ class IndicatorResourceTest(ResourceTestCase):
         resp_data = self.deserialize(resp)
         self.assertEqual(len(resp_data['objects']), 0)
 
-
-    #POST request requires fields: 'name, 'short_name', 'description','data_format'
-    #'good_bound', 'bad_bound', 'source_name'
-    #'id' field is optional
-    #if any of these fields are missing or incorrect returns 500 error code
-    #if data format not specified it defaults to int
     def test_create_indicator(self):
         Indicator.objects.all().delete()
 

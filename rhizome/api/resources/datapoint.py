@@ -12,7 +12,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree
+    LocationPermission, LocationTree, IndicatorClassMap
 
 
 class ResultObject(object):
@@ -28,7 +28,17 @@ class ResultObject(object):
 
 class DatapointResource(BaseNonModelResource):
     '''
-    This is the class that coincides with the /api/v1/datapoint endpoint.
+    - **GET Requests:**
+        - *Required Parameters:*
+            'indicator__in' A comma-separated list of indicator IDs to fetch. By default, all indicators
+            'chart_type'
+        - *Optional Parameters:*
+            'location__in' A comma-separated list of location IDs
+            'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
+            'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
+            'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
+    - **Errors:**
+        -
     '''
 
     error = None
@@ -64,6 +74,12 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
+        self.chart_type_fn_lookup = {
+            'MapChart': self.transform_map_data,
+            'BubbleMap': self.transform_map_data
+        }
+
+
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
         """
@@ -98,89 +114,21 @@ class DatapointResource(BaseNonModelResource):
         in the url parameters, and creating a ResultObject for each row in the
         response.
         '''
+
         self.error = None
+        self.class_indicator_map = self.build_class_indicator_map();
 
         results = []
 
         err = self.parse_url_params(request.GET)
-
         if err:
             self.error = err
             return []
 
         self.location_ids = self.get_locations_to_return_from_url(request)
+        self.base_data = self.base_transform()
+        return self.base_data
 
-
-        chart_type = 'rawData' ## make this the default
-        try:
-            chart_type = request.GET['chart_type']
-        except KeyError:
-            pass
-
-        # Pivot the data on request instead of caching ##
-        # in the datapoint_abstracted table ##
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
-
-        computed_datapoints = DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])
-
-        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
-            columns=df_columns)
-
-        try:
-            p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-
-            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-            pivoted_data = no_nan_pivoted_df.to_dict()
-
-            ## we need two dictionaries, one that has the value of the
-            ## datapoint_computed object and one with the id ##
-
-            p_table_for_id = pivot_table(
-                dwc_df, values='id', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
-                None)
-            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
-
-        except KeyError: ## there is no data
-            if len(self.parsed_params['campaign__in']) > 1:
-                ## implicit way to only do this for data entry - i.e. a hack.
-                return
-
-            pivoted_data, pivoted_data_for_id = {}, {}
-            for location_id in self.location_ids:
-                tupl = (location_id, self.parsed_params['campaign__in'][0])
-                pivoted_data[tupl] = {}
-                pivoted_data_for_id[tupl] = {}
-
-        for row, indicator_dict in pivoted_data.iteritems():
-
-            indicator_objects = [{
-                'indicator': unicode(k),
-                'computed': pivoted_data_for_id[row][k],
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
-
-            # avail_indicators = set([x for x,y in indicator_dict.keys()])
-            missing_indicators = list(set(self.parsed_params['indicator__in']))
-            for ind in missing_indicators:
-                if ind not in indicator_dict.keys():
-                    indicator_objects.append({'indicator': ind, 'value': None,\
-                    'computed_id': None})
-
-            r = ResultObject()
-            r.location = row[0]
-            r.campaign = row[1]
-            r.indicators = indicator_objects
-            results.append(r)
-
-        return results
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -191,7 +139,6 @@ class DatapointResource(BaseNonModelResource):
         objects = self.get_object_list(bundle.request)
         if not objects:
             objects = []
-
         return objects
 
     def obj_get(self, bundle, **kwargs):
@@ -210,12 +157,36 @@ class DatapointResource(BaseNonModelResource):
         '''
 
         try:
-            chart_type = request.GET['chart_type']
-            data['meta']['chart_type'] = chart_type
+            location_ids = request.GET['location_id__in']
+            data['meta']['location_ids'] = location_ids
         except KeyError:
-            chart_type = None
+            location_ids = None
 
-        if chart_type == 'TableChart':
+        try:
+            parent_location_ids = request.GET['parent_location_id__in']
+            data['meta']['parent_location_ids'] = parent_location_ids
+        except KeyError:
+            parent_location_ids = None
+
+        try:
+            indicator_ids = request.GET['indicator__in']
+            data['meta']['indicator_ids'] = indicator_ids
+        except KeyError:
+            indicator_ids = None
+
+        try:
+            chart_uuid = request.GET['chart_uuid']
+            data['meta']['chart_uuid'] = chart_uuid
+        except KeyError:
+            indicator_ids = None
+
+        try:
+            self.chart_type = request.GET['chart_type']
+            data['meta']['chart_type'] = self.chart_type
+        except KeyError:
+            self.chart_type = None
+
+        if self.chart_type == 'TableChart':
 
             p_loc_qs = Location.objects\
                 .filter(id__in = self.location_ids)\
@@ -232,6 +203,13 @@ class DatapointResource(BaseNonModelResource):
             data['error'] = self.error
         else:
             data['error'] = None
+
+
+        try:
+            chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
+            data['meta']['chart_data'] = chart_data_fn()
+        except KeyError:
+            data['meta']['chart_data'] = []
 
         return data
 
@@ -264,7 +242,7 @@ class DatapointResource(BaseNonModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None}
+            'campaign__in': None, 'location__in': None, 'filter_indicator':None, 'filter_value': None}
 
         for k, v in optional_params.iteritems():
             try:
@@ -322,3 +300,153 @@ class DatapointResource(BaseNonModelResource):
         campaign__in = [c.id for c in campaign_qs]
 
         return campaign__in
+
+    def build_class_indicator_map(self):
+        query_results = IndicatorClassMap.objects.filter(is_display=True) \
+            .values_list('indicator','enum_value','string_value')
+        class_indicator_map ={}
+        for query in query_results:
+            if query[0] not in class_indicator_map:
+                class_indicator_map[query[0]] ={}
+            class_indicator_map[query[0]][query[1]] = query[2]
+
+        return class_indicator_map
+
+    def add_class_indicator_val(self, x):
+        ind_id = x['indicator_id']
+        ind_val = x['value']
+        if ind_id in self.class_indicator_map and ind_val in self.class_indicator_map[ind_id]:
+            new_val = self.class_indicator_map[ind_id][ind_val]
+            x['value'] = new_val
+        return x
+
+    def base_transform(self):
+
+        results = []
+
+        # Pivot the data on request instead of caching ##
+        # in the datapoint_abstracted table ##
+        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+            'value']
+        computed_datapoints = DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=self.location_ids,
+                indicator__in=self.parsed_params['indicator__in'])
+
+        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
+            columns=df_columns)
+        # do an inner join on the filter indicator
+        if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
+            merge_columns = ['campaign_id', 'location_id']
+            filter_datapoints = DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=self.location_ids,
+                indicator_id=self.parsed_params['filter_indicator'],
+                value = self.parsed_params['filter_value']
+                )
+            filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
+            columns=merge_columns)
+            dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
+
+        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+
+        try:
+            p_table = pivot_table(
+                dwc_df, values='value', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+
+            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+            pivoted_data = no_nan_pivoted_df.to_dict()
+
+            ## we need two dictionaries, one that has the value of the
+            ## datapoint_computed object and one with the id ##
+
+            p_table_for_id = pivot_table(
+                dwc_df, values='id', index=['indicator_id'],\
+                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
+                None)
+            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
+
+        except KeyError: ## there is no data, so fill it with empty indicator data ##
+            pivoted_data, pivoted_data_for_id = {}, {}
+            for location_id in self.location_ids:
+                tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
+                pivoted_data[tupl] = {}
+                pivoted_data_for_id[tupl] = {}
+
+        # all_pivoted_data = self.add_missing_data(pivoted_data)
+        for i, (row, indicator_dict) in enumerate(pivoted_data.iteritems()):
+
+            indicator_objects = [{
+                'indicator': k,
+                'computed': pivoted_data_for_id[row][k],
+                'value': v
+            } for k, v in indicator_dict.iteritems()]
+
+            # avail_indicators = set([x for x,y in indicator_dict.keys()])
+            missing_indicators = list(set(self.parsed_params['indicator__in']))
+            for ind in missing_indicators:
+                if ind not in indicator_dict.keys():
+                    indicator_objects.append({'indicator': ind, 'value': None,\
+                    'computed_id': None})
+
+            r = ResultObject()
+            r.location = row[0]
+            r.campaign = row[1]
+            r.indicators = indicator_objects
+
+            results.append(r)
+
+        return results
+
+    # def add_missing_data(self, pivoted_data):
+    #     '''
+    #     If the campaign / locaiton cobination has no related datapoitns, we
+    #     add the keys here so that we can see the row of data in data entry
+    #     or data browser.
+    #
+    #     This in the future can be controlled with a parameter so that for
+    #     instance with a table chart for a large number of districts, we only
+    #     show those with data.
+    #
+    #     This is largely for Data entry so that we can see a row in the form
+    #     even when there is no existing data.
+    #     '''
+    #
+    #     for loc in self.location_ids:
+    #
+    #         for camp in self.parsed_params['campaign__in']:
+    #
+    #             tuple_dict_key = (float(loc), float(camp))
+    #
+    #             try:
+    #                 existing_data = pivoted_data[tuple_dict_key]
+    #             except KeyError:
+    #                 pivoted_data[tuple_dict_key] = {}
+    #
+    #     return pivoted_data
+
+    def transform_map_data(self):
+
+        high_chart_data = []
+        for obj in self.base_data:
+            dp_dict = obj.__dict__
+            indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
+            indicator_value = indicator_dict['value']
+            location = dp_dict['location']
+            if self.chart_type == 'MapChart':
+                object_dict = {
+                    'location_id' : location, ## high_chart_code,
+                    'value' : indicator_value
+                }
+            elif self.chart_type == 'BubbleMap':
+                object_dict = {
+                    'location_id' : location, ## high_chart_code,
+                    'z' : indicator_value
+                }
+
+
+            high_chart_data.append(object_dict)
+
+        return high_chart_data

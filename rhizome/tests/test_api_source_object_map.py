@@ -37,8 +37,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
         self.dsom= self.test_setup.create_arbitrary_dsom(self.document.id, self.indicator_map.id, 23)
 
-    #POST changes the master object for an existing source object map.
-    #Required fields: 'master_object_id' 'mapped_by_id' 'id'
     def test_som_post(self):
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
@@ -54,7 +52,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
         self.assertEqual(response_data['master_object_id'], self.indicators[0].id)
 
-    #POST returns 500 if required field is not included
     def test_som_post_invalid(self):
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
@@ -66,7 +63,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
         self.assertHttpApplicationError(post_resp)
 
-    #POST returns 500 if master_object_id is invalid
     def test_som_post_invalid_master_obj_id(self):
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
@@ -78,10 +74,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         post_resp = self.test_setup.post(self, '/api/v1/source_object_map/', post_data)
     
         self.assertHttpApplicationError(post_resp)
-
-    #GET requests: if "document_id" is specified, returns a list of Source Object Maps
-    #if 'id' field is specified, returns the Source Object Map
-    #if neither is specified, returns all of the source object maps
 
     def test_som_get_id(self):
         get_data ={'id':self.indicator_map.id}
@@ -107,7 +99,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         get_data = self.deserialize(get_resp)
         self.assertEqual(len(get_data['objects']), 2)
 
-    #if GET contains invalid document id or id, returns 200 but with empty object
     def test_som_get_doc_id_invalid(self):
         get_data={'document_id':123456}
         get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)

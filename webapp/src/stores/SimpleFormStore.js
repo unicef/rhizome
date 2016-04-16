@@ -106,7 +106,8 @@ var SimpleFormStore = Reflux.createStore({
             settings: {options: [
               { value: 'pct', label: 'pct' },
               { value: 'bool', label: 'bool' },
-              { value: 'int', label: 'int' }
+              { value: 'int', label: 'int' },
+              { value: 'class', label: 'class' }
             ]}
           },
           'description': {type: 'string'}
@@ -122,6 +123,8 @@ var SimpleFormStore = Reflux.createStore({
         self.data.formSettings = form_settings[content_type]
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
+        console.log('self.data', self.data)
+        //code fails on trigger call
         self.trigger(self.data)
       })
 

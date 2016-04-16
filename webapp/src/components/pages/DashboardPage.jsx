@@ -2,6 +2,8 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import AsyncButton from 'components/atoms/AsyncButton'
+
 import Placeholder from 'components/molecules/Placeholder'
 import MultiChart from 'components/organisms/MultiChart'
 import TitleInput from 'components/molecules/TitleInput'
@@ -10,16 +12,15 @@ import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
-import DashboardNewStore from 'stores/DashboardNewStore'
+import DashboardPageStore from 'stores/DashboardPageStore'
 
-import DashboardNewActions from 'actions/DashboardNewActions'
-import ChartActions from 'actions/ChartActions'
 import DashboardActions from 'actions/DashboardActions'
+import DashboardPageActions from 'actions/DashboardPageActions'
 
 const Dashboard = React.createClass({
 
   mixins: [
-    Reflux.connect(DashboardNewStore, 'dashboard'),
+    Reflux.connect(DashboardPageStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -29,171 +30,137 @@ const Dashboard = React.createClass({
     dashboard_id: PropTypes.number
   },
 
-  getInitialState () {
+  getDefaultProps: function () {
+    return {
+      dashboard_id: null
+    }
+  },
+
+  getInitialState: function () {
     return {
       titleEditMode: false
     }
   },
 
-  componentDidMount () {
+  componentDidMount: function () {
+    // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
     RootStore.listen(() => {
       const state = this.state
       if (state.locations.index && state.indicators.index && state.campaigns.index) {
         if (this.props.dashboard_id) {
-          DashboardNewActions.fetchDashboard(this.props.dashboard_id)
+          DashboardPageActions.fetchDashboard(this.props.dashboard_id)
         } else {
-          DashboardNewActions.addChart()
+          DashboardPageActions.addChart()
+          DashboardPageActions.toggleEditMode()
         }
+      }
+    })
+    // If the dashboard is saved for the first time, redirect to the dashboard page
+    this.listenTo(DashboardActions.postDashboard.completed, (response) => {
+      if (!this.props.dashboard_id) {
+        const dashboard_id = response.objects.id
+        window.location = window.location.origin + '/dashboards/' + dashboard_id
       }
     })
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate: function (nextProps, nextState) {
     const charts = _.toArray(nextState.dashboard.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
-    // console.log('missing_params', this.missing_params)
-    // console.log('missing_data', this.missing_data)
-    // console.log('loading_charts', this.loading_charts)
     return !this.missing_data || this.missing_params || this.loading_charts
   },
 
-  _toggleTitleEdit (title) {
+  _toggleTitleEdit: function (title) {
     if (_.isString(title)) {
-      DashboardNewActions.setDashboardTitle(title)
+      DashboardPageActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  saveDashboard () {
-    const dashboard = this.state.dashboard
-    console.info('- Dashboard.saveChart', dashboard.title)
-    if (!dashboard.title || dashboard.title === 'Untitled Dashboard') {
-      return window.alert('Please add a Title to your dashboard')
-    }
-    let allChartsSaved = true
-    _.toArray(dashboard.charts).forEach(chart => {
-      if (!chart.title || chart.title === 'Untitled Chart') {
-       return allChartsSaved = false
-      }
-      this.saveChart(chart)
-    })
-    if (!allChartsSaved) {
-      return window.alert('Please title all of your charts')
-    }
-
-    const query = {
-      id: this.props.dashboard_id || null,
-      title: dashboard.title,
-      chart_uuids: _.toArray(dashboard.charts).map(chart => chart.uuid)
-    }
-    DashboardActions.postDashboard(query)
-  },
-
-  saveChart (chart) {
-    console.info('- Dashboard.saveChart')
-    if (!chart.title || chart.title === 'Untitled Chart') {
-      return window.alert('Please add a Title to your chart')
-    }
-    ChartActions.postChart({
-      id: chart.id,
-      title: chart.title,
-      uuid: chart.uuid,
-      chart_json: JSON.stringify({
-        type: chart.type,
-        start_date: chart.start_date,
-        end_date: chart.end_date,
-        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
-        location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
-      })
-    })
-  },
-
-  renderChartRow (row) {
-    return (
-      row.map(chart =>
-        <div className={(row.length === 2 ? 'medium-12' : 'medium-12') + ' columns'}>
-          <MultiChart
-            chart={chart}
-            linkCampaigns={() => DashboardNewActions.toggleCampaignLink(chart.uuid)}
-            duplicateChart={DashboardNewActions.duplicateChart}
-            selectChart={new_chart => DashboardNewActions.selectChart(new_chart, chart.uuid)}
-            toggleSelectTypeMode={() => DashboardNewActions.toggleSelectTypeMode(chart.uuid)}
-            removeChart={DashboardNewActions.removeChart}
-            saveChart={this.saveChart}
-            setDateRange={(key, value) => DashboardNewActions.setDateRange(key, value, chart.uuid)}
-            setGroupBy={(grouping) => DashboardNewActions.setGroupBy(grouping, chart.uuid)}
-            setPalette={(palette) => DashboardNewActions.setPalette(palette, chart.uuid)}
-            setTitle={(title) => DashboardNewActions.setChartTitle(title, chart.uuid)}
-            setType={(type) => DashboardNewActions.setType(type, chart.uuid)}
-            setIndicators={(indicators) => DashboardNewActions.setIndicators(indicators, chart.uuid)}
-            selectIndicator={(id) => DashboardNewActions.selectIndicator(id, chart.uuid)}
-            deselectIndicator={(id) => DashboardNewActions.deselectIndicator(id, chart.uuid)}
-            reorderIndicator={(indicators) => DashboardNewActions.reorderIndicator(indicators, chart.uuid)}
-            clearSelectedIndicators={() => DashboardNewActions.clearSelectedIndicators(chart.uuid)}
-            setLocations={(locations) => DashboardNewActions.setLocations(locations, chart.uuid)}
-            selectLocation={(id) => DashboardNewActions.selectLocation(id, chart.uuid)}
-            deselectLocation={(id) => DashboardNewActions.deselectLocation(id, chart.uuid)}
-            clearSelectedLocations={() => DashboardNewActions.clearSelectedLocations(chart.uuid)}
-            setCampaigns={(campaigns) => DashboardNewActions.setCampaigns(campaigns, chart.uuid)}
-            selectCampaign={(id) => DashboardNewActions.selectCampaign(id, chart.uuid)}
-            deselectCampaign={(id) => DashboardNewActions.deselectCampaign(id, chart.uuid)}
-          />
-        </div>
-      )
-    )
-  },
-
-  render () {
+  render: function () {
+    const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(dashboard.charts)
-    console.info('Dashboard.RENDER ========================================== Charts:', charts)
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
       <h1 onClick={this._toggleTitleEdit}>
-        <a>
-          {dashboard.title || 'Untitled Dashboard'}
-        </a>
+        <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
-    var temp = charts.slice();
-    var arr = [];
-    while (temp.length) {
-      arr.push(temp.splice(0,2));
-    }
-    const chart_components = arr.map(row => {
-      return (
-        <div className='row collapse'>
-          { this.renderChartRow(row) }
+    const chart_components = charts.map(chart => (
+        <div className='row'>
+          <MultiChart
+            chart={chart}
+            readOnlyMode={!editMode}
+            linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
+            duplicateChart={DashboardPageActions.duplicateChart}
+            selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
+            toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
+            toggleEditMode={() => DashboardPageActions.toggleChartEditMode(chart.uuid)}
+            removeChart={DashboardPageActions.removeChart}
+            saveChart={() => DashboardPageActions.saveChart(chart.uuid)}
+            setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
+            setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
+            setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
+            setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
+            setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
+            setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
+            selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
+            deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
+            reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
+            clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
+            setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
+            selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
+            deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
+            clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
+            setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
+            selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
+            deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
+          />
         </div>
       )
-    })
+    )
+
+    const save_dashboard_button = editMode ? (
+      <AsyncButton
+        text='Save Dashboard'
+        alt_text='Saving ...'
+        isBusy={dashboard.saving}
+        onClick={() => DashboardPageActions.saveDashboard(this.props.dashboard_id)}
+      />
+    ) : null
+
+    const add_chart_button = loading || editMode ? (
+      <div className='row text-center'>
+        <button
+          className='button large'
+          onClick={DashboardPageActions.addChart}
+          style={{marginTop: '1rem'}}>
+          Add Chart
+        </button>
+      </div>
+    ) : null
+
     const loading = !charts.length > 0
+
     return (
       <section className='dashboard'>
         <header className='row dashboard-header'>
           <div className='medium-6 columns medium-text-left small-text-center'>
-            { title_bar }
+            { editMode ? title_bar : <h1>{dashboard.title || 'Untitled Dashboard'}</h1> }
           </div>
           <div className='medium-6 columns medium-text-right small-text-center'>
-            <button className='button' onClick={this.saveDashboard}>Save Dashboard</button>
+            { save_dashboard_button }
+            <button className='button' onClick={DashboardPageActions.toggleEditMode}>
+              { !editMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
+            </button>
           </div>
         </header>
         { loading ? <Placeholder height={600} /> : chart_components}
-        { loading ? null : (
-            <div className='row text-center'>
-              <button
-                className='button large'
-                onClick={DashboardNewActions.addChart}
-                style={{marginTop: '1rem'}}>
-                Add Chart
-              </button>
-            </div>
-          )
-        }
+        { add_chart_button }
       </section>
     )
   }

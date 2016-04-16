@@ -16,7 +16,8 @@ var MenuItem = React.createClass({
     disabled: React.PropTypes.bool,
     filtered: React.PropTypes.bool,
     displayTitle: React.PropTypes.string,
-    noValue: React.PropTypes.bool
+    noValue: React.PropTypes.bool,
+    hideLastLevel: React.PropTypes.bool // Don't show any children if they have no children themselves
   },
 
   statics: {
@@ -32,6 +33,7 @@ var MenuItem = React.createClass({
     return {
       depth: 0,
       filtered: false,
+      hideLastLevel: false,
       displayTitle: null
     }
   },
@@ -43,11 +45,11 @@ var MenuItem = React.createClass({
     }
   },
 
-  componentDidMount() {
+  componentDidMount () {
     this.setState({disabled: this.props.disabled})
   },
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate (nextProps, nextState) {
     if (this.props.disabled !== nextProps.disabled) {
       this.setState({disabled: nextProps.disabled})
     }
@@ -68,38 +70,44 @@ var MenuItem = React.createClass({
   },
 
   render: function () {
-    var hasChildren = !this.props.filtered && _.isArray(this.props.children) && this.props.children.length > 0
-    var itemStyle = {
-      paddingLeft: this.state.filtered ? '5px' : (5 + (17 * this.props.depth)) + 'px',
-      textDecoration: this.state.disabled ? 'line-through' : null
-    }
+    const props = this.props
+    const hasChildren = !props.filtered && _.isArray(props.children) && props.children.length > 0
+    const isLastParent = props.children && props.children.filter(child => child.children).length < 1
+    const hideArrow = isLastParent && props.hideLastLevel
+    const prefix = props.filtered ? _.get(this.props, 'ancestryString', '') : ''
+    const title = prefix + (props.displayTitle === null ? props.title : props.displayTitle)
 
     var children = null
-    if (this.props.children && this.state.open) {
-      children = MenuItem.fromArray(
-        this.props.children,
-        this.props.sendValue,
-        this.props.depth + 1)
+    if (props.children && this.state.open) {
+      children = props.children.map(item => {
+        return <MenuItem key={item.value} depth={props.depth + 1} sendValue={props.sendValue} {...item} hideLastLevel={props.hideLastLevel}/>
+      })
     }
 
-    var prefix = this.props.filtered ? _.get(this.props, 'ancestryString', '') : ''
-    var title = prefix + (this.props.displayTitle === null ? this.props.title : this.props.displayTitle)
+    var arrowStyle = {
+      paddingLeft: this.state.filtered ? '5px' : (5 + (17 * props.depth)) + 'px',
+      display: 'inline-block'
+    }
+    const arrow_button = hasChildren ? (
+      <a onClick={this._toggleChildren} className={hasChildren ? 'folder' : null} style={arrowStyle}>
+        <i className={'fa fa-lg fa-fw fa-caret-' + (this.state.open ? 'down' : 'right')}></i>
+      </a>
+    ) : null
+
+    let itemStyle = { display: 'inline-block' }
+    let classes = this.state.disabled ? ' disabled ' : ''
+    classes += hasChildren ? 'folder' : ''
+    !hasChildren || hideArrow ? itemStyle.paddingLeft = this.state.filtered ? '5px' : (15 + (18 * props.depth)) + 'px' : null
+    const item_button = (
+      <a role='menuitem' onClick={this._handleClick} style={itemStyle} tabIndex='-1' className={classes} >
+        {title}
+      </a>
+    )
+
     return (
-      <li className={this.props.classes}>
-        <a
-          role='menuitem'
-          onClick={this._handleClick}
-          style={itemStyle}
-          className={hasChildren ? 'folder' : null}
-          tabIndex='-1'>
-
-          <i
-            className={'fa fa-lg fa-fw ' + (this.state.open ? 'fa-caret-down' : 'fa-caret-right')}
-            onClick={this._toggleChildren}></i>
-
-          {title}
-        </a>
-
+      <li className={props.classes}>
+        { hideArrow ? null : arrow_button }
+        { item_button }
         <div>
           {children}
         </div>

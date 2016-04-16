@@ -1,6 +1,10 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
+
+import IndicatorStore from 'stores/IndicatorStore'
+import LocationStore from 'stores/LocationStore'
+
 import DatapointActions from 'actions/DatapointActions'
 
 var DatapointStore = Reflux.createStore({
@@ -11,8 +15,18 @@ var DatapointStore = Reflux.createStore({
 
   datapoints: {
     meta: null,
-    melted: null,
-    raw: null
+    raw: null,
+    flattened: null,
+    melted: null
+  },
+
+  init () {
+    this.joinTrailing(LocationStore, IndicatorStore, this.onGetInintialStores)
+  },
+
+  onGetInintialStores (locations, indicators) {
+    this.indicators = indicators[0]
+    this.locations = locations[0]
   },
 
   getInitialState () {
@@ -25,25 +39,18 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints () {
-  console.info('--- DatapointsStore.onFetchDatapoints')
-    this.setState({ raw: null })
+    this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
   onFetchDatapointsCompleted (response) {
-  console.info('--- DatapointsStore.onFetchDatapointsCompleted')
     this.setState({
       meta: response.meta,
       raw: response.objects,
-      melted: _(response.objects)
-        .flatten()
-        .sortBy(_.method('campaign.start_date.getTime'))
-        .map(this.melt)
-        .flatten()
-        .value()
+      flattened: this.flatten(response.objects),
+      melted: this.melt(response.objects, response.meta.indicator_ids)
     })
   },
 
   onFetchDatapointsFailed (error) {
-  console.info('--- DatapointsStore.onFetchDatapointsFailed')
     this.setState({ error: error })
   },
 
@@ -51,23 +58,47 @@ var DatapointStore = Reflux.createStore({
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onClearDatapoints () {
-    console.info('--- DatapointsStore.onClearDatapoints')
-    this.setState({ meta: null, melted: null, raw: null })
+    this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
 
   // =========================================================================== //
   //                                  UTILITIES                                  //
   // =========================================================================== //
-  melt (datapoint) {
-    var base = _.omit(datapoint, 'indicators')
-    return datapoint.indicators.map(indicator => {
-      return _.assign({
-        computed: indicator.computed,
-        indicator: indicator.indicator,
-        value: indicator.value
-      }, base)
+  flatten (datapoints) {
+    return _(datapoints)
+      .flatten()
+      .sortBy(_.method('campaign.start_date.getTime'))
+      .map(datapoint => {
+        var base = _.omit(datapoint, 'indicators')
+        return datapoint.indicators.map(indicator => {
+          return _.assign({
+            computed: indicator.computed,
+            indicator: indicator.indicator,
+            value: indicator.value
+          }, base)
+        })
+      })
+      .flatten()
+      .value()
+  },
+
+  melt (datapoints, indicator_ids) {
+    const selected_indicator_ids = indicator_ids.split(',')
+    const baseIndicators = selected_indicator_ids.map(id => ({ indicator: parseInt(id, 0), value: 0 }))
+    const melted_datapoints = _(datapoints).map(datapoint => {
+      const base = _.omit(datapoint, 'indicators')
+      const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), datapoint.indicators)
+      return indicatorFullList.map(indicator => _.assign({}, base, indicator))
     })
+      .flatten()
+      .value()
+    melted_datapoints.forEach(melted_datapoint => {
+      melted_datapoint.indicator = this.indicators.index[melted_datapoint.indicator]
+      melted_datapoint.location = this.locations.index[melted_datapoint.location]
+    })
+    return melted_datapoints
   }
+
 })
 
 export default DatapointStore

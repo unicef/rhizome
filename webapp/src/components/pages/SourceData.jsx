@@ -3,17 +3,17 @@ import React from 'react'
 import Reflux from 'reflux'
 import page from 'page'
 
-import ReviewTable from 'components/organisms/source-data/ReviewTable.js'
-import DocOverview from 'components/organisms/source-data/DocOverview.jsx'
-import CSVMenuItem from 'components/molecules/CSVMenuItem.jsx'
+import ReviewTable from 'components/organisms/source-data/ReviewTable'
+import DocOverview from 'components/organisms/source-data/DocOverview'
+import CSVMenuItem from 'components/molecules/CSVMenuItem'
+import DocForm from 'components/organisms/source-data/DocForm.jsx'
 
 import SourceDataStore from 'stores/SourceDataStore'
-// import SourceDataActions from 'actions/SourceDataActions'
 
-var {
-  SimpleDataTable, SimpleDataTableColumn,
-  Paginator, SearchBar
-} = require('react-datascope')
+import TableToRefactor from 'components/organisms/datascope/TableToRefactor'
+import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import Paginator from 'components/organisms/datascope/Paginator'
+import SearchBar from 'components/organisms/datascope/SearchBar'
 
 var SourceData = React.createClass({
   mixins: [
@@ -77,11 +77,11 @@ var SourceData = React.createClass({
       doc_tab={doc_tab}
       datascopeFilters={datascopeFilters}>
       <Paginator />
-      <SimpleDataTable>
+      <TableToRefactor>
         {table_definition[doc_tab]['fields'].map(fieldName => {
           return <SimpleDataTableColumn name={fieldName}/>
         })}
-      </SimpleDataTable>
+      </TableToRefactor>
     </ReviewTable>)
 
     var uploadData = (
@@ -89,6 +89,7 @@ var SourceData = React.createClass({
         <div className='medium-12 columns upload__csv--load'>
           upload data
         </div>
+        <DocForm/>
       </div>
     )
 

@@ -1,0 +1,36 @@
+.dropdown-list, .button.dropdown-list {
+  background-color: transparent;
+  color: $rhz-background-color;
+  padding: 0 0 10px 0;
+  margin: 0 auto;
+  font-size: 0.825rem;
+  font-family: proxima, Helvetica, Roboto, Arial, sans-serif;
+  font-weight: 600;
+  text-align: left;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  cursor: pointer;
+  a {
+    position: absolute;
+    right: 0;
+    top: -10px;
+    color: $rhz-background-color;
+  }
+  &:hover, &:focus {
+    background-color: transparent !important;
+    color: initial !important;
+  }
+  &.chart-selector {
+    width: 14rem;
+  }
+}
+
+.dropdown-list-text{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-left: 0;
+  line-height: 1.2;
+  .icon-button.right {
+    padding-right: .4rem;
+  }
+}

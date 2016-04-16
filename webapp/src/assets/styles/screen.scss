@@ -9,6 +9,7 @@
 @import "charts";
 @import "list";
 @import "dropdown";
+@import "dropdown-list";
 @import "animations";
 @import "menu";
 @import "buttons";
@@ -22,6 +23,7 @@
 @import "user-account";
 @import "tables";
 @import "text";
+@import "tooltip";
 @import "admin";
 @import "expandable-section";
 @import "data-explorer";
@@ -305,7 +307,7 @@ ul {
 }
 
 .tooltip {
-  color: white;
+  color: #F1F1F1;
   margin: 10px;
   z-index: 9999;
 

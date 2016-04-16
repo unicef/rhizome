@@ -29,7 +29,7 @@ var DropdownIcon = React.createClass({
 
   render: function () {
     return (
-      <IconButton {...this.props} />
+      <IconButton {...this.props} onClick={this._toggleMenu}/>
     )
   }
 })

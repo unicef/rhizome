@@ -81,7 +81,7 @@ Regarding POLIO-205 - How are we to determine the semantic identities of locatio
 Consider the following wikipedia page:
 
 
-  http://en.wikipedia.org/wiki/Killa_Abdullah_District
+http://en.wikipedia.org/wiki/Killa_Abdullah_District
 
   *"Killa Abdullah or Qilla Abdullah or Abdullah Qilla (Pashto: قلعہ عبد الله‎)"...*
 
@@ -165,7 +165,7 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
 The Cache Refresh Class
 -----------------------
 
-  .. autoclass:: datapoints.agg_tasks.AggRefresh
+  .. autoclass:: rhizome.agg_tasks.AggRefresh
 
 **When the __init__() method is called two subsequent methods are called:**
 
@@ -174,20 +174,20 @@ The Cache Refresh Class
 
 the set_up() method
 -------------------
-  .. automethod:: datapoints.agg_tasks.AggRefresh.set_up
+  .. automethod:: rhizome.agg_tasks.AggRefresh.set_up
 
-  .. automethod:: datapoints.agg_tasks.AggRefresh.get_indicator_ids
+  .. automethod:: rhizome.agg_tasks.AggRefresh.get_indicator_ids
 
-  .. automethod:: datapoints.agg_tasks.AggRefresh.get_datapoints_to_cache
+  .. automethod:: rhizome.agg_tasks.AggRefresh.get_datapoints_to_cache
 
 the main() method
 -----------------
 
-  .. automethod:: datapoints.agg_tasks.AggRefresh.main
+  .. automethod:: rhizome.agg_tasks.AggRefresh.main
 
-  .. automethod:: datapoints.agg_tasks.AggRefresh.agg_datapoints
+  .. automethod:: rhizome.agg_tasks.AggRefresh.agg_datapoints
 
-  .. automethod:: datapoints.agg_tasks.AggRefresh.calc_datapoints
+  .. automethod:: rhizome.agg_tasks.AggRefresh.calc_datapoints
 
 
 

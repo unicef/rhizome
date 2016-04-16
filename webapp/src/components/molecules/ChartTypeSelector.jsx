@@ -1,19 +1,32 @@
-import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import React from 'react'
 
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 
-const ChartTypeSelector = React.createClass({
+export default React.createClass({
+  propTypes: {
+    value: React.PropTypes.oneOfType([
+      React.PropTypes.string,
+      React.PropTypes.number
+    ]),
+    onChange: React.PropTypes.func.isRequired
+  },
+
+  _handleChange (event) {
+    this.props.onChange(event.target.value)
+  },
+
   render () {
-    return (
-      <div style={{ fontSize: '1px' }}>
-        <i className='fa fa-table' />
-        <i className='fa fa-th' />
-        <i className='fa fa-map' />
-        <i className='fa fa-line-chart' />
-        <i className='fa fa-bar-chart' />
-      </div>
-    )
+    const charts = builderDefinitions.charts
+    var chartBoxes = charts.map((chart, index) => {
+      return (
+        <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === this.props.value ? 'active' : '')}>
+          <div className='chart-box' onClick={this.props.onChange.bind(null, chart.name)}>
+            <img className='chart-icon' src={'/static/img/chart-icons/' + chart.name + '.png'} />
+            <p>{chart.name}</p>
+          </div>
+        </div>
+      )
+    })
+    return (<div className='chart-select'>{chartBoxes}</div>)
   }
 })
-
-export default ChartTypeSelector

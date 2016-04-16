@@ -72,25 +72,28 @@ class BaseResource(Resource):
         TO DO -- Check Location Permission so that the user can only see
         What they are permissioned to.
         '''
+        if 'location_id__in' in request.GET:
+            return request.GET['location_id__in'].split(',')
+        elif 'parent_location_id__in' in request.GET:
 
-        location_ids = None
-
-        try:
-            location_ids = request.GET['location_id__in'].split(',')
-        except KeyError:
-            pass
-
-        try:
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             location_ids = Location.objects\
-                .filter(parent_location_id__in = pl_id_list).values_list('id', flat=True)
-        except KeyError:
-            pass
+                .filter(parent_location_id__in = pl_id_list)\
+                .values_list('id', flat=True)
+            ## begin hack ##
+            if pl_id_list == [u'1']: ## super hack way to
+                                  ## fix this long term with a "admin_levevel"
+                                  ## parameter that wll allow us to query for
+                                  ## all ancestors of the parent at a particluar
+                                  ## level
+                location_ids = Location.objects\
+                    .filter(parent_location_id__in = location_ids)\
+                    .values_list('id', flat=True)
+            ## end hack ##
+            return location_ids
+        else:
+            return Location.objects.all().values_list('id', flat=True)
 
-        if not location_ids:
-            location_ids = Location.objects.all().values_list('id', flat=True)
-
-        return location_ids
 
     def dispatch(self, request_type, request, **kwargs):
         """

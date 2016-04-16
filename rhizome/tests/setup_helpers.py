@@ -6,10 +6,12 @@ from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.models import SourceObjectMap
-from pandas import read_csv, notnull
+from pandas import read_csv, notnull, to_datetime
 from rhizome.models import *
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
+from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 import ast
+from rhizome.cache_meta import LocationTreeCache
+
 
 class TestSetupHelpers(ResourceTestCase):
 
@@ -46,7 +48,7 @@ class TestSetupHelpers(ResourceTestCase):
 	                office_id = office_id
 	            )
 
-   	def create_arbitrary_som(self, source_object_code='Percent missed children_PCA', id=None):
+   	def create_arbitrary_som(self, source_object_code='Percent missed children_PCA', id=None, content_type='indicator'):
    		if id:
    			return SourceObjectMap.objects.create(
 	            source_object_code = source_object_code,
@@ -112,13 +114,6 @@ class TestSetupHelpers(ResourceTestCase):
 		non_null_df = model_df.where((notnull(model_df)), None)
 		list_of_dicts = non_null_df.transpose().to_dict()
 		for row_ix, row_dict in list_of_dicts.iteritems():
-			#hack for running api_geo test
-			# if 'geo_json' in row_dict.keys():
-			# 	row_dict['geo_json'] = re.sub('\"\"$', '', row_dict['geo_json'])
-			# 	row_dict['geo_json'] = ast.literal_eval(row_dict['geo_json'])
-			# 	print row_dict['geo_json']
-
-				# row_dict['geo_json'] = json.dumps(row_dict['geo_json'])
 			row_id = model.objects.create(**row_dict)
 			meta_ids.append(row_id)
 		return meta_ids
@@ -146,7 +141,7 @@ class TestSetupHelpers(ResourceTestCase):
         	guid = 'test')
 		document.docfile = file_name
 		document.save()
-		sdt = SimpleDocTransform(self.user.id, document.id)
+		sdt = ComplexDocTransform(self.user.id, document.id)
 		sdt.main()
 		return document.id
 
@@ -157,5 +152,23 @@ class TestSetupHelpers(ResourceTestCase):
 			row_number=0,
 			data_date = data_date)
 
+	#pre loads a top level indicator tag, locations, campaigns, indicators
+	def load_some_metadata(self):
+		top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
+		campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
+		campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
+		campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+		campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
+		
+		location_df= read_csv('rhizome/tests/_data/locations.csv')
+		indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
+		office_id = Office.objects.create(id=1,name='test').id
+
+		cache_job_id = CacheJob.objects.create(id = -2, \
+            date_attempted = '2015-01-01',is_error = False)
+
+		self.locations = self.model_df_to_data(location_df,Location)
+		self.campaigns = self.model_df_to_data(campaign_df,Campaign)
+		self.indicators = self.model_df_to_data(indicator_df,Indicator)
 

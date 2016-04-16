@@ -313,6 +313,19 @@ class IndicatorToOffice(models.Model):
     class Meta:
         db_table = 'indicator_to_office'
 
+class IndicatorClassMap(models.Model):
+    '''
+    Maps "class" type indicator enum values to equivalent string values. For example
+    "High Pass" and "HP" both map to value 1.
+    '''
+    indicator = models.ForeignKey(Indicator)
+    string_value = models.CharField(max_length=100)
+    enum_value = models.IntegerField()
+    is_display = models.BooleanField()
+
+    class Meta:
+        db_table = 'indicator_class_map'
+        unique_together = ('indicator', 'string_value', 'enum_value')
 
 #===========================================================================#
 #                                CAMPAIGN MODELS                            #
@@ -464,6 +477,7 @@ class CustomDashboard(models.Model):
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=1000)
     layout = models.IntegerField(default=0, null=True)
+    rows = JSONField(null=True, blank=True)
 
     class Meta:
         db_table = 'custom_dashboard'

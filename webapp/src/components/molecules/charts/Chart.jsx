@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import LineChartRenderer from 'components/molecules/charts/renderers/line-chart'
 import TableChartRenderer from 'components/molecules/charts/renderers/table-chart'
 import ChoroplethMapRenderer from 'components/molecules/charts/renderers/choropleth-map'
 
@@ -13,13 +12,10 @@ class Chart extends Component {
   }
 
   componentDidMount () {
-    console.info('------ Chart.componentDidMount')
     this.container = React.findDOMNode(this)
     this.setData()
     this.setOptions()
-    if (this.options.type === 'LineChart') {
-      this.chart = new LineChartRenderer(this.data, this.options, this.container)
-    } else if (this.options.type === 'TableChart') {
+    if (this.options.type === 'TableChart') {
       this.chart = new TableChartRenderer(this.data, this.options, this.container)
     } else if (this.options.type === 'ChoroplethMap') {
       this.chart = new ChoroplethMapRenderer(this.data, this.options, this.container)
@@ -28,7 +24,6 @@ class Chart extends Component {
   }
 
   componentDidUpdate () {
-    console.info('------ Chart.componentDidUpdate')
     this.options = _.defaults({}, this.props, this.options)
     this.setData()
     this.setOptions()
@@ -36,12 +31,10 @@ class Chart extends Component {
   }
 
   setData () {
-    console.info('------ Chart.setData')
     this.data = this.props.data
   }
 
   setOptions () {
-    console.info('------ Chart.setOptions')
     const aspect = this.options.aspect || 1
     this.options.width = this.props.width || this.container.clientWidth
     this.options.height = this.props.height || this.options.width / aspect
@@ -49,7 +42,6 @@ class Chart extends Component {
   }
 
   render () {
-    console.info('------ Chart.render')
     return (
       <svg></svg>
     )

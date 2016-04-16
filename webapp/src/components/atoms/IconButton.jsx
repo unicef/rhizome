@@ -1,20 +1,26 @@
-import React from 'react'
+import React, {PropTypes} from 'react'
 import Layer from 'react-layer'
 import Tooltip from 'components/molecules/Tooltip'
 
-var DropdownIcon = React.createClass({
+var IconButton = React.createClass({
 
   propTypes: {
-    icon: React.PropTypes.string.isRequired,
-    text: React.PropTypes.string,
-    onClick: React.PropTypes.func,
-    className: React.PropTypes.string
+    icon: PropTypes.string.isRequired,
+    text: PropTypes.string,
+    alt_text: PropTypes.string,
+    onClick: PropTypes.func,
+    className: PropTypes.string,
+    style: PropTypes.object,
+    isBusy: PropTypes.bool
   },
 
   getDefaultProps: function () {
     return {
       icon: 'info-circle',
-      text: null
+      text: null,
+      alt_text: 'Loading ...',
+      isBusy: false,
+      style: {fontSize: '2rem'}
     }
   },
 
@@ -25,10 +31,11 @@ var DropdownIcon = React.createClass({
   },
 
   showTooltip: function (event) {
-     if (typeof this.props.text === 'undefined' || this.props.text === null) return
+    if (typeof this.props.text === 'undefined' || this.props.text === null) return
+
 
     let render = () => {
-      return <Tooltip left={event.pageX} top={event.pageY}>{this.props.text}</Tooltip>
+      return <Tooltip left={event.pageX} top={event.pageY}>{ this.props.isBusy ? this.props.alt_text : this.props.text}</Tooltip>
     }
     this.state.tooltip = new Layer(document.body, render)
     this.state.tooltip.render()
@@ -47,13 +54,12 @@ var DropdownIcon = React.createClass({
         onClick={this.props.onClick}
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
-        style={{top: '.1rem'}}
         className={'button icon-button ' + this.props.className}
       >
-        <i className={'fa ' + this.props.icon}/>
+        <i className={'fa ' + (this.props.isBusy ? 'fa-spinner fa-spin' : this.props.icon)}/>
       </button>
     )
   }
 })
 
-export default DropdownIcon
+export default IconButton

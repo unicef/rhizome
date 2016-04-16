@@ -1,4 +1,5 @@
 import React from 'react'
+import IconButton from 'components/atoms/IconButton'
 
 export default React.createClass({
   propTypes: {
@@ -7,13 +8,11 @@ export default React.createClass({
   },
   render: function () {
     var listItems = this.props.items.map(item => {
-      return (<li className='animated slideInRight' key={item.id}>{item.name}
-            <a
-            className='clear-btn'
-            onClick={this.props.removeItem.bind(this, item.id)}>
-              <i className='fa fa-times-circle'></i>
-            </a>
-          </li>)
+      return (
+        <li className='animated fadeInDown' key={item.id}>{item.name}
+          <IconButton className='clear-btn' onClick={() => this.props.removeItem(item.id)} icon='fa-times-circle'/>
+        </li>
+      )
     })
     return <ul className='list'>{listItems}</ul>
   }
