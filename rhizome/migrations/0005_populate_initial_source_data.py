@@ -21,8 +21,6 @@ from rhizome.agg_tasks import AggRefresh
 
 from pprint import pprint
 
-def pass_fn(apps, schema_editor):
-    pass
 
 def populate_source_data(apps, schema_editor):
     '''
@@ -52,14 +50,10 @@ class MetaDataGenerator:
         self.source_sheet_df = source_sheet_df
         self.source_sheet_df['COUNTRY'] = self.country
         self.office = Office.objects\
-            .create(name = self.country)
+            .get(name = self.country)
+
         self.top_lvl_location = Location.objects\
-            .create(
-                name = self.country,
-                location_code = self.country,
-                office_id = self.office.id,
-                location_type_id = LocationType.objects.get(name='Country').id,
-        )
+            .get(name = self.country)
 
         self.odk_file_map = {
             'date_column': 'RRM_Distribution/date_assessdistro',
@@ -78,6 +72,29 @@ class MetaDataGenerator:
 
         ## add location_ids here when inserting and use to find the parent ##
         self.existing_location_map = {self.country : self.top_lvl_location.id}
+
+        ## the names in the shape file are different from ODK ##
+        # { ODK_NAME: HIGH_CHART_NAME }
+        self.location_lookup = {'Anbar':'Al-Anbar',
+            'Basrah':'Al-Basrah',
+            'Muthanna':'Al-Muthannia',
+            'Qadissiya':'Al-Qadisiyah',
+            'An-Najaf':'An-Najaf',
+            'Erbil':'Arbil',
+            'Sulaymaniyah':'As-Sulaymaniyah',
+            'Kirkuk':'At-Ta''mim',
+            'Babylon':'Babil',
+            'Baghdad':'Baghdad',
+            'Thi_Qar':'Dhi-Qar',
+            'Dahuk':'Dihok',
+            'Diyala':'Diyala',
+            'Karbala''':'Karbala',
+            'Missan':'Maysan',
+            'Ninewa':'Ninawa',
+            'Salah_al_Din':'Sala ad-Din',
+            'Wassit':'Wasit'
+        }
+
 
     def main(self):
 
@@ -157,12 +174,40 @@ class MetaDataGenerator:
     def build_location_meta(self):
 
         ## PROVINCE ##
+        ## since we ingested the shapes first, we lookup the province name,
+        ## then change it to what the ODK form has.. this allows us to attach
+        ## the shapes to the location IDS from ODK so that they are familiar
+        ## to the owners of the data
+
         province_column = self.odk_file_map['province_column']
         province_df = pd.DataFrame(self.source_sheet_df[province_column])
-        province_df['parent'] = self.country
-        province_df.drop_duplicates(inplace=True)
 
-        self.process_location_df(province_df, 'Province')
+        province_column = self.odk_file_map['province_column']
+        for ix, row in province_df.iterrows():
+
+            row_dict = row.to_dict()
+
+            province_name = row_dict[province_column]
+
+            try:
+                existing_location_name = location_lookup[province_name]
+                location_obj = Location.objects\
+                    .get(name = existing_location_name)
+                location_obj.name = province_name
+                location_obj.location_code = province_name
+
+            except:
+                location_obj, created = Location.objects.get_or_create(
+                    name = province_name,
+                    defaults = {
+                    'location_code': province_name,
+                    'office_id': self.office.id,
+                    'parent_location_id': self.top_lvl_location.id,
+                    'location_type_id': LocationType.objects\
+                        .get(name = 'Province').id
+                })
+
+            self.existing_location_map[province_name] = location_obj.id
 
         # DISTRICT ##
         district_column = self.odk_file_map['district_column']
@@ -223,7 +268,7 @@ class MetaDataGenerator:
                 'office_id': self.office.id
             }))
 
-        Location.objects.filter(location_type__name=admin_level).delete()
+        # Location.objects.filter(location_type__name=admin_level).delete()
         Location.objects.bulk_create(batch)
 
         ## now add these ids to the parent map for later lookups ##
@@ -303,9 +348,8 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # migrations.RunPython(populate_source_data),
-        migrations.RunPython(pass_fn),
-    ]
+        migrations.RunPython(populate_source_data),
+        ]
 
 # u'start',
 # u'end',
