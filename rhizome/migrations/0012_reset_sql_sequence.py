@@ -18,6 +18,9 @@ from datetime import datetime
 
 from rhizome.models import CacheJob
 
+def pass_fn(apps, schema_editor):
+
+    pass
 def reset_seq(apps, schema_editor):
 
     cj_1 = CacheJob.objects.create(
@@ -38,12 +41,14 @@ def reset_seq(apps, schema_editor):
                 call_command('sqlsequencereset', label, stdout=commands)
         cursor.execute(commands.getvalue())
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0002_populate_initial_meta_data'),
+        ('rhizome', '0011_customdashboard_rows'),
     ]
 
     operations = [
-        migrations.RunPython(reset_seq),
+        # migrations.RunPython(reset_seq),
+        migrations.RunPython(pass_fn),
     ]

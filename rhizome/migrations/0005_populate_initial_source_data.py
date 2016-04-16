@@ -21,6 +21,9 @@ from rhizome.agg_tasks import AggRefresh
 
 from pprint import pprint
 
+def pass_fn(apps, schema_editor):
+    pass
+
 def populate_source_data(apps, schema_editor):
     '''
     Here, we take an excel file that has the same schema as the database
@@ -292,14 +295,16 @@ def create_doc_details(doc_id):
                                         ## are named with the above convention
         )
 
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0003_reset_sql_sequence'),
+        ('rhizome', '0003_ingest_geojson'),
     ]
 
     operations = [
-        migrations.RunPython(populate_source_data),
+        # migrations.RunPython(populate_source_data),
+        migrations.RunPython(pass_fn),
     ]
 
 # u'start',

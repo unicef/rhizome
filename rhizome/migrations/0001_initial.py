@@ -662,4 +662,21 @@ class Migration(migrations.Migration):
             name='charttodashboard',
             unique_together=set([('chart', 'dashboard')]),
         ),
+        migrations.CreateModel(
+            name='IndicatorClassMap',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('string_value', models.CharField(max_length=100)),
+                ('enum_value', models.IntegerField()),
+                ('is_display', models.BooleanField()),
+                ('indicator', models.ForeignKey(to='rhizome.Indicator')),
+            ],
+            options={
+                'db_table': 'indicator_class_map',
+            },
+        ),
+        migrations.AlterUniqueTogether(
+            name='indicatorclassmap',
+            unique_together=set([('indicator', 'string_value', 'enum_value')]),
+        ),
     ]

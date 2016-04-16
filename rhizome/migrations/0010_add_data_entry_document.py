@@ -16,5 +16,5 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ('rhizome', '0009_add_regions'),
+        ('rhizome', '0005_populate_initial_source_data'),
     ]
