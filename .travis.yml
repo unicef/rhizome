@@ -18,8 +18,6 @@ script:
 - cd webapp && npm run package && cd ..
 notifications:
   slack: rhisome:l1yqsBjtWznLZ2opgr2mOPiu
-before_deploy:
-  - cd webapp/dist && pwd && cd ../../
 deploy:
   - provider: s3
     access_key_id:
@@ -30,7 +28,7 @@ deploy:
     skip_cleanup: true
     on:
       branch: rhizome_dev_autodeploy
-    local_dir: webapp/dist
+    local_dir: dist/
 
   - provider: codedeploy
     access_key_id:
