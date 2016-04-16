@@ -82,7 +82,7 @@ class MetaDataGenerator:
             'An-Najaf':'An-Najaf',
             'Erbil':'Arbil',
             'Sulaymaniyah':'As-Sulaymaniyah',
-            'Kirkuk':'At-Ta''mim',
+            'Kirkuk': "At-Ta'mim",
             'Babylon':'Babil',
             'Baghdad':'Baghdad',
             'Thi_Qar':'Dhi-Qar',
@@ -190,13 +190,13 @@ class MetaDataGenerator:
             province_name = row_dict[province_column]
 
             try:
-                existing_location_name = location_lookup[province_name]
+
+                existing_location_name = self.location_lookup[province_name]
+
                 location_obj = Location.objects\
                     .get(name = existing_location_name)
-                location_obj.name = province_name
-                location_obj.location_code = province_name
 
-            except:
+            except KeyError:
                 location_obj, created = Location.objects.get_or_create(
                     name = province_name,
                     defaults = {
@@ -231,6 +231,21 @@ class MetaDataGenerator:
             'source_object_code': loc.location_code
         }) for loc in Location.objects.all()]
         SourceObjectMap.objects.bulk_create(source_object_map_batch)
+
+
+        ## now let me change the names of the locations
+        ##  so that they are familiar to the progam
+
+        for k,v in self.location_lookup.iteritems():
+
+            try:
+                l = Location.objects.get(name=v)
+                l.name = k
+                l.location_code = k
+                l.save()
+            except Location.DoesNotExist:  ## LOOK INTO THIS....
+                pass
+
 
     def process_location_df(self, location_df, admin_level):
 
