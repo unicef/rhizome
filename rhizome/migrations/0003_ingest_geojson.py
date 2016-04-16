@@ -36,14 +36,11 @@ def process_geo_json(apps, schema_editor):
         office = office
         ).id
 
-    print 'PROCESS GEO JSO\n' * 10
-
     with open('geo_json.txt') as data_file:
         data = json.load(data_file)
         features = data['features']
-        # location_name =
+
     for location in features:
-        print '=PROCESSIGN LOCATION=\n' * 5
         location_name = location['properties']['woe-name']
         location_shape = location['geometry']
 
@@ -54,9 +51,6 @@ def process_geo_json(apps, schema_editor):
             parent_location_id = iraq_location_id,
             office = office
         )
-
-        print '++++==CREATED LOCATION ==++++\n' * 5
-        print location_object.name
 
         location_shape_object = MinGeo.objects.create(
             location_id = location_object.id,

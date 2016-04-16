@@ -40,13 +40,28 @@ class GeoResource(BaseNonModelResource):
         features = []
 
         location_ids_to_return = self.get_locations_to_return_from_url(request)
+
+        parent_loc = request.GET['parent_location_id__in']
+        location_ids = Location.objects\
+            .filter(parent_location_id = parent_loc)\
+            .values_list('id', flat =True)
+
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
-            location_ids_to_return)
+            location_ids)
+
 
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
-            geo_obj.geometry = p.geo_json['geometry']
+
+            print '===='
+            print p.geo_json
+
+            try:
+                geo_obj.geometry = p.geo_json['geometry']
+            except KeyError:
+                geo_obj.geometry = p.geo_json ## p.geo_json['coordinates']
+
             geo_obj.type = p.geo_json['type']
             geo_obj.properties = {'location_id': p.location.id}
             geo_obj.parent_location_id =\
