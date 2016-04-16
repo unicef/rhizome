@@ -123,6 +123,8 @@ var SimpleFormStore = Reflux.createStore({
         self.data.formSettings = form_settings[content_type]
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
+        console.log('self.data', self.data)
+        //code fails on trigger call
         self.trigger(self.data)
       })
 
