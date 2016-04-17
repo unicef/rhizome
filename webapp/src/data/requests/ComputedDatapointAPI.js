@@ -18,7 +18,6 @@ export default {
     })
   },
   deleteComputedDataPoint (id) {
-    console.log('deleteting this id : ', id)
     let fetch = api.endPoint('/computed_datapoint/' + id, 'delete', 1)
     return new Promise(function (fulfill, reject) {
       fetch(null, null, {'cache-control': 'no-cache'}).then(function (computed_datapoint) {

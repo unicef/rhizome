@@ -53,8 +53,6 @@ let EditableTableCell = React.createClass({
     let computed_id = this.props.row[this.props.field.key].computed
 
     if (new_value === '' && computed_id) {
-      console.log('NEW VAUE IS EMPTY: ', new_value)
-      console.log('delete this id: ', computed_id)
       ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
@@ -92,6 +90,7 @@ let EditableTableCell = React.createClass({
         if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
+
     this.display_value = new_value
   },
 
