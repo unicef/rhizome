@@ -16,22 +16,5 @@ export default {
         fulfill(response)
       }, reject)
     })
-  },
-  deleteComputedDatapoint (computedId) {
-    let fetch = api.endPoint('/computed_datapoint/' + computedId, 'delete', 1)
-    return new Promise(function (fulfill, reject) {
-      fetch(null, null, {'cache-control': 'no-cache'}).then(function (response) {
-        fulfill(response)
-      }, reject)
-    })
   }
 }
-
-// deleteChart (id) {
-//   let fetch = api.endPoint('/custom_chart/' + id, 'delete', 1)
-//   return new Promise(function (fulfill, reject) {
-//     fetch(null, null, {'cache-control': 'no-cache'}).then(function (chart) {
-//       fulfill(chart)
-//     })
-//   })
-// }
