@@ -242,12 +242,15 @@ var SimpleFormStore = Reflux.createStore({
       api.indicators({}, null, {'cache-control': 'no-cache'})
     ])
       .then(_.spread(function (tags, indicators) {
-        var indicators = indicators.objects
+        var indicatorsData = indicators.objects
         var indicatorTags = _.map(tags.objects, function (row) {
+          console.log(row)
           return {'id': row.id, displayId: row.id, 'display': row.indicator__short_name}
         })
 
-        self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicators}
+        console.log('dropDownData:', indicatorsData)
+
+        self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicatorsData}
         self.data.loading = false
         self.trigger(self.data)
       }))

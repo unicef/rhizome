@@ -43,6 +43,9 @@ var SimpleFormComponent = React.createClass({
   },
 
   componentWillMount: function () {
+
+    console.log('TWHUTHUH: ', this.props.contentType)
+
     // FIXME use data as opposed to hacky control flow here!
     if (this.props.contentType === 'indicator_tag') {
       SimpleFormActions.initIndicatorToTag(this.props.objectId)
