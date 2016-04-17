@@ -42,3 +42,34 @@ class ComputedDataPointResource(BaseModelResource):
 
     def obj_delete(self, bundle, **kwargs):
         DataPointComputed.objects.get(id=kwargs['pk']).delete()
+
+    def obj_update(self, bundle, **kwargs):
+        '''
+        Overriding this tastypie method so we can explicitly set the value to
+        NULL when the value comes in as NaN.  This method is how the system
+        handles "deletes" that is we do not remove the row all together, just
+        set the value to null so the history can be maintained, and we are
+        more easily able to queue up changes for caching.
+        '''
+
+        # print 'OBJ UPDATE\n' * 2
+        # print bundle.data
+        # print 'OBJ UPDATE\n' * 2
+
+        value_to_update = bundle.data['value']
+
+        if value_to_update in ['NaN', '']:
+            bundle.data['value'] = None
+
+        dp = DataPointComputed.objects.get(id=kwargs['pk'])
+        # dp.value = value_to_update
+        if dp.value == value_to_update:
+            dp.value = None
+
+        dp.save()
+
+        bundle.obj = dp
+        bundle.data['value'] = None
+        bundle.data['pk'] = kwargs['pk']
+
+        return bundle

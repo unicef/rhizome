@@ -4,7 +4,9 @@ export default {
   putComputedDatapoint (options) {
     let fetch = api.endPoint('/computed_datapoint/' + options.computed_id, 'PATCH', 1)
     return new Promise(function (fulfill, reject) {
+      console.log('options.value: ', options.value)
       fetch({value: options.value}, null, {'cache-control': 'no-cache'}).then(function (response) {
+        console.log('RESPONSE: ', response)
         fulfill(response)
       }, reject)
     })

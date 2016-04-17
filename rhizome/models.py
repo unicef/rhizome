@@ -661,7 +661,7 @@ class DataPointEntry(DataPoint):
 
 class DataPointComputed(models.Model):
 
-    value = models.FloatField()
+    value = models.FloatField(null = True)
     cache_job = models.ForeignKey(CacheJob, default=-1)
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
