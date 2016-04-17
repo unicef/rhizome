@@ -111,6 +111,10 @@ class MetaDataGenerator:
 
         self.process_source_sheet()
 
+        # indicators = Indicator.objects.all()
+        # if len(indicators) < 10:
+        #     raise Exception()
+
     def build_meta_data_from_source(self):
 
         indicator_ids = self.build_indicator_meta()
@@ -128,24 +132,20 @@ class MetaDataGenerator:
         for ind in indicators:
 
             try:
-                ind_name = self.indicator_lookup['ind']
-                batch.append(Indicator(**{
+                ind_name = self.indicator_lookup[ind]
+                ind = Indicator.objects.create(**{
                     'name':ind_name,
                     'short_name':ind_name,
                     'description':ind_name
-                }))
+                })
+                SourceObjectMap(**{
+                    'master_object_id': ind.id,
+                    'content_type': 'indicator',
+                    'source_object_code': ind
+                })
             except KeyError:
                 pass
 
-        Indicator.objects.all().delete()
-        Indicator.objects.bulk_create(batch)
-
-        source_object_map_batch = [SourceObjectMap(**{
-            'master_object_id': ind.id,
-            'content_type': 'indicator',
-            'source_object_code': ind.name
-        }) for ind in Indicator.objects.all()]
-        SourceObjectMap.objects.bulk_create(source_object_map_batch)
 
     def build_campaign_meta(self):
 
@@ -173,9 +173,10 @@ class MetaDataGenerator:
                 'top_lvl_location_id': self.top_lvl_location.id
             })
 
+            source_code = str(month_dict['month_and_year'])[:7]
             SourceObjectMap.objects.create(
                 master_object_id = c.id,
-                source_object_code = month_dict['month_and_year'],
+                source_object_code = source_code,
                 content_type = 'campaign'
             )
 

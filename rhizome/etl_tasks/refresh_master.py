@@ -111,10 +111,10 @@ class MasterRefresh(object):
 
     def get_class_indicator_mappings(self):
         '''
-        Using the meta mappings, map indicator ids to another dict, which maps all 
+        Using the meta mappings, map indicator ids to another dict, which maps all
         of the class indicator string values to their corresponding enum values.
         '''
-        
+
         indicator_ids = self.source_map_dict.values()
         query_results = IndicatorClassMap.objects.filter(
             indicator_id__in = indicator_ids).values_list('indicator', 'string_value', 'enum_value')
@@ -123,7 +123,7 @@ class MasterRefresh(object):
         for query in query_results:
             if query[0] not in class_map_dict:
                 class_map_dict[query[0]] = {}
-            class_map_dict[query[0]][query[1]] = query[2]  
+            class_map_dict[query[0]][query[1]] = query[2]
 
         return class_map_dict
 
@@ -348,6 +348,8 @@ class MasterRefresh(object):
 
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
+
+        return DocDataPoint.objects.filter(source_submission_id=row.id)
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):
