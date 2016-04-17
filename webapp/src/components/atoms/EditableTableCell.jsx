@@ -56,8 +56,7 @@ let EditableTableCell = React.createClass({
       ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
-    // }
-    //
+
     // let validation = EditableTableCellActions.validateValue(new_value)
     // if (!validation) {
     //   this.setState({ editMode: false, hasError: true })
@@ -92,6 +91,7 @@ let EditableTableCell = React.createClass({
     }
 
     this.display_value = new_value
+    this.forceUpdate()
   },
 
   render: function () {
@@ -124,11 +124,11 @@ let EditableTableCell = React.createClass({
       this.isBool = true
       let items = [
         {
-          'value': 0,
+          'value': '0',
           'title': 'No'
         },
         {
-          'value': 1,
+          'value': '1',
           'title': 'Yes'
         },
         {
