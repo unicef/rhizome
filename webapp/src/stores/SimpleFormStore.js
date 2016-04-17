@@ -28,14 +28,14 @@ var SimpleFormStore = Reflux.createStore({
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
     var form_data =
     {'indicator': {
-        'name': '',
-        'short_name': '',
-        'data_format': '',
-        'description': '',
-        'source_name': '',
-        'bad_bound': '',
-        'good_bound': ''
-      },
+      'name': '',
+      'short_name': '',
+      'data_format': '',
+      'description': '',
+      'source_name': '',
+      'bad_bound': '',
+      'good_bound': ''
+    },
       'indicator_tag': {'tag_name': ''}
     }
 
@@ -78,13 +78,13 @@ var SimpleFormStore = Reflux.createStore({
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
     var form_data =
     {'indicator': {
-        'name': '',
-        'short_name': '',
-        'data_format': '',
-        'description': '',
-        'source_name': '',
-        'bad_bound': '',
-        'good_bound': ''
+      'name': '',
+      'short_name': '',
+      'data_format': '',
+      'description': '',
+      'source_name': '',
+      'bad_bound': '',
+      'good_bound': ''
       },
       'indicator_tag': {'tag_name': ''}
     }
@@ -237,10 +237,8 @@ var SimpleFormStore = Reflux.createStore({
   onInitTagToIndicator: function (tagId) {
     var self = this
 
-    console.log('onInitTagToIndicator  TAG ID: ', tagId)
-
     Promise.all([
-      api.indicator_to_tag({ tag_id: tagId }, null, {'cache-control': 'no-cache'}),
+      api.indicator_to_tag({ indicator_tag_id: tagId }, null, {'cache-control': 'no-cache'}),
       api.indicators({}, null, {'cache-control': 'no-cache'})
     ])
       .then(_.spread(function (tags, indicators) {
