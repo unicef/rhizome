@@ -64,14 +64,19 @@ let EditableTableCell = React.createClass({
       }
       let api_response = {}
 
-      if (query_params.computed_id) {
-        console.log('query_params: ', query_params)
+      if (query_params.computed_id && new_value === '') {
+        console.log('DELETEING: ', new_value)
+        console.log('DELETEING: ', new_value)
+        console.log('DELETEING: ', new_value)
+        api_response = ComputedDatapointAPI.deleteComputedDatapoint(query_params.computed_id)
+        this.display_value = new_value
+        return
+      } else if (query_params.computed_id) {
         api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
       } else {
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
       }
       api_response.then(response => {
-        console.log('API RESPONSE: ', response.objects)
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
         this.display_value = query_params.value
@@ -130,6 +135,9 @@ let EditableTableCell = React.createClass({
           'title': 'No Data'
         }
       ]
+
+      console.log('ITEMS: ', items)
+      console.log('this.display_value: ', this.display_value)
 
       let dropDownDisplayValue = 'No Data'
       if (this.display_value) {
