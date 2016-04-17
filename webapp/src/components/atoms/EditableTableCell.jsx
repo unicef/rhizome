@@ -30,7 +30,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount() {
+  componentWillMount () {
     this.display_value = this.props.value
   // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
@@ -121,13 +121,26 @@ let EditableTableCell = React.createClass({
         {
           'value': 1,
           'title': 'Yes'
+        },
+        {
+          'value': '',
+          'title': 'No Data'
         }
       ]
+
+      console.log('ITEMS: ', items)
+      console.log('this.display_value: ', this.display_value)
+
+      let dropDownDisplayValue = 'No Data'
+      if (this.display_value) {
+        dropDownDisplayValue = items[this.display_value].title
+      }
+
       cell = (<td>
                 <DropdownMenu
                   items={items}
                   sendValue={this.updateCellValue}
-                  text={items[this.display_value].title}
+                  text={dropDownDisplayValue}
                   onChange={this.updateCellValue}
                   style='boolColor'
                 />
