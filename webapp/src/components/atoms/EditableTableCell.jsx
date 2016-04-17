@@ -63,7 +63,15 @@ let EditableTableCell = React.createClass({
         value: new_value
       }
       let api_response = {}
-      if (query_params.computed_id) {
+
+      if (query_params.computed_id && new_value === '') {
+        console.log('DELETEING: ', new_value)
+        console.log('DELETEING: ', new_value)
+        console.log('DELETEING: ', new_value)
+        api_response = ComputedDatapointAPI.deleteComputedDatapoint(query_params.computed_id)
+        this.display_value = new_value
+        return
+      } else if (query_params.computed_id) {
         api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
       } else {
         api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
