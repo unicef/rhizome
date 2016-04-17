@@ -39,3 +39,7 @@ class ComputedDataPointResource(BaseModelResource):
         ).values('indicator_id','location__name','campaign__name','indicator__short_name' ,'value')
 
         return queryset
+
+    def delete_detail(self, request, **kwargs):
+
+        DataPointComputed.objects.get(id = kwargs['pk']).delete()

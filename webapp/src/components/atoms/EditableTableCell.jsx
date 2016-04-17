@@ -50,9 +50,19 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
-    let validation = EditableTableCellActions.validateValue(new_value)
-    if (!validation) {
-      this.setState({ editMode: false, hasError: true })
+    let computed_id = this.props.row[this.props.field.key].computed
+
+    if (new_value === '' && computed_id) {
+      console.log('NEW VAUE IS EMPTY: ', new_value)
+      console.log('delete this id: ', computed_id)
+      ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
+      this.display_value = ''
+      this.setState({ editMode: false, hasError: false })
+    // }
+    //
+    // let validation = EditableTableCellActions.validateValue(new_value)
+    // if (!validation) {
+    //   this.setState({ editMode: false, hasError: true })
     } else {
       this.isSaving = true
       let query_params = {
@@ -127,9 +137,6 @@ let EditableTableCell = React.createClass({
           'title': 'No Data'
         }
       ]
-
-      console.log('ITEMS: ', items)
-      console.log('this.display_value: ', this.display_value)
 
       let dropDownDisplayValue = 'No Data'
       if (this.display_value) {
