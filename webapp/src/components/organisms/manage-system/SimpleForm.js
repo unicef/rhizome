@@ -268,6 +268,20 @@ var SimpleForm = React.createClass({
         </div>
       )
     }
+    if (contentType === 'indicator_tag') {
+      subFormList = (
+        <div>
+          <SimpleFormComponent
+            objectId={objectId}
+            contentType={'indicator'}
+            componentTitle='Add Indicators to Tags'
+            onClick={this.addIndicatoToTag}
+            smallItemCouldClick
+            onSmallItemClick={this.removeTagFromIndicator} />
+          <br />
+          </div>
+      )
+    }
 
     return (
     <div className='row'>

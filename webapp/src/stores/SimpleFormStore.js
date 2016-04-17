@@ -27,7 +27,7 @@ var SimpleFormStore = Reflux.createStore({
     var self = this
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
     var form_data =
-      {'indicator': {
+    {'indicator': {
         'name': '',
         'short_name': '',
         'data_format': '',
@@ -47,24 +47,24 @@ var SimpleFormStore = Reflux.createStore({
     Promise.all([
       api_fn(all_data)
     ])
-    .then(_.spread(function (apiResponse) {
-      self.data.formData = form_data[content_type]
-      self.data.objectId = apiResponse.objects.id
-      self.data.dataObject = apiResponse
-      self.data.loading = false
-      self.data.saveSuccess = true
-      self.data.displayMsg = true
-      self.data.message = 'Indicator is successfully created.'
-      self.trigger(self.data)
-    }), function (error) {
-      self.data.formData = form_data[content_type]
-      self.data.displayMsg = true
-      self.data.dataObject = data_to_post
-      self.data.saveSuccess = false
-      self.data.message = error.msg
-      self.data.loading = false
-      self.trigger(self.data)
-    })
+      .then(_.spread(function (apiResponse) {
+        self.data.formData = form_data[content_type]
+        self.data.objectId = apiResponse.objects.id
+        self.data.dataObject = apiResponse
+        self.data.loading = false
+        self.data.saveSuccess = true
+        self.data.displayMsg = true
+        self.data.message = 'Indicator is successfully created.'
+        self.trigger(self.data)
+      }), function (error) {
+        self.data.formData = form_data[content_type]
+        self.data.displayMsg = true
+        self.data.dataObject = data_to_post
+        self.data.saveSuccess = false
+        self.data.message = error.msg
+        self.data.loading = false
+        self.trigger(self.data)
+      })
   },
 
   onInitialize: function (object_id, content_type) {
@@ -77,7 +77,7 @@ var SimpleFormStore = Reflux.createStore({
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
     var form_data =
-      {'indicator': {
+    {'indicator': {
         'name': '',
         'short_name': '',
         'data_format': '',
@@ -104,10 +104,10 @@ var SimpleFormStore = Reflux.createStore({
           'data_format': {
             type: 'select',
             settings: {options: [
-              { value: 'pct', label: 'pct' },
-              { value: 'bool', label: 'bool' },
-              { value: 'int', label: 'int' },
-              { value: 'class', label: 'class' }
+                { value: 'pct', label: 'pct' },
+                { value: 'bool', label: 'bool' },
+                { value: 'int', label: 'int' },
+                { value: 'class', label: 'class' }
             ]}
           },
           'description': {type: 'string'}
@@ -124,7 +124,7 @@ var SimpleFormStore = Reflux.createStore({
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
         console.log('self.data', self.data)
-        //code fails on trigger call
+        // code fails on trigger call
         self.trigger(self.data)
       })
 
@@ -217,6 +217,8 @@ var SimpleFormStore = Reflux.createStore({
   onInitIndicatorToTag: function (indicatorId) {
     var self = this
 
+    console.log('onInitIndicatorToTag  indicatorId ID: ', indicatorId)
+
     Promise.all([
       api.indicator_to_tag({ indicator_id: indicatorId }, null, {'cache-control': 'no-cache'}),
       api.tagTree({}, null, {'cache-control': 'no-cache'})
@@ -228,6 +230,26 @@ var SimpleFormStore = Reflux.createStore({
         })
 
         self.data.componentData['indicator_tag'] = {'componentRows': indicatorTags, 'dropDownData': allTags}
+        self.data.loading = false
+        self.trigger(self.data)
+      }))
+  },
+  onInitTagToIndicator: function (tagId) {
+    var self = this
+
+    console.log('onInitTagToIndicator  TAG ID: ', tagId)
+
+    Promise.all([
+      api.indicator_to_tag({ tag_id: tagId }, null, {'cache-control': 'no-cache'}),
+      api.indicators({}, null, {'cache-control': 'no-cache'})
+    ])
+      .then(_.spread(function (tags, indicators) {
+        var indicators = indicators.objects
+        var indicatorTags = _.map(tags.objects, function (row) {
+          return {'id': row.id, displayId: row.id, 'display': row.indicator__short_name}
+        })
+
+        self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicators}
         self.data.loading = false
         self.trigger(self.data)
       }))
