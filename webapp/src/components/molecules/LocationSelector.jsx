@@ -31,12 +31,14 @@ const LocationSelector = React.createClass({
   getAvailableLocations () {
     const selected_ids = this.props.selected_locations.map(location => location.id)
     const locations_filtered = this.props.locations.filtered
+
     locations_filtered.forEach(country => {
       country.disabled = selected_ids.indexOf(country.id) > -1
-      country.children.forEach(province => {
-        province.disabled = selected_ids.indexOf(province.value) > -1
-        province.children.forEach(city => city.disabled = selected_ids.indexOf(city.value) > -1)
-      })
+      // country.children.forEach(province => {
+      //   console.log('province: ', province)
+      //   province.disabled = selected_ids.indexOf(province.value) > -1
+      //   province.children.forEach(city => city.disabled = selected_ids.indexOf(city.value) > -1)
+      // })
     })
     return locations_filtered
   },

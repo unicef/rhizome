@@ -95,6 +95,10 @@ class MetaDataGenerator:
             'Wassit':'Wasit'
         }
 
+        self.indicator_lookup = {
+            'RRM_Distribution/group_distribution/rrm_kits': 'RRM Kits Distributed',
+            'RRM_Distribution/group_distribution/plumpy' : 'Plumpy Bars Distributed'
+        }
 
     def main(self):
 
@@ -123,11 +127,15 @@ class MetaDataGenerator:
 
         for ind in indicators:
 
-            batch.append(Indicator(**{
-                'name':ind,
-                'short_name':ind,
-                'description':ind
-            }))
+            try:
+                ind_name = self.indicator_lookup['ind']
+                batch.append(Indicator(**{
+                    'name':ind_name,
+                    'short_name':ind_name,
+                    'description':ind_name
+                }))
+            except KeyError:
+                pass
 
         Indicator.objects.all().delete()
         Indicator.objects.bulk_create(batch)
@@ -400,10 +408,8 @@ class Migration(migrations.Migration):
 # u'RRM_Distribution/group_distribution/rrmtype/RRM_only',
 # u'RRM_Distribution/group_distribution/rrmtype/IRR_only',
 # u'RRM_Distribution/group_distribution/rrmtype/Dignity_kits',
-# u'RRM_Distribution/group_distribution/rrm_kits',
 # u'RRM_Distribution/group_distribution/irr_kits',
 # u'RRM_Distribution/group_distribution/dignity_kits',
-# u'RRM_Distribution/group_distribution/plumpy',
 # u'RRM_Distribution/group_distribution/families',
 # u'RRM_Distribution/group_distribution/singles',
 # u'RRM_Distribution/other_needs/the_1st_Need',
