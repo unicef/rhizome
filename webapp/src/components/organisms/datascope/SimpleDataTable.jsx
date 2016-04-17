@@ -135,10 +135,15 @@ let SimpleDataTable = React.createClass({
       })
     }
 
-    let renderRow = _.partial(this.renderRow, columns)
-    let sourceRow = _.map(this.props.schema.items.properties, function (field) {
-      return <td>{field.source_name}</td>
+    // build teh source footer by reversing the schema anad creating a row //
+    // of cells so we can match indicator data with the source //
+    let sourceDataObject = this.props.schema.items.properties
+    let sourceDataFields = Object.keys(sourceDataObject).reverse()
+    let sourceRow = _.map(sourceDataFields, function (field) {
+      return <td>{sourceDataObject[field].source_name}</td>
     })
+
+    let renderRow = _.partial(this.renderRow, columns)
 
     if (hasData || this.props.isEmptyContentInTable) {
       return (
@@ -150,7 +155,7 @@ let SimpleDataTable = React.createClass({
         </thead>
         <tbody>
           {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-          <tfoot><td></td> <td></td> {sourceRow} </tfoot>
+          <tfoot> {sourceRow} </tfoot>
         </tbody>
       </table>
       )
