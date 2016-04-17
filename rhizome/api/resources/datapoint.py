@@ -242,7 +242,9 @@ class DatapointResource(BaseNonModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None, 'filter_indicator':None, 'filter_value': None}
+            'campaign__in': None, 'location__in': None, \
+            'filter_indicator':None, 'filter_value': None,\
+            'show_missing_data':None}
 
         for k, v in optional_params.iteritems():
             try:
@@ -375,7 +377,11 @@ class DatapointResource(BaseNonModelResource):
                 pivoted_data[tupl] = {}
                 pivoted_data_for_id[tupl] = {}
 
-        all_pivoted_data = self.add_missing_data(pivoted_data)
+        if self.parsed_params['show_missing_data'] == u'1':
+            all_pivoted_data = self.add_missing_data(pivoted_data)
+        else:
+            all_pivoted_data = pivoted_data
+
         for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
 
             indicator_objects = [{
