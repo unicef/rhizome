@@ -12,7 +12,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree, IndicatorClassMap
+    LocationPermission, LocationTree, IndicatorClassMap, Indicator
 
 
 class ResultObject(object):
@@ -37,6 +37,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
             'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
             'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
+            'cumulative'
     - **Errors:**
         -
     '''
@@ -244,7 +245,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
             'campaign__in': None, 'location__in': None, \
             'filter_indicator':None, 'filter_value': None,\
-            'show_missing_data':None}
+            'show_missing_data':None, 'cumulative':0}
 
         for k, v in optional_params.iteritems():
             try:
@@ -340,15 +341,25 @@ class DatapointResource(BaseNonModelResource):
         # do an inner join on the filter indicator
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
+            indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
             filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
-                indicator_id=self.parsed_params['filter_indicator'],
+                indicator_id=indicator_id,
                 value = self.parsed_params['filter_value']
                 )
             filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
             columns=merge_columns)
             dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
+
+        # if self.parsed_params['cumulative'] == '1':
+        #     print 'dwc_df before'
+        #     print dwc_df
+        #     dwc_df = DataFrame(dwc_df\
+        #     .groupby(['location_id', 'indicator_id'])\
+        #     ['value'].sum())
+        #     print 'dwc_df after'
+        #     print dwc_df
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
@@ -381,6 +392,12 @@ class DatapointResource(BaseNonModelResource):
             all_pivoted_data = self.add_missing_data(pivoted_data)
         else:
             all_pivoted_data = pivoted_data
+
+        # print 'pivoted_data_for_id'
+        # print pivoted_data_for_id
+
+        # print 'all_pivoted_data'
+        # print all_pivoted_data
 
         for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
 
