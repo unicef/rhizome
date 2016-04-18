@@ -51,10 +51,6 @@ let EditableTableCell = React.createClass({
 
   updateCellValue: function (new_value) {
 
-    if (this.props.field.schema.data_format === 'pct') {
-      new_value = new_value / 100.00
-    }
-
     let computed_id = this.props.row[this.props.field.key].computed
 
     if (new_value === '' && computed_id) { // this is the delete //
@@ -73,7 +69,7 @@ let EditableTableCell = React.createClass({
         campaign_id: this.props.row.campaign_id.id,
         indicator_id: this.props.field.key,
         computed_id: this.props.row[this.props.field.key].computed,
-        value: new_value
+        value: this.props.field.schema.data_format === 'pct' ? new_value / 100.00 : new_value
       }
       let api_response = {}
       if (query_params.computed_id) {
