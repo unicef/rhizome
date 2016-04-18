@@ -3,6 +3,7 @@ import Layer from 'react-layer'
 import Tooltip from 'components/molecules/Tooltip'
 import moment from 'moment'
 import numeral from 'numeral'
+import format from 'utilities/format'
 
 var TableCell = React.createClass({
 
@@ -31,7 +32,7 @@ var TableCell = React.createClass({
   },
 
   showTooltip: function (event) {
-     if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null || this.props.hideValue) return
+    if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null || this.props.hideValue) return
 
     let render = () => {
       return <Tooltip left={event.pageX} top={event.pageY}>{this.props.tooltip}</Tooltip>
@@ -53,7 +54,7 @@ var TableCell = React.createClass({
     let value_component = ''
 
     if (shouldDisplayValue) {
-      let display_value = typeof value !== 'object' ? value : value.value
+      let display_value = format.autoFormat((typeof value !== 'object' ? value : value.value), this.props.field.schema.data_format)
       value_component = this.props.field.renderer(
         display_value,
         this.props.field,

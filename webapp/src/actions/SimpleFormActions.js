@@ -10,6 +10,7 @@ export default Reflux.createActions([
   'removeCalculationFromIndicator',
   'getTagTree',
   'initIndicatorToTag',
+  'initTagToIndicator',
   'initIndicatorToCalc',
   'refreshTags',
   'refreshCalculation',

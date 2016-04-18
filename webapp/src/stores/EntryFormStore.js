@@ -234,7 +234,7 @@ let EntryFormStore = Reflux.createStore({
     }
 
     options.indicator__in = indicatorIds
-    options.source_name = this.data.selected.source.title
+    options.show_missing_data = 1
 
     _.defaults(options, this.data.pagination)
 

@@ -7,7 +7,7 @@ import _ from 'lodash'
 
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
-import SimpleFormComponent from './SimpleFormComponent'
+import SimpleFormComponent from 'components/organisms/manage-system/SimpleFormComponent'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu.jsx'
 
 var SimpleForm = React.createClass({
@@ -266,6 +266,20 @@ var SimpleForm = React.createClass({
             smallIDCouldClick
             smallIDBaseUrl='/manage_system/manage/indicator/' />
         </div>
+      )
+    }
+    if (contentType === 'indicator_tag') {
+      subFormList = (
+        <div>
+          <SimpleFormComponent
+            objectId={objectId}
+            contentType={'indicator'}
+            componentTitle='Add Indicators to Tags'
+            onClick={this.addIndicatoToTag}
+            smallItemCouldClick
+            onSmallItemClick={this.removeTagFromIndicator} />
+          <br />
+          </div>
       )
     }
 

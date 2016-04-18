@@ -43,11 +43,16 @@ var SimpleFormComponent = React.createClass({
   },
 
   componentWillMount: function () {
+
+    console.log('TWHUTHUH: ', this.props.contentType)
+
     // FIXME use data as opposed to hacky control flow here!
     if (this.props.contentType === 'indicator_tag') {
       SimpleFormActions.initIndicatorToTag(this.props.objectId)
     } else if (this.props.contentType === 'indicator_calc') {
       SimpleFormActions.initIndicatorToCalc(this.props.objectId)
+    } else if (this.props.contentType === 'indicator') {
+      SimpleFormActions.initTagToIndicator(this.props.objectId)
     }
   },
 
@@ -127,6 +132,14 @@ var SimpleFormComponent = React.createClass({
             text='Add Component'/>
         </form>
       )
+    } else if (contentType === 'indicator') {
+      <div>
+        <DropdownMenu
+          items={dropDownData}
+          sendValue={this.props.onClick}
+          item_plural_name='Components'
+          text='Add Component'/>
+      </div>
     }
 
     return (

@@ -30,7 +30,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount() {
+  componentWillMount () {
     this.display_value = this.props.value
   // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
   },
@@ -50,9 +50,18 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
-    let validation = EditableTableCellActions.validateValue(new_value)
-    if (!validation) {
-      this.setState({ editMode: false, hasError: true })
+
+    let computed_id = this.props.row[this.props.field.key].computed
+
+    if (new_value === '' && computed_id) { // this is the delete //
+      ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
+      this.display_value = ''
+      this.setState({ editMode: false, hasError: false })
+
+    // WHAT DOES THIS DO -- Under what circubmstance will this prevent bad data ///
+    // let validation = EditableTableCellActions.validateValue(new_value)
+    // if (!validation) {
+    //   this.setState({ editMode: false, hasError: true })
     } else {
       this.isSaving = true
       let query_params = {
@@ -60,7 +69,7 @@ let EditableTableCell = React.createClass({
         campaign_id: this.props.row.campaign_id.id,
         indicator_id: this.props.field.key,
         computed_id: this.props.row[this.props.field.key].computed,
-        value: new_value
+        value: this.props.field.schema.data_format === 'pct' ? new_value / 100.00 : new_value
       }
       let api_response = {}
       if (query_params.computed_id) {
@@ -82,7 +91,9 @@ let EditableTableCell = React.createClass({
         if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
+
     this.display_value = new_value
+    this.forceUpdate()
   },
 
   render: function () {
@@ -115,19 +126,29 @@ let EditableTableCell = React.createClass({
       this.isBool = true
       let items = [
         {
-          'value': 0,
+          'value': '0',
           'title': 'No'
         },
         {
-          'value': 1,
+          'value': '1',
           'title': 'Yes'
+        },
+        {
+          'value': '',
+          'title': 'No Data'
         }
       ]
+
+      let dropDownDisplayValue = 'No Data'
+      if (this.display_value) {
+        dropDownDisplayValue = items[this.display_value].title
+      }
+
       cell = (<td>
                 <DropdownMenu
                   items={items}
                   sendValue={this.updateCellValue}
-                  text={items[this.display_value].title}
+                  text={dropDownDisplayValue}
                   onChange={this.updateCellValue}
                   style='boolColor'
                 />
