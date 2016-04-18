@@ -76,7 +76,7 @@ const DashboardHeader = React.createClass({
           sendValue={this._setLocation}
           hideLastLevel
         />
-        <LpdTitleMenu selected={props.filter_indicator} sendValue={this._setIndicatorFilter} />
+        <LpdTitleMenu selected={props.indicator_filter} sendValue={this._setIndicatorFilter} />
       </div>
     )
 

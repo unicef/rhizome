@@ -31,8 +31,8 @@ const _prepDatapointsQuery = (params) => {
   }
 
   if (params.indicator_filter) {
-    // query['filter_indicator'] = params.indicator_filter.type
-    // query['filter_value'] = params.indicator_filter.value
+    query['filter_indicator'] = params.indicator_filter.type
+    query['filter_value'] = params.indicator_filter.value
   }
 
   return query
