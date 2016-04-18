@@ -135,7 +135,7 @@ class DashboardResourceTest(ResourceTestCase):
         c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = json.dumps({'foo': 'bar','title':'sometitle'}))
         c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
 
-        dboard_rows = json.dumps([{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid], 'layout':2}])
+        dboard_rows = [{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid], 'layout':2}]
         d = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
         
         ## relate the charts to the dashboard ##
@@ -151,8 +151,9 @@ class DashboardResourceTest(ResourceTestCase):
 
         response_data = self.deserialize(resp)
         self.assertValidJSONResponse(resp)
-        self.assertEqual(len(response_data['rows']), len(json.loads(dboard_rows)))
+        self.assertEqual(len(response_data['rows']), len(dboard_rows))
 
+    #  this is a duplicate of the above test
     def _dashboard_get_detail(self):
         ## create a dashboard ##
         d = CustomDashboard.objects.create(title='Dashboard')

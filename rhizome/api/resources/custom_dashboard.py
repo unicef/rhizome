@@ -42,8 +42,7 @@ class CustomDashboardResource(BaseModelResource):
         response_data.pop('_state')
 
         if response_data['rows']:
-            response_data_rows = json.loads(response_data['rows'])
-
+            response_data_rows = response_data['rows']
             charts = list(CustomChart.objects.filter(charttodashboard__dashboard_id = requested_id))
 
             # create a dict to get random access

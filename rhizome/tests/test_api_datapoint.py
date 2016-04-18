@@ -288,8 +288,6 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(len(response_data['objects']), 0)
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
-
-
     def test_indicator_filter(self):
         campaign_id = 2
         province_lt = LocationType.objects.create(name='Province',admin_level = 1)
@@ -370,6 +368,34 @@ class DataPointResourceTest(ResourceTestCase):
         #  make sure the chart data isn't empty
 
 
+    def _get_cumulative(self):
+        # add a couple different campaigns with different time frames
+        campaign_type = CampaignType.objects\
+            .create(name='National Immunization Days (NID)')
+
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+
+        start_date_1 = '2016-01-01'
+        end_date_1 = '2016-01-01'
+
+        campaign_1 = Campaign.objects.create(office=self.ts.o,\
+            campaign_type=campaign_type,start_date=start_date_1,end_date=end_date_1,\
+            top_lvl_indicator_tag_id = ind_tag.id,\
+            top_lvl_location_id = location.id)
+
+        start_date_2 = '2016-02-01'
+        end_date_2 = '2016-02-01'
+
+        campaign_2 = Campaign.objects.create(office=self.ts.o,\
+            campaign_type=campaign_type,start_date=start_date_2,end_date=end_date_2,\
+            top_lvl_indicator_tag_id = ind_tag.id,\
+            top_lvl_location_id = location.id)
+
+
+        # create an indicator
+        # add datapoints for these different campaigns
+        # make sure that that api call returns cumulative values,
+        # and only one dp per each location
 
 
 
