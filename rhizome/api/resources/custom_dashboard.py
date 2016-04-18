@@ -38,18 +38,29 @@ class CustomDashboardResource(BaseModelResource):
         bundle = self.build_bundle(request=request)
 
         response_data = CustomDashboard.objects.get(id=requested_id).__dict__
+
         response_data.pop('_state')
 
-        chart_data = []
-        for c in CustomChart.objects\
-            .filter(charttodashboard__dashboard_id = requested_id)\
-            .values():
-                c['chart_json'] = json.loads(c['chart_json'])
-                chart_data.append(c)
+        if response_data['rows']:
+            response_data_rows = response_data['rows']
+            charts = list(CustomChart.objects.filter(charttodashboard__dashboard_id = requested_id))
 
-        response_data['charts'] = chart_data
+            # create a dict to get random access
+            charts_dict ={}
+            for chart in charts:
+                chart_dict = chart.__dict__
+                chart_dict.pop('_state')
+                charts_dict[chart.uuid] = chart_dict
+
+            # add the charts to the row in the response
+            for idx, row in enumerate(response_data_rows):
+                charts_list = row['charts']
+                for idx2, chart_uuid in enumerate(charts_list):
+                    if chart_uuid in charts_dict.keys():
+                        chart = charts_dict[chart_uuid]
+                        response_data_rows[idx]['charts'][idx2] = charts_dict[chart_uuid]
+            response_data['rows'] = response_data_rows
         bundle.data = response_data
-
         return self.create_response(request, bundle)
 
     def obj_create(self, bundle, **kwargs):
