@@ -31,13 +31,21 @@ class BubbleMapChart extends HighChart {
 
   setConfig = function () {
     const current_indicator = this.props.selected_indicators[0]
-    const palette = this.getColorPalette(this.props.palette)
+    // const palette = this.getColorPalette(this.props.palette)
     this.config = {
       mapNavigation: {
         enabled: true,
         enableMouseWheelZoom: false,
         buttonOptions: {
           verticalAlign: 'bottom'
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      plotOptions: {
+        mapbubble: {
+          color: '#BAD355'
         }
       },
       series: this.setSeries()
@@ -47,9 +55,20 @@ class BubbleMapChart extends HighChart {
   setSeries = function () {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
+    let counter = 0
+    const data = this.props.datapoints.meta.chart_data.
+                  map(datapoint => { return (
+                                        {
+                                          name: `Point${counter+=1}`,
+                                          z: datapoint.z,
+                                          color: '#BAD355'
+                                        }
+                                      )
+                                    }
+                      )
     return [{
-      color: '#BAD355',
       data: this.props.datapoints.meta.chart_data,
+      type: 'mapbubble',
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
       name: current_indicator.name
