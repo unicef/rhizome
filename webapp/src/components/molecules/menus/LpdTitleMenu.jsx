@@ -26,7 +26,7 @@ var LpdTitleMenu = React.createClass({
       { id: 4, value: 3, name: 'LPD 3', type: 'lpd_status' }
     ]
 
-    const selected_text = !this.props.selected.id ? 'LPD Status' : this.props.selected.name
+    const selected_text = !this.props.selected ? 'LPD Status' : this.props.selected.name
 
     const indicator_menu_items = filters.map(filter =>
       <TitleMenuItem

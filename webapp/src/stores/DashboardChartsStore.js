@@ -177,6 +177,9 @@ var DashboardChartsStore = Reflux.createStore({
   onSetIndicatorFilter: function (filter, uuid) {
     this.toggleLoading(uuid)
     this.charts[uuid].indicator_filter = filter
+    if (filter.id === 0) {
+      this.charts[uuid].indicator_filter = null
+    }
     this.updateChart(uuid)
   },
 
@@ -413,6 +416,7 @@ var DashboardChartsStore = Reflux.createStore({
 
   fetchDatapoints: function (uuid) {
     DatapointActions.fetchDatapoints({
+      indicator_filter: this.charts[uuid].indicator_filter,
       indicator_ids: this.charts[uuid].selected_indicators.map(indicator => indicator.id),
       location_ids: this.charts[uuid].selected_locations.map(location => location.id),
       start_date: this.charts[uuid].start_date,

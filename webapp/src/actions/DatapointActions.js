@@ -29,6 +29,12 @@ const _prepDatapointsQuery = (params) => {
   } else {
     query['location_id__in'] = params.location_ids
   }
+
+  if (params.indicator_filter) {
+    // query['filter_indicator'] = params.indicator_filter.type
+    // query['filter_value'] = params.indicator_filter.value
+  }
+
   return query
 }
 
