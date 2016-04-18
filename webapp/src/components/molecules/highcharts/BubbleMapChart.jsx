@@ -61,7 +61,8 @@ class BubbleMapChart extends HighChart {
                                         {
                                           name: `Point${counter+=1}`,
                                           z: datapoint.z,
-                                          color: '#BAD355'
+                                          color: '#BAD355',
+                                          location_id: datapoint.location_id
                                         }
                                       )
                                     }
@@ -85,28 +86,28 @@ class BubbleMapChart extends HighChart {
   //       }
   //     }
 
-  getDataClasses (current_indicator, palette) {
-    if (current_indicator.good_bound < current_indicator.bad_bound) {
-      let temp_bound = current_indicator.good_bound
-      current_indicator.good_bound = current_indicator.bad_bound
-      current_indicator.bad_bound = temp_bound
-      palette = palette.reverse()
-    }
-    let dataClasses = null
-    if (current_indicator.data_format === 'bool') {
-      dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
-                     {from: current_indicator.good_bound,color: palette[2]}]
-    } else {
-      dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
-                     {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
-                     {from:current_indicator.good_bound, color:palette[2]}]
-    }
-    return dataClasses
-  }
+  // getDataClasses (current_indicator, palette) {
+  //   if (current_indicator.good_bound < current_indicator.bad_bound) {
+  //     let temp_bound = current_indicator.good_bound
+  //     current_indicator.good_bound = current_indicator.bad_bound
+  //     current_indicator.bad_bound = temp_bound
+  //     palette = palette.reverse()
+  //   }
+  //   let dataClasses = null
+  //   if (current_indicator.data_format === 'bool') {
+  //     dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
+  //                    {from: current_indicator.good_bound,color: palette[2]}]
+  //   } else {
+  //     dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
+  //                    {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
+  //                    {from:current_indicator.good_bound, color:palette[2]}]
+  //   }
+  //   return dataClasses
+  // }
 
-  getColorPalette (paletteType) {
-    return paletteType === 'traffic_light' ? ['#FF9489', '#FFED89', '#83F5A2'] : []
-  }
+  // getColorPalette (paletteType) {
+  //   return paletteType === 'traffic_light' ? ['#FF9489', '#FFED89', '#83F5A2'] : []
+  // }
 }
 
 export default BubbleMapChart
