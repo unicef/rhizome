@@ -8,7 +8,7 @@ import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
-import LpdTitleMenu from 'components/molecules/menus/LpdTitleMenu'
+import DistrictTitleMenu from 'components/molecules/menus/DistrictTitleMenu'
 import LocationStore from 'stores/LocationStore'
 
 const DashboardHeader = React.createClass({
@@ -76,7 +76,7 @@ const DashboardHeader = React.createClass({
           sendValue={this._setLocation}
           hideLastLevel
         />
-        <LpdTitleMenu selected={props.indicator_filter} sendValue={this._setIndicatorFilter} />
+        <DistrictTitleMenu selected={props.indicator_filter} sendValue={this._setIndicatorFilter} />
       </div>
     )
 

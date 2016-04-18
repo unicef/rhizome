@@ -11,7 +11,7 @@ const filters = [
   { id: 4, value: 3, name: 'LPD 3', type: 'LPD Status' }
 ]
 
-const LpdTitleMenu = React.createClass({
+const DistrictTitleMenu = React.createClass({
   propTypes: {
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
@@ -50,4 +50,4 @@ const LpdTitleMenu = React.createClass({
   }
 })
 
-export default LpdTitleMenu
+export default DistrictTitleMenu
