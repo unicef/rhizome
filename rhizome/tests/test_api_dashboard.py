@@ -131,18 +131,29 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(len(resp_data['objects']), 2)
 
     def test_dashboard_get_rows(self):
-        dboard_rows = json.dumps([{'charts':['fdfdf'], 'layout':1}, {'charts':['ddsds'], 'layout':2}])
-        d1 = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
-        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d1.id,
+        ## create two charts ##
+        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = json.dumps({'foo': 'bar','title':'sometitle'}))
+        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
+
+        dboard_rows = json.dumps([{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid], 'layout':2}])
+        d = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
+        
+        ## relate the charts to the dashboard ##
+        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c1.id)
+        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
+            chart_id = c2.id)
+
+
+        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
                 format='json', \
                 authentication=self.get_credentials())
 
-        self.assertValidJSONResponse(resp)
         response_data = self.deserialize(resp)
-        self.assertEqual(response_data['rows'], dboard_rows)
+        self.assertValidJSONResponse(resp)
+        self.assertEqual(len(response_data['rows']), len(json.loads(dboard_rows)))
 
-
-    def test_dashboard_get_detail(self):
+    def _dashboard_get_detail(self):
         ## create a dashboard ##
         d = CustomDashboard.objects.create(title='Dashboard')
 
