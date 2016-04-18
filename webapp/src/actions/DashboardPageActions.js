@@ -4,6 +4,7 @@ import DashboardAPI from 'data/requests/DashboardAPI'
 const DashboardPageActions = Reflux.createActions({
   'fetchDashboard': { children: ['completed', 'failed'] },
   'addRow': 'addRow',
+  'selectChart': 'selectChart',
   'removeChart': 'removeChart',
   'selectRowLayout': 'selectRowLayout',
   'toggleEditMode': 'toggleEditMode',

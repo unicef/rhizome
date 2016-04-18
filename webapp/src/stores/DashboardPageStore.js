@@ -66,6 +66,13 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onSelectChart: function (chart, old_uuid, row_index, chart_index) {
+    DashboardChartsActions.selectChart(chart, old_uuid) // Select chart
+    this.dashboard.rows[row_index].charts.splice(chart_index, 1) // Remove old uuid from row
+    this.dashboard.rows[row_index].charts[chart_index] = chart.uuid // Set new uuid in row
+    this.trigger(this.dashboard)
+  },
+
   onRemoveChart: function (row_index, chart_index) {
     const row = this.dashboard.rows[row_index]
     const uuid_to_remove = row.charts[chart_index]
