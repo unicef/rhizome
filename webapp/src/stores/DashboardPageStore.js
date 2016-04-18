@@ -138,8 +138,11 @@ const DashboardPageStore = Reflux.createStore({
   },
   onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.title
-    response.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
-    this.dashboard.chart_uuids = response.charts.map(chart => chart.uuid) // UPDATE HERE
+    response.rows.forEach(row => {
+      row.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
+      row.charts = row.charts.map(chart => chart.uuid)
+      this.dashboard.rows.push(row)
+    })
     this.trigger(this.dashboard)
   },
   onFetchDashboardFailed: function (error) {
