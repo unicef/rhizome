@@ -23,6 +23,7 @@ const DashboardChartsActions = Reflux.createActions({
   'setGroupBy': 'setGroupBy',
   'setType': 'setType',
   'setDateRange': 'setDateRange',
+  'setIndicatorFilter': 'setIndicatorFilter',
   // Locations
   'setLocations': 'setLocations',
   'selectLocation': 'selectLocation',

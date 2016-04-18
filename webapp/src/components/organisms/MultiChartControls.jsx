@@ -12,6 +12,7 @@ import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DateRangePicker from 'components/molecules/DateRangePicker'
+import LpdTitleMenu from 'components/molecules/menus/LpdTitleMenu'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -71,7 +72,7 @@ const MultiChartControls = React.createClass({
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
         <DateRangePicker
-          sendValue={this.props.setDateRange}
+          sendValue={props.setDateRange}
           start={start_date}
           end={end_date}
           fromComponent='MultiChartControls'
@@ -81,9 +82,16 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
+    const indicator_filter = (
+      <div className='medium-12 columns'>
+        <h3>LPD Status</h3>
+        <LpdTitleMenu selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
+      </div>
+    )
+
     const group_by_selector = chart.type === 'LineChart' ? (
       <div className='medium-12 columns radio-group'>
-        <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={this.props.setGroupBy}>
+        <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={props.setGroupBy}>
           {Radio => (
             <div>
               <Radio value='indicator' /> Multiple Indicators
@@ -99,10 +107,10 @@ const MultiChartControls = React.createClass({
       <CampaignSelector
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
-        selectCampaign={this.props.selectCampaign}
-        deselectCampaign={this.props.deselectCampaign}
-        setCampaigns={this.props.setCampaigns}
-        linkCampaigns={this.props.linkCampaigns}
+        selectCampaign={props.selectCampaign}
+        deselectCampaign={props.deselectCampaign}
+        setCampaigns={props.setCampaigns}
+        linkCampaigns={props.linkCampaigns}
         classes='medium-12 columns'
         linked={chart.linkedCampaigns}
       />
@@ -117,10 +125,10 @@ const MultiChartControls = React.createClass({
       <LocationSelector
         locations={this.state.locations}
         selected_locations={chart.selected_locations}
-        selectLocation={this.props.selectLocation}
-        deselectLocation={this.props.deselectLocation}
-        setLocations={this.props.setLocations}
-        clearSelectedLocations={this.props.clearSelectedLocations}
+        selectLocation={props.selectLocation}
+        deselectLocation={props.deselectLocation}
+        setLocations={props.setLocations}
+        clearSelectedLocations={props.clearSelectedLocations}
         classes={multiLocation && !groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiLocation || groupByIndicator}
         hideLastLevel={chart.type === 'MapChart'}
@@ -131,11 +139,11 @@ const MultiChartControls = React.createClass({
       <IndicatorSelector
         indicators={this.state.indicators}
         selected_indicators={chart.selected_indicators}
-        selectIndicator={this.props.selectIndicator}
-        setIndicators={this.props.setIndicators}
-        deselectIndicator={this.props.deselectIndicator}
-        clearSelectedIndicators={this.props.clearSelectedIndicators}
-        reorderIndicator={this.props.reorderIndicator}
+        selectIndicator={props.selectIndicator}
+        setIndicators={props.setIndicators}
+        deselectIndicator={props.deselectIndicator}
+        clearSelectedIndicators={props.clearSelectedIndicators}
+        reorderIndicator={props.reorderIndicator}
         classes={multiIndicator && !groupByLocation ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiIndicator || groupByLocation}
         avoidBooleans={chart.type === 'LineChart'}
@@ -147,6 +155,7 @@ const MultiChartControls = React.createClass({
         <IconButton onClick={props.toggleEditMode} icon='fa-angle-double-right' className='chart-options-button' />
         { date_range_picker }
         { campaign_selector }
+        { indicator_filter }
         { group_by_selector }
         { location_selector }
         { indicator_selector }

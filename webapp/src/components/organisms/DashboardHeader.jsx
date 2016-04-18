@@ -42,6 +42,12 @@ const DashboardHeader = React.createClass({
     })
   },
 
+  _setIndicatorFilter: function (filter) {
+    this.props.rows.forEach(row => {
+      row.charts.forEach(uuid => DashboardChartsActions.setIndicatorFilter(filter, uuid))
+    })
+  },
+
   render () {
     const props = this.props
     const editMode = props.editMode
@@ -70,11 +76,7 @@ const DashboardHeader = React.createClass({
           sendValue={this._setLocation}
           hideLastLevel
         />
-        <LpdTitleMenu
-          selected={props.filter_indicator}
-          sendValue={this._setLocation}
-          hideLastLevel
-        />
+        <LpdTitleMenu selected={props.filter_indicator} sendValue={this._setIndicatorFilter} />
       </div>
     )
 

@@ -45,6 +45,7 @@ const DashboardRow = React.createClass({
         setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
         setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
         setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
+        setIndicatorFilter={(filter) => DashboardChartsActions.setIndicatorFilter(filter, chart.uuid)}
         selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
         deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
         reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}

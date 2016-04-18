@@ -19,18 +19,21 @@ var LpdTitleMenu = React.createClass({
   },
 
   render () {
-    const lpd_statuses = [
-      { id: 1, name: 'LPD 1'}, { id: 2, name: 'LPD 2'}, { id: 3, name: 'LPD 3'}
+    const filters = [
+      { id: 1, value: 0, name: 'All', type: 'lpd_status' },
+      { id: 2, value: 1, name: 'LPD 1', type: 'lpd_status' },
+      { id: 3, value: 2, name: 'LPD 2', type: 'lpd_status' },
+      { id: 4, value: 3, name: 'LPD 3', type: 'lpd_status' }
     ]
 
     const selected_text = !this.props.selected.id ? 'LPD Status' : this.props.selected.name
 
-    const indicator_menu_items = lpd_statuses.map(status =>
+    const indicator_menu_items = filters.map(filter =>
       <TitleMenuItem
-        key={'status-' + status.id}
-        text={status.name}
-        onClick={() => this.props.sendValue(status.id)}
-        classes='status'
+        key={'filter-' + filter.id}
+        text={filter.name}
+        onClick={() => this.props.sendValue(filter)}
+        classes='filter'
       />
     )
 
