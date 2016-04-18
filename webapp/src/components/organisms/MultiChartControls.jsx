@@ -12,7 +12,7 @@ import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DateRangePicker from 'components/molecules/DateRangePicker'
-import DistrictTitleMenu from 'components/molecules/menus/DistrictTitleMenu'
+import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -85,7 +85,7 @@ const MultiChartControls = React.createClass({
     const indicator_filter = (
       <div className='medium-12 columns'>
         <h3>LPD Status</h3>
-        <DistrictTitleMenu selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
+        <DistrictDropdown selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
       </div>
     )
 

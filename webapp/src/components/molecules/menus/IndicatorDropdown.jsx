@@ -1,9 +1,9 @@
 import React from 'react'
 
-import TitleMenu from 'components/molecules/menus/TitleMenu'
-import TitleMenuItem from 'components/molecules/menus/TitleMenuItem'
+import Dropdown from 'components/molecules/menus/Dropdown'
+import DropdownItem from 'components/molecules/menus/DropdownItem'
 
-var IndicatorTitleMenu = React.createClass({
+var IndicatorDropdown = React.createClass({
   propTypes: {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -52,7 +52,7 @@ var IndicatorTitleMenu = React.createClass({
     this.indicators = this.indicatorsFilteredBySet()
     const selected_text = !this.props.selected.id && this.indicators.length > 0 ? 'Select Indicator' : this.props.selected.name
     const indicator_menu_items = this.filteredMenuItems().map(indicator =>
-      <TitleMenuItem
+      <DropdownItem
         key={'indicator-' + indicator.id}
         text={indicator.name}
         onClick={this.props.sendValue.bind(this, indicator.id)}
@@ -61,16 +61,16 @@ var IndicatorTitleMenu = React.createClass({
     )
 
     return (
-      <TitleMenu
+      <Dropdown
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this.setPattern}>
         {indicator_menu_items}
-      </TitleMenu>
+      </Dropdown>
     )
   }
 })
 
-export default IndicatorTitleMenu
+export default IndicatorDropdown

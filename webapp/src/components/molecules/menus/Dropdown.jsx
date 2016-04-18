@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from 'components/atoms/IconButton'
 
-var TitleMenu = React.createClass({
+var Dropdown = React.createClass({
 
   mixins: [
     require('components/molecules/menus/MenuControl')
@@ -48,4 +48,4 @@ var TitleMenu = React.createClass({
 
 })
 
-export default TitleMenu
+export default Dropdown

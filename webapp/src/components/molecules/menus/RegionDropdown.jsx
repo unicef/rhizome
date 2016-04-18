@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import TitleMenu from 'components/molecules/menus/TitleMenu.jsx'
+import Dropdown from 'components/molecules/menus/Dropdown.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
-var RegionTitleMenu = React.createClass({
+var RegionDropdown = React.createClass({
   propTypes: {
     locations: PropTypes.array.isRequired,
     selected: PropTypes.object.isRequired,
@@ -75,16 +75,16 @@ var RegionTitleMenu = React.createClass({
     })
 
     return (
-      <TitleMenu
+      <Dropdown
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this._setPattern}>
         {menu_items}
-      </TitleMenu>
+      </Dropdown>
     )
   }
 })
 
-export default RegionTitleMenu
+export default RegionDropdown

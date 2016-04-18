@@ -2,8 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import TitleMenu from 'components/molecules/menus/TitleMenu'
-import TitleMenuItem from 'components/molecules/menus/TitleMenuItem'
+import Dropdown from 'components/molecules/menus/Dropdown'
+import DropdownItem from 'components/molecules/menus/DropdownItem'
 
 var ChartSelector = React.createClass({
   propTypes: {
@@ -22,7 +22,7 @@ var ChartSelector = React.createClass({
   render () {
     const charts = this.props.charts || []
     const chart_menu_items = this.props.charts.map(chart =>
-      <TitleMenuItem
+      <DropdownItem
         key={'chart-' + chart.id}
         text={chart.title}
         onClick={() => this.props.selectChart(chart)}
@@ -31,12 +31,12 @@ var ChartSelector = React.createClass({
     )
 
     return (
-      <TitleMenu
+      <Dropdown
         className='font-weight-600 chart-selector'
         icon='fa-chevron-down'
         text={this.props.selected.title}>
         {chart_menu_items}
-      </TitleMenu>
+      </Dropdown>
     )
   }
 })

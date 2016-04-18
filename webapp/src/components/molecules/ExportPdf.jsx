@@ -1,6 +1,6 @@
 import React from 'react'
 
-import TitleMenu from 'components/molecules/menus/TitleMenu.jsx'
+import Dropdown from 'components/molecules/menus/Dropdown.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
 var ExportPdf = React.createClass({
@@ -77,13 +77,13 @@ var ExportPdf = React.createClass({
     classString += this.props.disabled ? ' disabled ' : ''
     return (
       <div>
-        <TitleMenu
+        <Dropdown
           className={'font-weight-600 export-file ' + classString}
           icon={this.props.button ? '' : 'fa-chevron-down'}
           searchable={false}
           text={this.state.label}>
           {items}
-        </TitleMenu>
+        </Dropdown>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
         {this.props.button ? exportIcon : ''}
       </div>

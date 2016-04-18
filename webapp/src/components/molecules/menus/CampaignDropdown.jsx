@@ -2,10 +2,10 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import TitleMenu from 'components/molecules/menus/TitleMenu'
-import TitleMenuItem from 'components/molecules/menus/TitleMenuItem'
+import Dropdown from 'components/molecules/menus/Dropdown'
+import DropdownItem from 'components/molecules/menus/DropdownItem'
 
-var CampaignTitleMenu = React.createClass({
+var CampaignDropdown = React.createClass({
   propTypes: {
     campaigns: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -21,7 +21,7 @@ var CampaignTitleMenu = React.createClass({
 
   render () {
     const campaign_menu_items = this.props.campaigns.map(campaign =>
-      <TitleMenuItem
+      <DropdownItem
         key={'campaign-' + campaign.id}
         text={campaign.name}
         onClick={this.props.sendValue.bind(this, campaign.id)}
@@ -30,14 +30,14 @@ var CampaignTitleMenu = React.createClass({
     )
 
     return (
-      <TitleMenu
+      <Dropdown
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={this.props.selected.name}>
         {campaign_menu_items}
-      </TitleMenu>
+      </Dropdown>
     )
   }
 })
 
-export default CampaignTitleMenu
+export default CampaignDropdown
