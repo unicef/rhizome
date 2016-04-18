@@ -124,7 +124,7 @@ const DashboardPageStore = Reflux.createStore({
     const query = {
       id: dashboard_id,
       title: this.dashboard.title,
-      chart_uuids: _.toArray(this.charts).map(chart => chart.uuid)
+      rows: JSON.stringify(this.dashboard.rows)
     }
     DashboardActions.postDashboard(query)
   },
