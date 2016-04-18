@@ -50,13 +50,19 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
+
+    if (this.props.field.schema.data_format === 'pct') {
+      new_value = new_value / 100.00
+    }
+
     let computed_id = this.props.row[this.props.field.key].computed
 
-    if (new_value === '' && computed_id) {
+    if (new_value === '' && computed_id) { // this is the delete //
       ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
 
+    // WHAT DOES THIS DO -- Under what circubmstance will this prevent bad data ///
     // let validation = EditableTableCellActions.validateValue(new_value)
     // if (!validation) {
     //   this.setState({ editMode: false, hasError: true })
