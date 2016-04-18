@@ -369,7 +369,7 @@ class DataPointResourceTest(ResourceTestCase):
         #  make sure the chart data isn't empty
 
 
-    def _get_cumulative(self):
+    def test_get_cumulative(self):
         # add a couple different campaigns with different time frames
         campaign_type = CampaignType.objects\
             .create(name='National Immunization Days (NID)')
@@ -432,8 +432,7 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
-        print response_data['objects']
-        # returned_indicators = response_data['objects']
+        returned_indicators = response_data['objects']
         self.assertEqual(len(returned_indicators), 1)
         self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
 

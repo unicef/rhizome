@@ -352,14 +352,20 @@ class DatapointResource(BaseNonModelResource):
             columns=merge_columns)
             dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
 
-        # if self.parsed_params['cumulative'] == '1':
-        #     print 'dwc_df before'
-        #     print dwc_df
-        #     dwc_df = DataFrame(dwc_df\
-        #     .groupby(['location_id', 'indicator_id'])\
-        #     ['value'].sum())
-        #     print 'dwc_df after'
-        #     print dwc_df
+        if self.parsed_params['cumulative'] == '1':
+            #  hack -- we need the ids so that we can create the pivot table.
+            #  later, the ids will be discarded
+            dwc_id = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['id'].first().reset_index())
+            dwc_vals = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['value'].sum().reset_index())
+            dwc_campaigns = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['campaign_id'].first().reset_index())
+            dwc_df = dwc_vals.merge(dwc_campaigns, how ='inner', on=['location_id', 'indicator_id'])
+            dwc_df = dwc_df.merge(dwc_id, how ='inner', on=['location_id', 'indicator_id'])
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
@@ -373,7 +379,6 @@ class DatapointResource(BaseNonModelResource):
 
             ## we need two dictionaries, one that has the value of the
             ## datapoint_computed object and one with the id ##
-
             p_table_for_id = pivot_table(
                 dwc_df, values='id', index=['indicator_id'],\
                     columns=['location_id', 'campaign_id'], aggfunc=np.sum)
@@ -393,19 +398,19 @@ class DatapointResource(BaseNonModelResource):
         else:
             all_pivoted_data = pivoted_data
 
-        # print 'pivoted_data_for_id'
-        # print pivoted_data_for_id
-
-        # print 'all_pivoted_data'
-        # print all_pivoted_data
-
         for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
 
-            indicator_objects = [{
-                'indicator': k,
-                'computed': pivoted_data_for_id[row][k],
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
+            if self.parsed_params['cumulative'] == '1':
+                indicator_objects = [{
+                    'indicator': k,
+                    'value': v
+                } for k, v in indicator_dict.iteritems()]
+            else:
+                indicator_objects = [{
+                    'indicator': k,
+                    'computed_id': pivoted_data_for_id[row][k],
+                    'value': v
+                } for k, v in indicator_dict.iteritems()]
 
             # avail_indicators = set([x for x,y in indicator_dict.keys()])
             missing_indicators = list(set(self.parsed_params['indicator__in']))
