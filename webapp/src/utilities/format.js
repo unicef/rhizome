@@ -10,9 +10,9 @@ function num (value, format = 'n') {
   return d3.format(format)(value)
 }
 
-function autoFormat (value, format) {
+function autoFormat (value, format, decimalPlaces = null) {
   if (format === 'pct' && value !== '') {
-    return Math.floor(value * 100) + '%'
+    return (isNaN(decimalPlaces) ? Math.floor(value * 100) : (value*100).toFixed(decimalPlaces)) + '%'
   } else if (format === 'bool') {
     const boolValues = ['No', 'Yes']
     return boolValues[value]
