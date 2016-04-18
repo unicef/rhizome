@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 
 import TitleMenu from 'components/molecules/menus/TitleMenu'
@@ -26,7 +27,7 @@ const LpdTitleMenu = React.createClass({
   },
 
   render () {
-    const selected_text = !this.props.selected ? 'LPD Status' : this.props.selected.name
+    const selected_text = _.isEmpty(this.props.selected) ? filters[0].name: this.props.selected.name
 
     const indicator_menu_items = filters.map(filter =>
       <TitleMenuItem
