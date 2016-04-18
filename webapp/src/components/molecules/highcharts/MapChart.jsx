@@ -16,6 +16,9 @@ class MapChart extends HighChart {
           verticalAlign: 'bottom'
         }
       },
+      chart: {
+        type: 'map'
+      },
       legend: {
         layout: 'vertical',
         align: 'right',
