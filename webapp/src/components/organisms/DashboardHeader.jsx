@@ -8,6 +8,7 @@ import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
+import LpdTitleMenu from 'components/molecules/menus/LpdTitleMenu'
 import LocationStore from 'stores/LocationStore'
 
 const DashboardHeader = React.createClass({
@@ -66,6 +67,11 @@ const DashboardHeader = React.createClass({
         <RegionTitleMenu
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
+          sendValue={this._setLocation}
+          hideLastLevel
+        />
+        <LpdTitleMenu
+          selected={props.filter_indicator}
           sendValue={this._setLocation}
           hideLastLevel
         />
