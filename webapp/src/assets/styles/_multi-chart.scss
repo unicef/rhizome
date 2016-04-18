@@ -126,4 +126,14 @@
     	font-size: 1.4rem;
     }
   }
+  &.no-frame {
+  	padding: 0;
+  	.chart-zone {
+  		padding-top: 0;
+  		padding-bottom: 0;
+  	}
+  	table {
+  		margin: 0;
+  	}
+  }
 }

@@ -106,9 +106,11 @@ const MultiChart = React.createClass({
     )
 
     const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-9 medium-pull-4 large-pull-3 '
+    const hideChartFrame = !this.props.readOnlyMode && chart.type === 'RawData'
+
     return (
-      <article className='multi-chart medium-12 columns'>
-        <MultiChartHeader {...this.props}/>
+      <article className={'multi-chart medium-12 columns' + (!hideChartFrame ? ' no-frame ' : '')}>
+        { hideChartFrame ? <MultiChartHeader {...this.props}/> : null }
         <section className='row'>
           { chart.editMode ? sidebar : null }
           <div className={chart_classes + ' columns chart-zone'}>
