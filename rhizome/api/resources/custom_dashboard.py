@@ -43,7 +43,8 @@ class CustomDashboardResource(BaseModelResource):
 
         if response_data['rows']:
             response_data_rows = response_data['rows']
-            charts = list(CustomChart.objects.filter(charttodashboard__dashboard_id = requested_id))
+            chart_uuids = response_data_rows[0]['charts']
+            charts = list(CustomChart.objects.filter(uuid__in = chart_uuids))
 
             # create a dict to get random access
             charts_dict ={}
@@ -51,14 +52,13 @@ class CustomDashboardResource(BaseModelResource):
                 chart_dict = chart.__dict__
                 chart_dict.pop('_state')
                 charts_dict[chart.uuid] = chart_dict
-
             # add the charts to the row in the response
             for idx, row in enumerate(response_data_rows):
                 charts_list = row['charts']
                 for idx2, chart_uuid in enumerate(charts_list):
                     if chart_uuid in charts_dict.keys():
                         chart = charts_dict[chart_uuid]
-                        response_data_rows[idx]['charts'][idx2] = charts_dict[chart_uuid]
+                        response_data_rows[idx]['charts'][idx2] = chart
             response_data['rows'] = response_data_rows
         bundle.data = response_data
         return self.create_response(request, bundle)
