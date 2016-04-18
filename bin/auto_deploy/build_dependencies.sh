@@ -1,4 +1,4 @@
-cd webapp &&
+pwd
 npm install &&
 mkdir -p ~/deploy/rhizome-work &&
 mv dist/rhizome.zip ~/deploy/rhizome-work/rhizome.zip &&
