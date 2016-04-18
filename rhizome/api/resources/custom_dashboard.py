@@ -94,13 +94,14 @@ class CustomDashboardResource(BaseModelResource):
             'id': dash_id,
             'title': title,
             'description': description,
-            'layout': layout
+            'layout': layout,
+            'rows': rows
         }
 
         if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
             raise DatapointsException('the custom dashboard "{0}" already exists'.format(title))
 
-        dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults, rows=rows)
+        dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
 
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id

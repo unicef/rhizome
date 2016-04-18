@@ -242,6 +242,8 @@ class DashboardResourceTest(ResourceTestCase):
     
         self.assertEqual(CustomDashboard.objects.count(), 0)
 
+    # TODO: test for duplicate dashboard
+
 
 
 
