@@ -11,10 +11,10 @@ function num (value, format = 'n') {
 }
 
 function autoFormat (value, format) {
-  if (format === 'pct') {
+  if (format === 'pct' && value !== '') {
     return Math.floor(value * 100) + '%'
-  } else if (format === 'bool'){
-    const boolValues = ['No','Yes']
+  } else if (format === 'bool') {
+    const boolValues = ['No', 'Yes']
     return boolValues[value]
   } else {
     return value
