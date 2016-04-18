@@ -4,7 +4,7 @@ import React from 'react'
 import HighChart from 'components/molecules/highcharts/HighChart'
 import format from 'utilities/format'
 
-class ColumnChart extends HighChart {
+class StackedColumnChart extends HighChart {
 
   setConfig = function () {
     const first_indicator = this.props.selected_indicators[0]
@@ -22,6 +22,11 @@ class ColumnChart extends HighChart {
           formatter: function () {
             return format.autoFormat(this.value, first_indicator.data_format)
           }
+        }
+      },
+      plotOptions: {
+        column: {
+          stacking: 'percent'
         }
       },
       tooltip: {
@@ -51,4 +56,4 @@ class ColumnChart extends HighChart {
   }
 }
 
-export default ColumnChart
+export default StackedColumnChart

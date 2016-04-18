@@ -11,6 +11,7 @@ import MapChart from 'components/molecules/highcharts/MapChart'
 import BubbleMap from 'components/molecules/highcharts/BubbleMapChart'
 import LineChart from 'components/molecules/highcharts/LineChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
+import StackedColumnChart from 'components/molecules/highcharts/StackedColumnChart'
 import TableChart from 'components/molecules/charts/TableChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -56,6 +57,8 @@ const MultiChart = React.createClass({
       return <MapChart {...this.props.chart} />
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
+    } else if (type === 'StackedColumnChart') {
+      return <StackedColumnChart {...this.props.chart} />
     } else if (type === 'BubbleMap') {
       return <BubbleMap {...this.props.chart} />
     } else if (type === 'BarChart') {
