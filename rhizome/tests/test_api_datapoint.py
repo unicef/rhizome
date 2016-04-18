@@ -391,12 +391,26 @@ class DataPointResourceTest(ResourceTestCase):
             top_lvl_indicator_tag_id = ind_tag.id,\
             top_lvl_location_id = self.top_lvl_location.id)
 
-        # create an indicator
+        # create an indicator and location
         indicator = Indicator.objects.create(short_name='number missed children', \
                                      name='number missed children', \
                                      data_format='int', )
-
+        province = Location.objects.create(
+                name = 'Kandahar',
+                location_code = 'Kandahar',
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+            )
         # add datapoints for these different campaigns
+        value_1 =12
+        value_2 =322
+        dp_1 = DataPointComputed.objects.create(
+                    location_id = province.id,
+                    value = value_1,
+                    campaign_id = campaign_1.id,
+                    indicator_id = indicator_id,
+                    document_id = document.id
+                )
 
         # make sure that that api call returns cumulative values,
         # and only one dp per each location

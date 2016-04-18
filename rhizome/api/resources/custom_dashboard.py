@@ -43,7 +43,9 @@ class CustomDashboardResource(BaseModelResource):
 
         if response_data['rows']:
             response_data_rows = response_data['rows']
-            chart_uuids = response_data_rows[0]['charts'] # Needs to be done for each row
+            chart_uuids =[]
+            for row in response_data_rows:
+                chart_uuids = chart_uuids + (row['charts'])
             charts = list(CustomChart.objects.filter(uuid__in = chart_uuids))
 
             # create a dict to get random access

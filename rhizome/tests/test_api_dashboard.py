@@ -134,8 +134,8 @@ class DashboardResourceTest(ResourceTestCase):
         ## create two charts ##
         c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = json.dumps({'foo': 'bar','title':'sometitle'}))
         c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
-
-        dboard_rows = [{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid], 'layout':2}]
+        c3 = CustomChart.objects.create(uuid = 'c',title = 'c',chart_json = json.dumps({'c1': 'c2','title2':'sometitle2'}))
+        dboard_rows = [{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid, c3.uuid], 'layout':2}]
         d = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
         
         ## relate the charts to the dashboard ##
