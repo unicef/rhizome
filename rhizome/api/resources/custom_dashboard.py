@@ -56,8 +56,9 @@ class CustomDashboardResource(BaseModelResource):
             for idx, row in enumerate(response_data_rows):
                 charts_list = row['charts']
                 for idx2, chart_uuid in enumerate(charts_list):
-                    chart = charts_dict[chart_uuid]
-                    response_data_rows[idx]['charts'][idx2] = charts_dict[chart_uuid]
+                    if chart_uuid in charts_dict.keys():
+                        chart = charts_dict[chart_uuid]
+                        response_data_rows[idx]['charts'][idx2] = charts_dict[chart_uuid]
             response_data['rows'] = response_data_rows
         bundle.data = response_data
         return self.create_response(request, bundle)

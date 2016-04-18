@@ -378,22 +378,26 @@ class DataPointResourceTest(ResourceTestCase):
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
-        campaign_1 = Campaign.objects.create(office=self.ts.o,\
+        campaign_1 = Campaign.objects.create(office=self.o,\
             campaign_type=campaign_type,start_date=start_date_1,end_date=end_date_1,\
             top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = location.id)
+            top_lvl_location_id = self.top_lvl_location.id)
 
         start_date_2 = '2016-02-01'
         end_date_2 = '2016-02-01'
 
-        campaign_2 = Campaign.objects.create(office=self.ts.o,\
+        campaign_2 = Campaign.objects.create(office=self.o,\
             campaign_type=campaign_type,start_date=start_date_2,end_date=end_date_2,\
             top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = location.id)
-
+            top_lvl_location_id = self.top_lvl_location.id)
 
         # create an indicator
+        indicator = Indicator.objects.create(short_name='number missed children', \
+                                     name='number missed children', \
+                                     data_format='int', )
+
         # add datapoints for these different campaigns
+
         # make sure that that api call returns cumulative values,
         # and only one dp per each location
 
