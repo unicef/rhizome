@@ -32,7 +32,7 @@ var TableCell = React.createClass({
   },
 
   showTooltip: function (event) {
-     if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null || this.props.hideValue) return
+    if (typeof this.props.tooltip === 'undefined' || this.props.tooltip === null || this.props.hideValue) return
 
     let render = () => {
       return <Tooltip left={event.pageX} top={event.pageY}>{this.props.tooltip}</Tooltip>
@@ -54,7 +54,15 @@ var TableCell = React.createClass({
     let value_component = ''
 
     if (shouldDisplayValue) {
-      let display_value = format.autoFormat((typeof value !== 'object' ? value : value.value), this.props.field.schema.data_format)
+      let display_value = value
+      // format.autoFormat((typeof value !== 'object' ? value : value.value), this.props.field.schema.data_format)
+
+      if (typeof value === 'object' && value.value !== '') {
+        display_value = format.autoFormat(value.value, this.props.field.schema.data_format)
+      }
+
+      // console.log('display_value:', display_value)
+
       value_component = this.props.field.renderer(
         display_value,
         this.props.field,
