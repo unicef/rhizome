@@ -5,30 +5,6 @@ import format from 'utilities/format'
 
 class BubbleMapChart extends HighChart {
 
-  //move back into setConfig when bubble map is working
-  //modify legend or remove
-  // legend: {
-  //   layout: 'vertical',
-  //   align: 'right',
-  //   labelFormatter: function () {
-  //     const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
-  //     const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
-  //     const isBool = current_indicator.data_format === 'bool'
-  //     return (
-  //           (boundFrom || (isBool ? '' : '0')) +
-  //           (isBool ? '': boundTo ? ' - ' : ' ') +
-  //           (boundTo || (isBool ? '' : '+'))
-  //     )
-  //   },
-  //   itemStyle: {
-  //     'fontSize': '16px'
-  //   }
-  // },
-  // colorAxis: {
-  //   dataClasses: this.getDataClasses(current_indicator, palette),
-  //   reversed: current_indicator.good_bound < current_indicator.bad_bound
-  // },
-
   setConfig = function () {
     const current_indicator = this.props.selected_indicators[0]
     // const palette = this.getColorPalette(this.props.palette)
@@ -40,13 +16,11 @@ class BubbleMapChart extends HighChart {
           verticalAlign: 'bottom'
         }
       },
+      chart: {
+        type: 'map'
+      },
       legend: {
         enabled: false
-      },
-      plotOptions: {
-        mapbubble: {
-          color: '#BAD355'
-        }
       },
       series: this.setSeries()
     }
@@ -55,27 +29,32 @@ class BubbleMapChart extends HighChart {
   setSeries = function () {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
-    let counter = 0
-    const data = this.props.datapoints.meta.chart_data.
-                  map(datapoint => { return (
-                                        {
-                                          name: `Point${counter+=1}`,
-                                          z: datapoint.z,
-                                          color: '#BAD355',
-                                          location_id: datapoint.location_id
-                                        }
-                                      )
-                                    }
-                      )
-    return [{
-      data: this.props.datapoints.meta.chart_data,
-      type: 'mapbubble',
-      mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
-      joinBy: 'location_id',
-      name: current_indicator.name
-    }]
+    let mapData = {'features': this.props.features, 'type': 'FeatureCollection'}
+    //first object config for empty map
+    //second object config for bubbles
+    return [
+      {
+        name: 'base map',
+        mapData: mapData,
+        color: '#E0E0E0',
+        enableMouseTracking: false
+      },
+      {
+        type: 'mapbubble',
+        mapData: mapData,
+        name: current_indicator.name,
+        joinBy: 'location_id',
+        data: this.props.datapoints.meta.chart_data,
+        minSize: 4,
+        maxSize: '12%',
+        tooltip: {
+            pointFormat: '{point.z}'
+        },
+        color: '#000000'
+      }
+    ]
   }
-  //move back into setSeries when bubblemap is working
+  //move back into setSeries and customize when bubblemap is working
   // tooltip: {
   //       pointFormatter: function() {
   //         return (

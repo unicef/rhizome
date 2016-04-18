@@ -60,8 +60,8 @@ class HighChart extends Component {
   renderChart = function () {
     const type = this.props.type
     this.setConfig()
-    this.config.colors = palettes[this.props.palette]
-    let chartConfig = this.config.chart
+    // this.config.colors = palettes[this.props.palette]
+    const chartConfig = this.config.chart
     //refactor next line out to more centralized static param, especially if more map types added
     const chartType = type === 'MapChart' || type === 'BubbleMap' ? 'Map' : 'Chart'
 
@@ -72,7 +72,6 @@ class HighChart extends Component {
         renderTo: this.refs.chart.getDOMNode()
       }
     })
-
     global.requestAnimationFrame && requestAnimationFrame(()=>{
       this.chart && this.chart.options && this.chart.reflow()
     })
