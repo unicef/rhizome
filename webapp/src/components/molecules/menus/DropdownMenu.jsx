@@ -94,9 +94,9 @@ var DropdownMenu = React.createClass({
     const icon = this.props.icon ? (<i className={['fa', this.props.icon].join(' ')} />) : null
 
     return (
-      <a className={'button ' + this.props.style} role='button' onClick={this._toggleMenu}>
+      <button className={this.props.style} role='button' onClick={this._toggleMenu}>
         {icon} {this.props.text}
-      </a>
+      </button>
     )
   }
 })

@@ -19,7 +19,7 @@ export default {
     React.render(React.createElement(require('components/pages/DashboardsPage')), el)
   },
   Dashboard: function (el, dashboard_id) {
-    React.render(React.createElement(require('components/pages/DashboardPage'), { dashboard_id: dashboard_id }), el)
+    React.render(React.createElement(require('components/pages/DashboardLayout'), { dashboard_id: dashboard_id }), el)
   },
   Charts: function (el) {
     React.render(React.createElement(require('components/pages/ChartsPage')), el)

@@ -4,7 +4,7 @@ export default {
   charts: [
     { name: 'RawData', groupBy: true, locationLevel: true },
     { name: 'TableChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
-    { name: 'ChoroplethMap', groupBy: false, locationLevel: false, timeRadios: ['1month'] },
+    // { name: 'ChoroplethMap', groupBy: false, locationLevel: false, timeRadios: ['1month'] },
     { name: 'MapChart', groupBy: false, locationLevel: false, timeRadios: ['1month'] },
     { name: 'BubbleMap', groupBy: false, locationLevel: false, timeRadios: ['1month'] },
     { name: 'LineChart', groupBy: true, locationLevel: true, timeRadios: ['all', '1year', '3month'] },

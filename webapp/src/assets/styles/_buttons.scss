@@ -7,7 +7,11 @@
   letter-spacing: 1px;
   margin: .5rem;
   font-size: .7rem;
-  &:not(.disabled):not(.success):not(.icon-button):hover {
+  &.boolColor {
+    background-color: #FFFFFF;
+    color: #000000;
+  }
+  &:hover {
     background-color: #426281;
     color: $rhz-font-color;
   }
@@ -57,12 +61,6 @@
       width: auto;
       text-align: left;
     }
-  }
-  &.boolColor {
-    background-color: #FFFFFF;
-    color: #000000;
-    font-size: .9em;
-    font-weight:bold;
   }
 }
 

@@ -13,13 +13,16 @@ import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
+import DashboardChartsStore from 'stores/DashboardChartsStore'
 
 import DashboardActions from 'actions/DashboardActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardChartsActions from 'actions/DashboardChartsActions'
 
 const Dashboard = React.createClass({
 
   mixins: [
+    Reflux.connect(DashboardChartsStore, 'charts'),
     Reflux.connect(DashboardPageStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
@@ -50,7 +53,7 @@ const Dashboard = React.createClass({
         if (this.props.dashboard_id) {
           DashboardPageActions.fetchDashboard(this.props.dashboard_id)
         } else {
-          DashboardPageActions.addChart()
+          DashboardChartsActions.addChart()
           DashboardPageActions.toggleEditMode()
         }
       }
@@ -65,7 +68,7 @@ const Dashboard = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
-    const charts = _.toArray(nextState.dashboard.charts)
+    const charts = _.toArray(nextState.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
@@ -82,7 +85,8 @@ const Dashboard = React.createClass({
   render: function () {
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
-    const charts = _.toArray(dashboard.charts)
+    const chart_uuids = this.state.dashboard.chart_uuids
+    const charts = _.toArray(this.state.charts)
     const title_bar = this.state.titleEditMode ?
       <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
       :
@@ -90,39 +94,41 @@ const Dashboard = React.createClass({
         <a>{dashboard.title || 'Untitled Dashboard'}</a>
       </h1>
 
-    const chart_components = charts.map(chart => (
+    const chart_components = chart_uuids.map(uuid => {
+      const chart = this.state.charts[uuid]
+      return (
         <div className='row'>
           <MultiChart
             chart={chart}
             readOnlyMode={!editMode}
-            linkCampaigns={() => DashboardPageActions.toggleCampaignLink(chart.uuid)}
-            duplicateChart={DashboardPageActions.duplicateChart}
-            selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid)}
-            toggleSelectTypeMode={() => DashboardPageActions.toggleSelectTypeMode(chart.uuid)}
-            toggleEditMode={() => DashboardPageActions.toggleChartEditMode(chart.uuid)}
-            removeChart={DashboardPageActions.removeChart}
-            saveChart={() => DashboardPageActions.saveChart(chart.uuid)}
-            setDateRange={(key, value) => DashboardPageActions.setDateRange(key, value, chart.uuid)}
-            setGroupBy={(grouping) => DashboardPageActions.setGroupBy(grouping, chart.uuid)}
-            setPalette={(palette) => DashboardPageActions.setPalette(palette, chart.uuid)}
-            setTitle={(title) => DashboardPageActions.setChartTitle(title, chart.uuid)}
-            setType={(type) => DashboardPageActions.setType(type, chart.uuid)}
-            setIndicators={(indicators) => DashboardPageActions.setIndicators(indicators, chart.uuid)}
-            selectIndicator={(id) => DashboardPageActions.selectIndicator(id, chart.uuid)}
-            deselectIndicator={(id) => DashboardPageActions.deselectIndicator(id, chart.uuid)}
-            reorderIndicator={(indicators) => DashboardPageActions.reorderIndicator(indicators, chart.uuid)}
-            clearSelectedIndicators={() => DashboardPageActions.clearSelectedIndicators(chart.uuid)}
-            setLocations={(locations) => DashboardPageActions.setLocations(locations, chart.uuid)}
-            selectLocation={(id) => DashboardPageActions.selectLocation(id, chart.uuid)}
-            deselectLocation={(id) => DashboardPageActions.deselectLocation(id, chart.uuid)}
-            clearSelectedLocations={() => DashboardPageActions.clearSelectedLocations(chart.uuid)}
-            setCampaigns={(campaigns) => DashboardPageActions.setCampaigns(campaigns, chart.uuid)}
-            selectCampaign={(id) => DashboardPageActions.selectCampaign(id, chart.uuid)}
-            deselectCampaign={(id) => DashboardPageActions.deselectCampaign(id, chart.uuid)}
+            linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
+            duplicateChart={DashboardChartsActions.duplicateChart}
+            selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}
+            toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
+            toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
+            removeChart={DashboardChartsActions.removeChart}
+            saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
+            setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
+            setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
+            setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
+            setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
+            setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
+            setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
+            selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
+            deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
+            reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
+            clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
+            setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
+            selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
+            deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}
+            clearSelectedLocations={() => DashboardChartsActions.clearSelectedLocations(chart.uuid)}
+            setCampaigns={(campaigns) => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
+            selectCampaign={(id) => DashboardChartsActions.selectCampaign(id, chart.uuid)}
+            deselectCampaign={(id) => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
           />
         </div>
       )
-    )
+    })
 
     const save_dashboard_button = editMode ? (
       <AsyncButton
@@ -137,7 +143,7 @@ const Dashboard = React.createClass({
       <div className='row text-center'>
         <button
           className='button large'
-          onClick={DashboardPageActions.addChart}
+          onClick={DashboardChartsActions.addChart}
           style={{marginTop: '1rem'}}>
           Add Chart
         </button>

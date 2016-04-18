@@ -63,6 +63,7 @@ class HighChart extends Component {
     let chartConfig = this.config.chart
     //refactor next line out to more centralized static param, especially if more map types added
     const chartType = this.props.type === 'MapChart' || 'BubbleMap' ? 'Map' : 'Chart'
+
     this.chart = new Highcharts[chartType]({
       ...this.config,
       chart: {

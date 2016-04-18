@@ -31,13 +31,21 @@ class BubbleMapChart extends HighChart {
 
   setConfig = function () {
     const current_indicator = this.props.selected_indicators[0]
-    const palette = this.getColorPalette(this.props.palette)
+    // const palette = this.getColorPalette(this.props.palette)
     this.config = {
       mapNavigation: {
         enabled: true,
         enableMouseWheelZoom: false,
         buttonOptions: {
           verticalAlign: 'bottom'
+        }
+      },
+      legend: {
+        enabled: false
+      },
+      plotOptions: {
+        mapbubble: {
+          color: '#BAD355'
         }
       },
       series: this.setSeries()
@@ -47,9 +55,21 @@ class BubbleMapChart extends HighChart {
   setSeries = function () {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
+    let counter = 0
+    const data = this.props.datapoints.meta.chart_data.
+                  map(datapoint => { return (
+                                        {
+                                          name: `Point${counter+=1}`,
+                                          z: datapoint.z,
+                                          color: '#BAD355',
+                                          location_id: datapoint.location_id
+                                        }
+                                      )
+                                    }
+                      )
     return [{
-      color: '#BAD355',
       data: this.props.datapoints.meta.chart_data,
+      type: 'mapbubble',
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
       name: current_indicator.name
@@ -66,28 +86,28 @@ class BubbleMapChart extends HighChart {
   //       }
   //     }
 
-  getDataClasses (current_indicator, palette) {
-    if (current_indicator.good_bound < current_indicator.bad_bound) {
-      let temp_bound = current_indicator.good_bound
-      current_indicator.good_bound = current_indicator.bad_bound
-      current_indicator.bad_bound = temp_bound
-      palette = palette.reverse()
-    }
-    let dataClasses = null
-    if (current_indicator.data_format === 'bool') {
-      dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
-                     {from: current_indicator.good_bound,color: palette[2]}]
-    } else {
-      dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
-                     {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
-                     {from:current_indicator.good_bound, color:palette[2]}]
-    }
-    return dataClasses
-  }
+  // getDataClasses (current_indicator, palette) {
+  //   if (current_indicator.good_bound < current_indicator.bad_bound) {
+  //     let temp_bound = current_indicator.good_bound
+  //     current_indicator.good_bound = current_indicator.bad_bound
+  //     current_indicator.bad_bound = temp_bound
+  //     palette = palette.reverse()
+  //   }
+  //   let dataClasses = null
+  //   if (current_indicator.data_format === 'bool') {
+  //     dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
+  //                    {from: current_indicator.good_bound,color: palette[2]}]
+  //   } else {
+  //     dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
+  //                    {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
+  //                    {from:current_indicator.good_bound, color:palette[2]}]
+  //   }
+  //   return dataClasses
+  // }
 
-  getColorPalette (paletteType) {
-    return paletteType === 'traffic_light' ? ['#FF9489', '#FFED89', '#83F5A2'] : []
-  }
+  // getColorPalette (paletteType) {
+  //   return paletteType === 'traffic_light' ? ['#FF9489', '#FFED89', '#83F5A2'] : []
+  // }
 }
 
 export default BubbleMapChart

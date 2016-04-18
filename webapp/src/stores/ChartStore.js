@@ -18,7 +18,7 @@ var ChartStore = Reflux.createStore({
     loading: false
   },
 
-  getInitialState () {
+  getInitialState: function () {
     return this.charts
   },
 
@@ -26,10 +26,10 @@ var ChartStore = Reflux.createStore({
   //                               API CALL HANDLERS                             //
   // =========================================================================== //
   // ===============================  Fetch Charts  ============================ //
-  onFetchCharts () {
+  onFetchCharts: function () {
     this.setState({ raw: null })
   },
-  onFetchChartsCompleted (response) {
+  onFetchChartsCompleted: function (response) {
     this.charts.loading = false
     this.charts.meta = response.meta
     this.charts.raw = response.objects[0].charts || response.objects
@@ -42,29 +42,29 @@ var ChartStore = Reflux.createStore({
     this.charts.index = _.indexBy(this.charts.raw, 'id')
     this.trigger(this.charts)
   },
-  onFetchChartsFailed (error) {
+  onFetchChartsFailed: function (error) {
     this.setState({ error: error })
   },
 
   // ===============================  Post Chart  ============================= //
-  onPostChart () {
+  onPostChart: function () {
     this.setState({ raw: null, loading: true })
   },
-  onPostChartCompleted (response) {
+  onPostChartCompleted: function (response) {
     ChartActions.fetchCharts()
   },
-  onPostChartFailed (error) {
+  onPostChartFailed: function (error) {
     this.setState({ error: error })
   },
 
   // ===============================  Delete Chart  ============================ //
-  onDeleteChart () {
+  onDeleteChart: function () {
     this.setState({ raw: null })
   },
-  onDeleteChartCompleted (response) {
+  onDeleteChartCompleted: function (response) {
     ChartActions.fetchCharts()
   },
-  onDeleteChartFailed (error) {
+  onDeleteChartFailed: function (error) {
     this.setState({ error: error })
   }
 
