@@ -80,8 +80,8 @@ const DashboardRow = React.createClass({
       )
     } else if (layout === 4) {
       return (
-        <div className='row animated fadeInDown'>
-          <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
+        <div className='row animated fadeInDown' style={{display: 'flex'}}>
+          <div className='medium-6 columns' style={{display: 'flex'}}>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>
             <div className='row'>
               <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
