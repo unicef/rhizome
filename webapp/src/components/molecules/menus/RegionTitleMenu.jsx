@@ -1,15 +1,15 @@
 import _ from 'lodash'
-import React from 'react'
+import React, {PropTypes} from 'react'
 
 import TitleMenu from 'components/molecules/menus/TitleMenu.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
 var RegionTitleMenu = React.createClass({
   propTypes: {
-    locations: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired,
-    hideLastLevel: React.PropTypes.bool
+    locations: PropTypes.array.isRequired,
+    selected: PropTypes.object.isRequired,
+    sendValue: PropTypes.func.isRequired,
+    hideLastLevel: PropTypes.bool
   },
 
   getInitialState () {
