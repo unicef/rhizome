@@ -343,8 +343,9 @@ class DataPointResourceTest(ResourceTestCase):
                 if indicator_id == indicator_to_filter and value_to_use == indicator_val_to_filter:
                     dps_to_track.append(dp)
 
+        indicator_name_to_filter = Indicator.objects.get(id=indicator_to_filter);
         get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=MapChart'\
-            .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_to_filter, indicator_val_to_filter)
+            .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
@@ -368,13 +369,14 @@ class DataPointResourceTest(ResourceTestCase):
         #  make sure the chart data isn't empty
 
 
-    def _get_cumulative(self):
+    def test_get_cumulative(self):
         # add a couple different campaigns with different time frames
         campaign_type = CampaignType.objects\
             .create(name='National Immunization Days (NID)')
 
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
-
+        document = Document.objects.create(doc_title='uploadddd')
+       
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
@@ -400,6 +402,7 @@ class DataPointResourceTest(ResourceTestCase):
                 location_code = 'Kandahar',
                 location_type_id = self.lt.id,
                 office_id = self.o.id,
+                parent_location_id = self.top_lvl_location.id
             )
         # add datapoints for these different campaigns
         value_1 =12
@@ -408,12 +411,30 @@ class DataPointResourceTest(ResourceTestCase):
                     location_id = province.id,
                     value = value_1,
                     campaign_id = campaign_1.id,
-                    indicator_id = indicator_id,
-                    document_id = document.id
+                    indicator_id = indicator.id,
+                    document_id = document.id,
                 )
 
+        dp_2 = DataPointComputed.objects.create(
+                location_id = province.id,
+                value = value_2,
+                campaign_id = campaign_2.id,
+                indicator_id = indicator.id,
+                document_id = document.id,
+
+            )
+
         # make sure that that api call returns cumulative values,
-        # and only one dp per each location
+        get_parameter = 'indicator__in={0}&start_date=2016-01-01&end_date=2016-02-02&parent_location_id__in={2}&chart_type=MapChart&cumulative=1'\
+            .format(indicator.id, campaign_1.id, self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        returned_indicators = response_data['objects']
+        self.assertEqual(len(returned_indicators), 1)
+        self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
 
 
 

@@ -54,7 +54,14 @@ var ChartsPage = React.createClass({
 
 
   render () {
-    let rows = <tr><td colSpan='3'>No custom charts created yet.</td></tr>
+    let rows = (
+      <tr>
+        <td colSpan='3'>
+          No charts created yet.
+          <a href='/charts/create' className='underlined'>Create your first chart</a>
+        </td>
+      </tr>
+    )
     if (_.isNull(this.state.charts.list)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
     } else if (this.state.charts.list.length > 0) {

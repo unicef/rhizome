@@ -177,7 +177,7 @@ var DashboardChartsStore = Reflux.createStore({
   onSetIndicatorFilter: function (filter, uuid) {
     this.toggleLoading(uuid)
     this.charts[uuid].indicator_filter = filter
-    if (filter.id === 0) {
+    if (filter.value === 0) {
       this.charts[uuid].indicator_filter = null
     }
     this.updateChart(uuid)

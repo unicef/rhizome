@@ -51,6 +51,7 @@ $total-columns: 7;
 }
 
 .dashboard {
+	padding-bottom: 2.5rem;
 	.dashboard-header {
 		background: $rhz-header-bg-color;
 		border-top: 1px solid black;
@@ -81,8 +82,6 @@ $total-columns: 7;
 	    margin-right: .2rem;
 		}
 		.title-input {
-			margin-left: .55rem;
-			text-align: left;
 			text-transform: uppercase;
 			position: relative;
 			top: .2rem;

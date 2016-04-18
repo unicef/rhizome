@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-import CampaignTitleMenu from 'components/molecules/menus/CampaignTitleMenu'
+import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
 
 import CampaignStore from 'stores/CampaignStore'
 
@@ -59,7 +59,7 @@ const CampaignSelector = React.createClass({
           <h3>
             Campaign <a onClick={this.props.linkCampaigns}><i className={'fa ' + (this.props.linked ? 'fa-chain ' : 'fa-chain-broken') }/></a>
           </h3>
-          <CampaignTitleMenu
+          <CampaignDropdown
             campaigns={raw_campaigns}
             selected={selected_campaigns[0]}
             sendValue={this.props.setCampaigns}/>

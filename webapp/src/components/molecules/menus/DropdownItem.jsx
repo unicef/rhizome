@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 
-var TitleMenuItem = React.createClass({
+var DropdownItem = React.createClass({
   propTypes: {
     key: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
@@ -19,4 +19,4 @@ var TitleMenuItem = React.createClass({
   }
 })
 
-export default TitleMenuItem
+export default DropdownItem

@@ -11,6 +11,7 @@ import MapChart from 'components/molecules/highcharts/MapChart'
 import BubbleMapChart from 'components/molecules/highcharts/BubbleMapChart'
 import LineChart from 'components/molecules/highcharts/LineChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
+import StackedColumnChart from 'components/molecules/highcharts/StackedColumnChart'
 import TableChart from 'components/molecules/charts/TableChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
@@ -56,6 +57,8 @@ const MultiChart = React.createClass({
       return <MapChart {...this.props.chart} />
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
+    } else if (type === 'StackedColumnChart') {
+      return <StackedColumnChart {...this.props.chart} />
     } else if (type === 'BubbleMap') {
       return <BubbleMapChart {...this.props.chart} />
     } else if (type === 'BarChart') {
@@ -103,9 +106,11 @@ const MultiChart = React.createClass({
     )
 
     const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-9 medium-pull-4 large-pull-3 '
+    const hideChartFrame = this.props.readOnlyMode && chart.type === 'RawData'
+
     return (
-      <article className='multi-chart medium-12 columns'>
-        <MultiChartHeader {...this.props}/>
+      <article className={'multi-chart medium-12 columns' + (hideChartFrame ? ' no-frame ' : '')}>
+        { !hideChartFrame ? <MultiChartHeader {...this.props}/> : null }
         <section className='row'>
           { chart.editMode ? sidebar : null }
           <div className={chart_classes + ' columns chart-zone'}>

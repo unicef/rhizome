@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
-import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
+import RegionDropdown from 'components/molecules/menus/RegionDropdown'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu.jsx'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
@@ -80,7 +80,7 @@ var MapForm = React.createClass({
       if (!this.state.data.locations) {
         return loadText('Locations')
       }
-      return <div><RegionTitleMenu
+      return <div><RegionDropdown
         locations={this.state.data.locations}
         selected={defaultSelected}
         sendValue={this.postMetaMap}/></div>

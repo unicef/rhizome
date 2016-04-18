@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-import IndicatorTitleMenu from 'components/molecules/menus/IndicatorTitleMenu'
+import IndicatorDropdown from 'components/molecules/menus/IndicatorDropdown'
 
 
 const IndicatorSelector = React.createClass({

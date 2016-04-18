@@ -66,7 +66,14 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
-  onRemoveChart: function (row_index, chart_index) { console.info('DashboardPageStore - onRemoveChart')
+  onSelectChart: function (chart, old_uuid, row_index, chart_index) {
+    DashboardChartsActions.selectChart(chart, old_uuid) // Select chart
+    this.dashboard.rows[row_index].charts.splice(chart_index, 1) // Remove old uuid from row
+    this.dashboard.rows[row_index].charts[chart_index] = chart.uuid // Set new uuid in row
+    this.trigger(this.dashboard)
+  },
+
+  onRemoveChart: function (row_index, chart_index) {
     const row = this.dashboard.rows[row_index]
     const uuid_to_remove = row.charts[chart_index]
     row.charts.splice(chart_index, 1)
@@ -82,9 +89,6 @@ const DashboardPageStore = Reflux.createStore({
   },
 
   onSelectRowLayout: function (layout) {
-    console.info('')
-    console.info('------------------------------------------------------------')
-    console.info('DashboardPageStore - onSelectRowLayout')
     const row_index = this.dashboard.rows.length - 1
     this.dashboard.rows[row_index].layout = layout
     this._addChartToRow(row_index)
@@ -94,11 +98,10 @@ const DashboardPageStore = Reflux.createStore({
       this._addChartToRow(row_index)
       this._addChartToRow(row_index)
     }
-    console.log('this.dashboard.rows', this.dashboard.rows)
     this.trigger(this.dashboard)
   },
 
-  _addChartToRow: function (row_index) { console.info('DashboardPageStore - _addChartToRow')
+  _addChartToRow: function (row_index) {
     const chart_uuid = uuid.v4()
     this.dashboard.rows[row_index].charts.push(chart_uuid)
     DashboardChartsActions.addChart(chart_uuid)

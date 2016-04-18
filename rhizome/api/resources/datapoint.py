@@ -12,7 +12,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree, IndicatorClassMap
+    LocationPermission, LocationTree, IndicatorClassMap, Indicator
 
 
 class ResultObject(object):
@@ -37,6 +37,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
             'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
             'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
+            'cumulative'
     - **Errors:**
         -
     '''
@@ -244,7 +245,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
             'campaign__in': None, 'location__in': None, \
             'filter_indicator':None, 'filter_value': None,\
-            'show_missing_data':None}
+            'show_missing_data':None, 'cumulative':0}
 
         for k, v in optional_params.iteritems():
             try:
@@ -340,15 +341,31 @@ class DatapointResource(BaseNonModelResource):
         # do an inner join on the filter indicator
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
+            indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
             filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
-                indicator_id=self.parsed_params['filter_indicator'],
+                indicator_id=indicator_id,
                 value = self.parsed_params['filter_value']
                 )
             filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
             columns=merge_columns)
             dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
+
+        if self.parsed_params['cumulative'] == '1':
+            #  hack -- we need the ids so that we can create the pivot table.
+            #  later, the ids will be discarded
+            dwc_id = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['id'].first().reset_index())
+            dwc_vals = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['value'].sum().reset_index())
+            dwc_campaigns = DataFrame(dwc_df\
+            .groupby(['location_id', 'indicator_id'])\
+            ['campaign_id'].first().reset_index())
+            dwc_df = dwc_vals.merge(dwc_campaigns, how ='inner', on=['location_id', 'indicator_id'])
+            dwc_df = dwc_df.merge(dwc_id, how ='inner', on=['location_id', 'indicator_id'])
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
@@ -362,7 +379,6 @@ class DatapointResource(BaseNonModelResource):
 
             ## we need two dictionaries, one that has the value of the
             ## datapoint_computed object and one with the id ##
-
             p_table_for_id = pivot_table(
                 dwc_df, values='id', index=['indicator_id'],\
                     columns=['location_id', 'campaign_id'], aggfunc=np.sum)
@@ -384,11 +400,17 @@ class DatapointResource(BaseNonModelResource):
 
         for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
 
-            indicator_objects = [{
-                'indicator': k,
-                'computed': pivoted_data_for_id[row][k],
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
+            if self.parsed_params['cumulative'] == '1':
+                indicator_objects = [{
+                    'indicator': k,
+                    'value': v
+                } for k, v in indicator_dict.iteritems()]
+            else:
+                indicator_objects = [{
+                    'indicator': k,
+                    'computed_id': pivoted_data_for_id[row][k],
+                    'value': v
+                } for k, v in indicator_dict.iteritems()]
 
             # avail_indicators = set([x for x,y in indicator_dict.keys()])
             missing_indicators = list(set(self.parsed_params['indicator__in']))

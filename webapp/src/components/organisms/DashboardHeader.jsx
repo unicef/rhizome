@@ -7,8 +7,8 @@ import IconButton from 'components/atoms/IconButton'
 import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
-import RegionTitleMenu from 'components/molecules/menus/RegionTitleMenu'
-import LpdTitleMenu from 'components/molecules/menus/LpdTitleMenu'
+import RegionDropdown from 'components/molecules/menus/RegionDropdown'
+import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
 import LocationStore from 'stores/LocationStore'
 
 const DashboardHeader = React.createClass({
@@ -70,13 +70,13 @@ const DashboardHeader = React.createClass({
 
     const dashboard_filters = (
       <div className='dashboard-filters'>
-        <RegionTitleMenu
+        <RegionDropdown
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
           sendValue={this._setLocation}
           hideLastLevel
         />
-        <LpdTitleMenu selected={props.filter_indicator} sendValue={this._setIndicatorFilter} />
+        <DistrictDropdown selected={props.indicator_filter} sendValue={this._setIndicatorFilter} />
       </div>
     )
 

@@ -1,7 +1,7 @@
 import React from 'react'
 
 import DropdownIcon from 'components/atoms/DropdownIcon'
-import TitleMenu from 'components/molecules/menus/TitleMenu'
+import Dropdown from 'components/molecules/menus/Dropdown'
 import MenuItem from 'components/molecules/MenuItem'
 
 var ExportIcon = React.createClass({

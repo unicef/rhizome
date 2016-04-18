@@ -34,7 +34,7 @@ const DashboardRow = React.createClass({
         readOnlyMode={!this.props.editMode}
         linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
         duplicateChart={DashboardChartsActions.duplicateChart}
-        selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}
+        selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid, this.props.rowIndex, chart_index)}
         toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
         toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
         removeChart={() => DashboardPageActions.removeChart(this.props.rowIndex, chart_index)}

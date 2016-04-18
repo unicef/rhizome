@@ -86,6 +86,7 @@ const DashboardLayout = React.createClass({
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
     const selected_locations = charts[0] ? charts[0].selected_locations : []
+    const indicator_filter = charts[0] ? charts[0].indicator_filter : []
     const rows = dashboard.rows.map((row, index) => <DashboardRow {...row} editMode={editMode} rowIndex={index}/>)
 
     let loading = !charts.length > 0 || (!dashboard.rows.length > 0)
@@ -108,7 +109,11 @@ const DashboardLayout = React.createClass({
 
     return (
       <section className='dashboard'>
-        <DashboardHeader {...dashboard} dashboard_id={this.props.dashboard_id} selected_locations={selected_locations} />
+        <DashboardHeader {...dashboard}
+          dashboard_id={this.props.dashboard_id}
+          selected_locations={selected_locations}
+          indicator_filter={indicator_filter}
+        />
         { loading ? <Placeholder height={600} /> : rows }
         { add_row_button }
       </section>

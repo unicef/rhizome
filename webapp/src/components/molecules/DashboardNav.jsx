@@ -10,7 +10,6 @@ import RootStore from 'stores/RootStore'
 let DashboardNav = React.createClass({
 
   mixins: [
-    // Reflux.connect(RootStore),
     require('components/molecules/menus/MenuControl')
   ],
 
@@ -76,8 +75,6 @@ let DashboardNav = React.createClass({
           <ul className='dashboard-menu'>
             <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
             { custom_dashboards }
-            <li className='separator'><hr /></li>
-            { premade_dashboards }
           </ul>
         </li>
         <li className='log-out'>
