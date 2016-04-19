@@ -7,8 +7,8 @@ import flattenChildren from 'data/transform/flattenChildren'
 import api from 'data/api'
 import DatapointAPI from 'data/requests/DatapointAPI'
 
-let EntryFormStore = Reflux.createStore({
-  listenables: [require('actions/EntryFormActions')],
+let DataEntryStore = Reflux.createStore({
+  listenables: [require('actions/DataEntryActions')],
   locationList: [],
 
   data: {
@@ -18,7 +18,6 @@ let EntryFormStore = Reflux.createStore({
     filteredIndicators: [],
     data: null,
     loaded: false,
-    campaigns: [],
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -72,14 +71,14 @@ let EntryFormStore = Reflux.createStore({
         self.data.tags = tagResult
 
         // CAMPAIGNS
-        let campaignResult = _(campaigns.objects)
-          .map(campaign => {
-            return {
-              'id': campaign.id,
-              'name': campaign.name
-            }
-          }).value()
-        self.data.campaigns = campaignResult
+        // let campaignResult = _(campaigns.objects)
+        //   .map(campaign => {
+        //     return {
+        //       'id': campaign.id,
+        //       'name': campaign.name
+        //     }
+        //   }).value()
+        // self.data.campaigns = campaignResult
 
         // LOCATIONS
         let locationResult = _(locations.objects)
@@ -127,7 +126,7 @@ let EntryFormStore = Reflux.createStore({
 
   _setCouldLoad: function () {
     this.data.couldLoad = (this.data.selected.form.value !== null &&
-      this.data.selected.campaign.value !== null &&
+      this.data.selected_campaign.value !== null &&
       this.data.locationSelected.length > 0)
     if (this.data.couldLoad) { this._getTableData() }
   },
@@ -148,10 +147,12 @@ let EntryFormStore = Reflux.createStore({
     this.trigger(this.data)
   },
 
-  onSetCampaign: function (campaignId) {
-    this.data.selected.campaign.value = campaignId
-    this.data.selected.campaign.title = this.data.camp
-    this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaignId})[0].name
+  onSetCampaign: function (campaign) {
+    console.log('campaign', campaign)
+    this.data.selected_campaign = campaign
+    // this.data.selected.campaign.value = campaign.id
+    // this.data.selected.campaign.title = this.data.camp
+    // this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaign.id})[0].name
     this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
@@ -197,7 +198,7 @@ let EntryFormStore = Reflux.createStore({
     let indicatorIds = this._getIndicatorIds()
 
     let options = {
-      campaign__in: parseInt(this.data.selected.campaign.value, 10),
+      campaign__in: parseInt(this.data.selected_campaign.id, 10),
       indicator__in: [],
       location_id__in: [],
       source_name: ''
@@ -261,4 +262,4 @@ let EntryFormStore = Reflux.createStore({
   }
 })
 
-export default EntryFormStore
+export default DataEntryStore

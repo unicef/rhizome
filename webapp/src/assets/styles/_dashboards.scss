@@ -50,49 +50,46 @@ $total-columns: 7;
 	background: $rhz-footer-bg-color;
 }
 
-.dashboard {
-	padding-bottom: 2.5rem;
-	.dashboard-header {
-		background: $rhz-header-bg-color;
-		border-top: 1px solid black;
-		margin-bottom: 2rem;
-		&.fixed {
-			transition: all .4s ease 0s;
-			background: black;
+.page-header {
+	background: $rhz-header-bg-color;
+	border-top: 1px solid black;
+	margin-bottom: 2rem;
+	&.fixed {
+		transition: all .4s ease 0s;
+		background: black;
+	}
+	h1 {
+		position: relative;
+		top: .1rem;
+		padding: .8rem 0 .5rem 1rem;
+		margin-top: 0;
+		@media #{$small-only} {
+			padding: .8rem .5rem;
 		}
-		h1 {
-			position: relative;
-			top: .1rem;
-			padding: .8rem 0 .5rem 1rem;
-			margin-top: 0;
-			@media #{$small-only} {
-				padding: .8rem .5rem;
-			}
-			a {
-				font-size: 1.5rem;
-				cursor: text;
-			}
-		}
-		h1, i {
-			color: white;
-		}
-		form .icon-button, .dashboard-actions > .icon-button {
-	    font-size: 1.3rem;
-	    top: .2rem;
-	    margin-right: .2rem;
-		}
-		.title-input {
-			text-transform: uppercase;
-			position: relative;
-			top: .2rem;
-			padding: 1.2rem .7rem;
-		}
-		.button {
-			display: inline-block;
-			padding: .85rem .9rem;
+		a {
+			font-size: 1.5rem;
+			cursor: text;
 		}
 	}
-	.dashboard-filters {
+	h1, i {
+		color: white;
+	}
+	form .icon-button, .dashboard-actions > .icon-button {
+    font-size: 1.3rem;
+    top: .2rem;
+    margin-right: .2rem;
+	}
+	.title-input {
+		text-transform: uppercase;
+		position: relative;
+		top: .2rem;
+		padding: 1.2rem .7rem;
+	}
+	.button {
+		display: inline-block;
+		padding: .85rem .9rem;
+	}
+	.page-header-filters {
 		display: inline-block;
 		.dropdown-list {
 			display: inline-block;
@@ -111,6 +108,11 @@ $total-columns: 7;
 			color: white;
 		}
 	}
+}
+
+.dashboard {
+	padding-bottom: 2.5rem;
+
 	hr {
 		margin-top: 0;
 		margin-bottom: 2rem;
