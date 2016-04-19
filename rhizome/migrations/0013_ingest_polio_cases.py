@@ -11,14 +11,13 @@ from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 import pandas as pd
 
-from pprint import pprint
-
 def ingest_polio_cases(apps, schema_editor):
 
     indicator_id = Indicator.objects.create(
         name = 'Polio Cases',
         short_name = 'Polio Cases',
         description = 'Polio Cases',
+        data_format = 'date_int'
     ).id
 
     som_id = SourceObjectMap.objects.create(
@@ -28,18 +27,17 @@ def ingest_polio_cases(apps, schema_editor):
     )
 
     document_id = process_source_sheet_df()
-    pprint(SourceSubmission.objects.filter(document_id = document_id))
 
     polio_cases_count = DataPoint.objects.filter(
         indicator_id = indicator_id,
     ).count()
 
-    # print 'polio case count\n' * 3
-    # print polio_cases_count
-    # print 'polio case count\n' * 3
-    #
-    # if polio_cases_count != 33:
-    #     raise Exception('did not ingest the polio case data properly')
+    doc_polio_cases_count = DocDataPoint.objects.filter(
+        indicator_id = indicator_id,
+    ).count()
+
+    if polio_cases_count != 51:
+        raise Exception('did not ingest the polio case data properly')
 
 
 def process_source_sheet_df():
@@ -50,10 +48,6 @@ def process_source_sheet_df():
     # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name
 
     source_sheet_df = pd.read_csv(sheet_name)
-
-    print '===\n' * 3
-    print source_sheet_df[:2]
-    print '===\n' * 3
 
     # doc_file_text = sheet_name + '.csv'
 
@@ -72,13 +66,6 @@ def process_source_sheet_df():
     mr = MasterRefresh(user_id, new_doc.id)
     mr.main()
 
-    ## datapoints -> computed datapoints ##
-    # for c in Campaign.objects.all():
-    #     print 'processing campaign id: %s' % c.id
-    #     ar = AggRefresh(c.id)
-    #     print 'DWC COUNT %s' % len(DataPointComputed.objects\
-    #         .filter(campaign_id = c.id))
-
     return new_doc.id
 
 class Migration(migrations.Migration):
@@ -90,3 +77,24 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunPython(ingest_polio_cases)
     ]
+
+# DROP TABLE IF EXISTS _polio_case_indicator;
+# CREATE TABLE _polio_case_indicator AS
+# SELECT ind.id FROM indicator ind WHERE name = 'Polio Cases';
+#
+# DELETE FROM source_object_map where content_type = 'indicator' AND master_object_id in (
+#     SELECT id FROM _polio_case_indicator
+# );
+#
+# DELETE FROM doc_datapoint WHERE indicator_id in (
+#     SELECT id FROM _polio_case_indicator
+# );
+# DELETE FROM datapoint WHERE indicator_id in (
+#     SELECT id FROM _polio_case_indicator
+# );
+# DELETE FROM indicator WHERE id in (
+#     SELECT id FROM _polio_case_indicator
+# );
+# DELETE FROM source_submission where document_id in ( SELECT id FROM source_doc WHERE doc_title = 'AfgPolioCases.csv' );
+# DELETE FROM source_doc WHERE doc_title = 'AfgPolioCases.csv';
+# DELETE FROM django_migrations where name = '0013_ingest_polio_cases';
