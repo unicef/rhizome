@@ -27,8 +27,6 @@ const DataEntry = React.createClass({
 
   render: function () {
     const table_data = this.state.apiResponseData
-    console.log('table_data', table_data)
-
     return (
       <div>
         <DataEntryHeader {...this.state}/>
@@ -38,6 +36,7 @@ const DataEntry = React.createClass({
               data={table_data}
               selected_locations={this.state.locationSelected}
               selected_indicators={this.state.filteredIndicators}
+              hideCampaigns
               editable />
           </div>
         </div>

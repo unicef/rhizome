@@ -4,8 +4,6 @@ import moment from 'moment'
 import React from 'react'
 import Reflux from 'reflux'
 import parseSchema from 'components/organisms/manage-system/utils/parseSchema'
-import DataBrowserTableStore from 'stores/DataBrowserTableStore'
-import DataBrowserTableActions from 'actions/DataBrowserTableActions'
 import SimpleDataTable from 'components/organisms/datascope/SimpleDataTable'
 
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
@@ -40,7 +38,7 @@ let DatabrowserTable = React.createClass({
     return ''
   },
 
-  _extractItemsFromData: function (datapoints) {
+  extractItemsFromData: function (datapoints) {
     return datapoints.map(item => {
       let result = _.pick(item, 'location')
       result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
@@ -56,39 +54,46 @@ let DatabrowserTable = React.createClass({
     })
   },
 
-  _getPickValue: function (items, locations) {
-    let pickValue = []
+  getData: function (items, locations) {
+    let data = []
     items.forEach(item => {
       locations.forEach(location => {
         if (item.location === location.id) {
           item.location = location.name
-          pickValue.push(item)
+          data.push(item)
           return
         }
       })
     })
-    return pickValue
+    return data
   },
 
   render: function () {
-    if (!this.props.data) {
+    const props = this.props
+    if (!props.data) {
       return <div className='medium-12 columns ds-data-table-empty'>No data.</div>
     } else {
-      let fields = {location: {title: 'Location', name: 'location'}, campaign: {title: 'Campaign', name: 'campaign'}}
-      let columns = ['location', 'campaign']
-      this.props.selected_indicators.forEach(indicator => {
+      let fields = {location: {title: 'Location', name: 'location'}}
+      let columns = ['location']
+
+      if (!props.hideCampaigns) {
+        fields.campaign = {title: 'Campaign', name: 'campaign'}
+        columns.push('campaign')
+      }
+
+      props.selected_indicators.forEach(indicator => {
         fields[indicator.id] = {title: indicator.name, name: indicator.id, 'computed': indicator.computed, 'source_name': indicator.source_name, 'data_format': indicator.data_format}
         columns.push(indicator.id)
       })
-      const items = this._extractItemsFromData(this.props.data || [])
-      const data = this._getPickValue(items, this.props.selected_locations)
-      const schema = parseSchema(this.props.data)
+      const items = this.extractItemsFromData(props.data || [])
+      const data = this.getData(items, props.selected_locations)
+      const schema = parseSchema(props.data)
       schema.items.properties = fields
 
       return (
         <LocalDatascope data={data} schema={schema} pageSize={10}>
           <Datascope>
-            <SimpleDataTable editable={this.props.editable}>
+            <SimpleDataTable editable={props.editable}>
               { columns.map(column => <SimpleDataTableColumn name={column}/>) }
             </SimpleDataTable>
             <Paginator />

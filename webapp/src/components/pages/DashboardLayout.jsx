@@ -38,7 +38,7 @@ const DashboardLayout = React.createClass({
 
   componentDidMount: function () {
     document.getElementsByTagName('body')[0].className += ' dashboard-page'
-    const header = document.getElementsByClassName('dashboard-header')[0]
+    const header = document.getElementsByClassName('page-header')[0]
     window.addEventListener('scroll', () => this._stickyHeader(header), false)
 
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
