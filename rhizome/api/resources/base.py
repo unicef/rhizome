@@ -74,23 +74,25 @@ class BaseResource(Resource):
         '''
         if 'location_id__in' in request.GET:
             return request.GET['location_id__in'].split(',')
+
+
+        elif 'location_level' in request.GET:
+            location_type_id = LocationType.objects\
+                .get(name = request.GET['location_level'])
+            pl_id_list = request.GET['parent_location_id__in'].split(',')
+
+            return LocationTree.objects.filter(
+                location__location_type_id = location_type_id,
+                parent_location_id__in = pl_id_list
+            ).values_list('location_id', flat=True)
+
         elif 'parent_location_id__in' in request.GET:
 
             pl_id_list = request.GET['parent_location_id__in'].split(',')
-            location_ids = Location.objects\
+            return Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
-            ## begin hack ##
-            if pl_id_list == [u'1']: ## super hack way to
-                                  ## fix this long term with a "admin_levevel"
-                                  ## parameter that wll allow us to query for
-                                  ## all ancestors of the parent at a particluar
-                                  ## level
-                location_ids = Location.objects\
-                    .filter(parent_location_id__in = location_ids)\
-                    .values_list('id', flat=True)
-            ## end hack ##
-            return location_ids
+
         else:
             return Location.objects.all().values_list('id', flat=True)
 

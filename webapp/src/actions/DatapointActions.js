@@ -33,6 +33,12 @@ const _prepDatapointsQuery = (params) => {
     query['location_id__in'] = params.location_ids
   }
 
+  if (type === 'TableChart') {
+    console.log('ADD LOCATION LEVEL TO DATAPOINT REQUEST')
+    console.log('ADD LOCATION LEVEL TO DATAPOINT REQUEST')
+    query['location_level'] = 'District'
+  }
+
   if (params.indicator_filter) {
     query['filter_indicator'] = params.indicator_filter.type
     query['filter_value'] = params.indicator_filter.value
