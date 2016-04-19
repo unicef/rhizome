@@ -12,6 +12,8 @@ let DataEntryStore = Reflux.createStore({
   locationList: [],
 
   data: {
+    selected_campaign: null,
+    selected_indicator_tag: null,
     apiResponseData: null,
     indicatorMap: null,
     indicatorsToTags: [],
@@ -61,14 +63,14 @@ let DataEntryStore = Reflux.createStore({
           }).value()
 
         self.data.indicatorsToTags = indicatorToTagsResult
-        let tagResult = _(tags.objects)
-          .map(tag => {
-            return {
-              'id': tag.id,
-              'name': tag.tag_name
-            }
-          }).value()
-        self.data.tags = tagResult
+        // let tagResult = _(tags.objects)
+        //   .map(tag => {
+        //     return {
+        //       'id': tag.id,
+        //       'name': tag.tag_name
+        //     }
+        //   }).value()
+        // self.data.tags = tagResult
 
         // CAMPAIGNS
         // let campaignResult = _(campaigns.objects)
@@ -125,7 +127,7 @@ let DataEntryStore = Reflux.createStore({
   },
 
   _setCouldLoad: function () {
-    this.data.couldLoad = (this.data.selected.form.value !== null &&
+    this.data.couldLoad = (this.data.selected_indicator_tag !== null &&
       this.data.selected_campaign.value !== null &&
       this.data.locationSelected.length > 0)
     if (this.data.couldLoad) { this._getTableData() }
@@ -139,20 +141,15 @@ let DataEntryStore = Reflux.createStore({
     })
   },
 
-  onSetForm: function (formValue) {
-    this.data.selected.form.value = formValue
-    this.data.selected.form.title = _.filter(this.data.tags, {value: formValue})[0].title
+  onSetForm: function (indicator_tag) {
+    this.data.selected_indicator_tag = indicator_tag
     this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
   },
 
   onSetCampaign: function (campaign) {
-    console.log('campaign', campaign)
     this.data.selected_campaign = campaign
-    // this.data.selected.campaign.value = campaign.id
-    // this.data.selected.campaign.title = this.data.camp
-    // this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaign.id})[0].name
     this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
@@ -177,7 +174,7 @@ let DataEntryStore = Reflux.createStore({
   },
 
   _filterIndicators: function () {
-    let tagId = parseInt(this.data.selected.form.value, 10)
+    let tagId = this.data.selected_indicator_tag.id
     let filteredData = _.filter(this.data.indicatorsToTags, {tag_id: tagId})
     let filteredIndicators = []
     filteredData.forEach(indicatorToTag => {

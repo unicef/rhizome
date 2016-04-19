@@ -2,25 +2,25 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import IndicatorTagDropdown from 'components/molecules/menus/IndicatorTagDropdown'
 import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
-import CampaignStore from 'stores/CampaignStore'
 import DataEntryActions from 'actions/DataEntryActions'
 
 const DataEntryHeader = React.createClass({
 
-  mixins: [
-    Reflux.connect(CampaignStore, 'campaigns'),
-  ],
-
   render () {
     const props = this.props
-
     const dashboard_filters = (
       <div className='page-header-filters'>
         <CampaignDropdown
           campaigns={props.campaigns.raw || []}
           selected={props.selected_campaign}
           sendValue={id => DataEntryActions.setCampaign(props.campaigns.index[id])}
+        />
+        <IndicatorTagDropdown
+          indicator_tags={props.indicators.tags || []}
+          selected={props.selected_indicator_tag}
+          sendValue={id => DataEntryActions.setForm(props.indicators.tags.filter(tag => tag.id ===id)[0])}
         />
       </div>
     )
