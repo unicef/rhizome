@@ -59,7 +59,7 @@ const DashboardLayout = React.createClass({
     })
   },
 
-  shouldComponentUpdate: function (nextProps, nextState) { console.info('DashboardLayout - shouldComponentUpdate')
+  shouldComponentUpdate: function (nextProps, nextState) {
     const first_row_charts = !nextProps.dashboard_id ? nextState.dashboard.rows[0].charts : []
     const charts = _.toArray(nextState.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
@@ -77,7 +77,7 @@ const DashboardLayout = React.createClass({
     }
   },
 
-  render: function () { console.info('DashboardLayout - render =============================================')
+  render: function () { console.info('DashboardLayout - render ===========================================')
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
