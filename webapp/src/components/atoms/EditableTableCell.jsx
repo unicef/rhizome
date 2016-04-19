@@ -97,6 +97,7 @@ let EditableTableCell = React.createClass({
   },
 
   render: function () {
+
     let classes = this.props.classes + ' editable '
     classes += this.state.editMode ? ' in-edit-mode' : ''
     classes += this.isSaving ? ' saving ' : ''
@@ -115,6 +116,7 @@ let EditableTableCell = React.createClass({
                       onKeyUp={this.exitEditMode}
                       id={this.cell_id} />
     }
+
     let data_format = this.props.field.schema.data_format
 
     if (this.isSaving) {

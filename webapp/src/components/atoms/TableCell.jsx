@@ -61,7 +61,6 @@ var TableCell = React.createClass({
         { moment: moment, numeral: numeral }
       )
     }
-
     return (
       <td onClick={this.handleClick}
         onMouseOver={this.showTooltip}

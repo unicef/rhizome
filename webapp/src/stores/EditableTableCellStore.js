@@ -40,6 +40,7 @@ let EditableTableCellStore = Reflux.createStore({
     this.trigger(this.data)
     return this.data
   }
+
 })
 
 export default EditableTableCellStore
