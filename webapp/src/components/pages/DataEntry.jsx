@@ -27,6 +27,7 @@ const DataEntry = React.createClass({
 
   render: function () {
     const table_data = this.state.apiResponseData
+    console.log('table_data', table_data)
 
     return (
       <div>
