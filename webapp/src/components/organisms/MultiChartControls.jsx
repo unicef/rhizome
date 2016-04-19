@@ -50,10 +50,11 @@ const MultiChartControls = React.createClass({
   render () {
     const props = this.props
     const chart = props.chart
+    const type = chart.type
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
 
-    const palette_selector = chart.type !== 'RawData' ? (
+    const palette_selector = type !== 'RawData' ? (
       <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
         <DropdownList
           data={ _.map(palettes, (key, value) => ({colors: key, value: value}) )}
@@ -68,7 +69,7 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const date_range_picker = chart.type === 'LineChart' || chart.type === 'RawData' ? (
+    const date_range_picker = type === 'LineChart' || type === 'RawData' ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
         <DateRangePicker
@@ -89,7 +90,8 @@ const MultiChartControls = React.createClass({
       </div>
     )
 
-    const group_by_selector = chart.type === 'LineChart' ? (
+    const groupedChart = type === 'LineChart' || type === 'ColumnChart' || type === 'StackedColumnChart'
+    const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
         <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={props.setGroupBy}>
           {Radio => (
@@ -103,7 +105,7 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const campaign_selector = chart.type !== 'LineChart' && chart.type !== 'RawData' ? (
+    const campaign_selector = type !== 'LineChart' && type !== 'RawData' ? (
       <CampaignSelector
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
@@ -116,10 +118,10 @@ const MultiChartControls = React.createClass({
       />
     ) : ''
 
-    const multiIndicator = chart.type === 'TableChart' || chart.type === 'RawData'
-    const multiLocation = chart.type === 'TableChart' || chart.type === 'RawData'
-    const groupByIndicator = chart.type === 'LineChart'  && chart.groupBy === 'location'
-    const groupByLocation = chart.type === 'LineChart'  && chart.groupBy === 'indicator'
+    const multiIndicator = type === 'TableChart' || type === 'RawData'
+    const multiLocation = type === 'TableChart' || type === 'RawData'
+    const groupByIndicator = groupedChart && chart.groupBy === 'location'
+    const groupByLocation = groupedChart && chart.groupBy === 'indicator'
 
     const location_selector = (
       <LocationSelector
