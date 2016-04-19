@@ -342,11 +342,18 @@ class DatapointResource(BaseNonModelResource):
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
             indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
+            filter_value_list = [self.parsed_params['filter_value']]
+
+            if filter_value_list == ['-1']: ## this means "show all classes"
+                filter_value_list = [1,2,3]
+                ## this only works for LPDS... this should be --
+                ## IndicatorClassMap.objects.filter(indicator = indicator).values_list(enum_value, flat = True)
+
             filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator_id=indicator_id,
-                value = self.parsed_params['filter_value']
+                value__in = filter_value_list
                 )
             filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
             columns=merge_columns)
