@@ -37,7 +37,7 @@ let EditableTableCell = React.createClass({
 
   enterEditMode: function (event) {
     this.setState({ editMode: true })
-    EditableTableCellActions.focusInput(this.cell_id, this.props.value)
+    EditableTableCellActions.focusInput(this.cell_id, this.props.value, this.refs[this.cell_id].getDOMNode())
   },
 
   exitEditMode: function (event) {
@@ -109,17 +109,18 @@ let EditableTableCell = React.createClass({
 
     if (this.state.editMode) {
       input_field = <input
+                      value={this.display_value}
                       type='text'
                       onBlur={this.exitEditMode}
                       onKeyUp={this.exitEditMode}
                       id={this.cell_id} />
     }
+    let data_format = this.props.field.schema.data_format
 
     if (this.isSaving) {
       spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
     }
 
-    let data_format = this.props.field.schema.data_format
 
     let cell = ''
     if (data_format === 'bool') {
@@ -160,6 +161,7 @@ let EditableTableCell = React.createClass({
                 value={this.display_value}
                 formatValue={this.props.formatValue}
                 classes={classes}
+                ref={this.cell_id}
                 onClick={this.enterEditMode}
                 hideValue={hideValue}>
                 {spinner}
