@@ -4,7 +4,7 @@ os: linux
 
 files:
   - source: /rhizome
-    destination: /rhizome
+    destination: ~/deploy/rhizome-work
 permissions:
   - object: /rhizome
     pattern: "**"
