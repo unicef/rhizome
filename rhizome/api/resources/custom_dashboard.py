@@ -102,11 +102,10 @@ class CustomDashboardResource(BaseModelResource):
 
         if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
             raise DatapointsException('the custom dashboard "{0}" already exists'.format(title))
-
         dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
-
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
+        return bundle
 
     def obj_delete_list(self, bundle, **kwargs):
         obj_id = int(bundle.request.GET[u'id'])
