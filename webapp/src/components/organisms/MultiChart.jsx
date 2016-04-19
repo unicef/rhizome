@@ -101,12 +101,12 @@ const MultiChart = React.createClass({
     }
 
     const sidebar = (
-      <aside className='medium-4 large-3 medium-push-8 large-push-9 columns animated slideInRight'>
+      <aside className='medium-4 large-4 medium-push-8 large-push-8 columns animated slideInRight'>
         <MultiChartControls {...this.props} className='row collapse' />
       </aside>
     )
 
-    const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-9 medium-pull-4 large-pull-3 '
+    const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-8 medium-pull-4 large-pull-3 '
     const hideChartFrame = this.props.readOnlyMode && chart.type === 'RawData'
 
     return (
