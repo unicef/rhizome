@@ -8,6 +8,8 @@ class ColumnChart extends HighChart {
 
   setConfig = function () {
     const first_indicator = this.props.selected_indicators[0]
+    const first_location = this.props.selected_locations[0]
+    const props = this.props
     this.config = {
       chart: { type: 'column' },
       xAxis: {
@@ -28,7 +30,8 @@ class ColumnChart extends HighChart {
         xDateFormat: '%b %Y',
         pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format)
-          return `${this.series.name}: <b>${value}</b><br/>`
+          const secondary_text = props.groupBy === 'indicator' ? first_location.name : first_indicator.name
+          return `<b>${secondary_text}</b><br/>${this.series.name}: <b>${value}</b><br/>`
         }
       },
       series: this.setSeries()
