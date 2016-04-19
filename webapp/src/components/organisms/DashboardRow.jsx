@@ -25,11 +25,19 @@ const DashboardRow = React.createClass({
     }
   },
 
+  onChartClick: function (value, chart) {
+    const selected_location_type = chart.selected_locations[0].location_type_id
+    if (chart.type === 'MapChart' && selected_location_type < 2) {
+      DashboardPageActions.setLocation(value, chart.uuid)
+    }
+  },
+
   renderChart: function (chart, chart_index) {
     return (
       <MultiChart
         chart={chart}
         readOnlyMode={!this.props.editMode}
+        primaryChartClick={value => this.onChartClick(value, chart)}
         linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
         duplicateChart={DashboardChartsActions.duplicateChart}
         selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid, this.props.rowIndex, chart_index)}

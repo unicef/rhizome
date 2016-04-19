@@ -55,7 +55,7 @@ const MultiChart = React.createClass({
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     } else if (type === 'MapChart') {
-      return <MapChart {...this.props.chart} />
+      return <MapChart {...this.props.chart} onMapClick={this.props.primaryChartClick}/>
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
     } else if (type === 'StackedColumnChart') {

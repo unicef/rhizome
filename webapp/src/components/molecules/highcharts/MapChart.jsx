@@ -45,6 +45,22 @@ class MapChart extends HighChart {
         }
       }
     }
+
+    const clickMap = this.props.onMapClick
+    if (clickMap) {
+      this.config.plotOptions = {
+        series: {
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function (e) {
+                clickMap(this.location_id)
+              }
+            }
+          }
+        }
+      }
+    }
   }
 
   setSeries = function () {
