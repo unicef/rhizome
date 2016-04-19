@@ -111,10 +111,10 @@ class MasterRefresh(object):
 
     def get_class_indicator_mappings(self):
         '''
-        Using the meta mappings, map indicator ids to another dict, which maps all 
+        Using the meta mappings, map indicator ids to another dict, which maps all
         of the class indicator string values to their corresponding enum values.
         '''
-        
+
         indicator_ids = self.source_map_dict.values()
         query_results = IndicatorClassMap.objects.filter(
             indicator_id__in = indicator_ids).values_list('indicator', 'string_value', 'enum_value')
@@ -123,7 +123,7 @@ class MasterRefresh(object):
         for query in query_results:
             if query[0] not in class_map_dict:
                 class_map_dict[query[0]] = {}
-            class_map_dict[query[0]][query[1]] = query[2]  
+            class_map_dict[query[0]][query[1]] = query[2]
 
         return class_map_dict
 
@@ -267,6 +267,9 @@ class MasterRefresh(object):
             else:
                 doc_dps = self.process_source_submission(row)
 
+        # print 'count of source submissions\n' * 5
+        # print len(SourceSubmission.objects.filter(document_id = self.document_id))
+
     def sync_datapoint(self, ss_id_list = None):
         dp_batch = []
 
@@ -315,7 +318,7 @@ class MasterRefresh(object):
 
             row_created_at = row.created_at.replace(tzinfo=None)
 
-            if row_created_at == max_created_at:
+            if row_created_at == max_created_at or row.campaign_id is None:
                 dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
@@ -355,8 +358,6 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
-
-
 
         ## it no indicator row dont process ##
         try:

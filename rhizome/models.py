@@ -618,7 +618,7 @@ class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    campaign = models.ForeignKey(Campaign, null=True)
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
@@ -631,6 +631,8 @@ class DataPoint(models.Model):
     class Meta:
         db_table = 'datapoint'
 
+
+
 class DocDataPoint(models.Model):
     '''
     For Validation of upload rhizome.
@@ -639,7 +641,7 @@ class DocDataPoint(models.Model):
     document = models.ForeignKey(Document)  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    campaign = models.ForeignKey(Campaign, null=True)
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
     source_submission = models.ForeignKey(SourceSubmission)

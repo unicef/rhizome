@@ -1,6 +1,6 @@
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models import Indicator, IndicatorTag, Location, Campaign, Office, CustomChart, CustomDashboard
+from rhizome.models import Indicator, IndicatorTag, Location, Campaign, Office, CustomChart, CustomDashboard, User
 import json
 from rhizome.api.serialize import CustomSerializer
 
@@ -12,12 +12,12 @@ class AllMetaResult(object):
     indicator_tags = list()
     locations = list()
     offices = list()
-
+    is_superuser = bool()
 
 class AllMetaResource(BaseNonModelResource):
     '''
     **GET Request** Returns all camapaigns, charts, dashboards, indicators,indicator_tags, locations and offices in the database.
-        - *Required Parameters:* 
+        - *Required Parameters:*
             none
     '''
     campaigns = fields.ListField(attribute='campaigns')
@@ -27,6 +27,8 @@ class AllMetaResource(BaseNonModelResource):
     indicator_tags = fields.ListField(attribute='indicator_tags')
     locations = fields.ListField(attribute='locations')
     offices = fields.ListField(attribute='offices')
+    is_superuser = fields.BooleanField(attribute='is_superuser')
+
     class Meta(BaseNonModelResource.Meta):
         object_class = AllMetaResult
         resource_name = 'all_meta'
@@ -45,5 +47,7 @@ class AllMetaResource(BaseNonModelResource):
         am_result.indicator_tags = IndicatorTag.objects.all().values()
         am_result.locations = Location.objects.all().values()
         am_result.offices = Office.objects.all().values()
+        am_result.is_superuser = User.objects.get(id = request.user.id).is_superuser
         qs.append(am_result)
+
         return qs

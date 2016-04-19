@@ -15,17 +15,11 @@ let EditableTableCellStore = Reflux.createStore({
     isSaving: false
   },
 
-  onFocusInput: function (cell_id, value, DOMObj) {
+  onFocusInput: function (cell_id, value) {
     let dom = document.getElementById(cell_id)
     dom.value = value
     dom.focus()
     dom.select()
-    //grabs react element to find dom node. previous code above not functioning
-    //i left it in there in case another part of the code is utilizing it.
-    inputField = DOMObj.children.cell_id
-    inputField.value = value
-    inputField.focus()
-    inputField.select()
   },
 
   validateValue: function (value) {

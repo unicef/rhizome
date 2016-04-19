@@ -342,28 +342,47 @@ class DatapointResource(BaseNonModelResource):
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
             indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
+            filter_value_list = [self.parsed_params['filter_value']]
+
+            if filter_value_list == ['-1']: ## this means "show all classes"
+                filter_value_list = [1,2,3]
+                ## this only works for LPDS... this should be --
+                ## IndicatorClassMap.objects.filter(indicator = indicator).values_list(enum_value, flat = True)
+
             filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator_id=indicator_id,
-                value = self.parsed_params['filter_value']
+                value__in = filter_value_list
                 )
             filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
             columns=merge_columns)
             dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
 
+            ## now only show the locations that match that filter..
+            location_ids_in_filter = set(filter_df['location_id'])
+            self.location_ids = set(self.location_ids)\
+                .intersection(location_ids_in_filter)
+
+
         if self.parsed_params['cumulative'] == '1':
             #  hack -- we need the ids so that we can create the pivot table.
             #  later, the ids will be discarded
-            dwc_id = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['id'].first().reset_index())
+            dwc_id = DataFrame(dwc_df
+                .groupby(['location_id', 'indicator_id'])['id']\
+                .first()
+                .reset_index())
+
             dwc_vals = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['value'].sum().reset_index())
+                .groupby(['location_id', 'indicator_id'])['value']\
+                .sum()\
+                .reset_index())
+
             dwc_campaigns = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['campaign_id'].first().reset_index())
+                .groupby(['location_id', 'indicator_id'])['campaign_id']\
+                .first()\
+                .reset_index())
+
             dwc_df = dwc_vals.merge(dwc_campaigns, how ='inner', on=['location_id', 'indicator_id'])
             dwc_df = dwc_df.merge(dwc_id, how ='inner', on=['location_id', 'indicator_id'])
 

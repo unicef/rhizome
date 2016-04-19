@@ -10,11 +10,13 @@ import DashboardChartsActions from 'actions/DashboardChartsActions'
 import RegionDropdown from 'components/molecules/menus/RegionDropdown'
 import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
 import LocationStore from 'stores/LocationStore'
+import RootStore from 'stores/RootStore'
 
 const DashboardHeader = React.createClass({
 
   mixins: [
     Reflux.connect(LocationStore, 'locations'),
+    Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 
   propTypes: {
@@ -84,7 +86,7 @@ const DashboardHeader = React.createClass({
         <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
           { dashboard_filters }
           { save_dashboard_button }
-          { edit_mode_toggle }
+          { this.state.superuser ? edit_mode_toggle : null}
         </div>
       </header>
     )
