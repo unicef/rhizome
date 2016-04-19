@@ -352,6 +352,12 @@ class DatapointResource(BaseNonModelResource):
             columns=merge_columns)
             dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
 
+            ## now only show the locations that match that filter..
+            location_ids_in_filter = set(filter_df['location_id'])
+            self.location_ids = set(self.location_ids)\
+                .intersection(location_ids_in_filter)
+
+
         if self.parsed_params['cumulative'] == '1':
             #  hack -- we need the ids so that we can create the pivot table.
             #  later, the ids will be discarded

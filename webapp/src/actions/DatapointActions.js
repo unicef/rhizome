@@ -34,8 +34,6 @@ const _prepDatapointsQuery = (params) => {
   }
 
   if (type === 'TableChart') {
-    console.log('ADD LOCATION LEVEL TO DATAPOINT REQUEST')
-    console.log('ADD LOCATION LEVEL TO DATAPOINT REQUEST')
     query['location_level'] = 'District'
   }
 
