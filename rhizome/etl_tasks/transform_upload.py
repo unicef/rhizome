@@ -311,14 +311,9 @@ class DateDocTransform(DocTransform):
 
         try:
             date = datetime.strptime(date_string, '%d-%m-%y')
-        except ValueError as err:
+        except ValueError:
             date = datetime.strptime(date_string, '%d/%m/%y')
-            print 'ERR'
-            print err
-        except ValueError as err:
-            print 'ERR'
-            print err
-
+        except ValueError:
             date = None
 
         return date

@@ -7,28 +7,39 @@ from django.conf import settings
 import jsonfield.fields
 
 from rhizome.etl_tasks.transform_upload import DateDocTransform
+from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 import pandas as pd
 
-def ingest_polio_cases(apps, schema_editor):
+from pprint import pprint
 
+def ingest_polio_cases(apps, schema_editor):
 
     indicator_id = Indicator.objects.create(
         name = 'Polio Cases',
         short_name = 'Polio Cases',
         description = 'Polio Cases',
+    ).id
+
+    som_id = SourceObjectMap.objects.create(
+        content_type = 'indicator',
+        master_object_id = indicator_id,
+        source_object_code = 'polio_case'
     )
 
-    process_source_sheet_df()
+    document_id = process_source_sheet_df()
+    pprint(SourceSubmission.objects.filter(document_id = document_id))
 
     polio_cases_count = DataPoint.objects.filter(
         indicator_id = indicator_id,
     ).count()
 
-    print 'polio case count\n' * 10
-
-    if polio_cases_count != target_case_count:
-        raise Exception('did not ingest the polio case data properly')
+    # print 'polio case count\n' * 3
+    # print polio_cases_count
+    # print 'polio case count\n' * 3
+    #
+    # if polio_cases_count != 33:
+    #     raise Exception('did not ingest the polio case data properly')
 
 
 def process_source_sheet_df():
@@ -68,10 +79,12 @@ def process_source_sheet_df():
     #     print 'DWC COUNT %s' % len(DataPointComputed.objects\
     #         .filter(campaign_id = c.id))
 
+    return new_doc.id
+
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0011_customdashboard_rows'),
+        ('rhizome', '0012_datapoint_campaign_nullable'),
     ]
 
     operations = [
