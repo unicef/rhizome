@@ -368,15 +368,21 @@ class DatapointResource(BaseNonModelResource):
         if self.parsed_params['cumulative'] == '1':
             #  hack -- we need the ids so that we can create the pivot table.
             #  later, the ids will be discarded
-            dwc_id = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['id'].first().reset_index())
+            dwc_id = DataFrame(dwc_df
+                .groupby(['location_id', 'indicator_id'])['id']\
+                .first()
+                .reset_index())
+
             dwc_vals = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['value'].sum().reset_index())
+                .groupby(['location_id', 'indicator_id'])['value']\
+                .sum()\
+                .reset_index())
+
             dwc_campaigns = DataFrame(dwc_df\
-            .groupby(['location_id', 'indicator_id'])\
-            ['campaign_id'].first().reset_index())
+                .groupby(['location_id', 'indicator_id'])['campaign_id']\
+                .first()\
+                .reset_index())
+
             dwc_df = dwc_vals.merge(dwc_campaigns, how ='inner', on=['location_id', 'indicator_id'])
             dwc_df = dwc_df.merge(dwc_id, how ='inner', on=['location_id', 'indicator_id'])
 
