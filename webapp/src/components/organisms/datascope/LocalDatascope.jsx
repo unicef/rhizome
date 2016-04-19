@@ -156,7 +156,7 @@ var LocalDatascope = React.createClass({
         }))
       })
     return (
-      <div className={'local-datascope'}>
+      <div className={'local-datascope'} style={{overflow:'auto'}}>
         {children}
       </div>
     )
