@@ -23,6 +23,11 @@ table {
   }
 
   tbody {
+    tr:nth-child(even) {
+      td {
+        background: #F1F1F1;
+      }
+    }
     tr:not(.empty) {
       &:hover {
         // td {
@@ -52,7 +57,7 @@ table {
         padding: 0;
       }
       &:hover {
-        background: #DDDDDD;
+        background: rgba(0, 0, 0, .2);
       }
       &.missing {
         background-color: #E2E2E2// #FFEB86// rgb(255, 235, 134);
@@ -60,6 +65,13 @@ table {
       &.error {
         background-color: #FF9081;
       }
+    }
+    &.table-row-actions {
+      padding: .4rem;
+    }
+    .button.icon-button, *[role="button"].icon-button {
+      top: -0.05rem;
+      padding: 0;
     }
     .boolean-dropdown {
       background: transparent;

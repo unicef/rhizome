@@ -75,6 +75,10 @@ let DatabrowserTable = React.createClass({
     } else {
       let fields = {location: {title: 'Location', name: 'location'}}
       let columns = ['location']
+      if (!props.hideCampaigns) {
+        fields.campaign = {title: 'Campaign', name: 'campaign'}
+        columns.push('campaign')
+      }
 
       if (!props.hideCampaigns) {
         fields.campaign = {title: 'Campaign', name: 'campaign'}
@@ -82,7 +86,7 @@ let DatabrowserTable = React.createClass({
       }
 
       props.selected_indicators.forEach(indicator => {
-        fields[indicator.id] = {title: indicator.name, name: indicator.id, 'computed': indicator.computed, 'source_name': indicator.source_name, 'data_format': indicator.data_format}
+        fields[indicator.id] = {title: indicator.short_name, name: indicator.id, 'computed': indicator.computed, 'source_name': indicator.source_name, 'data_format': indicator.data_format}
         columns.push(indicator.id)
       })
       const items = this.extractItemsFromData(props.data || [])
@@ -93,7 +97,7 @@ let DatabrowserTable = React.createClass({
       return (
         <LocalDatascope data={data} schema={schema} pageSize={10}>
           <Datascope>
-            <SimpleDataTable editable={props.editable}>
+            <SimpleDataTable editable={props.editable} rowAction={props.rowAction}>
               { columns.map(column => <SimpleDataTableColumn name={column}/>) }
             </SimpleDataTable>
             <Paginator />

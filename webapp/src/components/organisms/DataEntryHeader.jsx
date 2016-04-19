@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
+import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 import IndicatorTagDropdown from 'components/molecules/menus/IndicatorTagDropdown'
 import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
 import DataEntryActions from 'actions/DataEntryActions'
@@ -22,6 +23,13 @@ const DataEntryHeader = React.createClass({
           selected={props.selected_indicator_tag}
           sendValue={id => DataEntryActions.setForm(props.indicators.tags.filter(tag => tag.id ===id)[0])}
         />
+        <DropdownMenu
+          items={props.filterLocations}
+          sendValue={DataEntryActions.addLocations}
+          item_plural_name='Locations'
+          text='Add Locations'
+          style='button'
+          uniqueOnly/>
       </div>
     )
     return (
