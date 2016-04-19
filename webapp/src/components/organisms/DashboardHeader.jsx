@@ -7,14 +7,17 @@ import IconButton from 'components/atoms/IconButton'
 import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
+import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
 import RegionDropdown from 'components/molecules/menus/RegionDropdown'
 import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
+import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import RootStore from 'stores/RootStore'
 
 const DashboardHeader = React.createClass({
 
   mixins: [
+    Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
@@ -59,12 +62,17 @@ const DashboardHeader = React.createClass({
     ) : null
 
     const dashboard_filters = (
-      <div className='dashboard-filters'>
+      <div className='page-header-filters'>
         <RegionDropdown
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
           sendValue={DashboardPageActions.setLocation}
           hideLastLevel
+        />
+        <CampaignDropdown
+          campaigns={this.state.campaigns.raw || []}
+          selected={props.selected_campaigns[0]}
+          sendValue={DashboardPageActions.setCampaign}
         />
         <DistrictDropdown selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
       </div>
@@ -79,7 +87,7 @@ const DashboardHeader = React.createClass({
     )
 
     return (
-      <header className='row dashboard-header'>
+      <header className='row page-header'>
         <div className='medium-5 columns medium-text-left small-text-center'>
           { editMode ? title_bar : <h1>{props.title || 'Untitled Dashboard'}</h1> }
         </div>

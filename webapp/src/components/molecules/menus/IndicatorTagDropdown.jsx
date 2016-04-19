@@ -5,41 +5,41 @@ import moment from 'moment'
 import Dropdown from 'components/molecules/menus/Dropdown'
 import DropdownItem from 'components/molecules/menus/DropdownItem'
 
-var CampaignDropdown = React.createClass({
+var IndicatorTagDropdown = React.createClass({
   propTypes: {
-    campaigns: React.PropTypes.array.isRequired,
+    indicator_tags: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired
   },
 
   getDefaultProps () {
     return {
-      campaigns: [],
+      indicator_tags: [],
       selected: {'name':'Loading ...'}
     }
   },
 
   render () {
-    const campaign_menu_items = this.props.campaigns.map(campaign =>
+    const indicator_tag_menu_items = this.props.indicator_tags.map(indicator_tag =>
       <DropdownItem
-        key={'campaign-' + campaign.id}
-        text={campaign.name}
-        onClick={this.props.sendValue.bind(this, campaign.id)}
-        classes='campaign'
+        key={'indicator_tag-' + indicator_tag.id}
+        text={indicator_tag.tag_name}
+        onClick={this.props.sendValue.bind(this, indicator_tag.id)}
+        classes='indicator_tag'
       />
     )
 
-    const selected_text = this.props.selected ? this.props.selected.name : 'Select Campaign'
+    const selected_text = this.props.selected ? this.props.selected.tag_name : 'Select Form'
     return (
       <Dropdown
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable={false}>
-        {campaign_menu_items}
+        {indicator_tag_menu_items}
       </Dropdown>
     )
   }
 })
 
-export default CampaignDropdown
+export default IndicatorTagDropdown

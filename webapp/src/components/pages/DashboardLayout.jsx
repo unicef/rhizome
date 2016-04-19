@@ -38,7 +38,7 @@ const DashboardLayout = React.createClass({
 
   componentDidMount: function () {
     document.getElementsByTagName('body')[0].className += ' dashboard-page'
-    const header = document.getElementsByClassName('dashboard-header')[0]
+    const header = document.getElementsByClassName('page-header')[0]
     window.addEventListener('scroll', () => this._stickyHeader(header), false)
 
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
@@ -82,6 +82,7 @@ const DashboardLayout = React.createClass({
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
     const selected_locations = charts[0] ? charts[0].selected_locations : []
+    const selected_campaigns = charts[0] ? charts[0].selected_campaigns : []
     const indicator_filter = charts[0] ? charts[0].indicator_filter : []
     const rows = noRows ? [] : dashboard.rows.map((row, index) => {
       return  <DashboardRow {...row} all_charts={this.state.charts} editMode={editMode} rowIndex={index}/>
@@ -111,6 +112,7 @@ const DashboardLayout = React.createClass({
       <section className='dashboard'>
         <DashboardHeader {...dashboard}
           dashboard_id={this.props.dashboard_id}
+          selected_campaigns={selected_campaigns}
           selected_locations={selected_locations}
           indicator_filter={indicator_filter}
         />

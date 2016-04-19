@@ -61,6 +61,18 @@ table {
         background-color: #FF9081;
       }
     }
+    .boolean-dropdown {
+      background: transparent;
+      width: 100%;
+      padding: 0 .5rem;
+      text-align: left;
+      color: $rhz-body-color;
+      margin: 0;
+      &:hover {
+        color: $rhz-body-color;
+        background: transparent;
+      }
+    }
   }
 
   tfoot {

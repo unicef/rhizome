@@ -72,6 +72,13 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onSetCampaign: function (campaign) {
+    this.dashboard.rows.forEach(row => {
+      row.charts.forEach(uuid => DashboardChartsActions.setCampaigns(campaign, uuid))
+    })
+    this.trigger(this.dashboard)
+  },
+
   onSetLocation: function (location) {
     this.dashboard.rows.forEach(row => {
       row.charts.forEach(uuid => DashboardChartsActions.setLocations(location, uuid))

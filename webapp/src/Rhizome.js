@@ -9,8 +9,8 @@ Reflux.use(RefluxPromise(window.Promise))
 React.render(React.createElement(require('components/molecules/DashboardNav')), document.getElementById('dashboards-nav'))
 
 export default {
-  EntryForm: function (el) {
-    React.render(React.createElement(require('components/pages/EntryForm')), el)
+  DataEntry: function (el) {
+    React.render(React.createElement(require('components/pages/DataEntry')), el)
   },
   UserAccount: function (el, userId) {
     React.render(React.createElement(require('components/pages/UserAccount'), {userId: userId}), el)

@@ -7,18 +7,19 @@ import flattenChildren from 'data/transform/flattenChildren'
 import api from 'data/api'
 import DatapointAPI from 'data/requests/DatapointAPI'
 
-let EntryFormStore = Reflux.createStore({
-  listenables: [require('actions/EntryFormActions')],
+let DataEntryStore = Reflux.createStore({
+  listenables: [require('actions/DataEntryActions')],
   locationList: [],
 
   data: {
+    selected_campaign: null,
+    selected_indicator_tag: null,
     apiResponseData: null,
     indicatorMap: null,
     indicatorsToTags: [],
     filteredIndicators: [],
     data: null,
     loaded: false,
-    campaigns: [],
     couldLoad: false,
     filterLocations: [],
     locationMap: null,
@@ -62,24 +63,24 @@ let EntryFormStore = Reflux.createStore({
           }).value()
 
         self.data.indicatorsToTags = indicatorToTagsResult
-        let tagResult = _(tags.objects)
-          .map(tag => {
-            return {
-              'id': tag.id,
-              'name': tag.tag_name
-            }
-          }).value()
-        self.data.tags = tagResult
+        // let tagResult = _(tags.objects)
+        //   .map(tag => {
+        //     return {
+        //       'id': tag.id,
+        //       'name': tag.tag_name
+        //     }
+        //   }).value()
+        // self.data.tags = tagResult
 
         // CAMPAIGNS
-        let campaignResult = _(campaigns.objects)
-          .map(campaign => {
-            return {
-              'id': campaign.id,
-              'name': campaign.name
-            }
-          }).value()
-        self.data.campaigns = campaignResult
+        // let campaignResult = _(campaigns.objects)
+        //   .map(campaign => {
+        //     return {
+        //       'id': campaign.id,
+        //       'name': campaign.name
+        //     }
+        //   }).value()
+        // self.data.campaigns = campaignResult
 
         // LOCATIONS
         let locationResult = _(locations.objects)
@@ -126,8 +127,8 @@ let EntryFormStore = Reflux.createStore({
   },
 
   _setCouldLoad: function () {
-    this.data.couldLoad = (this.data.selected.form.value !== null &&
-      this.data.selected.campaign.value !== null &&
+    this.data.couldLoad = (this.data.selected_indicator_tag !== null &&
+      this.data.selected_campaign.value !== null &&
       this.data.locationSelected.length > 0)
     if (this.data.couldLoad) { this._getTableData() }
   },
@@ -140,18 +141,15 @@ let EntryFormStore = Reflux.createStore({
     })
   },
 
-  onSetForm: function (formValue) {
-    this.data.selected.form.value = formValue
-    this.data.selected.form.title = _.filter(this.data.tags, {value: formValue})[0].title
+  onSetForm: function (indicator_tag) {
+    this.data.selected_indicator_tag = indicator_tag
     this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
   },
 
-  onSetCampaign: function (campaignId) {
-    this.data.selected.campaign.value = campaignId
-    this.data.selected.campaign.title = this.data.camp
-    this.data.selected.campaign.title = _.filter(this.data.campaigns, {value: campaignId})[0].name
+  onSetCampaign: function (campaign) {
+    this.data.selected_campaign = campaign
     this.data.apiResponseData = null
     this._setCouldLoad()
     this.trigger(this.data)
@@ -176,7 +174,7 @@ let EntryFormStore = Reflux.createStore({
   },
 
   _filterIndicators: function () {
-    let tagId = parseInt(this.data.selected.form.value, 10)
+    let tagId = this.data.selected_indicator_tag.id
     let filteredData = _.filter(this.data.indicatorsToTags, {tag_id: tagId})
     let filteredIndicators = []
     filteredData.forEach(indicatorToTag => {
@@ -197,7 +195,7 @@ let EntryFormStore = Reflux.createStore({
     let indicatorIds = this._getIndicatorIds()
 
     let options = {
-      campaign__in: parseInt(this.data.selected.campaign.value, 10),
+      campaign__in: parseInt(this.data.selected_campaign.id, 10),
       indicator__in: [],
       location_id__in: [],
       source_name: ''
@@ -261,4 +259,4 @@ let EntryFormStore = Reflux.createStore({
   }
 })
 
-export default EntryFormStore
+export default DataEntryStore
