@@ -25,7 +25,7 @@ const DashboardRow = React.createClass({
     }
   },
 
-  renderChart: function (chart, chart_index) { console.info('DashboardRow - renderChart')
+  renderChart: function (chart, chart_index) {
     return (
       <MultiChart
         chart={chart}
@@ -59,7 +59,7 @@ const DashboardRow = React.createClass({
     )
   },
 
-  renderRow: function (layout, uuids) { console.info('DashboardRow - renderRow')
+  renderRow: function (layout, uuids) {
     const chart_slot = <div className='chart-preview'></div>
     const charts = this.props.all_charts
 
@@ -100,7 +100,7 @@ const DashboardRow = React.createClass({
     )
   },
 
-  render: function () { console.info('DashboardRow - render')
+  render: function () {
     const props = this.props
     const layouts = [1,2,3,4]
 
