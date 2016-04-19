@@ -44,7 +44,7 @@ const MultiChart = React.createClass({
     const missing_params = _.isEmpty(nextProps.chart.selected_indicators) || _.isEmpty(nextProps.chart.selected_locations)
     const chart_data = !_.isEmpty(nextProps.chart.data)
     const chart_data_changed  = nextProps.chart.loading !== this.props.chart.loading
-    return chart_data || missing_params || chart_data_changed
+    return chart_data || nextProps.chart.loading || missing_params || chart_data_changed
   },
 
   getChartComponentByType: function (type) {
