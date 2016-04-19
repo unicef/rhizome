@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
-from rhizome.models import CustomDashboard, CustomChart, ChartToDashboard
+from rhizome.models import CustomDashboard, CustomChart
 
 import json
 
@@ -107,28 +107,6 @@ class CustomDashboardResource(BaseModelResource):
 
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
-
-        ## optionally add charts to the dashboard ##
-        try:
-            chart_uuids = post_data['chart_uuids']
-            self.upsert_chart_uuids(dashboard.id, chart_uuids.split(','))
-        except KeyError:
-            pass
-
-        return bundle
-
-    def upsert_chart_uuids(self, dashboard_id, chart_uuids):
-
-        chart_ids = CustomChart.objects.filter(uuid__in = chart_uuids)\
-            .values_list('id',flat=True)
-
-        batch = [ChartToDashboard(**{
-            'chart_id': c_id,
-            'dashboard_id': dashboard_id
-        }) for c_id in chart_ids]
-
-        ChartToDashboard.objects.filter(dashboard_id = dashboard_id).delete()
-        ChartToDashboard.objects.bulk_create(batch)
 
     def obj_delete_list(self, bundle, **kwargs):
         obj_id = int(bundle.request.GET[u'id'])
