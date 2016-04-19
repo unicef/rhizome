@@ -20,7 +20,7 @@ class GeoResourceTest(ResourceTestCase):
         locations = self.ts.model_df_to_data(location_df_from_csv,Location)
 
         ## override location type attribute from file so that these locations ##
-        ## are provinces ##
+        ### are provinces ###
         for loc in locations:
             loc.location_type_id = self.lt.id
             loc.save()
@@ -38,6 +38,7 @@ class GeoResourceTest(ResourceTestCase):
         LocationPermission.objects.create(user_id = self.ts.user.id,\
             top_lvl_location_id = 1)
 
+
     def test_get_geo_tree_lvl(self):
         get_data ={'parent_location_id__in':6, 'tree_lvl':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
@@ -45,6 +46,7 @@ class GeoResourceTest(ResourceTestCase):
         self.assertEqual(len(self.deserialize(resp)['features']), 5)
 
     # make sure that the api returns the parent location
+
     def test_check_parent_location(self):
         get_data ={'parent_location_id__in':6, 'tree_lvl':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
