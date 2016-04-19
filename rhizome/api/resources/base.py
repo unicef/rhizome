@@ -27,37 +27,6 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
-    # def get_worst_performing(self, request, location_ids):
-    #
-    #     indicator_id = self.parsed_params['indicator__in'][0]
-    #     indicator_obj = Indicator.objects\
-    #         .get(id=indicator_id)
-    #
-    #     sub_location_ids = LocationTree.objects\
-    #         .filter(parent_location_id__in=location_ids)\
-    #         .values_list('location_id',flat=True)
-    #
-    #     latest_campaign = Campaign.objects\
-    #         .filter(id__in=self.parsed_params['campaign__in'])\
-    #         .order_by('-end_date')[0]
-    #
-    #     try:
-    #         if indicator_obj.good_bound > indicator_obj.bad_bound:
-    #             worst_performing = DataPointComputed.objects.filter(
-    #                 location_id__in=sub_location_ids,
-    #                 campaign=latest_campaign,
-    #                 indicator_id=indicator_id
-    #             ).order_by('value')[0].location_id
-    #         else:
-    #             worst_performing = DataPointComputed.objects.filter(
-    #                 location_id__in=sub_location_ids,
-    #                 campaign=latest_campaign,
-    #                 indicator_id=indicator_id
-    #             ).order_by('-value')[0].location_id
-    #     except IndexError:
-    #         return sub_location_ids[:1]
-    #
-    #     return [worst_performing]
 
     def get_locations_to_return_from_url(self, request):
         '''
@@ -89,9 +58,20 @@ class BaseResource(Resource):
         elif 'parent_location_id__in' in request.GET:
 
             pl_id_list = request.GET['parent_location_id__in'].split(',')
-            return Location.objects\
+            ## begin hack ##
+            #### Since we do not have shapes for Regions, we render the ####
+              ## shapes for provinces when Afghanistan is requested ##
+            if pl_id_list == ['1']:
+                pl_id_list = Location.objects.filter(
+                    location_type__name = 'Region'
+                ).values_list('id', flat=True)
+            ## end hack ##
+
+            x =  Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
+
+            return x
 
         else:
             return Location.objects.all().values_list('id', flat=True)
@@ -156,4 +136,4 @@ class BaseResource(Resource):
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
 
-        return response
+        return response        
