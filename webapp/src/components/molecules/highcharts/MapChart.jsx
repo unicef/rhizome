@@ -1,27 +1,38 @@
 import React from 'react'
 
 import HighChart from 'components/molecules/highcharts/HighChart'
+import palettes from 'utilities/palettes'
 import format from 'utilities/format'
 
 class MapChart extends HighChart {
 
   setConfig = function () {
     const current_indicator = this.props.selected_indicators[0]
-    const palette = this.getColorPalette(this.props.palette)
+    const palette = palettes[this.props.palette]
+    const integerWithBounds = current_indicator.data_format === 'int' && current_indicator.good_bound < 2 && current_indicator.bad_bound < 2
     this.config = {
+      series: this.setSeries(),
+      colorAxis: {min: 0},
       mapNavigation: {
         enabled: true,
         enableMouseWheelZoom: false,
         buttonOptions: {
           verticalAlign: 'bottom'
         }
-      },
-      chart: {
-        type: 'map'
-      },
-      legend: {
+      }
+    }
+
+    if (!integerWithBounds) {
+      this.config.colorAxis = {
+        dataClasses: this.getDataClasses(current_indicator, palette),
+        reversed: current_indicator.good_bound < current_indicator.bad_bound
+      }
+      this.config.legend = {
         layout: 'vertical',
         align: 'right',
+        itemStyle: {
+          'fontSize': '14px'
+        },
         labelFormatter: function () {
           const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
           const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
@@ -31,16 +42,24 @@ class MapChart extends HighChart {
                 (isBool ? '': boundTo ? ' - ' : ' ') +
                 (boundTo || (isBool ? '' : '+'))
           )
-        },
-        itemStyle: {
-          'fontSize': '16px'
         }
-      },
-      colorAxis: {
-        dataClasses: this.getDataClasses(current_indicator, palette),
-        reversed: current_indicator.good_bound < current_indicator.bad_bound
-      },
-      series: this.setSeries()
+      }
+    }
+
+    const clickMap = this.props.onMapClick
+    if (clickMap) {
+      this.config.plotOptions = {
+        series: {
+          cursor: 'pointer',
+          point: {
+            events: {
+              click: function (e) {
+                clickMap(this.location_id)
+              }
+            }
+          }
+        }
+      }
     }
   }
 
@@ -56,7 +75,7 @@ class MapChart extends HighChart {
       nullColor: '#D3D3D3',
       states: {
         hover: {
-          color: "rgba(163, 232, 255,1.0)"
+          color: "rgba(163, 232, 255, 1.0)"
         }
       },
       tooltip: {
@@ -71,7 +90,7 @@ class MapChart extends HighChart {
     }]
   }
 
-  getDataClasses (current_indicator, palette) {
+  getDataClasses = function (current_indicator, palette) {
     if (current_indicator.good_bound < current_indicator.bad_bound) {
       let temp_bound = current_indicator.good_bound
       current_indicator.good_bound = current_indicator.bad_bound
@@ -88,10 +107,6 @@ class MapChart extends HighChart {
                      {from:current_indicator.good_bound, color:palette[2]}]
     }
     return dataClasses
-  }
-
-  getColorPalette (paletteType) {
-    return paletteType === 'traffic_light' ? ['#FF9489', '#FFED89', '#83F5A2'] : []
   }
 }
 

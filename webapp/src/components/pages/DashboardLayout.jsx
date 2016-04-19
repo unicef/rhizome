@@ -6,16 +6,15 @@ import Placeholder from 'components/molecules/Placeholder'
 import DashboardHeader from 'components/organisms/DashboardHeader'
 import DashboardRow from 'components/organisms/DashboardRow'
 
-import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
 import DashboardChartsStore from 'stores/DashboardChartsStore'
 
+import RootActions from 'actions/RootActions'
 import DashboardActions from 'actions/DashboardActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
-import DashboardChartsActions from 'actions/DashboardChartsActions'
 
 const DashboardLayout = React.createClass({
 
@@ -43,15 +42,12 @@ const DashboardLayout = React.createClass({
     window.addEventListener('scroll', () => this._stickyHeader(header), false)
 
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
-    RootStore.listen(() => {
-      const state = this.state
-      if (state.locations.index && state.indicators.index && state.campaigns.index) {
-        if (this.props.dashboard_id) {
-          DashboardPageActions.fetchDashboard(this.props.dashboard_id)
-        } else {
-          DashboardPageActions.addRow()
-          DashboardPageActions.toggleEditMode()
-        }
+    this.listenTo(RootActions.fetchAllMeta.completed, (response) => {
+      if (this.props.dashboard_id) {
+        DashboardPageActions.fetchDashboard(this.props.dashboard_id)
+      } else {
+        DashboardPageActions.addRow()
+        DashboardPageActions.toggleEditMode()
       }
     })
     // If the dashboard is saved for the first time, redirect to the dashboard page
@@ -81,17 +77,21 @@ const DashboardLayout = React.createClass({
     }
   },
 
-  render: function () {
+  render: function () { console.info('DashboardLayout - render ===========================================')
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
     const selected_locations = charts[0] ? charts[0].selected_locations : []
     const indicator_filter = charts[0] ? charts[0].indicator_filter : []
-    const rows = dashboard.rows.map((row, index) => <DashboardRow {...row} editMode={editMode} rowIndex={index}/>)
+    const rows = noRows ? [] : dashboard.rows.map((row, index) => {
+      return  <DashboardRow {...row} all_charts={this.state.charts} editMode={editMode} rowIndex={index}/>
+    })
+    const noRows = dashboard.rows.length <= 0
+    const noCharts = charts.length <= 0
 
-    let loading = !charts.length > 0 || (!dashboard.rows.length > 0)
+    let loading = noCharts || noRows
 
-    if (!this.props.dashboard_id && dashboard.rows.length > 0) {
+    if (!this.props.dashboard_id && !noRows) {
       loading = false
     }
 

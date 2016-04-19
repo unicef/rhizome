@@ -36,18 +36,6 @@ const DashboardHeader = React.createClass({
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
 
-  _setLocation: function (location) {
-    this.props.rows.forEach(row => {
-      row.charts.forEach(uuid => DashboardChartsActions.setLocations(location, uuid))
-    })
-  },
-
-  _setIndicatorFilter: function (filter) {
-    this.props.rows.forEach(row => {
-      row.charts.forEach(uuid => DashboardChartsActions.setIndicatorFilter(filter, uuid))
-    })
-  },
-
   render () {
     const props = this.props
     const editMode = props.editMode
@@ -73,10 +61,10 @@ const DashboardHeader = React.createClass({
         <RegionDropdown
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
-          sendValue={this._setLocation}
+          sendValue={DashboardPageActions.setLocation}
           hideLastLevel
         />
-        <DistrictDropdown selected={props.indicator_filter} sendValue={this._setIndicatorFilter} />
+        <DistrictDropdown selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
       </div>
     )
 

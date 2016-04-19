@@ -1,17 +1,14 @@
+import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
-import DashboardChartsStore from 'stores/DashboardChartsStore'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import MultiChart from 'components/organisms/MultiChart'
 
 const DashboardRow = React.createClass({
 
-  mixins: [
-    Reflux.connect(DashboardChartsStore, 'charts'),
-  ],
-
   propTypes: {
+    all_charts: PropTypes.object,
     charts: PropTypes.array,
     layout: PropTypes.number,
     editMode: PropTypes.bool,
@@ -22,16 +19,25 @@ const DashboardRow = React.createClass({
   getDefaultProps: function () {
     return {
       rowIndex: null,
+      all_charts: null,
       charts: null,
       layout: null
     }
   },
 
-  renderChart: function (chart, chart_index) { console.info('DashboardRow - renderChart')
+  onChartClick: function (value, chart) {
+    const selected_location_type = chart.selected_locations[0].location_type_id
+    if (chart.type === 'MapChart' && selected_location_type < 2) {
+      DashboardPageActions.setLocation(value, chart.uuid)
+    }
+  },
+
+  renderChart: function (chart, chart_index) {
     return (
       <MultiChart
         chart={chart}
         readOnlyMode={!this.props.editMode}
+        primaryChartClick={value => this.onChartClick(value, chart)}
         linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
         duplicateChart={DashboardChartsActions.duplicateChart}
         selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid, this.props.rowIndex, chart_index)}
@@ -63,7 +69,8 @@ const DashboardRow = React.createClass({
 
   renderRow: function (layout, uuids) {
     const chart_slot = <div className='chart-preview'></div>
-    const charts = this.state.charts
+    const charts = this.props.all_charts
+
     if (layout === 2) {
       return (
         <div className='row animated fadeInDown'>
@@ -105,21 +112,23 @@ const DashboardRow = React.createClass({
     const props = this.props
     const layouts = [1,2,3,4]
 
+    if (!_.isEmpty(props.charts)) {
+      return this.renderRow(props.layout, props.charts)
+    }
+
     const layout_options = layouts.map(layout =>
       <button className='layout-preview' onClick={() => DashboardPageActions.selectRowLayout(layout)}>
        { this.renderRow(layout) }
       </button>
     )
 
-    const layout_selector = (
+    return (
       <div className='row layout-options text-center'>
         <h4 className='medium-12 columns'>{'Select chart layout for this row'}</h4>
         <div className='clearfix'></div>
         { layout_options }
       </div>
     )
-
-    return !props.layout ? layout_selector : this.renderRow(props.layout, props.charts)
   }
 })
 

@@ -43,7 +43,8 @@ const MultiChart = React.createClass({
   shouldComponentUpdate: function (nextProps, nextState) {
     const missing_params = _.isEmpty(nextProps.chart.selected_indicators) || _.isEmpty(nextProps.chart.selected_locations)
     const chart_data = !_.isEmpty(nextProps.chart.data)
-    return chart_data || nextProps.chart.loading || missing_params
+    const chart_data_changed  = nextProps.chart.loading !== this.props.chart.loading
+    return chart_data || nextProps.chart.loading || missing_params || chart_data_changed
   },
 
   getChartComponentByType: function (type) {
@@ -54,7 +55,7 @@ const MultiChart = React.createClass({
     } else if (type === 'ChoroplethMap') {
       return <ChoroplethMap {...this.props.chart} />
     } else if (type === 'MapChart') {
-      return <MapChart {...this.props.chart} />
+      return <MapChart {...this.props.chart} onMapClick={this.props.primaryChartClick}/>
     } else if (type === 'ColumnChart') {
       return <ColumnChart {...this.props.chart} />
     } else if (type === 'StackedColumnChart') {

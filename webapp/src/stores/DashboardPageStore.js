@@ -72,6 +72,20 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onSetLocation: function (location) {
+    this.dashboard.rows.forEach(row => {
+      row.charts.forEach(uuid => DashboardChartsActions.setLocations(location, uuid))
+    })
+    this.trigger(this.dashboard)
+  },
+
+  onSetIndicatorFilter: function (filter) {
+    this.dashboard.rows.forEach(row => {
+      row.charts.forEach(uuid => DashboardChartsActions.setIndicatorFilter(filter, uuid))
+    })
+    this.trigger(this.dashboard)
+  },
+
   onRemoveChart: function (row_index, chart_index) {
     const row = this.dashboard.rows[row_index]
     const uuid_to_remove = row.charts[chart_index]
