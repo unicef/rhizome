@@ -12,7 +12,7 @@ class AllMetaResult(object):
     indicator_tags = list()
     locations = list()
     offices = list()
-    is_sueperuser = bool()
+    is_superuser = bool()
 
 class AllMetaResource(BaseNonModelResource):
     '''
@@ -27,7 +27,7 @@ class AllMetaResource(BaseNonModelResource):
     indicator_tags = fields.ListField(attribute='indicator_tags')
     locations = fields.ListField(attribute='locations')
     offices = fields.ListField(attribute='offices')
-    is_sueperuser = fields.BooleanField(attribute='is_sueperuser')
+    is_superuser = fields.BooleanField(attribute='is_superuser')
 
     class Meta(BaseNonModelResource.Meta):
         object_class = AllMetaResult
