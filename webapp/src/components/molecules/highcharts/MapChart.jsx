@@ -1,5 +1,5 @@
 import React from 'react'
-
+import _ from 'lodash'
 import HighChart from 'components/molecules/highcharts/HighChart'
 import palettes from 'utilities/palettes'
 import format from 'utilities/format'
@@ -21,11 +21,9 @@ class MapChart extends HighChart {
         }
       }
     }
-
     if (!integerWithBounds) {
       this.config.colorAxis = {
         dataClasses: this.getDataClasses(current_indicator, palette),
-        reversed: current_indicator.good_bound < current_indicator.bad_bound
       }
       this.config.legend = {
         layout: 'vertical',
@@ -91,20 +89,21 @@ class MapChart extends HighChart {
   }
 
   getDataClasses = function (current_indicator, palette) {
+    let temp_good, temp_bad
     if (current_indicator.good_bound < current_indicator.bad_bound) {
       let temp_bound = current_indicator.good_bound
-      current_indicator.good_bound = current_indicator.bad_bound
-      current_indicator.bad_bound = temp_bound
-      palette = palette.reverse()
+      temp_good = current_indicator.bad_bound
+      temp_bad = temp_bound
+      palette = _.clone(palette).reverse()
     }
     let dataClasses = null
     if (current_indicator.data_format === 'bool') {
-      dataClasses = [{to: current_indicator.bad_bound,color: palette[0]},
-                     {from: current_indicator.good_bound,color: palette[2]}]
+      dataClasses = [{to: temp_bad,color: palette[0]},
+                     {from: temp_good,color: palette[2]}]
     } else {
-      dataClasses = [{from:0, to:current_indicator.bad_bound, color:palette[0]},
-                     {from:current_indicator.bad_bound, to:current_indicator.good_bound, color:palette[1]},
-                     {from:current_indicator.good_bound, color:palette[2]}]
+      dataClasses = [{from:0, to:temp_bad, color:palette[0]},
+                     {from:temp_bad, to:temp_good, color:palette[1]},
+                     {from:temp_good, color:palette[2]}]
     }
     return dataClasses
   }
