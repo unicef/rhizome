@@ -9,17 +9,18 @@
 
 .multi-chart {
 	background: white;
-	border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
-	border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
-	border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
+	// border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
+	// border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
+	// border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
+	// box-shadow: -1px 2px 3px grey;
 	margin-top: 1rem;
 	margin-bottom: 2rem;
 	margin-left: 1%;
 	margin-right: 1%;
 	width: 98%;
-	box-shadow: -1px 2px 3px grey;
 	header {
-		background: $rhz-navigation-hover-bg-color-glass;
+		// background: $rhz-navigation-hover-bg-color-glass;
+		background: #252525;
 	  h1, h2, h3, h4, h5, h6, p {
 	  	text-transform: none;
 	  	position: relative;
