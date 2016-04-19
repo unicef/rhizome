@@ -1,6 +1,8 @@
 from pandas import read_csv
 from pandas import notnull
 from pandas import to_datetime
+from pandas import DataFrame
+
 import json
 from rhizome.api.exceptions import DatapointsException
 from django.conf import settings
@@ -9,29 +11,46 @@ from django.core.exceptions import ObjectDoesNotExist
 from rhizome.models import *
 from sets import Set
 
+from datetime import datetime
+
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
     defaultCode = -2
 
-
 class DocTransform(object):
 
-    def __init__(self, user_id, document_id):
+    def __init__(self, user_id, document_id, raw_csv_df = None):
 
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
             ['geocode', 'campaign', 'unique_key']
 
+        self.date_column = 'data_date'
+
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
-        raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+
+
+        if not isinstance(raw_csv_df, DataFrame):
+            raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
+
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-        try:
-            csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
-        except Exception as err:
-            dp_error_message = '%s is a required column.' %err.message
-            raise DatapointsException(message=dp_error_message)
+
+        ## if there is no uq id column -- make one ##
+        if not self.uq_id_column in raw_csv_df.columns:
+
+            try:
+                csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
+            except Exception as err:
+                if not self.date_column in csv_df.columns:
+                    dp_error_message = '%s is a required column.' %err.message
+                    print dp_error_message
+                    print dp_error_message
+                    print dp_error_message
+                    print dp_error_message
+                    raise DatapointsException(message=dp_error_message)
+
         self.csv_df = csv_df
         self.file_header = csv_df.columns
 
@@ -83,7 +102,6 @@ class DocTransform(object):
         '''
         TODO: save the source_strings so i dont have to iterate through
         the source_submission json.
-
         endpoint: api/v2/doc_mapping/?document=66
         '''
 
@@ -162,9 +180,9 @@ class ComplexDocTransform(DocTransform):
         indicators - indicators are columns.
     '''
 
-    def __init__(self,user_id,document_id):
+    def __init__(self,user_id,document_id,raw_csv_df=None):
 
-        super(ComplexDocTransform, self).__init__(user_id, document_id)
+        super(ComplexDocTransform, self).__init__(user_id, document_id, raw_csv_df)
 
         ## if we allow for user input to choose column definitinos
         ## we can pull the data frmo the below calls.  Since we are hard
@@ -222,13 +240,11 @@ class ComplexDocTransform(DocTransform):
     #
     #     return doc_df
 
-
     def apply_doc_config_to_csv_df(self, csv_df):
         '''
         Currenlty this only applies to the 'Location Code Column Length'
         configuration which allows us to ingest the ODK data at the one level
         higher than it is collected.
-
         This is a short term solution, but saves us massive ammounts of work
         in Mapping, and also makes it such that we don't need to create location
         IDs for the 10k settlements in Nigeria.
@@ -254,7 +270,6 @@ class ComplexDocTransform(DocTransform):
     def process_file(self):
         '''
         Takes a file and dumps the data into the source submission table.
-
         Returns a list of source_submission_ids
         '''
 
@@ -285,3 +300,107 @@ class ComplexDocTransform(DocTransform):
         object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
         return [x.id for x in ss]
+
+class DateDocTransform(DocTransform):
+
+    def __init__(self,user_id,document_id,raw_csv_df=None):
+
+        super(DateDocTransform, self).__init__(user_id, document_id, raw_csv_df)
+
+    def clean_date(self, date_string):
+
+        try:
+            date = datetime.strptime(date_string, '%d-%m-%y')
+        except ValueError as err:
+            date = datetime.strptime(date_string, '%d/%m/%y')
+            print 'ERR'
+            print err
+        except ValueError as err:
+            print 'ERR'
+            print err
+
+            date = None
+
+        return date
+
+    def process_raw_source_submission(self, submission):
+
+        submission_ix, submission_data = submission[0], submission[1:]
+
+        submission_data = dict(zip(self.file_header,submission_data))
+        instance_guid = submission_data[self.uq_id_column]
+
+        if instance_guid == '' or instance_guid in self.existing_submission_keys:
+            return None, None
+
+        cleaned_date = self.clean_date(submission_data['data_date'])
+        submission_dict = {
+            'submission_json': submission_data,
+            'document_id': self.document.id,
+            'row_number': submission_ix,
+            'location_code': submission_data[self.location_column],
+            'data_date': cleaned_date,
+            'instance_guid': submission_data[self.uq_id_column],
+            'process_status': 'TO_PROCESS',
+        }
+        return submission_dict, instance_guid
+
+    def process_file(self):
+        '''
+        Takes a file and dumps the data into the source submission table.
+        Returns a list of source_submission_ids
+        '''
+
+        # full_file_path = settings.MEDIA_ROOT + self.file_path
+        # raw_csv_df = read_csv(full_file_path)
+        # csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
+
+        ## transform the raw data based on the documents configurations ##
+        doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
+        # doc_df = self.process_date_column(doc_df)
+
+        doc_obj = Document.objects.get(id = self.document.id)
+        doc_obj.file_header = list(doc_df.columns.values)
+        doc_obj.save()
+
+        self.file_header = doc_obj.file_header
+
+        batch = {}
+
+        for submission in doc_df.itertuples():
+
+            ss, instance_guid = self.process_raw_source_submission(submission)
+
+            if ss is not None and instance_guid is not None:
+                ss['instance_guid'] = instance_guid
+                batch[instance_guid] = ss
+
+        object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
+        ss = SourceSubmission.objects.bulk_create(object_list)
+        return [x.id for x in ss]
+
+    def apply_doc_config_to_csv_df(self, csv_df):
+        '''
+        Currenlty this only applies to the 'Location Code Column Length'
+        configuration which allows us to ingest the ODK data at the one level
+        higher than it is collected.
+        This is a short term solution, but saves us massive ammounts of work
+        in Mapping, and also makes it such that we don't need to create location
+        IDs for the 10k settlements in Nigeria.
+        '''
+
+        try:
+            location_code_column_length = int(DocumentDetail.objects.get(
+                document_id = self.document.id,
+                doc_detail_type_id = DocDetailType.objects.get(name=\
+                    'Location Code Column Length')
+            ).doc_detail_value)
+
+            ## truncate the location_codes in accordance to the value above ##
+            csv_df[self.location_column] = csv_df[self.location_column]\
+                .apply(lambda x: str(x)[:location_code_column_length])
+
+        except ObjectDoesNotExist:
+            pass
+
+        return csv_df
