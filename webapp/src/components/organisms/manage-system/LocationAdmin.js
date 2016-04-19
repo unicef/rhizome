@@ -19,6 +19,7 @@ const fields = {
   },
   id: { title: 'ID', name: 'id' },
   name: { title: 'Name', name: 'name' },
+  location_code: { title: 'Location code', name: 'location_code' },
   created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
 }
 
@@ -26,14 +27,14 @@ const schema = {
   created_at: { type: 'string', format: 'date-time' }
 }
 
-const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link']
+const fieldNamesOnTable = ['id', 'name', 'location_code', 'created_at', 'edit_link']
 
 var RegionAdmin = React.createClass({
   render () {
     var datascopeFilters =
       <div>
         <SearchBar
-          fieldNames={['name']}
+          fieldNames={['name', 'location_code']}
           placeholder='Search locations ...'
           />
       </div>
