@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
-    Location, LocationType, Office, ChartToDashboard
+    Location, LocationType, Office
 
 import json
 
@@ -45,12 +45,11 @@ class DashboardResourceTest(ResourceTestCase):
         resp = self.api_client.post('/api/v1/custom_dashboard/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
         response_data = self.deserialize(resp)
-
         self.assertHttpCreated(resp)
         self.assertEqual(post_data['title'], response_data['title'])
         self.assertEqual(CustomDashboard.objects.count(), 1)
 
-    def test_dashboard_post_rows(self):        
+    def test_dashboard_post_rows(self):
         dboard_title = 'the dashboard title'
         dboard_rows = json.dumps([{'charts':['fdfdf'], 'layout':1}, {'charts':['ddsds'], 'layout':2}])
         post_data = {
@@ -92,13 +91,9 @@ class DashboardResourceTest(ResourceTestCase):
 
         response_data = self.deserialize(resp)
 
-        ## find the uuids that have been created in association with the dash ##
-        db_chart_uuids = CustomChart.objects\
-            .filter(charttodashboard__dashboard_id = response_data['id']).values_list('uuid',flat=True)
-
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['title'], dashboard_title)
-        self.assertEqual(chart_uuids.split(','), [str(x) for x in db_chart_uuids])
+        self.assertEqual(response_data['chart_uuids'].split(','), [c1.uuid, c2.uuid])
 
     def test_dashboard_name_exist(self):
         dashboard_name = "test the already exists"
@@ -137,44 +132,19 @@ class DashboardResourceTest(ResourceTestCase):
         c3 = CustomChart.objects.create(uuid = 'c',title = 'c',chart_json = json.dumps({'c1': 'c2','title2':'sometitle2'}))
         dboard_rows = [{'charts':[c1.uuid], 'layout':1}, {'charts':[c2.uuid, c3.uuid], 'layout':2}]
         d = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
-        
-        ## relate the charts to the dashboard ##
-        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c1.id)
-        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c2.id)
-
 
         resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
                 format='json', \
                 authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        # print response_data
         self.assertValidJSONResponse(resp)
         self.assertEqual(len(response_data['rows']), len(dboard_rows))
-
-    #  this is a duplicate of the above test
-    def _dashboard_get_detail(self):
-        ## create a dashboard ##
-        d = CustomDashboard.objects.create(title='Dashboard')
-
-        ## create two charts ##
-        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = json.dumps({'foo': 'bar','title':'sometitle'}))
-        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
-
-        ## relate the charts to the dashboard ##
-        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c1.id)
-        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c2.id)
-
-        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
-                format='json', \
-                authentication=self.get_credentials())
-
-        self.assertValidJSONResponse(resp)
-        response_data = self.deserialize(resp)
-        self.assertEqual(len(response_data['charts']), 2)
+        # make sure all the right charts are added in the right places
+        for idx, row in enumerate(response_data['rows']):
+            for idx2, chart in enumerate(row['charts']):
+                self.assertEqual(chart['uuid'], dboard_rows[idx]['charts'][idx2])
 
     def test_dashboard_get(self):
         ## create a dashboard ##
@@ -185,11 +155,6 @@ class DashboardResourceTest(ResourceTestCase):
         c1 = CustomChart.objects.create(uuid = '1',title = 'bbbbb',chart_json = json.dumps({'foo1': 'bar1','title1':'sometitle1'}))
         c2 = CustomChart.objects.create(uuid = '2',title = 'aaaa',chart_json = json.dumps({'foo2': 'bar2','title2':'sometitle2'}))
 
-        ## relate the charts to the dashboard ##
-        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c1.id)
-        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c2.id)
         get_data = {
             'id' : d.id
             }
@@ -203,48 +168,19 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(resp_data['objects'][0]['title'], dashboard_title)
 
     def test_delete_dashboard(self):
-
-        CustomDashboard.objects.all().delete()
-
-        ## create a dashboard ##
-        d = CustomDashboard.objects.create(title='Dashboard')
-        self.assertEqual(1, len(CustomDashboard.objects.all()))
-
-        ## create two charts ##
-        c1 = CustomChart.objects.create(uuid = 'a',title = 'a',chart_json = '')
-        c2 = CustomChart.objects.create(uuid = 'b',title = 'b',chart_json = '')
-
-        ## relate the charts to the dashboard ##
-        ctd1 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c1.id)
-        ctd2 = ChartToDashboard.objects.create(dashboard_id = d.id, \
-            chart_id = c2.id)    
-
-        resp = self.api_client.delete('/api/v1/custom_dashboard/?id=%s' %d.id, format='json',
-                                   authentication=self.get_credentials())
-
-        self.assertHttpAccepted(resp)
-        self.assertEqual(0, len(CustomDashboard.objects.all()))
-
-    def test_delete_dashboard(self):
         dashboard_name = "test delete a dashboard"
-    
+
         # Create the custom dashboard
         CustomDashboard.objects.all().delete()
         self.assertEqual(CustomDashboard.objects.count(), 0)
-    
+
         dashboard = CustomDashboard.objects.create(title=dashboard_name, layout=1)
         self.assertEqual(CustomDashboard.objects.count(), 1)
-    
-        delete_url = '/api/v1/custom_dashboard/%s/' %str(dashboard.id) 
-    
+
+        delete_url = '/api/v1/custom_dashboard/%s/' %str(dashboard.id)
+
         resp = self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
-    
+
         self.assertEqual(CustomDashboard.objects.count(), 0)
 
     # TODO: test for duplicate dashboard
-
-
-
-
-
