@@ -32,7 +32,7 @@ let EditableTableCell = React.createClass({
 
   componentWillMount () {
     this.display_value = this.props.value
-  // this.tooltip = this.props.tooltip.value !==  '' ? this.props.tooltip.value : 'No value'
+    this.isBool = this.props.field.schema.data_format === 'bool'
   },
 
   enterEditMode: function (event) {
@@ -96,78 +96,51 @@ let EditableTableCell = React.createClass({
   },
 
   render: function () {
-
     let classes = this.props.classes + ' editable '
     classes += this.state.editMode ? ' in-edit-mode' : ''
     classes += this.isSaving ? ' saving ' : ''
     classes += this.hasError ? ' error ' : ''
     classes += this.display_value === '' ? ' missing ' : ''
 
-    let hideValue = this.state.editMode || this.isSaving
-    let input_field = ''
-    let spinner = ''
-
-    if (this.state.editMode) {
-      input_field = <input
-                      type='text'
-                      placeholder={this.display_value}
-                      onBlur={this.exitEditMode}
-                      onKeyUp={this.exitEditMode}
-                      id={this.cell_id} />
-    }
-
-    if (this.isSaving) {
-      spinner = <i className='fa fa-spinner fa-spin saving-icon'></i>
-    }
-
-    let data_format = this.props.field.schema.data_format
-
-    let cell = ''
-    if (data_format === 'bool') {
-      this.isBool = true
-      let items = [
-        {
-          'value': '0',
-          'title': 'No'
-        },
-        {
-          'value': '1',
-          'title': 'Yes'
-        },
-        {
-          'value': '',
-          'title': 'No Data'
-        }
+    if (this.isBool) {
+      const items = [
+        { 'value': '0', 'title': 'No' },
+        { 'value': '1', 'title': 'Yes' },
+        { 'value': '', 'title': 'No Data'}
       ]
-
-      let dropDownDisplayValue = 'No Data'
-      if (this.display_value) {
-        dropDownDisplayValue = items[this.display_value].title
-      }
-
-      cell = (<td>
-                <DropdownMenu
-                  items={items}
-                  sendValue={this.updateCellValue}
-                  text={dropDownDisplayValue}
-                  onChange={this.updateCellValue}
-                  style='boolColor'
-                />
-              </td>)
+      return (
+        <td className='editable'>
+          <DropdownMenu
+            items={items}
+            sendValue={this.updateCellValue}
+            text={items[this.display_value].title || 'No Data'}
+            onChange={this.updateCellValue}
+            style='boolean-dropdown'
+          />
+        </td>
+      )
     } else {
-      cell = (<TableCell
-                field={this.props.field}
-                row={this.props.row}
-                value={this.display_value}
-                formatValue={this.props.formatValue}
-                classes={classes}
-                onClick={this.enterEditMode}
-                hideValue={hideValue}>
-                {spinner}
-                {input_field}
-              </TableCell>)
+      const input_field = (
+        <input placeholder={this.display_value}
+          onBlur={this.exitEditMode}
+          onKeyUp={this.exitEditMode}
+          id={this.cell_id}
+          type='text'/>
+      )
+      return (
+        <TableCell
+          field={this.props.field}
+          row={this.props.row}
+          value={this.display_value}
+          formatValue={this.props.formatValue}
+          classes={classes}
+          onClick={this.enterEditMode}
+          hideValue={this.state.editMode || this.isSaving}>
+          {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
+          {this.state.editMode ? input_field : null}
+        </TableCell>
+      )
     }
-    return (cell)
   }
 })
 
