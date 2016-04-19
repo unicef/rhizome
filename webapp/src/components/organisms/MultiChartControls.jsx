@@ -149,6 +149,7 @@ const MultiChartControls = React.createClass({
         classes={multiIndicator && !groupByLocation ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiIndicator || groupByLocation}
         avoidBooleans={chart.type === 'LineChart'}
+        filterByFormat={chart.type !== 'TableChart' && chart.type !== 'RawData'}
       />
     )
 

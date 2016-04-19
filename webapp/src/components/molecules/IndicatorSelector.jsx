@@ -21,11 +21,13 @@ const IndicatorSelector = React.createClass({
     reorderIndicator: PropTypes.func,
     classes: PropTypes.string,
     multi: PropTypes.bool,
+    filterByFormat: PropTypes.bool,
     avoidBooleans: PropTypes.bool
   },
 
   getDefaultProps () {
     return {
+      filterByFormat: true,
       avoidBooleans: false,
       multi: false,
       selected_indicators: []
@@ -33,12 +35,18 @@ const IndicatorSelector = React.createClass({
   },
 
   getAvailableIndicators () {
-    const indicators_list = this.props.indicators.list
     const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
-    indicators_list.forEach(indicator_group => {
-      this.markDisabledIndicators(indicator_group.children, selected_ids)
+    const first_indicator = this.props.selected_indicators[0]
+    let indicators = []
+    this.props.indicators.list.forEach(indicator_group => {
+      let group = Object.assign({}, indicator_group)
+      if (this.props.multi && this.props.filterByFormat && first_indicator) {
+        group.children = group.children.filter(item => first_indicator.data_format === item.data_format)
+      }
+      group.children = this.markDisabledIndicators(group.children, selected_ids)
+      indicators.push(group)
     })
-    return indicators_list
+    return indicators.filter(indicator_group => indicator_group.children.length > 0)
   },
 
   markDisabledIndicators (items, selected_ids) {
