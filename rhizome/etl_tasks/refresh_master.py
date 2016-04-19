@@ -318,7 +318,7 @@ class MasterRefresh(object):
 
             row_created_at = row.created_at.replace(tzinfo=None)
 
-            if row_created_at == max_created_at or row.data_date:
+            if row_created_at == max_created_at or row.campaign_id is None:
                 dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
@@ -358,8 +358,6 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
-
-
 
         ## it no indicator row dont process ##
         try:
