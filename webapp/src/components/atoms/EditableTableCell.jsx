@@ -50,18 +50,17 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
-
+    let validation = EditableTableCellActions.validateValue(new_value)
     let computed_id = this.props.row[this.props.field.key].computed
-
     if (new_value === '' && computed_id) { // this is the delete //
       ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
-
+    }
     // WHAT DOES THIS DO -- Under what circubmstance will this prevent bad data ///
-    // let validation = EditableTableCellActions.validateValue(new_value)
-    // if (!validation) {
-    //   this.setState({ editMode: false, hasError: true })
+    if (!validation) {
+      this.setState({ editMode: false, hasError: true })
+
     } else {
       this.isSaving = true
       let query_params = {
@@ -111,6 +110,7 @@ let EditableTableCell = React.createClass({
     if (this.state.editMode) {
       input_field = <input
                       type='text'
+                      placeholder={this.display_value}
                       onBlur={this.exitEditMode}
                       onKeyUp={this.exitEditMode}
                       id={this.cell_id} />

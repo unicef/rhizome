@@ -22,7 +22,7 @@ let EditableTableCellStore = Reflux.createStore({
     dom.select()
   },
 
-  validateValue: function (value) {
+  onValidateValue: function (value) {
     if (_.isNull(value)) {
       this.data.new_value = null
       this.data.passed = false
@@ -30,7 +30,6 @@ let EditableTableCellStore = Reflux.createStore({
       this.data.new_value = parseFloat(value)
       this.data.passed = !_.isNaN(this.data.new_value)
     }
-
     this.trigger(this.data)
     return this.data
   }
