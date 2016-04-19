@@ -6,6 +6,7 @@ import d3 from 'd3'
 
 import InterfaceMixin from 'utilities/InterfaceMixin'
 import TableCell from 'components/atoms/TableCell'
+import IconButton from 'components/atoms/IconButton'
 import EditableTableCell from 'components/atoms/EditableTableCell.jsx'
 import TableHeaderCell from 'components/atoms/TableHeaderCell.jsx'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
@@ -82,25 +83,43 @@ let SimpleDataTable = React.createClass({
     let table_cells = React.Children.map(columns, column => {
       let cell_key = column.props.name
       if (this.props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
-        return <EditableTableCell
-                 field={this.props.fields[cell_key]}
-                 row={row}
-                 value={row[cell_key].value}
-                 onSave={this.saveCellValue}
-                 formatValue={this._numberFormatter}
-                 classes={'numeric'} />
+        return (
+          <EditableTableCell
+             field={this.props.fields[cell_key]}
+             row={row}
+             value={row[cell_key].value}
+             onSave={this.saveCellValue}
+             formatValue={this._numberFormatter}
+             classes={'numeric'} />
+        )
       } else {
-        return <TableCell
-                 field={this.props.fields[cell_key]}
-                 row={row}
-                 value={row[cell_key].value}
-                 formatValue={this._numberFormatter}
-                 classes={'numeric'} />
+        return (
+          <TableCell
+             field={this.props.fields[cell_key]}
+             row={row}
+             value={row[cell_key].value}
+             formatValue={this._numberFormatter}
+             classes={'numeric'} />
+        )
       }
     })
-    return <tr>
-             {table_cells}
-           </tr>
+
+    const row_actions = this.props.rowAction ? (
+      <td className='table-row-actions'>
+        <IconButton
+          className='clear-btn'
+          onClick={() => this.props.rowAction(row.location_id)}
+          text='Remove Location'
+          icon='fa-times-circle'/>
+      </td>
+     ) : null
+
+    return (
+      <tr>
+        {row_actions}
+        {table_cells}
+      </tr>
+    )
   },
 
   renderColumnHeader: function (column) {
@@ -150,13 +169,17 @@ let SimpleDataTable = React.createClass({
       <table className={cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }])}>
         <thead>
           <tr>
+            {this.props.rowAction ? <th></th> : null }
             {React.Children.map(columns, this.renderColumnHeader)}
           </tr>
         </thead>
         <tbody>
           {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
-          <tfoot> {sourceRow} </tfoot>
         </tbody>
+        <tfoot>
+          {this.props.rowAction ? <td></td> : null }
+          {sourceRow}
+        </tfoot>
       </table>
       )
     } else {

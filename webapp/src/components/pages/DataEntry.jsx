@@ -36,19 +36,10 @@ const DataEntry = React.createClass({
               data={table_data}
               selected_locations={this.state.locationSelected}
               selected_indicators={this.state.filteredIndicators}
+              rowAction={DataEntryActions.removeLocation}
               hideCampaigns
               editable />
           </div>
-        </div>
-        <div className='row text-center'>
-          <br/><br/><br/><br/><br/><br/>
-          <DropdownMenu
-            items={this.state.filterLocations}
-            sendValue={DataEntryActions.addLocations}
-            item_plural_name='Locations'
-            text='Add Locations'
-            icon=''
-            uniqueOnly/>
         </div>
       </div>
     )
