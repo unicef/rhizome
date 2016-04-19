@@ -11,7 +11,7 @@ from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
 class GeoResourceTest(ResourceTestCase):
     def setUp(self):
-      #   super(GeoResourceTest, self).setUp()
+        super(GeoResourceTest, self).setUp()
 
         self.ts = TestSetupHelpers()
         self.lt = LocationType.objects.create(name='Province',admin_level=2)
