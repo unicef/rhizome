@@ -33,7 +33,6 @@ class CustomChartResource(BaseModelResource):
     def get_detail(self, request, **kwargs):
         bundle = self.build_bundle(request=request)
         bundle.data = CustomChart.objects.get(id=kwargs['pk']).__dict__
-
         return self.create_response(request, bundle)
 
     def obj_create(self, bundle, **kwargs):
