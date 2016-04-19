@@ -4,7 +4,6 @@ import zip from 'gulp-zip'
 const TASK_NAME = 'package'
 
 function packageTask () {
-  let counter = 1
   gulp.autoRegister(TASK_NAME, config => {
     return gulp.src(config.src)
       .pipe(zip(config.options.filename))
