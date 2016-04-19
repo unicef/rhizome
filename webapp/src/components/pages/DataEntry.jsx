@@ -12,7 +12,7 @@ import CampaignStore from 'stores/CampaignStore'
 import DataEntryStore from 'stores/DataEntryStore'
 import DataEntryActions from 'actions/DataEntryActions'
 
-let DataEntry = React.createClass({
+const DataEntry = React.createClass({
 
   mixins: [
     Reflux.connect(DataEntryStore),
@@ -22,10 +22,11 @@ let DataEntry = React.createClass({
 
   componentWillMount: function () {
     DataEntryActions.initData()
+    CampaignStore.listen(campaigns => DataEntryActions.setCampaign(campaigns.raw[0]))
   },
 
   render: function () {
-    let tableData = this.state.apiResponseData
+    const table_data = this.state.apiResponseData
 
     return (
       <div>
@@ -33,27 +34,21 @@ let DataEntry = React.createClass({
         <div className='row'>
           <div className='medium-12 columns'>
             <DatabrowserTable
-              data={tableData}
+              data={table_data}
               selected_locations={this.state.locationSelected}
               selected_indicators={this.state.filteredIndicators}
               editable />
           </div>
         </div>
-        <div className='row'>
-          <form className='medium-12 columns'>
-            <div className='medium-2 columns'>
-              <label htmlFor='locations'><h3>Locations</h3></label>
-              <DropdownMenu
-                items={this.state.filterLocations}
-                sendValue={DataEntryActions.addLocations}
-                item_plural_name='Locations'
-                text='Select Locations'
-                icon=''
-                uniqueOnly/>
-              <List items={this.state.locationSelected} removeItem={DataEntryActions.removeLocation} />
-              <br /><br />
-            </div>
-          </form>
+        <div className='row text-center'>
+          <br/><br/><br/><br/><br/><br/>
+          <DropdownMenu
+            items={this.state.filterLocations}
+            sendValue={DataEntryActions.addLocations}
+            item_plural_name='Locations'
+            text='Add Locations'
+            icon=''
+            uniqueOnly/>
         </div>
       </div>
     )

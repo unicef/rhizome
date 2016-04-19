@@ -34,7 +34,8 @@ var CampaignDropdown = React.createClass({
       <Dropdown
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
-        text={selected_text}>
+        text={selected_text}
+        searchable={false}>
         {campaign_menu_items}
       </Dropdown>
     )
