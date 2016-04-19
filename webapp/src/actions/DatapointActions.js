@@ -24,7 +24,10 @@ const _prepDatapointsQuery = (params) => {
     chart_uuid: params.uuid
   }
 
-  if (params.type === 'ChoroplethMap' || params.type === 'MapChart' || params.type === 'BubbleMap') {
+  const type = params.type
+  const needsChildrenLocations = type === 'ChoroplethMap' || type === 'MapChart' || type === 'BubbleMap' || type === 'TableChart'
+
+  if (needsChildrenLocations) {
     query['parent_location_id__in'] = params.location_ids
   } else {
     query['location_id__in'] = params.location_ids
