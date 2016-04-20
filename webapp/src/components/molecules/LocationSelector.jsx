@@ -43,26 +43,18 @@ const LocationSelector = React.createClass({
 
   render () {
     const props = this.props
-    let location_options = []
-    if (this.props.locations.filtered.length > 0) {
-      location_options = [
-        { title: 'by Status', value: props.locations.lpd_statuses },
-        { title: 'by Country', value: this.getAvailableLocations() || [] }
-      ]
-    }
-
     const locations = props.locations.raw || []
     if (props.multi) {
       return (
         <form className={props.classes}>
           <h3 style={{marginBottom: '.1rem'}}>Locations
             <DropdownMenu
-              items={location_options}
+              items={this.getAvailableLocations() || []}
               sendValue={this.props.selectLocation}
               item_plural_name='Locations'
               style='icon-button right pad-right'
               icon='fa-plus'
-              grouped/>
+            />
           </h3>
           <List items={this.props.selected_locations} removeItem={this.props.deselectLocation} />
           { props.selected_locations.length > 1 ? <a className='remove-filters-link' onClick={this.props.clearSelectedLocations}>Remove All </a> : '' }
