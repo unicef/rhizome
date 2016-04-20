@@ -103,7 +103,7 @@ let EditableTableCell = React.createClass({
     classes += this.display_value === '' ? ' missing ' : ''
 
     if (this.isBool) {
-      const items = [
+      const boolean_options = [
         { 'value': '0', 'title': 'No' },
         { 'value': '1', 'title': 'Yes' },
         { 'value': '', 'title': 'No Data'}
@@ -111,11 +111,12 @@ let EditableTableCell = React.createClass({
       return (
         <td className='editable'>
           <DropdownMenu
-            items={items}
+            items={boolean_options}
             sendValue={this.updateCellValue}
-            text={items[this.display_value].title || 'No Data'}
+            text={boolean_options[this.display_value].title || 'No Data'}
             onChange={this.updateCellValue}
             style='boolean-dropdown'
+            searchable={false}
           />
         </td>
       )

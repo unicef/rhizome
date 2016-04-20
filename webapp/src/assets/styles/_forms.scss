@@ -46,9 +46,13 @@ input[type='radio'] {
 input[type="text"],
 input[type="password"],
 .text-field {
-	border-bottom: 2px solid lighten($primary-color, 20%);
-	transition: border 300ms ease-in-out;
-	&:focus {
+  background-color: rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+  color: black;
+  &:focus {
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.2);
+    color: black;
 		box-shadow: none;
 		outline: none;
 	}

@@ -1,10 +1,12 @@
+$table-color: rgba(107, 122, 131, 0.25);
+
 table {
-  border: 1px solid #DDDDDD;
+  border: none;
   border-collapse: collapse;
   margin-top: 10pt;
   width: 100%;
-
   thead {
+    background: $table-color;
     tr {
       th {
         color: $rhz-body-color;
@@ -24,40 +26,42 @@ table {
 
   tbody {
     tr:nth-child(even) {
+      background: transparent;
       td {
-        background: #F1F1F1;
+        background: transparent;
+      }
+    }
+    tr:last-child {
+      td {
+        border-bottom: none;
       }
     }
     tr:not(.empty) {
       &:hover {
-        // td {
-          background-color: $ghost;
-        // }
-      }
-      td.editable {
-        &:hover {
-          border-bottom: 2px solid #ffcc67;
-        }
+        background-color: #F1F1F1;
       }
     }
   }
 
   td {
-    background-color: white;
+    background-color: transparent;
     cursor: default;
     font-size: .6875rem;
     padding: 3pt 0;
+    border-bottom: 1px solid $table-color;
     input[type=text] {
       font-size: .85rem;
       text-align: left;
       margin: 0;
     }
     &.editable {
+      cursor: pointer;
       &.in-edit-mode {
         padding: 0;
       }
       &:hover {
-        background: rgba(0, 0, 0, .2);
+        background-color: rgba(0, 0, 0, 0.2);
+        box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
       }
       &.missing {
         background-color: #E2E2E2// #FFEB86// rgb(255, 235, 134);
@@ -70,10 +74,12 @@ table {
       padding: .4rem;
     }
     .button.icon-button, *[role="button"].icon-button {
-      top: -0.05rem;
+      top: 0;
       padding: 0;
     }
     .boolean-dropdown {
+      font-family: proxima, Helvetica, sans-serif;
+      font-size: .9rem;
       background: transparent;
       width: 100%;
       padding: 0 .5rem;
@@ -88,7 +94,12 @@ table {
   }
 
   tfoot {
+    tr td {
+      padding-top: 1rem;
+      font-size: .8rem;
+    }
     td {
+      border: none;
       background-color: #FFFFFF;
       padding: 0;
       margin-top: 10;
@@ -188,7 +199,7 @@ table {
 
   .header-background {
     height: $defaultHeaderHeight; /* height of header */
-    background-color: #F5F5F5;
+    // background-color: #F5F5F5;
     border: solid 1px $borderColor;
     border-bottom: none;
     position: absolute;
@@ -235,7 +246,7 @@ table {
       z-index: 900;
 
       border-left: 1px solid $borderColor;
-      background-color: #F5F5F5;
+      // background-color: #F5F5F5;
 
       /* to hide overflow text, and then reveal on hover: */
       white-space: nowrap;

@@ -2,20 +2,18 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import cx from 'classnames'
-import d3 from 'd3'
-
 import InterfaceMixin from 'utilities/InterfaceMixin'
-import TableCell from 'components/atoms/TableCell'
-import IconButton from 'components/atoms/IconButton'
-import EditableTableCell from 'components/atoms/EditableTableCell.jsx'
 import TableHeaderCell from 'components/atoms/TableHeaderCell.jsx'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
+import SimpleDataTableRow from 'components/organisms/datascope/SimpleDataTableRow'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 
 let SimpleDataTable = React.createClass({
+
   mixins: [
-    InterfaceMixin('Datascope', 'DatascopeSort'), Reflux.connect(EditableTableCellStore, 'editedCell')
+    InterfaceMixin('Datascope', 'DatascopeSort'),
+    Reflux.connect(EditableTableCellStore, 'editedCell')
   ],
 
   propTypes: {
@@ -41,9 +39,7 @@ let SimpleDataTable = React.createClass({
     return {
       sortable: true,
       editable: false,
-      emptyContent: <div className='ds-data-table-empty'>
-                      No results found
-                    </div>,
+      emptyContent: <div className='ds-data-table-empty'>No results found</div>,
       isEmptyContentInTable: false,
       sortIndicatorAscending: ' ▲',
       sortIndicatorDescending: ' ▼'
@@ -62,12 +58,6 @@ let SimpleDataTable = React.createClass({
     this.hasError = true
   },
 
-  _numberFormatter: function (v) {
-    return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
-  },
-
-  saveCellValue: function () {},
-
   sortColumns: function (dataKey) {
     let isSortedOnColumn = dataKey === this.props.sortKey
     let isSortAscending = (this.props.sortOrder || '').toLowerCase().indexOf('asc') === 0
@@ -77,49 +67,6 @@ let SimpleDataTable = React.createClass({
     let sortKey = !isSortedOnColumn || !isSortAscending ? dataKey : undefined
     let sortOrder = !isSortedOnColumn ? 'descending' : !isSortAscending ? 'ascending' : undefined
     this.props.onChangeSort(sortKey, sortOrder)
-  },
-
-  renderRow: function (columns, row) {
-    let table_cells = React.Children.map(columns, column => {
-      let cell_key = column.props.name
-      if (this.props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
-        return (
-          <EditableTableCell
-             field={this.props.fields[cell_key]}
-             row={row}
-             value={row[cell_key].value}
-             onSave={this.saveCellValue}
-             formatValue={this._numberFormatter}
-             classes={'numeric'} />
-        )
-      } else {
-        return (
-          <TableCell
-             field={this.props.fields[cell_key]}
-             row={row}
-             value={row[cell_key].value}
-             formatValue={this._numberFormatter}
-             classes={'numeric'} />
-        )
-      }
-    })
-
-    const row_actions = this.props.rowAction ? (
-      <td className='table-row-actions'>
-        <IconButton
-          className='clear-btn'
-          onClick={() => this.props.rowAction(row.location_id)}
-          text='Remove Location'
-          icon='fa-times-circle'/>
-      </td>
-     ) : null
-
-    return (
-      <tr>
-        {row_actions}
-        {table_cells}
-      </tr>
-    )
   },
 
   renderColumnHeader: function (column) {
@@ -136,54 +83,52 @@ let SimpleDataTable = React.createClass({
   },
 
   render: function () {
+    const props = this.props
     // if no data, and no "empty" message to show, hide table entirely
-    let hasData = this.props.data && this.props.data.length
-    if (!hasData && _.isNull(this.props.emptyContent)) return null
+    let hasData = props.data && props.data.length
+    if (!hasData && _.isNull(props.emptyContent)) return null
 
-    let children = this.props.children
+    let children = props.children
     children = _.isUndefined(children) ? [] : _.isArray(children) ? children : [children]
     let hasColumns = false
-    let columns = React.Children.map(this.props.children, function (child) {
+    let columns = React.Children.map(props.children, function (child) {
       let isColumn = _.isFunction(child.type.implementsInterface) && child.type.implementsInterface('DataTableColumn')
       if (isColumn) hasColumns = true
       return isColumn ? child : null
     })
     if (!hasColumns) {
-      columns = _.map(this.props.orderedFields, function (field) {
-        return React.createElement(SimpleDataTableColumn, { name: field.key })
-      })
+      columns = props.orderedFields.map(field => React.createElement(SimpleDataTableColumn, { name: field.key }))
     }
-
     // build teh source footer by reversing the schema anad creating a row //
     // of cells so we can match indicator data with the source //
-    let sourceDataObject = this.props.schema.items.properties
+    let sourceDataObject = props.schema.items.properties
     let sourceDataFields = Object.keys(sourceDataObject).reverse()
     let sourceRow = _.map(sourceDataFields, function (field) {
       return <td>{sourceDataObject[field].source_name}</td>
     })
 
-    let renderRow = _.partial(this.renderRow, columns)
-
-    if (hasData || this.props.isEmptyContentInTable) {
+    if (hasData || props.isEmptyContentInTable) {
       return (
-      <table className={cx(['ds-data-table', { 'ds-data-table-sortable': this.props.sortable }])}>
+      <table className={cx(['ds-data-table', { 'ds-data-table-sortable': props.sortable }])}>
         <thead>
           <tr>
-            {this.props.rowAction ? <th></th> : null }
+            {props.rowAction ? <th></th> : null }
             {React.Children.map(columns, this.renderColumnHeader)}
           </tr>
         </thead>
         <tbody>
-          {hasData ? this.props.data.map(renderRow) : this.props.emptyContent}
+          {hasData ? props.data.map(row => {
+            return <SimpleDataTableRow row={row} columns={columns} {...props}/>
+          }) : props.emptyContent}
         </tbody>
         <tfoot>
-          {this.props.rowAction ? <td></td> : null }
+          {props.rowAction ? <td></td> : null }
           {sourceRow}
         </tfoot>
       </table>
       )
     } else {
-      return this.props.emptyContent
+      return props.emptyContent
     }
   }
 })
