@@ -132,14 +132,18 @@ var SimpleFormComponent = React.createClass({
             text='Add Component'/>
         </form>
       )
+      console.log("dropDownData: ", dropDownData);
     } else if (contentType === 'indicator') {
-      <div>
-        <DropdownMenu
-          items={dropDownData}
-          sendValue={this.props.onClick}
-          item_plural_name='Components'
-          text='Add Component'/>
-      </div>
+        componentForm = (
+          <div>
+            <DropdownMenu
+              items={dropDownData}
+              sendValue={this.props.onClick}
+              item_plural_name='Indicators'
+              text='Add Indicator'/>
+          </div>
+        )
+        //console.log("dropDownData: ", dropDownData);
     }
 
     return (

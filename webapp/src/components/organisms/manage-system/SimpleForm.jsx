@@ -28,6 +28,7 @@ var SimpleForm = React.createClass({
       objectId: null,
       extraFormData: {},
       tagTree: [],
+      indicatorsTree: [],
       errorMessage: {},
       formData: {}
     }
@@ -44,6 +45,11 @@ var SimpleForm = React.createClass({
         self.setState({'tagTree': response.objects})
       })
     }
+    // if(this.props.contentType === 'indicator') {
+    //   api.tagIndicatorTree({}, null, {'cache-control': 'no-cache'}).then(function (response)) {
+    //     self.setState({'indicatorsTree': response.objects})
+    //   })
+    // }
   },
 
   componentWillReceiveProps: function (nextProps) {
@@ -74,6 +80,12 @@ var SimpleForm = React.createClass({
       SimpleFormActions.addTagToIndicator(this.props.params.id, tag_id)
     }
   },
+  addIndicatorToTag: function (indicator_id) {
+    console.log('hello')
+    console.log(indicator_id)
+    console.log('hello')
+    SimpleFormActions.addIndicatorToTag(indicator_id, this.props.params.id)
+  },
 
   addCalculationToIndicator: function (typeInfo, indicator_id) {
     if (this.findCurrentIndicatorId()) {
@@ -89,9 +101,16 @@ var SimpleForm = React.createClass({
   },
 
   removeTagFromIndicator: function (id) {
+
     var mainID = this.props.params.id
     if (mainID === null) return
     SimpleFormActions.removeTagFromIndicator(mainID, id)
+  },
+
+  removeIndicatorFromTag: function (id) {
+    var mainID = this.props.params.id
+    if (mainID === null) return
+    SimpleFormActions.removeIndicatorFromTag(id, mainID)
   },
 
   componentWillUpdate: function (nextProps, nextState) {
@@ -271,13 +290,16 @@ var SimpleForm = React.createClass({
     if (contentType === 'indicator_tag') {
       subFormList = (
         <div>
+          <div className='ufadmin-create-button'>
+            <a className='button' href='/manage_system/manage/indicator/'>Create Indicator</a>
+          </div>
           <SimpleFormComponent
             objectId={objectId}
             contentType={'indicator'}
             componentTitle='Add Indicators to Tags'
-            onClick={this.addIndicatoToTag}
+            onClick={this.addIndicatorToTag}
             smallItemCouldClick
-            onSmallItemClick={this.removeTagFromIndicator} />
+            onSmallItemClick={this.removeIndicatorFromTag} />
           <br />
           </div>
       )

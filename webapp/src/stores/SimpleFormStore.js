@@ -133,7 +133,12 @@ var SimpleFormStore = Reflux.createStore({
       self.trigger(self.data)
     })
   },
-
+  onAddIndicatorToTag: function(indicator_id, tag_id) {
+    //console.log("This has been called");
+    api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
+      SimpleFormActions.refreshIndicators(tag_id)
+    })
+  },
   onAddTagToIndicator: function (indicator_id, tag_id) {
     api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
@@ -162,6 +167,12 @@ var SimpleFormStore = Reflux.createStore({
     })
   },
 
+  onRemoveIndicatorFromTag: function (id, tagId) {
+    api.remove_indicator_from_tag({ id: id }).then(function (response) {
+      SimpleFormActions.refreshIndicators(tagId)
+    })
+  },
+
   onRefreshTags: function (indicator_id) {
     var self = this
     api.indicator_to_tag({ indicator_id: indicator_id }, null, {'cache-control': 'no-cache'}).then(function (indicator_to_tag) {
@@ -186,6 +197,21 @@ var SimpleFormStore = Reflux.createStore({
       })
 
       self.data.componentData['indicator_calc'].componentRows = indicatorCalcList
+      self.trigger(self.data)
+    })
+  },
+
+  onRefreshIndicators: function (tagId) {
+    var self = this
+    api.indicator_to_tag({ indicator_tag_id: tagId }, null, {'cache-control': 'no-cache'}).then(function (tags) {
+      var indicatorTags = _.map(tags.objects, function (row) {
+        return {
+          'id': row.id, displayId: row.id, 'display': row.indicator__short_name
+        }
+      })
+
+      self.data.componentData['indicator'].componentRows = indicatorTags
+      //self.data.loading = false
       self.trigger(self.data)
     })
   },
@@ -239,16 +265,16 @@ var SimpleFormStore = Reflux.createStore({
 
     Promise.all([
       api.indicator_to_tag({ indicator_tag_id: tagId }, null, {'cache-control': 'no-cache'}),
-      api.indicators({}, null, {'cache-control': 'no-cache'})
+      api.indicatorsTree({}, null, {'cache-control': 'no-cache'})
     ])
       .then(_.spread(function (tags, indicators) {
-        var indicatorsData = indicators.objects
+        var indicatorsData = _(indicators.objects).sortBy('title').value()
         var indicatorTags = _.map(tags.objects, function (row) {
-          console.log(row)
+          //console.log(row)
           return {'id': row.id, displayId: row.id, 'display': row.indicator__short_name}
         })
 
-        console.log('dropDownData:', indicatorsData)
+        //console.log('dropDownData:', indicatorsData)
 
         self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicatorsData}
         self.data.loading = false
