@@ -23,6 +23,7 @@ const DataEntry = React.createClass({
   componentWillMount: function () {
     DataEntryActions.initData()
     CampaignStore.listen(campaigns => DataEntryActions.setCampaign(campaigns.raw[0]))
+    IndicatorStore.listen(indicators => DataEntryActions.setForm(indicators.tags[1]))
   },
 
   render: function () {
