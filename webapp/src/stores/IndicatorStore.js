@@ -54,6 +54,23 @@ var IndicatorStore = Reflux.createStore({
     this.setState({ error: error })
   },
 
+  // ===========================  Fetch IndicatorsToTags ========================= //
+  onFetchIndicatorsToTags () {
+    this.setState({ raw: [] })
+  },
+  onFetchIndicatorsToTagsCompleted (response) {
+    const grouped_indicators_to_tags = _.groupBy(response.objects[0].indicators_to_tags, 'indicator_tag_id')
+    this.indicators.tags.forEach(tag => {
+      tag.indicators = _.map(grouped_indicators_to_tags[tag.id], indicator_to_tag => {
+        return this.indicators.index[indicator_to_tag.indicator_id]
+      })
+    })
+    this.processIndicators()
+  },
+  onFetchIndicatorsToTagsFailed (error) {
+    this.setState({ error: error })
+  },
+
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
