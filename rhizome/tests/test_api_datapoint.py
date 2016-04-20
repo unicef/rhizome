@@ -164,6 +164,9 @@ class DataPointResourceTest(ResourceTestCase):
     def test_map_transform(self):
 
         indicator_id = 1
+        indicator_object = Indicator.objects.create(
+            id = indicator_id,name = 'name', short_name = 'short_name'
+        )
         campaign_id = 2
         parent_location_id =3
         document = Document.objects.create(doc_title='some doc')
@@ -213,6 +216,8 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+
         chart_data = response_data['meta']['chart_data']
 
         self.assertEqual(len(chart_data), len(data))
@@ -234,6 +239,7 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         chart_data = response_data['meta']['chart_data']
         self.assertEqual(len(chart_data), len(data))
         if 'z' in chart_data[0].keys():
@@ -241,15 +247,16 @@ class DataPointResourceTest(ResourceTestCase):
         else:
             fail('returned object didn\'t contain a \'z\' for value')
 
-
     # make sure that the api returns an empty list if the parent location has no children
     def test_map_transform_no_children(self):
         indicator_id = 1
+        indicator_object = Indicator.objects.create(
+            id = indicator_id,name = 'name', short_name = 'short_name'
+        )
         campaign_id = 2
         parent_location_id = 3
 
         document = Document.objects.create(doc_title='some doc')
-
 
         # add a bunch of children for parent_location_id
         loc_and_value ={'Zamfara':0.054, 'Yobe':0.118, 'Taraba':0.221, 'Sokoto':0.032}
@@ -285,6 +292,7 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+
         self.assertEqual(len(response_data['objects']), 0)
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
@@ -294,7 +302,7 @@ class DataPointResourceTest(ResourceTestCase):
         document = Document.objects.create(doc_title='some doc')
 
         #make a couple different types of indicators, and indicators with different values
-        indicator_names_to_values = {"LPD Status":[1,2], 
+        indicator_names_to_values = {"LPD Status":[1,2],
             'LQAS':[0, 1, 2]
         }
 
@@ -310,7 +318,7 @@ class DataPointResourceTest(ResourceTestCase):
 
 
         some_provinces = ['Kandahar', 'Kunar', 'Hilmand', 'Nimroz', 'Sari-Pul', 'Kabul', 'Paktika', 'Ghazni']
-       
+
         ind_id_keys = indicator_ids_to_values.keys()
         indicator_to_query = ind_id_keys[1]
 
@@ -376,7 +384,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
         document = Document.objects.create(doc_title='uploadddd')
-       
+
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
@@ -435,6 +443,3 @@ class DataPointResourceTest(ResourceTestCase):
         returned_indicators = response_data['objects']
         self.assertEqual(len(returned_indicators), 1)
         self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
-
-
-
