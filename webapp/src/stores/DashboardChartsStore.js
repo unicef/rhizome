@@ -3,6 +3,7 @@ import uuid from 'uuid'
 import moment from 'moment'
 import Reflux from 'reflux'
 
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import ChartActions from 'actions/ChartActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import DatapointActions from 'actions/DatapointActions'
@@ -270,8 +271,8 @@ var DashboardChartsStore = Reflux.createStore({
     } else {
       this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
     }
-    const single_campaign_charts = ['RawData', 'TableChart', 'MapChart', 'BubbleMap']
-    if (_.indexOf(single_campaign_charts, this.charts[uuid].type) !== -1) {
+    const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, this.charts[uuid].type) !== -1
+    if (chartShowsOneCampaign) {
       this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
       this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
       if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
