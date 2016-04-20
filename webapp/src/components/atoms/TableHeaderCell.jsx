@@ -29,11 +29,12 @@ let TableHeaderCell = React.createClass({
   },
 
   render: function render () {
-    let isSortAscending = (this.props.sortOrder || '').toLowerCase().indexOf('asc') === 0
-    let sortIndicator = this.props.isSortedBy ? isSortAscending ? this.props.sortIndicatorAscending : this.props.sortIndicatorDescending : ''
+    const props = this.props
+    let isSortAscending = (props.sortOrder || '').toLowerCase().indexOf('asc') === 0
+    let sortIndicator = props.isSortedBy ? isSortAscending ? props.sortIndicatorAscending : props.sortIndicatorDescending : ''
     return (
-      <th className='ds-data-table-col-head' onClick={this.props.onClick}>
-        <span className='ds-data-table-col-title'>{this._getTitle()}</span>
+      <th className='ds-data-table-col-head' onClick={props.onClick}>
+        <span className='ds-data-table-col-title'>{props.name !== 'location' ? this._getTitle() : ''}</span>
         <span className='ds-data-table-sort-indicator'>{sortIndicator}</span>
       </th>
     )

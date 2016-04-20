@@ -79,12 +79,6 @@ let DatabrowserTable = React.createClass({
         fields.campaign = {title: 'Campaign', name: 'campaign'}
         columns.push('campaign')
       }
-
-      if (!props.hideCampaigns) {
-        fields.campaign = {title: 'Campaign', name: 'campaign'}
-        columns.push('campaign')
-      }
-
       props.selected_indicators.forEach(indicator => {
         fields[indicator.id] = {title: indicator.short_name, name: indicator.id, 'computed': indicator.computed, 'source_name': indicator.source_name, 'data_format': indicator.data_format}
         columns.push(indicator.id)

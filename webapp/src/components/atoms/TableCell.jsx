@@ -61,12 +61,13 @@ var TableCell = React.createClass({
         { moment: moment, numeral: numeral }
       )
     }
+
     return (
       <td onClick={this.handleClick}
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
         className={this.props.classes}>
-        { value_component }
+        { this.props.field.name === 'location' ? <b>{ value_component }</b> : value_component }
         { this.props.children }
       </td>
     )

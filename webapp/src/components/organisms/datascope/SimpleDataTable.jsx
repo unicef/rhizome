@@ -79,7 +79,7 @@ let SimpleDataTable = React.createClass({
       sortIndicatorAscending: this.props.sortIndicatorAscending,
       sortIndicatorDescending: this.props.sortIndicatorDescending
     })
-    return React.createElement(TableHeaderCell, propsToPass)
+    return <TableHeaderCell {...propsToPass} />
   },
 
   render: function () {
