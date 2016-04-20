@@ -3,19 +3,15 @@ version: 0.0
 os: linux
 
 files:
-  - source: /rhizome
-    destination: /home/ubuntu/deploy/rhizome-work
+  - source: /
+    destination: /var/www/apps/rhizome/
 permissions:
-  - object: /rhizome
+  - object: /var/www/apps/rhizome/
     pattern: "**"
     mode: 777
 hooks:
   ApplicationStop:
     - location: bin/auto_deploy/stop_apache.sh
-      timeout: 1800
-      runas: root
-  BeforeInstall:
-    - location: bin/auto_deploy/build_dependencies.sh
       timeout: 1800
       runas: root
   AfterInstall:
