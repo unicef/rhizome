@@ -13,7 +13,7 @@ class LineChart extends HighChart {
       xAxis: {
         type: 'datetime',
         labels: {
-          format: '{value:%b %d, %Y}'
+          format: '{value:%b %Y}'
         }
       },
       yAxis: {
@@ -25,11 +25,16 @@ class LineChart extends HighChart {
         }
       },
       tooltip: {
-        xDateFormat: '%b %d',
+        xDateFormat: '%b %Y',
         pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format)
           return `${this.series.name}: <b>${value}</b><br/>`
         }
+      },
+      legend: {
+        itemStyle: {
+          fontSize: '14px'
+        },
       },
       series: this.setSeries()
     }

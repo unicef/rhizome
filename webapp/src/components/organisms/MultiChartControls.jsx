@@ -5,6 +5,7 @@ import Reflux from 'reflux'
 import {DropdownList} from 'react-widgets'
 import RadioGroup from 'react-radio-group'
 
+import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import IconButton from 'components/atoms/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
@@ -53,6 +54,7 @@ const MultiChartControls = React.createClass({
     const type = chart.type
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
+    const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
 
     const palette_selector = type !== 'RawData' ? (
       <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
@@ -69,7 +71,7 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const date_range_picker = type === 'LineChart' || type === 'RawData' ? (
+    const date_range_picker = !chartShowsOneCampaign ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
         <DateRangePicker
@@ -105,7 +107,7 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const campaign_selector = type !== 'LineChart' && type !== 'RawData' ? (
+    const campaign_selector = chartShowsOneCampaign ? (
       <CampaignSelector
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
