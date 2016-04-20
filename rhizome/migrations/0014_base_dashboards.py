@@ -56,7 +56,7 @@ def ingest_post_campaign():
             "end_date":"2016-03-01",
             "indicator_ids":[34,21],
             "campaign_ids":[5],
-            "location_ids":[33],
+            "location_ids":[157],
             "type":"LineChart",
             "start_date":"2015-02-01"
         },
