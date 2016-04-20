@@ -230,12 +230,12 @@ var DashboardChartsStore = Reflux.createStore({
     if (this.charts[uuid].linkedCampaigns) {
       _.toArray(this.charts).forEach(chart => {
         if (chart.linkedCampaigns) {
-          this.assignCampaigns(campaigns, chart.uuid)
+          this._assignCampaigns(campaigns, chart.uuid)
         }
         this.updateChart(chart.uuid)
       })
     } else {
-      this.assignCampaigns(campaigns, uuid)
+      this._assignCampaigns(campaigns, uuid)
       this.updateChart(uuid)
     }
   },
@@ -264,17 +264,20 @@ var DashboardChartsStore = Reflux.createStore({
     _.toArray(this.charts).forEach(chart => chart.linkedCampaigns = true)
     _.toArray(this.charts).forEach(chart => DashboardChartsActions.setCampaigns(current_chart.selected_campaigns, chart.uuid))
   },
-  assignCampaigns: function (campaigns, uuid) {
+  _assignCampaigns: function (campaigns, uuid) {
     if (_.isArray(campaigns)) {
       this.charts[uuid].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
     } else {
       this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
     }
-    this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
-    this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
-    if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
-      this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
-      this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
+    const single_campaign_charts = ['RawData', 'TableChart', 'MapChart', 'BubbleMap']
+    if (_.indexOf(single_campaign_charts, this.charts[uuid].type) !== -1) {
+      this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
+      this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
+      if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
+        this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
+        this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
+      }
     }
   },
 
@@ -398,6 +401,19 @@ var DashboardChartsStore = Reflux.createStore({
     }
   },
 
+  fetchDatapoints: function (uuid) {
+    const chart = this.charts[uuid]
+    DatapointActions.fetchDatapoints({
+      indicator_filter: chart.indicator_filter,
+      indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
+      location_ids: chart.selected_locations.map(location => location.id),
+      start_date: chart.start_date,
+      end_date: chart.end_date,
+      type: chart.type,
+      uuid: uuid
+    })
+  },
+
   meltChart: function (chart) {
     const new_chart = new ChartState()
     new_chart.id = chart.id
@@ -412,18 +428,6 @@ var DashboardChartsStore = Reflux.createStore({
     new_chart.selectTypeMode = false
     new_chart.editMode = false
     return new_chart
-  },
-
-  fetchDatapoints: function (uuid) {
-    DatapointActions.fetchDatapoints({
-      indicator_filter: this.charts[uuid].indicator_filter,
-      indicator_ids: this.charts[uuid].selected_indicators.map(indicator => indicator.id),
-      location_ids: this.charts[uuid].selected_locations.map(location => location.id),
-      start_date: this.charts[uuid].start_date,
-      end_date: this.charts[uuid].end_date,
-      type: this.charts[uuid].type,
-      uuid: uuid
-    })
   },
 
   chartParamsAreReady: function (uuid) {
