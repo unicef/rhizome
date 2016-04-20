@@ -517,7 +517,7 @@ class DatapointResource(BaseNonModelResource):
             else:
                 indicator_objects = [{
                     'indicator': k,
-                    'computed_id': pivoted_data_for_id[row][k],
+                    'computed': pivoted_data_for_id[row][k],
                     'value': v
                 } for k, v in indicator_dict.iteritems()]
 
