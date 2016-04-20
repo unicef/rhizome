@@ -16,10 +16,12 @@ let EditableTableCellStore = Reflux.createStore({
   },
 
   onFocusInput: function (cell_id, value) {
-    let dom = document.getElementById(cell_id)
-    dom.value = value
-    dom.focus()
-    dom.select()
+    setTimeout(() => {
+      let element = document.getElementById(cell_id)
+      element.value = value
+      element.focus()
+      element.select()
+    }, 10)
   },
 
   onValidateValue: function (value) {

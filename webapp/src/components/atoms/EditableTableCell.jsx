@@ -135,7 +135,7 @@ let EditableTableCell = React.createClass({
           value={this.display_value}
           formatValue={this.props.formatValue}
           classes={classes}
-          onClick={this.enterEditMode}
+          onClick={!this.state.editMode ? this.enterEditMode : null}
           hideValue={this.state.editMode || this.isSaving}>
           {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
           {this.state.editMode ? input_field : null}

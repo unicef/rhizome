@@ -85,7 +85,7 @@ var DashboardChartsStore = Reflux.createStore({
   },
 
   // =================================  Charts  ================================ //
-  onAddChart: function (chart_uuid) { console.info('DashboardChartsStore - onAddChart')
+  onAddChart: function (chart_uuid) {
     const new_chart = new ChartState()
     new_chart.uuid = chart_uuid || uuid.v4()
     this.charts[new_chart.uuid] = new_chart
