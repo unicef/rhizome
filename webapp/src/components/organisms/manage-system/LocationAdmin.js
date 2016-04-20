@@ -34,7 +34,7 @@ var RegionAdmin = React.createClass({
     var datascopeFilters =
       <div>
         <SearchBar
-          fieldNames={['name', 'location_code']}
+          fieldNames={['id', 'name', 'location_code']}
           placeholder='Search locations ...'
           />
       </div>
