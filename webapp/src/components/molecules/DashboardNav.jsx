@@ -10,7 +10,8 @@ import RootStore from 'stores/RootStore'
 let DashboardNav = React.createClass({
 
   mixins: [
-    require('components/molecules/menus/MenuControl')
+    require('components/molecules/menus/MenuControl'),
+    Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 
   getInitialState() {
@@ -61,19 +62,27 @@ let DashboardNav = React.createClass({
       </NavMenuItem>
     )
 
+    const create_chart_button = this.state.superuser ? (
+      <li className='cta-menu-item'><a href='/charts/create'>Create a Chart</a></li>
+    ) : null
+
+    const create_dashboard_button = this.state.superuser ? (
+      <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
+    ) : null
+
     return (
       <ul className='dashboards-nav'>
         <li>
           <a href='/charts'>Charts</a>
           <ul className='dashboard-menu'>
-            <li className='cta-menu-item'><a href='/charts/create'>Create a Chart</a></li>
+            { create_chart_button }
             { custom_charts }
           </ul>
         </li>
         <li>
           <a href='/dashboards'>Dashboards</a>
           <ul className='dashboard-menu'>
-            <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
+            { create_dashboard_button }
             { custom_dashboards }
           </ul>
         </li>
