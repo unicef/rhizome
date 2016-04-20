@@ -63,16 +63,16 @@ const DashboardHeader = React.createClass({
 
     const dashboard_filters = (
       <div className='page-header-filters'>
+        <CampaignDropdown
+          campaigns={this.state.campaigns.raw || []}
+          selected={props.selected_campaigns[0]}
+          sendValue={DashboardPageActions.setCampaign}
+        />
         <RegionDropdown
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
           sendValue={DashboardPageActions.setLocation}
           hideLastLevel
-        />
-        <CampaignDropdown
-          campaigns={this.state.campaigns.raw || []}
-          selected={props.selected_campaigns[0]}
-          sendValue={DashboardPageActions.setCampaign}
         />
         <DistrictDropdown selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
       </div>
