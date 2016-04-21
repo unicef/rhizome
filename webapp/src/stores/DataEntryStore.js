@@ -1,18 +1,15 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
-
-import api from 'data/api'
-import DatapointAPI from 'data/requests/DatapointAPI'
+import DatapointActions from 'actions/DatapointActions'
+import DataEntryActions from 'actions/DataEntryActions'
 
 let DataEntryStore = Reflux.createStore({
 
-  listenables: [require('actions/DataEntryActions')],
+  listenables: [DataEntryActions],
 
   data: {
-    table_data: null,
     selected_campaign: null,
     selected_indicator_tag: null,
-    selected_indicators: [],
     selected_locations: [],
     selected_source: null,
     indicators_to_tags: [],
@@ -37,32 +34,16 @@ let DataEntryStore = Reflux.createStore({
     return this.data
   },
 
-  init: function () {
-    let self = this
-    Promise.resolve(api.indicator_to_tag()).then(indicator_to_tags => {
-      self.data.indicators_to_tags = indicator_to_tags.objects
-      self.trigger(self.data)
-    })
-  },
-
   // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
   onSetIndicatorsByTag: function (indicator_tag, indicators_index) {
     this.data.selected_indicator_tag = indicator_tag
-    this.data.selected_indicators = []
-    this.data.indicators_to_tags.forEach(indicator_to_tag => {
-      if (indicator_to_tag.indicator_tag_id === indicator_tag.id) {
-        this.data.selected_indicators.push(indicators_index[indicator_to_tag.indicator_id])
-      }
-    })
-    this.data.table_data = null
     this.updateTable()
   },
 
   onSetCampaign: function (campaign) {
     this.data.selected_campaign = campaign
-    this.data.table_data = null
     this.updateTable()
   },
 
@@ -86,37 +67,17 @@ let DataEntryStore = Reflux.createStore({
   //                                   UTILITIES                                 //
   // =========================================================================== //
   updateTable: function () {
-    this.data.table_data = null
     const d = this.data
     if (d.selected_indicator_tag && d.selected_campaign && d.selected_locations.length > 0) {
-      this.getTableData()
+      DatapointActions.fetchDatapoints({
+        campaign__in: parseInt(this.data.selected_campaign.id, 10),
+        indicator_ids: this.data.selected_indicator_tag.indicators.map(indicator => indicator.id),
+        location_ids: this.data.selected_locations.map(location => location.id),
+        show_missing_data: 1,
+        source_name: ''
+      })
     }
     this.trigger(this.data)
-  },
-
-  getTableData: function () {
-    const options = {
-      campaign__in: parseInt(this.data.selected_campaign.id, 10),
-      indicator__in: this.data.selected_indicators.map(indicator => indicator.id),
-      location_id__in: this.data.selected_locations.map(location => location.id),
-      show_missing_data: 1,
-      source_name: ''
-    }
-
-    DatapointAPI.getFilteredDatapoints(options, null, {'cache-control': 'no-cache'}).then(response => {
-      const campaign_index = _.indexBy(response.meta.campaign_list, 'id')
-      this.data.table_data = response.objects.map(datapoint => {
-        return {
-          'campaign': campaign_index[datapoint.campaign],
-          'location': datapoint.location,
-          'indicators': datapoint.indicators
-        }
-      })
-      this.trigger(this.data)
-    }, function (err) {
-      console.error(err)
-      this.trigger(this.data)
-    })
   }
 })
 

@@ -1,11 +1,13 @@
 import React from 'react'
 import Reflux from 'reflux'
 
+import Placeholder from 'components/molecules/Placeholder'
 import IndicatorTagDropdown from 'components/molecules/menus/IndicatorTagDropdown'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
+import DatapointStore from 'stores/DatapointStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
@@ -17,6 +19,7 @@ const DataEntry = React.createClass({
 
   mixins: [
     Reflux.connect(DataEntryStore),
+    Reflux.connect(DatapointStore, 'datapoints'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators'),
     Reflux.connect(LocationStore, 'locations')
@@ -29,6 +32,21 @@ const DataEntry = React.createClass({
 
   render: function () {
     const state = this.state
+
+    const placeholder = state.selected_locations.length < 1
+      ? <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/>
+      : <Placeholder height={300}/>
+
+    const data_table = state.datapoints.raw ? (
+      <DatabrowserTable
+        data={state.datapoints.raw}
+        selected_locations={state.selected_locations}
+        selected_indicators={state.selected_indicator_tag ? state.selected_indicator_tag.indicators : []}
+        rowAction={DataEntryActions.removeLocation}
+        hideCampaigns
+        editable />
+    ) : placeholder
+
     return (
       <div>
         <header className='row page-header'>
@@ -62,13 +80,7 @@ const DataEntry = React.createClass({
         </header>
         <div className='row'>
           <div className='medium-12 columns'>
-            <DatabrowserTable
-              data={state.table_data}
-              selected_locations={state.selected_locations}
-              selected_indicators={state.selected_indicators}
-              rowAction={DataEntryActions.removeLocation}
-              hideCampaigns
-              editable />
+            { data_table }
           </div>
         </div>
       </div>
