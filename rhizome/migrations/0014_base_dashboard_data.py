@@ -43,9 +43,45 @@ class DataIngestor(object):
                location_id = 1,
                indicator__short_name = 'Number Inaccessible Children'
            )
-
         if len(afghanistan_missed_children_qs) == 0:
-           raise Exception('The data was not loaded properly')
+           raise Exception('The data was not loaded properly for t5')
+
+        print Indicator.objects.filter(short_name = 'Infected district (Yes/No)').values()[0]['id']
+        print 'total dps'
+        print len(DataPoint.objects.all())
+        infected_dist_dwcs= DataPointComputed.objects\
+            .filter(
+                location_id = 1,
+                indicator__short_name = 'Infected district (Yes/No)'
+            )   
+
+        if len(infected_dist_dwcs) == 0:
+           raise Exception('The data was not loaded properly for t3')
+
+        non_polio_afp_dwc = DataPointComputed.objects\
+            .filter(
+                location_id = 1,
+                indicator__short_name = 'Number of reported Non Polio AFP cases'
+            )
+        if len(non_polio_afp_dwc) == 0:
+            raise Exception('The data was not loaded properly for t4')
+
+        afp_rate = DataPointComputed.objects\
+            .filter(
+                location_id=1,
+                indicator__short_name = 'Non Polio AFP Rate'
+            )
+
+        if len(afp_rate) == 0:
+            raise Exception('The data was not loaded properly t4')
+
+        env_samples = DataPointComputed.objects.filter(
+            location_id = 1,
+            indicator__short_name = "Number of Environmental Samples with result pending in Lab"
+        )
+
+        if len(env_samples) == 0:
+            raise Exception('The data was not loaded properly for t6')
         # raise Exception('you shall not pass!')
 
     def process_sheet(self, sheet_dict):
@@ -85,6 +121,8 @@ class DataIngestor(object):
         ind_df.columns = ['indicator_id', 'data_format']
         campaign_list_of_lists  = [[camp] for camp in campaign_ids]
         campaign_df = DataFrame(campaign_list_of_lists, columns = ['campaign_id'])
+        print 'campaign_df'
+        print campaign_df
         location_list_of_lists  = [[loc] for loc in location_ids]
         location_df = DataFrame(location_list_of_lists, columns = ['location_id'])
         ind_df['join_col'] = 1
@@ -105,6 +143,16 @@ class DataIngestor(object):
                 rand_val = randint(0,1000)
             if row.data_format =='bool':
                 rand_val = randint(0,1)
+            if row.data_format == 'pct':
+                rand_val = float(randint(0, 100))/100
+            # print 'row.indicator_id'
+            # print row.indicator_id
+            # print 'row.campaign_id'
+            # print row.campaign_id
+            # print 'row.location_id'
+            # print row.location_id
+            # print 'rand_val'
+            # print rand_val
             dwc_obj = DataPoint(**{
                 'indicator_id':row.indicator_id,
                 'campaign_id':row.campaign_id,
@@ -116,9 +164,14 @@ class DataIngestor(object):
             dwc_batch.append(dwc_obj)
 
 
-        DataPoint.objects.all().delete()
+        # DataPoint.objects.all().delete()
+        print'\n-------\n'
+        print 'dps before'
+        print len(DataPoint.objects.all())
         DataPoint.objects.bulk_create(dwc_batch)
-
+        print'\n-------\n'
+        print 'dps after'
+        print len(DataPoint.objects.all())
     def upsert_indicator_ids(self, chart_indicator_df):
 
         indicator_id_list = []

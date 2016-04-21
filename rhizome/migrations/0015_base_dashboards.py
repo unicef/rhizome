@@ -62,7 +62,12 @@ def ingest_situational():
         title = 'Immunity Profile',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[28],
+            "indicator_ids":[Indicator.objects.get(name="Number of reported Non Polio AFP cases").id,
+            Indicator.objects.get(name="Number of Unvaccinated Non Polio AFP Cases").id,
+            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 1-3 doses").id,
+            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 4-6 doses").id,
+            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 7+ doses").id,
+            ],
             "campaign_ids":[5],
             "location_ids":[151],
             "type":"StackedColumnChart",
@@ -72,10 +77,12 @@ def ingest_situational():
     )
 
     chart_4 = CustomChart.objects.create(
-        title = 'Non Polio AFP Rate and % Adequate Specimens',
+        title = 'Non Polio AFP Rate and Adequate Specimens',
         chart_json ={
             "end_date":"2016-03-01",
-            "indicator_ids":[15],
+            "indicator_ids":[Indicator.objects.get(name="Non Polio AFP Rate").id,
+            Indicator.objects.get(name="Percentage of Adequate Specimen ").id
+            ],
             "campaign_ids":[5],
             "location_ids":[151],
             "type":"ColumnChart",
@@ -83,6 +90,7 @@ def ingest_situational():
         },
         uuid = '4499af7d-bbcc-41a6-81cf-b2071d79ce55'
     )
+
 
     chart_5 = CustomChart.objects.create(
         title = 'Inaccessible Children',
@@ -101,7 +109,10 @@ def ingest_situational():
         title = 'Environmental Results',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[15],
+            "indicator_ids":[Indicator.objects.get(short_name="Number of Environmental Samples collected").id,
+            Indicator.objects.get(short_name="Number of Environmental Samples with Negative result").id,
+            Indicator.objects.get(short_name="Number of Environmental Samples with Positive result").id,
+            Indicator.objects.get(short_name="Number of Environmental Samples with result pending in Lab").id],
             "campaign_ids":[5],
             "location_ids":[151],
             "type":"ColumnChart",
@@ -109,6 +120,7 @@ def ingest_situational():
         },
         uuid = '6f2efd2a-dd9f-4bcc-8652-7a622ebfc047'
     )
+
 
     chart_7 = CustomChart.objects.create(
         title = 'Preparatory Indicators',
