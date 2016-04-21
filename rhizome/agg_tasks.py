@@ -88,7 +88,6 @@ class AggRefresh(object):
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
             self.cache_job.save()
-
             return err
 
         ic = IndicatorCache()
@@ -238,9 +237,7 @@ class AggRefresh(object):
         self.part_over_whole()
         self.part_of_difference()
         self.raw_data()
-
         self.upsert_computed()
-
         return []
 
     def build_calc_df(self,calc_list):
@@ -308,8 +305,6 @@ class AggRefresh(object):
         Add the raw indicator data to the tuple dict.  This happens last so
         the raw indicator data will always override the calculated.
         '''
-
-        # print len(list(AggDataPoint.objects.filter(campaign_id = self.campaign.id)))
 
         for adp in AggDataPoint.objects.filter(campaign_id = self.campaign.id):
             adp_tuple = (adp.location_id, adp.indicator_id)
@@ -445,10 +440,8 @@ class AggRefresh(object):
                 'document_id': self.document_id
             }
             self.dwc_batch.append(DataPointComputed(**dwc_dict))
-
         DataPointComputed.objects.filter(campaign_id=self.campaign.id).delete()
         DataPointComputed.objects.bulk_create(self.dwc_batch)
-
     def get_datapoints_to_agg(self,limit=None):
         '''
         Since there are complicated dependencies for location aggregation, as
