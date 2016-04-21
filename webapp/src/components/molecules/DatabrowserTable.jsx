@@ -27,7 +27,7 @@ let DatabrowserTable = React.createClass({
     }
   },
 
-  _format: function (value) { console.info('DatabrowserTable -  _format')
+  _format: function (value) {
     if (_.isFinite(value)) {
       var format = d3.format('n')
       if (Math.abs(value) < 1 && value !== 0) {
@@ -38,7 +38,7 @@ let DatabrowserTable = React.createClass({
     return ''
   },
 
-  extractItemsFromData: function (datapoints) { console.info('DatabrowserTable -  extractItemsFromData')
+  extractItemsFromData: function (datapoints) {
     return datapoints.map(item => {
       let result = _.pick(item, 'location')
       result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
@@ -54,7 +54,7 @@ let DatabrowserTable = React.createClass({
     })
   },
 
-  getData: function (items, locations) { console.info('DatabrowserTable -  getData')
+  getData: function (items, locations) {
     let data = []
     items.forEach(item => {
       locations.forEach(location => {
@@ -68,9 +68,8 @@ let DatabrowserTable = React.createClass({
     return data
   },
 
-  render: function () { console.info('DatabrowserTable -  render')
+  render: function () {
     const props = this.props
-    console.log('props.data.length', props.data.length)
     if (!props.data || props.data.length === 0) {
       return <div className='medium-12 columns ds-data-table-empty'>No data.</div>
     } else {
