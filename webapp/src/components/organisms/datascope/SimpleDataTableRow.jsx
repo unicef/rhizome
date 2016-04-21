@@ -23,7 +23,6 @@ let SimpleDataTableRow = React.createClass({
       const fields = props.fields
       const field = props.fields[cell_key]
       if (props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
-
         return (
           <EditableTableCell
             field={field}

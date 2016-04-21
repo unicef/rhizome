@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -105,15 +106,16 @@ let EditableTableCell = React.createClass({
     if (this.isBool) {
       const boolean_options = [
         { 'value': '0', 'title': 'No' },
-        { 'value': '1', 'title': 'Yes' }
+        { 'value': '1', 'title': 'Yes' },
+        { 'value': '', 'title': 'No Data' }
       ]
       const selected_item = boolean_options[this.display_value]
       return (
-        <td className='editable'>
+        <td className={'editable' + classes}>
           <DropdownMenu
             items={boolean_options}
             sendValue={this.updateCellValue}
-            text={selected_item ? selected_item.title : 'No Data'}
+            text={selected_item ? selected_item.title : ''}
             onChange={this.updateCellValue}
             style='boolean-dropdown'
             searchable={false}
