@@ -54,14 +54,13 @@ var TableCell = React.createClass({
     let value_component = ''
 
     if (shouldDisplayValue) {
-      let display_value = format.autoFormat((typeof value !== 'object' ? value : value.value), this.props.field.schema.data_format, 2)
+      let display_value = (typeof value !== 'object' ? value : value.value)
       value_component = this.props.field.renderer(
         display_value,
         this.props.field,
         { moment: moment, numeral: numeral }
       )
     }
-
     return (
       <td onClick={this.handleClick}
         onMouseOver={this.showTooltip}
