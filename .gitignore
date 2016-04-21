@@ -33,7 +33,7 @@ rhizome/settings/private.py
 settings.py
 dev
 webapp/coverage
-~$initial_data.xlsx
+~$*
 rhizome.conf
 geo_json.txt
 rhizome/templates/base.html
