@@ -14,7 +14,7 @@ from django.db.models import get_app, get_models
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
-
+from django.db import transaction
 
 
 class DataIngestor(object):
@@ -31,11 +31,20 @@ class DataIngestor(object):
         raw_chart_index = self.xl.parse('chart_index')
         self.chart_index_df = raw_chart_index[raw_chart_index\
             ['to_ingest'] == 1][chart_index_columns]
-
         for ix, row in self.chart_index_df.iterrows():
             self.process_sheet(row.to_dict())
 
-        raise Exception('this aint gonna pass')
+        
+        afghanistan_missed_children_qs = DataPointComputed.objects\
+           .filter(
+               location_id = 1,
+               indicator__name = 'Number of inaccesible children'
+           )
+
+        if len(afghanistan_missed_children_qs) == 0:
+           raise Exception('The data was not loaded properly')
+        
+        raise Exception('This aint gonna pass')
 
     def process_sheet(self, sheet_dict):
 
@@ -60,27 +69,23 @@ class DataIngestor(object):
         location_ids = Location.objects.filter(
             location_type__name = sheet_dict['data_level']
         ).values_list('id', flat=True)
-
         document_id = Document.objects.create(doc_title = sheet_name).id
         self.create_fake_data(indicator_ids, campaign_ids, location_ids, document_id)
 
         # mr = MasterRefresh(1, document_id)
         
         # for c in campaign_ids:
-        #     ar = AggRefresh(c)
-        #     ar.main()
+        #     with transaction.atomic():
+        #         ar = AggRefresh(c)
+        #         ar.main()
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
-
         indicator_list_of_lists = [[ind] for ind in indicator_ids]
         ind_df = DataFrame(indicator_list_of_lists, columns = ['indicator_id'])
-
         campaign_list_of_lists  = [[camp] for camp in campaign_ids]
         campaign_df = DataFrame(campaign_list_of_lists, columns = ['campaign_id'])
-
         location_list_of_lists  = [[loc] for loc in location_ids]
         location_df = DataFrame(location_list_of_lists, columns = ['location_id'])
-
         ind_df['join_col'] = 1
         campaign_df['join_col'] = 1
         location_df['join_col'] = 1
@@ -94,6 +99,7 @@ class DataIngestor(object):
         )
 
         dwc_batch = []
+
         for ix, row in final_merged_df.iterrows():
 
             # if row.data_format == 'int':

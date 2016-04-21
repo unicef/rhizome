@@ -15,13 +15,15 @@ def ingest_base_dashboards(apps, schema_editor):
 #
 # psql rhizome -c "TRUNCATE TABLE custom_dashboard CASCADE;
 # TRUNCATE TABLE custom_chart CASCADE;
+
+# run this in psql in case you need to run the migration again:
 # DELETE FROM django_migrations where name like '%base_dashboar%';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
 
-    # ingest_pre_campaign() ## @martha plz add
-    # ingest_intra_campaign() ## #martha plz add
+    ingest_pre_campaign()
+    ingest_intra_campaign()
     ingest_post_campaign()
     ingest_situational()
 
@@ -273,6 +275,49 @@ def ingest_post_campaign():
                 "charts":["e2a6e9ac-78be-4def-bfe1-b978f726f447"]
         }],
         title = 'Post Campaign'
+    )
+
+def ingest_pre_campaign():
+    chart_0 = CustomChart.objects.create(
+        title = 'Pre Campaign Table',
+        chart_json = {
+            "end_date":"2016-03-01",
+            "indicator_ids":[28,34,21,29,15,30,32,33],
+            "campaign_ids":[5],
+            "location_ids":[1],
+            "type":"TableChart"
+            ,"start_date":"2016-02-01"
+        },
+        uuid= "b1a6b067-f58d-472c-9953-18129bdad127"
+    )
+    dashboard = CustomDashboard.objects.create(
+        rows = [{
+            "layout":1,
+                "charts":["b1a6b067-f58d-472c-9953-18129bdad127"]
+        }],
+        title = 'Pre Campaign'
+    )
+
+def ingest_intra_campaign():
+    chart_0 = CustomChart.objects.create(
+        title = 'Intra Campaign Table',
+        chart_json = {
+            "end_date":"2016-03-01",
+            "indicator_ids":[28, 9, 11, 20, 8, 10, 22, 24, 6, 4],
+            "campaign_ids":[5],
+            "location_ids":[1],
+            "type":"TableChart"
+            ,"start_date":"2016-02-01"
+        },
+        uuid= "7f7b0a20-b73d-4bdb-a49a-c776d3442bd0"
+    )
+
+    dashboard = CustomDashboard.objects.create(
+        rows = [{
+            "layout":1,
+                "charts":["7f7b0a20-b73d-4bdb-a49a-c776d3442bd0"]
+        }],
+        title = 'Intra Campaign'
     )
 
 class Migration(migrations.Migration):
