@@ -66,8 +66,6 @@ class AggRefresh(object):
         self.document_id = SourceSubmission.objects.get(id = latest_dp_source)\
             .document_id
 
-
-
         response_msg = self.main()
 
         ## mark job as completed and save

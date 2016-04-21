@@ -25,16 +25,23 @@ class DataIngestor(object):
     def main(self):
 
         chart_index_columns = ['sheet_name','data_level','date_key',\
-            'month_trend_count']
+            'month_trend_count','chart_key']
 
         self.xl = pd.ExcelFile('SituationalDashboard.xlsx')
+
         raw_chart_index = self.xl.parse('chart_index')
         self.chart_index_df = raw_chart_index[raw_chart_index\
-            ['to_ingest'] == 1][chart_index_columns]
+            ['to_ingest'] == 1]
+
+        self.indicator_sheet_df = self.xl.parse('indicators')
+
         for ix, row in self.chart_index_df.iterrows():
+            print 'row.to_dict()\n' * 5
+            print row.to_dict()
+
             self.process_sheet(row.to_dict())
 
-        
+
         afghanistan_missed_children_qs = DataPointComputed.objects\
            .filter(
                location_id = 1,
@@ -43,21 +50,19 @@ class DataIngestor(object):
 
         if len(afghanistan_missed_children_qs) == 0:
            raise Exception('The data was not loaded properly')
-        
-        raise Exception('This aint gonna pass')
 
     def process_sheet(self, sheet_dict):
 
         # print '==sheet_dict==\n' * 2
         # pprint(sheet_dict)
 
-        sheet_name = sheet_dict['sheet_name']
-        sheet_df = self.xl.parse(sheet_name)
+        chart_name = sheet_dict['chart']
+        chart_key = sheet_dict['chart_key']
 
         ## handle indicators ##
-        indicator_names = list(set(sheet_df.columns)\
-            .difference(set(self.base_columns)))
-        indicator_ids = self.upsert_indicator_ids(indicator_names)
+        chart_indicator_df = self.indicator_sheet_df[self.indicator_sheet_df\
+            ['chart_key'] == chart_key]
+        indicator_ids = self.upsert_indicator_ids(chart_indicator_df)
 
         ## handle campaigns ##
         number_of_campaigns_to_process = sheet_dict['month_trend_count']
@@ -69,11 +74,12 @@ class DataIngestor(object):
         location_ids = Location.objects.filter(
             location_type__name = sheet_dict['data_level']
         ).values_list('id', flat=True)
-        document_id = Document.objects.create(doc_title = sheet_name).id
+
+        document_id = Document.objects.create(doc_title = 'fake situational -- ' + chart_name).id
         self.create_fake_data(indicator_ids, campaign_ids, location_ids, document_id)
 
         # mr = MasterRefresh(1, document_id)
-        
+
         # for c in campaign_ids:
         #     with transaction.atomic():
         #         ar = AggRefresh(c)
@@ -119,17 +125,14 @@ class DataIngestor(object):
         DataPoint.objects.all().delete()
         DataPoint.objects.bulk_create(dwc_batch)
 
-    def upsert_indicator_ids(self, indicator_name_list):
+    def upsert_indicator_ids(self, chart_indicator_df):
 
         indicator_id_list = []
 
-        for ind in indicator_name_list:
-            ind_object = Indicator.objects.create(
-                name = ind,
-                short_name = ind,
-                description = ind,
-                data_format = 'int'
-            )
+        for ix, row in chart_indicator_df.iterrows():
+            row_dict = row.to_dict()
+            row_dict.pop('chart_key')
+            ind_object = Indicator.objects.create(**row_dict)
             indicator_id_list.append(ind_object.id)
 
         return indicator_id_list
