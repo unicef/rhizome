@@ -3,7 +3,8 @@ import api from 'data/api'
 
 const IndicatorActions = Reflux.createActions({
   'fetchIndicators': { children: ['completed', 'failed'] },
-  'fetchIndicatorTags': { children: ['completed', 'failed'] }
+  'fetchIndicatorTags': { children: ['completed', 'failed'] },
+  'fetchIndicatorsToTags': { children: ['completed', 'failed'] }
 })
 
 IndicatorActions.fetchIndicators.listenAndPromise(() => {
@@ -13,5 +14,7 @@ IndicatorActions.fetchIndicators.listenAndPromise(() => {
 IndicatorActions.fetchIndicatorTags.listenAndPromise(() => {
   return api.get_indicator_tag(null, null, { 'cache-control': 'no-cache' })
 })
+
+IndicatorActions.fetchIndicatorsToTags.listenAndPromise(() => api.indicator_to_tag())
 
 export default IndicatorActions

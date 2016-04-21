@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
@@ -30,7 +31,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount () {
+  componentWillMount: function () {
     this.display_value = this.props.value
     this.isBool = this.props.field.schema.data_format === 'bool'
   },
@@ -106,14 +107,15 @@ let EditableTableCell = React.createClass({
       const boolean_options = [
         { 'value': '0', 'title': 'No' },
         { 'value': '1', 'title': 'Yes' },
-        { 'value': '', 'title': 'No Data'}
+        { 'value': '', 'title': 'No Data' }
       ]
+      const selected_item = boolean_options[this.display_value]
       return (
-        <td className='editable'>
+        <td className={'editable' + classes}>
           <DropdownMenu
             items={boolean_options}
             sendValue={this.updateCellValue}
-            text={boolean_options[this.display_value].title || 'No Data'}
+            text={selected_item ? selected_item.title : ''}
             onChange={this.updateCellValue}
             style='boolean-dropdown'
             searchable={false}
@@ -135,7 +137,7 @@ let EditableTableCell = React.createClass({
           value={this.display_value}
           formatValue={this.props.formatValue}
           classes={classes}
-          onClick={this.enterEditMode}
+          onClick={!this.state.editMode ? this.enterEditMode : null}
           hideValue={this.state.editMode || this.isSaving}>
           {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
           {this.state.editMode ? input_field : null}

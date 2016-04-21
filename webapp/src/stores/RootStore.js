@@ -58,6 +58,7 @@ var RootStore = Reflux.createStore({
     DashboardActions.fetchDashboards.completed(response)
     IndicatorActions.fetchIndicators.completed(response)
     IndicatorActions.fetchIndicatorTags.completed(response)
+    IndicatorActions.fetchIndicatorsToTags.completed(response)
     LocationActions.fetchLocations.completed(response)
     OfficeActions.fetchOffices.completed(response)
     this.trigger(this.data)

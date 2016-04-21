@@ -24,7 +24,8 @@ $rhz-navigation-hover-sop-color: #c32027;
 $rhz-navigation-hover-c4d-color: #217985;
 $rhz-navigation-hover-data-color: $rhz-primary-color;
 
-$rhz-button-bg-color: #344B61;
+$rhz-button-bg-color: $rhz-primary-color;
+$rhz-button-hover-bg-color: #344B61;
 $rhz-button-color: $rhz-font-color;
 
 $rhz-chart-panel-color: #FFFFFF;

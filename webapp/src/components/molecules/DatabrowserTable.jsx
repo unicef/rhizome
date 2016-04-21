@@ -70,7 +70,7 @@ let DatabrowserTable = React.createClass({
 
   render: function () {
     const props = this.props
-    if (!props.data) {
+    if (!props.data || props.data.length === 0) {
       return <div className='medium-12 columns ds-data-table-empty'>No data.</div>
     } else {
       let fields = {location: {title: 'Location', name: 'location'}}

@@ -8,7 +8,7 @@
   margin: .5rem;
   font-size: .7rem;
   &:hover {
-    background-color: #426281;
+    background-color: $rhz-button-hover-bg-color;
     color: $rhz-font-color;
   }
   &:focus {

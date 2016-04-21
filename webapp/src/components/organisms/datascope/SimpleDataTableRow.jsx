@@ -15,14 +15,9 @@ let SimpleDataTableRow = React.createClass({
     return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
   },
 
-  saveCellValue: function () {
-    console.log('Save cell value')
-  },
-
   render: function () {
     const props = this.props
     const row = props.row
-
     const table_cells = React.Children.map(props.columns, column => {
       const cell_key = column.props.name
       const fields = props.fields
@@ -30,21 +25,20 @@ let SimpleDataTableRow = React.createClass({
       if (props.editable && cell_key !== 'location' && cell_key !== 'campaign') {
         return (
           <EditableTableCell
-             field={props.fields[cell_key]}
-             row={row}
-             value={row[cell_key].value}
-             onSave={this.saveCellValue}
-             formatValue={this._numberFormatter}
-             classes={'numeric'} />
+            field={field}
+            row={row}
+            value={row[cell_key].value}
+            formatValue={this._numberFormatter}
+            classes='numeric' />
         )
       } else {
         return (
           <TableCell
-             field={props.fields[cell_key]}
-             row={row}
-             value={row[cell_key].value}
-             formatValue={this._numberFormatter}
-             classes={'numeric'} />
+            field={field}
+            row={row}
+            value={row[cell_key].value}
+            formatValue={this._numberFormatter}
+            classes='numeric' />
         )
       }
     })
