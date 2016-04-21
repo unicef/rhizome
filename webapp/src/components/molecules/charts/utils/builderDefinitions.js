@@ -10,6 +10,7 @@ export default {
     { name: 'LineChart', groupBy: true, locationLevel: true, timeRadios: ['all', '1year', '3month'] },
     { name: 'ColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
     { name: 'StackedColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
+    { name: 'StackedPercentColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
     { name: 'BarChart', groupBy: true, locationLevel: true, timeRadios: ['1month'] }
     // { name: 'ScatterChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
     // { name: 'PieChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] }

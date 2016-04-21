@@ -92,7 +92,8 @@ const MultiChartControls = React.createClass({
       </div>
     )
 
-    const groupedChart = type === 'LineChart' || type === 'ColumnChart' || type === 'StackedColumnChart'
+    const groupedChart = type === 'LineChart' || type === 'ColumnChart' || type === 'StackedColumnChart' || type === 'StackedPercentColumnChart'
+    
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
         <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={props.setGroupBy}>
