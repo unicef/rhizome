@@ -28,7 +28,7 @@ let TableHeaderCell = React.createClass({
     return _.isUndefined(this.props.title) ? this.props.field.title : this.props.title
   },
 
-  render: function render () {
+  render: function render () { console.info('TableHeaderCell - render')
     const props = this.props
     let isSortAscending = (props.sortOrder || '').toLowerCase().indexOf('asc') === 0
     let sortIndicator = props.isSortedBy ? isSortAscending ? props.sortIndicatorAscending : props.sortIndicatorDescending : ''

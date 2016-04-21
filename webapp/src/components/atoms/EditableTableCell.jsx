@@ -30,7 +30,7 @@ let EditableTableCell = React.createClass({
   display_value: null,
   tooltip: null,
 
-  componentWillMount () {
+  componentWillMount: function () {
     this.display_value = this.props.value
     this.isBool = this.props.field.schema.data_format === 'bool'
   },
@@ -105,15 +105,15 @@ let EditableTableCell = React.createClass({
     if (this.isBool) {
       const boolean_options = [
         { 'value': '0', 'title': 'No' },
-        { 'value': '1', 'title': 'Yes' },
-        { 'value': '', 'title': 'No Data'}
+        { 'value': '1', 'title': 'Yes' }
       ]
+      const selected_item = boolean_options[this.display_value]
       return (
         <td className='editable'>
           <DropdownMenu
             items={boolean_options}
             sendValue={this.updateCellValue}
-            text={boolean_options[this.display_value].title || 'No Data'}
+            text={selected_item ? selected_item.title : 'No Data'}
             onChange={this.updateCellValue}
             style='boolean-dropdown'
             searchable={false}

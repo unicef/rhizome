@@ -37,7 +37,7 @@ const DataEntry = React.createClass({
       ? <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/>
       : <Placeholder height={300}/>
 
-    const data_table = state.datapoints.raw ? (
+    const data_table = (
       <DatabrowserTable
         data={state.datapoints.raw}
         selected_locations={state.selected_locations}
@@ -45,7 +45,7 @@ const DataEntry = React.createClass({
         rowAction={DataEntryActions.removeLocation}
         hideCampaigns
         editable />
-    ) : placeholder
+    )
 
     return (
       <div>
@@ -80,7 +80,7 @@ const DataEntry = React.createClass({
         </header>
         <div className='row'>
           <div className='medium-12 columns'>
-            { data_table }
+            { state.datapoints.raw ? data_table : placeholder }
           </div>
         </div>
       </div>
