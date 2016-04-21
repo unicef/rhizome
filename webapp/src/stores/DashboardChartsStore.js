@@ -273,11 +273,12 @@ var DashboardChartsStore = Reflux.createStore({
     }
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, this.charts[uuid].type) !== -1
     if (chartShowsOneCampaign) {
-      this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
-      this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
-      if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
-        this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
-        this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
+      const campaign_start_date = this.charts[uuid].selected_campaigns[0].start_date
+      const campaign_end_date = this.charts[uuid].selected_campaigns[0].end_date
+      this.charts[uuid].start_date = campaign_start_date
+      this.charts[uuid].end_date = campaign_end_date
+      if (campaign_start_date === campaign_end_date) {
+        this.charts[uuid].end_date = moment(campaign_end_date).add(1, 'M').format('YYYY-MM-DD')
       }
     }
   },
