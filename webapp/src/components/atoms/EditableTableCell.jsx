@@ -44,11 +44,15 @@ let EditableTableCell = React.createClass({
 
   exitEditMode: function (event) {
     if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
-      const pctIndex = event.target.value.indexOf('%')
-      let value = pctIndex === -1 ? event.target.value : event.target.value.slice(0, pctIndex)
-      value = format.autoFormat((value/100), this.props.field.schema.data_format, 2)
-      if (value !== this.display_value) {
-        this.updateCellValue(event.target.value/100)
+      let displayValue = event.target.value
+      if (this.props.field.schema.data_format === 'pct') {
+        const pctIndex = event.target.value.indexOf('%')
+        displayValue = pctIndex === -1 ? event.target.value : event.target.value.slice(0, pctIndex)
+        displayValue = format.autoFormat(displayValue/100, this.props.field.schema.data_format, 2)
+        event.target.value = event.target.value/100
+      }
+      if (displayValue !== this.display_value) {
+        this.updateCellValue(event.target.value)
       }
       this.setState({editMode: false})
     }
