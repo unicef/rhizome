@@ -180,12 +180,13 @@ def ingest_situational():
     chart_11 = CustomChart.objects.create(
         title = 'LQAS',
         chart_json = {
-            "end_date":"2016-03-01",
-            "indicator_ids":[lqas_indicator_ids],
-            "campaign_ids":[5],
+            "start_date":"2015-04-22",
+            "end_date":"2016-04-22",
+            "indicator_ids":lqas_indicator_ids,
+            "campaign_ids":[5]
+            ,"groupBy":"indicator",
             "location_ids":[1],
-            "type":"StackedColumnChart",
-            "start_date":"2015-11-01"
+            "type":"StackedPercentColumnChart"
         },
         uuid = 'a7f581a5-50b7-4ad1-83ec-c899b3e2948b'
     )
