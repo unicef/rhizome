@@ -17,7 +17,7 @@ def ingest_base_dashboards(apps, schema_editor):
 # TRUNCATE TABLE custom_chart CASCADE;
 
 # run this in bash when you need to run the migration again:
-# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboards';"
+# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboard';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()

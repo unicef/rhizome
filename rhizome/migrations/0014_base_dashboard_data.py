@@ -20,7 +20,9 @@ from django.core.exceptions import ObjectDoesNotExist
 class DataIngestor(object):
 
     def __init__(self):
-        self.base_columns = [u'Province', u'PCODE', u'level', u'DCODE', u'geocode', u'District.Name', u'Alternative.Spell', u'LPD.group']
+        pass
+
+    # psql rhizome -c "DELETE FROM django_migrations where name like '%base_dashboard%';"
 
     def main(self):
 
@@ -35,13 +37,15 @@ class DataIngestor(object):
 
         self.indicator_sheet_df = self.xl.parse('indicators')
 
+        eoc_tag_id = IndicatorTag.objects.get(tag_name =\
+            'Kabul EOC Indicators').id
+        self.situational_dashboard_tag_id = IndicatorTag.objects.create(
+            tag_name = 'Situational Dashboard',
+            parent_tag_id = eoc_tag_id
+        ).id
+
         for ix, row in self.chart_index_df.iterrows():
             self.process_sheet(row.to_dict())
-
-        if len(DataPointComputed.objects.filter(
-            indicator__name = '# of Accepted Lots by 80%'
-        )) == 0:
-           raise Exception('The data was not loaded properly for LQAS')
 
         # self.validate_ingest()
 
@@ -101,7 +105,7 @@ class DataIngestor(object):
         ## handle indicators ##
         chart_indicator_df = self.indicator_sheet_df[self.indicator_sheet_df\
             ['chart_key'] == chart_key]
-        indicator_ids = self.upsert_indicator_ids(chart_indicator_df)
+        indicator_ids = self.upsert_indicator_ids(chart_name, chart_indicator_df)
 
         ## handle campaigns ##
         number_of_campaigns_to_process = sheet_dict['month_trend_count']
@@ -117,11 +121,10 @@ class DataIngestor(object):
         document, created = Document.objects\
             .get_or_create(doc_title = 'fake situational -- ' + chart_name)
 
-        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
+        # self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
 
-        # mr = MasterRefresh(1, document_id)
-        for c in campaign_ids:
-            ar = AggRefresh(c)
+        # for c in campaign_ids:
+        #     ar = AggRefresh(c)
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
 
@@ -174,18 +177,40 @@ class DataIngestor(object):
         # print'\n---dps after----\n'
         # print len(DataPoint.objects.all())
 
-    def upsert_indicator_ids(self, chart_indicator_df):
+    def upsert_indicator_ids(self, chart_name, chart_indicator_df):
+
+        chart_tag, created = IndicatorTag.objects.get_or_create(
+            tag_name = chart_name,
+            defaults = {'parent_tag_id': self.situational_dashboard_tag_id}
+        )
 
         indicator_id_list = []
+
+        IndicatorToTag.objects.filter(indicator_tag_id = chart_tag.id).delete()
 
         for ix, row in chart_indicator_df.iterrows():
             row_dict = row.to_dict()
             row_dict.pop('chart_key')
-            try:
-                ind_object = Indicator.objects.get(name=row_dict['name'])
-            except ObjectDoesNotExist:
-                ind_object = Indicator.objects.create(**row_dict)
+
+            indicator_name = row_dict['name']
+            indicator_short_name = row_dict['short_name']
+            row_dict.pop('name')
+            row_dict.pop('short_name')
+
+            ind_object, created = Indicator.objects\
+                .get_or_create(name = indicator_name,\
+                    short_name = indicator_short_name,\
+                 defaults = row_dict)
+
             indicator_id_list.append(ind_object.id)
+
+            IndicatorToTag.objects.create(
+                indicator_tag_id = chart_tag.id,
+                indicator_id = ind_object.id
+            )
+
+
+
 
         return indicator_id_list
 
