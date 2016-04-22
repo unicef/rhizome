@@ -12,7 +12,7 @@ function num (value, format = 'n') {
 
 function autoFormat (value, format, decimalPlaces = null) {
   if (format === 'pct' && value !== '') {
-    return (isNaN(decimalPlaces) ? Math.floor(value * 100) : (value*100).toFixed(decimalPlaces)) + '%'
+    return (isNaN(decimalPlaces) ? Math.floor(value * 100) : (value * 100).toFixed(decimalPlaces)) + '%'
   } else if (format === 'bool') {
     const boolValues = ['No', 'Yes']
     return boolValues[value]

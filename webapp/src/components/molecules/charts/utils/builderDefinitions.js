@@ -15,7 +15,8 @@ export default {
     // { name: 'ScatterChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
     // { name: 'PieChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] }
   ],
-  single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap', 'RawData'],
+  single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap'],
+  grouped_charts: ['LineChart', 'ColumnChart', 'StackedColumnChart', 'StackedPercentColumnChart', 'RawData'],
   multi_location_charts: ['TableChart', 'MapChart', 'BubbleMap'],
   groups: [
     { value: 'indicator', title: 'Indicators' },
