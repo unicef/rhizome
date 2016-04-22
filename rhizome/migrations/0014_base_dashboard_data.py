@@ -47,7 +47,7 @@ class DataIngestor(object):
         for ix, row in self.chart_index_df.iterrows():
             self.process_sheet(row.to_dict())
 
-        # self.validate_ingest()
+        self.validate_ingest()
 
     def validate_ingest(self):
 
@@ -93,7 +93,47 @@ class DataIngestor(object):
         if len(env_samples) == 0:
             raise Exception('The data was not loaded properly for t6')
 
+        polio_cases = DataPointComputed.objects.filter(
+            location_id = 1,
+            indicator__short_name = "polio cases"
+        )
 
+        if len(polio_cases) == 0:
+            raise Exception('The data was not loaded properly for m__1')
+
+        district_meeting = DataPointComputed.objects.filter(
+            location_id = 1,
+            indicator__short_name = 'District review and planning meeting'
+        )
+
+        if len(district_meeting) == 0:
+            raise Exception('The data was not loaded properly for t7')
+
+        num_vaccinated = DataPointComputed.objects.filter(
+            location_id = 1,
+            indicator__short_name = 'Number.Vaccinated.Recorded.3days'
+        )
+
+        if len(num_vaccinated) == 0:
+            raise Exception('The data was not loaded properly for t8')
+
+        # num_seen = DataPointComputed.objects.filter(
+        #     location_id = 1,
+        #     indicator__short_name = 'Number.Children.Seen.Market.Survey'
+        # )
+
+        # if len(num_seen) == 0:
+        #     raise Exception('The data was not loaded properly for t9')
+
+        num_seen_pca = DataPointComputed.objects.filter(
+            location_id = 1,
+            indicator__short_name = '# children seen - PCA'
+        )
+
+        if len(num_seen_pca) == 0:
+            raise Exception('The data was not properly loaded for t11')
+
+        
     def process_sheet(self, sheet_dict):
 
         # print '==sheet_dict==\n' * 2
@@ -121,10 +161,10 @@ class DataIngestor(object):
         document, created = Document.objects\
             .get_or_create(doc_title = 'fake situational -- ' + chart_name)
 
-        # self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
+        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
 
-        # for c in campaign_ids:
-        #     ar = AggRefresh(c)
+        for c in campaign_ids:
+            ar = AggRefresh(c)
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
 
@@ -171,11 +211,11 @@ class DataIngestor(object):
             })
             dwc_batch.append(dwc_obj)
 
-        # print'\n---dps before----\n'
-        # print len(DataPoint.objects.all())
+        print'\n---dps before----\n'
+        print len(DataPoint.objects.all())
         DataPoint.objects.bulk_create(dwc_batch)
-        # print'\n---dps after----\n'
-        # print len(DataPoint.objects.all())
+        print'\n---dps after----\n'
+        print len(DataPoint.objects.all())
 
     def upsert_indicator_ids(self, chart_name, chart_indicator_df):
 
@@ -208,9 +248,6 @@ class DataIngestor(object):
                 indicator_tag_id = chart_tag.id,
                 indicator_id = ind_object.id
             )
-
-
-
 
         return indicator_id_list
 

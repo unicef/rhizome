@@ -41,7 +41,7 @@ def ingest_situational():
         title = 'Polio Cases - 2014 to Present',
         chart_json =    {
             "end_date":"2016-03-01",
-            "indicator_ids":[83],
+            "indicator_ids":get_indicators_by_tag_name('Polio Cases 2014-Present'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"BubbleMap",
@@ -134,7 +134,7 @@ def ingest_situational():
         title = 'Preparatory Indicators',
         chart_json = {
             "end_date":"2016-03-01"
-            ,"indicator_ids":[15],
+            ,"indicator_ids":get_indicators_by_tag_name('Preparatory Indicators'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -147,7 +147,7 @@ def ingest_situational():
         title = 'Campaign Analysis',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[15],
+            "indicator_ids":get_indicators_by_tag_name('Campaign Analysis'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -157,7 +157,7 @@ def ingest_situational():
     )
 
     chart_9 = CustomChart.objects.create(
-        title = ' Missed Children PCA vs. Out of House',
+        title = 'Missed Children PCA vs. Out of House',
         chart_json = {
             "end_date":"2016-03-01",
             "indicator_ids":[34,21],
@@ -173,7 +173,7 @@ def ingest_situational():
         title = 'Missed Children By Reason',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[15],
+            "indicator_ids":get_indicators_by_tag_name('Missed Chilren By Reason'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"StackedColumnChart",
