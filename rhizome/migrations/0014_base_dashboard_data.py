@@ -38,6 +38,15 @@ class DataIngestor(object):
         for ix, row in self.chart_index_df.iterrows():
             self.process_sheet(row.to_dict())
 
+        if len(DataPointComputed.objects.filter(
+            indicator__name = '# of Accepted Lots by 80%'
+        )) == 0:
+           raise Exception('The data was not loaded properly for LQAS')
+
+        # self.validate_ingest()
+
+    def validate_ingest(self):
+
         afghanistan_missed_children_qs = DataPointComputed.objects\
            .filter(
                location_id = 1,
@@ -46,14 +55,11 @@ class DataIngestor(object):
         if len(afghanistan_missed_children_qs) == 0:
            raise Exception('The data was not loaded properly for t5')
 
-        print Indicator.objects.filter(short_name = 'Infected district (Yes/No)').values()[0]['id']
-        print 'total dps'
-        print len(DataPoint.objects.all())
         infected_dist_dwcs= DataPointComputed.objects\
             .filter(
                 location_id = 1,
                 indicator__short_name = 'Infected district (Yes/No)'
-            )   
+            )
 
         if len(infected_dist_dwcs) == 0:
            raise Exception('The data was not loaded properly for t3')
@@ -82,7 +88,7 @@ class DataIngestor(object):
 
         if len(env_samples) == 0:
             raise Exception('The data was not loaded properly for t6')
-        # raise Exception('you shall not pass!')
+
 
     def process_sheet(self, sheet_dict):
 
@@ -108,32 +114,38 @@ class DataIngestor(object):
             location_type__name = sheet_dict['data_level']
         ).values_list('id', flat=True)
 
-        document_id = Document.objects.create(doc_title = 'fake situational -- ' + chart_name).id
-        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document_id)
+        document, created = Document.objects\
+            .get_or_create(doc_title = 'fake situational -- ' + chart_name)
+
+        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
 
         # mr = MasterRefresh(1, document_id)
         for c in campaign_ids:
             ar = AggRefresh(c)
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
+
         indicator_df_cols =['id', 'data_format']
         ind_df = DataFrame(list(Indicator.objects.filter(id__in= indicator_ids).values('id', 'data_format')), columns = indicator_df_cols)
         ind_df.columns = ['indicator_id', 'data_format']
+
         campaign_list_of_lists  = [[camp] for camp in campaign_ids]
         campaign_df = DataFrame(campaign_list_of_lists, columns = ['campaign_id'])
-        print 'campaign_df'
-        print campaign_df
+
+
         location_list_of_lists  = [[loc] for loc in location_ids]
         location_df = DataFrame(location_list_of_lists, columns = ['location_id'])
+
         ind_df['join_col'] = 1
         campaign_df['join_col'] = 1
         location_df['join_col'] = 1
 
         first_merged_df = ind_df.merge(campaign_df,on='join_col')
         final_merged_df = first_merged_df.merge(location_df, on='join_col')
-        source_submission = SourceSubmission.objects.create(
+        source_submission, created = SourceSubmission.objects.get_or_create(
             document_id = document_id,
-            row_number = 1
+            row_number = 1,
+            defaults = { 'instance_guid': document_id }
         )
 
         dwc_batch = []
@@ -145,14 +157,7 @@ class DataIngestor(object):
                 rand_val = randint(0,1)
             if row.data_format == 'pct':
                 rand_val = float(randint(0, 100))/100
-            # print 'row.indicator_id'
-            # print row.indicator_id
-            # print 'row.campaign_id'
-            # print row.campaign_id
-            # print 'row.location_id'
-            # print row.location_id
-            # print 'rand_val'
-            # print rand_val
+
             dwc_obj = DataPoint(**{
                 'indicator_id':row.indicator_id,
                 'campaign_id':row.campaign_id,
@@ -163,15 +168,12 @@ class DataIngestor(object):
             })
             dwc_batch.append(dwc_obj)
 
-
-        # DataPoint.objects.all().delete()
-        print'\n-------\n'
-        print 'dps before'
-        print len(DataPoint.objects.all())
+        # print'\n---dps before----\n'
+        # print len(DataPoint.objects.all())
         DataPoint.objects.bulk_create(dwc_batch)
-        print'\n-------\n'
-        print 'dps after'
-        print len(DataPoint.objects.all())
+        # print'\n---dps after----\n'
+        # print len(DataPoint.objects.all())
+
     def upsert_indicator_ids(self, chart_indicator_df):
 
         indicator_id_list = []
@@ -180,7 +182,7 @@ class DataIngestor(object):
             row_dict = row.to_dict()
             row_dict.pop('chart_key')
             try:
-                ind_object = Indicator.objects.get(short_name=row_dict['short_name'])
+                ind_object = Indicator.objects.get(name=row_dict['name'])
             except ObjectDoesNotExist:
                 ind_object = Indicator.objects.create(**row_dict)
             indicator_id_list.append(ind_object.id)
