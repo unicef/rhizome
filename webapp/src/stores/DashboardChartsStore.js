@@ -138,7 +138,8 @@ var DashboardChartsStore = Reflux.createStore({
         end_date: chart.end_date,
         campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
         location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
+        groupBy: chart.groupBy
       })
     })
   },
@@ -427,6 +428,7 @@ var DashboardChartsStore = Reflux.createStore({
     new_chart.selected_indicators = chart.chart_json.indicator_ids.map(id => this.indicators.index[id])
     new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
     new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
+    new_chart.groupBy = chart.chart_json.groupBy
     new_chart.selectTypeMode = false
     new_chart.editMode = false
     return new_chart

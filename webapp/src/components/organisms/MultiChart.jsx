@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
+import DatapointTable from 'components/molecules/tables/DatapointTable'
 import ChartTypeSelector from 'components/molecules/ChartTypeSelector'
 import ChartSelector from 'components/molecules/ChartSelector'
 import Placeholder from 'components/molecules/Placeholder'
@@ -15,7 +16,6 @@ import StackedColumnChart from 'components/molecules/highcharts/StackedColumnCha
 import StackedPercentColumnChart from 'components/molecules/highcharts/StackedPercentColumnChart'
 import TableChart from 'components/molecules/charts/TableChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
-import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
 import MultiChartControls from 'components/organisms/MultiChartControls'
 import MultiChartHeader from 'components/organisms/MultiChartHeader'
@@ -68,11 +68,11 @@ const MultiChart = React.createClass({
     } else if (type === 'BarChart') {
       return <BarChart {...this.props.chart} />
     } else {
-      return <DatabrowserTable {...this.props.chart} />
+      return <DatapointTable {...this.props.chart} />
     }
   },
 
-  render: function () { console.info('MultiChart - render '+ this.props.chart.title)
+  render: function () {
     const chart = this.props.chart
 
     const chart_selector = (

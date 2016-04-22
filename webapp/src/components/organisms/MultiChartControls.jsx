@@ -55,6 +55,7 @@ const MultiChartControls = React.createClass({
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
+    const groupedChart = _.indexOf(builderDefinitions.grouped_charts, type) !== -1
 
     const palette_selector = type !== 'RawData' ? (
       <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
@@ -92,8 +93,6 @@ const MultiChartControls = React.createClass({
       </div>
     )
 
-    const groupedChart = type === 'LineChart' || type === 'ColumnChart' || type === 'StackedColumnChart' || type === 'StackedPercentColumnChart'
-    
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
         <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={props.setGroupBy}>
@@ -122,7 +121,7 @@ const MultiChartControls = React.createClass({
     ) : ''
 
     const multiIndicator = type === 'TableChart' || type === 'RawData'
-    const multiLocation = type === 'TableChart' || type === 'RawData'
+    const multiLocation = type === 'TableChart'
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = groupedChart && chart.groupBy === 'indicator'
 
@@ -134,7 +133,7 @@ const MultiChartControls = React.createClass({
         deselectLocation={props.deselectLocation}
         setLocations={props.setLocations}
         clearSelectedLocations={props.clearSelectedLocations}
-        classes={multiLocation && !groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
+        classes={multiLocation || groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiLocation || groupByIndicator}
         hideLastLevel={chart.type === 'MapChart'}
       />
