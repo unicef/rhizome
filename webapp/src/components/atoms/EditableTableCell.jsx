@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
+import format from 'utilities/format'
 
 import randomHash from 'utilities/randomHash'
 import TableCell from 'components/atoms/TableCell'
@@ -32,22 +33,33 @@ let EditableTableCell = React.createClass({
   tooltip: null,
 
   componentWillMount: function () {
-    this.display_value = this.props.value
     this.isBool = this.props.field.schema.data_format === 'bool'
+    this.display_value = this.isBool ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2)
   },
 
   enterEditMode: function (event) {
     this.setState({ editMode: true })
-    EditableTableCellActions.focusInput(this.cell_id, this.props.value)
+    EditableTableCellActions.focusInput(this.cell_id, this.display_value)
   },
 
   exitEditMode: function (event) {
     if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
-      if (event.target.value !== this.display_value) {
+      if (this._shouldUpdateCell(event)) {
         this.updateCellValue(event.target.value)
       }
       this.setState({editMode: false})
     }
+  },
+
+  _shouldUpdateCell: function(event){
+    let displayValue = event.target.value
+    if (this.props.field.schema.data_format === 'pct') {
+      const pctIndex = event.target.value.indexOf('%')
+      displayValue = pctIndex === -1 ? event.target.value : event.target.value.slice(0, pctIndex)
+      displayValue = format.autoFormat(displayValue/100, this.props.field.schema.data_format, 2)
+      event.target.value = event.target.value/100
+    }
+    return displayValue !== this.display_value
   },
 
   updateCellValue: function (new_value) {
@@ -58,10 +70,8 @@ let EditableTableCell = React.createClass({
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
     }
-    // WHAT DOES THIS DO -- Under what circubmstance will this prevent bad data ///
     if (!validation) {
       this.setState({ editMode: false, hasError: true })
-
     } else {
       this.isSaving = true
       let query_params = {
@@ -69,7 +79,7 @@ let EditableTableCell = React.createClass({
         campaign_id: this.props.row.campaign_id.id,
         indicator_id: this.props.field.key,
         computed_id: this.props.row[this.props.field.key].computed,
-        value: this.props.field.schema.data_format === 'pct' ? new_value / 100.00 : new_value
+        value: new_value
       }
       let api_response = {}
       if (query_params.computed_id) {
@@ -80,19 +90,17 @@ let EditableTableCell = React.createClass({
       api_response.then(response => {
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
-        this.display_value = query_params.value
         this.isSaving = false
         this.hasError = false
         if (!this.isBool) { this.setState({editMode: false}) }
       }, reject => {
-        this.display_value = query_params.value
         this.isSaving = false
         this.hasError = true
         if (!this.isBool) { this.setState({editMode: false}) }
       })
     }
+    this.display_value = this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
 
-    this.display_value = new_value
     this.forceUpdate()
   },
 
@@ -135,7 +143,6 @@ let EditableTableCell = React.createClass({
           field={this.props.field}
           row={this.props.row}
           value={this.display_value}
-          formatValue={this.props.formatValue}
           classes={classes}
           onClick={!this.state.editMode ? this.enterEditMode : null}
           hideValue={this.state.editMode || this.isSaving}>

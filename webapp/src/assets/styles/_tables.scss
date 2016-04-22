@@ -44,6 +44,7 @@ table {
   }
   tr {
     td {
+      padding: 0.4625rem 0.625rem;
       transition: background-color 300ms ease-in-out;
       background-color: transparent;
       cursor: default;
@@ -111,7 +112,7 @@ table {
       background-color: #FFFFFF;
       padding: 0;
       margin-top: 10;
-
+      font-weight: bold;
       &.more {
         font-size: rem-calc(10);
         text-align: center;
@@ -302,9 +303,18 @@ $valueColumnWidth: 80px;
 .empty,
 .loading
 {
-  // background-color: #fafafa;
   background-color: transparent;
   color: #999;
   text-align: center;
   padding: 40px 0;
+}
+
+.percent-bar {
+  background: #f1f1f1;
+  width: 100%;
+  > div {
+    text-align: center;
+    display: inline-block;
+    min-width: 2rem;
+  }
 }

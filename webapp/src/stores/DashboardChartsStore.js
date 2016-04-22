@@ -138,7 +138,8 @@ var DashboardChartsStore = Reflux.createStore({
         end_date: chart.end_date,
         campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
         location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
+        groupBy: chart.groupBy
       })
     })
   },
@@ -273,11 +274,12 @@ var DashboardChartsStore = Reflux.createStore({
     }
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, this.charts[uuid].type) !== -1
     if (chartShowsOneCampaign) {
-      this.charts[uuid].start_date = this.charts[uuid].selected_campaigns[0].start_date
-      this.charts[uuid].end_date = this.charts[uuid].selected_campaigns[0].end_date
-      if (this.charts[uuid].start_date === this.charts[uuid].end_date) {
-        this.charts[uuid].start_date = moment(this.charts[uuid].start_date).subtract(1, 'M').format('YYYY-MM-DD')
-        this.charts[uuid].end_date = moment(this.charts[uuid].start_date).add(1, 'M').format('YYYY-MM-DD')
+      const campaign_start_date = this.charts[uuid].selected_campaigns[0].start_date
+      const campaign_end_date = this.charts[uuid].selected_campaigns[0].end_date
+      this.charts[uuid].start_date = campaign_start_date
+      this.charts[uuid].end_date = campaign_end_date
+      if (campaign_start_date === campaign_end_date) {
+        this.charts[uuid].end_date = moment(campaign_end_date).add(1, 'M').format('YYYY-MM-DD')
       }
     }
   },
@@ -426,6 +428,7 @@ var DashboardChartsStore = Reflux.createStore({
     new_chart.selected_indicators = chart.chart_json.indicator_ids.map(id => this.indicators.index[id])
     new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
     new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
+    new_chart.groupBy = chart.chart_json.groupBy
     new_chart.selectTypeMode = false
     new_chart.editMode = false
     return new_chart

@@ -10,12 +10,14 @@ export default {
     { name: 'LineChart', groupBy: true, locationLevel: true, timeRadios: ['all', '1year', '3month'] },
     { name: 'ColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
     { name: 'StackedColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
+    { name: 'StackedPercentColumnChart', groupBy: true, locationLevel: true, timeRadios: ['1year', '3month', '1month'] },
     { name: 'BarChart', groupBy: true, locationLevel: true, timeRadios: ['1month'] }
     // { name: 'ScatterChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] },
     // { name: 'PieChart', groupBy: false, locationLevel: true, timeRadios: ['1month'] }
   ],
-  single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap', 'RawData'],
-  multi_location_charts: ['TableChart', 'MapChart', 'BubbleMap'],
+  single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap', 'StackedColumnChart', 'StackedPercentColumnChart'],
+  grouped_charts: ['LineChart', 'ColumnChart', 'StackedColumnChart', 'StackedPercentColumnChart', 'RawData'],
+  multi_location_charts: ['TableChart', 'MapChart', 'BubbleMap', 'StackedColumnChart', 'StackedPercentColumnChart'],
   groups: [
     { value: 'indicator', title: 'Indicators' },
     { value: 'location', title: 'Locations' }

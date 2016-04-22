@@ -4,7 +4,7 @@ import React from 'react'
 import HighChart from 'components/molecules/highcharts/HighChart'
 import format from 'utilities/format'
 
-class StackedColumnChart extends HighChart {
+class StackedPercentColumnChart extends HighChart {
 
   setConfig = function () {
     const props = this.props
@@ -17,10 +17,10 @@ class StackedColumnChart extends HighChart {
         categories: locations.map(location => location.name)
       },
       yAxis: {
-        title: { text: '' }
+        title: { text: 'Percent' }
       },
       plotOptions: {
-        column: { stacking: 'normal' }
+        column: { stacking: 'percent' }
       },
       tooltip: {
         xDateFormat: '%b %Y',
@@ -48,4 +48,4 @@ class StackedColumnChart extends HighChart {
   }
 }
 
-export default StackedColumnChart
+export default StackedPercentColumnChart

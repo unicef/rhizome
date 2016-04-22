@@ -76,7 +76,8 @@ const ChartPage = React.createClass({
         end_date: chart.end_date,
         campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
         location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id)
+        indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
+        groupBy: chart.groupBy
       })
     })
   },
