@@ -41,7 +41,8 @@ const IndicatorSelector = React.createClass({
     this.props.indicators.list.forEach(indicator_group => {
       let group = Object.assign({}, indicator_group)
       if (this.props.multi && this.props.filterByFormat && first_indicator) {
-        group.children = group.children.filter(item => first_indicator.data_format === item.data_format)
+        // Filter out indicators of a different data_format from the dropdown menu
+        // group.children = group.children.filter(item => first_indicator.data_format === item.data_format)
       }
       group.children = this.markDisabledIndicators(group.children, selected_ids)
       indicators.push(group)
