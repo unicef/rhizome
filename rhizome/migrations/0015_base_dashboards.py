@@ -12,20 +12,28 @@ from rhizome.models import *
 import pandas as pd
 
 def ingest_base_dashboards(apps, schema_editor):
-#
+
 # psql rhizome -c "TRUNCATE TABLE custom_dashboard CASCADE;
 # TRUNCATE TABLE custom_chart CASCADE;
 
-# run this in psql in case you need to run the migration again:
-# DELETE FROM django_migrations where name like '%base_dashboar%';"
+# run this in bash when you need to run the migration again:
+# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboards';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
 
+    ingest_situational()
     ingest_pre_campaign()
     ingest_intra_campaign()
     ingest_post_campaign()
-    ingest_situational()
+
+def get_indicators_by_tag_name(tag_name):
+
+    tag_id = IndicatorTag.objects.get(tag_name = tag_name).id
+
+    return Indicator.objects.filter(indicatortotag__indicator_tag_id = tag_id)\
+        .values_list('id', flat=True)
+
 
 def ingest_situational():
 
@@ -174,15 +182,13 @@ def ingest_situational():
         uuid = '3f04d269-96db-4424-866f-8e09b5eeb9f3'
     )
 
-    lqas_indicator_ids = list(Indicator.objects\
-        .filter(name__contains='Lots').values_list('id',flat=True))
 
     chart_11 = CustomChart.objects.create(
         title = 'LQAS',
         chart_json = {
             "start_date":"2015-04-22",
             "end_date":"2016-04-22",
-            "indicator_ids":lqas_indicator_ids,
+            "indicator_ids": get_indicators_by_tag_name('LQAS'),
             "campaign_ids":[5]
             ,"groupBy":"indicator",
             "location_ids":[1],
