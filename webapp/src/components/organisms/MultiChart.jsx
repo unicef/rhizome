@@ -14,6 +14,7 @@ import LineChart from 'components/molecules/highcharts/LineChart'
 import ColumnChart from 'components/molecules/highcharts/ColumnChart'
 import StackedColumnChart from 'components/molecules/highcharts/StackedColumnChart'
 import StackedPercentColumnChart from 'components/molecules/highcharts/StackedPercentColumnChart'
+import DualAxisLineAndColumn from 'components/molecules/highcharts/DualAxisLineAndColumn'
 import TableChart from 'components/molecules/charts/TableChart'
 import ChoroplethMap from 'components/molecules/charts/ChoroplethMap'
 
@@ -63,6 +64,8 @@ const MultiChart = React.createClass({
       return <StackedColumnChart {...this.props.chart} />
     } else if (type === 'StackedPercentColumnChart') {
       return <StackedPercentColumnChart {...this.props.chart} />
+    } else if (type === 'DualAxisLineAndColumn') {
+      return <DualAxisLineAndColumn {...this.props.chart} />
     } else if (type === 'BubbleMap') {
       return <BubbleMapChart {...this.props.chart} />
     } else if (type === 'BarChart') {
