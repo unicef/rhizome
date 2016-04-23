@@ -31,7 +31,19 @@ let EditableTableCell = React.createClass({
   cell_id: 'edit_id_' + randomHash(),
   display_value: null,
   tooltip: null,
+  classes: '',
 
+  getInitialState: function() {
+    return {
+      isBool: this.props.field.schema.data_format === 'bool',
+      cell_id: 'edit_id_' + randomHash(),
+      display_value: this.props.field.schema.data_format === 'bool' ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2),
+      tooltip: null,
+      editMode: false,
+      isSaving: false,
+      hasError: false
+    }
+  },
   componentWillMount: function () {
     this.isBool = this.props.field.schema.data_format === 'bool'
     this.display_value = this.isBool ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2)
@@ -104,22 +116,24 @@ let EditableTableCell = React.createClass({
     this.forceUpdate()
   },
 
-  render: function () {
-    let classes = this.props.classes + ' editable '
-    classes += this.state.editMode ? ' in-edit-mode' : ''
-    classes += this.isSaving ? ' saving ' : ''
-    classes += this.hasError ? ' error ' : ''
-    classes += this.display_value === '' ? ' missing ' : ''
-
-    if (this.isBool) {
-      const boolean_options = [
+  _setClasses: function () {
+    this.classes = (this.props.classes + ' editable ' +
+                   (this.state.editMode ? ' in-edit-mode' : '') +
+                   (this.isSaving ? ' saving ' : '') +
+                   (this.hasError ? ' error ' : '') +
+                   (this.display_value === '' ? ' missing ' : ''))
+  },
+  _getBooleanComponent: function () {
+    const boolean_options = [
         { 'value': '0', 'title': 'No' },
         { 'value': '1', 'title': 'Yes' },
         { 'value': '', 'title': 'No Data' }
       ]
+      console.log('this.display_value', this.display_value)
       const selected_item = boolean_options[this.display_value]
+      console.log('this.classes', this.classes)
       return (
-        <td className={'editable' + classes}>
+        <td className={'editable' + this.classes}>
           <DropdownMenu
             items={boolean_options}
             sendValue={this.updateCellValue}
@@ -130,26 +144,35 @@ let EditableTableCell = React.createClass({
           />
         </td>
       )
+  },
+  _getTableCellComponent: function () {
+    const input_field = (
+      <input placeholder={this.display_value}
+        onBlur={this.exitEditMode}
+        onKeyUp={this.exitEditMode}
+        id={this.cell_id}
+        type='text'/>
+    )
+    return (
+      <TableCell
+        field={this.props.field}
+        row={this.props.row}
+        value={this.display_value}
+        classes={this.classes}
+        onClick={!this.state.editMode ? this.enterEditMode : null}
+        hideValue={this.state.editMode || this.isSaving}>
+        {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
+        {this.state.editMode ? input_field : null}
+      </TableCell>
+    )
+  },
+
+  render: function () {
+    this._setClasses()
+    if (this.isBool) {
+      return this._getBooleanComponent()
     } else {
-      const input_field = (
-        <input placeholder={this.display_value}
-          onBlur={this.exitEditMode}
-          onKeyUp={this.exitEditMode}
-          id={this.cell_id}
-          type='text'/>
-      )
-      return (
-        <TableCell
-          field={this.props.field}
-          row={this.props.row}
-          value={this.display_value}
-          classes={classes}
-          onClick={!this.state.editMode ? this.enterEditMode : null}
-          hideValue={this.state.editMode || this.isSaving}>
-          {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
-          {this.state.editMode ? input_field : null}
-        </TableCell>
-      )
+      return this._getTableCellComponent()
     }
   }
 })
