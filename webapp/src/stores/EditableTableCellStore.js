@@ -15,11 +15,6 @@ let EditableTableCellStore = Reflux.createStore({
     isSaving: false
   },
 
-  onSetDefaultData: function (currentState) {
-    _.merge(this.data, currentState)
-    this.trigger(this.data)
-  },
-
   onFocusInput: function (cell_id, value) {
     setTimeout(() => {
       let element = document.getElementById(cell_id)
@@ -28,9 +23,7 @@ let EditableTableCellStore = Reflux.createStore({
       element.select()
     }, 10)
   },
-  onGetBooleanComponent () {
 
-  },
   onValidateValue: function (value) {
     if (_.isNull(value)) {
       this.data.new_value = null
