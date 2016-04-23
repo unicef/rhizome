@@ -40,6 +40,7 @@ let EditableTableCell = React.createClass({
   },
 
   componentWillMount: function () {
+    EditableTableCellActions.setDefaultData(this.state)
   },
 
   enterEditMode: function (event) {
@@ -108,51 +109,63 @@ let EditableTableCell = React.createClass({
     this.forceUpdate()
   },
 
+  _getClasses: function () {
+    return (this.props.classes + ' editable ' +
+           (this.state.editMode ? ' in-edit-mode' : '') +
+           (this.state.isSaving ? ' saving ' : '') +
+           (this.state.hasError ? ' error ' : '') +
+           (this.state.display_value === '' ? ' missing ' : ''))
+  },
+
+  _getBooleanComponent: function (classes) {
+    const boolean_options = [
+      { 'value': '0', 'title': 'No' },
+      { 'value': '1', 'title': 'Yes' },
+      { 'value': '', 'title': 'No Data' }
+    ]
+    const selected_item = boolean_options[this.state.display_value]
+    return (
+      <td className={'editable' + classes}>
+        <DropdownMenu
+          items={boolean_options}
+          sendValue={this.updateCellValue}
+          text={selected_item ? selected_item.title : ''}
+          onChange={this.updateCellValue}
+          style='boolean-dropdown'
+          searchable={false}
+        />
+      </td>
+    )
+  },
+
+  _getTableCell: function (classes) {
+    const input_field = (
+      <input placeholder={this.state.display_value}
+        onBlur={this.exitEditMode}
+        onKeyUp={this.exitEditMode}
+        id={this.state.cell_id}
+        type='text'/>
+    )
+    return (
+      <TableCell
+        field={this.props.field}
+        row={this.props.row}
+        value={this.state.display_value}
+        classes={classes}
+        onClick={!this.state.editMode ? this.enterEditMode : null}
+        hideValue={this.state.editMode || this.state.isSaving}>
+        {this.state.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
+        {this.state.editMode ? input_field : null}
+      </TableCell>
+    )
+  },
+
   render: function () {
-    let classes = this.props.classes + ' editable '
-    classes += this.state.editMode ? ' in-edit-mode' : ''
-    classes += this.state.isSaving ? ' saving ' : ''
-    classes += this.state.hasError ? ' error ' : ''
-    classes += this.display_value === '' ? ' missing ' : ''
+    const classes = this._getClasses()
     if (this.state.isBool) {
-      const boolean_options = [
-        { 'value': '0', 'title': 'No' },
-        { 'value': '1', 'title': 'Yes' },
-        { 'value': '', 'title': 'No Data' }
-      ]
-      const selected_item = boolean_options[this.state.display_value]
-      return (
-        <td className={'editable' + classes}>
-          <DropdownMenu
-            items={boolean_options}
-            sendValue={this.updateCellValue}
-            text={selected_item ? selected_item.title : ''}
-            onChange={this.updateCellValue}
-            style='boolean-dropdown'
-            searchable={false}
-          />
-        </td>
-      )
+      return this._getBooleanComponent(classes)
     } else {
-      const input_field = (
-        <input placeholder={this.state.display_value}
-          onBlur={this.exitEditMode}
-          onKeyUp={this.exitEditMode}
-          id={this.state.cell_id}
-          type='text'/>
-      )
-      return (
-        <TableCell
-          field={this.props.field}
-          row={this.props.row}
-          value={this.state.display_value}
-          classes={classes}
-          onClick={!this.state.editMode ? this.enterEditMode : null}
-          hideValue={this.state.editMode || this.state.isSaving}>
-          {this.state.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
-          {this.state.editMode ? input_field : null}
-        </TableCell>
-      )
+      return this._getTableCell(classes)
     }
   }
 })
