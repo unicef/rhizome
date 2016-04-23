@@ -44,7 +44,6 @@ class BaseResource(Resource):
         if 'location_id__in' in request.GET:
             return request.GET['location_id__in'].split(',')
 
-
         elif 'location_level' in request.GET:
             location_type_id = LocationType.objects\
                 .get(name = request.GET['location_level'])
@@ -57,21 +56,31 @@ class BaseResource(Resource):
 
         elif 'parent_location_id__in' in request.GET:
 
+
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             ## begin hack ##
             #### Since we do not have shapes for Regions, we render the ####
               ## shapes for provinces when Afghanistan is requested ##
-            if pl_id_list == ['1']:
+              ## thus we have to put this in to handle map requests for:
+                    # - geo api
+                    # - MapChart
+                    # - BubbleMap
+              ## NOTE : we can remove this hack if we are able to generate
+              ## region shapes for afghanistan ( south, north etc )
+
+            full_request = request.path + request.META['QUERY_STRING']
+            needs_to_be_hacked = any(x in full_request for x in \
+                ['geo','BubbleMap','MapChart'])
+
+            if pl_id_list == ['1'] and needs_to_be_hacked:
                 pl_id_list = Location.objects.filter(
                     location_type__name = 'Region'
                 ).values_list('id', flat=True)
             ## end hack ##
 
-            x =  Location.objects\
+            return Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
-
-            return x
 
         else:
             return Location.objects.all().values_list('id', flat=True)
@@ -136,4 +145,4 @@ class BaseResource(Resource):
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()
 
-        return response        
+        return response
