@@ -27,14 +27,19 @@ let EditableTableCell = React.createClass({
     classes: React.PropTypes.string
   },
 
-  isBool: false,
-  cell_id: 'edit_id_' + randomHash(),
-  display_value: null,
-  tooltip: null,
+  getInitialState: function() {
+    return {
+      isBool: this.props.field.schema.data_format === 'bool',
+      cell_id: 'edit_id_' + randomHash(),
+      display_value: this.props.field.schema.data_format === 'bool' ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2),
+      tooltip: null,
+      editMode: false,
+      isSaving: false,
+      hasError: false
+    }
+  },
 
   componentWillMount: function () {
-    this.isBool = this.props.field.schema.data_format === 'bool'
-    this.display_value = this.isBool ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2)
   },
 
   enterEditMode: function (event) {
@@ -69,8 +74,7 @@ let EditableTableCell = React.createClass({
       ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
       this.display_value = ''
       this.setState({ editMode: false, hasError: false })
-    }
-    if (!validation) {
+    } else if (!validation) {
       this.setState({ editMode: false, hasError: true })
     } else {
       this.isSaving = true
@@ -107,17 +111,16 @@ let EditableTableCell = React.createClass({
   render: function () {
     let classes = this.props.classes + ' editable '
     classes += this.state.editMode ? ' in-edit-mode' : ''
-    classes += this.isSaving ? ' saving ' : ''
-    classes += this.hasError ? ' error ' : ''
+    classes += this.state.isSaving ? ' saving ' : ''
+    classes += this.state.hasError ? ' error ' : ''
     classes += this.display_value === '' ? ' missing ' : ''
-
-    if (this.isBool) {
+    if (this.state.isBool) {
       const boolean_options = [
         { 'value': '0', 'title': 'No' },
         { 'value': '1', 'title': 'Yes' },
         { 'value': '', 'title': 'No Data' }
       ]
-      const selected_item = boolean_options[this.display_value]
+      const selected_item = boolean_options[this.state.display_value]
       return (
         <td className={'editable' + classes}>
           <DropdownMenu
@@ -132,21 +135,21 @@ let EditableTableCell = React.createClass({
       )
     } else {
       const input_field = (
-        <input placeholder={this.display_value}
+        <input placeholder={this.state.display_value}
           onBlur={this.exitEditMode}
           onKeyUp={this.exitEditMode}
-          id={this.cell_id}
+          id={this.state.cell_id}
           type='text'/>
       )
       return (
         <TableCell
           field={this.props.field}
           row={this.props.row}
-          value={this.display_value}
+          value={this.state.display_value}
           classes={classes}
           onClick={!this.state.editMode ? this.enterEditMode : null}
-          hideValue={this.state.editMode || this.isSaving}>
-          {this.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
+          hideValue={this.state.editMode || this.state.isSaving}>
+          {this.state.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
           {this.state.editMode ? input_field : null}
         </TableCell>
       )
