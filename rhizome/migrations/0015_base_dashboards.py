@@ -17,7 +17,7 @@ def ingest_base_dashboards(apps, schema_editor):
 # TRUNCATE TABLE custom_chart CASCADE;
 
 # run this in bash when you need to run the migration again:
-# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboard';"
+# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboards';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
@@ -69,17 +69,18 @@ def ingest_situational():
     chart_3 = CustomChart.objects.create(
         title = 'Immunity Profile',
         chart_json = {
+            "start_date":"2016-03-01",
             "end_date":"2016-03-01",
-            "indicator_ids":[Indicator.objects.get(name="Number of reported Non Polio AFP cases").id,
-            Indicator.objects.get(name="Number of Unvaccinated Non Polio AFP Cases").id,
-            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 1-3 doses").id,
-            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 4-6 doses").id,
-            Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 7+ doses").id,
+            "indicator_ids":[
+                Indicator.objects.get(name="Number of Unvaccinated Non Polio AFP Cases").id,
+                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 1-3 doses").id,
+                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 4-6 doses").id,
+                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 7+ doses").id
             ],
             "campaign_ids":[5],
             "location_ids":[1],
-            "type":"StackedColumnChart",
-            "start_date":"2015-11-01"
+            "groupBy":"indicator",
+            "type":"StackedPercentColumnChart"
         },
         uuid = '1874bf4a-140a-420a-a3e2-0d29430786c0'
     )
@@ -186,7 +187,7 @@ def ingest_situational():
     chart_11 = CustomChart.objects.create(
         title = 'LQAS',
         chart_json = {
-            "start_date":"2015-04-22",
+            "start_date":"2016-03-01",
             "end_date":"2016-04-22",
             "indicator_ids": get_indicators_by_tag_name('LQAS'),
             "campaign_ids":[5]

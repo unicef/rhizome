@@ -47,7 +47,7 @@ class DataIngestor(object):
         for ix, row in self.chart_index_df.iterrows():
             self.process_sheet(row.to_dict())
 
-        self.validate_ingest()
+        # self.validate_ingest()
 
     def validate_ingest(self):
 
@@ -133,7 +133,7 @@ class DataIngestor(object):
         if len(num_seen_pca) == 0:
             raise Exception('The data was not properly loaded for t11')
 
-        
+
     def process_sheet(self, sheet_dict):
 
         # print '==sheet_dict==\n' * 2
@@ -174,7 +174,6 @@ class DataIngestor(object):
 
         campaign_list_of_lists  = [[camp] for camp in campaign_ids]
         campaign_df = DataFrame(campaign_list_of_lists, columns = ['campaign_id'])
-
 
         location_list_of_lists  = [[loc] for loc in location_ids]
         location_df = DataFrame(location_list_of_lists, columns = ['location_id'])
@@ -235,11 +234,9 @@ class DataIngestor(object):
             indicator_name = row_dict['name']
             indicator_short_name = row_dict['short_name']
             row_dict.pop('name')
-            row_dict.pop('short_name')
 
             ind_object, created = Indicator.objects\
                 .get_or_create(name = indicator_name,\
-                    short_name = indicator_short_name,\
                  defaults = row_dict)
 
             indicator_id_list.append(ind_object.id)
