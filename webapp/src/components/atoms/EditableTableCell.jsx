@@ -36,7 +36,8 @@ let EditableTableCell = React.createClass({
     return {
       editMode: false,
       isSaving: false,
-      hasError: false
+      hasError: false,
+      computed_id: this.props.row[this.props.field.key].computed
     }
   },
   componentWillMount: function () {
@@ -77,13 +78,15 @@ let EditableTableCell = React.createClass({
   },
   _queryDatapoint: function (query_params, new_value) {
     let api_response = {}
-    if (query_params.computed_id) {
+    if (this.state.computed_id) {
       api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
     } else {
       api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
     }
     api_response.then(response => {
       this.props.row[this.props.field.key].computed = response.objects.id
+      this.setState({'computed_id': response.objects.id})
+      console.log('computed_id', response.objects.id)
       this.props.value = response.objects.value
       if ((this.isBool && new_value === '2') || (new_value === '')) {
         // for 'null'
@@ -115,11 +118,12 @@ let EditableTableCell = React.createClass({
     }
 
     const isEmpty = this.isBool ? cleaned_value === '2' : cleaned_value === ''
-    let computed_id = this.props.row[this.props.field.key].computed
+    let computed_id = this.state.computed_id
     if (isEmpty && computed_id) {
       let query_params = this._getQueryParams(null)
       this._deleteValue(computed_id, query_params, cleaned_value)
-    } else if (isNaN(cleaned_value)) {
+      this.setState({'computed_id': null})
+    } else if (isNaN(cleaned_value)) { // i dont think this is necessary //
       this.setState({ editMode: false, hasError: true })
     } else {
       this.setState({isSaving: true})
