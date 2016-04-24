@@ -135,14 +135,12 @@ class DatapointResource(BaseNonModelResource):
 
         return self.base_data
 
-
     def date_int_transform(self):
         '''
         This method right now is set up specifically to deal with polio cases.
 
         Notice that here we query the DATAPOINT table..not datapoint_computed
 
-        1.
         '''
 
         results = []
@@ -153,10 +151,13 @@ class DatapointResource(BaseNonModelResource):
         ## could use a parameter like "locatoin_level" in order to clean up this
         ## logic.
 
-        location_ids = LocationTree.objects.filter(
-            location__location_type__name = 'District',
-            parent_location__in = self.parsed_params['parent_location_id__in']
-        ).values_list('location_id', flat=True)
+        try:
+            location_ids = LocationTree.objects.filter(
+                location__location_type__name = 'District',
+                parent_location__in = self.parsed_params['parent_location_id__in']
+            ).values_list('location_id', flat=True)
+        except ValueError: ## super super hack alert -- trying to populate the annual case table..
+            return self.annual_case_transform(indicator_id_list)
 
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
@@ -218,6 +219,58 @@ class DatapointResource(BaseNonModelResource):
 
         return results
 
+    def annual_case_transform(self, indicator_id_list):
+
+        location_id = self.parsed_params['location_id__in']
+        location_ids = LocationTree.objects.filter(
+                location__location_type__name = 'District',
+                parent_location_id = location_id
+            ).values_list('location_id', flat=True)
+
+        cols = ['data_date','indicator_id','value']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = location_ids,
+            indicator_id__in = indicator_id_list
+        ).values(*cols)),columns=cols)
+
+        ## Group Datapoints by Year ##
+        dp_df['year'] = dp_df['data_date'].map(lambda x: x.year)
+        gb_df = DataFrame(dp_df.groupby(['indicator_id','year'])['value']\
+            .sum()).reset_index()
+
+        # gb_df.reset_index(0).reset_index(drop=True)
+        # gb_df.reset_index(1).reset_index(drop=True)
+
+        # gb_df.columns = ['indicator_id','year','value']
+
+        results = []
+        for ix, row in gb_df.iterrows():
+
+            r = ResultObject()
+            r.location = location_id
+            r.campaign = row.year * -1
+            r.indicators = {indicator_id_list[0]}
+
+            # r.indicators = [{
+            #     'computed': None,
+            #     'indicator': ind_id,
+            #     'value': row.value
+            # } for ind_id in indicator_id_list]
+
+            results.append(r)
+
+        self.campaign_qs = [{
+            'id': -2016,
+            'name': '2016'
+        },{
+            'id': -2015,
+            'name': '2015'
+        },{
+            'id': -2014,
+            'name': '2014'
+        }]
+
+        return results
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -285,7 +338,7 @@ class DatapointResource(BaseNonModelResource):
             data['meta']['parent_location_map'] = [l for l in p_loc_qs]
             data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
-        data['meta']['campaign_list'] = [c for c in self.campaign_qs.values()]
+        data['meta']['campaign_list'] = self.get_campaign_qs()
 
         # add errors if it exists
         if self.error:
@@ -301,6 +354,15 @@ class DatapointResource(BaseNonModelResource):
             data['meta']['chart_data'] = []
 
         return data
+
+    def get_campaign_qs(self):
+
+        try:
+            campaign_data = [c for c in self.campaign_qs.values()]
+        except AttributeError:
+            campaign_data = self.campaign_qs
+
+        return campaign_data
 
     def dehydrate(self, bundle):
         '''
@@ -331,7 +393,7 @@ class DatapointResource(BaseNonModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None, \
+            'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
             'parent_location_id__in': None
