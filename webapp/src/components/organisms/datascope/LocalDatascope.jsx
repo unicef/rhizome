@@ -20,7 +20,11 @@ var LocalDatascope = React.createClass({
     return aLower > bLower ? 1 : aLower < bLower ? -1 : 0
   },
   numberComparator (a, b) {
-    return a > b ? 1 : a < b ? -1 : 0
+    // if (typeof a === 'object') {
+    //   return a.value > b.value ? 1 : a.value < b.value ? -1 : 0
+    // } else {
+      return a > b ? 1 : a < b ? -1 : 0
+    // }
   },
 
   matchesFilter (objToTest, filter, key) {
@@ -112,8 +116,10 @@ var LocalDatascope = React.createClass({
   },
   _sortData (data, sortQuery) {
     var self = this
+    // let clonedData = _.clone(data)
     // WARNING this mutates the data array so call it with a copy
     // return _.sortBy(data, sortQuery.key)
+
     return data.sort(function (a, b) {
       var key = sortQuery.key
       var order = sortQuery.order.toLowerCase().indexOf('asc') === 0 ? -1 : 1
