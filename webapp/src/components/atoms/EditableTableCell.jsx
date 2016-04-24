@@ -110,7 +110,7 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
-    const isEmpty = this.isBool ? new_value === '2' : new_value === ''
+    const isEmpty = new_value === ''
 
     let cleaned_value = new_value.replace(',', '')
     if (cleaned_value.indexOf('%') > 0 || this.props.field.schema.data_format === 'pct') {
