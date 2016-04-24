@@ -86,7 +86,6 @@ let EditableTableCell = React.createClass({
     api_response.then(response => {
       this.props.row[this.props.field.key].computed = response.objects.id
       this.setState({'computed_id': response.objects.id})
-      console.log('computed_id', response.objects.id)
       this.props.value = response.objects.value
       if ((this.isBool && new_value === '2') || (new_value === '')) {
         // for 'null'
@@ -111,14 +110,16 @@ let EditableTableCell = React.createClass({
   },
 
   updateCellValue: function (new_value) {
+    const isEmpty = this.isBool ? new_value === '2' : new_value === ''
+
     let cleaned_value = new_value.replace(',', '')
-    if (cleaned_value.indexOf('%') > 0) {
+    if (cleaned_value.indexOf('%') > 0 || this.props.field.schema.data_format === 'pct') {
       cleaned_value = cleaned_value.replace('%', '')
       cleaned_value = cleaned_value / 100.00
     }
 
-    const isEmpty = this.isBool ? cleaned_value === '2' : cleaned_value === ''
     let computed_id = this.state.computed_id
+
     if (isEmpty && computed_id) {
       let query_params = this._getQueryParams(null)
       this._deleteValue(computed_id, query_params, cleaned_value)

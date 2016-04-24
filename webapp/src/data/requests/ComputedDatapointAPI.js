@@ -10,7 +10,6 @@ export default {
     })
   },
   postComputedDatapoint (options) {
-    console.log('options: ', options)
     delete options['computed_id']
     let fetch = api.endPoint('/computed_datapoint/', 'POST', 1)
     return new Promise(function (fulfill, reject) {
