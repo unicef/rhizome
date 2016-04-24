@@ -53,22 +53,9 @@ let EditableTableCell = React.createClass({
 
   exitEditMode: function (event) {
     if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
-      if (this._shouldUpdateCell(event)) {
-        this.updateCellValue(event.target.value)
-      }
+      this.updateCellValue(event.target.value)
       this.setState({editMode: false})
     }
-  },
-
-  _shouldUpdateCell: function (event) {
-    let displayValue = event.target.value
-    if (this.props.field.schema.data_format === 'pct') {
-      const pctIndex = event.target.value.indexOf('%')
-      displayValue = pctIndex === -1 ? event.target.value : event.target.value.slice(0, pctIndex)
-      displayValue = format.autoFormat(displayValue / 100, this.props.field.schema.data_format, 2)
-      event.target.value = event.target.value === '' ? '' : event.target.value / 100
-    }
-    return displayValue !== this.display_value
   },
 
   _deleteValue: function (computed_id, query_params, new_value) {
@@ -77,7 +64,7 @@ let EditableTableCell = React.createClass({
     ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
     // this._queryDatapoint(query_params, new_value)
     this.display_value = this.isBool ? '2' : ''
-    this.setState({isSaving: false, editMode: false, hasError: false })
+    this.setState({ isSaving: false, editMode: false, hasError: false })
   },
   _getQueryParams: function (new_value) {
     return {
@@ -122,6 +109,10 @@ let EditableTableCell = React.createClass({
 
   updateCellValue: function (new_value) {
     let cleaned_value = new_value.replace(',', '')
+    if (cleaned_value.indexOf('%') > 0) {
+      cleaned_value = cleaned_value.replace('%', '')
+      cleaned_value = cleaned_value / 100.00
+    }
 
     const isEmpty = this.isBool ? cleaned_value === '2' : cleaned_value === ''
     let computed_id = this.props.row[this.props.field.key].computed
