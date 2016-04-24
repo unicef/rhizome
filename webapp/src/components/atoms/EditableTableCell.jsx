@@ -1,4 +1,3 @@
-import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import format from 'utilities/format'
@@ -33,7 +32,7 @@ let EditableTableCell = React.createClass({
   tooltip: null,
   classes: '',
 
-  getInitialState: function() {
+  getInitialState: function () {
     return {
       editMode: false,
       isSaving: false,
@@ -44,7 +43,7 @@ let EditableTableCell = React.createClass({
     this._setDefaultProps()
   },
   _setDefaultProps: function () {
-    this.isBool = this.props.field.schema.data_format === 'bool',
+    this.isBool = this.props.field.schema.data_format === 'bool'
     this.display_value = this.props.field.schema.data_format === 'bool' ? this.props.value : format.autoFormat(this.props.value, this.props.field.schema.data_format, 2)
   },
   enterEditMode: function (event) {
@@ -61,20 +60,20 @@ let EditableTableCell = React.createClass({
     }
   },
 
-  _shouldUpdateCell: function(event){
+  _shouldUpdateCell: function (event) {
     let displayValue = event.target.value
     if (this.props.field.schema.data_format === 'pct') {
       const pctIndex = event.target.value.indexOf('%')
       displayValue = pctIndex === -1 ? event.target.value : event.target.value.slice(0, pctIndex)
-      displayValue = format.autoFormat(displayValue/100, this.props.field.schema.data_format, 2)
-      event.target.value = event.target.value === '' ? '' : event.target.value/100
+      displayValue = format.autoFormat(displayValue / 100, this.props.field.schema.data_format, 2)
+      event.target.value = event.target.value === '' ? '' : event.target.value / 100
     }
     return displayValue !== this.display_value
   },
 
   _deleteValue: function (computed_id, query_params, new_value) {
-    //this path does not delete. modified to simply update the value with null
-    //all commented lines are for 'delete' route
+    // this path does not delete. modified to simply update the value with null
+    // all commented lines are for 'delete' route
     ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
     // this._queryDatapoint(query_params, new_value)
     this.display_value = this.isBool ? '2' : ''
@@ -82,12 +81,12 @@ let EditableTableCell = React.createClass({
   },
   _getQueryParams: function (new_value) {
     return {
-        location_id: this.props.row.location_id,
-        campaign_id: this.props.row.campaign_id.id,
-        indicator_id: this.props.field.key,
-        computed_id: this.props.row[this.props.field.key].computed,
-        value: new_value
-      }
+      location_id: this.props.row.location_id,
+      campaign_id: this.props.row.campaign_id.id,
+      indicator_id: this.props.field.key,
+      computed_id: this.props.row[this.props.field.key].computed,
+      value: new_value
+    }
   },
   _queryDatapoint: function (query_params, new_value) {
     let api_response = {}
@@ -97,42 +96,44 @@ let EditableTableCell = React.createClass({
       api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
     }
     api_response.then(response => {
-        this.props.row[this.props.field.key].computed = response.objects.id
-        this.props.value = response.objects.value
-        if ((this.isBool && new_value === '2') || (new_value === '')){
-          //for 'null'
-          this.display_value = this.isBool ? '2' : ''
-        } else {
-          //for any other value
-          this.display_value = this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
-        }
-        if (!this.isBool) {
-          this.setState({editMode: false, isSaving: false, hasError: false})
-        } else {
-          this.setState({isSaving: false, hasError: false})
-        }
-      }, reject => {
-        this.display_value= this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
-        if (!this.isBool) {
-          this.setState({editMode: false, isSaving: false, hasError: true})
-        } else {
-          this.setState({isSaving: false, hasError: true})
-        }
-      })
+      this.props.row[this.props.field.key].computed = response.objects.id
+      this.props.value = response.objects.value
+      if ((this.isBool && new_value === '2') || (new_value === '')) {
+        // for 'null'
+        this.display_value = this.isBool ? '2' : ''
+      } else {
+        // for any other value
+        this.display_value = this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
+      }
+      if (!this.isBool) {
+        this.setState({editMode: false, isSaving: false, hasError: false})
+      } else {
+        this.setState({isSaving: false, hasError: false})
+      }
+    }, reject => {
+      this.display_value = this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
+      if (!this.isBool) {
+        this.setState({editMode: false, isSaving: false, hasError: true})
+      } else {
+        this.setState({isSaving: false, hasError: true})
+      }
+    })
   },
 
   updateCellValue: function (new_value) {
-    const isEmpty = this.isBool ? new_value === '2' : new_value === ''
+    let cleaned_value = new_value.replace(',', '')
+
+    const isEmpty = this.isBool ? cleaned_value === '2' : cleaned_value === ''
     let computed_id = this.props.row[this.props.field.key].computed
     if (isEmpty && computed_id) {
       let query_params = this._getQueryParams(null)
-      this._deleteValue(computed_id, query_params, new_value)
-    } else if (isNaN(new_value)) {
+      this._deleteValue(computed_id, query_params, cleaned_value)
+    } else if (isNaN(cleaned_value)) {
       this.setState({ editMode: false, hasError: true })
     } else {
       this.setState({isSaving: true})
-      let query_params = this._getQueryParams(new_value)
-      this._queryDatapoint(query_params, new_value)
+      let query_params = this._getQueryParams(cleaned_value)
+      this._queryDatapoint(query_params, cleaned_value)
     }
     this.forceUpdate()
   },
@@ -140,17 +141,17 @@ let EditableTableCell = React.createClass({
   _setClasses: function () {
     let display_value
     if (this.isBool) {
-      if (this.display_value === '2' || this.display_value === ''){
+      if (this.display_value === '2' || this.display_value === '') {
         display_value = ''
       }
     } else {
       display_value = this.display_value
     }
     this.classes = (this.props.classes + ' editable ' +
-                   (this.state.editMode ? 'in-edit-mode ' : '') +
-                   (this.state.isSaving ? 'saving ' : '') +
-                   (this.state.hasError ? 'error ' : '') +
-                   (display_value === '' ? 'missing ' : ''))
+    (this.state.editMode ? 'in-edit-mode ' : '') +
+    (this.state.isSaving ? 'saving ' : '') +
+    (this.state.hasError ? 'error ' : '') +
+    (display_value === '' ? 'missing ' : ''))
   },
   _getBooleanComponent: function () {
     const boolean_options = [
@@ -160,37 +161,37 @@ let EditableTableCell = React.createClass({
     ]
     const selected_item = boolean_options[this.display_value]
     return (
-      <td className={'editable ' + this.classes}>
-        <DropdownMenu
-          items={boolean_options}
-          sendValue={this.updateCellValue}
-          text={selected_item ? selected_item.title : ''}
-          onChange={this.updateCellValue}
-          style='boolean-dropdown'
-          searchable={false}
-        />
-      </td>
+    <td className={'editable ' + this.classes}>
+      <DropdownMenu
+        items={boolean_options}
+        sendValue={this.updateCellValue}
+        text={selected_item ? selected_item.title : ''}
+        onChange={this.updateCellValue}
+        style='boolean-dropdown'
+        searchable={false} />
+    </td>
     )
   },
   _getTableCellComponent: function () {
     const input_field = (
-      <input placeholder={this.display_value}
-        onBlur={this.exitEditMode}
-        onKeyUp={this.exitEditMode}
-        id={this.cell_id}
-        type='text'/>
+    <input
+      placeholder={this.display_value}
+      onBlur={this.exitEditMode}
+      onKeyUp={this.exitEditMode}
+      id={this.cell_id}
+      type='text' />
     )
     return (
-      <TableCell
-        field={this.props.field}
-        row={this.props.row}
-        value={this.display_value}
-        classes={this.classes}
-        onClick={!this.state.editMode ? this.enterEditMode : null}
-        hideValue={this.state.editMode || this.state.isSaving || this.display_value === ''}>
-        {this.state.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
-        {this.state.editMode ? input_field : null}
-      </TableCell>
+    <TableCell
+      field={this.props.field}
+      row={this.props.row}
+      value={this.display_value}
+      classes={this.classes}
+      onClick={!this.state.editMode ? this.enterEditMode : null}
+      hideValue={this.state.editMode || this.state.isSaving || this.display_value === ''}>
+      {this.state.isSaving ? <i className='fa fa-spinner fa-spin saving-icon'></i> : null}
+      {this.state.editMode ? input_field : null}
+    </TableCell>
     )
   },
 
