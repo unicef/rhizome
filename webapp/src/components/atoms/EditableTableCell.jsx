@@ -72,8 +72,11 @@ let EditableTableCell = React.createClass({
     return displayValue !== this.display_value
   },
 
-  _deleteValue: function (computed_id) {
+  _deleteValue: function (computed_id, query_params, new_value) {
+    //this path does not delete. modified to simply update the value with null
+    //all commented lines are for 'delete' route
     ComputedDatapointAPI.deleteComputedDataPoint(computed_id)
+    // this._queryDatapoint(query_params, new_value)
     this.display_value = this.isBool ? '2' : ''
     this.setState({isSaving: false, editMode: false, hasError: false })
   },
@@ -96,7 +99,13 @@ let EditableTableCell = React.createClass({
     api_response.then(response => {
         this.props.row[this.props.field.key].computed = response.objects.id
         this.props.value = response.objects.value
-        this.display_value= this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
+        if ((this.isBool && new_value === '2') || (new_value === '')){
+          //for 'null'
+          this.display_value = this.isBool ? '2' : ''
+        } else {
+          //for any other value
+          this.display_value = this.isBool ? new_value : format.autoFormat(new_value, this.props.field.schema.data_format, 2)
+        }
         if (!this.isBool) {
           this.setState({editMode: false, isSaving: false, hasError: false})
         } else {
@@ -115,8 +124,9 @@ let EditableTableCell = React.createClass({
   updateCellValue: function (new_value) {
     const isEmpty = this.isBool ? new_value === '2' : new_value === ''
     let computed_id = this.props.row[this.props.field.key].computed
-    if (isEmpty && computed_id) { // this is the delete //
-      this._deleteValue(computed_id)
+    if (isEmpty && computed_id) {
+      let query_params = this._getQueryParams(null)
+      this._deleteValue(computed_id, query_params, new_value)
     } else if (isNaN(new_value)) {
       this.setState({ editMode: false, hasError: true })
     } else {
