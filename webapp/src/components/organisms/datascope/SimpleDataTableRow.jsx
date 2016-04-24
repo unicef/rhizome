@@ -15,6 +15,18 @@ let SimpleDataTableRow = React.createClass({
     return (isNaN(v) || _.isNull(v)) ? v : d3.format('n')(v)
   },
 
+  handleClick: function (rowLocation_id) {
+    this.props.rowAction(rowLocation_id)
+    this.removeTooltip()
+  },
+
+  removeTooltip: function () {
+    let tooltipCollection = document.getElementsByClassName('tooltip')
+    for (var idx = 0; idx < tooltipCollection.length; idx++) {
+      tooltipCollection[idx].remove()
+    }
+  },
+
   render: function () {
     const props = this.props
     const row = props.row
@@ -47,7 +59,7 @@ let SimpleDataTableRow = React.createClass({
       <td className='table-row-actions'>
         <IconButton
           className='clear-btn'
-          onClick={() => props.rowAction(row.location_id)}
+          onClick={() => this.handleClick(row.location_id)}
           text={'Remove ' + row.location}
           icon='fa-times-circle'/>
       </td>
