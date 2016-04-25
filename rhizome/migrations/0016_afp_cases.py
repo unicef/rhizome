@@ -19,7 +19,7 @@ def ingest_afp_cases(apps, schema_editor):
 def transformed_file_to_datapoint(df):
 
     user_id = User.objects.all()[0].id
-    new_doc = Document.objects.create(
+    new_doc, created = Document.objects.get_or_create(
         doc_title = 'AFP_CASES',
         guid = 'AFP_CASES'
     )
@@ -27,6 +27,7 @@ def transformed_file_to_datapoint(df):
     df['unique_key'] = df['geocode'] + df['data_date'].map(str)
     dt = DateDocTransform(user_id, new_doc.id, df)
     dt.process_file()
+    dt.upsert_source_object_map()
 
     ss_id_list = SourceSubmission.objects.filter(document_id = new_doc.id)\
         .values_list('id', flat=True)
@@ -39,22 +40,11 @@ def transformed_file_to_datapoint(df):
         source_submission_id__in = ss_id_list
     )
 
-    if len(ss_id_list) != len(df):
+    # if len(ss_id_list) != len(df):
+    #     raise Exception('source Submissions not ingested properly')
 
-        print 'ss_id_list LEN \n' * 5
-        print len(ss_id_list)
-        print '==\n * 3'
-
-        raise Exception('source Submissions got messed up')
-
-    if len(dps != len(df)):
-
-        print 'df LEN \n' * 5
-        print len(df)
-        print '==\n * 3'
-
-        raise Exception('source Submissions got messed up')
-
+    # if len(dps != len(df)):
+    #     raise Exception('datapoitns not ingested properly')
 
 def transform_raw_file():
 
