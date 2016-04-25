@@ -122,3 +122,13 @@ class DataPointResourceTest(ResourceTestCase):
         objects = response_data['objects']
 
         self.assertEqual(3, len(objects)) # one for each year #
+
+        case_dict = {}
+        for obj in objects:
+            case_dict[obj['campaign']] = obj['indicators'][0][unicode(self.ind.id)]
+
+        pprint(case_dict)
+
+        self.assertEqual(28.00, case_dict[-2014]) # one for each year #
+        self.assertEqual(20.00, case_dict[-2015]) # one for each year #
+        self.assertEqual(3.0, case_dict[-2016]) # one for each year #

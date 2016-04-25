@@ -162,7 +162,7 @@ class DatapointResource(BaseNonModelResource):
             r = ResultObject()
             r.location = location_id
             r.campaign = row.year * -1
-            r.indicators = {indicator_id_list[0]}
+            r.indicators = [{indicator_id_list[0] : row.value}]
 
             # r.indicators = [{
             #     'computed': None,
