@@ -1,11 +1,7 @@
 {% extends "base.html" %}
 
-{% block content %}
-	<uf-dashboard></uf-dashboard>
-{% endblock %}
-
 {% block scripts %}
-	<script>
-		Rhizome.Dashboard(document.getElementById('main'),{{dashboard_id}});
-	</script>
+	<script>Rhizome.Dashboard(document.getElementById('main'),{{dashboard_id}});</script>
+
+  <script src="/static/vendor/grouped-categories.js"></script>
 {% endblock %}
