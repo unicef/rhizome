@@ -107,7 +107,7 @@ def update_campaign(request):
 @user_passes_test(lambda u: u.groups.filter(name='chart_edit') or u.is_superuser,
     login_url='/permissions_needed/', redirect_field_name=None)
 def chart_edit(request, chart_id=None):
-    return render_to_response('charts/edit.html', {'chart_id': chart_id},
+    return render_to_response('charts/show.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
 
