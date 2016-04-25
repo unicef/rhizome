@@ -26,6 +26,12 @@ class DataPointResourceTest(ResourceTestCase):
                                         'eradicate@polio.com', self.password)
 
         self.lt = LocationType.objects.create(name='Country',admin_level = 0)
+        self.province_lt = LocationType.objects.create(name='Province'\
+            ,admin_level = 1)
+        self.district_lt = LocationType.objects.create(name='District'\
+            ,admin_level = 2)
+
+
         self.o = Office.objects.create(name = 'Earth')
         self.ind = Indicator.objects.create(
             name = 'Polio Cases',
@@ -40,7 +46,22 @@ class DataPointResourceTest(ResourceTestCase):
                 location_type_id = self.lt.id,
                 office_id = self.o.id,
             )
-
+        self.some_province = Location.objects.create(
+                name = 'Province',
+                location_code = 'Province',
+                id=432,
+                parent_location_id = self.top_lvl_location.id,
+                location_type_id = self.province_lt.id,
+                office_id = self.o.id,
+            )
+        self.some_district = Location.objects.create(
+                name = 'Achin',
+                location_code = 'Achin',
+                id=4321,
+                parent_location_id = self.some_province.id,
+                location_type_id = self.district_lt.id,
+                office_id = self.o.id,
+            )
 
         ltc = LocationTreeCache()
         ltc.main()
@@ -57,15 +78,16 @@ class DataPointResourceTest(ResourceTestCase):
 
         for ix, row in df.iterrows():
             DataPoint.objects.create(
-                location_id = self.top_lvl_location.id,
+                location_id = self.some_district.id,
                 indicator_id = self.ind.id,
                 data_date = self.clean_date(row.data_date),
                 value = 1,
                 source_submission_id = 1
             )
 
-
     def clean_date(self, date_string):
+
+        date = None
 
         try:
             date = datetime.strptime(date_string, '%d-%m-%y')
@@ -75,7 +97,7 @@ class DataPointResourceTest(ResourceTestCase):
         try:
             date = datetime.strptime(date_string, '%m/%d/%y')
         except ValueError:
-            date = None
+            pass
 
         return date
 
@@ -89,21 +111,14 @@ class DataPointResourceTest(ResourceTestCase):
     def test_get_list(self):
         # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
 
-        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id={3}'\
+        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
-        print 'response\n' * 5
-        print resp
-        print '===\n' * 5
-
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         objects = response_data['objects']
 
-        print '=='
-        pprint(objects)
-        print '=='
-        self.assertEqual(3, objects) # one for each year #
+        self.assertEqual(3, len(objects)) # one for each year #

@@ -130,7 +130,7 @@ class DatapointResource(BaseNonModelResource):
 
         try:
             gb_param = request.GET['group_by_time']
-            self.group_by_time_transform()
+            self.base_data = self.group_by_time_transform()
         except KeyError:
             self.base_data = self.base_transform()
 
@@ -138,6 +138,7 @@ class DatapointResource(BaseNonModelResource):
 
     def group_by_time_transform(self):
 
+        indicator_id_list = self.parsed_params['indicator__in']
         location_id = self.parsed_params['location_id__in']
         location_ids = LocationTree.objects.filter(
                 location__location_type__name = 'District',
@@ -147,7 +148,7 @@ class DatapointResource(BaseNonModelResource):
         cols = ['data_date','indicator_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
-            indicator_id__in = self.parsed_params['indicator__in']
+            indicator_id__in = indicator_id_list
         ).values(*cols)),columns=cols)
 
         ## Group Datapoints by Year ##
