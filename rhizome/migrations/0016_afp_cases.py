@@ -24,7 +24,7 @@ def transformed_file_to_datapoint(df):
         guid = 'AFP_CASES'
     )
 
-    df['unique_key'] = df['index_0']
+    df['unique_key'] = df['geocode'] + df['data_date'].map(str)
     dt = DateDocTransform(user_id, new_doc.id, df)
     dt.process_file()
 
