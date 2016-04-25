@@ -11,7 +11,6 @@ class ColumnChart extends HighChart {
     const first_location = this.props.selected_locations[0]
     const props = this.props
     this.config = {
-      chart: { type: 'column' },
       xAxis: {
         type: 'datetime',
         labels: {
@@ -39,17 +38,36 @@ class ColumnChart extends HighChart {
   }
 
   setSeries = function () {
-    const data = this.props.datapoints.melted
+    const multiIndicator = this.props.selected_indicators.length > 1
     const groupByIndicator = this.props.groupBy === 'indicator'
+    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
+    const data = this.props.datapoints.melted
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
-    _.forEach(grouped_data, group_collection => {
-      group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
-      series.push({
-        name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
-        data: group_collection.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
-      })
+
+    // Set column data for all indicators except the last one
+    // In the case of a multi-indicator chart, the last indicator is displayed as a line
+    _.forEach(grouped_data, (group_collection, key) => {
+      if (!multiIndicator || parseInt(last_indicator.id) !== parseInt(key)) {
+        const sorted_column_data = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
+        series.push({
+          name: groupByIndicator ? sorted_column_data[0].indicator.name : sorted_column_data[0].location.name,
+          type: 'column',
+          data: sorted_column_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
+        })
+      }
     })
+
+    // Set the line data for the last indicator
+    if (multiIndicator) {
+      const sorted_line_data = _.sortBy(grouped_data[last_indicator.id], group => group.campaign.start_date.getTime())
+      series.push({
+        name: last_indicator.name,
+        type: 'spline',
+        data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
+      })
+    }
+
     return series
   }
 }
