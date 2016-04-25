@@ -176,28 +176,16 @@ class DatapointResource(BaseNonModelResource):
 
             results.append(r)
 
+        all_yrs = list(dp_df['year'].unique())
+
         self.campaign_qs = [{
-            'id': -2016,
-            'name': '2016',
-            'start_date': '2016-01-01',
-            'end_date': '2016-01-01',
+            'id': yr * -1 ,
+            'name': str(yr),
+            'start_date': str(yr) + '-01-01',
+            'end_date': str(yr) + '-01-01',
             'office_id': 1,
             'created_at': datetime.now()
-        },{
-            'id': -2015,
-            'name': '2015',
-            'start_date': '2015-01-01',
-            'end_date': '2015-01-01',
-            'office_id': 1,
-            'created_at': datetime.now()
-        },{
-            'id': -2014,
-            'name': '2014',
-            'start_date': '2014-01-01',
-            'end_date': '2014-01-01',
-            'office_id': 1,
-            'created_at': datetime.now()
-        }]
+        } for yr in all_yrs]
 
         return results
 
@@ -554,6 +542,10 @@ class DatapointResource(BaseNonModelResource):
 
         This needs to be removed and we need to figure out a better way to
         Handle the polio case indicator / Bubble Map viz.
+
+        AS you will noice.. this is very similar to the base_transform function
+        excpet it uses the datapoint ( not datapoint_with_computed ) table
+        to return results
         '''
 
         results = []
