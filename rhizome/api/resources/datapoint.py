@@ -128,98 +128,15 @@ class DatapointResource(BaseNonModelResource):
 
         self.location_ids = self.get_locations_to_return_from_url(request)
 
-        if Indicator.objects.get(id = self.parsed_params['indicator__in'][0]).data_format == 'date_int':
-            self.base_data = self.date_int_transform()
-        else:
+        try:
+            gb_param = request.GET['group_by_time']
+            self.group_by_time_transform()
+        except KeyError:
             self.base_data = self.base_transform()
 
         return self.base_data
 
-    def date_int_transform(self):
-        '''
-        This method right now is set up specifically to deal with polio cases.
-
-        Notice that here we query the DATAPOINT table..not datapoint_computed
-
-        '''
-
-        results = []
-        indicator_id_list = self.parsed_params['indicator__in']
-
-        ## here we have to find the cases at the district level.  Ideally, this
-        ## would all be handled in "get_locations_to_return_from_url" and we
-        ## could use a parameter like "locatoin_level" in order to clean up this
-        ## logic.
-
-        try:
-            location_ids = LocationTree.objects.filter(
-                location__location_type__name = 'District',
-                parent_location__in = self.parsed_params['parent_location_id__in']
-            ).values_list('location_id', flat=True)
-        except ValueError: ## super super hack alert -- trying to populate the annual case table..
-            return self.annual_case_transform(indicator_id_list)
-
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
-        datapoints = DataPoint.objects.filter(
-                # campaign__in=self.arsed_params['campaign__in'],
-                location__in = location_ids,
-                indicator__in = indicator_id_list)
-
-        dwc_df = DataFrame(list(datapoints.values_list(*df_columns)),\
-            columns=df_columns)
-
-        ## here is a fat hack that aggregates the district level cases up to
-        ## the province so that we can draw a sensible map for the country
-        ## and regional level chart.
-        if Location.objects.get(id = self.parsed_params['parent_location_id__in']).location_type_id != 2: ## province...
-            province_parent_location_df = DataFrame(list(
-                Location.objects.filter(id__in = location_ids)\
-                .values_list('id','parent_location_id')
-            ),columns = ['location_id', 'parent_location_id'])
-
-            parent_lookup_df = dwc_df.merge(province_parent_location_df)
-            gb_df = DataFrame(parent_lookup_df\
-                .groupby('parent_location_id')['value'].sum()).reset_index()
-
-            gb_df['indicator_id'] = indicator_id_list[0]
-            gb_df['campaign_id'] = None
-            gb_df.columns = ['location_id','value','indicator_id', 'campaign_id']
-
-            dwc_df = gb_df
-
-        try:
-            p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'],\
-                    columns=['location_id'], aggfunc=np.sum)
-
-            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-            pivoted_data = no_nan_pivoted_df.to_dict()
-
-        except KeyError: ## there is no data, so fill it with empty indicator data ##
-            pivoted_data =  {}
-            for location_id in self.location_ids:
-                tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
-                pivoted_data[tupl] = {}
-
-        for i, (location_id, indicator_dict) in enumerate(pivoted_data.iteritems()):
-
-            indicator_objects = [{
-                'indicator': k,
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
-
-            for c in self.parsed_params['campaign__in']:
-                r = ResultObject()
-                r.location = location_id
-                r.campaign = c
-                r.indicators = indicator_objects
-
-                results.append(r)
-
-        return results
-
-    def annual_case_transform(self, indicator_id_list):
+    def group_by_time_transform(self):
 
         location_id = self.parsed_params['location_id__in']
         location_ids = LocationTree.objects.filter(
@@ -230,18 +147,13 @@ class DatapointResource(BaseNonModelResource):
         cols = ['data_date','indicator_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
-            indicator_id__in = indicator_id_list
+            indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
         ## Group Datapoints by Year ##
         dp_df['year'] = dp_df['data_date'].map(lambda x: x.year)
         gb_df = DataFrame(dp_df.groupby(['indicator_id','year'])['value']\
             .sum()).reset_index()
-
-        # gb_df.reset_index(0).reset_index(drop=True)
-        # gb_df.reset_index(1).reset_index(drop=True)
-
-        # gb_df.columns = ['indicator_id','year','value']
 
         results = []
         for ix, row in gb_df.iterrows():
@@ -261,13 +173,22 @@ class DatapointResource(BaseNonModelResource):
 
         self.campaign_qs = [{
             'id': -2016,
-            'name': '2016'
+            'name': '2016',
+            'start_date': '2016-01-01',
+            'end_date': '2016-01-01',
+            'office_id': 1
         },{
             'id': -2015,
-            'name': '2015'
+            'name': '2015',
+            'start_date': '2015-01-01',
+            'end_date': '2015-01-01',
+            'office_id': 1
         },{
             'id': -2014,
-            'name': '2014'
+            'name': '2014',
+            'start_date': '2014-01-01',
+            'end_date': '2014-01-01',
+            'office_id': 1
         }]
 
         return results
@@ -436,22 +357,14 @@ class DatapointResource(BaseNonModelResource):
         Based on the parameters passed for campaigns, start/end or __in
         return to the parsed params dictionary a list of campaigns to query
         '''
-        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back
-            campaign_qs = Campaign.objects.filter(
-                start_date__gte=campaign_start,
-                start_date__lte=campaign_end
-                # top_lvl_location_id=self.top_lvl_location_id
-            )
 
-        else:
-            campaign_qs = Campaign.objects.filter(
-                start_date__gte=campaign_start,
-                start_date__lte=campaign_end,
-                top_lvl_location_id=self.top_lvl_location_id
-            )
-        campaign__in = [c.id for c in campaign_qs]
+        campaign_qs = Campaign.objects.filter(
+            start_date__gte=campaign_start,
+            start_date__lte=campaign_end,
+            top_lvl_location_id=self.top_lvl_location_id
+        )
 
-        return campaign__in
+        return [c.id for c in campaign_qs]
 
     def build_class_indicator_map(self):
         query_results = IndicatorClassMap.objects.filter(is_display=True) \
@@ -496,7 +409,8 @@ class DatapointResource(BaseNonModelResource):
             if filter_value_list == ['-1']: ## this means "show all classes"
                 filter_value_list = [1,2,3]
                 ## this only works for LPDS... this should be --
-                ## IndicatorClassMap.objects.filter(indicator = indicator).values_list(enum_value, flat = True)
+                ## IndicatorClassMap.objects.filter(indicator = indicator)\
+                ##    .values_list(enum_value, flat = True)
 
             filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
@@ -512,28 +426,6 @@ class DatapointResource(BaseNonModelResource):
             location_ids_in_filter = set(filter_df['location_id'])
             self.location_ids = set(self.location_ids)\
                 .intersection(location_ids_in_filter)
-
-
-        if self.parsed_params['cumulative'] == '1':
-            #  hack -- we need the ids so that we can create the pivot table.
-            #  later, the ids will be discarded
-            dwc_id = DataFrame(dwc_df
-                .groupby(['location_id', 'indicator_id'])['id']\
-                .first()
-                .reset_index())
-
-            dwc_vals = DataFrame(dwc_df\
-                .groupby(['location_id', 'indicator_id'])['value']\
-                .sum()\
-                .reset_index())
-
-            dwc_campaigns = DataFrame(dwc_df\
-                .groupby(['location_id', 'indicator_id'])['campaign_id']\
-                .first()\
-                .reset_index())
-
-            dwc_df = dwc_vals.merge(dwc_campaigns, how ='inner', on=['location_id', 'indicator_id'])
-            dwc_df = dwc_df.merge(dwc_id, how ='inner', on=['location_id', 'indicator_id'])
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 

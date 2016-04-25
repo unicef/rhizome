@@ -12,6 +12,7 @@ from random import randint
 
 import pandas as pd
 from datetime import datetime
+from pprint import pprint
 
 class DataPointResourceTest(ResourceTestCase):
 
@@ -88,11 +89,21 @@ class DataPointResourceTest(ResourceTestCase):
     def test_get_list(self):
         # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
 
-        get_parameter = 'group_by=year&indicator__in={0}&start_date={1}&end_date={2}&location_id={3}'\
+        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
+        print 'response\n' * 5
+        print resp
+        print '===\n' * 5
+
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
+        objects = response_data['objects']
+
+        print '=='
+        pprint(objects)
+        print '=='
+        self.assertEqual(3, objects) # one for each year #
