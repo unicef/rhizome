@@ -30,6 +30,11 @@ function timeAxis (value) {
   )
 }
 
+function monthYear (value) {
+  var m = moment(value)
+  return m.format("MMM YY'")
+}
+
 function unCamelCase (str) {
   return str
     // insert a space between lower & upper
@@ -43,6 +48,7 @@ function unCamelCase (str) {
 export default {
   general: general,
   autoFormat: autoFormat,
+  monthYear: monthYear,
   num: num,
   timeAxis: timeAxis,
   unCamelCase: unCamelCase
