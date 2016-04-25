@@ -4,11 +4,14 @@ from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
-    LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
+    LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, IndicatorClassMap
 
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
+
+import pandas as pd
+from datetime import datetime
 
 class DataPointResourceTest(ResourceTestCase):
 
@@ -37,6 +40,7 @@ class DataPointResourceTest(ResourceTestCase):
                 office_id = self.o.id,
             )
 
+
         ltc = LocationTreeCache()
         ltc.main()
 
@@ -44,8 +48,36 @@ class DataPointResourceTest(ResourceTestCase):
             top_lvl_location_id = self.top_lvl_location.id)
 
         self.get_credentials()
+        self.create_polio_cases()
 
-        # create their api_key
+    def create_polio_cases(self):
+
+        df = pd.read_csv('AfgPolioCases.csv')
+
+        for ix, row in df.iterrows():
+            DataPoint.objects.create(
+                location_id = self.top_lvl_location.id,
+                indicator_id = self.ind.id,
+                data_date = self.clean_date(row.data_date),
+                value = 1,
+                source_submission_id = 1
+            )
+
+
+    def clean_date(self, date_string):
+
+        try:
+            date = datetime.strptime(date_string, '%d-%m-%y')
+        except ValueError:
+            pass
+
+        try:
+            date = datetime.strptime(date_string, '%m/%d/%y')
+        except ValueError:
+            date = None
+
+        return date
+
 
     def get_credentials(self):
         result = self.api_client.client.login(username=self.username,
