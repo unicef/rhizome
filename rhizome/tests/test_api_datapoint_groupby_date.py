@@ -1,4 +1,3 @@
-
 from django.test import TestCase
 from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey
@@ -12,7 +11,6 @@ from random import randint
 
 import pandas as pd
 from datetime import datetime
-from pprint import pprint
 
 class DataPointResourceTest(ResourceTestCase):
 
@@ -80,21 +78,10 @@ class DataPointResourceTest(ResourceTestCase):
             DataPoint.objects.create(
                 location_id = self.some_district.id,
                 indicator_id = self.ind.id,
-                data_date = self.clean_date(row.data_date),
+                data_date = datetime.strptime(row.data_date, '%d-%m-%y'),
                 value = 1,
                 source_submission_id = 1
             )
-
-    def clean_date(self, date_string):
-
-        date = None
-
-        try:
-            date = datetime.strptime(date_string, '%d-%m-%y')
-        except ValueError:
-            pass
-
-        return date
 
 
     def get_credentials(self):
@@ -122,8 +109,6 @@ class DataPointResourceTest(ResourceTestCase):
         for obj in objects:
             case_dict[obj['campaign']] = obj['indicators'][0][unicode(self.ind.id)]
 
-        pprint(case_dict)
-
-        self.assertEqual(28.00, case_dict[-2014]) # one for each year #
-        self.assertEqual(20.00, case_dict[-2015]) # one for each year #
-        self.assertEqual(3.0, case_dict[-2016]) # one for each year #
+        self.assertEqual(28.00, case_dict[-2014])
+        self.assertEqual(20.00, case_dict[-2015])
+        self.assertEqual(3.0, case_dict[-2016])

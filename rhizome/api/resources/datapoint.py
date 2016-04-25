@@ -131,15 +131,8 @@ class DatapointResource(BaseNonModelResource):
 
         try:
             gb_param = request.GET['group_by_time']
-        except KeyError:
-            gb_param = None
-
-        if gb_param or Indicator.objects\
-            .get(id = self.parsed_params['indicator__in'][0])\
-            .data_format == 'date_int':
-            ## this 'or' only needed is until we add logic to the FE to group by year
             self.base_data = self.group_by_time_transform()
-        else:
+        except KeyError:
             self.base_data = self.base_transform()
 
         return self.base_data
