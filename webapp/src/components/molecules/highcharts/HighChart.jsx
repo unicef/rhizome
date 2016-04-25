@@ -3,6 +3,7 @@ import React, { Component, PropTypes } from 'react'
 import format from 'utilities/format'
 
 import Highcharts from 'highcharts'
+window.Highcharts = Highcharts
 import More from 'highcharts-more'
 import Exporting from 'highcharts/modules/exporting'
 import Map from 'highcharts/modules/map'
