@@ -4,7 +4,7 @@ import React, {PropTypes} from 'react'
 import Dropdown from 'components/molecules/menus/Dropdown.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
-var RegionDropdown = React.createClass({
+var LocationDropdown = React.createClass({
   propTypes: {
     locations: PropTypes.array.isRequired,
     selected: PropTypes.object.isRequired,
@@ -87,4 +87,4 @@ var RegionDropdown = React.createClass({
   }
 })
 
-export default RegionDropdown
+export default LocationDropdown

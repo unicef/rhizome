@@ -1,6 +1,6 @@
 import { expect } from 'chai'
 
-import RegionDropdown from '../menus/RegionDropdown'
+import LocationDropdown from '../menus/LocationDropdown'
 
 describe(__filename, () => {
   context('build up location data', () => {
@@ -21,7 +21,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'America'
-      let location = RegionDropdown.prototype._buildLocations(original_locations, filter)
+      let location = LocationDropdown.prototype._buildLocations(original_locations, filter)
       expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
@@ -48,7 +48,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = RegionDropdown.prototype._buildLocations(original_locations, filter)
+      let location = LocationDropdown.prototype._buildLocations(original_locations, filter)
       expect(location).to.deep.eql([
         {
           'title': 'America - Maine',
@@ -79,7 +79,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = RegionDropdown.prototype._buildLocations(original_locations, filter)
+      let location = LocationDropdown.prototype._buildLocations(original_locations, filter)
       expect(location).to.deep.eql([
         {
           'children': [
@@ -125,7 +125,7 @@ describe(__filename, () => {
         }
       ]
       const filter = 'am'
-      let location = RegionDropdown.prototype._buildLocations(original_locations, filter)
+      let location = LocationDropdown.prototype._buildLocations(original_locations, filter)
       expect(location).to.deep.eql([
         {
           'children': [

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-import RegionDropdown from 'components/molecules/menus/RegionDropdown'
+import LocationDropdown from 'components/molecules/menus/LocationDropdown'
 
 const LocationSelector = React.createClass({
 
@@ -66,7 +66,7 @@ const LocationSelector = React.createClass({
       return (
         <div className={props.classes}>
           <h3>Location</h3>
-          <RegionDropdown
+          <LocationDropdown
             locations={locations}
             selected={this.props.selected_locations[0]}
             sendValue={this.props.setLocations}

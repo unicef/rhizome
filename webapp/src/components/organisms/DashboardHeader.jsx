@@ -8,7 +8,7 @@ import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
-import RegionDropdown from 'components/molecules/menus/RegionDropdown'
+import LocationDropdown from 'components/molecules/menus/LocationDropdown'
 import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
@@ -68,7 +68,7 @@ const DashboardHeader = React.createClass({
           selected={props.selected_campaigns[0]}
           sendValue={DashboardPageActions.setCampaign}
         />
-        <RegionDropdown
+        <LocationDropdown
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
           sendValue={DashboardPageActions.setLocation}

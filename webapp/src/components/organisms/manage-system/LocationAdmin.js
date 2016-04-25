@@ -29,7 +29,7 @@ const schema = {
 
 const fieldNamesOnTable = ['id', 'name', 'location_code', 'created_at', 'edit_link']
 
-var RegionAdmin = React.createClass({
+var LocationAdmin = React.createClass({
   render () {
     var datascopeFilters =
       <div>
@@ -56,4 +56,4 @@ var RegionAdmin = React.createClass({
   }
 })
 
-export default RegionAdmin
+export default LocationAdmin
