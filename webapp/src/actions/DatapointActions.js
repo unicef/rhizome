@@ -36,6 +36,9 @@ const _prepDatapointsQuery = (params) => {
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
     location_level: type === 'TableChart' ? 'District' : null
   }
+  if (params.type === 'BubbleMap') {
+    query['group_by_time'] = 'all_time'
+  }
 
   return query
 }

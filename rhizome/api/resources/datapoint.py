@@ -139,6 +139,9 @@ class DatapointResource(BaseNonModelResource):
 
     def group_by_time_transform(self):
 
+        if self.parsed_params['group_by_time'] == 'all_time':
+            return self.map_bubble_transform() # hack...
+
         indicator_id_list = self.parsed_params['indicator__in']
         location_id = self.parsed_params['location_id__in']
         location_ids = LocationTree.objects.filter(
@@ -322,7 +325,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
-            'parent_location_id__in': None
+            'parent_location_id__in': None, 'group_by_time': None
         }
 
         for k, v in optional_params.iteritems():
@@ -543,3 +546,88 @@ class DatapointResource(BaseNonModelResource):
             high_chart_data.append(object_dict)
 
         return high_chart_data
+
+
+    def map_bubble_transform(self):
+        '''
+        This method right now is set up specifically to deal with polio cases.
+
+        This needs to be removed and we need to figure out a better way to
+        Handle the polio case indicator / Bubble Map viz.
+        '''
+
+        results = []
+        indicator_id_list = self.parsed_params['indicator__in']
+
+        ## here we have to find the cases at the district level.  Ideally, this
+        ## would all be handled in "get_locations_to_return_from_url" and we
+        ## could use a parameter like "locatoin_level" in order to clean up this
+        ## logic.
+
+
+        location_ids = LocationTree.objects.filter(
+            location__location_type__name = 'District',
+            parent_location__in = self.parsed_params['parent_location_id__in']
+        ).values_list('location_id', flat=True)
+
+
+
+        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+            'value']
+        datapoints = DataPoint.objects.filter(
+                # campaign__in=self.arsed_params['campaign__in'],
+                location__in = location_ids,
+                indicator__in = indicator_id_list)
+
+        dwc_df = DataFrame(list(datapoints.values_list(*df_columns)),\
+            columns=df_columns)
+
+        ## here is a fat hack that aggregates the district level cases up to
+        ## the province so that we can draw a sensible map for the country
+        ## and regional level chart.
+        if Location.objects.get(id = self.parsed_params['parent_location_id__in']).location_type_id != 2: ## province...
+            province_parent_location_df = DataFrame(list(
+                Location.objects.filter(id__in = location_ids)\
+                .values_list('id','parent_location_id')
+            ),columns = ['location_id', 'parent_location_id'])
+
+            parent_lookup_df = dwc_df.merge(province_parent_location_df)
+            gb_df = DataFrame(parent_lookup_df\
+                .groupby('parent_location_id')['value'].sum()).reset_index()
+
+            gb_df['indicator_id'] = indicator_id_list[0]
+            gb_df['campaign_id'] = None
+            gb_df.columns = ['location_id','value','indicator_id', 'campaign_id']
+
+            dwc_df = gb_df
+
+        try:
+            p_table = pivot_table(
+                dwc_df, values='value', index=['indicator_id'],\
+                    columns=['location_id'], aggfunc=np.sum)
+
+            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+            pivoted_data = no_nan_pivoted_df.to_dict()
+
+        except KeyError: ## there is no data, so fill it with empty indicator data ##
+            pivoted_data =  {}
+            for location_id in self.location_ids:
+                tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
+                pivoted_data[tupl] = {}
+
+        for i, (location_id, indicator_dict) in enumerate(pivoted_data.iteritems()):
+
+            indicator_objects = [{
+                'indicator': k,
+                'value': v
+            } for k, v in indicator_dict.iteritems()]
+
+            for c in self.parsed_params['campaign__in']:
+                r = ResultObject()
+                r.location = location_id
+                r.campaign = c
+                r.indicators = indicator_objects
+
+                results.append(r)
+
+        return results
