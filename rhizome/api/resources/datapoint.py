@@ -14,6 +14,7 @@ from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint
 
+from datetime import datetime
 
 class ResultObject(object):
     '''
@@ -130,8 +131,15 @@ class DatapointResource(BaseNonModelResource):
 
         try:
             gb_param = request.GET['group_by_time']
-            self.base_data = self.group_by_time_transform()
         except KeyError:
+            gb_param = None
+
+        if gb_param or Indicator.objects\
+            .get(id = self.parsed_params['indicator__in'][0])\
+            .data_format == 'date_int':
+            ## this 'or' only needed is until we add logic to the FE to group by year
+            self.base_data = self.group_by_time_transform()
+        else:
             self.base_data = self.base_transform()
 
         return self.base_data
@@ -177,19 +185,22 @@ class DatapointResource(BaseNonModelResource):
             'name': '2016',
             'start_date': '2016-01-01',
             'end_date': '2016-01-01',
-            'office_id': 1
+            'office_id': 1,
+            'created_at': datetime.now()
         },{
             'id': -2015,
             'name': '2015',
             'start_date': '2015-01-01',
             'end_date': '2015-01-01',
-            'office_id': 1
+            'office_id': 1,
+            'created_at': datetime.now()
         },{
             'id': -2014,
             'name': '2014',
             'start_date': '2014-01-01',
             'end_date': '2014-01-01',
-            'office_id': 1
+            'office_id': 1,
+            'created_at': datetime.now()
         }]
 
         return results

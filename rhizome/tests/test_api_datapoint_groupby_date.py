@@ -94,11 +94,6 @@ class DataPointResourceTest(ResourceTestCase):
         except ValueError:
             pass
 
-        try:
-            date = datetime.strptime(date_string, '%m/%d/%y')
-        except ValueError:
-            pass
-
         return date
 
 
