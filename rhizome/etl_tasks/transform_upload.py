@@ -303,7 +303,7 @@ class ComplexDocTransform(DocTransform):
 
 class DateDocTransform(DocTransform):
 
-    def __init__(self,user_id,document_id,raw_csv_df=None):
+    def __init__(self,user_id, document_id,raw_csv_df=None):
 
         super(DateDocTransform, self).__init__(user_id, document_id, raw_csv_df)
 
@@ -311,6 +311,8 @@ class DateDocTransform(DocTransform):
 
         try:
             date = datetime.strptime(date_string, '%d-%m-%y')
+        except ValueError:
+            date = datetime.strptime(date_string, '%d-%m-%Y')
         except ValueError:
             date = datetime.strptime(date_string, '%d/%m/%y')
         except ValueError:
