@@ -14,11 +14,11 @@ class MapChart extends HighChart {
       series: this.setSeries(),
       colorAxis: {min: 0},
       mapNavigation: {
-        enabled: true,
+        enabled: false,
+        enableTouchZoom: false,
+        enableDoubleClickZoom: false,
         enableMouseWheelZoom: false,
-        buttonOptions: {
-          verticalAlign: 'bottom'
-        }
+        enableButtons: false
       }
     }
     if (!integerWithBounds) {

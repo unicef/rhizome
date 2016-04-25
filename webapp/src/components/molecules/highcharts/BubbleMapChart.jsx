@@ -12,11 +12,11 @@ class BubbleMap extends HighChart {
       },
       series: this.setSeries(),
       mapNavigation: {
-        enabled: true,
+        enabled: false,
+        enableTouchZoom: false,
+        enableDoubleClickZoom: false,
         enableMouseWheelZoom: false,
-        buttonOptions: {
-          verticalAlign: 'bottom'
-        }
+        enableButtons: false
       }
     }
   }
