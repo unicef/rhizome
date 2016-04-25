@@ -8,7 +8,7 @@ export default React.createClass({
   render: function () {
     let item = this.props.item
     return (
-      <div key={item.id}>{item.name}
+      <div key={item.id}>{item.short_name || item.name}
         <IconButton className='clear-btn' onClick={() => item.removeFunction(item.id)} icon='fa-times-circle' />
       </div>
     )
