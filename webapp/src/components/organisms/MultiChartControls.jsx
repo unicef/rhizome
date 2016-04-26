@@ -79,7 +79,7 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const date_range_picker = !chartShowsOneCampaign ? (
+    const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
         <DateRangePicker
