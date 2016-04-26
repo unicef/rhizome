@@ -16,6 +16,8 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 
 from datetime import datetime
 
+import calendar
+
 class ResultObject(object):
     '''
     This is the same as a row in the CSV export in which one row has a distinct
@@ -138,7 +140,9 @@ class DatapointResource(BaseNonModelResource):
 
     def group_by_time_transform(self):
 
-        if self.parsed_params['group_by_time'] == 'all_time':
+        time_grouping =  self.parsed_params['group_by_time']
+
+        if time_grouping == 'all_time':
             return self.map_bubble_transform() # hack...
 
         indicator_id_list = self.parsed_params['indicator__in']
@@ -154,17 +158,26 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = indicator_id_list
         ).values(*cols)),columns=cols)
 
-        ## Group Datapoints by Year ##
-        dp_df['year'] = dp_df['data_date'].map(lambda x: x.year)
-        gb_df = DataFrame(dp_df.groupby(['indicator_id','year'])['value']\
-            .sum()).reset_index()
+        ## Group Datapoints by Year / Quarter ##
+        if time_grouping == 'year':
+            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: x.year)
+        elif time_grouping == 'quarter':
+
+            dp_df['time_grouping'] = dp_df['data_date']\
+                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+
+        else:
+            return []
+
+        gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
+            ['value'].sum()).reset_index()
 
         results = []
         for ix, row in gb_df.iterrows():
 
             r = ResultObject()
             r.location = location_id
-            r.campaign = row.year * -1
+            r.campaign = row.time_grouping.replace('-','')
             r.indicators = [{indicator_id_list[0] : row.value}]
 
             # r.indicators = [{
@@ -175,16 +188,16 @@ class DatapointResource(BaseNonModelResource):
 
             results.append(r)
 
-        all_yrs = list(dp_df['year'].unique())
+        all_time_groups = list(dp_df['time_grouping'].unique())
 
         self.campaign_qs = [{
-            'id': yr * -1 ,
-            'name': str(yr),
-            'start_date': str(yr) + '-01-01',
-            'end_date': str(yr) + '-01-01',
+            'id': time_grp ,
+            'name': str(time_grp),
+            # 'start_date': str(yr) + '-01-01',
+            # 'end_date': str(yr) + '-01-01',
             'office_id': 1,
             'created_at': datetime.now()
-        } for yr in all_yrs]
+        } for time_grp in all_time_groups]
 
         return results
 
