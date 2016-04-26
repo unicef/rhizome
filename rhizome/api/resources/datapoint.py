@@ -129,11 +129,10 @@ class DatapointResource(BaseNonModelResource):
 
         self.location_ids = self.get_locations_to_return_from_url(request)
 
-        try:
-            gb_param = request.GET['group_by_time']
-            self.base_data = self.group_by_time_transform()
-        except KeyError:
+        if self.parsed_params['group_by_time'] == 'campaign':
             self.base_data = self.base_transform()
+        else:
+            self.base_data = self.group_by_time_transform()
 
         return self.base_data
 
