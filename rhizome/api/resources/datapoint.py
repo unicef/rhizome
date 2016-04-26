@@ -179,13 +179,12 @@ class DatapointResource(BaseNonModelResource):
             r = ResultObject()
             r.location = location_id
             r.campaign = str(row.time_grouping).replace('-','').replace('.0','')
-            r.indicators = [{indicator_id_list[0] : row.value}]
 
-            # r.indicators = [{
-            #     'computed': None,
-            #     'indicator': ind_id,
-            #     'value': row.value
-            # } for ind_id in indicator_id_list]
+            r.indicators = [{
+                'computed': None,
+                'indicator': indicator_id_list[0],
+                'value': row.value
+            } for ind_id in indicator_id_list]
 
             results.append(r)
 
