@@ -192,7 +192,7 @@ class DatapointResource(BaseNonModelResource):
         all_time_groups = list(dp_df['time_grouping'].unique())
 
         self.campaign_qs = [{
-            'id': time_grp ,
+            'id': r.campaign,
             'name': str(time_grp),
             'office_id': 1,
             'created_at': datetime.now()
