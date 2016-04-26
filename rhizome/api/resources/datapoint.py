@@ -16,6 +16,8 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 
 from datetime import datetime
 
+from pprint import pprint
+
 class ResultObject(object):
     '''
     This is the same as a row in the CSV export in which one row has a distinct
@@ -173,10 +175,16 @@ class DatapointResource(BaseNonModelResource):
 
         df_with_aggregate = self.add_aggregate_indicators(dp_df)
 
+        print 'df_with_aggregate[:5]'
+        print df_with_aggregate[:5]
+
         gb_df = DataFrame(df_with_aggregate\
             .groupby(['indicator_id','time_grouping'])['value']\
             .sum())\
             .reset_index()
+
+        print 'gb_df[:5]'
+        print gb_df[:5]
 
         p_table = pivot_table(
             gb_df, values='value', index=['indicator_id'],\
@@ -184,6 +192,8 @@ class DatapointResource(BaseNonModelResource):
 
         no_nan_p_table = p_table.where((notnull(p_table)), None)
         pivoted_data = no_nan_p_table.to_dict()
+
+        pprint(pivoted_data)
 
         results = []
         for time_grouping, indicator_data in pivoted_data.iteritems():
@@ -226,7 +236,7 @@ class DatapointResource(BaseNonModelResource):
             .groupby(['indicator_id','time_grouping'])['data_date']\
             .max())\
             .reset_index()\
-            .rename(columns = {'data_date':ind_meta['latest_date_indicator']})
+            .rename(columns = {'data_date':'value'})
 
         latest_date_df['indicator_id'] = ind_meta['latest_date_indicator']
         concat_df = concat([latest_date_df, filtered_df])
