@@ -81,9 +81,9 @@ var DropdownMenu = React.createClass({
     if (!this.props.items || this.props.items.length === 0) {
       if (this.props.text) {
         return (
-          <button className={'button' + this.props.style }>
-            <i className='fa fa-spinner fa-spin'></i>
-            'Loading ' {_.capitalize(this.props.item_plural_name)}...
+          <button className={this.props.style} role='button'>
+            <i className='fa fa-spinner fa-spin'></i> &nbsp;
+            Loading {_.capitalize(this.props.item_plural_name)}...
           </button>
         )
       } else {
