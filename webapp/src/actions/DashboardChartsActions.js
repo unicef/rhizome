@@ -21,6 +21,7 @@ const DashboardChartsActions = Reflux.createActions({
   'setChartTitle': 'setChartTitle',
   'setPalette': 'setPalette',
   'setGroupBy': 'setGroupBy',
+  'setGroupByTime': 'setGroupByTime',
   'setType': 'setType',
   'setDateRange': 'setDateRange',
   'setIndicatorFilter': 'setIndicatorFilter',

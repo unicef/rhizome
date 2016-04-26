@@ -47,6 +47,7 @@ const DashboardRow = React.createClass({
         saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
         setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
         setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
+        setGroupByTime={(grouping) => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
         setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
         setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
         setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}

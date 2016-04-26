@@ -77,7 +77,8 @@ const ChartPage = React.createClass({
         campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
         location_ids: chart.selected_locations.map(location => location.id),
         indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
-        groupBy: chart.groupBy
+        groupBy: chart.groupBy,
+        groupByTime: chart.groupByTime
       })
     })
   },
@@ -95,6 +96,7 @@ const ChartPage = React.createClass({
           toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
           saveChart={() => this.saveChart(chart)}
           setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
+          setGroupByTime={(grouping) => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
           setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
           setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
           setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}

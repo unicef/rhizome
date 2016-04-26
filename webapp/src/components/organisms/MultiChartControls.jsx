@@ -3,7 +3,9 @@ import moment from 'moment'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import {DropdownList} from 'react-widgets'
-import RadioGroup from 'react-radio-group'
+// import RadioGroup from 'react-radio-group'
+import RadioGroup from 'components/molecules/RadioGroup'
+
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import IconButton from 'components/atoms/IconButton'
@@ -56,6 +58,11 @@ const MultiChartControls = React.createClass({
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
     const groupedChart = _.indexOf(builderDefinitions.grouped_charts, type) !== -1
+    const multiIndicator = type === 'TableChart' || type === 'RawData'
+    const multiLocation = type === 'TableChart'
+    const groupByIndicator = groupedChart && chart.groupBy === 'location'
+    const groupByLocation = groupedChart && chart.groupBy === 'indicator'
+
 
     const palette_selector = type !== 'RawData' ? (
       <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
@@ -86,24 +93,40 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
+    const group_by_time_selector = !chartShowsOneCampaign ? (
+      <div className='medium-12 columns radio-group'>
+        <h3>Group By</h3>
+        <RadioGroup
+          name={'groupByTime' + chart.uuid}
+          value={chart.groupByTime}
+          onChange={props.setGroupByTime}
+          horizontal
+          values={[
+            {value: 'campaign', title: 'Campaign'},
+            {value: 'quarter', title: 'Quarter'},
+            {value: 'year', title: 'Year'}
+          ]}/>
+      </div>
+    ) : null
+
     const indicator_filter = (
       <div className='medium-12 columns'>
-        <h3>LPD Status</h3>
+        <h3>Filter By</h3>
         <DistrictDropdown selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
       </div>
     )
 
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
-        <RadioGroup name={'groupBy' + chart.uuid} selectedValue={chart.groupBy} onChange={props.setGroupBy}>
-          {Radio => (
-            <div>
-              <Radio value='indicator' /> Multiple Indicators
-              <span>&nbsp;&nbsp;</span>
-              <Radio value='location' /> Multiple Locations
-            </div>
-          )}
-        </RadioGroup>
+        <RadioGroup
+          name={'groupBy' + chart.uuid}
+          value={chart.groupBy}
+          onChange={props.setGroupBy}
+          horizontal
+          values={[
+            {value: 'indicator', title: 'Multiple Indicators'},
+            {value: 'location', title: ' Multiple Locations'}
+          ]}/>
       </div>
     ) : null
 
@@ -119,11 +142,6 @@ const MultiChartControls = React.createClass({
         linked={chart.linkedCampaigns}
       />
     ) : ''
-
-    const multiIndicator = type === 'TableChart' || type === 'RawData'
-    const multiLocation = type === 'TableChart'
-    const groupByIndicator = groupedChart && chart.groupBy === 'location'
-    const groupByLocation = groupedChart && chart.groupBy === 'indicator'
 
     const location_selector = (
       <LocationSelector
@@ -158,10 +176,11 @@ const MultiChartControls = React.createClass({
     return (
       <div className={this.props.className}>
         <IconButton onClick={props.toggleEditMode} icon='fa-angle-double-right' className='chart-options-button' />
+        { group_by_time_selector }
         { date_range_picker }
         { campaign_selector }
-        { indicator_filter }
         { group_by_selector }
+        { indicator_filter }
         { location_selector }
         { indicator_selector }
         { !this.props.readOnlyMode ? palette_selector : null }

@@ -30,6 +30,7 @@ const _prepDatapointsQuery = (params) => {
     chart_type: params.type,
     chart_uuid: params.uuid,
     show_missing_data: params.show_missing_data,
+    group_by_time: params.group_by_time,
     source_name: params.source_name,
     parent_location_id__in: needsLocationChildren ? params.location_ids : null,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,

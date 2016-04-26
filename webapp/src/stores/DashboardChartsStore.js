@@ -23,6 +23,7 @@ class ChartState {
     this.datapoints = null
     this.data_format = 'pct'
     this.groupBy = 'indicator'
+    this.groupByTime = 'campaign'
     this.palette = 'traffic_light'
     this.locations_index = null
     this.indicators_index = null
@@ -139,7 +140,8 @@ var DashboardChartsStore = Reflux.createStore({
         campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
         location_ids: chart.selected_locations.map(location => location.id),
         indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
-        groupBy: chart.groupBy
+        groupBy: chart.groupBy,
+        groupByTime: chart.groupByTime
       })
     })
   },
@@ -311,6 +313,11 @@ var DashboardChartsStore = Reflux.createStore({
     this.charts[uuid].selected_locations = first_location ? [first_location] : []
     this.updateChart(uuid)
   },
+  onSetGroupByTime: function (grouping, uuid) {
+    this.toggleLoading(uuid)
+    this.charts[uuid].groupByTime = grouping
+    this.updateChart(uuid)
+  },
   onSetChartTitle: function (title, uuid) {
     this.charts[uuid].title = title
     this.trigger(this.charts)
@@ -410,6 +417,7 @@ var DashboardChartsStore = Reflux.createStore({
       indicator_filter: chart.indicator_filter,
       indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
       location_ids: chart.selected_locations.map(location => location.id),
+      group_by_time: chart.groupByTime,
       start_date: chart.start_date,
       end_date: chart.end_date,
       type: chart.type,

@@ -42,7 +42,8 @@ var ChartsPage = React.createClass({
         campaign_ids: chart_def.campaign_ids,
         location_ids: chart_def.location_ids,
         indicator_ids: chart_def.indicator_ids,
-        groupBy: chart_def.groupBy
+        groupBy: chart_def.groupBy,
+        groupByTime: chart_def.groupByTime
       })
     })
   },
