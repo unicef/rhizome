@@ -18,9 +18,9 @@
 
 ##### Update cell value
   * Click into the cell for a percentage indicator, there should now be a keyboard cursor in the cell. It should allow you to edit the number that is already there or if it is blank you can input a new number.
-  * Input '99'. Now either click outside of the data table or press enter. This should show a small loading icon in the cell and then save. You may or may not see the loading icon depending how fast it saves. It should display '99%' for this cell. Click outside the table or press enter to save.
+  * Input '99'. Now either click outside of the data table or press enter. This should show a small loading icon in the cell and then save. You may or may not see the loading icon depending how fast it saves. It should display '99%' for this cell.
+  * Click outside the table or press enter to save.
   * Make note of this indicator name and value.
-
   * Let's edit a couple other cells and we will test if the database has saved these changes. Find one of the boolean indicators. These are cells which allow you to enter 1 of the 3, 'Yes', 'No' or 'No Data'.
   * Input either data if it is 'No Data' or the opposite answer('Yes' if 'No' etc.).
   * Click outside the table or press enter to save. It should now display the value you have selected. Make note of which indicator name this is and it's value.
@@ -51,3 +51,18 @@
   * Now simply remove the location by clicking the little X at the beginning of the table row. The values in the other two rows should not change, and they definitely should not inherit any information from the middle row that was just removed.
   * Find the middle row location(Kabul if it was Kabul) from the Add Location dropdown and add it again. It should have all of the new changed values which you had just input.
   * Verify each cell value to indicator name.
+
+##### Add values to row and change campaign
+  * Add locations Bagrami, Kabul, Uruzgan.
+  * Keep note of which campaign selected.
+  * For Uruzgan row put input valid values for each indicator possible.
+  * Let's input all variations of valid data for each cell. So for percentage that is anything greater than 0 to 100, also a blank percentage cell should be at least one indicator in the row. Same for boolean, mostly 'Yes' or 'No' and one 'No Data'. Integers can be any range, 0 to infinity(stick to 200,000 being maximum). Also one indicator with blank data.
+  * Now switch campaign to a different campaign.
+  * Click on Uruzgan location.
+  * The data should not reflect what you have entered.
+  * Return to the original campaign which was selected.
+  * Select the locations again, Bagrami, Kabul, and Uruzgan.
+  * Verify each cell value to indicator name for Uruzgan contain your updated values.
+
+
+  // more test cases should be added to verify dashboard configurations and combinations
