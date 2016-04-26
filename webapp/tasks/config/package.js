@@ -9,7 +9,8 @@ export default {
     'appspec.yml',
     'requirements.txt',
     'settings.py',
-    'initial_data.xlsx'
+    '*.xlsx',
+    '*.csv'
   ].map(file => {
     return path.join(process.cwd(), '..') + '/' + file
   }),
