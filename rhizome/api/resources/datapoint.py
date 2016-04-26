@@ -16,8 +16,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 
 from datetime import datetime
 
-import calendar
-
 class ResultObject(object):
     '''
     This is the same as a row in the CSV export in which one row has a distinct
@@ -135,10 +133,10 @@ class DatapointResource(BaseNonModelResource):
         if time_gb == 'campaign' or time_gb is None:
             self.base_data = self.base_transform()
         else:
-            try:
-                self.base_data = self.group_by_time_transform()
-            except AttributeError: ## clean this up ##
-                self.base_data = self.base_transform()
+            # try:
+            self.base_data = self.group_by_time_transform()
+            # except AttributeError: ## clean this up ##
+            #     self.base_data = self.base_transform()
 
         return self.base_data
 
@@ -166,28 +164,35 @@ class DatapointResource(BaseNonModelResource):
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
-
             dp_df['time_grouping'] = dp_df['data_date']\
                 .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
-
+        elif time_grouping == 'all_time':
+            dp_df['time_grouping'] = 'all_time'
         else:
             return []
 
         gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
             ['value'].sum()).reset_index()
 
+        p_table = pivot_table(
+            gb_df, values='value', index=['indicator_id'],\
+                columns=['time_grouping'], aggfunc=np.sum)
+
+        no_nan_p_table = p_table.where((notnull(p_table)), None)
+        pivoted_data = no_nan_p_table.to_dict()
+
         results = []
-        for ix, row in gb_df.iterrows():
+        for time_grouping, indicator_data in pivoted_data.iteritems():
 
             r = ResultObject()
             r.location = location_id
-            r.campaign = str(row.time_grouping).replace('-','').replace('.0','')
+            r.campaign = str(time_grouping).replace('-','').replace('.0','')
 
             r.indicators = [{
                 'computed': None,
-                'indicator': indicator_id_list[0],
-                'value': row.value
-            } for ind_id in indicator_id_list]
+                'indicator': k,
+                'value': v
+            } for k,v in indicator_data.iteritems()]
 
             results.append(r)
 
@@ -196,8 +201,6 @@ class DatapointResource(BaseNonModelResource):
         self.campaign_qs = [{
             'id': time_grp ,
             'name': str(time_grp),
-            # 'start_date': str(yr) + '-01-01',
-            # 'end_date': str(yr) + '-01-01',
             'office_id': 1,
             'created_at': datetime.now()
         } for time_grp in all_time_groups]
