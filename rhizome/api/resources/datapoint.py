@@ -131,7 +131,8 @@ class DatapointResource(BaseNonModelResource):
 
         self.location_ids = self.get_locations_to_return_from_url(request)
 
-        if self.parsed_params['group_by_time'] == 'campaign':
+        time_gb = self.parsed_params['group_by_time']
+        if time_gb == 'campaign' or time_gb is None:
             self.base_data = self.base_transform()
         else:
             self.base_data = self.group_by_time_transform()
@@ -160,7 +161,7 @@ class DatapointResource(BaseNonModelResource):
 
         ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
-            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: x.year)
+            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
 
             dp_df['time_grouping'] = dp_df['data_date']\
@@ -177,7 +178,7 @@ class DatapointResource(BaseNonModelResource):
 
             r = ResultObject()
             r.location = location_id
-            r.campaign = row.time_grouping.replace('-','')
+            r.campaign = str(row.time_grouping).replace('-','').replace('.0','')
             r.indicators = [{indicator_id_list[0] : row.value}]
 
             # r.indicators = [{
