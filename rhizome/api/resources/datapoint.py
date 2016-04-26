@@ -153,13 +153,13 @@ class DatapointResource(BaseNonModelResource):
                 location__location_type__name = 'District',
                 parent_location_id = location_id
             ).values_list('location_id', flat=True)
-
         cols = ['data_date','indicator_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
             indicator_id__in = indicator_id_list
         ).values(*cols)),columns=cols)
-
+        if dp_df.empty:
+            return []
         ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
@@ -170,10 +170,8 @@ class DatapointResource(BaseNonModelResource):
             dp_df['time_grouping'] = 'all_time'
         else:
             return []
-
         gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
             ['value'].sum()).reset_index()
-
         pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
 
         results = []
@@ -194,7 +192,7 @@ class DatapointResource(BaseNonModelResource):
         all_time_groups = list(dp_df['time_grouping'].unique())
 
         self.campaign_qs = [{
-            'id': time_grp ,
+            'id': r.campaign,
             'name': str(time_grp),
             'office_id': 1,
             'created_at': datetime.now()
@@ -313,16 +311,8 @@ class DatapointResource(BaseNonModelResource):
         p_table = pivot_table(df, values=value, index=index_column_list,\
                 columns=pivot_column_list, aggfunc=np.sum)
 
-        # print '===p_table====\n' * 5
-        # print p_table
-        # print '===p_table====\n' * 5
-
         no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
         pivoted_dictionary = no_nan_pivoted_df.to_dict()
-
-        print '===\n' * 3
-        print pivoted_dictionary
-        print '===\n' * 3
 
         return pivoted_dictionary
 

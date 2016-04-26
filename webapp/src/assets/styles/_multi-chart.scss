@@ -1,19 +1,5 @@
-// .multi-chart footer, footer.hideable{
-// 	background: #252525;
-//   padding-top: .75rem;
-//   padding-bottom: .3rem;
-//   h1, h2, h3, h4, h5, h6, p {
-//     color: $rhz-body-color;
-//   }
-// }
-
 .multi-chart {
 	background: white;
-	// border-bottom: 1px solid $rhz-navigation-hover-bg-color-glass;
-	// border-left: 1px solid $rhz-navigation-hover-bg-color-glass;
-	// border-right: 1px solid $rhz-navigation-hover-bg-color-glass;
-	// box-shadow: -1px 2px 3px grey;
-	white-space: nowrap;
 	overflow-x: auto;
 	margin-top: 1rem;
 	margin-bottom: 2rem;
@@ -21,8 +7,8 @@
 	margin-right: 1%;
 	width: 98%;
 	header {
-		// background: $rhz-navigation-hover-bg-color-glass;
-		background: #252525;
+		background: white;
+		text-align: center;
 	  h1, h2, h3, h4, h5, h6, p {
 	  	text-transform: none;
 	  	position: relative;
@@ -31,16 +17,25 @@
 	  		top: .025rem;
 	  	}
 	  	margin: 0;
-	    color: white;
+	    color: $rhz-body-color;
 	  }
 		h1, input, .icon-button {
 			position: relative;
 			z-index: 300;
 		}
 		h2 {
-			font-size: 1.25rem;
-			margin: 0.4rem auto;
+			font-family: adelle;
+			font-size: 1.4rem;
+			margin-top: 1.5rem;
+			margin-bottom: .1rem;
 			display: block;
+			font-weight: 700;
+			a {
+				font-size: 1.4rem;
+				&:hover {
+					color: $rhz-body-color;
+				}
+			}
 			@media #{$small-only} {
 				border-top: 1px solid #DBDBDB;
 				width: 100%;
@@ -48,12 +43,16 @@
 			}
 		}
 		form {
+			display: inline-block;
+			input {
+				text-align: center;
+			}
 			.icon-button {
 				top: .1rem;
 			}
 		}
 		.icon-button {
-			color: white;
+			color: $rhz-body-color;
 	    left: initial;
 			font-size: 1.2rem;
 			padding: 0.5rem 0.7rem;
@@ -61,7 +60,7 @@
 	  .chart-actions {
 			position: absolute;
 			right: 0;
-			top: 0;
+			top: 1rem;
 	  }
 	  .chart-options-button {
     	color: $rhz-body-color;

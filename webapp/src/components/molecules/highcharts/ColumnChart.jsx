@@ -9,6 +9,7 @@ class ColumnChart extends HighChart {
   setConfig = function () {
     const first_indicator = this.props.selected_indicators[0]
     const first_location = this.props.selected_locations[0]
+    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const props = this.props
     this.config = {
       xAxis: {
@@ -17,18 +18,30 @@ class ColumnChart extends HighChart {
           format: '{value:%b %Y}'
         }
       },
-      yAxis: {
-        title: { text: '' },
-        labels: {
-          formatter: function () {
-            return format.autoFormat(this.value, first_indicator.data_format)
+      yAxis: [
+        {
+          title: { text: '' },
+          labels: {
+            formatter: function () {
+              return format.autoFormat(this.value, first_indicator.data_format)
+            }
           }
-        }
-      },
+        },
+        {
+          title: { text: '' },
+          labels: {
+            formatter: function () {
+              return format.autoFormat(this.value, last_indicator.data_format)
+            }
+          },
+          opposite: true
+        },
+      ],
       tooltip: {
         xDateFormat: '%b %Y',
-        pointFormatter: function (point) {
-          const value = format.autoFormat(this.y, first_indicator.data_format)
+        pointFormatter: function () {
+          const data_format = this.series.name === last_indicator.name ? last_indicator.data_format : first_indicator.data_format
+          const value = format.autoFormat(this.y, data_format)
           const secondary_text = props.groupBy === 'indicator' ? first_location.name : first_indicator.name
           return `<b>${secondary_text}</b><br/>${this.series.name}: <b>${value}</b><br/>`
         }
@@ -62,12 +75,12 @@ class ColumnChart extends HighChart {
     if (multiIndicator) {
       const sorted_line_data = _.sortBy(grouped_data[last_indicator.id], group => group.campaign.start_date.getTime())
       series.push({
+        yAxis: 1,
         name: last_indicator.name,
         type: 'spline',
         data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
       })
     }
-
     return series
   }
 }
