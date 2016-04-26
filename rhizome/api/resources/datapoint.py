@@ -161,10 +161,14 @@ class DatapointResource(BaseNonModelResource):
             .difference(set(inicators_to_filter)))
 
         location_id = self.parsed_params['location_id__in']
-        location_ids = LocationTree.objects.filter(
+        location_tree_cols = ['location_id', 'parent_location_id']
+        location_tree_df = DataFrame(list(LocationTree.objects.filter(
                 location__location_type__name = 'District',
                 parent_location_id = location_id
-            ).values_list('location_id', flat=True)
+            ).values_list(*location_tree_cols))\
+                ,columns = location_tree_cols)
+
+        location_ids = list(location_tree_df['location_id'].unique())
 
         cols = ['data_date','indicator_id','location_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
@@ -183,7 +187,8 @@ class DatapointResource(BaseNonModelResource):
         else:
             return []
 
-        df_with_aggregate = self.add_aggregate_indicators(dp_df)
+        df_with_aggregate = self.add_aggregate_indicators(dp_df, \
+            location_tree_df)
 
         gb_df = DataFrame(df_with_aggregate\
             .groupby(['indicator_id','time_grouping'])['value']\
@@ -223,7 +228,7 @@ class DatapointResource(BaseNonModelResource):
 
         return results
 
-    def add_aggregate_indicators(self, flat_df):
+    def add_aggregate_indicators(self, flat_df, location_tree_df):
         '''
         '''
         #  http://localhost:8000/api/v1/datapoint/?indicator__in=37&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
