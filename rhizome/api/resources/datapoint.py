@@ -81,6 +81,12 @@ class DatapointResource(BaseNonModelResource):
             'BubbleMap': self.transform_map_data
         }
 
+        ## popluate this in caluclated_indicator_component ##
+        self.ind_meta = {
+            'base_indicator': 37,
+            'latest_date_indicator': 82,
+            'district_count_indicator': 39
+        }
 
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
@@ -148,16 +154,22 @@ class DatapointResource(BaseNonModelResource):
             return self.map_bubble_transform() # hack...
 
         indicator_id_list = self.parsed_params['indicator__in']
+        inicators_to_filter = set([self.ind_meta['latest_date_indicator'],\
+            self.ind_meta['district_count_indicator']])
+
+        filtered_indicator_list = list(set(indicator_id_list)\
+            .difference(set(inicators_to_filter)))
+
         location_id = self.parsed_params['location_id__in']
         location_ids = LocationTree.objects.filter(
                 location__location_type__name = 'District',
                 parent_location_id = location_id
             ).values_list('location_id', flat=True)
 
-        cols = ['data_date','indicator_id','value']
+        cols = ['data_date','indicator_id','location_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
-            indicator_id__in = indicator_id_list
+            indicator_id__in = filtered_indicator_list
         ).values(*cols)),columns=cols)
 
         ## Group Datapoints by Year / Quarter ##
@@ -214,24 +226,29 @@ class DatapointResource(BaseNonModelResource):
     def add_aggregate_indicators(self, flat_df):
         '''
         '''
+        #  http://localhost:8000/api/v1/datapoint/?indicator__in=37&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
 
-        ## popluate this in caluclated_indicator_component ##
-        ind_meta = {
-            'base_indicator': 37,
-            'latest_date_indicator': 82
-        }
+        # http://localhost:8000/api/v1/datapoint/?indicator__in=37%2C39&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
 
-        filtered_df = flat_df[flat_df['indicator_id'] == 37]
-        latest_date_df = DataFrame(filtered_df\
+        latest_date_df = DataFrame(flat_df\
             .groupby(['indicator_id','time_grouping'])['data_date']\
             .max())\
-            .reset_index()\
-
+            .reset_index()
         latest_date_df['value'] = latest_date_df['data_date']\
             .map(lambda x: x.strftime('%b %d %Y'))
+        latest_date_df['indicator_id'] = self\
+            .ind_meta['latest_date_indicator']
 
-        latest_date_df['indicator_id'] = ind_meta['latest_date_indicator']
-        concat_df = concat([latest_date_df, filtered_df])
+        district_count_df = DataFrame(flat_df\
+            .groupby(['time_grouping']).location_id
+            .nunique())\
+            .reset_index()
+
+        district_count_df['value'] = district_count_df['location_id']
+        district_count_df['indicator_id'] = self\
+            .ind_meta['district_count_indicator']
+
+        concat_df = concat([latest_date_df, flat_df, district_count_df])
 
         return concat_df
 
