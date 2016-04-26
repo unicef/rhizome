@@ -174,12 +174,7 @@ class DatapointResource(BaseNonModelResource):
         gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
             ['value'].sum()).reset_index()
 
-        p_table = pivot_table(
-            gb_df, values='value', index=['indicator_id'],\
-                columns=['time_grouping'], aggfunc=np.sum)
-
-        no_nan_p_table = p_table.where((notnull(p_table)), None)
-        pivoted_data = no_nan_p_table.to_dict()
+        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
 
         results = []
         for time_grouping, indicator_data in pivoted_data.iteritems():
@@ -313,6 +308,24 @@ class DatapointResource(BaseNonModelResource):
     # ### HELPER METHODS #####
     # #########################
 
+    def pivot_df(self, df, index_column_list, value, pivot_column_list):
+
+        p_table = pivot_table(df, values=value, index=index_column_list,\
+                columns=pivot_column_list, aggfunc=np.sum)
+
+        # print '===p_table====\n' * 5
+        # print p_table
+        # print '===p_table====\n' * 5
+
+        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+        pivoted_dictionary = no_nan_pivoted_df.to_dict()
+
+        print '===\n' * 3
+        print pivoted_dictionary
+        print '===\n' * 3
+
+        return pivoted_dictionary
+
     def parse_url_params(self, query_dict):
         '''
         For the query dict return another dictionary ( or error ) in accordance
@@ -444,21 +457,11 @@ class DatapointResource(BaseNonModelResource):
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
         try:
-            p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-
-            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-            pivoted_data = no_nan_pivoted_df.to_dict()
+            pivoted_data = self.pivot_df(dwc_df, ['indicator_id'], 'value', ['location_id', 'campaign_id'])
 
             ## we need two dictionaries, one that has the value of the
             ## datapoint_computed object and one with the id ##
-            p_table_for_id = pivot_table(
-                dwc_df, values='id', index=['indicator_id'],\
-                    columns=['location_id', 'campaign_id'], aggfunc=np.sum)
-            no_nan_pivoted_df_for_id = p_table_for_id.where((notnull(p_table)), \
-                None)
-            pivoted_data_for_id = no_nan_pivoted_df_for_id.to_dict()
+            pivoted_data_for_id = self.pivot_df(dwc_df, ['indicator_id'], 'id', ['location_id', 'campaign_id'])
 
         except KeyError: ## there is no data, so fill it with empty indicator data ##
             pivoted_data, pivoted_data_for_id = {}, {}
@@ -612,12 +615,7 @@ class DatapointResource(BaseNonModelResource):
             dwc_df = gb_df
 
         try:
-            p_table = pivot_table(
-                dwc_df, values='value', index=['indicator_id'],\
-                    columns=['location_id'], aggfunc=np.sum)
-
-            no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-            pivoted_data = no_nan_pivoted_df.to_dict()
+            pivoted_data = self.pivot_df(dwc_df, ['indicator_id'], 'value', ['location_id'])
 
         except KeyError: ## there is no data, so fill it with empty indicator data ##
             pivoted_data =  {}
