@@ -159,7 +159,6 @@ class DatapointResource(BaseNonModelResource):
             location_id__in = location_ids,
             indicator_id__in = indicator_id_list
         ).values(*cols)),columns=cols)
-
         ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
@@ -313,16 +312,8 @@ class DatapointResource(BaseNonModelResource):
         p_table = pivot_table(df, values=value, index=index_column_list,\
                 columns=pivot_column_list, aggfunc=np.sum)
 
-        # print '===p_table====\n' * 5
-        # print p_table
-        # print '===p_table====\n' * 5
-
         no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
         pivoted_dictionary = no_nan_pivoted_df.to_dict()
-
-        print '===\n' * 3
-        print pivoted_dictionary
-        print '===\n' * 3
 
         return pivoted_dictionary
 
