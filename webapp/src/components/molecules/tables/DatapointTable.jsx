@@ -24,7 +24,7 @@ class DatapointTable extends Table {
     return (
       <tr>
         <th></th>
-        { !this.groupByIndicator ? <th>{this.props.groupByTime}</th> : null}
+        { !this.groupByIndicator ? <th>{_.capitalize(this.props.groupByTime)}</th> : null}
         { header_cells }
       </tr>
     )
