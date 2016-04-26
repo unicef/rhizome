@@ -2,18 +2,16 @@
 
 ### High Level Functionality
 
- Click campaign dropdown and check if all campaigns are available.
- Click dashboard dropdown(below dashboard navigation) and check if all dashboards are available.
- Click location dropdown and check if all locations are available.
- Type 'Kabul' in the search drop down for locations to find Kabul.
- Type 'Uru' and it should not show any search suggestions. (3 letters does not trigger search until 4th is typed in.)
+  * Click campaign dropdown and check if all campaigns are available.
+  * Click dashboard dropdown(below dashboard navigation) and check if all dashboards are available.
+  * Click location dropdown and check if all locations are available. Type 'Kabul' in the search drop down for locations to find Kabul. Type 'Uru' and it should not show any search suggestions. (3 letters does not trigger search until 4th is typed in.)
 
 ##### Load table
- Below the these drop down selections there should be an empty area designated for data entry to load.(unless a table for data entry was already loaded)
- Click on add location and input 'Hilmand' and click on the location in the drop down menu. The other dropdowns to the left of this should be something along the lines of January 2016 and Pre Campaign. I state it as something along the lines because this data is subject to change.
- A table with 2 rows should have loaded. First row is the 'table header' row, with multiple indicators, one for each column. Second row is the table data row. The very left, beginning, of the table data row should indicate 'Hilmand'. In each column, in the Hilmand data row, there should be a value, or potentionally no value. If there is a value the editable cell, which is a cross section of this table row and header, should be white in color and indicate a value. If any indicator has 'No Data' or is empty it should be greyed out.
- This value may be numeric or a word. For example, some indicators will be a percentage(ex: 11%) or an integer(ex: 325), while some are boolean and indicate true or false(ex:'Yes'). If the indicator is 'Event meeting conducted' the value should be 'Yes', 'No', or 'No Data', if data was not collected. 'Percentage children missed' indicator should state a percentage, for example, '12%'. 'LQAS' indicator is an integer, and should have a basic number value, for example, '235'.
- Verify all columns and values in cell follow the rules stated above in this section.
+  * Below the these drop down selections there should be an empty area designated for data entry to load.(unless a table for data entry was already loaded)
+  * Click on add location and input 'Hilmand' and click on the location in the drop down menu. The other dropdowns to the left of this should be something along the lines of January 2016 and Pre Campaign. I state it as something along the lines because this data is subject to change.
+  * A table with 2 rows should have loaded. First row is the 'table header' row, with multiple indicators, one for each column. Second row is the table data row. The very left, beginning, of the table data row should indicate 'Hilmand'. In each column, in the Hilmand data row, there should be a value, or potentionally no value. If there is a value the editable cell, which is a cross section of this table row and header, should be white in color and indicate a value. If any indicator has 'No Data' or is empty it should be greyed out.
+  * This value may be numeric or a word. For example, some indicators will be a percentage(ex: 11%) or an integer(ex: 325), while some are boolean and indicate true or false(ex:'Yes'). If the indicator is 'Event meeting conducted' the value should be 'Yes', 'No', or 'No Data', if data was not collected. 'Percentage children missed' indicator should state a percentage, for example, '12%'. 'LQAS' indicator is an integer, and should have a basic number value, for example, '235'.
+  * Verify all columns and values in cell follow the rules stated above in this section.
 
 ### Low Level Functionality
 
