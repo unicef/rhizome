@@ -32,9 +32,8 @@ header {
   a {
     color: $rhz-font-color;
     font-size: 1.25rem;
-
     &:hover {
-      color: $rhz-font-color !important;
+      color: $rhz-font-color ;
     }
   }
 
