@@ -135,7 +135,10 @@ class DatapointResource(BaseNonModelResource):
         if time_gb == 'campaign' or time_gb is None:
             self.base_data = self.base_transform()
         else:
-            self.base_data = self.group_by_time_transform()
+            try:
+                self.base_data = self.group_by_time_transform()
+            except AttributeError: ## clean this up ##
+                self.base_data = self.base_transform()
 
         return self.base_data
 
