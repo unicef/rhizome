@@ -107,7 +107,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         case_dict = {}
         for obj in objects:
-            case_dict[obj['campaign']] = obj['indicators'][0][unicode(self.ind.id)]
+            case_dict[obj['campaign']] = obj['indicators'][0]['value']
 
         self.assertEqual(28.00, case_dict[2014])
         self.assertEqual(20.00, case_dict[2015])
