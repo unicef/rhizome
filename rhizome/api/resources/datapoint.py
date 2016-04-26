@@ -153,12 +153,13 @@ class DatapointResource(BaseNonModelResource):
                 location__location_type__name = 'District',
                 parent_location_id = location_id
             ).values_list('location_id', flat=True)
-
         cols = ['data_date','indicator_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
             indicator_id__in = indicator_id_list
         ).values(*cols)),columns=cols)
+        if dp_df.empty:
+            return []
         ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
@@ -169,10 +170,8 @@ class DatapointResource(BaseNonModelResource):
             dp_df['time_grouping'] = 'all_time'
         else:
             return []
-
         gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
             ['value'].sum()).reset_index()
-
         pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
 
         results = []

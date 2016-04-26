@@ -75,6 +75,7 @@ class DataPointResourceTest(ResourceTestCase):
         df = pd.read_csv('AfgPolioCases.csv')
 
         for ix, row in df.iterrows():
+
             DataPoint.objects.create(
                 location_id = self.some_district.id,
                 indicator_id = self.ind.id,
@@ -113,6 +114,33 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(20.00, case_dict[2015])
         self.assertEqual(3.0, case_dict[2016])
 
+
+    # not sure if this is a bug or what, but start and end date seem to be irrelevant when using group_by_time
+    def test_get_list_diff_start_end_dates(self):
+        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        objects_1 = response_data['objects']
+
+        get_parameter_2 = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(self.ind.id, '2016-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp_2 = self.api_client.get('/api/v1/datapoint/?' + get_parameter_2, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp_2)
+        response_data_2 = self.deserialize(resp_2)
+        objects_2 = response_data_2['objects']
+
+        self.assertEqual(len(objects_1), len(objects_2))
+
+
+
     def test_get_list_quarter(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
@@ -141,5 +169,17 @@ class DataPointResourceTest(ResourceTestCase):
                 q1_found = True
 
         self.assertTrue(q1_found)
+
+    # provide a non-existent id
+    def test_get_list_bogus_id(self):
+        get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), 0)
 
 
