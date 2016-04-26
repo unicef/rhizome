@@ -1,6 +1,6 @@
 import numpy as np
 import sys
-from pandas import DataFrame, pivot_table, notnull
+from pandas import DataFrame, pivot_table, notnull, concat
 
 from django.http import HttpResponse
 
@@ -171,8 +171,12 @@ class DatapointResource(BaseNonModelResource):
         else:
             return []
 
-        gb_df = DataFrame(dp_df.groupby(['indicator_id','time_grouping'])\
-            ['value'].sum()).reset_index()
+        df_with_aggregate = self.add_aggregate_indicators(dp_df)
+
+        gb_df = DataFrame(df_with_aggregate\
+            .groupby(['indicator_id','time_grouping'])['value']\
+            .sum())\
+            .reset_index()
 
         p_table = pivot_table(
             gb_df, values='value', index=['indicator_id'],\
@@ -206,6 +210,28 @@ class DatapointResource(BaseNonModelResource):
         } for time_grp in all_time_groups]
 
         return results
+
+    def add_aggregate_indicators(self, flat_df):
+        '''
+        '''
+
+        ## popluate this in caluclated_indicator_component ##
+        ind_meta = {
+            'base_indicator': 37,
+            'latest_date_indicator': 82
+        }
+
+        filtered_df = flat_df[flat_df['indicator_id'] == 37]
+        latest_date_df = DataFrame(filtered_df\
+            .groupby(['indicator_id','time_grouping'])['data_date']\
+            .max())\
+            .reset_index()\
+            .rename(columns = {'data_date':ind_meta['latest_date_indicator']})
+
+        latest_date_df['indicator_id'] = ind_meta['latest_date_indicator']
+        concat_df = concat([latest_date_df, filtered_df])
+
+        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
