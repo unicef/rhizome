@@ -9,9 +9,9 @@
   * Campaign drop down should exist. Clicking this will show campaign options to click on.
   * Location drop down should exist. Clicking this will show location options to click on.
   * Districts drop down should exist. Clicking this will show district options to click on.
-  * When selecting a campaignfrom this drop down, it should update any charts with a campaign display. See in 'Layout' for which rows may contain charts with campaign information visible to the user. These charts should each reflect the current selection for campaign name.
-  * When selecting a locationfrom this drop down, it should update any charts with a location display. See in 'Layout' for which rows may contain charts with location information visible to the user. These charts should each reflect the current selection for location name.
-  * When selecting a districtfrom this drop down, it should update any charts with a district display. See in 'Layout' for which rows may contain charts with district information visible to the user. These charts should each reflect the current selection for district name.
+  * When selecting a campaign from this drop down, it should update any charts with a campaign display. See in 'Layout' for which rows may contain charts with campaign information visible to the user. These charts should each reflect the current selection for campaign name.
+  * When selecting a location from this drop down, it should update any charts with a location display. See in 'Layout' for which rows may contain charts with location information visible to the user. These charts should each reflect the current selection for location name.
+  * When selecting a district from this drop down, it should update any charts with a district display. See in 'Layout' for which rows may contain charts with district information visible to the user. These charts should each reflect the current selection for district name.
 ### Layout
   * All of the elements should exist:
   * Row 1
@@ -34,5 +34,4 @@
     * The chart on the left side is a column chart displaying indicator 'Missed Children PCA vs. Out of House'. The X axis displays campaign name. //update Y axis info.
     * Right side chart is a stacked column chart displaying 'Missed Children By Reason'. X axis indicates the regions, each with their own color. Y axis indicates number in integer form.
   * Row 6
-    * Last row has one chart for LQAS data. This is a stacked percentage column chart.
-    //update with more information later
+    * Last row has one chart for LQAS data. This is a stacked percentage column chart. The Y axis should be percentages for lot accepted. The X axis is displaying abbrieviated campaign dates.
