@@ -76,10 +76,11 @@ def ingest_situational():
             "start_date":"2014-01-01",
             "end_date":"2016-03-01",
             "indicator_ids":[
-                Indicator.objects.get(short_name="Zero Dose").id,
-                Indicator.objects.get(short_name="1-3 Dose").id,
-                Indicator.objects.get(short_name="4-6 Dose").id,
-                Indicator.objects.get(short_name="7+ Dose").id,
+                Indicator.objects.get(short_name='Number of reported Non Polio AFP cases').id,
+                Indicator.objects.get(short_name='Number of Unvaccinated Non Polio AFP Cases').id,
+                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 1-3 doses').id,
+                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 4-6 doses').id,
+                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 7+ doses').id,
             ],
             "campaign_ids":[5],
             "location_ids":[1],
@@ -95,7 +96,7 @@ def ingest_situational():
         chart_json ={
             "end_date":"2016-03-01",
             "indicator_ids":[Indicator.objects.get(name="Non Polio AFP Rate").id,
-            Indicator.objects.get(name="Percentage of Adequate Specimen ").id
+            Indicator.objects.get(name="Percentage of Adequate Specimen").id
             ],
             "campaign_ids":[5],
             "location_ids":[1],
