@@ -109,7 +109,6 @@ class MasterRefresh(object):
 
         source_map_dict = source_map_dict.to_dict()['master_object_id']
 
-        # print source_map_dict[('indicator','Number of Non Polio AFP cases vaccinated 1-3 doses')]
         return source_map_dict
 
     def get_class_indicator_mappings(self):
@@ -139,51 +138,6 @@ class MasterRefresh(object):
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
-        # self.mark_datapoints_with_needs_campaign()
-
-    # def mark_datapoints_with_needs_campaign(self):
-    #
-    #     new_dp_df = DataFrame(list(DataPoint.objects\
-    #         .filter(source_submission_id__in = \
-    #             self.ss_ids_to_process).values()))
-    #
-    #     date_series = new_dp_df['data_date']
-    #     mn_date, mx_date = min(date_series).date(), max(date_series).date()
-    #
-    #     office_lookup_df = DataFrame(list(Location.objects\
-    #         .filter(id__in = list(set(new_dp_df['location_id'])))\
-    #         .values_list('id','office_id')), \
-    #          columns = ['location_id', 'office_id'])
-    #
-    #     campaign_qs = Campaign.objects.filter(
-    #         end_date__gte = mn_date, start_date__lte = mx_date,
-    #         office_id__in = office_lookup_df\
-    #         ['office_id'].unique())
-    #
-    #     campaign_df = DataFrame(list(campaign_qs\
-    #         .values('office_id','start_date','end_date')))
-    #
-    #     if len(campaign_df) == 0:
-    #         ## no campaigns match the datapoitns so update all with cj_id = -2
-    #         DataPoint.objects.filter(id__in=new_dp_df['id'].unique())\
-    #             .update(cache_job_id = -2)
-    #         return
-    #
-    #     dp_merged_df = new_dp_df.merge(office_lookup_df)
-    #     cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
-    #
-    #     dp_ids_that_need_campaign = []
-    #     dp_merged_with_campaign = cleaned_dp_df.merge(campaign_df)
-    #
-    #     ## iterrate over the dps and check if there is a campaign ##
-    #     for ix, r in dp_merged_with_campaign.iterrows():
-    #         ## convert date time to date
-    #         r_date = r.data_date.date()
-    #         if r_date >= r.end_date or r_date < r.start_date:
-    #             dp_ids_that_need_campaign.append(r.id)
-    #
-    #     DataPoint.objects.filter(id__in=dp_ids_that_need_campaign)\
-    #         .update(cache_job_id = -2)
 
     def delete_unmapped(self):
         ## if a user re-maps data, we need to delete the
@@ -270,9 +224,6 @@ class MasterRefresh(object):
             else:
                 doc_dps = self.process_source_submission(row)
 
-        # print 'count of source submissions\n' * 5
-        # print len(SourceSubmission.objects.filter(document_id = self.document_id))
-
     def sync_datapoint(self, ss_id_list = None):
         dp_batch = []
         if not ss_id_list:
@@ -281,6 +232,7 @@ class MasterRefresh(object):
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
+
         if len(doc_dp_df) == 0:
             return
 
@@ -315,7 +267,6 @@ class MasterRefresh(object):
 
         dp_batch, dp_ids_to_delete = [],[]
 
-
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
                 row.indicator_id)]
@@ -343,10 +294,9 @@ class MasterRefresh(object):
         doc_dp_batch = []
         submission  = row.submission_json
 
-        data_date = timezone.now().date()
         for k,v in submission.iteritems():
             doc_dp = self.source_submission_cell_to_doc_datapoint(row, k, v, \
-                data_date)
+                row.data_date)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
 
@@ -434,4 +384,3 @@ class MasterRefresh(object):
         if convert_percent:
             cleaned_val = cleaned_val/100.0
         return cleaned_val
-Status API Training Shop Blog About
