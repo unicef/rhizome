@@ -3,7 +3,7 @@
 ### Dropdown Navigation
   * Campaign drop down should exist. Clicking this will show campaign options to click on.
   * Location drop down should exist. Clicking this will show location options to click on.
-  * Location drop down should exist. Clicking this will show location options to click on.
+  * Districts drop down should exist. Clicking this will show district options to click on.
 ### Layout
   * We need to make sure the following
   * Row 1

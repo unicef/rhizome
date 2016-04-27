@@ -59,7 +59,7 @@ var ChartsPage = React.createClass({
     let rows = (
       <tr>
         <td colSpan='3'>
-          No charts created yet.
+          No charts created yet.{' '}
           <a href='/charts/create' className='underlined'>Create your first chart</a>
         </td>
       </tr>

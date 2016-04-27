@@ -18,12 +18,12 @@
   	<form method="post" action="{% url 'login' %}">
   		{% csrf_token %}
 
-  		<div class="form-group">
+  		<div class="form-group" style="background-color:white;">
   			{{ form.username.label_tag }}
   			{{ form.username }}
   		</div>
 
-  		<div class="form-group">
+  		<div class="form-group" style="background-color:white;">
   			{{ form.password.label_tag }}
   			{{ form.password }}
   		</div>
