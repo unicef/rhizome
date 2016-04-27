@@ -26,8 +26,17 @@ def ingest_polio_cases(apps, schema_editor):
         indicator_id = polio_case_indicator_id,
     ).count()
 
+    polio_cases_count_2016 = DataPoint.objects.filter(
+        indicator_id = polio_case_indicator_id,
+        data_date__gt = '2016-01-01'
+    ).count()
+
     if polio_cases_count != 51:
         raise Exception('did not ingest the polio case data properly')
+
+    if polio_cases_count_2016 != 3:
+        raise Exception('polio case date ingest error')
+
 
 def ingest_polio_meta_data():
 

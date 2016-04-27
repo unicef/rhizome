@@ -15,9 +15,30 @@ import numpy as np
 
 def ingest_afp_cases(apps, schema_editor):
 
-    indicator_ids = update_indicators_and_dps()
+    indicator_ids = ingest_afp_case_meta()
     transformed_df = transform_raw_file()
     transformed_file_to_datapoint(transformed_df, indicator_ids)
+
+def ingest_afp_case_meta():
+
+    indicator_ids = []
+    indicator_names = ['Zero Dose','1-3 Dose','4-6 Dose','7+ Dose']
+
+    for ind in indicator_names:
+        ind_id = Indicator.objects.create(
+            name = ind,
+            short_name = ind,
+            description = ind,
+            data_format = 'int'
+        ).id
+        som_obj = SourceObjectMap.objects.create(
+            master_object_id = ind_id,
+            content_type = 'indicator',
+            source_object_code = ind
+        )
+        indicator_ids.append(ind_id)
+
+    return indicator_ids
 
 def transformed_file_to_datapoint(df, indicator_ids):
     user_id = User.objects.all()[0].id
@@ -103,44 +124,17 @@ def transform_raw_file():
         how='outer',on=['geocode','data_date'])
 
     final_df.columns = ['index_0','index_1','geocode','data_date',\
-        'Number of Unvaccinated Non Polio AFP Cases',\
-        'Number of Non Polio AFP cases vaccinated 1-3 doses',\
-        'Number of Non Polio AFP cases vaccinated 4-6 doses',\
-        'Number of Non Polio AFP cases vaccinated 7+ doses']
+        'Zero Dose','1-3 Dose','4-6 Dose','7+ Dose']
 
     final_df = final_df.replace(np.nan, 0)
     final_df = final_df.groupby(['geocode', 'data_date'], as_index = False).sum()
 
     return final_df
 
-def update_indicators_and_dps():
-
-    # get or create indicators
-    indicator_names = ['Number of Unvaccinated Non Polio AFP Cases',\
-        'Number of Non Polio AFP cases vaccinated 1-3 doses',\
-        'Number of Non Polio AFP cases vaccinated 4-6 doses',\
-        'Number of Non Polio AFP cases vaccinated 7+ doses']
-
-    indicator_ids =[]
-    for indicator_name in indicator_names:
-        indicator = Indicator.objects.get_or_create(name=indicator_name,\
-            short_name = indicator_name,
-            description = indicator_name,
-            data_format = 'int')
-        indicator_ids.append(indicator[0].id)
-
-    # delete any existing dps for those indicators
-    for indicator_id in indicator_ids:
-        DataPoint.objects.filter(indicator=indicator_id).delete()
-        DataPointComputed.objects.filter(indicator=indicator_id).delete()
-        DocDataPoint.objects.filter(indicator=indicator_id).delete()
-
-    return indicator_ids
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0015_base_dashboards'),
+        ('rhizome', '0013_ingest_polio_cases'),
     ]
 
     operations = [

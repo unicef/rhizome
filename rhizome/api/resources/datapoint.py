@@ -82,22 +82,6 @@ class DatapointResource(BaseNonModelResource):
             'BubbleMap': self.transform_map_data
         }
 
-        ## popluate this in caluclated_indicator_component ##
-
-        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
-            objects.filter(indicator__name = 'Polio Cases').values()
-
-        self.ind_meta = {'base_indicator': \
-            calc_indicator_data_for_polio_cases[0]['indicator_id']
-        }
-
-        for row in calc_indicator_data_for_polio_cases:
-            calc = row['calculation']
-            ind_id = row['indicator_component_id']
-            self.ind_meta[calc] = ind_id
-
-        # {u'province_count': 39, u'latest_date': 37, u'district_count': 38}
-
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
         """
@@ -440,6 +424,20 @@ class DatapointResource(BaseNonModelResource):
         parsed_params['campaign__in'] = campaign_ids
 
         self.parsed_params = parsed_params
+
+        ## popluate this in caluclated_indicator_component ##
+
+        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
+            objects.filter(indicator__name = 'Polio Cases').values()
+
+        self.ind_meta = {'base_indicator': \
+            calc_indicator_data_for_polio_cases[0]['indicator_id']
+        }
+
+        for row in calc_indicator_data_for_polio_cases:
+            calc = row['calculation']
+            ind_id = row['indicator_component_id']
+            self.ind_meta[calc] = ind_id
 
         return None
 
