@@ -82,8 +82,14 @@ $total-columns: 7;
 	.title-input {
 		text-transform: uppercase;
 		position: relative;
-		top: .2rem;
+		top: -.2rem;
 		padding: 1.2rem .7rem;
+	  &::placeholder {
+	    color: rgba(255, 255, 255, 0.5);
+	  }
+	  &:focus {
+	    color: white;
+	  }
 	}
 	.button {
 		display: inline-block;
