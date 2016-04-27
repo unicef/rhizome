@@ -156,14 +156,13 @@ class DatapointResource(BaseNonModelResource):
             .difference(set(inicators_to_filter)))
 
         location_id = self.parsed_params['location_id__in']
-        location_tree_cols = ['location_id', 'parent_location_id']
-        location_tree_df = DataFrame(list(LocationTree.objects.filter(
+        if location_id is None:
+            location_id = self.parsed_params['parent_location_id__in']
+
+        location_ids = LocationTree.objects.filter(
                 location__location_type__name = 'District',
                 parent_location_id = location_id
-            ).values_list(*location_tree_cols))\
-                ,columns = location_tree_cols)
-
-        location_ids = list(location_tree_df['location_id'].unique())
+            ).values_list('location_id', flat=True)
 
         cols = ['data_date','indicator_id','location_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
@@ -185,7 +184,11 @@ class DatapointResource(BaseNonModelResource):
         else:
             return []
 
-        df_with_aggregate = self.add_aggregate_indicators(dp_df)
+        if self.ind_meta['base_indicator'] in filtered_indicator_list:
+            df_with_aggregate = self.add_aggregate_indicators(dp_df)
+        else:
+            df_with_aggregate = dp_df
+
 
         gb_df = DataFrame(df_with_aggregate\
             .groupby(['indicator_id','time_grouping'])['value']\
@@ -640,7 +643,6 @@ class DatapointResource(BaseNonModelResource):
         ## would all be handled in "get_locations_to_return_from_url" and we
         ## could use a parameter like "locatoin_level" in order to clean up this
         ## logic.
-
 
         location_ids = LocationTree.objects.filter(
             location__location_type__name = 'District',
