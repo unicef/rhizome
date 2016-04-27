@@ -90,7 +90,7 @@ const IndicatorSelector = React.createClass({
             sendValue={this.props.setIndicators}
             item_plural_name='Indicators'
             style='dropdown-list'
-            text={selected_indicator.short_name}
+            text={selected_indicator.short_name || selected_indicator.name}
           />
         </form>
       )
