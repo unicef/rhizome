@@ -139,9 +139,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(len(objects_1), len(objects_2))
 
-
-
-    def test_get_list_quarter(self):
+    def _get_list_quarter(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
@@ -164,7 +162,7 @@ class DataPointResourceTest(ResourceTestCase):
         for indicator in response_data['objects']:
             campaign = indicator['campaign']
             if campaign == 20141:
-                value = indicator['indicators'][0]['value'] 
+                value = indicator['indicators'][0]['value']
                 self.assertEqual(value, total)
                 q1_found = True
 
@@ -181,5 +179,3 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 0)
-
-
