@@ -17,7 +17,7 @@ def ingest_base_dashboards(apps, schema_editor):
 # TRUNCATE TABLE custom_chart CASCADE;
 
 # run this in bash when you need to run the migration again:
-# psql rhizome -c "DELETE FROM django_migrations where name = '0016_base_dashboards';"
+# psql rhizome -c "DELETE FROM django_migrations where name = '0016_base_dashboard';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
@@ -57,17 +57,20 @@ def ingest_situational():
         title = 'Annual Case Table',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[Indicator.objects.get(name="Polio Cases").id,
-            Indicator.objects.get(name="# of Infected Districts").id,
-            Indicator.objects.get(name="# of Infected Provinces").id],
+            "indicator_ids":[
+                Indicator.objects.get(name = "Polio Cases").id,
+                Indicator.objects.get(name = "Date of Latest Polio Case").id,
+                Indicator.objects.get(name = "# of Infected Districts").id,
+                Indicator.objects.get(name = "# of Infected Provinces").id],
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
-            "start_date":"2015-11-01"
+            "start_date":"2015-11-01",
+            "groupByTime":"year",
+            "groupBy":"location"
         },
         uuid = '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be'
-    ) # {"groupByTime":"year","end_date":"2016-03-01","indicator_ids":[36,37,38,39],"campaign_ids":[5],"groupBy":"location","location_ids":[1],"type":"RawData","start_date":"2015-11-01"} | 5599c516-d2be-4ed0-ab2c-d9e7e5fe33be
-
+    )
 
     chart_3 = CustomChart.objects.create(
         title = 'Immunity Profile',
