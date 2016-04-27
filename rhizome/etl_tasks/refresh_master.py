@@ -92,8 +92,8 @@ class MasterRefresh(object):
         ## during the DocTransform process we associate new AND existing mappings between
         ## the metadata assoicated with this doucment.
 
-        sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
-            self.document_id).values_list('source_object_map_id',flat=True)
+        # sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
+        #     self.document_id).values_list('source_object_map_id',flat=True)
 
         # create a tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
@@ -105,8 +105,11 @@ class MasterRefresh(object):
             ,index= SourceObjectMap.objects.filter(master_object_id__gt=0)
                 # ,id__in = sm_ids)\
                 .values_list(*['content_type','source_object_code']))\
-                .to_dict()['master_object_id']
 
+
+        source_map_dict = source_map_dict.to_dict()['master_object_id']
+
+        # print source_map_dict[('indicator','Number of Non Polio AFP cases vaccinated 1-3 doses')]
         return source_map_dict
 
     def get_class_indicator_mappings(self):
@@ -272,7 +275,6 @@ class MasterRefresh(object):
 
     def sync_datapoint(self, ss_id_list = None):
         dp_batch = []
-
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
                 .filter(document_id = self.document_id).values_list('id',flat=True)
@@ -312,6 +314,8 @@ class MasterRefresh(object):
             .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
 
         dp_batch, dp_ids_to_delete = [],[]
+
+
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
                 row.indicator_id)]
@@ -340,9 +344,7 @@ class MasterRefresh(object):
         submission  = row.submission_json
 
         data_date = timezone.now().date()
-
         for k,v in submission.iteritems():
-
             doc_dp = self.source_submission_cell_to_doc_datapoint(row, k, v, \
                 data_date)
             if doc_dp:
@@ -358,8 +360,7 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
-
-        ## it no indicator row dont process ##
+        ## if no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
@@ -433,3 +434,4 @@ class MasterRefresh(object):
         if convert_percent:
             cleaned_val = cleaned_val/100.0
         return cleaned_val
+Status API Training Shop Blog About
