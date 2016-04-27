@@ -11,34 +11,77 @@ from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 import pandas as pd
 
+
+
 def ingest_polio_cases(apps, schema_editor):
 
-    indicator_id = Indicator.objects.create(
-        name = 'Polio Cases',
-        short_name = 'Polio Cases',
-        description = 'Polio Cases',
-        data_format = 'date_int'
-    ).id
-
-    som_id = SourceObjectMap.objects.create(
-        content_type = 'indicator',
-        master_object_id = indicator_id,
-        source_object_code = 'polio_case'
-    )
-
+    polio_case_indicator_id = ingest_polio_meta_data()
     document_id = process_source_sheet_df()
 
     polio_cases_count = DataPoint.objects.filter(
-        indicator_id = indicator_id,
+        indicator_id = polio_case_indicator_id,
     ).count()
 
     doc_polio_cases_count = DocDataPoint.objects.filter(
-        indicator_id = indicator_id,
+        indicator_id = polio_case_indicator_id,
     ).count()
 
     if polio_cases_count != 51:
         raise Exception('did not ingest the polio case data properly')
 
+def ingest_polio_meta_data():
+
+    polio_case_indicator_id = Indicator.objects.create(
+        name = 'Polio Cases',
+        short_name = 'Polio Cases',
+        description = 'Polio Cases',
+        data_format = 'int'
+    ).id
+
+    lates_date_polio_case_ind = Indicator.objects.create(
+        name = 'Date of Latest Polio Case',
+        short_name = 'Date of Latest Polio Case',
+        description = 'Date of Latest Polio Case',
+        data_format = 'int'
+    ).id
+
+    polio_case_district_count = Indicator.objects.create(
+        name = '# of Infected Districts',
+        short_name = '# of Infected Districts',
+        description = '# of Infected Districts',
+        data_format = 'int'
+    ).id
+
+    polio_case_province_count = Indicator.objects.create(
+        name = '# of Infected Provinces',
+        short_name = '# of Infected Provinces',
+        description = '# of Infected Provinces',
+        data_format = 'int'
+    ).id
+
+    ind_calc_1 = CalculatedIndicatorComponent.objects.create(
+        indicator_id = polio_case_indicator_id,
+        indicator_component_id = lates_date_polio_case_ind,
+        calculation = 'latest_date'
+    )
+    ind_calc_2 = CalculatedIndicatorComponent.objects.create(
+        indicator_id = polio_case_indicator_id,
+        indicator_component_id = polio_case_district_count,
+        calculation = 'district_count'
+    )
+    ind_calc_3 = CalculatedIndicatorComponent.objects.create(
+        indicator_id = polio_case_indicator_id,
+        indicator_component_id = polio_case_province_count,
+        calculation = 'province_count'
+    )
+
+    som_id = SourceObjectMap.objects.create(
+        content_type = 'indicator',
+        master_object_id = polio_case_indicator_id,
+        source_object_code = 'polio_case'
+    )
+
+    return polio_case_indicator_id
 
 def process_source_sheet_df():
 

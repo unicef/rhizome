@@ -45,6 +45,9 @@ class DataIngestor(object):
         ).id
 
         for ix, row in self.chart_index_df.iterrows():
+            print '==chart index row==\n' * 3
+            print row.to_dict()
+            print '==chart index row==\n' * 3
             self.process_sheet(row.to_dict())
 
         # self.validate_ingest()
@@ -161,10 +164,10 @@ class DataIngestor(object):
         document, created = Document.objects\
             .get_or_create(doc_title = 'fake situational -- ' + chart_name)
 
-        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
-
-        for c in campaign_ids:
-            ar = AggRefresh(c)
+        # self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
+        #
+        # for c in campaign_ids:
+        #     ar = AggRefresh(c)
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
 
@@ -257,7 +260,7 @@ def populate_base_dashboard_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0013_ingest_polio_cases'),
+        ('rhizome', '0014_afp_cases'),
     ]
 
     operations = [

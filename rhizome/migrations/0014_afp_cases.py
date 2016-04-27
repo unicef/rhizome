@@ -13,8 +13,25 @@ import pandas as pd
 
 def ingest_afp_cases(apps, schema_editor):
 
+    ingest_afp_case_meta()
     transformed_df = transform_raw_file()
     transformed_file_to_datapoint(transformed_df)
+
+def ingest_afp_case_meta():
+
+    indicator_names = ['Zero Dose','1-3 Dose','4-6 Dose','7+ Dose']
+    for ind in indicator_names:
+        ind_id = Indicator.objects.create(
+            name = 'AFP Case' + ind,
+            short_name = ind,
+            description = ind,
+            data_format = 'int'
+        ).id
+        som_obj = SourceObjectMap.objects.create(
+            master_object_id = ind_id,
+            content_type = 'indicator',
+            source_object_code = ind
+        )
 
 def transformed_file_to_datapoint(df):
 
@@ -83,7 +100,7 @@ def transform_raw_file():
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0015_base_dashboards'),
+        ('rhizome', '0013_ingest_polio_cases'),
     ]
 
     operations = [
