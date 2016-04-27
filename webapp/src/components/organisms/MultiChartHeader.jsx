@@ -35,7 +35,7 @@ const MultiChartHeader = React.createClass({
     const chart = props.chart
 
     const remove_button = props.removeChart ? (
-      <IconButton onClick={() => props.removeChart(chart.uuid)} icon='fa-times' text='Remove' />
+      <IconButton onClick={() => props.removeChart(chart.uuid)} icon='fa-trash' text='Remove' />
     ) : null
 
     const duplicate_button = props.duplicateChart ? (
