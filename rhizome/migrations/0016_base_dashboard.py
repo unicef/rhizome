@@ -96,7 +96,7 @@ def ingest_situational():
         chart_json ={
             "end_date":"2016-03-01",
             "indicator_ids":[Indicator.objects.get(name="Non Polio AFP Rate").id,
-            Indicator.objects.get(name="Percentage of Adequate Specimen").id
+            # Indicator.objects.get(name="Percentage of Adequate Specimen").id
             ],
             "campaign_ids":[5],
             "location_ids":[1],
@@ -144,7 +144,7 @@ def ingest_situational():
         title = 'Preparatory Indicators',
         chart_json = {
             "end_date":"2016-03-01"
-            ,"indicator_ids":get_indicators_by_tag_name('Preparatory Indicators'),
+            ,"indicator_ids":[34],
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -158,7 +158,7 @@ def ingest_situational():
         title = 'Campaign Analysis',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":get_indicators_by_tag_name('Campaign Analysis'),
+            "indicator_ids":[34],
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -186,7 +186,7 @@ def ingest_situational():
         title = 'Missed Children By Reason',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":get_indicators_by_tag_name('Missed Chilren By Reason'),
+            "indicator_ids":[34],
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"StackedColumnChart",
