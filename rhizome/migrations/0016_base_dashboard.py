@@ -178,6 +178,7 @@ def ingest_situational():
             "type":"ColumnChart",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator",
         },
         uuid = '4f19f297-7c92-45e1-a4fe-def61e6c18e8'
     )
