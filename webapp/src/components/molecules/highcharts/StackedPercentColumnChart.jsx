@@ -9,13 +9,11 @@ class StackedPercentColumnChart extends HighChart {
   setConfig = function () {
     const props = this.props
     const first_indicator = props.selected_indicators[0]
-    const locations = props.datapoints.raw.map(datapoint => props.locations_index[datapoint.location])
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
     this.config = {
       chart: { type: 'column' },
-      xAxis: {
-        categories: multipleCampaigns ? this._getGroupedCategories() : locations,
-      },
+      series: this.setSeries(),
+      xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
         labels: { format: '{value}%'}
@@ -34,13 +32,8 @@ class StackedPercentColumnChart extends HighChart {
           }
           return `${this.category}: <strong>${value}</strong><br/>`
         }
-      },
-      series: this.setSeries()
+      }
     }
-    if (multipleCampaigns) {
-      this.config.xAxis.labels = { format: ("{value:%b <br/> %y'}") }
-    }
-
   }
 
   setSeries = function () {
@@ -55,6 +48,25 @@ class StackedPercentColumnChart extends HighChart {
       })
     })
     return series
+  }
+
+  setXAxis = function (multipleCampaigns) {
+    const locations = this.props.datapoints.raw.map(d => this.props.locations_index[d.location])
+    if (!multipleCampaigns) {
+      return {categories: locations}
+    }
+    let xAxis = {categories: this._getGroupedCategories()}
+    if (this.props.groupByTime) {
+      xAxis.labels = {
+        format: '{value:%Y}',
+        style: { fontFamily: 'proxima-bold' }
+      }
+    } else {
+      xAxis.labels = {
+        format: "{value:%b <br/> %y'}"
+      }
+    }
+    return xAxis
   }
 
   _getGroupedCategories = function () {
