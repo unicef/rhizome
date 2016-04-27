@@ -4,7 +4,7 @@ from django.utils import timezone
 from collections import defaultdict
 import json
 import re
-from pandas import DataFrame, concat
+from pandas import DataFrame, concat, notnull
 from bulk_update.helper import bulk_update
 import math
 from rhizome.models import *
@@ -225,6 +225,7 @@ class MasterRefresh(object):
                 doc_dps = self.process_source_submission(row)
 
     def sync_datapoint(self, ss_id_list = None):
+        #  python manage.py test rhizome.tests.test_transform_upload.TransformUploadTestCase --settings=rhizome.settings.test
         dp_batch = []
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
@@ -267,18 +268,21 @@ class MasterRefresh(object):
 
         dp_batch, dp_ids_to_delete = [],[]
 
+        merged_df = merged_df.where((notnull(merged_df)), None)
+
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
                 row.indicator_id)]
 
             row_created_at = row.created_at.replace(tzinfo=None)
 
+
             if row_created_at == max_created_at or row.campaign_id is None:
                 dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
                     'campaign_id' : row.campaign_id,
-                    'data_date' : data_date,
+                    'data_date' : row.data_date,
                     'value' : row.value,
                     'source_submission_id' : row.source_submission_id,
                 }))

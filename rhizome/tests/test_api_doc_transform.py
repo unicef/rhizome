@@ -52,9 +52,7 @@ class DocTransformResourceTest(ResourceTestCase):
         doc = self.ts.create_arbitrary_document(document_docfile='eoc_post_campaign.csv')
         get_data = {'document_id':doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
-        print self.deserialize(resp)
-        # print resp
-		# self.assertHttpOK(resp)
-		# self.assertEqual(len(self.deserialize(resp)['objects']), 1)
-		# self.assertEqual(DataPointComputed.objects.all()[0].value, 0.082670906)
 
+        self.assertHttpOK(resp)
+        self.assertEqual(len(self.deserialize(resp)['objects']), 1)
+        self.assertEqual(DataPointComputed.objects.all()[0].value, 0.082670906)
