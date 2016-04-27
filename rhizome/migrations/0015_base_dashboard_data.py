@@ -164,10 +164,10 @@ class DataIngestor(object):
         document, created = Document.objects\
             .get_or_create(doc_title = 'fake situational -- ' + chart_name)
 
-        # self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
-        #
-        # for c in campaign_ids:
-        #     ar = AggRefresh(c)
+        self.create_fake_data(indicator_ids, campaign_ids, location_ids, document.id)
+
+        for c in campaign_ids:
+            ar = AggRefresh(c)
 
     def create_fake_data(self, indicator_ids, campaign_ids, location_ids, document_id):
 
