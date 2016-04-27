@@ -58,9 +58,29 @@ let EditableTableCell = React.createClass({
 
   exitEditMode: function (event) {
     if (event.type === 'blur' || event.keyCode === 13) { // Keycode for 'Enter' key
-      this.updateCellValue(event.target.value)
-      this.setState({ editMode: false })
+      let cleaned_value = this._cleanValue(event.target.value)
+      if (this._shouldQuery(cleaned_value)) {
+        this.updateCellValue(cleaned_value)
+      }
+      if (!this.isBool) { this.setState({ editMode: false }) }
     }
+  },
+
+  _cleanValue: function(value) {
+    let cleaned_value = value.replace(',', '')
+    if (cleaned_value.indexOf('%') !== -1 || this.props.field.schema.data_format === 'pct') {
+      cleaned_value = cleaned_value.replace('%', '')
+      cleaned_value = cleaned_value === '' ? cleaned_value : cleaned_value / 100.00
+    }
+    return cleaned_value
+  },
+
+  _shouldQuery: function (value) {
+    let formattedValue = ''
+    if (value !== '') {
+      formattedValue = this.isBool ? value : format.autoFormat(value, this.props.field.schema.data_format, 2)
+    }
+    return formattedValue !== this.display_value
   },
 
   _deleteValue: function (query_params, new_value) {
@@ -108,21 +128,15 @@ let EditableTableCell = React.createClass({
   updateCellValue: function (new_value) {
     const isEmpty = new_value === ''
 
-    let cleaned_value = new_value.replace(',', '')
-    if (cleaned_value.indexOf('%') !== -1 || this.props.field.schema.data_format === 'pct') {
-      cleaned_value = cleaned_value.replace('%', '')
-      cleaned_value = cleaned_value / 100.00
-    }
-
     if (isEmpty && this.computed_id) {
       let query_params = this._getQueryParams(null)
-      this._deleteValue(query_params, cleaned_value)
-    } else if (isNaN(cleaned_value)) { //validation in case user inputs symbols, good to have even if back end has validations
+      this._deleteValue(query_params, new_value)
+    } else if (isNaN(new_value)) { //validation in case user inputs symbols, good to have even if back end has validations
       this.setState({ editMode: false, hasError: true })
     } else {
       this.setState({isSaving: true})
-      let query_params = this._getQueryParams(cleaned_value)
-      this._queryDatapoint(query_params, cleaned_value)
+      let query_params = this._getQueryParams(new_value)
+      this._queryDatapoint(query_params, new_value)
     }
     this.forceUpdate()
   },
