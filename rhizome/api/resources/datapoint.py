@@ -148,9 +148,15 @@ class DatapointResource(BaseNonModelResource):
             return self.map_bubble_transform() # hack...
 
         indicator_id_list = self.parsed_params['indicator__in']
-        inicators_to_filter = set([self.ind_meta['latest_date'],\
-            self.ind_meta['district_count'],
-            self.ind_meta['province_count']])
+
+        if not 'latest_date' in self.ind_meta\
+        and not 'district_count' in self.ind_meta\
+        and not 'province_count' in self.ind_meta:
+            inicators_to_filter = []
+        else:
+            inicators_to_filter = set([self.ind_meta['latest_date'],\
+                self.ind_meta['district_count'],
+                self.ind_meta['province_count']])
 
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
@@ -184,7 +190,8 @@ class DatapointResource(BaseNonModelResource):
         else:
             return []
 
-        if self.ind_meta['base_indicator'] in filtered_indicator_list:
+        if 'base_indicator' in self.ind_meta\
+        and self.ind_meta['base_indicator'] in filtered_indicator_list:
             df_with_aggregate = self.add_aggregate_indicators(dp_df)
         else:
             df_with_aggregate = dp_df
@@ -433,9 +440,12 @@ class DatapointResource(BaseNonModelResource):
         calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
             objects.filter(indicator__name = 'Polio Cases').values()
 
-        self.ind_meta = {'base_indicator': \
-            calc_indicator_data_for_polio_cases[0]['indicator_id']
-        }
+        if len(calc_indicator_data_for_polio_cases) > 0:
+            self.ind_meta = {'base_indicator': \
+                calc_indicator_data_for_polio_cases[0]['indicator_id']
+            }
+        else:
+            self.ind_meta = {}
 
         for row in calc_indicator_data_for_polio_cases:
             calc = row['calculation']

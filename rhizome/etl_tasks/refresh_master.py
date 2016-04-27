@@ -6,7 +6,7 @@ import json
 import re
 from pandas import DataFrame, concat
 from bulk_update.helper import bulk_update
-
+import math
 from rhizome.models import *
 
 class MasterRefresh(object):
@@ -278,7 +278,7 @@ class MasterRefresh(object):
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
                     'campaign_id' : row.campaign_id,
-                    'data_date' : row.data_date,
+                    'data_date' : data_date,
                     'value' : row.value,
                     'source_submission_id' : row.source_submission_id,
                 }))
