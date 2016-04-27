@@ -226,11 +226,15 @@ a {
   form {
     max-width: 300px;
     margin: 0 auto;
-
     label {
       color: $white;
     }
-
+    input {
+      background: rgba(255, 255, 255, 0.9);
+      &:focus {
+        background: $white;
+      }
+    }
     input {
       width: 100%;
     }
