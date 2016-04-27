@@ -12,7 +12,8 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint
+    LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
+    CalculatedIndicatorComponent
 
 from datetime import datetime
 
@@ -82,12 +83,20 @@ class DatapointResource(BaseNonModelResource):
         }
 
         ## popluate this in caluclated_indicator_component ##
-        self.ind_meta = {
-            'base_indicator': 37,
-            'latest_date_indicator': 82,
-            'district_count_indicator': 39,
-            'province_count_indicator': 40
+
+        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
+            objects.filter(indicator__name = 'Polio Cases').values()
+
+        self.ind_meta = {'base_indicator': \
+            calc_indicator_data_for_polio_cases[0]['indicator_id']
         }
+
+        for row in calc_indicator_data_for_polio_cases:
+            calc = row['calculation']
+            ind_id = row['indicator_component_id']
+            self.ind_meta[calc] = ind_id
+
+        # {u'province_count': 39, u'latest_date': 37, u'district_count': 38}
 
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
@@ -155,9 +164,9 @@ class DatapointResource(BaseNonModelResource):
             return self.map_bubble_transform() # hack...
 
         indicator_id_list = self.parsed_params['indicator__in']
-        inicators_to_filter = set([self.ind_meta['latest_date_indicator'],\
-            self.ind_meta['district_count_indicator'],
-            self.ind_meta['province_count_indicator']])
+        inicators_to_filter = set([self.ind_meta['latest_date'],\
+            self.ind_meta['district_count'],
+            self.ind_meta['province_count']])
 
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
@@ -247,7 +256,7 @@ class DatapointResource(BaseNonModelResource):
         latest_date_df['value'] = latest_date_df['data_date']\
             .map(lambda x: x.strftime('%b %d %Y'))
         latest_date_df['indicator_id'] = self\
-            .ind_meta['latest_date_indicator']
+            .ind_meta['latest_date']
 
         district_count_df = DataFrame(flat_df\
             .groupby(['time_grouping']).location_id
@@ -255,7 +264,7 @@ class DatapointResource(BaseNonModelResource):
             .reset_index()
         district_count_df['value'] = district_count_df['location_id']
         district_count_df['indicator_id'] = self\
-            .ind_meta['district_count_indicator']
+            .ind_meta['district_count']
 
         parent_location_df = DataFrame(list(Location.objects\
             .filter(id__in = list(flat_df['location_id'].unique()))\
@@ -268,7 +277,7 @@ class DatapointResource(BaseNonModelResource):
             .reset_index()
         province_count_df['value'] = province_count_df['parent_location_id']
         province_count_df['indicator_id'] = self\
-            .ind_meta['province_count_indicator']
+            .ind_meta['province_count']
 
         concat_df = concat([latest_date_df, flat_df, district_count_df,\
             province_count_df])

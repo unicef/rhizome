@@ -17,7 +17,7 @@ def ingest_base_dashboards(apps, schema_editor):
 # TRUNCATE TABLE custom_chart CASCADE;
 
 # run this in bash when you need to run the migration again:
-# psql rhizome -c "DELETE FROM django_migrations where name = '0015_base_dashboards';"
+# psql rhizome -c "DELETE FROM django_migrations where name = '0016_base_dashboards';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
@@ -66,7 +66,7 @@ def ingest_situational():
             "start_date":"2015-11-01"
         },
         uuid = '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be'
-    )
+    ) # {"groupByTime":"year","end_date":"2016-03-01","indicator_ids":[36,37,38,39],"campaign_ids":[5],"groupBy":"location","location_ids":[1],"type":"RawData","start_date":"2015-11-01"} | 5599c516-d2be-4ed0-ab2c-d9e7e5fe33be
 
 
     chart_3 = CustomChart.objects.create(
@@ -75,10 +75,10 @@ def ingest_situational():
             "start_date":"2016-03-01",
             "end_date":"2016-03-01",
             "indicator_ids":[
-                Indicator.objects.get(name="Number of Unvaccinated Non Polio AFP Cases").id,
-                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 1-3 doses").id,
-                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 4-6 doses").id,
-                Indicator.objects.get(name="Number of Non Polio AFP cases vaccinated 7+ doses").id
+                Indicator.objects.get(short_name="Zero Dose").id,
+                Indicator.objects.get(short_name="1-3 Dose").id,
+                Indicator.objects.get(short_name="4-6 Dose").id,
+                Indicator.objects.get(short_name="7+ Dose").id,
             ],
             "campaign_ids":[5],
             "location_ids":[1],
@@ -209,29 +209,29 @@ def ingest_situational():
                     "5599c516-d2be-4ed0-ab2c-d9e7e5fe33be",
                     "1874bf4a-140a-420a-a3e2-0d29430786c0"
                 ]},
-            {"layout":1,
-                "charts":[
-                    "4499af7d-bbcc-41a6-81cf-b2071d79ce55"
-            ]},
-            {"layout":2,
-                "charts":[
-                    "8fd8f0e2-327d-4cf6-ba11-0252e6580f38",
-                    "6f2efd2a-dd9f-4bcc-8652-7a622ebfc047"
-            ]},
-            {"layout":2,
-                "charts":[
-                    "df3fdb84-5721-456c-8468-c4605842c7d6",
-                    "30fe1ee9-8e82-4caf-8f3b-eaf3b4cf43a9"
-            ]},
-            {"layout":2,
-                "charts":[
-                    "4f19f297-7c92-45e1-a4fe-def61e6c18e8",
-                    "3f04d269-96db-4424-866f-8e09b5eeb9f3"
-            ]},
-            {"layout":1,
-                "charts":[
-                    "a7f581a5-50b7-4ad1-83ec-c899b3e2948b"
-            ]}
+            # {"layout":1,
+            #     "charts":[
+            #         "4499af7d-bbcc-41a6-81cf-b2071d79ce55"
+            # ]},
+            # {"layout":2,
+            #     "charts":[
+            #         "8fd8f0e2-327d-4cf6-ba11-0252e6580f38",
+            #         "6f2efd2a-dd9f-4bcc-8652-7a622ebfc047"
+            # ]},
+            # {"layout":2,
+            #     "charts":[
+            #         "df3fdb84-5721-456c-8468-c4605842c7d6",
+            #         "30fe1ee9-8e82-4caf-8f3b-eaf3b4cf43a9"
+            # ]},
+            # {"layout":2,
+            #     "charts":[
+            #         "4f19f297-7c92-45e1-a4fe-def61e6c18e8",
+            #         "3f04d269-96db-4424-866f-8e09b5eeb9f3"
+            # ]},
+            # {"layout":1,
+            #     "charts":[
+            #         "a7f581a5-50b7-4ad1-83ec-c899b3e2948b"
+            # ]}
         ],
         title = 'Situational Dashboard'
     )

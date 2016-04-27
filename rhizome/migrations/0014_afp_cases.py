@@ -22,7 +22,7 @@ def ingest_afp_case_meta():
     indicator_names = ['Zero Dose','1-3 Dose','4-6 Dose','7+ Dose']
     for ind in indicator_names:
         ind_id = Indicator.objects.create(
-            name = 'AFP Case' + ind,
+            name = 'AFP Case - ' + ind,
             short_name = ind,
             description = ind,
             data_format = 'int'
