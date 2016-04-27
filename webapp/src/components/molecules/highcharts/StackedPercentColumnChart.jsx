@@ -17,7 +17,8 @@ class StackedPercentColumnChart extends HighChart {
         categories: multipleCampaigns ? this._getGroupedCategories() : locations,
       },
       yAxis: {
-        title: { text: 'Percent' }
+        title: { text: '' },
+        labels: { format: '{value}%'}
       },
       plotOptions: {
         column: { stacking: 'percent' }

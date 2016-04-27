@@ -4,7 +4,7 @@ from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document, IndicatorClassMap
+    LocationPermission, Document, IndicatorClassMap, DataPointComputed
 
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
@@ -75,6 +75,7 @@ class DataPointResourceTest(ResourceTestCase):
         df = pd.read_csv('AfgPolioCases.csv')
 
         for ix, row in df.iterrows():
+
             DataPoint.objects.create(
                 location_id = self.some_district.id,
                 indicator_id = self.ind.id,
@@ -112,3 +113,73 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(28.00, case_dict[2014])
         self.assertEqual(20.00, case_dict[2015])
         self.assertEqual(3.0, case_dict[2016])
+
+
+    # not sure if this is a bug or what, but start and end date seem to be irrelevant when using group_by_time
+    def test_get_list_diff_start_end_dates(self):
+        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        objects_1 = response_data['objects']
+
+        get_parameter_2 = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(self.ind.id, '2016-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp_2 = self.api_client.get('/api/v1/datapoint/?' + get_parameter_2, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp_2)
+        response_data_2 = self.deserialize(resp_2)
+        objects_2 = response_data_2['objects']
+
+        self.assertEqual(len(objects_1), len(objects_2))
+
+
+
+    def test_get_list_quarter(self):
+        get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        dps_q1_2014 = DataPoint.objects.filter(
+            data_date__range=('2014-01-01', '2014-03-31'),\
+            indicator = self.ind.id
+            )
+        total = 0
+        for dp in dps_q1_2014:
+            total += dp.value
+
+        # find the total for q1 2014
+        q1_found = False
+
+        for indicator in response_data['objects']:
+            campaign = indicator['campaign']
+            if campaign == 20141:
+                value = indicator['indicators'][0]['value'] 
+                self.assertEqual(value, total)
+                q1_found = True
+
+        self.assertTrue(q1_found)
+
+    # provide a non-existent id
+    def test_get_list_bogus_id(self):
+        get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
+            .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), 0)
+
+

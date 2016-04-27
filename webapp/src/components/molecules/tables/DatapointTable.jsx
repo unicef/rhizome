@@ -19,12 +19,12 @@ class DatapointTable extends Table {
     const first_row = this.groupByIndicator ? _.toArray(this.rows)[0] : _.toArray(this.rows)[0].indicators
     const header_cells = first_row.map(datapoint => {
       const entity = this.groupByIndicator ? datapoint.campaign : this.props.indicators_index[datapoint.indicator]
-      return <th>{entity.name}</th>
+      return <th>{entity.short_name || entity.name}</th>
     })
     return (
       <tr>
         <th></th>
-        { !this.groupByIndicator ? <th>Campaign</th> : null}
+        { !this.groupByIndicator ? <th>{_.capitalize(this.props.groupByTime)}</th> : null}
         { header_cells }
       </tr>
     )

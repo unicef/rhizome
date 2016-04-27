@@ -156,10 +156,6 @@ body.admin nav .admin {
 
 a {
   transition: color 300ms ease-in-out;
-
-  &[href]:hover {
-    color: $secondary-color;
-  }
 }
 
 

@@ -178,6 +178,9 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = filtered_indicator_list
         ).values(*cols)),columns=cols)
 
+        if dp_df.empty:
+             return []
+
         ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
@@ -221,7 +224,7 @@ class DatapointResource(BaseNonModelResource):
         all_time_groups = list(dp_df['time_grouping'].unique())
 
         self.campaign_qs = [{
-            'id': time_grp ,
+            'id': time_grp,
             'name': str(time_grp),
             'office_id': 1,
             'created_at': datetime.now()
