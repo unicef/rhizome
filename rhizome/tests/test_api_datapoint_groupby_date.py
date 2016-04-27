@@ -139,7 +139,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(len(objects_1), len(objects_2))
 
-    def _get_list_quarter(self):
+    def test_get_list_quarter(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
