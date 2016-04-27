@@ -26,10 +26,6 @@ let DashboardNav = React.createClass({
     DashboardStore.listen(dashboards => this.setState({dashboards: dashboards.list}))
   },
 
-  shouldComponentUpdate(nextProps, nextState) {
-    return !_.isEmpty(nextState.charts) && !_.isEmpty(nextState.dashboards)
-  },
-
   render: function () {
     let dashboards = this.state.dashboards
     if (!_.isUndefined(dashboards) && dashboards.length > 14) {
