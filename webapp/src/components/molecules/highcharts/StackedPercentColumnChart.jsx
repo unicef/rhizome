@@ -56,7 +56,7 @@ class StackedPercentColumnChart extends HighChart {
       return {categories: locations}
     }
     let xAxis = {categories: this._getGroupedCategories()}
-    if (this.props.groupByTime) {
+    if (this.props.groupByTime === 'year') {
       xAxis.labels = {
         format: '{value:%Y}',
         style: { fontFamily: 'proxima-bold' }
