@@ -229,9 +229,12 @@ def ingest_situational():
                     "8fd8f0e2-327d-4cf6-ba11-0252e6580f38",
                     "6f2efd2a-dd9f-4bcc-8652-7a622ebfc047"
             ]},
-            {"layout":2,
+            {"layout":1,
                 "charts":[
                     "df3fdb84-5721-456c-8468-c4605842c7d6",
+            ]},
+            {"layout":1,
+                "charts":[
                     "30fe1ee9-8e82-4caf-8f3b-eaf3b4cf43a9"
             ]},
             {"layout":2,
