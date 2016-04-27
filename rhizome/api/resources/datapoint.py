@@ -85,7 +85,8 @@ class DatapointResource(BaseNonModelResource):
         self.ind_meta = {
             'base_indicator': 37,
             'latest_date_indicator': 82,
-            'district_count_indicator': 39
+            'district_count_indicator': 39,
+            'province_count_indicator': 40
         }
 
     def create_response(self, request, data, response_class=HttpResponse,
@@ -155,7 +156,8 @@ class DatapointResource(BaseNonModelResource):
 
         indicator_id_list = self.parsed_params['indicator__in']
         inicators_to_filter = set([self.ind_meta['latest_date_indicator'],\
-            self.ind_meta['district_count_indicator']])
+            self.ind_meta['district_count_indicator'],
+            self.ind_meta['province_count_indicator']])
 
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
@@ -187,8 +189,7 @@ class DatapointResource(BaseNonModelResource):
         else:
             return []
 
-        df_with_aggregate = self.add_aggregate_indicators(dp_df, \
-            location_tree_df)
+        df_with_aggregate = self.add_aggregate_indicators(dp_df)
 
         gb_df = DataFrame(df_with_aggregate\
             .groupby(['indicator_id','time_grouping'])['value']\
@@ -228,12 +229,18 @@ class DatapointResource(BaseNonModelResource):
 
         return results
 
-    def add_aggregate_indicators(self, flat_df, location_tree_df):
+    def add_aggregate_indicators(self, flat_df):
         '''
-        '''
-        #  http://localhost:8000/api/v1/datapoint/?indicator__in=37&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+        This is a very specific peice of code that allows us to generate a table
+        with
+            - date of latest case
+            - infected district count
+            - infected province count
 
-        # http://localhost:8000/api/v1/datapoint/?indicator__in=37%2C39&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+        THis relies on certain calcluations to be made in
+        caluclated_indicator_component.
+        '''
+        # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
 
         latest_date_df = DataFrame(flat_df\
             .groupby(['indicator_id','time_grouping'])['data_date']\
@@ -248,12 +255,25 @@ class DatapointResource(BaseNonModelResource):
             .groupby(['time_grouping']).location_id
             .nunique())\
             .reset_index()
-
         district_count_df['value'] = district_count_df['location_id']
         district_count_df['indicator_id'] = self\
             .ind_meta['district_count_indicator']
 
-        concat_df = concat([latest_date_df, flat_df, district_count_df])
+        parent_location_df = DataFrame(list(Location.objects\
+            .filter(id__in = list(flat_df['location_id'].unique()))\
+            .values_list('id','parent_location_id')),\
+             columns = ['location_id','parent_location_id']
+        )
+        province_count_df = DataFrame(flat_df.merge(parent_location_df)\
+            .groupby(['time_grouping']).parent_location_id
+            .nunique())\
+            .reset_index()
+        province_count_df['value'] = province_count_df['parent_location_id']
+        province_count_df['indicator_id'] = self\
+            .ind_meta['province_count_indicator']
+
+        concat_df = concat([latest_date_df, flat_df, district_count_df,\
+            province_count_df])
 
         return concat_df
 
