@@ -155,12 +155,9 @@ class DatapointResource(BaseNonModelResource):
                 self.ind_meta['province_count']])
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
-
-        param_location_ids= self.parsed_params['location_id__in']
-        if param_location_ids is None:
-            param_location_ids = self.parsed_params['parent_location_id__in']
-        if param_location_ids:
-            param_location_ids = param_location_ids.split(',')
+        if time_grouping =='all_time':
+            return self.map_bubble_transform(filtered_indicator_list)
+        param_location_ids= self.location_ids
         results = []
         all_time_groupings = []
         for param_location_id in param_location_ids:
@@ -173,9 +170,6 @@ class DatapointResource(BaseNonModelResource):
                 location_id__in = location_ids,
                 indicator_id__in = filtered_indicator_list
             ).values(*cols)),columns=cols)
-            if time_grouping == 'all_time':
-                return self.map_bubble_transform(dp_df) # hack...
-                continue
 
             if dp_df.empty:
                 continue
@@ -185,8 +179,6 @@ class DatapointResource(BaseNonModelResource):
             elif time_grouping == 'quarter':
                 dp_df['time_grouping'] = dp_df['data_date']\
                     .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
-            elif time_grouping == 'all_time':
-                dp_df['time_grouping'] = 'all_time'
             else:
                 continue
 
@@ -637,13 +629,27 @@ class DatapointResource(BaseNonModelResource):
         return high_chart_data
 
 
-    def map_bubble_transform(self, dp_df):
+    def map_bubble_transform(self, filtered_indicator_list):
         '''
         This method right now is set up specifically to deal with polio cases.
 
         This needs to be removed and we need to figure out a better way to
         Handle the polio case indicator / Bubble Map viz.
         '''
+
+        param_location_id = self.parsed_params['parent_location_id__in']
+
+        location_ids = LocationTree.objects.filter(
+                location__location_type__name = 'District',
+                parent_location_id= param_location_id
+            ).values_list('location_id', flat=True)
+
+        cols = ['data_date','indicator_id','location_id','value']
+
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = location_ids,
+            indicator_id__in = filtered_indicator_list
+        ).values(*cols)),columns=cols)
 
         results = []
 
