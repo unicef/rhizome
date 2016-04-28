@@ -141,7 +141,6 @@ class DatapointResource(BaseNonModelResource):
         return self.base_data
 
     def group_by_time_transform(self):
-
         time_grouping =  self.parsed_params['group_by_time']
 
         if time_grouping == 'all_time':
@@ -157,14 +156,12 @@ class DatapointResource(BaseNonModelResource):
             inicators_to_filter = set([self.ind_meta['latest_date'],\
                 self.ind_meta['district_count'],
                 self.ind_meta['province_count']])
-
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
 
         location_id = self.parsed_params['location_id__in']
         if location_id is None:
             location_id = self.parsed_params['parent_location_id__in']
-
         location_ids = LocationTree.objects.filter(
                 location__location_type__name = 'District',
                 parent_location_id = location_id
@@ -659,8 +656,6 @@ class DatapointResource(BaseNonModelResource):
             parent_location__in = self.parsed_params['parent_location_id__in']
         ).values_list('location_id', flat=True)
 
-
-
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
         datapoints = DataPoint.objects.filter(
@@ -713,7 +708,6 @@ class DatapointResource(BaseNonModelResource):
                 r.indicators = indicator_objects
 
                 results.append(r)
-
         return results
 
     def pivot_df(self, df, index_column_list, value, pivot_column_list):

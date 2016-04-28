@@ -96,13 +96,13 @@ def ingest_situational():
         chart_json ={
             "end_date":"2016-03-01",
             "indicator_ids":[Indicator.objects.get(name="Non Polio AFP Rate").id,
-            # Indicator.objects.get(name="Percentage of Adequate Specimen").id
+            Indicator.objects.get(short_name="Percentage of Adequate Specimen ").id
             ],
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"ColumnChart",
             "start_date":"2015-11-01",
-            "groupByTime":"year",
+            "groupByTime":"campaign",
         },
         uuid = '4499af7d-bbcc-41a6-81cf-b2071d79ce55'
     )
@@ -132,9 +132,9 @@ def ingest_situational():
             Indicator.objects.get(short_name="Number of Environmental Samples with result pending in Lab").id],
             "campaign_ids":[5],
             "location_ids":[1],
-            "type":"ColumnChart",
+            "type":"StackedColumnChart",
             "start_date":"2015-11-01",
-            "groupByTime":"year",
+            "groupByTime":"campaign",
         },
         uuid = '6f2efd2a-dd9f-4bcc-8652-7a622ebfc047'
     )
@@ -144,7 +144,7 @@ def ingest_situational():
         title = 'Preparatory Indicators',
         chart_json = {
             "end_date":"2016-03-01"
-            ,"indicator_ids":[34],
+            ,"indicator_ids":get_indicators_by_tag_name('Preparatory Indicators'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -158,7 +158,7 @@ def ingest_situational():
         title = 'Campaign Analysis',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[34],
+            "indicator_ids":get_indicators_by_tag_name('Campaign Analysis'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"RawData",
@@ -186,7 +186,7 @@ def ingest_situational():
         title = 'Missed Children By Reason',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[34],
+            "indicator_ids":get_indicators_by_tag_name('Missed Chilren By Reason'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"StackedColumnChart",
