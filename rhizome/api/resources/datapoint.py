@@ -644,6 +644,19 @@ class DatapointResource(BaseNonModelResource):
 
         results = []
 
+        if self.parsed_params['parent_location_id__in'] == u'1':
+
+            district_to_region_df = DataFrame(list(
+                Location.objects.filter(
+                    id__in = list(dp_df['location_id'].unique()))
+                .values_list('id','parent_location_id')),\
+                columns = ['location_id','parent_location_id'])
+
+            merged_df = dp_df.merge(district_to_region_df)\
+                [['indicator_id','value','parent_location_id']]
+
+            dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
+
         gb_df = DataFrame(dp_df\
             .groupby(['location_id'])['value']\
             .sum())\
