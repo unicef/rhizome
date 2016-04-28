@@ -202,7 +202,8 @@ class DatapointResource(BaseNonModelResource):
         pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
 
         results = []
-        for time_grouping, indicator_data in pivoted_data.iteritems():
+        for time_grouping, indicator_data in sorted(pivoted_data.iteritems(),\
+            reverse=True):
 
             r = ResultObject()
             r.location = location_id
