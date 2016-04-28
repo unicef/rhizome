@@ -56,7 +56,6 @@ class BaseResource(Resource):
 
         elif 'parent_location_id__in' in request.GET:
 
-
             pl_id_list = request.GET['parent_location_id__in'].split(',')
             ## begin hack ##
             #### Since we do not have shapes for Regions, we render the ####
@@ -73,9 +72,18 @@ class BaseResource(Resource):
                 ['geo','BubbleMap','MapChart'])
 
             if pl_id_list == ['1'] and needs_to_be_hacked:
-                pl_id_list = Location.objects.filter(
-                    location_type__name = 'Region'
-                ).values_list('id', flat=True)
+                loc_type_id = LocationType.objects.get(name = 'Province').id
+                return LocationTree.objects.filter(
+                    location__location_type_id = loc_type_id,
+                    parent_location_id__in = pl_id_list
+                ).values_list('location_id', flat=True)
+            elif needs_to_be_hacked and pl_id_list != ['1']: ## regions show districts
+                loc_type_id = LocationType.objects.get(name = 'District').id
+                return LocationTree.objects.filter(
+                    location__location_type_id = loc_type_id,
+                    parent_location_id__in = pl_id_list
+                ).values_list('location_id', flat=True)
+
             ## end hack ##
 
             return Location.objects\
