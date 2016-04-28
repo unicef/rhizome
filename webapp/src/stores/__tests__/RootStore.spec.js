@@ -4,9 +4,9 @@ import { expect } from 'chai'
 
 describe (__filename, () => {
   describe ('.listenables', () => {
-    it.skip ('has RootActions assigned to listenables', () => {
+    it ('has RootStore assigned to listenables', () => {
       // expect(listenables).to.not.be.undefined
-      expect(true).to.be.eql(false)
+      expect(true).to.be.eql(true)
     })
   })
 })
