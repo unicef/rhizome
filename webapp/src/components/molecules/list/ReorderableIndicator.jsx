@@ -2,6 +2,7 @@ import React from 'react'
 import IconButton from 'components/atoms/IconButton'
 import DropdownIcon from 'components/atoms/DropdownIcon'
 import DropdownItem from 'components/molecules/menus/DropdownItem'
+import palettes from 'utilities/palettes'
 
 export default React.createClass({
   propTypes: {
@@ -10,7 +11,7 @@ export default React.createClass({
 
   render: function () {
     let item = this.props.item
-    const colors = ['blue', 'brown', 'purple', 'red', 'green']
+    const colors = palettes['full_rainbow']
     const color_menu_items = colors.map(color =>
       <li className='color-dot'>
         <IconButton
