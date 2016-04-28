@@ -1,7 +1,6 @@
 import React from 'react'
 import IconButton from 'components/atoms/IconButton'
 import DropdownIcon from 'components/atoms/DropdownIcon'
-import ColorPicker from 'components/molecules/menus/ColorPicker'
 import DropdownItem from 'components/molecules/menus/DropdownItem'
 
 export default React.createClass({
