@@ -204,8 +204,8 @@ def ingest_situational():
             "start_date":"2016-03-01",
             "end_date":"2016-04-22",
             "indicator_ids": get_indicators_by_tag_name('LQAS'),
-            "campaign_ids":[5]
-            ,"groupBy":"indicator",
+            "campaign_ids":[5],
+            "groupBy":"indicator",
             "location_ids":[1],
             "type":"StackedPercentColumnChart",
             "groupByTime":"campaign",
