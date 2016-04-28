@@ -81,12 +81,7 @@ class HighChart extends Component {
   }
 
   render = function () {
-    let props = this.props
-    props = {
-      ...props,
-      ref: 'chart'
-    }
-    return <div {...props} />
+    return <div ref='chart' {...this.props} />
   }
 }
 

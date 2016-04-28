@@ -62,27 +62,6 @@ const ChartPage = React.createClass({
     return !this.missing_data || this.missing_params || this.loading_charts
   },
 
-  saveChart (chart) {
-    if (!chart.title || chart.title === 'Untitled Chart') {
-      return window.alert('Please add a Title to your chart')
-    }
-    ChartActions.postChart({
-      id: chart.id,
-      title: chart.title,
-      uuid: chart.uuid,
-      chart_json: JSON.stringify({
-        type: chart.type,
-        start_date: chart.start_date,
-        end_date: chart.end_date,
-        campaign_ids: chart.selected_campaigns.map(campaign => campaign.id),
-        location_ids: chart.selected_locations.map(location => location.id),
-        indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
-        groupBy: chart.groupBy,
-        groupByTime: chart.groupByTime
-      })
-    })
-  },
-
   render () {
     const loading = !this.state.charts.length > 0
     const chart = _.toArray(this.state.charts)[0]
@@ -94,7 +73,7 @@ const ChartPage = React.createClass({
           linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
           toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
           toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
-          saveChart={() => this.saveChart(chart)}
+          saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
           setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
           setGroupByTime={(grouping) => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
           setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}

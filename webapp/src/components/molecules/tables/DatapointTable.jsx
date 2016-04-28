@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import React from 'react'
 import Table from 'components/molecules/tables/Table'
 import DatapointTableCell from 'components/molecules/tables/DatapointTableCell'
@@ -34,10 +35,11 @@ class DatapointTable extends Table {
     return _.map(this.rows, (row, key) => {
       const indicator = this.props.indicators_index[key]
       const entity = this.groupByIndicator ? indicator : this.props.locations_index[row.location]
+      const date_format = this.props.groupByTime === 'year' ? 'YYYY' : 'MMM YYYY'
       return (
         <tr>
           <td><strong>{entity.name}</strong></td>
-          { !this.groupByIndicator ? <td>{row.campaign.name}</td> : null}
+          { !this.groupByIndicator ? <td>{moment(row.campaign.start_date).format(date_format)}</td> : null}
           { this.renderCells(row, indicator) }
         </tr>
       )

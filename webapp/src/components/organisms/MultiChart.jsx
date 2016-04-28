@@ -112,7 +112,7 @@ const MultiChart = React.createClass({
     const chart_classes = !chart.editMode ? 'medium-12 ' : 'medium-8 large-8 medium-pull-4 large-pull-3 '
 
     return (
-      <article className='multi-chart medium-12 columns'>
+      <article className='multi-chart medium-12 columns' style={chart.type === 'RawData' ? {overflowX: 'auto'} : null}>
         <MultiChartHeader {...this.props}/>
         <section className='row'>
           { chart.editMode ? sidebar : null }

@@ -37,11 +37,8 @@ class DatapointTableCell extends Component {
 
   renderCellContent = function () {
     const data_format = this.props.indicator.data_format
-    // console.log('data_format', data_format)
     const value = this.props.datapoint.value
-    // console.log('value', value)
     const display_value = format.autoFormat(value, data_format)
-    // console.log('display_value', display_value)
 
     if (data_format === 'pct') {
       return (

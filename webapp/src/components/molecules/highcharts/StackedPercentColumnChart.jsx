@@ -6,19 +6,35 @@ import format from 'utilities/format'
 
 class StackedPercentColumnChart extends HighChart {
 
+  constructor (props) {
+    super(props)
+    this.state = {stackMode: 'percent'}
+  }
+
+  _toggleStackMode = (new_state) => {
+    this.setState({stackMode: new_state})
+    this.chart.series.forEach(s => s.update({stacking: new_state}, false))
+    this.chart.yAxis[0].update({labels: {format: this.state.stackMode === 'percent' ? '{value}%' : '{value}'}})
+    this.chart.redraw()
+  }
+
   setConfig = function () {
     const props = this.props
     const first_indicator = props.selected_indicators[0]
-    const locations = props.datapoints.raw.map(datapoint => props.locations_index[datapoint.location])
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
+
     this.config = {
       chart: { type: 'column' },
-      xAxis: {
-        categories: multipleCampaigns ? this._getGroupedCategories() : locations,
-      },
+      series: this.setSeries(),
+      xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
-        labels: { format: '{value}%'}
+        labels : {
+          format: this.state.stackMode === 'percent' ? '{value}%' : '{value}',
+          events: {
+            click: () => this._toggleStackMode(this.state.stackMode === 'percent' ? 'normal' : 'percent')
+          }
+        }
       },
       plotOptions: {
         column: { stacking: 'percent' }
@@ -34,13 +50,8 @@ class StackedPercentColumnChart extends HighChart {
           }
           return `${this.category}: <strong>${value}</strong><br/>`
         }
-      },
-      series: this.setSeries()
+      }
     }
-    if (multipleCampaigns) {
-      this.config.xAxis.labels = { format: ("{value:%b <br/> %y'}") }
-    }
-
   }
 
   setSeries = function () {
@@ -51,10 +62,32 @@ class StackedPercentColumnChart extends HighChart {
     _.forEach(grouped_data, group_collection => {
       series.push({
         name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
-        data: group_collection.map(datapoint => datapoint.value)
+        data: group_collection.map(datapoint => datapoint.value),
+        events: {
+          click: () => this._toggleStackMode(this.state.stackMode !== null ? null : 'normal')
+        }
       })
     })
     return series
+  }
+
+  setXAxis = function (multipleCampaigns) {
+    const locations = this.props.datapoints.raw.map(d => this.props.locations_index[d.location])
+    if (!multipleCampaigns) {
+      return {categories: locations}
+    }
+    let xAxis = {categories: this._getGroupedCategories()}
+    if (this.props.groupByTime === 'year') {
+      xAxis.labels = {
+        format: '{value:%Y}',
+        style: { fontFamily: 'proxima-bold' }
+      }
+    } else {
+      xAxis.labels = {
+        format: "{value:%b <br/> %y'}"
+      }
+    }
+    return xAxis
   }
 
   _getGroupedCategories = function () {

@@ -77,7 +77,7 @@ const DashboardLayout = React.createClass({
     }
   },
 
-  render: function () { console.info('DashboardLayout - render ===========================================')
+  render: function () {
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
     const charts = _.toArray(this.state.charts)
