@@ -27,6 +27,7 @@ class ChartState {
     this.palette = 'traffic_light'
     this.locations_index = null
     this.indicators_index = null
+    this.indicator_colors = {}
     this.indicator_filter = null
     this.selected_campaigns = []
     this.selected_indicators = []
@@ -184,6 +185,11 @@ var DashboardChartsStore = Reflux.createStore({
     if (filter.value === 0) {
       this.charts[uuid].indicator_filter = null
     }
+    this.updateChart(uuid)
+  },
+  onSetIndicatorColor: function (indicator_id, color, uuid) {
+    this.toggleLoading(uuid)
+    this.charts[uuid].indicator_colors[indicator_id] = color
     this.updateChart(uuid)
   },
 

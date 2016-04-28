@@ -82,6 +82,7 @@ const ChartPage = React.createClass({
           setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
           setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
           setIndicatorFilter={(filter) => DashboardChartsActions.setIndicatorFilter(filter, chart.uuid)}
+          setIndicatorColor={(indicator, color) => DashboardChartsActions.setIndicatorColor(indicator, color, chart.uuid)}
           selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
           deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
           reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}

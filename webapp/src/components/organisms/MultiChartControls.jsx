@@ -161,8 +161,10 @@ const MultiChartControls = React.createClass({
       <IndicatorSelector
         indicators={this.state.indicators}
         selected_indicators={chart.selected_indicators}
+        indicator_colors={chart.indicator_colors}
         selectIndicator={props.selectIndicator}
         setIndicators={props.setIndicators}
+        setIndicatorColor={props.setIndicatorColor}
         deselectIndicator={props.deselectIndicator}
         clearSelectedIndicators={props.clearSelectedIndicators}
         reorderIndicator={props.reorderIndicator}

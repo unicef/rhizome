@@ -6,7 +6,7 @@ ul.list, .reorderable-list {
     position: relative;
     margin-bottom: 2px;
     padding: 8px;
-    padding-right: 4px;
+    padding-right: 1.5rem;
     border: 1px solid #BBC6D1;
     background-color: #fafafa;
     color: #333;
@@ -17,6 +17,10 @@ ul.list, .reorderable-list {
     font-size: 0.85rem;
     &:last-child {
       border-bottom: none;
+    }
+    .color-picker-icon {
+      float: left;
+      margin-right: .5rem;
     }
     .clear-btn {
       position: absolute;
@@ -37,7 +41,6 @@ ul.list, .reorderable-list {
   div.reorderable-item {
     cursor: grab;
     &.placeholder {
-      padding-left: 5px;
       background-color: rgba(0, 0, 0, .05);
     }
   }

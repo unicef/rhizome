@@ -100,3 +100,10 @@
     }
 	}
 }
+
+.container ul li.color-dot {
+	display: inline-block;
+	.fa.fa-circle, .fa.fa-check-circle {
+		visibility: visible;
+	}
+}

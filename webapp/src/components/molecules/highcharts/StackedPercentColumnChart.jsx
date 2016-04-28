@@ -60,9 +60,12 @@ class StackedPercentColumnChart extends HighChart {
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
     _.forEach(grouped_data, group_collection => {
+      const first_datapoint = group_collection[0]
+      const color = this.props.indicator_colors[first_datapoint.indicator.id]
       series.push({
-        name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
+        name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
         data: group_collection.map(datapoint => datapoint.value),
+        color: color,
         events: {
           click: () => this._toggleStackMode(this.state.stackMode !== null ? null : 'normal')
         }
