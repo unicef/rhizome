@@ -172,7 +172,7 @@ def ingest_situational():
         title = 'Missed Children PCA vs. Out of House',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[34,21],
+            "indicator_ids":get_indicators_by_tag_name('Missed Children PCA vs. Out Of House'),
             "campaign_ids":[5],
             "location_ids":[1],
             "type":"ColumnChart",
