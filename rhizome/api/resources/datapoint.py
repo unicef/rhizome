@@ -128,7 +128,6 @@ class DatapointResource(BaseNonModelResource):
             return []
 
         self.location_ids = self.get_locations_to_return_from_url(request)
-
         time_gb = self.parsed_params['group_by_time']
         if time_gb == 'campaign' or time_gb is None:
             self.base_data = self.base_transform()
