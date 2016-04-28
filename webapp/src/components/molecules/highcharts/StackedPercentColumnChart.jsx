@@ -6,17 +6,35 @@ import format from 'utilities/format'
 
 class StackedPercentColumnChart extends HighChart {
 
+  constructor (props) {
+    super(props)
+    this.state = {stackMode: 'percent'}
+  }
+
+  _toggleStackMode = (new_state) => {
+    this.setState({stackMode: new_state})
+    this.chart.series.forEach(s => s.update({stacking: new_state}, false))
+    this.chart.yAxis[0].update({labels: {format: this.state.stackMode === 'percent' ? '{value}%' : '{value}'}})
+    this.chart.redraw()
+  }
+
   setConfig = function () {
     const props = this.props
     const first_indicator = props.selected_indicators[0]
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
+
     this.config = {
       chart: { type: 'column' },
       series: this.setSeries(),
       xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
-        labels: { format: '{value}%'}
+        labels : {
+          format: this.state.stackMode === 'percent' ? '{value}%' : '{value}',
+          events: {
+            click: () => this._toggleStackMode(this.state.stackMode === 'percent' ? 'normal' : 'percent')
+          }
+        }
       },
       plotOptions: {
         column: { stacking: 'percent' }
@@ -44,7 +62,10 @@ class StackedPercentColumnChart extends HighChart {
     _.forEach(grouped_data, group_collection => {
       series.push({
         name: groupByIndicator ? group_collection[0].indicator.name : group_collection[0].location.name,
-        data: group_collection.map(datapoint => datapoint.value)
+        data: group_collection.map(datapoint => datapoint.value),
+        events: {
+          click: () => this._toggleStackMode(this.state.stackMode !== null ? null : 'normal')
+        }
       })
     })
     return series
