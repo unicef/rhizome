@@ -42,7 +42,6 @@ class GeoResource(BaseNonModelResource):
         location_ids_to_return = self.get_locations_to_return_from_url(request)
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
             location_ids_to_return)
-
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
