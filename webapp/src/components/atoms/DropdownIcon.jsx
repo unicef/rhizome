@@ -9,6 +9,7 @@ var DropdownIcon = React.createClass({
 
   propTypes: {
     className: React.PropTypes.string,
+    color: React.PropTypes.string,
     text: React.PropTypes.string.isRequired,
     icon: React.PropTypes.string,
     searchable: React.PropTypes.bool,
