@@ -85,7 +85,15 @@ const DashboardLayout = React.createClass({
     const selected_campaigns = charts[0] ? charts[0].selected_campaigns : []
     const indicator_filter = charts[0] ? charts[0].indicator_filter : []
     const rows = noRows ? [] : dashboard.rows.map((row, index) => {
-      return  <DashboardRow {...row} all_charts={this.state.charts} editMode={editMode} rowIndex={index}/>
+      return (
+        <DashboardRow
+          all_charts={this.state.charts}
+          editMode={editMode}
+          rowIndex={index}
+          totalRows={dashboard.rows.length}
+          {...row}
+        />
+      )
     })
     const noRows = dashboard.rows.length <= 0
     const noCharts = charts.length <= 0
