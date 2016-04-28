@@ -173,7 +173,6 @@ class DatapointResource(BaseNonModelResource):
         if time_grouping == 'all_time':
             return self.map_bubble_transform(dp_df) # hack...
 
-
         if dp_df.empty:
              return []
 
