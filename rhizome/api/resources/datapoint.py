@@ -543,7 +543,11 @@ class DatapointResource(BaseNonModelResource):
         except KeyError: ## there is no data, so fill it with empty indicator data ##
             pivoted_data, pivoted_data_for_id = {}, {}
             for location_id in self.location_ids:
-                tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
+                try:
+                    tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
+                # there are no campaigns in the given range
+                except IndexError:
+                    return []
                 pivoted_data[tupl] = {}
                 pivoted_data_for_id[tupl] = {}
 
