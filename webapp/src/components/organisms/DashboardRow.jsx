@@ -3,6 +3,7 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
+import IconButton from 'components/atoms/IconButton'
 import MultiChart from 'components/organisms/MultiChart'
 
 const DashboardRow = React.createClass({
@@ -69,12 +70,28 @@ const DashboardRow = React.createClass({
   },
 
   renderRow: function (layout, uuids) {
+    const rowIndex = this.props.rowIndex
     const chart_slot = <div className='chart-preview'></div>
     const charts = this.props.all_charts
+    const row_order_buttons = this.props.editMode && uuids ? (
+      <div className='row-position-buttons'>
+        {
+          rowIndex !== 0
+          ? <IconButton onClick={() => DashboardPageActions.moveRowUp(rowIndex)} icon='fa-arrow-up' />
+          : null
+        }
+        {
+          rowIndex !== this.props.totalRows - 1
+          ? <IconButton onClick={() => DashboardPageActions.moveRowDown(rowIndex)} icon='fa-arrow-down' />
+          : null
+        }
+      </div>
+    ) : null
 
     if (layout === 2) {
       return (
         <div className='row animated fadeInDown'>
+          {row_order_buttons}
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
         </div>
@@ -82,6 +99,7 @@ const DashboardRow = React.createClass({
     } else if (layout === 3) {
       return (
         <div className='row animated fadeInDown'>
+          {row_order_buttons}
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[2]], 2) : chart_slot}</div>
@@ -90,6 +108,7 @@ const DashboardRow = React.createClass({
     } else if (layout === 4) {
       return (
         <div className='row animated fadeInDown' style={{display: 'flex'}}>
+          {row_order_buttons}
           <div className='medium-6 columns' style={{display: 'flex'}}>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>
             <div className='row'>
@@ -104,6 +123,7 @@ const DashboardRow = React.createClass({
     }
     return (
       <div className='row animated fadeInDown'>
+        {row_order_buttons}
         <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
       </div>
     )

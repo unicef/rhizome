@@ -48,6 +48,15 @@ $total-columns: 7;
 
 .dashboard-page {
 	background: $rhz-footer-bg-color;
+	.row-position-buttons {
+		z-index: 301;
+		position: absolute;
+    right: 1rem;
+    top: -0.5rem;
+		button {
+			color: white;
+		}
+	}
 }
 
 .page-header {
@@ -80,6 +89,7 @@ $total-columns: 7;
     margin-right: .2rem;
 	}
 	.title-input {
+		font-family: 'proxima';
 		text-transform: uppercase;
 		position: relative;
 		top: -.2rem;

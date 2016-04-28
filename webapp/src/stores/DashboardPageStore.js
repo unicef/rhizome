@@ -66,6 +66,16 @@ const DashboardPageStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onMoveRowUp: function (row_index) {
+    this.dashboard.rows.move(row_index, row_index - 1) // Move is defined at the bottom of this file
+    this.trigger(this.dashboard)
+  },
+
+  onMoveRowDown: function (row_index) {
+    this.dashboard.rows.move(row_index, row_index + 1) // Move is defined at the bottom of this file
+    this.trigger(this.dashboard)
+  },
+
   onSelectChart: function (chart, old_uuid, row_index, chart_index) {
     DashboardChartsActions.selectChart(chart, old_uuid) // Select chart
     this.dashboard.rows[row_index].charts.splice(chart_index, 1, chart.uuid) // Remove old uuid from row
@@ -174,3 +184,14 @@ const DashboardPageStore = Reflux.createStore({
 })
 
 export default DashboardPageStore
+
+Array.prototype.move = function (old_index, new_index) {
+  if (new_index >= this.length) {
+    var k = new_index - this.length
+    while ((k--) + 1) {
+      this.push(undefined)
+    }
+  }
+  this.splice(new_index, 0, this.splice(old_index, 1)[0])
+  return this
+}
