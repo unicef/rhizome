@@ -304,7 +304,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(len(response_data['objects']), 0)
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
-    def _indicator_filter(self):
+    def test_indicator_filter(self):
         campaign_id = 2
         province_lt, created = LocationType.objects\
             .get_or_create(name='Province',defaults = {'admin_level': 1})
@@ -362,7 +362,7 @@ class DataPointResourceTest(ResourceTestCase):
                     dps_to_track.append(dp)
 
         indicator_name_to_filter = Indicator.objects.get(id=indicator_to_filter);
-        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=MapChart'\
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
             .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
