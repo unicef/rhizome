@@ -63,8 +63,10 @@ class ColumnChart extends HighChart {
     _.forEach(grouped_data, (group_collection, key) => {
       if (!multiIndicator || parseInt(last_indicator.id) !== parseInt(key)) {
         const sorted_column_data = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
+        const color = this.props.indicator_colors[sorted_column_data[0].indicator.id]
         series.push({
           name: groupByIndicator ? sorted_column_data[0].indicator.name : sorted_column_data[0].location.name,
+          color: color,
           type: 'column',
           data: sorted_column_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
         })
@@ -74,9 +76,11 @@ class ColumnChart extends HighChart {
     // Set the line data for the last indicator
     if (multiIndicator) {
       const sorted_line_data = _.sortBy(grouped_data[last_indicator.id], group => group.campaign.start_date.getTime())
+      const color = this.props.indicator_colors[last_indicator.id]
       series.push({
         yAxis: 1,
         name: last_indicator.name,
+        color: color,
         type: 'spline',
         data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
       })
