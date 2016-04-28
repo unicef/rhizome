@@ -10,10 +10,10 @@ describe (__filename, () => {
     it ('has children.', () => {
       expect(RootActions.fetchAllMeta.children).to.exist
     })
-    it ('has children: \'completed\' and \'failed\'', () => {
+    it ('has children: \'completed\' and \'failed\'.', () => {
       expect(RootActions.fetchAllMeta.children).to.have.members(['completed', 'failed'])
     })
-    it ('has method listenAndPromise', () => {
+    it ('has method listenAndPromise.', () => {
       expect(RootActions.fetchAllMeta.listenAndPromise).to.exist
     })
   })
