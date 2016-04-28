@@ -13,9 +13,6 @@ import pandas as pd
 
 def ingest_base_dashboards(apps, schema_editor):
 
-# psql rhizome -c "TRUNCATE TABLE custom_dashboard CASCADE;
-# TRUNCATE TABLE custom_chart CASCADE;
-
 # run this in bash when you need to run the migration again:
 # psql rhizome -c "DELETE FROM django_migrations where name = '0016_base_dashboard';"
 
@@ -70,13 +67,13 @@ def ingest_situational():
         uuid = '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be'
     )
 
+
     chart_3 = CustomChart.objects.create(
         title = 'Immunity Profile',
         chart_json = {
             "start_date":"2014-01-01",
             "end_date":"2016-03-01",
             "indicator_ids":[
-                Indicator.objects.get(short_name='Number of reported Non Polio AFP cases').id,
                 Indicator.objects.get(short_name='Number of Unvaccinated Non Polio AFP Cases').id,
                 Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 1-3 doses').id,
                 Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 4-6 doses').id,
@@ -94,6 +91,7 @@ def ingest_situational():
     chart_4 = CustomChart.objects.create(
         title = 'Non Polio AFP Rate and Adequate Specimens',
         chart_json ={
+            "start_date":"2015-11-01",
             "end_date":"2016-03-01",
             "indicator_ids":[Indicator.objects.get(name="Non Polio AFP Rate").id,
             Indicator.objects.get(short_name="Percentage of Adequate Specimen ").id
@@ -103,10 +101,10 @@ def ingest_situational():
             "type":"ColumnChart",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator"
         },
         uuid = '4499af7d-bbcc-41a6-81cf-b2071d79ce55'
     )
-
 
     chart_5 = CustomChart.objects.create(
         title = 'Inaccessible Children',
@@ -118,6 +116,7 @@ def ingest_situational():
             "type":"ColumnChart",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator"
         },
         uuid = '8fd8f0e2-327d-4cf6-ba11-0252e6580f38'
     )
@@ -126,19 +125,19 @@ def ingest_situational():
         title = 'Environmental Results',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":[Indicator.objects.get(short_name="Number of Environmental Samples collected").id,
+            "indicator_ids":[
             Indicator.objects.get(short_name="Number of Environmental Samples with Negative result").id,
             Indicator.objects.get(short_name="Number of Environmental Samples with Positive result").id,
             Indicator.objects.get(short_name="Number of Environmental Samples with result pending in Lab").id],
             "campaign_ids":[5],
             "location_ids":[1],
-            "type":"StackedColumnChart",
-            "start_date":"2015-11-01",
+            "type":"StackedPercentColumnChart",
+            "start_date":"2016-02-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator"
         },
         uuid = '6f2efd2a-dd9f-4bcc-8652-7a622ebfc047'
     )
-
 
     chart_7 = CustomChart.objects.create(
         title = 'Preparatory Indicators',
@@ -150,6 +149,7 @@ def ingest_situational():
             "type":"RawData",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator"
         },
         uuid = 'df3fdb84-5721-456c-8468-c4605842c7d6'
     )
@@ -164,6 +164,7 @@ def ingest_situational():
             "type":"RawData",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator",
         },
         uuid = '30fe1ee9-8e82-4caf-8f3b-eaf3b4cf43a9'
     )
@@ -187,12 +188,15 @@ def ingest_situational():
         title = 'Missed Children By Reason',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":get_indicators_by_tag_name('Missed Chilren By Reason'),
+            "indicator_ids":Indicator.objects\
+                .filter(name__contains='Percent children missed')\
+                .values_list('id', flat=True),
             "campaign_ids":[5],
             "location_ids":[1],
-            "type":"StackedColumnChart",
+            "type":"StackedPercentColumnChart",
             "start_date":"2015-11-01",
             "groupByTime":"campaign",
+            "groupBy":"indicator",
         },
         uuid = '3f04d269-96db-4424-866f-8e09b5eeb9f3'
     )
