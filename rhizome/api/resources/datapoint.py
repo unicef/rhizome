@@ -143,9 +143,6 @@ class DatapointResource(BaseNonModelResource):
     def group_by_time_transform(self):
         time_grouping =  self.parsed_params['group_by_time']
 
-        if time_grouping == 'all_time':
-            return self.map_bubble_transform() # hack...
-
         indicator_id_list = self.parsed_params['indicator__in']
 
         if not 'latest_date' in self.ind_meta\
@@ -172,6 +169,10 @@ class DatapointResource(BaseNonModelResource):
             location_id__in = location_ids,
             indicator_id__in = filtered_indicator_list
         ).values(*cols)),columns=cols)
+
+        if time_grouping == 'all_time':
+            return self.map_bubble_transform(dp_df) # hack...
+
 
         if dp_df.empty:
              return []
@@ -633,83 +634,38 @@ class DatapointResource(BaseNonModelResource):
         return high_chart_data
 
 
-    def map_bubble_transform(self):
+    def map_bubble_transform(self, dp_df):
         '''
         This method right now is set up specifically to deal with polio cases.
 
         This needs to be removed and we need to figure out a better way to
         Handle the polio case indicator / Bubble Map viz.
-
-        AS you will noice.. this is very similar to the base_transform function
-        excpet it uses the datapoint ( not datapoint_with_computed ) table
-        to return results
         '''
 
         results = []
-        indicator_id_list = self.parsed_params['indicator__in']
 
-        ## here we have to find the cases at the district level.  Ideally, this
-        ## would all be handled in "get_locations_to_return_from_url" and we
-        ## could use a parameter like "locatoin_level" in order to clean up this
-        ## logic.
+        gb_df = DataFrame(dp_df\
+            .groupby(['location_id'])['value']\
+            .sum())\
+            .reset_index()
 
-        location_ids = LocationTree.objects.filter(
-            location__location_type__name = 'District',
-            parent_location__in = self.parsed_params['parent_location_id__in']
-        ).values_list('location_id', flat=True)
+        indicator_id = list(dp_df['indicator_id'].unique())[0]
+        campaign_id = self.parsed_params['campaign__in'][0]
 
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
-        datapoints = DataPoint.objects.filter(
-                # campaign__in=self.arsed_params['campaign__in'],
-                location__in = location_ids,
-                indicator__in = indicator_id_list)
-
-        dwc_df = DataFrame(list(datapoints.values_list(*df_columns)),\
-            columns=df_columns)
-
-        ## here is a fat hack that aggregates the district level cases up to
-        ## the province so that we can draw a sensible map for the country
-        ## and regional level chart.
-        if Location.objects.get(id = self.parsed_params['parent_location_id__in']).location_type_id != 2: ## province...
-            province_parent_location_df = DataFrame(list(
-                Location.objects.filter(id__in = location_ids)\
-                .values_list('id','parent_location_id')
-            ),columns = ['location_id', 'parent_location_id'])
-
-            parent_lookup_df = dwc_df.merge(province_parent_location_df)
-            gb_df = DataFrame(parent_lookup_df\
-                .groupby('parent_location_id')['value'].sum()).reset_index()
-
-            gb_df['indicator_id'] = indicator_id_list[0]
-            gb_df['campaign_id'] = None
-            gb_df.columns = ['location_id','value','indicator_id', 'campaign_id']
-
-            dwc_df = gb_df
-
-        try:
-             pivoted_data = self.pivot_df(dwc_df, \
-                ['indicator_id'], 'value', ['location_id'])
-        except KeyError: ## there is no data, so fill it with empty indicator data ##
-            pivoted_data =  {}
-            for location_id in self.location_ids:
-                tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
-                pivoted_data[tupl] = {}
-
-        for i, (location_id, indicator_dict) in enumerate(pivoted_data.iteritems()):
+        for ix, row in gb_df.iterrows():
 
             indicator_objects = [{
-                'indicator': k,
-                'value': v
-            } for k, v in indicator_dict.iteritems()]
+                'indicator': indicator_id,
+                'value': row.value
+            }]
 
-            for c in self.parsed_params['campaign__in']:
-                r = ResultObject()
-                r.location = location_id
-                r.campaign = c
-                r.indicators = indicator_objects
+            r = ResultObject()
+            r.location = row.location_id
+            r.campaign = campaign_id
+            r.indicators = indicator_objects
 
-                results.append(r)
+            results.append(r)
+
         return results
 
     def pivot_df(self, df, index_column_list, value, pivot_column_list):
