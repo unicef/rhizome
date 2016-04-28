@@ -83,9 +83,6 @@ var ChartsPage = React.createClass({
               <a onClick={() => this.duplicateChart(chart)}>
                 <i className='fa fa-clone'></i> Duplicate
               </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <a href={'/charts/' + chart.id + '/edit'}>
-                <i className='fa fa-pencil'></i> Edit
-              </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <a onClick={() => this.deleteChart(chart.id) }>
                 <i className='fa fa-trash'></i> Delete
               </a>
