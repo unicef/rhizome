@@ -156,68 +156,68 @@ class DatapointResource(BaseNonModelResource):
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
 
-        location_id = self.parsed_params['location_id__in']
-        if location_id is None:
-            location_id = self.parsed_params['parent_location_id__in']
-        location_ids = LocationTree.objects.filter(
-                location__location_type__name = 'District',
-                parent_location_id = location_id
-            ).values_list('location_id', flat=True)
-
-        cols = ['data_date','indicator_id','location_id','value']
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = location_ids,
-            indicator_id__in = filtered_indicator_list
-        ).values(*cols)),columns=cols)
-
-        if time_grouping == 'all_time':
-            return self.map_bubble_transform(dp_df) # hack...
-
-        if dp_df.empty:
-             return []
-
-        ## Group Datapoints by Year / Quarter ##
-        if time_grouping == 'year':
-            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
-        elif time_grouping == 'quarter':
-            dp_df['time_grouping'] = dp_df['data_date']\
-                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
-        elif time_grouping == 'all_time':
-            dp_df['time_grouping'] = 'all_time'
-        else:
-            return []
-
-        if 'base_indicator' in self.ind_meta\
-        and self.ind_meta['base_indicator'] in filtered_indicator_list:
-            df_with_aggregate = self.add_aggregate_indicators(dp_df)
-        else:
-            df_with_aggregate = dp_df
-
-
-        gb_df = DataFrame(df_with_aggregate\
-            .groupby(['indicator_id','time_grouping'])['value']\
-            .sum())\
-            .reset_index()
-
-        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
-
+        param_location_ids= self.parsed_params['location_id__in']
+        if param_location_ids is None:
+            param_location_ids = self.parsed_params['parent_location_id__in']
+        if param_location_ids:
+            param_location_ids = param_location_ids.split(',')
         results = []
-        for time_grouping, indicator_data in sorted(pivoted_data.iteritems(),\
-            reverse=True):
+        all_time_groupings = []
+        for param_location_id in param_location_ids:
+            location_ids = LocationTree.objects.filter(
+                    location__location_type__name = 'District',
+                    parent_location_id= param_location_id
+                ).values_list('location_id', flat=True)
+            cols = ['data_date','indicator_id','location_id','value']
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                location_id__in = location_ids,
+                indicator_id__in = filtered_indicator_list
+            ).values(*cols)),columns=cols)
+            if time_grouping == 'all_time':
+                return self.map_bubble_transform(dp_df) # hack...
+                continue
 
-            r = ResultObject()
-            r.location = location_id
-            r.campaign = str(time_grouping).replace('-','').replace('.0','')
+            if dp_df.empty:
+                continue
+            ## Group Datapoints by Year / Quarter ##
+            if time_grouping == 'year':
+                dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
+            elif time_grouping == 'quarter':
+                dp_df['time_grouping'] = dp_df['data_date']\
+                    .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+            elif time_grouping == 'all_time':
+                dp_df['time_grouping'] = 'all_time'
+            else:
+                continue
 
-            r.indicators = [{
-                'computed': None,
-                'indicator': k,
-                'value': v
-            } for k,v in indicator_data.iteritems()]
+            if 'base_indicator' in self.ind_meta\
+            and self.ind_meta['base_indicator'] in filtered_indicator_list:
+                df_with_aggregate = self.add_aggregate_indicators(dp_df)
+            else:
+                df_with_aggregate = dp_df
 
-            results.append(r)
+            gb_df = DataFrame(df_with_aggregate\
+                .groupby(['indicator_id','time_grouping'])['value']\
+                .sum())\
+                .reset_index()
+            pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
+            for time_group, indicator_data in sorted(pivoted_data.iteritems(),\
+                reverse=True):
 
-        all_time_groups = list(dp_df['time_grouping'].unique())
+                r = ResultObject()
+                r.location = param_location_id
+                r.campaign = str(time_group).replace('-','').replace('.0','')
+
+                r.indicators = [{
+                    'computed': None,
+                    'indicator': k,
+                    'value': v
+                } for k,v in indicator_data.iteritems()]
+
+                results.append(r)
+                all_time_groupings.extend(list(dp_df['time_grouping'].unique()))
+
+        all_time_groupings = list(set(all_time_groupings))
 
         self.campaign_qs = [{
             'id': time_grp,
@@ -226,8 +226,7 @@ class DatapointResource(BaseNonModelResource):
             'end_date': str(time_grp) + '-12-31',
             'office_id': 1,
             'created_at': datetime.now()
-        } for time_grp in all_time_groups]
-
+        } for time_grp in all_time_groupings]
         return results
 
     def add_aggregate_indicators(self, flat_df):
