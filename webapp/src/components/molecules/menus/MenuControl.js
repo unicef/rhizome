@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Layer from 'react-layer'
 
-import Menu from 'components/molecules/menus/Menu.jsx'
+import Menu from 'components/molecules/menus/Menu'
 import dom from 'utilities/dom'
 
 var MenuControl = {

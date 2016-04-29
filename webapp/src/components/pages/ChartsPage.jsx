@@ -42,6 +42,7 @@ var ChartsPage = React.createClass({
         campaign_ids: chart_def.campaign_ids,
         location_ids: chart_def.location_ids,
         indicator_ids: chart_def.indicator_ids,
+        indicator_colors: chart_def.indicator_colors,
         groupBy: chart_def.groupBy,
         groupByTime: chart_def.groupByTime
       })
@@ -82,9 +83,6 @@ var ChartsPage = React.createClass({
             <td>
               <a onClick={() => this.duplicateChart(chart)}>
                 <i className='fa fa-clone'></i> Duplicate
-              </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <a href={'/charts/' + chart.id + '/edit'}>
-                <i className='fa fa-pencil'></i> Edit
               </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <a onClick={() => this.deleteChart(chart.id) }>
                 <i className='fa fa-trash'></i> Delete

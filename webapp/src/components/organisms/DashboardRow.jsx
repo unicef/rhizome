@@ -47,24 +47,25 @@ const DashboardRow = React.createClass({
         removeChart={() => DashboardPageActions.removeChart(this.props.rowIndex, chart_index)}
         saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
         setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
-        setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
-        setGroupByTime={(grouping) => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
-        setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
-        setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
-        setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
-        setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
-        setIndicatorFilter={(filter) => DashboardChartsActions.setIndicatorFilter(filter, chart.uuid)}
-        selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
-        deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
-        reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
+        setGroupBy={grouping => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
+        setGroupByTime={grouping => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
+        setPalette={palette => DashboardChartsActions.setPalette(palette, chart.uuid)}
+        setTitle={title => DashboardChartsActions.setChartTitle(title, chart.uuid)}
+        setType={type => DashboardChartsActions.setType(type, chart.uuid)}
+        setIndicators={indicators => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
+        setIndicatorFilter={filter => DashboardChartsActions.setIndicatorFilter(filter, chart.uuid)}
+        setIndicatorColor={(indicator, color) => DashboardChartsActions.setIndicatorColor(indicator, color, chart.uuid)}
+        selectIndicator={id => DashboardChartsActions.selectIndicator(id, chart.uuid)}
+        deselectIndicator={id => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
+        reorderIndicator={indicators => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
         clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
-        setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
-        selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
-        deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}
+        setLocations={locations => DashboardChartsActions.setLocations(locations, chart.uuid)}
+        selectLocation={id => DashboardChartsActions.selectLocation(id, chart.uuid)}
+        deselectLocation={id => DashboardChartsActions.deselectLocation(id, chart.uuid)}
         clearSelectedLocations={() => DashboardChartsActions.clearSelectedLocations(chart.uuid)}
-        setCampaigns={(campaigns) => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
-        selectCampaign={(id) => DashboardChartsActions.selectCampaign(id, chart.uuid)}
-        deselectCampaign={(id) => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
+        setCampaigns={campaigns => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
+        selectCampaign={id => DashboardChartsActions.selectCampaign(id, chart.uuid)}
+        deselectCampaign={id => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
       />
     )
   },

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
-import ReorderableList from 'components/molecules/list/ReorderableList'
+import ReorderableIndicators from 'components/molecules/list/ReorderableIndicators'
 import DropdownMenu from 'components/molecules/menus/DropdownMenu'
 import IndicatorDropdown from 'components/molecules/menus/IndicatorDropdown'
 
@@ -22,12 +22,14 @@ const IndicatorSelector = React.createClass({
     classes: PropTypes.string,
     multi: PropTypes.bool,
     filterByFormat: PropTypes.bool,
-    avoidBooleans: PropTypes.bool
+    avoidBooleans: PropTypes.bool,
+    withColors: PropTypes.bool,
   },
 
   getDefaultProps () {
     return {
       filterByFormat: true,
+      withColors: true,
       avoidBooleans: false,
       multi: false,
       selected_indicators: []
@@ -76,7 +78,13 @@ const IndicatorSelector = React.createClass({
               icon='fa-plus'
             />
           </h3>
-          <ReorderableList items={props.selected_indicators} removeItem={props.deselectIndicator} dragItem={props.reorderIndicator} />
+          {
+            props.withColors
+            ? <ReorderableIndicators {...props}/>
+            : (
+              <ReorderableList items={props.selected_indicators} removeItem={props.deselectIndicator} dragItem={props.reorderIndicator} />
+            )
+          }
           { props.selected_indicators.length > 1 ? <a className='remove-filters-link' onClick={props.clearSelectedIndicators}>Remove All </a> : '' }
         </form>
       )

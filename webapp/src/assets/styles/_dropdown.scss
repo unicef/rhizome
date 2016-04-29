@@ -100,3 +100,13 @@
     }
 	}
 }
+
+.container ul li.color-dot {
+	display: inline-block;
+	button {
+		top: 0;
+	}
+	.fa.fa-circle, .fa.fa-check-circle {
+		visibility: visible;
+	}
+}

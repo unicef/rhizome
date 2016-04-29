@@ -2,24 +2,21 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
-import AsyncButton from 'components/atoms/AsyncButton'
-
 import Placeholder from 'components/molecules/Placeholder'
-import MultiChart from 'components/organisms/MultiChart'
-import TitleInput from 'components/molecules/TitleInput'
+import DashboardHeader from 'components/organisms/DashboardHeader'
+import DashboardRow from 'components/organisms/DashboardRow'
 
-import RootStore from 'stores/RootStore'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
 import DashboardPageStore from 'stores/DashboardPageStore'
 import DashboardChartsStore from 'stores/DashboardChartsStore'
 
+import RootActions from 'actions/RootActions'
 import DashboardActions from 'actions/DashboardActions'
 import DashboardPageActions from 'actions/DashboardPageActions'
-import DashboardChartsActions from 'actions/DashboardChartsActions'
 
-const Dashboard = React.createClass({
+const DashboardPage = React.createClass({
 
   mixins: [
     Reflux.connect(DashboardChartsStore, 'charts'),
@@ -39,23 +36,18 @@ const Dashboard = React.createClass({
     }
   },
 
-  getInitialState: function () {
-    return {
-      titleEditMode: false
-    }
-  },
-
   componentDidMount: function () {
+    document.getElementsByTagName('body')[0].className += ' dashboard-page'
+    const header = document.getElementsByClassName('page-header')[0]
+    window.addEventListener('scroll', () => this._stickyHeader(header), false)
+
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
-    RootStore.listen(() => {
-      const state = this.state
-      if (state.locations.index && state.indicators.index && state.campaigns.index) {
-        if (this.props.dashboard_id) {
-          DashboardPageActions.fetchDashboard(this.props.dashboard_id)
-        } else {
-          DashboardChartsActions.addChart()
-          DashboardPageActions.toggleEditMode()
-        }
+    this.listenTo(RootActions.fetchAllMeta.completed, (response) => {
+      if (this.props.dashboard_id) {
+        DashboardPageActions.fetchDashboard(this.props.dashboard_id)
+      } else {
+        DashboardPageActions.addRow()
+        DashboardPageActions.toggleEditMode()
       }
     })
     // If the dashboard is saved for the first time, redirect to the dashboard page
@@ -68,108 +60,75 @@ const Dashboard = React.createClass({
   },
 
   shouldComponentUpdate: function (nextProps, nextState) {
+    const first_row_charts = !nextProps.dashboard_id ? nextState.dashboard.rows[0].charts : []
     const charts = _.toArray(nextState.charts)
     this.missing_params = charts.filter(chart => _.isEmpty(chart.selected_indicators) || _.isEmpty(chart.selected_locations)).length
     this.missing_data = charts.filter(chart => _.isEmpty(chart.data)).length
     this.loading_charts = charts.filter(chart => chart.loading).length
-    return !this.missing_data || this.missing_params || this.loading_charts
+    return !this.missing_data || this.missing_params || this.loading_charts || _.isNull(first_row_charts)
   },
 
-  _toggleTitleEdit: function (title) {
-    if (_.isString(title)) {
-      DashboardPageActions.setDashboardTitle(title)
+  _stickyHeader: function (header) {
+    if (window.pageYOffset > 93) {
+      header.classList.add('fixed')
     }
-    this.setState({titleEditMode: !this.state.titleEditMode})
+    if (window.pageYOffset < 92) {
+      header.classList.remove('fixed')
+    }
   },
 
   render: function () {
     const editMode = this.state.dashboard.editMode
     const dashboard = this.state.dashboard
-    const chart_uuids = this.state.dashboard.chart_uuids
     const charts = _.toArray(this.state.charts)
-    const title_bar = this.state.titleEditMode ?
-      <TitleInput initialText={dashboard.title} save={this._toggleTitleEdit}/>
-      :
-      <h1 onClick={this._toggleTitleEdit}>
-        <a>{dashboard.title || 'Untitled Dashboard'}</a>
-      </h1>
-
-    const chart_components = chart_uuids.map(uuid => {
-      const chart = this.state.charts[uuid]
+    const selected_locations = charts[0] ? charts[0].selected_locations : []
+    const selected_campaigns = charts[0] ? charts[0].selected_campaigns : []
+    const indicator_filter = charts[0] ? charts[0].indicator_filter : []
+    const rows = noRows ? [] : dashboard.rows.map((row, index) => {
       return (
-        <div className='row'>
-          <MultiChart
-            chart={chart}
-            readOnlyMode={!editMode}
-            linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
-            duplicateChart={DashboardChartsActions.duplicateChart}
-            selectChart={new_chart => DashboardChartsActions.selectChart(new_chart, chart.uuid)}
-            toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
-            toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
-            removeChart={DashboardChartsActions.removeChart}
-            saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
-            setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
-            setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
-            setPalette={(palette) => DashboardChartsActions.setPalette(palette, chart.uuid)}
-            setTitle={(title) => DashboardChartsActions.setChartTitle(title, chart.uuid)}
-            setType={(type) => DashboardChartsActions.setType(type, chart.uuid)}
-            setIndicators={(indicators) => DashboardChartsActions.setIndicators(indicators, chart.uuid)}
-            selectIndicator={(id) => DashboardChartsActions.selectIndicator(id, chart.uuid)}
-            deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
-            reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
-            clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
-            setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
-            selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
-            deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}
-            clearSelectedLocations={() => DashboardChartsActions.clearSelectedLocations(chart.uuid)}
-            setCampaigns={(campaigns) => DashboardChartsActions.setCampaigns(campaigns, chart.uuid)}
-            selectCampaign={(id) => DashboardChartsActions.selectCampaign(id, chart.uuid)}
-            deselectCampaign={(id) => DashboardChartsActions.deselectCampaign(id, chart.uuid)}
-          />
-        </div>
+        <DashboardRow
+          all_charts={this.state.charts}
+          editMode={editMode}
+          rowIndex={index}
+          totalRows={dashboard.rows.length}
+          {...row}
+        />
       )
     })
+    const noRows = dashboard.rows.length <= 0
+    const noCharts = charts.length <= 0
 
-    const save_dashboard_button = editMode ? (
-      <AsyncButton
-        text='Save Dashboard'
-        alt_text='Saving ...'
-        isBusy={dashboard.saving}
-        onClick={() => DashboardPageActions.saveDashboard(this.props.dashboard_id)}
-      />
-    ) : null
+    let loading = noCharts || noRows
 
-    const add_chart_button = loading || editMode ? (
+    if (!this.props.dashboard_id && !noRows) {
+      loading = false
+    }
+
+    const add_row_button = loading || editMode ? (
       <div className='row text-center'>
+        <br/><br/><br/><br/><br/><br/>
         <button
           className='button large'
-          onClick={DashboardChartsActions.addChart}
+          onClick={DashboardPageActions.addRow}
           style={{marginTop: '1rem'}}>
-          Add Chart
+          Add Row
         </button>
       </div>
     ) : null
 
-    const loading = !charts.length > 0
-
     return (
       <section className='dashboard'>
-        <header className='row dashboard-header'>
-          <div className='medium-6 columns medium-text-left small-text-center'>
-            { editMode ? title_bar : <h1>{dashboard.title || 'Untitled Dashboard'}</h1> }
-          </div>
-          <div className='medium-6 columns medium-text-right small-text-center'>
-            { save_dashboard_button }
-            <button className='button' onClick={DashboardPageActions.toggleEditMode}>
-              { !editMode ? 'Edit Dashboard' : 'Exit Edit Mode' }
-            </button>
-          </div>
-        </header>
-        { loading ? <Placeholder height={600} /> : chart_components}
-        { add_chart_button }
+        <DashboardHeader {...dashboard}
+          dashboard_id={this.props.dashboard_id}
+          selected_campaigns={selected_campaigns}
+          selected_locations={selected_locations}
+          indicator_filter={indicator_filter}
+        />
+        { loading ? <Placeholder height={600} /> : rows }
+        { add_row_button }
       </section>
     )
   }
 })
 
-export default Dashboard
+export default DashboardPage

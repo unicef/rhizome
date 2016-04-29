@@ -6,6 +6,7 @@ var IconButton = React.createClass({
 
   propTypes: {
     icon: PropTypes.string.isRequired,
+    color: PropTypes.string,
     text: PropTypes.string,
     alt_text: PropTypes.string,
     onClick: PropTypes.func,
@@ -16,6 +17,7 @@ var IconButton = React.createClass({
 
   getDefaultProps: function () {
     return {
+      color: null,
       icon: 'info-circle',
       text: null,
       alt_text: 'Loading ...',
@@ -54,9 +56,11 @@ var IconButton = React.createClass({
         onClick={this.props.onClick}
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
-        className={'button icon-button ' + this.props.className}
-      >
-        <i className={'fa ' + (this.props.isBusy ? 'fa-spinner fa-spin' : this.props.icon)}/>
+        className={'button icon-button ' + this.props.className}>
+        <i
+          className={'fa ' + (this.props.isBusy ? 'fa-spinner fa-spin' : this.props.icon)}
+          style={{color: this.props.color}}
+        />
       </button>
     )
   }
