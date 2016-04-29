@@ -1,20 +1,20 @@
-import { expect } from 'chai'
+// import { expect } from 'chai'
 
-import RootActions from '../../actions/RootActions.js'
+// import RootActions from '../../actions/RootActions'
 
-describe (__filename, () => {
-  describe ('.fetchAllMeta', () => {
-    it ('exists.', () => {
-      expect(RootActions.fetchAllMeta).to.exist
-    })
-    it ('has children.', () => {
-      expect(RootActions.fetchAllMeta.children).to.exist
-    })
-    it ('has children: \'completed\' and \'failed\'.', () => {
-      expect(RootActions.fetchAllMeta.children).to.have.members(['completed', 'failed'])
-    })
-    it ('has method listenAndPromise.', () => {
-      expect(RootActions.fetchAllMeta.listenAndPromise).to.exist
-    })
-  })
-})
+// describe.skip (__filename, () => {
+//   describe ('#fetchAllMeta', () => {
+//     it ('exists.', () => {
+//       expect(RootActions.fetchAllMeta).to.exist
+//     })
+//     it ('has children.', () => {
+//       expect(RootActions.fetchAllMeta.children).to.exist
+//     })
+//     it ('has children: \'completed\' and \'failed\'.', () => {
+//       expect(RootActions.fetchAllMeta.children).to.have.members(['completed', 'failed'])
+//     })
+//     it ('has method listenAndPromise.', () => {
+//       expect(RootActions.fetchAllMeta.listenAndPromise).to.exist
+//     })
+//   })
+// })
