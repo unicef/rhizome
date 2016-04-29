@@ -82,7 +82,7 @@ def transformed_file_to_datapoint(df, indicator_ids):
 
 def transform_raw_file():
 
-    input_df = pd.read_csv('AFP.afg.2014_2016.csv')
+    input_df = pd.read_csv('migration_data/AFP.afg.2014_2016.csv')
     input_df['data_date'] = input_df["Day"].map(str) + '-' + input_df["Month"]\
         .map(str) + '-' + input_df['Year'].map(str)
     input_df = input_df[['geocode','data_date','Doses']]

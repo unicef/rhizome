@@ -303,7 +303,6 @@ class MasterRefresh(object):
                 row.data_date)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
-
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
@@ -318,6 +317,7 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
+            'can\'t find indicator!'
             return None
 
         cleaned_val = None

@@ -638,6 +638,7 @@ class DatapointResource(BaseNonModelResource):
 
         param_location_id = self.parsed_params['parent_location_id__in']
 
+        # get all the districts
         location_ids = LocationTree.objects.filter(
                 location__location_type__name = 'District',
                 parent_location_id= param_location_id
@@ -653,7 +654,7 @@ class DatapointResource(BaseNonModelResource):
         results = []
 
         if self.parsed_params['parent_location_id__in'] == u'1':
-
+            # get all the parents of the districts (provinces), if we're looking at afghanistan
             district_to_region_df = DataFrame(list(
                 Location.objects.filter(
                     id__in = list(dp_df['location_id'].unique()))
@@ -665,6 +666,7 @@ class DatapointResource(BaseNonModelResource):
 
             dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
 
+        # get the sums for each location
         gb_df = DataFrame(dp_df\
             .groupby(['location_id'])['value']\
             .sum())\
