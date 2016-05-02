@@ -95,7 +95,7 @@ def ingest_polio_meta_data():
 def process_source_sheet_df():
 
     user_id = 1
-    sheet_name = 'AfgPolioCases.csv'
+    sheet_name = 'migration_data/AfgPolioCases.csv'
     # file_loc = settings.MEDIA_ROOT + sheet_name
     # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name
 

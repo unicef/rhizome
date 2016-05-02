@@ -29,7 +29,7 @@ class DataIngestor(object):
         chart_index_columns = ['sheet_name','data_level','date_key',\
             'month_trend_count','chart_key']
 
-        self.xl = pd.ExcelFile('SituationalDashboard.xlsx')
+        self.xl = pd.ExcelFile('migration_data/SituationalDashboard.xlsx')
 
         raw_chart_index = self.xl.parse('chart_index')
         self.chart_index_df = raw_chart_index[raw_chart_index\
@@ -196,12 +196,16 @@ class DataIngestor(object):
         dwc_batch = []
 
         for ix, row in final_merged_df.iterrows():
+            rand_val = 0
             if row.data_format == 'int':
                 rand_val = randint(0,1000)
-            if row.data_format =='bool':
+            elif row.data_format =='bool':
                 rand_val = randint(0,1)
-            if row.data_format == 'pct':
+            elif row.data_format == 'pct':
                 rand_val = float(randint(0, 100))/100
+            else:
+                rand_val = randint(0,1000)
+
 
             dwc_obj = DataPoint(**{
                 'indicator_id':row.indicator_id,
@@ -260,7 +264,7 @@ def populate_base_dashboard_data(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0014_afp_cases'),
+        ('rhizome', '0015_pca_data'),
     ]
 
     operations = [

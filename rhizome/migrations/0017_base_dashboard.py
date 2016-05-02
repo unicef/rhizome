@@ -14,7 +14,7 @@ import pandas as pd
 def ingest_base_dashboards(apps, schema_editor):
 
 # run this in bash when you need to run the migration again:
-# psql rhizome -c "DELETE FROM django_migrations where name = '0016_base_dashboard';"
+# psql rhizome -c "DELETE FROM django_migrations where name = '0017_base_dashboard';"
 
     CustomChart.objects.all().delete()
     CustomDashboard.objects.all().delete()
@@ -188,10 +188,16 @@ def ingest_situational():
         title = 'Missed Children By Reason',
         chart_json = {
             "end_date":"2016-03-01",
-            "indicator_ids":Indicator.objects\
-                .filter(name__contains='Percent children missed')\
-                .values_list('id', flat=True),
-            "campaign_ids":[5],
+            "indicator_ids":[ Indicator.objects.get(name = '# children seen - PCA').id,\
+                Indicator.objects.get(name = '# children missed due to refusal - PCA').id,\
+                Indicator.objects.get(name = '# children missed due to not available - PCA').id,\
+                Indicator.objects.get(name = '# children missed due to no team visit - PCA').id,\
+                Indicator.objects.get(name = '# children missed due to other reasons - PCA').id],
+            "campaign_ids":[Campaign.objects.get(name = 'November 2015 - OPV - LPD').id,\
+                Campaign.objects.get(name = 'Decemeber 2015 - OPV - LPD').id,\
+                Campaign.objects.get(name = 'January 2016 - OPV - LPD').id,\
+                Campaign.objects.get(name = 'February 2016 - OPV - SNID').id,\
+                Campaign.objects.get(name = 'March 2016 - OPV - LPD').id],
             "location_ids":[1],
             "type":"StackedPercentColumnChart",
             "start_date":"2015-11-01",
@@ -324,7 +330,7 @@ def ingest_intra_campaign():
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0015_base_dashboard_data'),
+        ('rhizome', '0016_base_dashboard_data'),
     ]
 
     operations = [

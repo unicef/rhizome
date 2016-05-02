@@ -45,6 +45,7 @@ class DocTransform(object):
             except Exception as err:
                 if not self.date_column in csv_df.columns:
                     dp_error_message = '%s is a required column.' %err.message
+                    print dp_error_message
                     raise DatapointsException(message=dp_error_message)
 
         self.csv_df = csv_df
