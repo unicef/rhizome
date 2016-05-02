@@ -8,6 +8,7 @@ from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+# psql rhizome -c "DELETE FROM django_migrations where name = '0015_pca_data';"
 
 def ingest_pca_data(apps, schema_editor):
 
@@ -27,7 +28,7 @@ def upsert_indicators_delete_dps(indicator_names):
 	indicator_name_to_id = {}
 
 	for indicator_name in indicator_names:
-		ind_id = Indicator.objects.get_or_create(name=indicator_name, short_name=indicator_name)[0].id
+		ind_id = Indicator.objects.get_or_create(name=indicator_name, short_name=indicator_name, data_format='int')[0].id
 		indicator_name_to_id[indicator_name] = ind_id
 
 		DataPoint.objects.filter(indicator_id = ind_id).delete()
@@ -78,11 +79,17 @@ def transform_df(df, indicator_names, campaign_names):
 
 	# now check the values
 	# check_df = df[indicator_names]
-	# total_valid_values = 0
-	# for row in check_df.rows:
-
 	# print 'check_df'
-	# print check_df.stack().value_counts()
+	# print check_df
+	# total_valid_values = 0
+	# for idx, row in check_df.iterrows():
+	# 	for name in indicator_names:
+	# 		if row[name] and row[name] != 0:
+	# 			total_valid_values += 1
+
+	# print total_valid_values
+
+
 
 def upload_and_alter_csv(indicator_name_to_id):
 	xl = pd.ExcelFile('migration_data/T11-Situational-Dashboard-Data.xlsx')
