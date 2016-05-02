@@ -8,7 +8,7 @@ class CampaignResource(BaseModelResource):
     **GET Request** Returns campaigns from the database
         - *Optional Parameters:* 
             'id': a comma delimited list of campaign ids. 
-            If the parameter is not, set, the API will return all campaigns
+            If the parameter is not set, the API will return all campaigns
         - *Errors:*
             if an invalid id is provided, the API returns a 200 code with
             an empty list of campaigns.

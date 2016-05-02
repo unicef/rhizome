@@ -403,7 +403,7 @@ url to the application:
 ``/api/v1/agg_refresh/``
 ++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.agg_refresh.AggRefreshResource
 
 ``/api/v1/cache_meta/``
 +++++++++++++++++++++++
