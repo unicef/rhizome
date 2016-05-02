@@ -7,3 +7,4 @@ python manage.py syncdb --settings=settings
 source ../environment_seed.env
 # python manage.py migrate --settings=settings
 python manage.py collectstatic --noinput --settings=settings
+deactivate
