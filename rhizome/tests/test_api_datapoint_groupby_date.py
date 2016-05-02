@@ -72,7 +72,7 @@ class DataPointResourceTest(ResourceTestCase):
 
     def create_polio_cases(self):
 
-        df = pd.read_csv('AfgPolioCases.csv')
+        df = pd.read_csv('rhizome/tests/_data/AfgPolioCases.csv')
 
         for ix, row in df.iterrows():
 

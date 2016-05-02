@@ -25,7 +25,7 @@ def populate_initial_data(apps, schema_editor):
 
 def process_meta_data():
 
-    xl = pd.ExcelFile('initial_data.xlsx')
+    xl = pd.ExcelFile('migration_data/initial_data.xlsx')
     all_sheets = xl.sheet_names
 
     rhizome_app = get_app('rhizome')
