@@ -6,6 +6,8 @@ import numpy as np
 from django.core.exceptions import ObjectDoesNotExist
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
+from rhizome.agg_tasks import AggRefresh
+
 
 def ingest_pca_data(apps, schema_editor):
 
@@ -16,10 +18,9 @@ def ingest_pca_data(apps, schema_editor):
 	'# children missed due to other reasons - PCA']
 
 	indicator_name_to_id = upsert_indicators_delete_dps(indicator_names)
-	df = upload_and_alter_csv(indicator_name_to_id)
-	transform_df(df, indicator_names)
+	df, campaign_names = upload_and_alter_csv(indicator_name_to_id)
+	transform_df(df, indicator_names, campaign_names)
 	raise Exception('not done writing migration!')
-	# create source submission and run master refresh (agg refresh?)
 
 def upsert_indicators_delete_dps(indicator_names):
 
@@ -35,7 +36,7 @@ def upsert_indicators_delete_dps(indicator_names):
 
 	return indicator_name_to_id
 
-def transform_df(df, indicator_names):
+def transform_df(df, indicator_names, campaign_names):
 	user_id = 1
 	new_doc, created = Document.objects.get_or_create(
 		doc_title = 'pca_data',
@@ -67,7 +68,21 @@ def transform_df(df, indicator_names):
 	print 'len(dps)'
 	print len(dps)
 
+	# and aggRefresh
+	campaign_ids = Campaign.objects.filter(name__in = campaign_names).values_list('id', flat=True)
+	for campaign_id in campaign_ids:
+		ar = AggRefresh(campaign_id)
+	cdps = DataPointComputed.objects.filter(campaign_id__in = campaign_ids)
+	print 'len(cdps)'
+	print len(cdps)
 
+	# now check the values
+	# check_df = df[indicator_names]
+	# total_valid_values = 0
+	# for row in check_df.rows:
+
+	# print 'check_df'
+	# print check_df.stack().value_counts()
 
 def upload_and_alter_csv(indicator_name_to_id):
 	xl = pd.ExcelFile('migration_data/T11-Situational-Dashboard-Data.xlsx')
@@ -78,7 +93,8 @@ def upload_and_alter_csv(indicator_name_to_id):
 		df['unique_key'] = df['geocode'] + campaign
 		df['campaign'] = campaign
 		dfs.append(df)
-	return pd.concat(dfs)
+
+	return (pd.concat(dfs), campaigns)
 
 class Migration(migrations.Migration):
 
