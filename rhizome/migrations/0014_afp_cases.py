@@ -89,29 +89,29 @@ def transform_raw_file():
 
     zero_dose_df = input_df[input_df['Doses'] == 0]
     zero_dose_df['Doses'] = 1
-    one_to_three_dose_df = input_df[input_df['Doses'].isin([1,2,3])]
-    one_to_three_dose_df['Doses'] = 1
-    four_to_six_dose_df = input_df[input_df['Doses'].isin([4,5,6])]
-    four_to_six_dose_df['Doses'] = 1
+    one_to_two_dose_df = input_df[input_df['Doses'].isin([1,2])]
+    one_to_two_dose_df['Doses'] = 1
+    three_to_six_dose_df = input_df[input_df['Doses'].isin([3,4,5,6])]
+    three_to_six_dose_df['Doses'] = 1
     seven_plus_dose_df = input_df[input_df['Doses'] > 6]
     seven_plus_dose_df['Doses'] = 1
 
-    first_df = zero_dose_df.merge(one_to_three_dose_df, \
+    first_df = zero_dose_df.merge(one_to_two_dose_df, \
         how='outer',on=['geocode','data_date']).reset_index()
-    first_df.columns = ['index','geocode','data_date','Zero Dose','1-3 Dose']
+    first_df.columns = ['index','geocode','data_date','Zero Dose','1-2 Dose']
 
-    second_df = first_df.merge(four_to_six_dose_df, \
+    second_df = first_df.merge(three_to_six_dose_df, \
         how='outer',on=['geocode','data_date']).reset_index()
     second_df.columns = ['index_0','index_1','geocode','data_date',\
-        'Zero Dose','1-3 Dose','4-6 Dose']
+        'Zero Dose','1-2 Dose','3-6 Dose']
 
     final_df = second_df.merge(seven_plus_dose_df,\
         how='outer',on=['geocode','data_date'])
 
     final_df.columns = ['index_0','index_1','geocode','data_date',\
         'Number of Unvaccinated Non Polio AFP Cases',\
-        'Number of Non Polio AFP cases vaccinated 1-3 doses',\
-        'Number of Non Polio AFP cases vaccinated 4-6 doses',\
+        'Number of Non Polio AFP cases vaccinated 1-2 doses',\
+        'Number of Non Polio AFP cases vaccinated 3-6 doses',\
         'Number of Non Polio AFP cases vaccinated 7+ doses']
     
     final_df = final_df.replace(np.nan, 0)
@@ -122,8 +122,8 @@ def transform_raw_file():
 
 def add_total_cases(x):
     total = x['Number of Unvaccinated Non Polio AFP Cases']+\
-    x['Number of Non Polio AFP cases vaccinated 1-3 doses']+\
-    x['Number of Non Polio AFP cases vaccinated 4-6 doses']+\
+    x['Number of Non Polio AFP cases vaccinated 1-2 doses']+\
+    x['Number of Non Polio AFP cases vaccinated 3-6 doses']+\
     x['Number of Non Polio AFP cases vaccinated 7+ doses']
     return total
 
@@ -132,8 +132,8 @@ def update_indicators_and_dps():
     # get or create indicators
     indicator_names = ['Number of reported Non Polio AFP cases',\
         'Number of Unvaccinated Non Polio AFP Cases',\
-        'Number of Non Polio AFP cases vaccinated 1-3 doses',\
-        'Number of Non Polio AFP cases vaccinated 4-6 doses',\
+        'Number of Non Polio AFP cases vaccinated 1-2 doses',\
+        'Number of Non Polio AFP cases vaccinated 3-6 doses',\
         'Number of Non Polio AFP cases vaccinated 7+ doses']
 
     indicator_ids =[]

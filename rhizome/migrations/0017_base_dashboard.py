@@ -75,8 +75,8 @@ def ingest_situational():
             "end_date":"2016-03-01",
             "indicator_ids":[
                 Indicator.objects.get(short_name='Number of Unvaccinated Non Polio AFP Cases').id,
-                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 1-3 doses').id,
-                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 4-6 doses').id,
+                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 1-2 doses').id,
+                Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 3-6 doses').id,
                 Indicator.objects.get(short_name='Number of Non Polio AFP cases vaccinated 7+ doses').id,
             ],
             "campaign_ids":[5],
