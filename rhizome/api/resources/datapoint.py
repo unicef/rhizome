@@ -650,6 +650,9 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = filtered_indicator_list
         ).values(*cols)),columns=cols)
 
+        if dp_df.empty:
+            return []
+
         results = []
 
         if self.parsed_params['parent_location_id__in'] == u'1':
