@@ -8,6 +8,7 @@ export default {
     'manage.py',
     'appspec.yml',
     'requirements.txt',
+    'migration_data/*.*',
     'settings.py',
     '*.xlsx',
     '*.csv'
