@@ -109,6 +109,15 @@ class TestSetupHelpers(ResourceTestCase):
 			return test_class.api_client.get(uri,\
     			format ='json', authentication= self.get_credentials(test_class))
 
+	def delete(self, test_class, uri, data=None):
+		if data:
+			return stest_class.api_client.delete(uri, format='json', data=data,\
+               authentication=self.get_credentials(test_class))
+		else:
+			return test_class.api_client.delete(uri, format='json',\
+               authentication=self.get_credentials(test_class))
+
+
 	def model_df_to_data(self,model_df,model):
 		meta_ids = []
 		non_null_df = model_df.where((notnull(model_df)), None)

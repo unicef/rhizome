@@ -44,28 +44,46 @@ class ComputedDatapointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['value'], 10.0)
 
-    # def test_delete_computed_datapoint(self):
-    #     # create a random cdp
-    #     indicator_id = Indicator.objects.all()[0].id
-    #     campaign_id = Campaign.objects.all()[0].id
-    #     location_id = Location.objects.all()[0].id
-    #     document_id = Document.objects.all()[0].id
+    def test_post_computed_datapoint_missing_data(self):
+        data = {'value':10}
+        resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
+        self.assertHttpApplicationError(resp)
 
-    #     dpc = DataPointComputed.objects.create(
-    #         indicator_id = indicator_id,
-    #         campaign_id = campaign_id,
-    #         location_id = location_id,
-    #         document_id = document_id,
-    #         value = 21)
+    def test_post_computed_datapoint_invalid_data(self):
+        doc_id = Document.objects.create(doc_title='Data Entry').id
+        data = {'document_id':doc_id,
+            'indicator_id':4324,
+            'campaign_id':32132123,
+            'location_id':4321,
+            'value':10
+        }
+        resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], 10.0)
 
-    #     dpc_query = DataPointComputed.objects.filter(id = dpc.id)
-    #     self.assertEqual(len(dpc_query), 1)
+    def test_delete_computed_datapoint(self):
+        # create a random cdp
+        indicator_id = Indicator.objects.all()[0].id
+        campaign_id = Campaign.objects.all()[0].id
+        location_id = Location.objects.all()[0].id
+        document_id = Document.objects.all()[0].id
 
-    #     delete_url = '/api/v1/computed_datapoint/%d/' %dpc.id
+        dpc = DataPointComputed.objects.create(
+            indicator_id = indicator_id,
+            campaign_id = campaign_id,
+            location_id = location_id,
+            document_id = document_id,
+            value = 21)
 
-    #     resp = self.ts.delete(self, delete_url)
+        dpc_query = DataPointComputed.objects.filter(id = dpc.id)
+        self.assertEqual(len(dpc_query), 1)
 
-    #     print self.deserialize(resp)
+        delete_url = '/api/v1/computed_datapoint/%d/' %dpc.id
+
+        resp = self.ts.delete(self, delete_url)
+
+        dpc_query = DataPointComputed.objects.filter(id = dpc.id)
+        self.assertEqual(len(dpc_query), 0)
 
 
     def create_metadata(self):
