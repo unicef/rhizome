@@ -20,7 +20,7 @@ def ingest_pca_data(apps, schema_editor):
 	indicator_name_to_id = upsert_indicators_delete_dps(indicator_names)
 	df, campaign_names = upload_and_alter_csv(indicator_name_to_id)
 	transform_df(df, indicator_names, campaign_names)
-	raise Exception('not done writing migration!')
+	# raise Exception('not done writing migration!')
 
 def upsert_indicators_delete_dps(indicator_names):
 
