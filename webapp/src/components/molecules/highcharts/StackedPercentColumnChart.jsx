@@ -106,10 +106,11 @@ class StackedPercentColumnChart extends HighChart {
     const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const grouped_categories = []
     _.forEach(grouped_data, (group, key) => {
-      const grouped = _.groupBy(group, 'campaign.id')
+      const subGrouped = _.groupBy(group, 'campaign.id')
+      const subGroupedAndSorted = _.sortBy(subGrouped, group => group[0].campaign.start_date.getTime())
       grouped_categories.push({
         name: this.props.locations_index[key].name,
-        categories: _.map(grouped, group => group[0].campaign.start_date.getTime())
+        categories: _.map(subGroupedAndSorted, group => group[0].campaign.start_date.getTime())
       })
     })
     return grouped_categories
