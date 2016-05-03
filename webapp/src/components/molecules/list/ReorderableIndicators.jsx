@@ -5,7 +5,7 @@ import ReorderableIndicator from 'components/molecules/list/ReorderableIndicator
 export default React.createClass({
   propTypes: {
     selected_indicators: React.PropTypes.arrayOf(React.PropTypes.object).isRequired, // [{id:1,title:'abc'},...]
-    removeItem: React.PropTypes.func,
+    deselectIndicator: React.PropTypes.func,
     setIndicatorColor: React.PropTypes.func,
     reorderIndicator: React.PropTypes.func
   },
@@ -15,12 +15,11 @@ export default React.createClass({
   render: function () {
     // Attach the remove function to each item for use in the item template
     let selected_indicators = this.props.selected_indicators.map(item => {
-      item.removeFunction = this.props.removeItem
+      item.deselectIndicator = this.props.deselectIndicator
       item.setIndicatorColor = this.props.setIndicatorColor
       item.selectedColor = this.props.indicator_colors[item.id]
       return item
     })
-
     return <Reorderable
       itemKey='id'
       lock='horizontal'
@@ -29,7 +28,7 @@ export default React.createClass({
       callback={this.rearrangeItems}
       listClass='reorderable-list'
       itemClass='reorderable-item animated fadeInDown'
-      removeItem={this.props.removeItem}
+      removeItem={this.props.deselectIndicator}
       setIndicatorColor={this.props.setIndicatorColor}
       disableReorder={false}
       list={selected_indicators}/>

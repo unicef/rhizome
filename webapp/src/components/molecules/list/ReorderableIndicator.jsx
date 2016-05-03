@@ -33,7 +33,10 @@ export default React.createClass({
           {color_menu_items}
         </DropdownIcon>
         {item.short_name || item.name}
-        <IconButton className='clear-btn' onClick={() => item.removeFunction(item.id)} icon='fa-times-circle' />
+        <IconButton className='clear-btn' onClick={(e) => {
+          e.preventDefault()
+          return item.deselectIndicator(item.id)
+        }} icon='fa-times-circle' />
       </div>
     )
   }
