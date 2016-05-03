@@ -142,6 +142,7 @@ class DatapointResource(BaseNonModelResource):
     def group_by_time_transform(self):
         time_grouping =  self.parsed_params['group_by_time']
 
+        print 'TIME GRUP[[[]]]\n' * 10
         indicator_id_list = self.parsed_params['indicator__in']
 
         if not 'latest_date' in self.ind_meta\
@@ -154,24 +155,37 @@ class DatapointResource(BaseNonModelResource):
                 self.ind_meta['province_count']])
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
+
         if time_grouping =='all_time':
             return self.map_bubble_transform(filtered_indicator_list)
+
         param_location_ids= self.location_ids
         results = []
         all_time_groupings = []
+
         for param_location_id in param_location_ids:
             location_ids = LocationTree.objects.filter(
                     location__location_type__name = 'District',
                     parent_location_id= param_location_id
                 ).values_list('location_id', flat=True)
             cols = ['data_date','indicator_id','location_id','value']
+
             dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = location_ids,
                 indicator_id__in = filtered_indicator_list
             ).values(*cols)),columns=cols)
 
             if dp_df.empty:
-                continue
+                sub_location_ids = Location.objects.filter(
+                    parent_location_id = self\
+                        .parsed_params['parent_location_id__in']
+                )
+
+                dp_df = DataFrame(list(DataPoint.objects.filter(
+                            location_id__in = sub_location_ids,
+                            indicator_id__in = filtered_indicator_list
+                        ).values(*cols)),columns=cols)
+
             ## Group Datapoints by Year / Quarter ##
             if time_grouping == 'year':
                 dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
