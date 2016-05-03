@@ -193,11 +193,7 @@ def ingest_situational():
                 Indicator.objects.get(name = '# children missed due to not available - PCA').id,\
                 Indicator.objects.get(name = '# children missed due to no team visit - PCA').id,\
                 Indicator.objects.get(name = '# children missed due to other reasons - PCA').id],
-            "campaign_ids":[Campaign.objects.get(name = 'November 2015 - OPV - LPD').id,\
-                Campaign.objects.get(name = 'Decemeber 2015 - OPV - LPD').id,\
-                Campaign.objects.get(name = 'January 2016 - OPV - LPD').id,\
-                Campaign.objects.get(name = 'February 2016 - OPV - SNID').id,\
-                Campaign.objects.get(name = 'March 2016 - OPV - LPD').id],
+            "campaign_ids":[5],
             "location_ids":[1],
             "type":"StackedPercentColumnChart",
             "start_date":"2015-11-01",
