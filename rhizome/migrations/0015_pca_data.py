@@ -52,9 +52,12 @@ def transform_df(df, indicator_names, campaign_names):
 	# update the source_object_map master_ids for campaigns and indicators
 	campaign_soms = SourceObjectMap.objects.filter(content_type='campaign')
 	for campaign_som in campaign_soms:
-		campaign = Campaign.objects.get(name=campaign_som.source_object_code)
-		campaign_som.master_object_id = campaign.id
-		campaign_som.save()
+		try:
+			campaign = Campaign.objects.get(name=campaign_som.source_object_code)
+			campaign_som.master_object_id = campaign.id
+			campaign_som.save()
+		except ObjectDoesNotExist:
+			pass
 
 	indicator_soms = SourceObjectMap.objects.filter(content_type='indicator', source_object_code__in=indicator_names)
 	for indicator_som in indicator_soms:
