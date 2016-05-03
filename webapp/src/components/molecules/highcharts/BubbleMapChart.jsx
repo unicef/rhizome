@@ -24,6 +24,7 @@ class BubbleMap extends HighChart {
   setSeries = function () {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
+    const color = this.props.indicator_colors[current_indicator.id]
     return [{
       mapData:  {'features': this.props.features, 'type': 'FeatureCollection'},
       color: '#E0E0E0',
@@ -36,6 +37,7 @@ class BubbleMap extends HighChart {
       joinBy: 'location_id',
       minSize: 4,
       maxSize: '12%',
+      color: color,
       tooltip: {
         pointFormatter: function() {
           return (
