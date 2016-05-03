@@ -14,7 +14,10 @@ class StackedPercentColumnChart extends HighChart {
   _toggleStackMode = (new_state) => {
     this.setState({stackMode: new_state})
     this.chart.series.forEach(s => s.update({stacking: new_state}, false))
-    this.chart.yAxis[0].update({labels: {format: this.state.stackMode === 'percent' ? '{value}%' : '{value}'}})
+    this.chart.yAxis[0].update({
+      labels: {format: new_state === 'percent' ? '{value}%' : '{value}'},
+      max: new_state === 'percent' ? 100 : null
+    })
     this.chart.redraw()
   }
 
@@ -29,6 +32,7 @@ class StackedPercentColumnChart extends HighChart {
       xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
+        max: this.state.stackMode === 'percent' ? 100 : null,
         labels : {
           format: this.state.stackMode === 'percent' ? '{value}%' : '{value}',
           events: {
