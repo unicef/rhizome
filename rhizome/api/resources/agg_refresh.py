@@ -5,8 +5,8 @@ from rhizome.models import Campaign, Office
 class AggRefreshResource(BaseModelResource):
   '''
       **GET Request** Runs AggRefresh on the backend
-        - *Optional Parameters:* 
-            'id': campaign id of the campaign to run agg refresh on. 
+        - *Optional Parameters:*
+            'id': campaign id of the campaign to run agg refresh on.
             If the parameter is not set, the API will run agg refresh on a randomly chosen campaign that needs to be aggregated.
         - *Errors:*
             if an invalid id is provided, the API returns a 500 error
@@ -30,7 +30,6 @@ class AggRefreshResource(BaseModelResource):
 
      try:
          campaign_id = request.GET['campaign_id']
-         print 'campaign_id: %s' % campaign_id
          ar = AggRefresh(campaign_id)
          return Campaign.objects.filter(id=campaign_id).values()
      except KeyError:

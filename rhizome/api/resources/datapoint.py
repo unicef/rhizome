@@ -173,7 +173,19 @@ class DatapointResource(BaseNonModelResource):
             ).values(*cols)),columns=cols)
 
             if dp_df.empty:
+                sub_location_ids = Location.objects.filter(
+                    parent_location_id = self\
+                        .parsed_params['parent_location_id__in']
+                )
+
+                dp_df = DataFrame(list(DataPoint.objects.filter(
+                            location_id__in = sub_location_ids,
+                            indicator_id__in = filtered_indicator_list
+                        ).values(*cols)),columns=cols)
+
+            if dp_df.empty:
                 continue
+
             ## Group Datapoints by Year / Quarter ##
             if time_grouping == 'year':
                 dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
