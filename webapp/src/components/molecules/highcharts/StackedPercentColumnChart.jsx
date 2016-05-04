@@ -66,6 +66,8 @@ class StackedPercentColumnChart extends HighChart {
     _.forEach(grouped_data, group_collection => {
       const first_datapoint = group_collection[0]
       const color = this.props.indicator_colors[first_datapoint.indicator.id]
+      group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
+      group_collection = _.sortBy(group_collection, group => group.location.name)
       series.push({
         name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
         data: group_collection.map(datapoint => datapoint.value),
@@ -113,7 +115,7 @@ class StackedPercentColumnChart extends HighChart {
         categories: _.map(subGroupedAndSorted, group => group[0].campaign.start_date.getTime())
       })
     })
-    return grouped_categories
+    return _.sortBy(grouped_categories, grouped_category => grouped_category.name)
   }
 }
 
