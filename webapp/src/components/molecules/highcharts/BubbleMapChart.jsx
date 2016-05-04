@@ -10,14 +10,14 @@ class BubbleMap extends HighChart {
       legend: {
         enabled: false
       },
-      series: this.setSeries(),
       mapNavigation: {
         enabled: false,
         enableTouchZoom: false,
         enableDoubleClickZoom: false,
         enableMouseWheelZoom: false,
         enableButtons: false
-      }
+      },
+      series: this.setSeries()
     }
   }
 

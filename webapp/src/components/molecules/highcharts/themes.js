@@ -2,6 +2,7 @@ export default {
   standard: {
     credits: { enabled: false },
     chart: {
+      spacingBottom: 20,
       style: {
         fontFamily: "'proxima', 'Helvetica', sans-serif' ",
         paddingTop: '20px'  // Make room for buttons
