@@ -85,7 +85,6 @@ class ColumnChart extends HighChart {
         data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
       })
     }
-    console.log('series', series)
     return series
   }
 }
