@@ -18,6 +18,7 @@ class ChartState {
   constructor () {
     this.uuid = null
     this.type = 'RawData'
+    this.type_params = {}
     this.title = ''
     this.data = null
     this.datapoints = null
@@ -27,7 +28,6 @@ class ChartState {
     this.palette = 'traffic_light'
     this.locations_index = null
     this.indicators_index = null
-    this.indicator_colors = {}
     this.indicator_filter = null
     this.selected_campaigns = []
     this.selected_indicators = []
@@ -40,6 +40,7 @@ class ChartState {
     this.selectTypeMode = true
     this.editMode = true
     this.saving = false
+    this.indicator_colors = {}
   }
 }
 
@@ -142,6 +143,7 @@ var DashboardChartsStore = Reflux.createStore({
         location_ids: chart.selected_locations.map(location => location.id),
         indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
         indicator_colors: chart.indicator_colors,
+        type_params: chart.type_params,
         groupBy: chart.groupBy,
         groupByTime: chart.groupByTime
       })
@@ -329,6 +331,10 @@ var DashboardChartsStore = Reflux.createStore({
     this.charts[uuid].title = title
     this.trigger(this.charts)
   },
+  onUpdateTypeParams: function (key, value, uuid) {
+    this.charts[uuid].type_params[key] = value
+    this.trigger(this.charts)
+  },
 
   // =========================================================================== //
   //                               API CALL HANDLERS                             //
@@ -444,6 +450,7 @@ var DashboardChartsStore = Reflux.createStore({
     new_chart.selected_locations = chart.chart_json.location_ids.map(id => this.locations.index[id])
     new_chart.selected_campaigns = chart.chart_json.campaign_ids.map(id => this.campaigns.index[id])
     new_chart.indicator_colors = chart.chart_json.indicator_colors || {}
+    new_chart.type_params = chart.chart_json.type_params || {}
     new_chart.groupBy = chart.chart_json.groupBy
     new_chart.groupByTime = chart.chart_json.groupByTime || 'campaign'
     new_chart.selectTypeMode = false

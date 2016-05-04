@@ -26,6 +26,7 @@ const DashboardChartsActions = Reflux.createActions({
   'setDateRange': 'setDateRange',
   'setIndicatorFilter': 'setIndicatorFilter',
   'setIndicatorColor': 'setIndicatorColor',
+  'updateTypeParams': 'updateTypeParams',
   // Locations
   'setLocations': 'setLocations',
   'selectLocation': 'selectLocation',

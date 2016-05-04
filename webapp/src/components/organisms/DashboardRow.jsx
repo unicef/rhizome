@@ -46,6 +46,7 @@ const DashboardRow = React.createClass({
         toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
         removeChart={() => DashboardPageActions.removeChart(this.props.rowIndex, chart_index)}
         saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
+        updateTypeParams={(key, value) => DashboardChartsActions.updateTypeParams(key, value, chart.uuid)}
         setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
         setGroupBy={grouping => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
         setGroupByTime={grouping => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}

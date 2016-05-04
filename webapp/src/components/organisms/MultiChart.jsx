@@ -62,7 +62,7 @@ const MultiChart = React.createClass({
     } else if (type === 'StackedColumnChart') {
       return <StackedColumnChart {...this.props.chart} />
     } else if (type === 'StackedPercentColumnChart') {
-      return <StackedPercentColumnChart {...this.props.chart} />
+      return <StackedPercentColumnChart {...this.props.chart} updateTypeParams={this.props.updateTypeParams} />
     } else if (type === 'BubbleMap') {
       return <BubbleMapChart {...this.props.chart} />
     } else if (type === 'BarChart') {

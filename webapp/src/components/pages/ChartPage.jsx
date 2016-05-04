@@ -74,6 +74,7 @@ const ChartPage = React.createClass({
           toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
           toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
           saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
+          updateTypeParams={(key, value) => DashboardChartsActions.updateTypeParams(key, value, chart.uuid)}
           setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
           setGroupByTime={(grouping) => DashboardChartsActions.setGroupByTime(grouping, chart.uuid)}
           setGroupBy={(grouping) => DashboardChartsActions.setGroupBy(grouping, chart.uuid)}
