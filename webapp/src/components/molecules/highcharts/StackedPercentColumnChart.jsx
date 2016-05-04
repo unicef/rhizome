@@ -46,7 +46,7 @@ class StackedPercentColumnChart extends HighChart {
       tooltip: {
         headerFormat: '<b>{series.name}</b><br/>',
         pointFormatter: function () {
-          const value = format.autoFormat(this.y, first_indicator.data_format)
+          const value = format.autoFormat(this.y, first_indicator.data_format, 1)
           if (multipleCampaigns) {
             const date = format.monthYear(this.category.name)
             const location = this.category.parent.name

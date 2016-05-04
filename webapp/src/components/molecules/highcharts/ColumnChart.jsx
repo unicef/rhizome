@@ -41,7 +41,7 @@ class ColumnChart extends HighChart {
         xDateFormat: '%b %Y',
         pointFormatter: function () {
           const data_format = this.series.name === last_indicator.name ? last_indicator.data_format : first_indicator.data_format
-          const value = format.autoFormat(this.y, data_format)
+          const value = format.autoFormat(this.y, data_format, 1)
           const secondary_text = props.groupBy === 'indicator' ? first_location.name : first_indicator.name
           return `<b>${secondary_text}</b><br/>${this.series.name}: <b>${value}</b><br/>`
         }
@@ -85,6 +85,7 @@ class ColumnChart extends HighChart {
         data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
       })
     }
+    console.log('series', series)
     return series
   }
 }

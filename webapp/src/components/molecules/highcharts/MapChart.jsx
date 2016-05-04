@@ -80,7 +80,7 @@ class MapChart extends HighChart {
         pointFormatter: function() {
           return (
             `<span> ${props.locations_index[this.location_id].name}:
-            <strong> ${format.autoFormat(this.value, current_indicator.data_format)} </strong>
+            <strong> ${format.autoFormat(this.value, current_indicator.data_format, 1)} </strong>
             </span>`
           )
         }

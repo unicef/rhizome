@@ -26,7 +26,7 @@ class BarChart extends HighChart {
       },
       tooltip: {
         pointFormatter: function (point) {
-          const value = format.autoFormat(this.y, first_indicator.data_format)
+          const value = format.autoFormat(this.y, first_indicator.data_format, 1)
           return `${this.series.name}: <b>${value}</b><br/>`
         }
       },
