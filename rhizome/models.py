@@ -582,7 +582,7 @@ class SourceSubmission(models.Model):
             l_id = SourceObjectMap.objects.get(content_type = 'location',\
                 source_object_code = self.location_code).master_object_id
         except ObjectDoesNotExist:
-            loc_id = None
+            l_id = None
 
         return l_id
 

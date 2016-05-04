@@ -56,3 +56,33 @@ class DocTransformResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
         self.assertEqual(DataPointComputed.objects.all()[0].value, 0.082670906)
+
+        
+
+    def test_data_date_transform(self):
+
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code = 'AF001047005000000000',
+            content_type = 'location',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_location_id
+        )
+
+        self.mapped_indicator_with_data = self.ts.indicators[2].id
+
+        self.indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'polio_case',
+            content_type = 'indicator',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_indicator_with_data
+        )
+        doc = self.ts.create_arbitrary_document('AfgPolioCases.csv')
+        get_data={'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        print self.deserialize(resp)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(self.deserialize(resp)['objects']), 1)
+        print len(DataPoint.objects.all())
+
+
+

@@ -20,23 +20,19 @@ class BadFileHeaderException(Exception):
 class DocTransform(object):
 
     def __init__(self, user_id, document_id, raw_csv_df = None):
-
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
             ['geocode', 'campaign', 'unique_key']
 
         self.date_column = 'data_date'
-
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
-
 
         if not isinstance(raw_csv_df, DataFrame):
             raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
 
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-
         ## if there is no uq id column -- make one ##
         if not self.uq_id_column in raw_csv_df.columns:
 
@@ -45,7 +41,6 @@ class DocTransform(object):
             except Exception as err:
                 if not self.date_column in csv_df.columns:
                     dp_error_message = '%s is a required column.' %err.message
-                    print dp_error_message
                     raise DatapointsException(message=dp_error_message)
 
         self.csv_df = csv_df
@@ -61,7 +56,6 @@ class DocTransform(object):
             document_id = self.document.id).values_list('instance_guid',flat=True)
 
         self.file_path = str(self.document.docfile)
-
     def source_submission_meta_upsert(self, content_type, source_object_code):
         '''
         Create new metadata if not exists
@@ -204,7 +198,6 @@ class ComplexDocTransform(DocTransform):
         # ).doc_detail_value)
 
     def main(self):
-
         self.process_file()
         self.upsert_source_object_map()
 

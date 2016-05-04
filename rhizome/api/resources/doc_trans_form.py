@@ -1,8 +1,8 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
-from rhizome.models import Document, DataPoint
+from rhizome.models import Document, DataPoint, SourceSubmission
 # from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import ComplexDocTransform, DateDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 from django.db import transaction
@@ -37,11 +37,17 @@ class DocTransFormResource(BaseModelResource):
             dt = ComplexDocTransform(request.user.id, doc_id)
             dt.main()
         except Exception as err:
-            raise DatapointsException(message=err.message)
+            try:
+                dt = DateDocTransform(request.user.id, doc_id)
+                ssids = dt.process_file()
 
+            except Exception as err:
+                raise DatapointsException(message=err.message)
+
+        print len(SourceSubmission.objects.filter(document_id=doc_id))
+        
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
-
         doc_campaign_ids = set(list(DataPoint.objects\
             .filter(source_submission__document_id = doc_id)\
             .values_list('campaign_id',flat=True)))
