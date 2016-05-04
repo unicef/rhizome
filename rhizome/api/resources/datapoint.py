@@ -213,7 +213,7 @@ class DatapointResource(BaseNonModelResource):
         self.campaign_qs = [{
             'id': time_grp,
             'name': str(time_grp),
-            'start_date': str(time_grp) + '-01-01',
+            'start_date': str(time_grp) + '-01-02',
             'end_date': str(time_grp) + '-12-31',
             'office_id': 1,
             'created_at': datetime.now()
