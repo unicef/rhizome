@@ -173,10 +173,17 @@ class DatapointResource(BaseNonModelResource):
             ).values(*cols)),columns=cols)
 
             if dp_df.empty:
+
+                parent_location_filter = self\
+                    .parsed_params['parent_location_id__in']
+
+                if parent_location_filter == None:
+                    parent_location_filter = self\
+                        .parsed_params['location_id__in']
+
                 sub_location_ids = Location.objects.filter(
-                    parent_location_id = self\
-                        .parsed_params['parent_location_id__in']
-                )
+                    parent_location_id = parent_location_filter
+                ).values_list('id', flat=True)
 
                 dp_df = DataFrame(list(DataPoint.objects.filter(
                             location_id__in = sub_location_ids,
