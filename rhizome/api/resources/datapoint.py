@@ -154,8 +154,10 @@ class DatapointResource(BaseNonModelResource):
                 self.ind_meta['province_count']])
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
+
         if time_grouping =='all_time':
             return self.map_bubble_transform(filtered_indicator_list)
+
         param_location_ids= self.location_ids
         results = []
         all_time_groupings = []

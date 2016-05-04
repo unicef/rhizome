@@ -6,7 +6,6 @@ import {DropdownList} from 'react-widgets'
 // import RadioGroup from 'react-radio-group'
 import RadioGroup from 'components/molecules/RadioGroup'
 
-
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import IconButton from 'components/atoms/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
