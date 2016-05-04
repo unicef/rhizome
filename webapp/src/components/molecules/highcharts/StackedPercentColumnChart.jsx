@@ -11,7 +11,10 @@ class StackedPercentColumnChart extends HighChart {
     this.state = {stackMode: 'percent'}
   }
 
-  _toggleStackMode = (new_state) => {
+  _toggleStackMode = () => {
+    const stack_modes = ['normal', 'percent', null]
+    const index = stack_modes.indexOf(this.state.stackMode) + 1
+    const new_state = index === 3 ? stack_modes[0] : stack_modes[index]
     this.setState({stackMode: new_state})
     this.chart.series.forEach(s => s.update({stacking: new_state}, false))
     this.chart.yAxis[0].update({
@@ -27,21 +30,36 @@ class StackedPercentColumnChart extends HighChart {
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
 
     this.config = {
-      chart: { type: 'column' },
+      chart: {
+        type: 'column'
+      },
       series: this.setSeries(),
       xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
         max: this.state.stackMode === 'percent' ? 100 : null,
         labels : {
-          format: this.state.stackMode === 'percent' ? '{value}%' : '{value}',
-          events: {
-            click: () => this._toggleStackMode(this.state.stackMode === 'percent' ? 'normal' : 'percent')
-          }
+          format: this.state.stackMode === 'percent' ? '{value}%' : '{value}'
         }
       },
       plotOptions: {
         column: { stacking: 'percent' }
+      },
+      exporting: {
+        buttons: {
+          customButton: {
+            text: 'Column Stacking',
+            onclick: this._toggleStackMode,
+            x: -65,
+            y: -30,
+            theme: {
+              style: {
+                color: '#039',
+                textDecoration: 'underline'
+              }
+            }
+          }
+        }
       },
       tooltip: {
         headerFormat: '<b>{series.name}</b><br/>',
@@ -71,10 +89,7 @@ class StackedPercentColumnChart extends HighChart {
       series.push({
         name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
         data: group_collection.map(datapoint => datapoint.value),
-        color: color,
-        events: {
-          click: () => this._toggleStackMode(this.state.stackMode !== null ? null : 'normal')
-        }
+        color: color
       })
     })
     return series
