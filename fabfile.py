@@ -1,6 +1,6 @@
 # example invocation
 # $ fab -H ubuntu@xx.x.xxx.xx deploy -i ~/.ssh/some.key
-
+import time
 from fabric.api import local, run, cd, put, env
 
 env.use_ssh_config = True
@@ -8,7 +8,8 @@ env.use_ssh_config = True
 local_venv_path = None
 
 # /var/www/clients.seedscientific.com/uf/UF04
-remote_work_path = '~/deploy/rhizome-work'
+current_timestamp = str(int(time.time()))
+remote_work_path = '~/deploy/rhizome-work/' + current_timestamp
 remote_backend_path = '/var/www/apps/rhizome/'
 remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
 remote_manage_path = remote_backend_path + "manage.py"
