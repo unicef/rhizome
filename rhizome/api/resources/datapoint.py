@@ -154,8 +154,10 @@ class DatapointResource(BaseNonModelResource):
                 self.ind_meta['province_count']])
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
+
         if time_grouping =='all_time':
             return self.map_bubble_transform(filtered_indicator_list)
+
         param_location_ids= self.location_ids
         results = []
         all_time_groupings = []
@@ -171,7 +173,26 @@ class DatapointResource(BaseNonModelResource):
             ).values(*cols)),columns=cols)
 
             if dp_df.empty:
+
+                parent_location_filter = self\
+                    .parsed_params['parent_location_id__in']
+
+                if parent_location_filter == None:
+                    parent_location_filter = self\
+                        .parsed_params['location_id__in']
+
+                sub_location_ids = Location.objects.filter(
+                    parent_location_id = parent_location_filter
+                ).values_list('id', flat=True)
+
+                dp_df = DataFrame(list(DataPoint.objects.filter(
+                            location_id__in = sub_location_ids,
+                            indicator_id__in = filtered_indicator_list
+                        ).values(*cols)),columns=cols)
+
+            if dp_df.empty:
                 continue
+
             ## Group Datapoints by Year / Quarter ##
             if time_grouping == 'year':
                 dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
@@ -213,7 +234,7 @@ class DatapointResource(BaseNonModelResource):
         self.campaign_qs = [{
             'id': time_grp,
             'name': str(time_grp),
-            'start_date': str(time_grp) + '-01-01',
+            'start_date': str(time_grp) + '-01-02',
             'end_date': str(time_grp) + '-12-31',
             'office_id': 1,
             'created_at': datetime.now()
