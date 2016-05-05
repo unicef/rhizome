@@ -30,28 +30,12 @@ var IndicatorDropdown = React.createClass({
     this.forceUpdate()
   },
 
-  indicatorsFilteredBySet(){
-    //grab current indicators based on camp/location.
-    const currentIndicators = this.props.indicators.filter(indicator =>
-        this.props.idsToRender.indexOf(indicator.id) !== -1
-      )
-    return currentIndicators
-  },
-
-  filteredMenuItems () {
-    if (this.state.pattern.length > 2) {
-      return this.indicators.filter(indicator => {
-        return new RegExp(this.state.pattern, 'i').test(indicator.name)
-      })
-    } else {
-      return this.indicators
-    }
-  },
-
   render () {
-    this.indicators = this.indicatorsFilteredBySet()
+    this.indicators = this.props.indicators.filter(i => this.props.idsToRender.indexOf(i.id) !== -1)
     const selected_text = !this.props.selected.id && this.indicators.length > 0 ? 'Select Indicator' : this.props.selected.name
-    const indicator_menu_items = this.filteredMenuItems().map(indicator =>
+    const pattern = this.state.pattern
+    const filtered_items = pattern.length > 2 ? this.indicators.filter(i => new RegExp(pattern, 'i').test(i.name)) : this.indicators
+    const indicator_menu_items = filtered_items.map(indicator =>
       <DropdownItem
         key={'indicator-' + indicator.id}
         text={indicator.name}
