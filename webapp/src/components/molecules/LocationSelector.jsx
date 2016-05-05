@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import LocationDropdown from 'components/molecules/dropdowns/LocationDropdown'
 
 const LocationSelector = React.createClass({
@@ -48,7 +48,7 @@ const LocationSelector = React.createClass({
       return (
         <form className={props.classes}>
           <h3 style={{marginBottom: '.1rem'}}>Locations
-            <DropdownMenu
+            <DropdownButton
               items={this.getAvailableLocations() || []}
               sendValue={this.props.selectLocation}
               item_plural_name='Locations'

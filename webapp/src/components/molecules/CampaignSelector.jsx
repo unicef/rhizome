@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
 
 import CampaignStore from 'stores/CampaignStore'
@@ -41,7 +41,7 @@ const CampaignSelector = React.createClass({
       return (
         <form className={props.classes}>
           <h3>Campaigns
-            <DropdownMenu
+            <DropdownButton
               items={raw_campaigns}
               sendValue={this.props.selectCampaign}
               item_plural_name='Campaigns'

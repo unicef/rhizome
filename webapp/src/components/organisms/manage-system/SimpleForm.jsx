@@ -8,7 +8,7 @@ import _ from 'lodash'
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
 import SimpleFormComponent from 'components/organisms/manage-system/SimpleFormComponent'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 
 var SimpleForm = React.createClass({
   propTypes: {
@@ -222,7 +222,7 @@ var SimpleForm = React.createClass({
             {`Parent Tag: ${selected}`}
           </p>
           <br />
-          <DropdownMenu
+          <DropdownButton
             items={tagTree}
             sendValue={this.setParentTag}
             item_plural_name='Parent Tags'

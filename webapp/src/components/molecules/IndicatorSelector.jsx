@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableIndicators from 'components/molecules/list/ReorderableIndicators'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import IndicatorDropdown from 'components/molecules/dropdowns/IndicatorDropdown'
 
 
@@ -70,7 +70,7 @@ const IndicatorSelector = React.createClass({
       return (
         <form className={props.classes}>
           <h3 style={{marginBottom: '.1rem'}}>Indicators
-            <DropdownMenu
+            <DropdownButton
               items={available_indicators}
               sendValue={this.props.selectIndicator}
               item_plural_name='Indicators'
@@ -93,7 +93,7 @@ const IndicatorSelector = React.createClass({
       return (
         <form className={props.classes}>
           <h3>Indicator</h3>
-          <DropdownMenu
+          <DropdownButton
             items={available_indicators}
             sendValue={this.props.setIndicators}
             item_plural_name='Indicators'

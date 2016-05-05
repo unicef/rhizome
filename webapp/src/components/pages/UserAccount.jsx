@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import UserGroup from 'components/molecules/UserGroup'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'
@@ -41,7 +41,7 @@ let UserAccount = React.createClass({
            <h4>Responsible For Location: </h4>
          </div>
          <div className='columns small-8 right-box'>
-          <DropdownMenu
+          <DropdownButton
             items={this.state.locations}
             sendValue={this._setLocation}
             item_plural_name='Locations'

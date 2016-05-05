@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ExpandableSection from 'components/molecules/ExpandableSection'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import List from 'components/molecules/list/List'
 
@@ -37,7 +37,7 @@ let DataFilter = React.createClass({
 
     return (
       <ExpandableSection title={this.props.item_plural_name} refer='preview'>
-        <DropdownMenu items={this.props.items} sendValue={this.props.addItem} item_plural_name={this.props.item_plural_name} text={this.props.text} style={this.props.style} icon={this.props.icon}/>
+        <DropdownButton items={this.props.items} sendValue={this.props.addItem} item_plural_name={this.props.item_plural_name} text={this.props.text} style={this.props.style} icon={this.props.icon}/>
         {selected_item_list}
       </ExpandableSection>
     )

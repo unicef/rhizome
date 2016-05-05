@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 
 import Placeholder from 'components/molecules/Placeholder'
 import IndicatorTagDropdown from 'components/molecules/dropdowns/IndicatorTagDropdown'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
@@ -68,7 +68,7 @@ const DataEntry = React.createClass({
                   DataEntryActions.setIndicatorsByTag(indicator_tag, state.indicators.index)
                 }}
               />
-              <DropdownMenu
+              <DropdownButton
                 items={state.locations.list}
                 sendValue={id => DataEntryActions.addLocation(state.locations.index[id])}
                 item_plural_name='Locations'

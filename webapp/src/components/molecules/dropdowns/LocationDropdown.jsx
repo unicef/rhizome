@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import Dropdown from 'components/atoms/dropdowns/Dropdown'
+import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
 import MenuItem from 'components/molecules/MenuItem'
 
 var LocationDropdown = React.createClass({
@@ -75,14 +75,14 @@ var LocationDropdown = React.createClass({
     })
 
     return (
-      <Dropdown
+      <DropdownSelect
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this._setPattern}>
         {menu_items}
-      </Dropdown>
+      </DropdownSelect>
     )
   }
 })

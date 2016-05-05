@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import api from 'data/api'
 
 import LocationDropdown from 'components/molecules/dropdowns/LocationDropdown'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
 
@@ -89,7 +89,7 @@ var MapForm = React.createClass({
       if (!this.state.data.indicators) {
         return loadText('Indicators')
       }
-      return <DropdownMenu
+      return <DropdownButton
           items={this.state.data.indicators}
           sendValue={this.postMetaMap}
           item_plural_name='Indicators'
@@ -100,7 +100,7 @@ var MapForm = React.createClass({
         return loadText('Campaigns')
       }
       console.log('this.state.data: ', this.state.data.campaigns)
-      return <DropdownMenu
+      return <DropdownButton
           items={this.state.data.campaigns}
           value_field='id'
           title_field='name'

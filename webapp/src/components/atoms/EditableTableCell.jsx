@@ -8,7 +8,7 @@ import TableCell from 'components/atoms/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
 
 let EditableTableCell = React.createClass({
   mixins: [Reflux.connect(EditableTableCellStore)],
@@ -159,7 +159,7 @@ let EditableTableCell = React.createClass({
     const selected_item = boolean_options[index]
     return (
       <td className={'editable ' + this.classes}>
-        <DropdownMenu
+        <DropdownButton
           items={boolean_options}
           sendValue={this.updateCellValue}
           text={selected_item ? selected_item.title : ''}

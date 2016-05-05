@@ -3,7 +3,7 @@ import React from 'react'
 
 import MenuItem from 'components/molecules/MenuItem'
 
-var DropdownMenu = React.createClass({
+var DropdownButton = React.createClass({
 
   mixins: [
     require('components/atoms/dropdowns/DropdownControl')
@@ -101,4 +101,4 @@ var DropdownMenu = React.createClass({
   }
 })
 
-export default DropdownMenu
+export default DropdownButton

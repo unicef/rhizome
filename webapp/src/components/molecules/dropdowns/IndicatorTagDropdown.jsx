@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import Dropdown from 'components/atoms/dropdowns/DropdownSelect'
+import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
 import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
 
 var IndicatorTagDropdown = React.createClass({
@@ -31,13 +31,13 @@ var IndicatorTagDropdown = React.createClass({
 
     const selected_text = this.props.selected ? this.props.selected.tag_name : 'Select Form'
     return (
-      <Dropdown
+      <DropdownSelect
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable={false}>
         {indicator_tag_menu_items}
-      </Dropdown>
+      </DropdownSelect>
     )
   }
 })
