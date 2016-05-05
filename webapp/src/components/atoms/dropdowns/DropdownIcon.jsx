@@ -1,38 +1,34 @@
 import React from 'react'
 import IconButton from 'components/atoms/IconButton'
+import Dropdown from 'components/atoms/dropdowns/Dropdown'
 
-var DropdownIcon = React.createClass({
+class DropdownIcon extends Dropdown {
 
-  mixins: [
-    require('components/atoms/dropdowns/DropdownControl')
-  ],
-
-  propTypes: {
+  static propTypes = {
     className: React.PropTypes.string,
     color: React.PropTypes.string,
     text: React.PropTypes.string.isRequired,
     icon: React.PropTypes.string,
     searchable: React.PropTypes.bool,
     onSearch: React.PropTypes.func
-  },
+  }
 
-  getDefaultProps: function () {
-    return {
-      icon: 'fa-bars'
-    }
-  },
+  static defaultProps = {
+    icon: 'fa-bars',
+    onSearch: () => null
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps = function (nextProps) {
     if (nextProps.text !== this.props.text) {
       this.setState({ open: false })
     }
-  },
+  }
 
-  render: function () {
+  render = function () {
     return (
       <IconButton {...this.props} onClick={this._toggleMenu}/>
     )
   }
-})
+}
 
 export default DropdownIcon
