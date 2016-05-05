@@ -1,6 +1,5 @@
 import Reflux from 'reflux'
 import api from 'data/api'
-import DashboardAPI from 'data/requests/DashboardAPI'
 
 const DashboardActions = Reflux.createActions({
   'fetchDashboards': { children: ['completed', 'failed'] },
@@ -11,7 +10,10 @@ const DashboardActions = Reflux.createActions({
 // API CALLS
 // ---------------------------------------------------------------------------
 DashboardActions.fetchDashboards.listenAndPromise(api.get_dashboard)
-DashboardActions.deleteDashboard.listenAndPromise(DashboardAPI.deleteDashboard)
+DashboardActions.deleteDashboard.listenAndPromise(dashboard_id => {
+  const fetch = api.endPoint('/custom_dashboard/' + dashboard_id, 'delete', 1)
+  return fetch(null, null, {'cache-control': 'no-cache'})
+})
 DashboardActions.postDashboard.listen(
 	dashboard_def => DashboardActions.postDashboard.promise(api.post_dashboard(dashboard_def))
 )
