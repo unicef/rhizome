@@ -89,5 +89,14 @@ class DocTransformResourceTest(ResourceTestCase):
         self.assertEqual(len(dp), 1)
         self.assertEqual(1, dp[0].value)
 
+    def test_doc_transform_with_zeros(self):
+        doc = self.ts.create_arbitrary_document(document_docfile='zero_val_test.csv')
+        get_data = {'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        self.assertHttpOK(resp)
+        self.assertEqual(len(self.deserialize(resp)['objects']), 1)
+        self.assertEqual(DataPointComputed.objects.all()[0].value, 0.0)
+
+
 
 

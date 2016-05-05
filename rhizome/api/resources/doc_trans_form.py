@@ -46,7 +46,6 @@ class DocTransFormResource(BaseModelResource):
 
             except Exception as err:
                 raise DatapointsException(message=err.message)
-
         
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
