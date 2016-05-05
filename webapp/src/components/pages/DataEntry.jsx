@@ -2,9 +2,9 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import Placeholder from 'components/molecules/Placeholder'
-import IndicatorTagDropdown from 'components/atoms/selectors/IndicatorTagDropdown'
+import IndicatorTagSelect from 'components/atoms/select/IndicatorTagSelect'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import CampaignDropdown from 'components/atoms/selectors/CampaignDropdown'
+import CampaignSelect from 'components/atoms/select/CampaignSelect'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
 import DatapointStore from 'stores/DatapointStore'
@@ -55,12 +55,12 @@ const DataEntry = React.createClass({
           </div>
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
-              <CampaignDropdown
+              <CampaignSelect
                 campaigns={state.campaigns.raw || []}
                 selected={state.selected_campaign}
                 sendValue={id => DataEntryActions.setCampaign(state.campaigns.index[id])}
               />
-              <IndicatorTagDropdown
+              <IndicatorTagSelect
                 indicator_tags={state.indicators.tags || []}
                 selected={state.selected_indicator_tag}
                 sendValue={id => {

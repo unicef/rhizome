@@ -1,11 +1,9 @@
 import React from 'react'
-import _ from 'lodash'
-import moment from 'moment'
 
-import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
+import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var IndicatorTagDropdown = React.createClass({
+var IndicatorTagSelect = React.createClass({
   propTypes: {
     indicator_tags: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -15,7 +13,7 @@ var IndicatorTagDropdown = React.createClass({
   getDefaultProps () {
     return {
       indicator_tags: [],
-      selected: {'name':'Loading ...'}
+      selected: {'name': 'Loading ...'}
     }
   },
 
@@ -31,15 +29,15 @@ var IndicatorTagDropdown = React.createClass({
 
     const selected_text = this.props.selected ? this.props.selected.tag_name : 'Select Form'
     return (
-      <DropdownSelector
+      <Select
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable={false}>
         {indicator_tag_menu_items}
-      </DropdownSelector>
+      </Select>
     )
   }
 })
 
-export default IndicatorTagDropdown
+export default IndicatorTagSelect

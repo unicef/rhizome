@@ -10,11 +10,11 @@ import builderDefinitions from 'components/molecules/charts/utils/builderDefinit
 import IconButton from 'components/atoms/buttons/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
-import CampaignMultiSelect from 'components/atoms/multi_selects/CampaignMultiSelect'
-import IndicatorMultiSelect from 'components/atoms/multi_selects/IndicatorMultiSelect'
-import LocationMultiSelect from 'components/atoms/multi_selects/LocationMultiSelect'
+import CampaignMultiSelect from 'components/atoms/multi_select/CampaignMultiSelect'
+import IndicatorMultiSelect from 'components/atoms/multi_select/IndicatorMultiSelect'
+import LocationMultiSelect from 'components/atoms/multi_select/LocationMultiSelect'
 import DateRangePicker from 'components/molecules/DateRangePicker'
-import DistrictDropdown from 'components/atoms/selectors/DistrictDropdown'
+import DistrictSelect from 'components/atoms/select/DistrictSelect'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -111,7 +111,7 @@ const MultiChartControls = React.createClass({
     const indicator_filter = (
       <div className='medium-12 columns'>
         <h3>Filter By</h3>
-        <DistrictDropdown selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
+        <DistrictSelect selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
       </div>
     )
 

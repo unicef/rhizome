@@ -1,10 +1,10 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
+import Select from 'components/atoms/select/Select'
 import MenuItem from 'components/molecules/MenuItem'
 
-var LocationDropdown = React.createClass({
+var LocationSelect = React.createClass({
   propTypes: {
     locations: PropTypes.array.isRequired,
     selected: PropTypes.object.isRequired,
@@ -21,7 +21,7 @@ var LocationDropdown = React.createClass({
   getDefaultProps () {
     return {
       locations: [],
-      selected: {'name':'Loading ...'}
+      selected: {'name': 'Loading ...'}
     }
   },
 
@@ -75,16 +75,16 @@ var LocationDropdown = React.createClass({
     })
 
     return (
-      <DropdownSelector
+      <Select
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this._setPattern}>
         {menu_items}
-      </DropdownSelector>
+      </Select>
     )
   }
 })
 
-export default LocationDropdown
+export default LocationSelect

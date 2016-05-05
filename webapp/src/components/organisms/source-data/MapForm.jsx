@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
-import LocationDropdown from 'components/atoms/selectors/LocationDropdown'
+import LocationSelect from 'components/atoms/select/LocationSelect'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
@@ -80,7 +80,7 @@ var MapForm = React.createClass({
       if (!this.state.data.locations) {
         return loadText('Locations')
       }
-      return <div><LocationDropdown
+      return <div><LocationSelect
         locations={this.state.data.locations}
         selected={defaultSelected}
         sendValue={this.postMetaMap}/></div>

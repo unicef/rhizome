@@ -1,9 +1,9 @@
 import React from 'react'
 
-import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
+import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var IndicatorDropdown = React.createClass({
+var IndicatorSelect = React.createClass({
   propTypes: {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -21,7 +21,7 @@ var IndicatorDropdown = React.createClass({
     return {
       indicators: [],
       idsToRender: [],
-      selected: {'name':'Loading ...'}
+      selected: {'name': 'Loading ...'}
     }
   },
 
@@ -45,16 +45,16 @@ var IndicatorDropdown = React.createClass({
     )
 
     return (
-      <DropdownSelector
+      <Select
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this.setPattern}>
         {indicator_menu_items}
-      </DropdownSelector>
+      </Select>
     )
   }
 })
 
-export default IndicatorDropdown
+export default IndicatorSelect

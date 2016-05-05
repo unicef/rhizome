@@ -3,7 +3,7 @@ import React from 'react'
 import IconButton from 'components/atoms/buttons/IconButton'
 import Dropdown from 'components/atoms/dropdown/Dropdown'
 
-class DropdownSelector extends Dropdown {
+class Select extends Dropdown {
 
   static propTypes = {
     className: React.PropTypes.string,
@@ -44,4 +44,4 @@ class DropdownSelector extends Dropdown {
   }
 }
 
-export default DropdownSelector
+export default Select

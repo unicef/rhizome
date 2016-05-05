@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import LocationDropdown from 'components/atoms/selectors/LocationDropdown'
+import LocationSelect from 'components/atoms/select/LocationSelect'
 
 const LocationMultiSelect = React.createClass({
 
@@ -66,7 +66,7 @@ const LocationMultiSelect = React.createClass({
       return (
         <div className={props.classes}>
           <h3>Location</h3>
-          <LocationDropdown
+          <LocationSelect
             locations={locations}
             selected={this.props.selected_locations[0]}
             sendValue={this.props.setLocations}

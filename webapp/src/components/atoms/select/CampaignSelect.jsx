@@ -2,10 +2,10 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
+import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var CampaignDropdown = React.createClass({
+var CampaignSelect = React.createClass({
   propTypes: {
     campaigns: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -31,15 +31,15 @@ var CampaignDropdown = React.createClass({
 
     const selected_text = this.props.selected ? this.props.selected.name : 'Select Campaign'
     return (
-      <DropdownSelector
+      <Select
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable={false}>
         {campaign_menu_items}
-      </DropdownSelector>
+      </Select>
     )
   }
 })
 
-export default CampaignDropdown
+export default CampaignSelect

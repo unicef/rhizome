@@ -1,11 +1,9 @@
 import React from 'react'
-import _ from 'lodash'
-import moment from 'moment'
 
-import Dropdown from 'components/atoms/selectors/DropdownSelector'
+import Dropdown from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var ChartDropdown = React.createClass({
+var ChartSelect = React.createClass({
   propTypes: {
     charts: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -15,13 +13,13 @@ var ChartDropdown = React.createClass({
   getDefaultProps () {
     return {
       charts: [],
-      selected: {'title':'Select existing chart'}
+      selected: {'title': 'Select existing chart'}
     }
   },
 
   render () {
     const charts = this.props.charts || []
-    const chart_menu_items = this.props.charts.map(chart =>
+    const chart_menu_items = charts.map(chart =>
       <DropdownMenuItem
         key={'chart-' + chart.id}
         text={chart.title}
@@ -41,4 +39,4 @@ var ChartDropdown = React.createClass({
   }
 })
 
-export default ChartDropdown
+export default ChartSelect

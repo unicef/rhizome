@@ -2,7 +2,7 @@ import React from 'react'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 
-export default React.createClass({
+const ChartTypeSelect = React.createClass({
   propTypes: {
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
@@ -30,3 +30,5 @@ export default React.createClass({
     return (<div className='chart-select'>{chartBoxes}</div>)
   }
 })
+
+export default ChartTypeSelect

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
+import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 const filters = [
@@ -12,7 +12,7 @@ const filters = [
   { id: 4, value: 3, name: 'LPD 3', type: 'LPD Status' }
 ]
 
-const DistrictDropdown = React.createClass({
+const DistrictSelect = React.createClass({
   propTypes: {
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
@@ -28,7 +28,7 @@ const DistrictDropdown = React.createClass({
   },
 
   render () {
-    const selected_text = _.isEmpty(this.props.selected) ? filters[0].name: this.props.selected.name
+    const selected_text = _.isEmpty(this.props.selected) ? filters[0].name : this.props.selected.name
 
     const indicator_menu_items = filters.map(filter =>
       <DropdownMenuItem
@@ -40,15 +40,15 @@ const DistrictDropdown = React.createClass({
     )
 
     return (
-      <DropdownSelector
+      <Select
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         searchable={false}
         text={selected_text}>
         {indicator_menu_items}
-      </DropdownSelector>
+      </Select>
     )
   }
 })
 
-export default DistrictDropdown
+export default DistrictSelect
