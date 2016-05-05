@@ -33,9 +33,12 @@ class DocTransFormResource(BaseModelResource):
             raise DatapointsException(message='Document_id is a required API param')
         # dt = DocTransform(request.user.id, doc_id)
 
+        ran_complex_doc_transform = False
+
         try:
             dt = ComplexDocTransform(request.user.id, doc_id)
             dt.main()
+            ran_complex_doc_transform = True
         except Exception as err:
             try:
                 dt = DateDocTransform(request.user.id, doc_id)
@@ -44,20 +47,21 @@ class DocTransFormResource(BaseModelResource):
             except Exception as err:
                 raise DatapointsException(message=err.message)
 
-        print len(SourceSubmission.objects.filter(document_id=doc_id))
         
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
-        doc_campaign_ids = set(list(DataPoint.objects\
-            .filter(source_submission__document_id = doc_id)\
-            .values_list('campaign_id',flat=True)))
 
-        for c_id in doc_campaign_ids:
-            ar = AggRefresh(c_id)
-            # try/except block hack because tests fail otherwise
-            try:
-                with transaction.atomic():
-                    ar.main()
-            except TransactionManagementError as e:
-                pass
+        if ran_complex_doc_transform:
+            doc_campaign_ids = set(list(DataPoint.objects\
+                .filter(source_submission__document_id = doc_id)\
+                .values_list('campaign_id',flat=True)))
+
+            for c_id in doc_campaign_ids:
+                ar = AggRefresh(c_id)
+                # try/except block hack because tests fail otherwise
+                try:
+                    with transaction.atomic():
+                        ar.main()
+                except TransactionManagementError as e:
+                    pass
         return Document.objects.filter(id=doc_id).values()

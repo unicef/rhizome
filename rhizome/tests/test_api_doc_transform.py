@@ -12,6 +12,7 @@ import os
 from pandas import read_excel
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models import *
+from datetime import datetime
 
 from rhizome.cache_meta import LocationTreeCache
 
@@ -60,7 +61,7 @@ class DocTransformResourceTest(ResourceTestCase):
         
 
     def test_data_date_transform(self):
-
+        DataPoint.objects.all().delete()
         loc_map = SourceObjectMap.objects.create(
             source_object_code = 'AF001047005000000000',
             content_type = 'location',
@@ -79,10 +80,14 @@ class DocTransformResourceTest(ResourceTestCase):
         doc = self.ts.create_arbitrary_document('AfgPolioCases.csv')
         get_data={'document_id':doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
-        print self.deserialize(resp)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
-        print len(DataPoint.objects.all())
+        data_date = datetime(2014, 9, 1, 0, 0)
+        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,\
+            indicator=self.mapped_indicator_with_data,\
+            data_date=data_date)
+        self.assertEqual(len(dp), 1)
+        self.assertEqual(1, dp[0].value)
 
 
 

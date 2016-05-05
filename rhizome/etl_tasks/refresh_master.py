@@ -206,22 +206,21 @@ class MasterRefresh(object):
         return ss_id_list_to_process,all_ss_ids
 
     def submissions_to_doc_datapoints(self):
-        print 'here3'
         '''
         Send all rows queued for processing to the process_source_submission method.
         '''
 
         # ss_ids_in_batch = self.submission_data.keys()
 
-        print len(SourceSubmission.objects.filter(document_id = self.document_id))
         for row in SourceSubmission.objects.filter(document_id = self.document_id):
 
             row.location_id = row.get_location_id()
             row.campaign_id = row.get_campaign_id()
+
             ## if no mapping for campaign / location -- dont process
-            if row.campaign_id == -1 or not row.data_date:
+            if (not row.campaign_id or row.campaign_id == -1) and not row.data_date:
                 row.process_status = 'missing campaign or data_date'
-            elif row.location_id == -1:
+            elif not row.location_id or row.location_id == -1:
                 row.process_status = 'missing location'
             else:
                 doc_dps = self.process_source_submission(row)
@@ -305,7 +304,6 @@ class MasterRefresh(object):
                 row.data_date)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
-        print len(doc_dp_batch)
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
@@ -320,7 +318,6 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
-            print'can\'t find indicator!'
             return None
 
         cleaned_val = None
@@ -353,7 +350,6 @@ class MasterRefresh(object):
             return None
 
     def clean_val(self, val):
-        print 'here'
         '''
         This needs alot of work but basically determines if a particular submission
         cell is alllowed.
