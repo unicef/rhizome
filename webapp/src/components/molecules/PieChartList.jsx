@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import Chart from 'components/molecules/Chart.jsx'
+import Chart from 'components/molecules/Chart'
 
 var PieChartList = React.createClass({
   propTypes: {

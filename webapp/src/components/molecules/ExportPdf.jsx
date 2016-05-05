@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Dropdown from 'components/molecules/dropdowns/Dropdown.jsx'
-import MenuItem from 'components/molecules/MenuItem.jsx'
+import Dropdown from 'components/atoms/dropdowns/Dropdown'
+import MenuItem from 'components/molecules/MenuItem'
 
 var ExportPdf = React.createClass({
   propTypes: {

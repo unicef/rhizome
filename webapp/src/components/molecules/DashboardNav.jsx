@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
-import NavMenuItem from 'components/molecules/NavMenuItem.jsx'
+import NavMenuItem from 'components/molecules/NavMenuItem'
 import ChartStore from 'stores/ChartStore'
 import DashboardStore from 'stores/DashboardStore'
 import RootStore from 'stores/RootStore'

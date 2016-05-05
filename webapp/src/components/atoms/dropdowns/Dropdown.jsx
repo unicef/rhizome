@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import Search from 'components/molecules/Search.jsx'
+import Search from 'components/molecules/Search'
 
 import dom from 'utilities/dom'
 

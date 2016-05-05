@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import Layer from 'react-layer'
-import Tooltip from 'components/molecules/Tooltip.jsx'
+import Tooltip from 'components/molecules/Tooltip'
 import moment from 'moment'
 import numeral from 'numeral'
 

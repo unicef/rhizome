@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import MenuItem from 'components/molecules/MenuItem.jsx'
+import MenuItem from 'components/molecules/MenuItem'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'
 
