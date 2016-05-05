@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 import Layer from 'react-layer'
-import Tooltip from 'components/molecules/Tooltip'
+import Tooltip from 'components/atoms/Tooltip'
 
 var IconButton = React.createClass({
 

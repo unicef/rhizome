@@ -1,6 +1,6 @@
 import React from 'react'
 import Layer from 'react-layer'
-import Tooltip from 'components/molecules/Tooltip'
+import Tooltip from 'components/atoms/Tooltip'
 import moment from 'moment'
 import numeral from 'numeral'
 import format from 'utilities/format'

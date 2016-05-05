@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import format from 'utilities/format'
 
 import randomHash from 'utilities/randomHash'
-import TableCell from 'components/atoms/TableCell'
+import TableCell from 'components/organisms/datascope/TableCell'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'

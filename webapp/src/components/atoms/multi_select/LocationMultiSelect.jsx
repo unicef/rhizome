@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 import Reflux from 'reflux'
-import List from 'components/molecules/list/List'
+import List from 'components/atoms/list/List'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 import LocationSelect from 'components/atoms/select/LocationSelect'
 
@@ -52,6 +52,7 @@ class LocationMultiSelect extends Component {
               item_plural_name='Locations'
               style='icon-button right pad-right'
               icon='fa-plus'
+              searchable
             />
           </h3>
           <List items={this.props.selected_locations} removeItem={this.props.deselectLocation} />

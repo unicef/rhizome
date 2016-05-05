@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 import Reflux from 'reflux'
-import ReorderableList from 'components/molecules/list/ReorderableList'
+import ReorderableList from 'components/atoms/list/ReorderableList'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 import CampaignSelect from 'components/atoms/select/CampaignSelect'
 

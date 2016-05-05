@@ -1,11 +1,11 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import Placeholder from 'components/molecules/Placeholder'
+import Placeholder from 'components/atoms/Placeholder'
 import IndicatorTagSelect from 'components/atoms/select/IndicatorTagSelect'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 import CampaignSelect from 'components/atoms/select/CampaignSelect'
-import DatabrowserTable from 'components/molecules/DatabrowserTable'
+import DatabrowserTable from 'components/atoms/table/DatabrowserTable'
 
 import DatapointStore from 'stores/DatapointStore'
 import LocationStore from 'stores/LocationStore'

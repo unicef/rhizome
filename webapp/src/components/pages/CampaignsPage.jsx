@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DateRangePicker from 'components/molecules/DateRangePicker'
+import DateMultiSelect from 'components/atoms/select/DateRangeSelect'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
@@ -116,7 +116,7 @@ var CampaignsPage = React.createClass({
     let dateRangePicker = (
       <div>
         <label htmlFor='start_date'>Start date: </label>
-        <DateRangePicker
+        <DateMultiSelect
           start={this.state.campaign.start}
           end={this.state.campaign.end}
           sendValue={CampaignPageActions.updateCampaignRange}

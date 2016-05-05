@@ -1,7 +1,7 @@
 import React from 'react'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
-var DateRangePicker = React.createClass({
+var DateMultiSelect = React.createClass({
   propTypes: {
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
@@ -53,4 +53,4 @@ var DateRangePicker = React.createClass({
   }
 })
 
-export default DateRangePicker
+export default DateMultiSelect

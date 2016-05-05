@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 import Reflux from 'reflux'
-import ReorderableIndicators from 'components/molecules/list/ReorderableIndicators'
+import ReorderableIndicators from 'components/atoms/list/ReorderableIndicators'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 import IndicatorSelect from 'components/atoms/select/IndicatorSelect'
 
@@ -73,6 +73,7 @@ class IndicatorMultiSelect extends Component {
               item_plural_name='Indicators'
               style='icon-button right pad-right'
               icon='fa-plus'
+              searchable
             />
           </h3>
           {

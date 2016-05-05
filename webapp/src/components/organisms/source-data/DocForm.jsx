@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import MenuItem from 'components/molecules/MenuItem'
+import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'
 
@@ -88,7 +88,7 @@ var DocForm = React.createClass({
   buildHeaderList: function (configType) {
     var stateHeader = this.state.config_options
 
-    return MenuItem.fromArray(
+    return ExpandableMenuItem.fromArray(
       _.map(stateHeader, d => {
         return {
           title: d.replace('"', ''),

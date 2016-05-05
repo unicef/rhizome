@@ -2,7 +2,7 @@ import React from 'react'
 
 import dom from 'utilities/dom'
 
-var Search = React.createClass({
+var DropdownMenuSearch = React.createClass({
   propTypes: {
     onChange: React.PropTypes.func.isRequired,
 
@@ -78,4 +78,4 @@ var Search = React.createClass({
   }
 })
 
-export default Search
+export default DropdownMenuSearch

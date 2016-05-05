@@ -2,10 +2,10 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
-import DatapointTable from 'components/molecules/tables/DatapointTable'
+import DatapointTable from 'components/atoms/table/DatapointTable'
 import ChartTypeSelect from 'components/atoms/select/ChartTypeSelect'
 import ChartSelect from 'components/atoms/select/ChartSelect'
-import Placeholder from 'components/molecules/Placeholder'
+import Placeholder from 'components/atoms/Placeholder'
 
 import BarChart from 'components/molecules/highcharts/BarChart'
 import MapChart from 'components/molecules/highcharts/MapChart'

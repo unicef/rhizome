@@ -2,7 +2,7 @@ import React from 'react'
 
 import IconButtonDropdown from 'components/atoms/button/IconButtonDropdown'
 import Dropdown from 'components/atoms/select/Select'
-import MenuItem from 'components/molecules/MenuItem'
+import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
 
 var ExportIcon = React.createClass({
   propTypes: {
@@ -129,9 +129,9 @@ var ExportIcon = React.createClass({
     return (
       <span style={{position: 'relative', top: '1px', left: '4px'}}>
         <IconButtonDropdown classes={classString} searchable={false} icon='fa-external-link' text='Export'>
-          <MenuItem key='jpeg' value='jpeg' title='Export as IMAGE' sendValue={this.selectOption} />
-          <MenuItem key='pdf' value='pdf'  title='Export as PDF' sendValue={this.selectOption} />
-          <MenuItem key='csv' value='csv'  title='Export as CSV' sendValue={this.selectOption} />
+          <ExpandableMenuItem key='jpeg' value='jpeg' title='Export as IMAGE' sendValue={this.selectOption} />
+          <ExpandableMenuItem key='pdf' value='pdf'  title='Export as PDF' sendValue={this.selectOption} />
+          <ExpandableMenuItem key='csv' value='csv'  title='Export as CSV' sendValue={this.selectOption} />
         </IconButtonDropdown>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
       </span>

@@ -1,6 +1,6 @@
 import React from 'react'
 import Reorderable from 'react-reorder'
-import ReorderableItem from 'components/molecules/list/ReorderableItem'
+import ReorderableItem from 'components/atoms/list/ReorderableItem'
 
 export default React.createClass({
   propTypes: {

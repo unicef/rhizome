@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import MenuItem from 'components/molecules/MenuItem'
+import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
 import Dropdown from 'components/atoms/dropdown/Dropdown'
 
 class DropdownButton extends Dropdown {
@@ -49,7 +49,7 @@ class DropdownButton extends Dropdown {
 
     items.forEach(item => {
       let menu_item_components = this._getMenuItemComponents(item.value, pattern)
-      let group_name_component = <MenuItem key={item.title} depth={0} sendValue={_.noop} title={item.title} classes='menu-group-title' />
+      let group_name_component = <ExpandableMenuItem key={item.title} depth={0} sendValue={_.noop} title={item.title} classes='menu-group-title' />
       menu_item_components.splice(0, 0, group_name_component)
       grouped_menu_item_components = grouped_menu_item_components.concat(menu_item_components)
     })
@@ -65,7 +65,7 @@ class DropdownButton extends Dropdown {
       item.value = item[this.props.value_field].toString()
       return item
     })
-    return menu_items.map(item => <MenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} />)
+    return menu_items.map(item => <ExpandableMenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} />)
   }
 
   _setPattern = (value) => {

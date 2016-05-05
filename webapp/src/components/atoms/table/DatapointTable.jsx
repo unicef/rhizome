@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import moment from 'moment'
 import React from 'react'
-import Table from 'components/molecules/tables/Table'
-import DatapointTableCell from 'components/molecules/tables/DatapointTableCell'
+import Table from 'components/atoms/table/Table'
+import DatapointTableCell from 'components/atoms/table/DatapointTableCell'
 
 class DatapointTable extends Table {
 

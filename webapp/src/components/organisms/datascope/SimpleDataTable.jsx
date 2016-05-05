@@ -3,7 +3,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import cx from 'classnames'
 import InterfaceMixin from 'utilities/InterfaceMixin'
-import TableHeaderCell from 'components/atoms/TableHeaderCell'
+import TableHeaderCell from 'components/organisms/datascope/TableHeaderCell'
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import SimpleDataTableRow from 'components/organisms/datascope/SimpleDataTableRow'
 

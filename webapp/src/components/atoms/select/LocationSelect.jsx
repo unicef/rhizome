@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 
 import Select from 'components/atoms/select/Select'
-import MenuItem from 'components/molecules/MenuItem'
+import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
 
 class LocationSelect extends Component {
 
@@ -71,7 +71,7 @@ class LocationSelect extends Component {
     const sorted_locations = _.sortBy(locations, 'title')
     const selected_text = !props.selected.id && locations.length > 0 ? 'Select Location' : props.selected.name
     const menu_items = sorted_locations.map(location => {
-      return <MenuItem key={location.value} sendValue={props.sendValue} {...location} hideLastLevel={props.hideLastLevel}/>
+      return <ExpandableMenuItem key={location.value} sendValue={props.sendValue} {...location} hideLastLevel={props.hideLastLevel}/>
     })
 
     return (

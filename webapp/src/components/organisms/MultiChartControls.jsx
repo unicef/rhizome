@@ -3,8 +3,8 @@ import moment from 'moment'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import {DropdownList} from 'react-widgets'
-// import RadioGroup from 'react-radio-group'
-import RadioGroup from 'components/molecules/RadioGroup'
+
+import RadioGroup from 'components/atoms/form/RadioGroup'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 import IconButton from 'components/atoms/button/IconButton'
@@ -13,7 +13,7 @@ import palettes from 'utilities/palettes'
 import CampaignMultiSelect from 'components/atoms/multi_select/CampaignMultiSelect'
 import IndicatorMultiSelect from 'components/atoms/multi_select/IndicatorMultiSelect'
 import LocationMultiSelect from 'components/atoms/multi_select/LocationMultiSelect'
-import DateRangePicker from 'components/molecules/DateRangePicker'
+import DateMultiSelect from 'components/atoms/select/DateRangeSelect'
 import DistrictSelect from 'components/atoms/select/DistrictSelect'
 
 import LocationStore from 'stores/LocationStore'
@@ -81,7 +81,7 @@ const MultiChartControls = React.createClass({
     const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
-        <DateRangePicker
+        <DateMultiSelect
           sendValue={props.setDateRange}
           start={start_date}
           end={end_date}

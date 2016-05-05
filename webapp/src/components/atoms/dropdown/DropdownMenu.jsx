@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 
-import Search from 'components/molecules/Search'
+import DropdownMenuSearch from 'components/atoms/dropdown/DropdownMenuSearch'
 
 import dom from 'utilities/dom'
 
@@ -101,7 +101,7 @@ class DropdownMenu extends Component {
       top: this.props.y
     }
 
-    var search = this.props.searchable ? (<Search onChange={this.props.onSearch} onBlur={this.onBlur} />) : null
+    var search = this.props.searchable ? (<DropdownMenuSearch onChange={this.props.onSearch} onBlur={this.onBlur} />) : null
 
     return (
       <div className='menu' style={position} tabIndex='-1' onBlur={this.onBlur}>
