@@ -144,6 +144,7 @@ class DatapointResource(BaseNonModelResource):
         Hack to assist in dealing with the polio case table.
         '''
 
+        is_polio_case_table_request = False
         indicator_id_list = self.parsed_params['indicator__in']
 
         if not 'latest_date' in self.ind_meta\
@@ -154,87 +155,61 @@ class DatapointResource(BaseNonModelResource):
             inicators_to_filter = set([self.ind_meta['latest_date'],\
                 self.ind_meta['district_count'],
                 self.ind_meta['province_count']])
+            is_polio_case_table_request = True
 
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
 
-        return filtered_indicator_list
+        return filtered_indicator_list, is_polio_case_table_request
 
-    def group_by_time_transform(self):
+    def get_time_group_series(self, dp_df, time_grouping):
 
-        indicator_id_list = self.parsed_params['indicator__in']
-        time_grouping =  self.parsed_params['group_by_time']
-        filtered_indicator_list = self.get_filtered_indicator_list()
+        print dp_df[:4]
 
-        if time_grouping =='all_time':
-            return self.map_bubble_transform(filtered_indicator_list)
-
-        results = []
-        all_time_groupings = []
-
-        cols = ['data_date','indicator_id','location_id','value']
-
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = self.location_ids,
-            indicator_id__in = filtered_indicator_list
-        ).values(*cols)),columns=cols)
-
-        # agg_logic = 'SUM'
-
-        # if dp_df.empty:
-        #     ## what is this conditino supposed to do.. ##
-        #
-        #     parent_location_filter = self\
-        #         .parsed_params['parent_location_id__in']
-        #
-        #     if parent_location_filter == None:
-        #         parent_location_filter = self\
-        #             .parsed_params['location_id__in']
-        #         agg_logic = 'AVG'
-        #
-        #     sub_location_ids = Location.objects.filter(
-        #         parent_location_id = parent_location_filter
-        #     ).values_list('id', flat=True)
-        #
-        #     dp_df = DataFrame(list(DataPoint.objects.filter(
-        #                 location_id__in = sub_location_ids,
-        #                 indicator_id__in = filtered_indicator_list
-        #             ).values(*cols)),columns=cols)
-        #
-        #     if dp_df.empty:
-        #         return []
-
-        ## Group Datapoints by Year / Quarter ##
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
             dp_df['time_grouping'] = dp_df['data_date']\
                 .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
         else:
-            return []
+            dp_df = DataFrame()
 
-        if 'base_indicator' in self.ind_meta\
-        and self.ind_meta['base_indicator'] in filtered_indicator_list:
-            df_with_aggregate = self.add_aggregate_indicators(dp_df)
+        return dp_df
+
+    def group_by_time_transform(self):
+
+        dp_df_columns = ['data_date','indicator_id','location_id','value']
+        time_grouping =  self.parsed_params['group_by_time']
+
+        if time_grouping =='all_time':
+            return self.map_bubble_transform(filtered_indicator_list)
+
+        indicator_list, is_polio_case_table_request =\
+            self.get_filtered_indicator_list()
+
+        if is_polio_case_table_request:
+            dp_df = self.handle_polio_case_table(indicator_list,\
+                dp_df_columns, time_grouping)
         else:
-            df_with_aggregate = dp_df
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                location_id__in = self.location_ids,
+                indicator_id__in = indicator_list
+            ).values(*cols)),columns=cols)
 
-        # if agg_logic == 'AVG':
-        #     gb_df = DataFrame(df_with_aggregate\
-        #         .groupby(['indicator_id','time_grouping'])['value']\
-        #         .mean())\
-        #         .reset_index()
-        # else:
+        results = []
+        all_time_groupings = []
 
-        gb_df = DataFrame(df_with_aggregate\
+        ## Group Datapoints by Year / Quarter ##)
+        if not is_polio_case_table_request:
+            dp_df = self.get_time_group_series(dp_df, time_grouping)
+
+        gb_df = DataFrame(dp_df\
             .groupby(['indicator_id','time_grouping','location_id'])['value']\
             .sum())\
             .reset_index()
 
-        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['location_id','time_grouping'])
-
-        print '==pivoted_data=='
-        pprint(pivoted_data)
+        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', \
+            ['location_id','time_grouping'])
 
         for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
             reverse=True):
@@ -266,7 +241,8 @@ class DatapointResource(BaseNonModelResource):
         } for time_grp in all_time_groupings]
         return results
 
-    def add_aggregate_indicators(self, flat_df):
+    def handle_polio_case_table(self, filtered_indicator_list, dp_df_columns, \
+        time_grouping):
         '''
         This is a very specific peice of code that allows us to generate a table
         with
@@ -278,6 +254,17 @@ class DatapointResource(BaseNonModelResource):
         caluclated_indicator_component.
         '''
         # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+
+        all_sub_locations = LocationTree.objects.filter(
+            parent_location_id__in = self.location_ids
+        ).values_list('location_id', flat=True)
+
+        flat_df = DataFrame(list(DataPoint.objects.filter(
+                        location_id__in = all_sub_locations,
+                        indicator_id__in = filtered_indicator_list
+                    ).values(*dp_df_columns)),columns=dp_df_columns)
+
+        flat_df = self.get_time_group_series(flat_df, time_grouping)
 
         latest_date_df = DataFrame(flat_df\
             .groupby(['indicator_id','time_grouping'])['data_date']\
