@@ -216,10 +216,11 @@ class MasterRefresh(object):
 
             row.location_id = row.get_location_id()
             row.campaign_id = row.get_campaign_id()
+
             ## if no mapping for campaign / location -- dont process
-            if row.campaign_id == -1:
-                row.process_status = 'missing campaign'
-            elif row.location_id == -1:
+            if (not row.campaign_id or row.campaign_id == -1) and not row.data_date:
+                row.process_status = 'missing campaign or data_date'
+            elif not row.location_id or row.location_id == -1:
                 row.process_status = 'missing location'
             else:
                 doc_dps = self.process_source_submission(row)
@@ -233,7 +234,6 @@ class MasterRefresh(object):
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
-
         if len(doc_dp_df) == 0:
             return
 
@@ -289,7 +289,6 @@ class MasterRefresh(object):
 
             else:
                 dp_ids_to_delete.append(row.id_x)
-
         DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
         DataPoint.objects.bulk_create(dp_batch)
 
@@ -317,7 +316,6 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
-            'can\'t find indicator!'
             return None
 
         cleaned_val = None
@@ -334,7 +332,7 @@ class MasterRefresh(object):
             except ValueError:
                 return None
 
-        if cleaned_val:
+        if not cleaned_val == None:
             doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
@@ -353,8 +351,6 @@ class MasterRefresh(object):
         '''
         This needs alot of work but basically determines if a particular submission
         cell is alllowed.
-        Big point of future controversy... what do we do with zero values?  In order to
-        keep the size of the database manageable, we only accept non zero values.
         '''
         str_lookup = {'yes':1,'no':0}
         if val is None:
