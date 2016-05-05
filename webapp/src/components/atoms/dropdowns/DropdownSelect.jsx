@@ -1,33 +1,30 @@
 import React from 'react'
+
 import IconButton from 'components/atoms/IconButton'
+import Dropdown from 'components/atoms/dropdowns/Dropdown'
 
-var Dropdown = React.createClass({
+class DropdownSelect extends Dropdown {
 
-  mixins: [
-    require('components/atoms/dropdowns/DropdownControl')
-  ],
-
-  propTypes: {
+  static propTypes = {
     className: React.PropTypes.string,
     text: React.PropTypes.string.isRequired,
     icon: React.PropTypes.string,
     searchable: React.PropTypes.bool,
     onSearch: React.PropTypes.func
-  },
+  }
 
-  getDefaultProps: function () {
-    return {
-      icon: 'fa-bars'
-    }
-  },
+  static defaultProps = {
+    icon: 'fa-bars',
+    onSearch: () => null
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps = (nextProps) => {
     if (nextProps.text !== this.props.text) {
       this.setState({ open: false })
     }
-  },
+  }
 
-  render: function () {
+  render = () => {
     return (
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
           {
@@ -45,7 +42,6 @@ var Dropdown = React.createClass({
       </div>
     )
   }
+}
 
-})
-
-export default Dropdown
+export default DropdownSelect

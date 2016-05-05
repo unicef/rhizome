@@ -18,7 +18,7 @@ class Dropdown extends Component {
   static defaultProps = {
     style: '',
     searchable: true,
-    onSearch: _.noop
+    onSearch: () => null
   }
 
   componentDidUpdate = () => {
