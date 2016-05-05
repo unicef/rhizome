@@ -5,9 +5,9 @@ import List from 'components/molecules/list/List'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import LocationSelect from 'components/atoms/select/LocationSelect'
 
-const LocationMultiSelect = React.createClass({
+class LocationMultiSelect extends Component {
 
-  propTypes: {
+  static propTypes = {
     locations: PropTypes.shape({
       raw: PropTypes.array,
       list: PropTypes.array
@@ -20,13 +20,11 @@ const LocationMultiSelect = React.createClass({
     classes: PropTypes.string,
     multi: PropTypes.bool,
     hideLastLevel: React.PropTypes.bool // Don't show any locations if they have no sub locations themselves
-  },
+  }
 
-  getDefaultProps() {
-    return {
-      selected_locations: []
-    }
-  },
+  static defaultProps = {
+    selected_locations: []
+  }
 
   getAvailableLocations () {
     const selected_ids = this.props.selected_locations.map(location => location.id)
@@ -39,7 +37,7 @@ const LocationMultiSelect = React.createClass({
       })
     })
     return locations_filtered
-  },
+  }
 
   render () {
     const props = this.props
@@ -77,6 +75,6 @@ const LocationMultiSelect = React.createClass({
       )
     }
   }
-})
+}
 
 export default LocationMultiSelect

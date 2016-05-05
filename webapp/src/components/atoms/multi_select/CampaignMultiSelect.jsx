@@ -7,9 +7,9 @@ import CampaignSelect from 'components/atoms/select/CampaignSelect'
 
 import CampaignStore from 'stores/CampaignStore'
 
-const CampaignMultiSelect = React.createClass({
+class CampaignMultiSelect extends Component {
 
-  propTypes: {
+  static propTypes = {
     campaigns: PropTypes.shape({
       raw: PropTypes.array,
       list: PropTypes.array
@@ -23,15 +23,13 @@ const CampaignMultiSelect = React.createClass({
     classes: PropTypes.string,
     linked: PropTypes.bool,
     multi: PropTypes.bool
-  },
+  }
 
-  getDefaultProps() {
-    return {
-      multi: false,
-      linked: false,
-      selected_campaigns: []
-    }
-  },
+  static defaultProps = {
+    multi: false,
+    linked: false,
+    selected_campaigns: []
+  }
 
   render () {
     const props = this.props
@@ -68,6 +66,6 @@ const CampaignMultiSelect = React.createClass({
       )
     }
   }
-})
+}
 
 export default CampaignMultiSelect

@@ -5,9 +5,9 @@ import ReorderableIndicators from 'components/molecules/list/ReorderableIndicato
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import IndicatorSelect from 'components/atoms/select/IndicatorSelect'
 
-const IndicatorMultiSelect = React.createClass({
+class IndicatorMultiSelect extends Component {
 
-  propTypes: {
+  static propTypes = {
     indicators: PropTypes.shape({
       raw: PropTypes.array,
       list: PropTypes.array
@@ -23,17 +23,15 @@ const IndicatorMultiSelect = React.createClass({
     filterByFormat: PropTypes.bool,
     avoidBooleans: PropTypes.bool,
     withColors: PropTypes.bool,
-  },
+  }
 
-  getDefaultProps () {
-    return {
-      filterByFormat: true,
-      withColors: true,
-      avoidBooleans: false,
-      multi: false,
-      selected_indicators: []
-    }
-  },
+  static defaultProps = {
+    filterByFormat: true,
+    withColors: true,
+    avoidBooleans: false,
+    multi: false,
+    selected_indicators: []
+  }
 
   getAvailableIndicators () {
     const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
@@ -49,7 +47,7 @@ const IndicatorMultiSelect = React.createClass({
       indicators.push(group)
     })
     return indicators.filter(indicator_group => indicator_group.children.length > 0)
-  },
+  }
 
   markDisabledIndicators (items, selected_ids) {
     items.forEach(item => {
@@ -59,7 +57,7 @@ const IndicatorMultiSelect = React.createClass({
       }
     })
     return items
-  },
+  }
 
   render () {
     const props = this.props
@@ -103,6 +101,6 @@ const IndicatorMultiSelect = React.createClass({
       )
     }
   }
-})
+}
 
 export default IndicatorMultiSelect
