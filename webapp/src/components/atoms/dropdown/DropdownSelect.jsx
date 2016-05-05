@@ -1,7 +1,7 @@
 import React from 'react'
 
-import IconButton from 'components/atoms/IconButton'
-import Dropdown from 'components/atoms/dropdowns/Dropdown'
+import IconButton from 'components/atoms/buttons/IconButton'
+import Dropdown from 'components/atoms/dropdown/Dropdown'
 
 class DropdownSelect extends Dropdown {
 

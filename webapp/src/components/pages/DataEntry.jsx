@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 
 import Placeholder from 'components/molecules/Placeholder'
 import IndicatorTagDropdown from 'components/molecules/dropdowns/IndicatorTagDropdown'
-import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 

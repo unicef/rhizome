@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
-import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
 
 import CampaignStore from 'stores/CampaignStore'

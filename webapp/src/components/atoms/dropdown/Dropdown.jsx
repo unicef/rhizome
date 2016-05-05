@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 import Layer from 'react-layer'
 
-import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdown/DropdownMenu'
 import dom from 'utilities/dom'
 
 class Dropdown extends Component {

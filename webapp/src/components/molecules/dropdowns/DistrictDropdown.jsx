@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
+import DropdownSelect from 'components/atoms/dropdown/DropdownSelect'
+import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 const filters = [
   { id: 1, value: 0, name: 'All Districts', type: 'LPD Status' },

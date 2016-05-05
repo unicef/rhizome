@@ -1,7 +1,7 @@
 import React from 'react'
-import IconButton from 'components/atoms/IconButton'
-import DropdownIcon from 'components/atoms/dropdowns/DropdownIcon'
-import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
+import IconButton from 'components/atoms/buttons/IconButton'
+import IconButtonDropdown from 'components/atoms/buttons/IconButtonDropdown'
+import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 import palettes from 'utilities/palettes'
 
 export default React.createClass({
@@ -23,7 +23,7 @@ export default React.createClass({
     )
     return (
       <div key={item.id}>
-        <DropdownIcon
+        <IconButtonDropdown
           searchable={false}
           icon='fa-circle'
           text='Select Color'
@@ -31,7 +31,7 @@ export default React.createClass({
           color={item.selectedColor}
         >
           {color_menu_items}
-        </DropdownIcon>
+        </IconButtonDropdown>
         {item.short_name || item.name}
         <IconButton className='clear-btn' onClick={(e) => {
           e.preventDefault()

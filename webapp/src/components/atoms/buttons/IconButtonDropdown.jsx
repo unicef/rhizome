@@ -1,8 +1,8 @@
 import React from 'react'
-import IconButton from 'components/atoms/IconButton'
-import Dropdown from 'components/atoms/dropdowns/Dropdown'
+import IconButton from 'components/atoms/buttons/IconButton'
+import Dropdown from 'components/atoms/dropdown/Dropdown'
 
-class DropdownIcon extends Dropdown {
+class IconButtonDropdown extends Dropdown {
 
   static propTypes = {
     className: React.PropTypes.string,
@@ -31,4 +31,4 @@ class DropdownIcon extends Dropdown {
   }
 }
 
-export default DropdownIcon
+export default IconButtonDropdown

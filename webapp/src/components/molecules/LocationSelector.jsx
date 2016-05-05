@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
-import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import LocationDropdown from 'components/molecules/dropdowns/LocationDropdown'
 
 const LocationSelector = React.createClass({

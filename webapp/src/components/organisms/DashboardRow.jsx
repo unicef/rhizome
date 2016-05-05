@@ -3,7 +3,7 @@ import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
-import IconButton from 'components/atoms/IconButton'
+import IconButton from 'components/atoms/buttons/IconButton'
 import MultiChart from 'components/organisms/MultiChart'
 
 const DashboardRow = React.createClass({

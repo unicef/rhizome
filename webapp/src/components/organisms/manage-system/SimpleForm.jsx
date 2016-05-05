@@ -8,7 +8,7 @@ import _ from 'lodash'
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
 import SimpleFormComponent from 'components/organisms/manage-system/SimpleFormComponent'
-import DropdownButton from 'components/atoms/dropdowns/DropdownButton'
+import DropdownButton from 'components/atoms/buttons/DropdownButton'
 
 var SimpleForm = React.createClass({
   propTypes: {

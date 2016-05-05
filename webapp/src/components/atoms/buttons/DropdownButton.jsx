@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 import MenuItem from 'components/molecules/MenuItem'
-import Dropdown from 'components/atoms/dropdowns/Dropdown'
+import Dropdown from 'components/atoms/dropdown/Dropdown'
 
 class DropdownButton extends Dropdown {
 
