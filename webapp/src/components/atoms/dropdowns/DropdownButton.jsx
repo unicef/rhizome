@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import MenuItem from 'components/molecules/MenuItem.jsx'
+import MenuItem from 'components/molecules/MenuItem'
 
 var DropdownMenu = React.createClass({
 

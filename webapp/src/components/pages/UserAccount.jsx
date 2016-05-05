@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import UserGroup from 'components/molecules/UserGroup'
-import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownButton'
 
 import UserAccountStore from 'stores/UserAccountStore'
 import UserAccountActions from 'actions/UserAccountActions'
