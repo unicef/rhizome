@@ -16,6 +16,7 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
     CalculatedIndicatorComponent
 
 from datetime import datetime
+from pprint import pprint
 
 class ResultObject(object):
     '''
@@ -138,8 +139,10 @@ class DatapointResource(BaseNonModelResource):
 
         return self.base_data
 
-    def group_by_time_transform(self):
-        time_grouping =  self.parsed_params['group_by_time']
+    def get_filtered_indicator_list(self):
+        '''
+        Hack to assist in dealing with the polio case table.
+        '''
 
         indicator_id_list = self.parsed_params['indicator__in']
 
@@ -151,90 +154,105 @@ class DatapointResource(BaseNonModelResource):
             inicators_to_filter = set([self.ind_meta['latest_date'],\
                 self.ind_meta['district_count'],
                 self.ind_meta['province_count']])
+
         filtered_indicator_list = list(set(indicator_id_list)\
             .difference(set(inicators_to_filter)))
+
+        return filtered_indicator_list
+
+    def group_by_time_transform(self):
+
+        indicator_id_list = self.parsed_params['indicator__in']
+        time_grouping =  self.parsed_params['group_by_time']
+        filtered_indicator_list = self.get_filtered_indicator_list()
 
         if time_grouping =='all_time':
             return self.map_bubble_transform(filtered_indicator_list)
 
-        param_location_ids= self.location_ids
         results = []
         all_time_groupings = []
-        for param_location_id in param_location_ids:
-            location_ids = LocationTree.objects.filter(
-                    location__location_type__name = 'District',
-                    parent_location_id= param_location_id
-                ).values_list('location_id', flat=True)
-            cols = ['data_date','indicator_id','location_id','value']
-            dp_df = DataFrame(list(DataPoint.objects.filter(
-                location_id__in = location_ids,
-                indicator_id__in = filtered_indicator_list
-            ).values(*cols)),columns=cols)
 
-            agg_logic = 'SUM'
-            if dp_df.empty:
+        cols = ['data_date','indicator_id','location_id','value']
 
-                parent_location_filter = self\
-                    .parsed_params['parent_location_id__in']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = self.location_ids,
+            indicator_id__in = filtered_indicator_list
+        ).values(*cols)),columns=cols)
 
-                if parent_location_filter == None:
-                    parent_location_filter = self\
-                        .parsed_params['location_id__in']
-                    agg_logic = 'AVG'
+        # agg_logic = 'SUM'
 
-                sub_location_ids = Location.objects.filter(
-                    parent_location_id = parent_location_filter
-                ).values_list('id', flat=True)
+        # if dp_df.empty:
+        #     ## what is this conditino supposed to do.. ##
+        #
+        #     parent_location_filter = self\
+        #         .parsed_params['parent_location_id__in']
+        #
+        #     if parent_location_filter == None:
+        #         parent_location_filter = self\
+        #             .parsed_params['location_id__in']
+        #         agg_logic = 'AVG'
+        #
+        #     sub_location_ids = Location.objects.filter(
+        #         parent_location_id = parent_location_filter
+        #     ).values_list('id', flat=True)
+        #
+        #     dp_df = DataFrame(list(DataPoint.objects.filter(
+        #                 location_id__in = sub_location_ids,
+        #                 indicator_id__in = filtered_indicator_list
+        #             ).values(*cols)),columns=cols)
+        #
+        #     if dp_df.empty:
+        #         return []
 
-                dp_df = DataFrame(list(DataPoint.objects.filter(
-                            location_id__in = sub_location_ids,
-                            indicator_id__in = filtered_indicator_list
-                        ).values(*cols)),columns=cols)
+        ## Group Datapoints by Year / Quarter ##
+        if time_grouping == 'year':
+            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
+        elif time_grouping == 'quarter':
+            dp_df['time_grouping'] = dp_df['data_date']\
+                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+        else:
+            return []
 
-            if dp_df.empty:
-                continue
+        if 'base_indicator' in self.ind_meta\
+        and self.ind_meta['base_indicator'] in filtered_indicator_list:
+            df_with_aggregate = self.add_aggregate_indicators(dp_df)
+        else:
+            df_with_aggregate = dp_df
 
-            ## Group Datapoints by Year / Quarter ##
-            if time_grouping == 'year':
-                dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
-            elif time_grouping == 'quarter':
-                dp_df['time_grouping'] = dp_df['data_date']\
-                    .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
-            else:
-                continue
+        # if agg_logic == 'AVG':
+        #     gb_df = DataFrame(df_with_aggregate\
+        #         .groupby(['indicator_id','time_grouping'])['value']\
+        #         .mean())\
+        #         .reset_index()
+        # else:
 
-            if 'base_indicator' in self.ind_meta\
-            and self.ind_meta['base_indicator'] in filtered_indicator_list:
-                df_with_aggregate = self.add_aggregate_indicators(dp_df)
-            else:
-                df_with_aggregate = dp_df
+        gb_df = DataFrame(df_with_aggregate\
+            .groupby(['indicator_id','time_grouping','location_id'])['value']\
+            .sum())\
+            .reset_index()
 
-            if agg_logic == 'AVG':
-                gb_df = DataFrame(df_with_aggregate\
-                    .groupby(['indicator_id','time_grouping'])['value']\
-                    .mean())\
-                    .reset_index()
-            else:
-                gb_df = DataFrame(df_with_aggregate\
-                    .groupby(['indicator_id','time_grouping'])['value']\
-                    .sum())\
-                    .reset_index()
-            pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
-            for time_group, indicator_data in sorted(pivoted_data.iteritems(),\
-                reverse=True):
+        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['location_id','time_grouping'])
 
-                r = ResultObject()
-                r.location = param_location_id
-                r.campaign = str(time_group).replace('-','').replace('.0','')
+        print '==pivoted_data=='
+        pprint(pivoted_data)
 
-                r.indicators = [{
-                    'computed': None,
-                    'indicator': k,
-                    'value': v
-                } for k,v in indicator_data.iteritems()]
+        for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
+            reverse=True):
 
-                results.append(r)
-                all_time_groupings.extend(list(dp_df['time_grouping'].unique()))
+            location_id, time_group = time_loc_tupl[0], time_loc_tupl[1]
+
+            r = ResultObject()
+            r.location = location_id
+            r.campaign = str(time_group).replace('-','').replace('.0','')
+
+            r.indicators = [{
+                'computed': None,
+                'indicator': k,
+                'value': v
+            } for k,v in indicator_data.iteritems()]
+
+            results.append(r)
+            all_time_groupings.extend(list(dp_df['time_grouping'].unique()))
 
         all_time_groupings = list(set(all_time_groupings))
 
