@@ -3,18 +3,18 @@ import moment from 'moment'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 import {DropdownList} from 'react-widgets'
-// import RadioGroup from 'react-radio-group'
-import RadioGroup from 'components/molecules/RadioGroup'
+
+import RadioGroup from 'components/atoms/form/RadioGroup'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
-import IconButton from 'components/atoms/IconButton'
+import IconButton from 'components/atoms/button/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
-import CampaignSelector from 'components/molecules/CampaignSelector'
-import IndicatorSelector from 'components/molecules/IndicatorSelector'
-import LocationSelector from 'components/molecules/LocationSelector'
-import DateRangePicker from 'components/molecules/DateRangePicker'
-import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
+import CampaignMultiSelect from 'components/atoms/multi_select/CampaignMultiSelect'
+import IndicatorMultiSelect from 'components/atoms/multi_select/IndicatorMultiSelect'
+import LocationMultiSelect from 'components/atoms/multi_select/LocationMultiSelect'
+import DateMultiSelect from 'components/atoms/select/DateRangeSelect'
+import DistrictSelect from 'components/atoms/select/DistrictSelect'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -81,7 +81,7 @@ const MultiChartControls = React.createClass({
     const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
-        <DateRangePicker
+        <DateMultiSelect
           sendValue={props.setDateRange}
           start={start_date}
           end={end_date}
@@ -111,7 +111,7 @@ const MultiChartControls = React.createClass({
     const indicator_filter = (
       <div className='medium-12 columns'>
         <h3>Filter By</h3>
-        <DistrictDropdown selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
+        <DistrictSelect selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
       </div>
     )
 
@@ -130,7 +130,7 @@ const MultiChartControls = React.createClass({
     ) : null
 
     const campaign_selector = chartShowsOneCampaign ? (
-      <CampaignSelector
+      <CampaignMultiSelect
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
         selectCampaign={props.selectCampaign}
@@ -143,7 +143,7 @@ const MultiChartControls = React.createClass({
     ) : ''
 
     const location_selector = (
-      <LocationSelector
+      <LocationMultiSelect
         locations={this.state.locations}
         selected_locations={chart.selected_locations}
         selectLocation={props.selectLocation}
@@ -157,7 +157,7 @@ const MultiChartControls = React.createClass({
     )
 
     const indicator_selector = (
-      <IndicatorSelector
+      <IndicatorMultiSelect
         indicators={this.state.indicators}
         selected_indicators={chart.selected_indicators}
         indicator_colors={chart.indicator_colors}

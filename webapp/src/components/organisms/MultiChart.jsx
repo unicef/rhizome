@@ -2,10 +2,10 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
-import DatapointTable from 'components/molecules/tables/DatapointTable'
-import ChartTypeSelector from 'components/molecules/ChartTypeSelector'
-import ChartSelector from 'components/molecules/ChartSelector'
-import Placeholder from 'components/molecules/Placeholder'
+import DatapointTable from 'components/atoms/table/DatapointTable'
+import ChartTypeSelect from 'components/atoms/select/ChartTypeSelect'
+import ChartSelect from 'components/atoms/select/ChartSelect'
+import Placeholder from 'components/atoms/Placeholder'
 
 import BarChart from 'components/molecules/highcharts/BarChart'
 import MapChart from 'components/molecules/highcharts/MapChart'
@@ -78,14 +78,14 @@ const MultiChart = React.createClass({
     const chart_selector = (
       <div>
         <br/><h4>or</h4><br/>
-        <ChartSelector charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
+        <ChartSelect charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
       </div>
     )
 
     const chart_type_selector = (
       <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>
         <h4>View Data As</h4>
-        <ChartTypeSelector onChange={this.props.setType}/>
+        <ChartTypeSelect onChange={this.props.setType}/>
         { this.props.selectChart ? chart_selector : null }
       </div>
     )

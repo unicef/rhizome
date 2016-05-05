@@ -6,7 +6,7 @@ import AdminApp from 'components/pages/AdminApp'
 
 Reflux.use(RefluxPromise(window.Promise))
 
-React.render(React.createElement(require('components/molecules/DashboardNav')), document.getElementById('dashboards-nav'))
+React.render(React.createElement(require('components/atoms/nav/DashboardNav')), document.getElementById('dashboards-nav'))
 
 export default {
   DataEntry: function (el) {

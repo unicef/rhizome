@@ -1,8 +1,8 @@
 import React from 'react'
 
-import DropdownIcon from 'components/atoms/DropdownIcon'
-import Dropdown from 'components/molecules/menus/Dropdown'
-import MenuItem from 'components/molecules/MenuItem'
+import IconButtonDropdown from 'components/atoms/button/IconButtonDropdown'
+import Dropdown from 'components/atoms/select/Select'
+import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
 
 var ExportIcon = React.createClass({
   propTypes: {
@@ -128,11 +128,11 @@ var ExportIcon = React.createClass({
 
     return (
       <span style={{position: 'relative', top: '1px', left: '4px'}}>
-        <DropdownIcon classes={classString} searchable={false} icon='fa-external-link' text='Export'>
-          <MenuItem key='jpeg' value='jpeg' title='Export as IMAGE' sendValue={this.selectOption} />
-          <MenuItem key='pdf' value='pdf'  title='Export as PDF' sendValue={this.selectOption} />
-          <MenuItem key='csv' value='csv'  title='Export as CSV' sendValue={this.selectOption} />
-        </DropdownIcon>
+        <IconButtonDropdown classes={classString} searchable={false} icon='fa-external-link' text='Export'>
+          <ExpandableMenuItem key='jpeg' value='jpeg' title='Export as IMAGE' sendValue={this.selectOption} />
+          <ExpandableMenuItem key='pdf' value='pdf'  title='Export as PDF' sendValue={this.selectOption} />
+          <ExpandableMenuItem key='csv' value='csv'  title='Export as CSV' sendValue={this.selectOption} />
+        </IconButtonDropdown>
         <iframe width='0' height='0' className='invisible' src={this.state.href}></iframe>
       </span>
     )

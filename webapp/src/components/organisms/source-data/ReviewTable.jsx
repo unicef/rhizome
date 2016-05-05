@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React from 'react'
 
-import SubmissionModal from 'components/organisms/source-data/SubmissionModal.jsx'
-import MapForm from 'components/organisms/source-data/MapForm.jsx'
+import SubmissionModal from 'components/organisms/source-data/SubmissionModal'
+import MapForm from 'components/organisms/source-data/MapForm'
 
 import Datascope from 'components/organisms/datascope/Datascope'
 import LocalDatascope from 'components/organisms/datascope/LocalDatascope'

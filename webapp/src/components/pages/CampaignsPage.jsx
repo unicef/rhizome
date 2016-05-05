@@ -2,8 +2,8 @@ import React from 'react'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import DateRangePicker from 'components/molecules/DateRangePicker'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DateMultiSelect from 'components/atoms/select/DateRangeSelect'
+import DropdownButton from 'components/atoms/button/DropdownButton'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'
@@ -79,7 +79,7 @@ var CampaignsPage = React.createClass({
     let topLevelLocationSet = (
       <div>
         <label htmlFor='top_lvl_location'>Top level location: </label>
-        <DropdownMenu
+        <DropdownButton
           items={this.state.locations}
           sendValue={CampaignPageActions.setLocation}
           item_plural_name='Locations'
@@ -92,7 +92,7 @@ var CampaignsPage = React.createClass({
     let topLevelIndicatorTagSet = (
       <div>
         <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-        <DropdownMenu
+        <DropdownButton
           items={this.state.indicatorToTags}
           sendValue={this._setIndicatorTag}
           item_plural_name='Indicator Tags'
@@ -116,7 +116,7 @@ var CampaignsPage = React.createClass({
     let dateRangePicker = (
       <div>
         <label htmlFor='start_date'>Start date: </label>
-        <DateRangePicker
+        <DateMultiSelect
           start={this.state.campaign.start}
           end={this.state.campaign.end}
           sendValue={CampaignPageActions.updateCampaignRange}

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import IconButton from 'components/atoms/IconButton'
+import IconButton from 'components/atoms/button/IconButton'
 import ExportIcon from 'components/atoms/ExportIcon'
 import TitleInput from 'components/molecules/TitleInput'
 

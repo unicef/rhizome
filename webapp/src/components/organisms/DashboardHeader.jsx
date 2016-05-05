@@ -2,14 +2,14 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
-import AsyncButton from 'components/atoms/AsyncButton'
-import IconButton from 'components/atoms/IconButton'
+import AsyncButton from 'components/atoms/button/AsyncButton'
+import IconButton from 'components/atoms/button/IconButton'
 import TitleInput from 'components/molecules/TitleInput'
 import DashboardPageActions from 'actions/DashboardPageActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
-import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
-import LocationDropdown from 'components/molecules/menus/LocationDropdown'
-import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
+import CampaignSelect from 'components/atoms/select/CampaignSelect'
+import LocationSelect from 'components/atoms/select/LocationSelect'
+import DistrictSelect from 'components/atoms/select/DistrictSelect'
 import CampaignStore from 'stores/CampaignStore'
 import LocationStore from 'stores/LocationStore'
 import RootStore from 'stores/RootStore'
@@ -63,18 +63,18 @@ const DashboardHeader = React.createClass({
 
     const dashboard_filters = (
       <div className='page-header-filters'>
-        <CampaignDropdown
+        <CampaignSelect
           campaigns={this.state.campaigns.raw || []}
           selected={props.selected_campaigns[0]}
           sendValue={DashboardPageActions.setCampaign}
         />
-        <LocationDropdown
+        <LocationSelect
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
           sendValue={DashboardPageActions.setLocation}
           hideLastLevel
         />
-        <DistrictDropdown selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
+        <DistrictSelect selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
       </div>
     )
 

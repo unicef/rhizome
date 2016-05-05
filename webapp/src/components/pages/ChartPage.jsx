@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
-import Placeholder from 'components/molecules/Placeholder'
+import Placeholder from 'components/atoms/Placeholder'
 import MultiChart from 'components/organisms/MultiChart'
 import TitleInput from 'components/molecules/TitleInput'
 

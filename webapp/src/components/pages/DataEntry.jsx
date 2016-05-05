@@ -1,11 +1,11 @@
 import React from 'react'
 import Reflux from 'reflux'
 
-import Placeholder from 'components/molecules/Placeholder'
-import IndicatorTagDropdown from 'components/molecules/menus/IndicatorTagDropdown'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
-import CampaignDropdown from 'components/molecules/menus/CampaignDropdown'
-import DatabrowserTable from 'components/molecules/DatabrowserTable'
+import Placeholder from 'components/atoms/Placeholder'
+import IndicatorTagSelect from 'components/atoms/select/IndicatorTagSelect'
+import DropdownButton from 'components/atoms/button/DropdownButton'
+import CampaignSelect from 'components/atoms/select/CampaignSelect'
+import DatabrowserTable from 'components/atoms/table/DatabrowserTable'
 
 import DatapointStore from 'stores/DatapointStore'
 import LocationStore from 'stores/LocationStore'
@@ -55,12 +55,12 @@ const DataEntry = React.createClass({
           </div>
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
-              <CampaignDropdown
+              <CampaignSelect
                 campaigns={state.campaigns.raw || []}
                 selected={state.selected_campaign}
                 sendValue={id => DataEntryActions.setCampaign(state.campaigns.index[id])}
               />
-              <IndicatorTagDropdown
+              <IndicatorTagSelect
                 indicator_tags={state.indicators.tags || []}
                 selected={state.selected_indicator_tag}
                 sendValue={id => {
@@ -68,7 +68,7 @@ const DataEntry = React.createClass({
                   DataEntryActions.setIndicatorsByTag(indicator_tag, state.indicators.index)
                 }}
               />
-              <DropdownMenu
+              <DropdownButton
                 items={state.locations.list}
                 sendValue={id => DataEntryActions.addLocation(state.locations.index[id])}
                 item_plural_name='Locations'
