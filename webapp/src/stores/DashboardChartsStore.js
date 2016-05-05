@@ -344,6 +344,7 @@ var DashboardChartsStore = Reflux.createStore({
     this.trigger(this.charts)
   },
   onFetchChartCompleted: function (chart) {
+    chart = chart.meta ? chart.objects : chart
     const new_chart = this.meltChart(chart)
     this.charts[chart.uuid] = new_chart
     DashboardChartsActions.setType(new_chart.type, new_chart.uuid)
@@ -355,7 +356,6 @@ var DashboardChartsStore = Reflux.createStore({
 
   // ============================  Fetch Map Features  ========================= //
   onFetchMapFeatures: function (uuid) {
-    this.charts[uuid].loading = true
     this.trigger(this.charts)
   },
   onFetchMapFeaturesCompleted: function (response) {

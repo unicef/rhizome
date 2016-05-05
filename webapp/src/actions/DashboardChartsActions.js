@@ -1,5 +1,4 @@
 import Reflux from 'reflux'
-import ChartAPI from 'data/requests/ChartAPI'
 import api from 'data/api'
 
 const DashboardChartsActions = Reflux.createActions({
@@ -47,7 +46,10 @@ const DashboardChartsActions = Reflux.createActions({
 
 // API CALLS
 // ---------------------------------------------------------------------------
-DashboardChartsActions.fetchChart.listenAndPromise(chart_id => ChartAPI.getChart(chart_id))
+DashboardChartsActions.fetchChart.listenAndPromise(chart_id => {
+  const fetch = api.endPoint('/custom_chart/' + chart_id, 'GET', 1)
+  return fetch(null, null, {'cache-control': 'no-cache'})
+})
 
 DashboardChartsActions.fetchMapFeatures.listen(location_ids => {
   DashboardChartsActions.fetchMapFeatures.promise(
