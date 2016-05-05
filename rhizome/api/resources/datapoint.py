@@ -172,6 +172,7 @@ class DatapointResource(BaseNonModelResource):
                 indicator_id__in = filtered_indicator_list
             ).values(*cols)),columns=cols)
 
+            agg_logic = 'SUM'
             if dp_df.empty:
 
                 parent_location_filter = self\
@@ -180,6 +181,7 @@ class DatapointResource(BaseNonModelResource):
                 if parent_location_filter == None:
                     parent_location_filter = self\
                         .parsed_params['location_id__in']
+                    agg_logic = 'AVG'
 
                 sub_location_ids = Location.objects.filter(
                     parent_location_id = parent_location_filter
@@ -208,10 +210,16 @@ class DatapointResource(BaseNonModelResource):
             else:
                 df_with_aggregate = dp_df
 
-            gb_df = DataFrame(df_with_aggregate\
-                .groupby(['indicator_id','time_grouping'])['value']\
-                .sum())\
-                .reset_index()
+            if agg_logic == 'AVG':
+                gb_df = DataFrame(df_with_aggregate\
+                    .groupby(['indicator_id','time_grouping'])['value']\
+                    .mean())\
+                    .reset_index()
+            else:
+                gb_df = DataFrame(df_with_aggregate\
+                    .groupby(['indicator_id','time_grouping'])['value']\
+                    .sum())\
+                    .reset_index()
             pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
             for time_group, indicator_data in sorted(pivoted_data.iteritems(),\
                 reverse=True):
