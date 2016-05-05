@@ -1,11 +1,13 @@
+import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
 import LocationSelect from 'components/atoms/select/LocationSelect'
 import DropdownButton from 'components/atoms/button/DropdownButton'
-import MapFormStore from 'stores/MapFormStore'
-import MapFormActions from 'actions/MapFormActions'
+import CampaignStore from 'stores/CampaignStore'
+import LocationStore from 'stores/LocationStore'
+import IndicatorStore from 'stores/IndicatorStore'
 
 import Modal from 'react-modal'
 
@@ -20,13 +22,11 @@ var MapForm = React.createClass({
     onModalClose: React.PropTypes.func.isRequired
   },
 
-  mixins: [Reflux.connect(MapFormStore, 'data')],
-
-  componentWillMount: function () {
-    MapFormActions.getLocations()
-    MapFormActions.getCampaigns()
-    MapFormActions.getIndicators()
-  },
+  mixins: [
+    Reflux.connect(CampaignStore, 'campaigns'),
+    Reflux.connect(LocationStore, 'locations'),
+    Reflux.connect(IndicatorStore, 'indicators')
+  ],
 
   getInitialState: function () {
     return {
@@ -77,31 +77,31 @@ var MapForm = React.createClass({
     }
 
     if (content_type === 'location') {
-      if (!this.state.data.locations) {
+      if (!this.state.locations.index) {
         return loadText('Locations')
       }
       return <div><LocationSelect
-        locations={this.state.data.locations}
+        locations={_.toArray(this.state.locations.index)}
         selected={defaultSelected}
         sendValue={this.postMetaMap}/></div>
     }
     if (content_type === 'indicator') {
-      if (!this.state.data.indicators) {
+      if (!this.state.indicators.list) {
         return loadText('Indicators')
       }
       return <DropdownButton
-          items={this.state.data.indicators}
+          items={this.state.indicators.list}
           sendValue={this.postMetaMap}
           item_plural_name='Indicators'
           text='Map Indicator'/>
     }
     if (content_type === 'campaign') {
-      if (!this.state.data.campaigns) {
+      if (!this.state.campaigns.list) {
         return loadText('Campaigns')
       }
-      console.log('this.state.data: ', this.state.data.campaigns)
+
       return <DropdownButton
-          items={this.state.data.campaigns}
+          items={this.state.campaigns.list}
           value_field='id'
           title_field='name'
           sendValue={this.postMetaMap}
