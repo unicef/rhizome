@@ -1,13 +1,13 @@
 import _ from 'lodash'
-import React from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Search from 'components/molecules/Search'
 
 import dom from 'utilities/dom'
 
-export default React.createClass({
+class DropdownMenu extends Component {
 
-  propTypes: {
+  static propTypes = {
     onSearch: React.PropTypes.func,
     onBlur: React.PropTypes.func,
     searchable: React.PropTypes.bool,
@@ -18,9 +18,9 @@ export default React.createClass({
       React.PropTypes.string,
       React.PropTypes.bool
     ])
-  },
+  }
 
-  getDefaultProps: function () {
+  getDefaultProps = () => {
     return {
       onSearch: _.noop,
       onBlur: _.noop,
@@ -28,18 +28,18 @@ export default React.createClass({
       x: 0,
       y: 0
     }
-  },
+  }
 
-  getInitialState: function () {
+  getInitialState = () => {
     return {
       maxHeight: 'none',
       marginLeft: 0,
       orientation: 'center',
       pattern: ''
     }
-  },
+  }
 
-  componentDidMount: function () {
+  componentDidMount = () => {
     window.addEventListener('resize', this._onResize)
 
     this._onResize()
@@ -48,21 +48,21 @@ export default React.createClass({
     } else {
       React.findDOMNode(this).focus()
     }
-  },
+  }
 
-  componentDidUpdate: function () {
+  componentDidUpdate = () => {
     this._onResize()
-  },
+  }
 
-  componentWillUnmount: function () {
+  componentWillUnmount = () => {
     window.removeEventListener('resize', this._onResize)
-  },
+  }
 
-  shouldComponentUpdate: function (nextProps, nextState) {
+  shouldComponentUpdate = (nextProps, nextState) => {
     return !_.isEqual(nextProps, this.props) || !_.isEqual(nextState, this.state)
-  },
+  }
 
-  _onResize: function () {
+  _onResize = () => {
     var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
     var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height: 0})
 
@@ -91,9 +91,9 @@ export default React.createClass({
       maxHeight: Math.round(Math.floor(window.innerHeight - y - (menu.height - items.height)) / 10) * 10,
       marginLeft: Math.floor(marginLeft)
     })
-  },
+  }
 
-  render: function () {
+  render = () => {
     var itemlistStyle = { maxHeight: this.state.maxHeight }
     var containerStyle = { marginLeft: this.state.marginLeft }
     var position = {
@@ -121,9 +121,9 @@ export default React.createClass({
         </div>
       </div>
     )
-  },
+  }
 
-  onBlur: function () {
+  onBlur = () => {
     var self = this
 
     window.setTimeout(function () {
@@ -134,4 +134,6 @@ export default React.createClass({
       }
     })
   }
-})
+}
+
+export default DropdownMenu

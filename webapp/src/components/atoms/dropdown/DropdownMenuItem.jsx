@@ -1,14 +1,15 @@
-import React, {PropTypes} from 'react'
+import React, {Component, PropTypes} from 'react'
 
-var DropdownMenuItem = React.createClass({
-  propTypes: {
+class DropdownMenuItem extends Component {
+
+  static propTypes = {
     key: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
     onClick: PropTypes.func.isRequired,
     classes: PropTypes.string
-  },
+  }
 
-  render: function () {
+  render = () => {
     return (
       <li key={this.props.key} className={this.props.classes}>
         <a role='menuitem' onClick={this.props.onClick}>
@@ -17,6 +18,6 @@ var DropdownMenuItem = React.createClass({
       </li>
     )
   }
-})
+}
 
 export default DropdownMenuItem

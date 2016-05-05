@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, { PropTypes } from 'react'
+import React, {Component, PropTypes} from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'

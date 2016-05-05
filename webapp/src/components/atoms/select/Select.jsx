@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import IconButton from 'components/atoms/buttons/IconButton'
 import Dropdown from 'components/atoms/dropdown/Dropdown'

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 

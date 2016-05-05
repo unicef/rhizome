@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React, {PropTypes} from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Select from 'components/atoms/select/Select'
 import MenuItem from 'components/molecules/MenuItem'

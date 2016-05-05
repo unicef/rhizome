@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {Component, PropTypes} from 'react'
 
 import Dropdown from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'

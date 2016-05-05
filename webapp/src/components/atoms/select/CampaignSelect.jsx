@@ -1,6 +1,6 @@
-import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
+import React, {Component, PropTypes} from 'react'
 
 import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
