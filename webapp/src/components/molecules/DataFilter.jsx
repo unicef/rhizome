@@ -1,7 +1,7 @@
 import React from 'react'
 
 import ExpandableSection from 'components/molecules/ExpandableSection'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import List from 'components/molecules/list/List'
 

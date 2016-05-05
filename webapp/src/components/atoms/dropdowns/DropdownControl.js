@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Layer from 'react-layer'
 
-import Menu from 'components/molecules/menus/Menu'
+import Menu from 'components/atoms/dropdowns/Dropdown'
 import dom from 'utilities/dom'
 
 var DropdownControl = {

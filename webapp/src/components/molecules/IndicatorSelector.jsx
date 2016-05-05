@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableIndicators from 'components/molecules/list/ReorderableIndicators'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 import IndicatorDropdown from 'components/molecules/menus/IndicatorDropdown'
 
 

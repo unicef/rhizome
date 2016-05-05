@@ -1,7 +1,7 @@
 import React from 'react'
 
-import Dropdown from 'components/molecules/menus/Dropdown'
-import DropdownItem from 'components/molecules/menus/DropdownItem'
+import Dropdown from 'components/atoms/dropdowns/DropdownSelect'
+import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
 
 var IndicatorDropdown = React.createClass({
   propTypes: {

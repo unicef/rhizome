@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import moment from 'moment'
 
 import DateRangePicker from 'components/molecules/DateRangePicker'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 
 import CampaignPageActions from 'actions/CampaignPageActions'
 import CampaignPageStore from 'stores/CampaignPageStore'

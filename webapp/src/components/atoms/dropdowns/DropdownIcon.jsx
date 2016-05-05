@@ -4,7 +4,7 @@ import IconButton from 'components/atoms/IconButton'
 var DropdownIcon = React.createClass({
 
   mixins: [
-    require('components/molecules/menus/DropdownControl')
+    require('components/atoms/dropdowns/DropdownControl')
   ],
 
   propTypes: {

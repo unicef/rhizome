@@ -1,7 +1,7 @@
 import React from 'react'
 import IconButton from 'components/atoms/IconButton'
-import DropdownIcon from 'components/atoms/DropdownIcon'
-import DropdownItem from 'components/molecules/menus/DropdownItem'
+import DropdownIcon from 'components/atoms/dropdowns/DropdownIcon'
+import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
 import palettes from 'utilities/palettes'
 
 export default React.createClass({

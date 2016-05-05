@@ -2,8 +2,8 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import Dropdown from 'components/molecules/menus/Dropdown'
-import DropdownItem from 'components/molecules/menus/DropdownItem'
+import Dropdown from 'components/atoms/dropdowns/DropdownSelect'
+import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
 
 var IndicatorTagDropdown = React.createClass({
   propTypes: {

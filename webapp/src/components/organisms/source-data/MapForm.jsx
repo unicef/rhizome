@@ -3,7 +3,7 @@ import Reflux from 'reflux'
 import api from 'data/api'
 
 import LocationDropdown from 'components/molecules/menus/LocationDropdown'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'
 

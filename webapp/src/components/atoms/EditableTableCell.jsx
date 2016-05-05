@@ -8,7 +8,7 @@ import TableCell from 'components/atoms/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
-import DropdownMenu from 'components/molecules/menus/DropdownMenu'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 
 let EditableTableCell = React.createClass({
   mixins: [Reflux.connect(EditableTableCellStore)],
