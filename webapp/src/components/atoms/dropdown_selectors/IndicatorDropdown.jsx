@@ -1,6 +1,6 @@
 import React from 'react'
 
-import DropdownSelect from 'components/atoms/dropdown/DropdownSelect'
+import DropdownSelector from 'components/atoms/dropdown_selectors/DropdownSelector'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 var IndicatorDropdown = React.createClass({
@@ -45,14 +45,14 @@ var IndicatorDropdown = React.createClass({
     )
 
     return (
-      <DropdownSelect
+      <DropdownSelector
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         text={selected_text}
         searchable
         onSearch={this.setPattern}>
         {indicator_menu_items}
-      </DropdownSelect>
+      </DropdownSelector>
     )
   }
 })

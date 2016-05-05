@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownSelect from 'components/atoms/dropdown/DropdownSelect'
+import DropdownSelector from 'components/atoms/dropdown_selectors/DropdownSelector'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 const filters = [
@@ -40,13 +40,13 @@ const DistrictDropdown = React.createClass({
     )
 
     return (
-      <DropdownSelect
+      <DropdownSelector
         className='font-weight-600 cd-titlebar-margin'
         icon='fa-chevron-down'
         searchable={false}
         text={selected_text}>
         {indicator_menu_items}
-      </DropdownSelect>
+      </DropdownSelector>
     )
   }
 })
