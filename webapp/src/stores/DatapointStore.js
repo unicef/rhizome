@@ -69,11 +69,12 @@ var DatapointStore = Reflux.createStore({
       .flatten()
       .sortBy(_.method('campaign.start_date.getTime'))
       .map(datapoint => {
-        var base = _.omit(datapoint, 'indicators')
+        var base = _.omit(datapoint, ['indicators', 'location'])
         return datapoint.indicators.map(indicator => {
           return _.assign({
             computed: indicator.computed,
-            indicator: indicator.indicator,
+            indicator: this.indicators.index[indicator.indicator],
+            location: this.locations.index[datapoint.location],
             value: indicator.value
           }, base)
         })

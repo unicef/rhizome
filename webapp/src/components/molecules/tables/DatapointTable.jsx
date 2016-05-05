@@ -9,7 +9,7 @@ class DatapointTable extends Table {
   constructor (props) {
     super(props)
     this.groupByIndicator = this.props.groupBy === 'indicator'
-    this.rows = this.groupByIndicator ? _.groupBy(this.props.datapoints.flattened, 'indicator') : this.props.datapoints.raw
+    this.rows = this.groupByIndicator ? _.groupBy(this.props.datapoints.flattened, 'indicator.id') : this.props.datapoints.raw
   }
 
   onSave = function () {
