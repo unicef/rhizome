@@ -18,9 +18,11 @@ class StackedPercentColumnChart extends HighChart {
     this.setState({stack_mode: new_state})
     this.props.updateTypeParams('stack_mode', new_state)
     this.chart.series.forEach(s => s.update({stacking: new_state}, false))
+    const selected_indicator_data_format = this.props.selected_indicators[0].data_format
     this.chart.yAxis[0].update({
-      labels: {format: new_state === 'percent' ? '{value}%' : '{value}'},
-      max: new_state === 'percent' ? 100 : null
+      labels: {
+        formatter: new_state === 'percent' ? undefined : function () { return format.autoFormat(this.value, selected_indicator_data_format)},
+        format: new_state === 'percent' ? '{value}%' : '{value}'},
     })
     this.chart.redraw()
   }
@@ -29,7 +31,6 @@ class StackedPercentColumnChart extends HighChart {
     const props = this.props
     const first_indicator = props.selected_indicators[0]
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
-
     this.config = {
       chart: {
         type: 'column'
@@ -38,9 +39,10 @@ class StackedPercentColumnChart extends HighChart {
       xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
-        max: this.state.stack_mode === 'percent' ? 100 : null,
-        labels : {
-          format: this.state.stack_mode === 'percent' ? '{value}%' : '{value}'
+        labels: {
+          formatter: function () {
+            return format.autoFormat(this.value, first_indicator.data_format)
+          }
         }
       },
       exporting: {
