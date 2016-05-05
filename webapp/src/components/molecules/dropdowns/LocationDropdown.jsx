@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 
-import Dropdown from 'components/molecules/menus/Dropdown.jsx'
+import Dropdown from 'components/molecules/dropdowns/Dropdown.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
 var LocationDropdown = React.createClass({

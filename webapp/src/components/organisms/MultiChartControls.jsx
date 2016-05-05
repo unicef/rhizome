@@ -14,7 +14,7 @@ import CampaignSelector from 'components/molecules/CampaignSelector'
 import IndicatorSelector from 'components/molecules/IndicatorSelector'
 import LocationSelector from 'components/molecules/LocationSelector'
 import DateRangePicker from 'components/molecules/DateRangePicker'
-import DistrictDropdown from 'components/molecules/menus/DistrictDropdown'
+import DistrictDropdown from 'components/molecules/dropdowns/DistrictDropdown'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'

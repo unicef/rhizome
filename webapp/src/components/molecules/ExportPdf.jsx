@@ -1,6 +1,6 @@
 import React from 'react'
 
-import Dropdown from 'components/molecules/menus/Dropdown.jsx'
+import Dropdown from 'components/molecules/dropdowns/Dropdown.jsx'
 import MenuItem from 'components/molecules/MenuItem.jsx'
 
 var ExportPdf = React.createClass({
