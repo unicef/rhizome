@@ -10,7 +10,6 @@ import RootStore from 'stores/RootStore'
 let DashboardNav = React.createClass({
 
   mixins: [
-    require('components/atoms/dropdowns/DropdownControl'),
     Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 

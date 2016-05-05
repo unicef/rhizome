@@ -3,7 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import Dropdown from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
+import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
 
 var ChartSelector = React.createClass({
   propTypes: {
@@ -22,7 +22,7 @@ var ChartSelector = React.createClass({
   render () {
     const charts = this.props.charts || []
     const chart_menu_items = this.props.charts.map(chart =>
-      <DropdownItem
+      <DropdownMenuItem
         key={'chart-' + chart.id}
         text={chart.title}
         onClick={() => this.props.selectChart(chart)}

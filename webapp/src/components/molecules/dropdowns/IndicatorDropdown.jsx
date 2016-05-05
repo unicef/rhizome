@@ -1,7 +1,7 @@
 import React from 'react'
 
 import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
+import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
 
 var IndicatorDropdown = React.createClass({
   propTypes: {
@@ -36,7 +36,7 @@ var IndicatorDropdown = React.createClass({
     const pattern = this.state.pattern
     const filtered_items = pattern.length > 2 ? this.indicators.filter(i => new RegExp(pattern, 'i').test(i.name)) : this.indicators
     const indicator_menu_items = filtered_items.map(indicator =>
-      <DropdownItem
+      <DropdownMenuItem
         key={'indicator-' + indicator.id}
         text={indicator.name}
         onClick={this.props.sendValue.bind(this, indicator.id)}

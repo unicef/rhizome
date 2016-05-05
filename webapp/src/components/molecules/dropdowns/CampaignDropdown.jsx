@@ -3,7 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
+import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
 
 var CampaignDropdown = React.createClass({
   propTypes: {
@@ -21,7 +21,7 @@ var CampaignDropdown = React.createClass({
 
   render () {
     const campaign_menu_items = this.props.campaigns.map(campaign =>
-      <DropdownItem
+      <DropdownMenuItem
         key={'campaign-' + campaign.id}
         text={campaign.name}
         onClick={this.props.sendValue.bind(this, campaign.id)}

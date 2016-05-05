@@ -1,6 +1,6 @@
 import React, {PropTypes} from 'react'
 
-var DropdownItem = React.createClass({
+var DropdownMenuItem = React.createClass({
   propTypes: {
     key: PropTypes.string.isRequired,
     text: PropTypes.string.isRequired,
@@ -19,4 +19,4 @@ var DropdownItem = React.createClass({
   }
 })
 
-export default DropdownItem
+export default DropdownMenuItem

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Layer from 'react-layer'
 
-import Menu from 'components/atoms/dropdowns/Dropdown'
+import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 import dom from 'utilities/dom'
 
 var DropdownControl = {
@@ -27,7 +27,7 @@ var DropdownControl = {
       var x = (offset.right + offset.left) / 2
 
       var menu = (
-        <Menu x={x} y={offset.bottom}
+        <DropdownMenu x={x} y={offset.bottom}
           onBlur={this.close}
           onSearch={this.props.onSearch}
           searchable={this.props.searchable}

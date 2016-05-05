@@ -3,7 +3,7 @@ import _ from 'lodash'
 import moment from 'moment'
 
 import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
+import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
 
 var IndicatorTagDropdown = React.createClass({
   propTypes: {
@@ -21,7 +21,7 @@ var IndicatorTagDropdown = React.createClass({
 
   render () {
     const indicator_tag_menu_items = this.props.indicator_tags.map(indicator_tag =>
-      <DropdownItem
+      <DropdownMenuItem
         key={'indicator_tag-' + indicator_tag.id}
         text={indicator_tag.tag_name}
         onClick={this.props.sendValue.bind(this, indicator_tag.id)}

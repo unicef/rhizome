@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 
 import DropdownSelect from 'components/atoms/dropdowns/DropdownSelect'
-import DropdownItem from 'components/atoms/dropdowns/DropdownItem'
+import DropdownMenuItem from 'components/atoms/dropdowns/DropdownMenuItem'
 
 const filters = [
   { id: 1, value: 0, name: 'All Districts', type: 'LPD Status' },
@@ -31,7 +31,7 @@ const DistrictDropdown = React.createClass({
     const selected_text = _.isEmpty(this.props.selected) ? filters[0].name: this.props.selected.name
 
     const indicator_menu_items = filters.map(filter =>
-      <DropdownItem
+      <DropdownMenuItem
         key={'filter-' + filter.id}
         text={filter.name}
         onClick={() => this.props.sendValue(filter)}
