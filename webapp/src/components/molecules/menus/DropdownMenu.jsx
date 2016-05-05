@@ -6,7 +6,7 @@ import MenuItem from 'components/molecules/MenuItem.jsx'
 var DropdownMenu = React.createClass({
 
   mixins: [
-    require('components/molecules/menus/MenuControl')
+    require('components/molecules/menus/DropdownControl')
   ],
 
   propTypes: {

@@ -10,7 +10,7 @@ import RootStore from 'stores/RootStore'
 let DashboardNav = React.createClass({
 
   mixins: [
-    require('components/molecules/menus/MenuControl'),
+    require('components/molecules/menus/DropdownControl'),
     Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 

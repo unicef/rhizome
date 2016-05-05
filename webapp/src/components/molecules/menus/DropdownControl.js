@@ -5,7 +5,7 @@ import Layer from 'react-layer'
 import Menu from 'components/molecules/menus/Menu'
 import dom from 'utilities/dom'
 
-var MenuControl = {
+var DropdownControl = {
   getDefaultProps: function () {
     return {
       style: '',
@@ -104,4 +104,4 @@ function findMatches (item, re) {
   return matches
 }
 
-export default MenuControl
+export default DropdownControl
