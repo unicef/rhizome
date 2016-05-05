@@ -3,7 +3,7 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DatapointTable from 'components/molecules/tables/DatapointTable'
-import ChartTypeSelector from 'components/molecules/data_filters/ChartTypeSelector'
+import ChartTypeSelector from 'components/molecules/chart_controls/ChartTypeSelector'
 import ChartDropdown from 'components/atoms/dropdown_selectors/ChartDropdown'
 import Placeholder from 'components/molecules/Placeholder'
 

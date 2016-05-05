@@ -10,9 +10,9 @@ import builderDefinitions from 'components/molecules/charts/utils/builderDefinit
 import IconButton from 'components/atoms/buttons/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
-import CampaignSelector from 'components/molecules/data_filters/CampaignSelector'
-import IndicatorSelector from 'components/molecules/data_filters/IndicatorSelector'
-import LocationSelector from 'components/molecules/data_filters/LocationSelector'
+import CampaignSelector from 'components/molecules/chart_controls/CampaignSelector'
+import IndicatorSelector from 'components/molecules/chart_controls/IndicatorSelector'
+import LocationSelector from 'components/molecules/chart_controls/LocationSelector'
 import DateRangePicker from 'components/molecules/DateRangePicker'
 import DistrictDropdown from 'components/atoms/dropdown_selectors/DistrictDropdown'
 
