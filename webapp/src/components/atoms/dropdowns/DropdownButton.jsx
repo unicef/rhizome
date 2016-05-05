@@ -2,14 +2,11 @@ import _ from 'lodash'
 import React from 'react'
 
 import MenuItem from 'components/molecules/MenuItem'
+import Dropdown from 'components/atoms/dropdowns/Dropdown'
 
-var DropdownButton = React.createClass({
+class DropdownButton extends Dropdown {
 
-  mixins: [
-    require('components/atoms/dropdowns/DropdownControl')
-  ],
-
-  propTypes: {
+  static propTypes = {
     items: React.PropTypes.array.isRequired,
     sendValue: React.PropTypes.func.isRequired,
     item_plural_name: React.PropTypes.string,
@@ -21,25 +18,23 @@ var DropdownButton = React.createClass({
     uniqueOnly: React.PropTypes.bool,
     multi: React.PropTypes.bool,
     grouped: React.PropTypes.bool
-  },
+  }
 
-  getDefaultProps: function () {
-    return {
-      uniqueOnly: false,
-      multi: false,
-      grouped: false,
-      value_field: 'value',
-      title_field: 'title'
-    }
-  },
+  static defaultProps = {
+    uniqueOnly: false,
+    multi: false,
+    grouped: false,
+    value_field: 'value',
+    title_field: 'title'
+  }
 
-  componentWillReceiveProps: function (nextProps) {
+  componentWillReceiveProps = (nextProps) => {
     if (!this.multi && nextProps.text !== this.props.text) {
       this.setState({ open: false })
     }
-  },
+  }
 
-  componentWillUpdate: function (nextProps, nextState) {
+  componentWillUpdate = (nextProps, nextState) => {
     if (this.props.grouped) {
       nextProps.children = this._getGroupedMenuItemComponents(this.props.items, this.state.pattern)
     } else {
@@ -47,9 +42,9 @@ var DropdownButton = React.createClass({
     }
 
     nextProps.onSearch = this._setPattern
-  },
+  }
 
-  _getGroupedMenuItemComponents: function (items, pattern) {
+  _getGroupedMenuItemComponents = (items, pattern) => {
     let grouped_menu_item_components = []
 
     items.forEach(item => {
@@ -60,9 +55,9 @@ var DropdownButton = React.createClass({
     })
 
     return grouped_menu_item_components
-  },
+  }
 
-  _getMenuItemComponents: function (items, pattern) {
+  _getMenuItemComponents = (items, pattern) => {
     const filtered_items = this.filterMenu(items, pattern)
     let menu_items = this.props.uniqueOnly ? _.uniq(filtered_items, item => item.id) : filtered_items
     menu_items = menu_items.map(item => {
@@ -71,13 +66,13 @@ var DropdownButton = React.createClass({
       return item
     })
     return menu_items.map(item => <MenuItem key={item.value} depth={0} sendValue={this.props.sendValue} {...item} />)
-  },
+  }
 
-  _setPattern: function (value) {
+  _setPattern = (value) => {
     this.setState({ pattern: value })
-  },
+  }
 
-  render: function () {
+  render = () => {
     if (!this.props.items || this.props.items.length === 0) {
       if (this.props.text) {
         return (
@@ -99,6 +94,6 @@ var DropdownButton = React.createClass({
       </button>
     )
   }
-})
+}
 
 export default DropdownButton

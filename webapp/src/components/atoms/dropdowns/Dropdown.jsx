@@ -5,7 +5,8 @@ import Layer from 'react-layer'
 import DropdownMenu from 'components/atoms/dropdowns/DropdownMenu'
 import dom from 'utilities/dom'
 
-class DropdownControl extends Component {
+class Dropdown extends Component {
+
   constructor (props) {
     super(props)
     this.state = {
@@ -103,4 +104,4 @@ function findMatches (item, re) {
   return matches
 }
 
-export default DropdownControl
+export default Dropdown
