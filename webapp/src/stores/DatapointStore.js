@@ -73,7 +73,7 @@ var DatapointStore = Reflux.createStore({
         return datapoint.indicators.map(indicator => {
           return _.assign({
             computed: indicator.computed,
-            indicator: indicator.indicator,
+            indicator: this.indicators.index[indicator.indicator],
             value: indicator.value
           }, base)
         })
