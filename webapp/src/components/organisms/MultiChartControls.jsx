@@ -10,11 +10,11 @@ import builderDefinitions from 'components/molecules/charts/utils/builderDefinit
 import IconButton from 'components/atoms/buttons/IconButton'
 import ColorSwatch from 'components/atoms/ColorSwatch'
 import palettes from 'utilities/palettes'
-import CampaignSelector from 'components/molecules/chart_controls/CampaignSelector'
-import IndicatorSelector from 'components/molecules/chart_controls/IndicatorSelector'
-import LocationSelector from 'components/molecules/chart_controls/LocationSelector'
+import CampaignMultiSelect from 'components/atoms/multi_selects/CampaignMultiSelect'
+import IndicatorMultiSelect from 'components/atoms/multi_selects/IndicatorMultiSelect'
+import LocationMultiSelect from 'components/atoms/multi_selects/LocationMultiSelect'
 import DateRangePicker from 'components/molecules/DateRangePicker'
-import DistrictDropdown from 'components/atoms/dropdown_selectors/DistrictDropdown'
+import DistrictDropdown from 'components/atoms/selectors/DistrictDropdown'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -130,7 +130,7 @@ const MultiChartControls = React.createClass({
     ) : null
 
     const campaign_selector = chartShowsOneCampaign ? (
-      <CampaignSelector
+      <CampaignMultiSelect
         campaigns={this.state.campaigns}
         selected_campaigns={chart.selected_campaigns}
         selectCampaign={props.selectCampaign}
@@ -143,7 +143,7 @@ const MultiChartControls = React.createClass({
     ) : ''
 
     const location_selector = (
-      <LocationSelector
+      <LocationMultiSelect
         locations={this.state.locations}
         selected_locations={chart.selected_locations}
         selectLocation={props.selectLocation}
@@ -157,7 +157,7 @@ const MultiChartControls = React.createClass({
     )
 
     const indicator_selector = (
-      <IndicatorSelector
+      <IndicatorMultiSelect
         indicators={this.state.indicators}
         selected_indicators={chart.selected_indicators}
         indicator_colors={chart.indicator_colors}

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import DropdownSelector from 'components/atoms/dropdown_selectors/DropdownSelector'
+import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 const filters = [

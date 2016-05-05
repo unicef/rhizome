@@ -2,7 +2,7 @@ import React from 'react'
 import Reflux from 'reflux'
 import api from 'data/api'
 
-import LocationDropdown from 'components/atoms/dropdown_selectors/LocationDropdown'
+import LocationDropdown from 'components/atoms/selectors/LocationDropdown'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
 import MapFormStore from 'stores/MapFormStore'
 import MapFormActions from 'actions/MapFormActions'

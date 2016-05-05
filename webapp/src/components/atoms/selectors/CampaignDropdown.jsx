@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import DropdownSelector from 'components/atoms/dropdown_selectors/DropdownSelector'
+import DropdownSelector from 'components/atoms/selectors/DropdownSelector'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 var CampaignDropdown = React.createClass({

@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import moment from 'moment'
 
-import Dropdown from 'components/atoms/dropdown_selectors/DropdownSelector'
+import Dropdown from 'components/atoms/selectors/DropdownSelector'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
 var ChartDropdown = React.createClass({

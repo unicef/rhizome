@@ -3,11 +3,11 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import CampaignDropdown from 'components/atoms/dropdown_selectors/CampaignDropdown'
+import CampaignDropdown from 'components/atoms/selectors/CampaignDropdown'
 
 import CampaignStore from 'stores/CampaignStore'
 
-const CampaignSelector = React.createClass({
+const CampaignMultiSelect = React.createClass({
 
   propTypes: {
     campaigns: PropTypes.shape({
@@ -70,4 +70,4 @@ const CampaignSelector = React.createClass({
   }
 })
 
-export default CampaignSelector
+export default CampaignMultiSelect

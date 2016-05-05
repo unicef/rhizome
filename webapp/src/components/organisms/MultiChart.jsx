@@ -3,8 +3,8 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DatapointTable from 'components/molecules/tables/DatapointTable'
-import ChartTypeSelector from 'components/molecules/chart_controls/ChartTypeSelector'
-import ChartDropdown from 'components/atoms/dropdown_selectors/ChartDropdown'
+import ChartTypeSelector from 'components/atoms/selectors/ChartTypeSelector'
+import ChartDropdown from 'components/atoms/selectors/ChartDropdown'
 import Placeholder from 'components/molecules/Placeholder'
 
 import BarChart from 'components/molecules/highcharts/BarChart'
