@@ -4,36 +4,36 @@ import React, {Component, PropTypes} from 'react'
 import Select from 'components/atoms/select/Select'
 import MenuItem from 'components/molecules/MenuItem'
 
-var LocationSelect = React.createClass({
-  propTypes: {
+class LocationSelect extends Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      pattern: ''
+    }
+  }
+
+  static propTypes = {
     locations: PropTypes.array.isRequired,
     selected: PropTypes.object.isRequired,
     sendValue: PropTypes.func.isRequired,
     hideLastLevel: PropTypes.bool
-  },
+  }
 
-  getInitialState () {
-    return {
-      pattern: ''
-    }
-  },
-
-  getDefaultProps () {
-    return {
-      locations: [],
-      selected: {'name': 'Loading ...'}
-    }
-  },
+  static defaultProps = {
+    locations: [],
+    selected: {'name': 'Loading ...'}
+  }
 
   shouldComponentUpdate (nextProps, nextState) {
     return nextProps.locations.length !== this.props.locations.length ||
       nextProps.selected.id !== this.props.selected.id
-  },
+  }
 
-  _setPattern (value) {
+  _setPattern = (value) => {
     this.setState({ pattern: value })
     this.forceUpdate()
-  },
+  }
 
   _buildLocations (original_locations, pattern) {
     var locations = original_locations.map(r => {
@@ -63,9 +63,9 @@ var LocationSelect = React.createClass({
     }
 
     return locations
-  },
+  }
 
-  render () {
+  render = () => {
     const props = this.props
     const locations = this._buildLocations(props.locations, this.state.pattern)
     const sorted_locations = _.sortBy(locations, 'title')
@@ -85,6 +85,6 @@ var LocationSelect = React.createClass({
       </Select>
     )
   }
-})
+}
 
 export default LocationSelect

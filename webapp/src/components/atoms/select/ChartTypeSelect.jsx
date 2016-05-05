@@ -2,18 +2,19 @@ import React, {Component, PropTypes} from 'react'
 
 import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
 
-const ChartTypeSelect = React.createClass({
-  propTypes: {
+class ChartTypeSelect extends Component {
+
+  static propTypes = {
     value: React.PropTypes.oneOfType([
       React.PropTypes.string,
       React.PropTypes.number
     ]),
     onChange: React.PropTypes.func.isRequired
-  },
+  }
 
   _handleChange (event) {
     this.props.onChange(event.target.value)
-  },
+  }
 
   render () {
     const charts = builderDefinitions.charts
@@ -29,6 +30,6 @@ const ChartTypeSelect = React.createClass({
     })
     return (<div className='chart-select'>{chartBoxes}</div>)
   }
-})
+}
 
 export default ChartTypeSelect

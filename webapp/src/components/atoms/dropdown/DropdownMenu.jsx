@@ -20,18 +20,17 @@ class DropdownMenu extends Component {
     ])
   }
 
-  getDefaultProps = () => {
-    return {
-      onSearch: _.noop,
-      onBlur: _.noop,
-      searchable: false,
-      x: 0,
-      y: 0
-    }
+  static defaultProps = {
+    onSearch: _.noop,
+    onBlur: _.noop,
+    searchable: false,
+    x: 0,
+    y: 0
   }
 
-  getInitialState = () => {
-    return {
+  constructor (props) {
+    super(props)
+    this.state = {
       maxHeight: 'none',
       marginLeft: 0,
       orientation: 'center',
@@ -93,7 +92,7 @@ class DropdownMenu extends Component {
     })
   }
 
-  render = () => {
+  render () {
     var itemlistStyle = { maxHeight: this.state.maxHeight }
     var containerStyle = { marginLeft: this.state.marginLeft }
     var position = {

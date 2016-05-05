@@ -5,19 +5,18 @@ import React, {Component, PropTypes} from 'react'
 import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var CampaignSelect = React.createClass({
-  propTypes: {
+class CampaignSelect extends Component {
+
+  static propTypes = {
     campaigns: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired
-  },
+  }
 
-  getDefaultProps () {
-    return {
-      campaigns: [],
-      selected: {'name':'Loading ...'}
-    }
-  },
+  static defaultProps = {
+    campaigns: [],
+    selected: {'name':'Loading ...'}
+  }
 
   render () {
     const campaign_menu_items = this.props.campaigns.map(campaign =>
@@ -40,6 +39,6 @@ var CampaignSelect = React.createClass({
       </Select>
     )
   }
-})
+}
 
 export default CampaignSelect

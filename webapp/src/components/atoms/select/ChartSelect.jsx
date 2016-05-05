@@ -3,19 +3,18 @@ import React, {Component, PropTypes} from 'react'
 import Dropdown from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var ChartSelect = React.createClass({
-  propTypes: {
+class ChartSelect extends Component {
+
+  static propTypes = {
     charts: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     selectChart: React.PropTypes.func.isRequired
-  },
+  }
 
-  getDefaultProps () {
-    return {
-      charts: [],
-      selected: {'title': 'Select existing chart'}
-    }
-  },
+  static defaultProps = {
+    charts: [],
+    selected: {'title': 'Select existing chart'}
+  }
 
   render () {
     const charts = this.props.charts || []
@@ -37,6 +36,6 @@ var ChartSelect = React.createClass({
       </Dropdown>
     )
   }
-})
+}
 
 export default ChartSelect

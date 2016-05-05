@@ -3,19 +3,18 @@ import React, {Component, PropTypes} from 'react'
 import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var IndicatorTagSelect = React.createClass({
-  propTypes: {
+class IndicatorTagSelect extends Component {
+
+  static propTypes = {
     indicator_tags: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired
-  },
+  }
 
-  getDefaultProps () {
-    return {
-      indicator_tags: [],
-      selected: {'name': 'Loading ...'}
-    }
-  },
+  static defaultProps = {
+    indicator_tags: [],
+    selected: {'name': 'Loading ...'}
+  }
 
   render () {
     const indicator_tag_menu_items = this.props.indicator_tags.map(indicator_tag =>
@@ -38,6 +37,6 @@ var IndicatorTagSelect = React.createClass({
       </Select>
     )
   }
-})
+}
 
 export default IndicatorTagSelect

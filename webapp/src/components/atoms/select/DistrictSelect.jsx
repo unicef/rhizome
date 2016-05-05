@@ -12,20 +12,19 @@ const filters = [
   { id: 4, value: 3, name: 'LPD 3', type: 'LPD Status' }
 ]
 
-const DistrictSelect = React.createClass({
-  propTypes: {
+class DistrictSelect extends Component {
+
+  static propTypes = {
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
     idsToRender: React.PropTypes.array
-  },
+  }
 
-  getDefaultProps () {
-    return {
-      statuses: [],
-      idsToRender: [],
-      selected: filters[0]
-    }
-  },
+  static defaultProps = {
+    statuses: [],
+    idsToRender: [],
+    selected: filters[0]
+  }
 
   render () {
     const selected_text = _.isEmpty(this.props.selected) ? filters[0].name : this.props.selected.name
@@ -49,6 +48,6 @@ const DistrictSelect = React.createClass({
       </Select>
     )
   }
-})
+}
 
 export default DistrictSelect

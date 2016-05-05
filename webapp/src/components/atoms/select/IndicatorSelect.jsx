@@ -3,32 +3,32 @@ import React, {Component, PropTypes} from 'react'
 import Select from 'components/atoms/select/Select'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var IndicatorSelect = React.createClass({
-  propTypes: {
+class IndicatorSelect extends Component {
+
+  constructor (props) {
+    super(props)
+    this.state = {
+      pattern: ''
+    }
+  }
+
+  static propTypes = {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
     idsToRender: React.PropTypes.array
-  },
+  }
 
-  getInitialState () {
-    return {
-      pattern: ''
-    }
-  },
-
-  getDefaultProps () {
-    return {
-      indicators: [],
-      idsToRender: [],
-      selected: {'name': 'Loading ...'}
-    }
-  },
+  static defaultProps = {
+    indicators: [],
+    idsToRender: [],
+    selected: {'name': 'Loading ...'}
+  }
 
   setPattern (value) {
     this.setState({ pattern: value })
     this.forceUpdate()
-  },
+  }
 
   render () {
     this.indicators = this.props.indicators.filter(i => this.props.idsToRender.indexOf(i.id) !== -1)
@@ -55,6 +55,6 @@ var IndicatorSelect = React.createClass({
       </Select>
     )
   }
-})
+}
 
 export default IndicatorSelect
