@@ -5,7 +5,7 @@ import moment from 'moment'
 import Dropdown from 'components/atoms/dropdown/DropdownSelect'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 
-var ChartSelector = React.createClass({
+var ChartDropdown = React.createClass({
   propTypes: {
     charts: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
@@ -41,4 +41,4 @@ var ChartSelector = React.createClass({
   }
 })
 
-export default ChartSelector
+export default ChartDropdown

@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import LocationDropdown from 'components/molecules/dropdowns/LocationDropdown'
+import LocationDropdown from 'components/atoms/dropdown_selectors/LocationDropdown'
 
 const LocationSelector = React.createClass({
 

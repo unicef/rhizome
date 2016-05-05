@@ -3,8 +3,8 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import DatapointTable from 'components/molecules/tables/DatapointTable'
-import ChartTypeSelector from 'components/molecules/ChartTypeSelector'
-import ChartSelector from 'components/molecules/ChartSelector'
+import ChartTypeSelector from 'components/molecules/data_filters/ChartTypeSelector'
+import ChartDropdown from 'components/atoms/dropdown_selectors/ChartDropdown'
 import Placeholder from 'components/molecules/Placeholder'
 
 import BarChart from 'components/molecules/highcharts/BarChart'
@@ -78,7 +78,7 @@ const MultiChart = React.createClass({
     const chart_selector = (
       <div>
         <br/><h4>or</h4><br/>
-        <ChartSelector charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
+        <ChartDropdown charts={this.state.all_charts.raw} selectChart={this.props.selectChart} />
       </div>
     )
 

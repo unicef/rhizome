@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 import Reflux from 'reflux'
 import ReorderableList from 'components/molecules/list/ReorderableList'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
+import CampaignDropdown from 'components/atoms/dropdown_selectors/CampaignDropdown'
 
 import CampaignStore from 'stores/CampaignStore'
 

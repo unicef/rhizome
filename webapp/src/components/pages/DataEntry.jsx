@@ -2,9 +2,9 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import Placeholder from 'components/molecules/Placeholder'
-import IndicatorTagDropdown from 'components/molecules/dropdowns/IndicatorTagDropdown'
+import IndicatorTagDropdown from 'components/atoms/dropdown_selectors/IndicatorTagDropdown'
 import DropdownButton from 'components/atoms/buttons/DropdownButton'
-import CampaignDropdown from 'components/molecules/dropdowns/CampaignDropdown'
+import CampaignDropdown from 'components/atoms/dropdown_selectors/CampaignDropdown'
 import DatabrowserTable from 'components/molecules/DatabrowserTable'
 
 import DatapointStore from 'stores/DatapointStore'
