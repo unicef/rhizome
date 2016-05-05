@@ -1,5 +1,5 @@
 import React from 'react'
-import IconButton from 'components/atoms/buttons/IconButton'
+import IconButton from 'components/atoms/button/IconButton'
 
 export default React.createClass({
   propTypes: {

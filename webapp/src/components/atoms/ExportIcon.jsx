@@ -1,6 +1,6 @@
 import React from 'react'
 
-import IconButtonDropdown from 'components/atoms/buttons/IconButtonDropdown'
+import IconButtonDropdown from 'components/atoms/button/IconButtonDropdown'
 import Dropdown from 'components/atoms/select/Select'
 import MenuItem from 'components/molecules/MenuItem'
 

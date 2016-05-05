@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, {Component, PropTypes} from 'react'
 import Reflux from 'reflux'
 import List from 'components/molecules/list/List'
-import DropdownButton from 'components/atoms/buttons/DropdownButton'
+import DropdownButton from 'components/atoms/button/DropdownButton'
 import LocationSelect from 'components/atoms/select/LocationSelect'
 
 class LocationMultiSelect extends Component {

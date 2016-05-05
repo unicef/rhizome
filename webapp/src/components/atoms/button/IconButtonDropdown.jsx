@@ -1,5 +1,5 @@
 import React from 'react'
-import IconButton from 'components/atoms/buttons/IconButton'
+import IconButton from 'components/atoms/button/IconButton'
 import Dropdown from 'components/atoms/dropdown/Dropdown'
 
 class IconButtonDropdown extends Dropdown {

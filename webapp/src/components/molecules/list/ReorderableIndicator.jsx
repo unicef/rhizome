@@ -1,6 +1,6 @@
 import React from 'react'
-import IconButton from 'components/atoms/buttons/IconButton'
-import IconButtonDropdown from 'components/atoms/buttons/IconButtonDropdown'
+import IconButton from 'components/atoms/button/IconButton'
+import IconButtonDropdown from 'components/atoms/button/IconButtonDropdown'
 import DropdownMenuItem from 'components/atoms/dropdown/DropdownMenuItem'
 import palettes from 'utilities/palettes'
 
