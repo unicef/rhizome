@@ -4,18 +4,16 @@ import orderBy from 'lodash.orderby'
 import React from 'react'
 import Reflux from 'reflux'
 
-import ChartAPI from 'data/requests/ChartAPI'
 import ChartActions from 'actions/ChartActions'
 import ChartStore from 'stores/ChartStore'
-
 
 var ChartsPage = React.createClass({
 
   mixins: [
-    Reflux.connect(ChartStore, 'charts'),
+    Reflux.connect(ChartStore, 'charts')
   ],
 
-  getInitialState() {
+  getInitialState () {
     return {
       sort_column: null,
       sort_desc: true
@@ -55,7 +53,6 @@ var ChartsPage = React.createClass({
     }
   },
 
-
   render () {
     let rows = (
       <tr>
@@ -75,7 +72,7 @@ var ChartsPage = React.createClass({
           <tr>
             <td>
               <a href={'/charts/' + chart.id + '/'}>
-              <strong>  {chart.title}</strong> </a>
+              <strong>{chart.title}</strong> </a>
             </td>
             <td>{chart.chart_json.type}</td>
             <td>{chart.chart_json.start_date}</td>
