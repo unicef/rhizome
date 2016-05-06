@@ -129,6 +129,7 @@ class DatapointEntryResource(BaseModelResource):
         """
 
         try:
+            print 'here'
             self.validate_object(bundle.data)
 
             # Determine what kind of request this is: create, update, or delete
@@ -202,11 +203,11 @@ class DatapointEntryResource(BaseModelResource):
                 user = User.objects.get(id=session.get_decoded()['_auth_user_id'])
                 return user.id
 
-    def is_delete_request(self, bundle):
-        if 'value' in bundle.data and bundle.data['value'] is None:
-            return True
-        else:
-            return False
+    # def is_delete_request(self, bundle):
+    #     if 'value' in bundle.data and bundle.data['value'] is None:
+    #         return True
+    #     else:
+    #         return False
 
     def obj_delete(self, bundle, **kwargs):
         """This is here to prevent an objects from ever being deleted."""
@@ -295,31 +296,33 @@ class DatapointEntryResource(BaseModelResource):
             except (ValueError, ObjectDoesNotExist):
                 raise InputException(3, 'Could not find record for metadata value: {0}'.format(key))
 
-    def validate_object_update(self, obj):
-        """
-        When updating an object, validate the new data.
-        """
-        # what should we do about id, url, created_at ?
-        # those all get filled in automatically, right?
+   # MEP: I commented this out because it doesn't appear to be used anywhere
 
-        # TODO uncomment once authorization is in place
-        # should this be a required key? yeah
-        # assert obj.has_key('changed_by_id')
-        # user_id = int(obj['changed_by_id'])
-        # User.objects.get(id=user_id)
+    # def validate_object_update(self, obj):
+    #     """
+    #     When updating an object, validate the new data.
+    #     """
+    #     # what should we do about id, url, created_at ?
+    #     # those all get filled in automatically, right?
 
-        # ensure that location, campaign, and indicator, if present, are valid values
-        if 'location_id' in obj:
-            location_id = int(obj['location_id'])
-            Location.objects.get(id=location_id)
+    #     # TODO uncomment once authorization is in place
+    #     # should this be a required key? yeah
+    #     # assert obj.has_key('changed_by_id')
+    #     # user_id = int(obj['changed_by_id'])
+    #     # User.objects.get(id=user_id)
 
-        if 'campaign_id' in obj:
-            campaign_id = int(obj['campaign_id'])
-            Campaign.objects.get(id=campaign_id)
+    #     # ensure that location, campaign, and indicator, if present, are valid values
+    #     if 'location_id' in obj:
+    #         location_id = int(obj['location_id'])
+    #         Location.objects.get(id=location_id)
 
-        if 'indicator_id' in obj:
-            indicator_id = int(obj['indicator_id'])
-            Indicator.objects.get(id=indicator_id)
+    #     if 'campaign_id' in obj:
+    #         campaign_id = int(obj['campaign_id'])
+    #         Campaign.objects.get(id=campaign_id)
+
+    #     if 'indicator_id' in obj:
+    #         indicator_id = int(obj['indicator_id'])
+    #         Indicator.objects.get(id=indicator_id)
 
     def success_response(self):
         response = {
