@@ -139,29 +139,6 @@ class DatapointResource(BaseNonModelResource):
 
         return self.base_data
 
-    def get_filtered_indicator_list(self):
-        '''
-        Hack to assist in dealing with the polio case table.
-        '''
-
-        is_polio_case_table_request = False
-        indicator_id_list = self.parsed_params['indicator__in']
-
-        if not 'latest_date' in self.ind_meta\
-        and not 'district_count' in self.ind_meta\
-        and not 'province_count' in self.ind_meta:
-            inicators_to_filter = []
-        else:
-            inicators_to_filter = set([self.ind_meta['latest_date'],\
-                self.ind_meta['district_count'],
-                self.ind_meta['province_count']])
-            is_polio_case_table_request = True
-
-        filtered_indicator_list = list(set(indicator_id_list)\
-            .difference(set(inicators_to_filter)))
-
-        return filtered_indicator_list, is_polio_case_table_request
-
     def get_time_group_series(self, dp_df, time_grouping):
 
         if time_grouping == 'year':
@@ -182,32 +159,32 @@ class DatapointResource(BaseNonModelResource):
         if time_grouping =='all_time':
             return self.map_bubble_transform(filtered_indicator_list)
 
-        indicator_list, is_polio_case_table_request =\
-            self.get_filtered_indicator_list()
+        if self.parsed_params['chart_uuid'] ==\
+            '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
+            return self.handle_polio_case_table(dp_df_columns, time_grouping)
 
-        if is_polio_case_table_request:
-            dp_df = self.handle_polio_case_table(indicator_list,\
-                dp_df_columns, time_grouping)
-
-        else:
-            dp_df = DataFrame(list(DataPoint.objects.filter(
-                location_id__in = self.location_ids,
-                indicator_id__in = indicator_list
-            ).values(*cols)),columns=cols)
+        cols = ['data_date','indicator_id','location_id','value']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = self.location_ids,
+            indicator_id__in = self.parsed_params['indicator__in']
+        ).values(*cols)),columns=cols)
 
         results = []
         all_time_groupings = []
 
-        if not is_polio_case_table_request:
-            dp_df = self.get_time_group_series(dp_df, time_grouping)
-            gb_df = DataFrame(dp_df\
-                .groupby(['indicator_id','time_grouping','location_id'])['value']\
-                .sum())\
-                .reset_index()
-        else:
-            gb_df = dp_df
+        dp_df = self.get_time_group_series(dp_df, time_grouping)
+        gb_df = DataFrame(dp_df\
+            .groupby(['indicator_id','time_grouping','location_id'])['value']\
+            .sum())\
+            .reset_index()
 
-        pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', \
+        return time_grouped_pivoted_data_to_results(gb_df)
+
+    def time_grouped_pivoted_data_to_results(self, df):
+
+        all_time_groupings, results = [], []
+
+        pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
             ['location_id','time_grouping'])
 
         for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
@@ -226,7 +203,7 @@ class DatapointResource(BaseNonModelResource):
             } for k,v in indicator_data.iteritems()]
 
             results.append(r)
-            all_time_groupings.extend(list(dp_df['time_grouping'].unique()))
+            all_time_groupings.extend(list(df['time_grouping'].unique()))
 
         all_time_groupings = list(set(all_time_groupings))
 
@@ -238,10 +215,10 @@ class DatapointResource(BaseNonModelResource):
             'office_id': 1,
             'created_at': datetime.now()
         } for time_grp in all_time_groupings]
+
         return results
 
-    def handle_polio_case_table(self, filtered_indicator_list, dp_df_columns, \
-        time_grouping):
+    def handle_polio_case_table(self, dp_df_columns, time_grouping):
         '''
         This is a very specific peice of code that allows us to generate a table
         with
@@ -262,7 +239,7 @@ class DatapointResource(BaseNonModelResource):
 
         flat_df = DataFrame(list(DataPoint.objects.filter(
                         location_id__in = all_sub_locations,
-                        indicator_id__in = filtered_indicator_list
+                        indicator_id__in = self.parsed_params['indicator__in']
                     ).values(*dp_df_columns)),columns=dp_df_columns)
 
         flat_df = self.get_time_group_series(flat_df, time_grouping)
@@ -300,7 +277,8 @@ class DatapointResource(BaseNonModelResource):
         concat_df = concat([gb_df, latest_date_df,  district_count_df])
         concat_df['location_id'] = parent_location_id
 
-        return concat_df
+        return self.time_grouped_pivoted_data_to_results(concat_df)
+
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -426,7 +404,8 @@ class DatapointResource(BaseNonModelResource):
             'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
-            'parent_location_id__in': None, 'group_by_time': None
+            'parent_location_id__in': None, 'group_by_time': None, \
+            'chart_uuid': None
         }
 
         for k, v in optional_params.iteritems():
