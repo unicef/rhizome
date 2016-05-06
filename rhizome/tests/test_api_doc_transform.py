@@ -97,6 +97,9 @@ class DocTransformResourceTest(ResourceTestCase):
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
         self.assertEqual(DataPointComputed.objects.all()[0].value, 0.0)
 
+    def test_doc_transform_no_document_id(self):        
+        resp = self.ts.get(self, '/api/v1/transform_upload/')
+        self.assertHttpApplicationError(resp)
 
 
 
