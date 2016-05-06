@@ -1,0 +1,20 @@
+{
+  "browser": {
+    "react": "react",
+    "d3": "d3",
+    "reflux": "reflux",
+    "superagent": "superagent",
+    "superagent-prefix": "superagent-prefix",
+    "lodash": "lodash",
+    "moment": "moment",
+    "page": "page",
+    "react-layer": "react-layer"
+  },
+  "browserify": {
+    "transform": [
+      "html-browserify",
+      "babelify",
+      "envify"
+    ]
+  }
+}
