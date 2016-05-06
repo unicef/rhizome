@@ -169,18 +169,20 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
-        results = []
-        all_time_groupings = []
+        results, all_time_groupings = [], []
 
         dp_df = self.get_time_group_series(dp_df, time_grouping)
+        if dp_df.empty:
+            return []
+
         gb_df = DataFrame(dp_df\
             .groupby(['indicator_id','time_grouping','location_id'])['value']\
             .sum())\
             .reset_index()
 
-        return time_grouped_pivoted_data_to_results(gb_df)
+        return self.time_grouped_df_to_results(gb_df)
 
-    def time_grouped_pivoted_data_to_results(self, df):
+    def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
 
@@ -277,7 +279,7 @@ class DatapointResource(BaseNonModelResource):
         concat_df = concat([gb_df, latest_date_df,  district_count_df])
         concat_df['location_id'] = parent_location_id
 
-        return self.time_grouped_pivoted_data_to_results(concat_df)
+        return self.time_grouped_df_to_results(concat_df)
 
 
     def obj_get_list(self, bundle, **kwargs):
