@@ -5,7 +5,7 @@ import page from 'page'
 
 import ReviewTable from 'components/organisms/source-data/ReviewTable'
 import DocOverview from 'components/organisms/source-data/DocOverview'
-import CSVMenuItem from 'components/CSVMenuItem'
+import CSVMenuItem from 'components/organisms/source-data/CSVMenuItem'
 import DocForm from 'components/organisms/source-data/DocForm'
 
 import SourceDataStore from 'stores/SourceDataStore'
