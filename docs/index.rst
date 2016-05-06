@@ -13,6 +13,7 @@ Contents:
 
    userGuide
    backendComponents
+   aggregationDetail
    api
 
 
