@@ -121,7 +121,6 @@ class DatapointResource(BaseNonModelResource):
         self.class_indicator_map = self.build_class_indicator_map();
 
         results = []
-
         err = self.parse_url_params(request.GET)
         if err:
             self.error = err
@@ -435,7 +434,6 @@ class DatapointResource(BaseNonModelResource):
             try:
                 parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
             except KeyError as err:
-
                 err_msg = '%s is a required parameter!' % err
                 return err_msg, None
 

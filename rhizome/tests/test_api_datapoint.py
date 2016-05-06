@@ -110,7 +110,6 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(int(response_data['objects'][0]['indicators'][0]['indicator']), indicator.id)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], value)
 
-
     def test_get_class_datapoint(self):
         cache_job = CacheJob.objects.create(
             is_error=False,
@@ -164,6 +163,24 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
+
+    def test_get_no_params(self):
+        resp = self.api_client.get('/api/v1/datapoint/',\
+            format='json', authentication=self.get_credentials())
+        self.assertHttpApplicationError(resp)
+
+    # what happens if we request a non-existent datapoint
+    def test_empty_response(self):
+        start_date = '2016-02-01'
+        end_date = '2016-02-01'
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
+            .format(1, start_date, end_date, self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']),0)
 
     # this tests for both MapChart and BubbleMap
     def test_map_transform(self):

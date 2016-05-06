@@ -21,7 +21,6 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
         resource_name = 'indicator_calculation'
 
     def get_object_list(self, request):
-
         try:
             indicator_id = request.GET['indicator_id']
         except KeyError:

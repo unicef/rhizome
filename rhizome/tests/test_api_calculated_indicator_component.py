@@ -19,7 +19,7 @@ class CalculatedIndicatorResourceTest(ResourceTestCase):
 # this is a pretty dumb test but it achieves 100% test coverage
     def test_indicator_id_missing(self):
     	data={}
-        resp = self.ts.get(self, '/api/v1/campaign_type/',data=data)
+        resp = self.ts.get(self, '/api/v1/indicator_calculation/',data=data)
         self.assertHttpOK(resp)
         resp_data = self.deserialize(resp)
         self.assertEqual(len(resp_data['objects']), 0)
