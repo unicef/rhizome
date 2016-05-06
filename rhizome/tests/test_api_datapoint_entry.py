@@ -113,7 +113,6 @@ class DatapointEntryResourceTest(ResourceTestCase):
         'value': dp_value
         }
         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
-        print resp
         self.assertHttpApplicationError(resp)
 
 

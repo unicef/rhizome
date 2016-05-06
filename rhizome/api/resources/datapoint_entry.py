@@ -129,7 +129,6 @@ class DatapointEntryResource(BaseModelResource):
         """
 
         try:
-            print 'here'
             self.validate_object(bundle.data)
 
             # Determine what kind of request this is: create, update, or delete
