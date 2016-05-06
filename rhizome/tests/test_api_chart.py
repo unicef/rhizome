@@ -130,10 +130,26 @@ class ChartResourceTest(ResourceTestCase):
         c2 = CustomChart.objects.create(title='J to the Muah',\
             chart_json={'goodnight': 'moon'},
             uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
-
+        self.assertEqual(CustomChart.objects.count(), 2)
         delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
 
         self.api_client.delete(delete_url, format='json', data={},
                                authentication=self.get_credentials())
 
         self.assertEqual(CustomChart.objects.count(), 1)
+
+    def test_chart_delete_detail(self):
+        c1 = CustomChart.objects.create(title='L.O.X',\
+            chart_json={'hello': 'world'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+
+        self.assertEqual(CustomChart.objects.count(), 1)
+        chart_id = CustomChart.objects.all()[0].id
+        delete_url = '/api/v1/custom_chart/%d/' %chart_id
+
+        self.api_client.delete(delete_url, format='json', data={},
+                               authentication=self.get_credentials())
+
+        self.assertEqual(CustomChart.objects.count(), 0)
+
+

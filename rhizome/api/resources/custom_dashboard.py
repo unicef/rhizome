@@ -109,7 +109,7 @@ class CustomDashboardResource(BaseModelResource):
 
     def obj_delete_list(self, bundle, **kwargs):
         obj_id = int(bundle.request.GET[u'id'])
-        CustomDashboard.objects.filter(id=obj_id).delete()
+        CustomDashboard.objects.get(id=obj_id).delete()
 
     def obj_delete(self, bundle, **kwargs):
         CustomDashboard.objects.get(id=kwargs['pk']).delete()

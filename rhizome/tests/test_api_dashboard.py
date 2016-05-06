@@ -167,7 +167,7 @@ class DashboardResourceTest(ResourceTestCase):
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['objects'][0]['title'], dashboard_title)
 
-    def test_delete_dashboard(self):
+    def test_delete_dashboard_detail(self):
         dashboard_name = "test delete a dashboard"
 
         # Create the custom dashboard
@@ -184,3 +184,14 @@ class DashboardResourceTest(ResourceTestCase):
         self.assertEqual(CustomDashboard.objects.count(), 0)
 
     # TODO: test for duplicate dashboard
+
+    def test_delete_dashboard(self):
+        dashboard_name = 'some d-board!'
+        dashboard = CustomDashboard.objects.create(title=dashboard_name, layout=1)
+        self.assertEqual(CustomDashboard.objects.count(), 1)
+
+        delete_url = '/api/v1/custom_dashboard/?id=' + str(dashboard.id)
+
+        resp = self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+        self.assertEqual(CustomDashboard.objects.count(), 0)
+
