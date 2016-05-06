@@ -2,10 +2,10 @@ import _ from 'lodash'
 import d3 from 'd3'
 import React, { PropTypes } from 'react'
 
-import Chart from 'components/d3charts/Chart'
+import Chart from 'components/d3chart/Chart'
 
 import palettes from 'utilities/palettes'
-import aspects from 'components/d3charts/utils/aspects'
+import aspects from 'components/d3chart/utils/aspects'
 
 class ChoroplethMap extends Chart {
 

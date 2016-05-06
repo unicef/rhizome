@@ -2,14 +2,11 @@ import _ from 'lodash'
 import moment from 'moment'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
-import {DropdownList} from 'react-widgets'
 
 import RadioGroup from 'components/form/RadioGroup'
 
-import builderDefinitions from 'components/d3charts/utils/builderDefinitions'
+import builderDefinitions from 'components/d3chart/utils/builderDefinitions'
 import IconButton from 'components/button/IconButton'
-import ColorSwatch from 'components/ColorSwatch'
-import palettes from 'utilities/palettes'
 import CampaignMultiSelect from 'components/multi_select/CampaignMultiSelect'
 import IndicatorMultiSelect from 'components/multi_select/IndicatorMultiSelect'
 import LocationMultiSelect from 'components/multi_select/LocationMultiSelect'
@@ -61,22 +58,6 @@ const MultiChartControls = React.createClass({
     const multiLocation = type === 'TableChart'
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = groupedChart && chart.groupBy === 'indicator'
-
-
-    const palette_selector = type !== 'RawData' ? (
-      <div className='medium-12 columns' style={{position: 'absolute', bottom: 0}}>
-        <DropdownList
-          data={ _.map(palettes, (key, value) => ({colors: key, value: value}) )}
-          textField='value'
-          valueField='value'
-          value={chart.palette}
-          itemComponent={ColorSwatch}
-          valueComponent={ColorSwatch}
-          onChange={item => props.setPalette(item.value)}
-        />
-        <br />
-      </div>
-    ) : null
 
     const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
       <div className='medium-12 columns'>
@@ -184,7 +165,6 @@ const MultiChartControls = React.createClass({
         { indicator_filter }
         { location_selector }
         { indicator_selector }
-        { /* !this.props.readOnlyMode ? palette_selector : null */}
       </div>
     )
   }

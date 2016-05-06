@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 
-import TableChartRenderer from 'components/d3charts/renderers/table-chart'
-import ChoroplethMapRenderer from 'components/d3charts/renderers/choropleth-map'
+import TableChartRenderer from 'components/d3chart/renderers/table-chart'
+import ChoroplethMapRenderer from 'components/d3chart/renderers/choropleth-map'
 
 class Chart extends Component {
 

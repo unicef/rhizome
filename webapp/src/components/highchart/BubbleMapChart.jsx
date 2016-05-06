@@ -1,6 +1,6 @@
 import React from 'react'
 
-import HighChart from 'components/highcharts/HighChart'
+import HighChart from 'components/highchart/HighChart'
 import palettes from 'utilities/palettes'
 import format from 'utilities/format'
 

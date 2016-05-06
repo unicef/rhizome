@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 
-import Chart from 'components/d3charts/Chart'
+import Chart from 'components/d3chart/Chart'
 import palettes from 'utilities/palettes'
 
 class TableChart extends Chart {

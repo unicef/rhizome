@@ -7,7 +7,7 @@ window.Highcharts = Highcharts
 import More from 'highcharts-more'
 import Exporting from 'highcharts/modules/exporting'
 import Map from 'highcharts/modules/map'
-import themes from 'components/highcharts/themes'
+import themes from 'components/highchart/themes'
 import palettes from 'utilities/palettes'
 
 More(Highcharts)

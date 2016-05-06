@@ -3,7 +3,7 @@ import uuid from 'uuid'
 import moment from 'moment'
 import Reflux from 'reflux'
 
-import builderDefinitions from 'components/d3charts/utils/builderDefinitions'
+import builderDefinitions from 'components/d3chart/utils/builderDefinitions'
 import ChartActions from 'actions/ChartActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import DatapointActions from 'actions/DatapointActions'

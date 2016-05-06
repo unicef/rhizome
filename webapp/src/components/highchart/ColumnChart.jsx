@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 
-import HighChart from 'components/highcharts/HighChart'
+import HighChart from 'components/highchart/HighChart'
 import format from 'utilities/format'
 
 class ColumnChart extends HighChart {

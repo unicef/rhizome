@@ -1,6 +1,6 @@
 import React, {Component, PropTypes} from 'react'
 
-import builderDefinitions from 'components/d3charts/utils/builderDefinitions'
+import builderDefinitions from 'components/d3chart/utils/builderDefinitions'
 
 class ChartTypeSelect extends Component {
 

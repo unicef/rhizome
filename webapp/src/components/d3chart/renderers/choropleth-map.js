@@ -3,7 +3,7 @@ import _ from 'lodash'
 import d3 from 'd3'
 import Layer from 'react-layer'
 import Tooltip from 'components/Tooltip'
-import legend from 'components/d3charts/renderers/legend'
+import legend from 'components/d3chart/renderers/legend'
 
 class ChoroplethMapRenderer {
   constructor (data, options, container) {
