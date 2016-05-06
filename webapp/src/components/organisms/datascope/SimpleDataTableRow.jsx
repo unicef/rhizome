@@ -2,7 +2,7 @@ import d3 from 'd3'
 import React, {PropTypes} from 'react'
 import EditableTableCell from 'components/organisms/datascope/EditableTableCell'
 import TableCell from 'components/organisms/datascope/TableCell'
-import IconButton from 'components/atoms/button/IconButton'
+import IconButton from 'components/button/IconButton'
 
 let SimpleDataTableRow = React.createClass({
 

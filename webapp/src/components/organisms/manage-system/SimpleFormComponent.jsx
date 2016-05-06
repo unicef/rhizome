@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 
 import SimpleFormStore from 'stores/SimpleFormStore'
 import SimpleFormActions from 'actions/SimpleFormActions'
-import DropdownButton from 'components/atoms/button/DropdownButton'
+import DropdownButton from 'components/button/DropdownButton'
 
 var SimpleFormComponent = React.createClass({
   propTypes: {

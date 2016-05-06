@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import ExpandableMenuItem from 'components/atoms/dropdown/ExpandableMenuItem'
+import ExpandableMenuItem from 'components/dropdown/ExpandableMenuItem'
 import Dropzone from 'react-dropzone'
 import ReactJson from 'react-json'
 

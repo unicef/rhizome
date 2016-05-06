@@ -8,7 +8,7 @@ import TableCell from 'components/organisms/datascope/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import DataEntryActions from 'actions/DataEntryActions'
-import DropdownButton from 'components/atoms/button/DropdownButton'
+import DropdownButton from 'components/button/DropdownButton'
 
 import api from 'utilities/api'
 

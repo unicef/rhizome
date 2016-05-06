@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import api from 'utilities/api'
 
-import builderDefinitions from 'components/molecules/charts/utils/builderDefinitions'
+import builderDefinitions from 'components/d3charts/utils/builderDefinitions'
 
 const DatapointActions = Reflux.createActions({
   'fetchDatapoints': { children: ['completed', 'failed'], asyncResult: true },
