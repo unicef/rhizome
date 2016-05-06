@@ -164,8 +164,6 @@ class DatapointResource(BaseNonModelResource):
 
     def get_time_group_series(self, dp_df, time_grouping):
 
-        print dp_df[:4]
-
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
@@ -190,6 +188,7 @@ class DatapointResource(BaseNonModelResource):
         if is_polio_case_table_request:
             dp_df = self.handle_polio_case_table(indicator_list,\
                 dp_df_columns, time_grouping)
+
         else:
             dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = self.location_ids,
@@ -199,15 +198,16 @@ class DatapointResource(BaseNonModelResource):
         results = []
         all_time_groupings = []
 
-        ## Group Datapoints by Year / Quarter ##)
         if not is_polio_case_table_request:
             dp_df = self.get_time_group_series(dp_df, time_grouping)
+            gb_df = DataFrame(dp_df\
+                .groupby(['indicator_id','time_grouping','location_id'])['value']\
+                .sum())\
+                .reset_index()
+        else:
+            gb_df = dp_df
 
-        gb_df = DataFrame(dp_df\
-            .groupby(['indicator_id','time_grouping','location_id'])['value']\
-            .sum())\
-            .reset_index()
-
+        print gb_df
         pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', \
             ['location_id','time_grouping'])
 
@@ -219,6 +219,9 @@ class DatapointResource(BaseNonModelResource):
             r = ResultObject()
             r.location = location_id
             r.campaign = str(time_group).replace('-','').replace('.0','')
+
+            print '=indicator_data=\n' * 2
+            print indicator_data
 
             r.indicators = [{
                 'computed': None,
@@ -255,8 +258,10 @@ class DatapointResource(BaseNonModelResource):
         '''
         # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
 
+        parent_location_id = self.parsed_params['location_id__in']
+
         all_sub_locations = LocationTree.objects.filter(
-            parent_location_id__in = self.location_ids
+            parent_location_id = parent_location_id
         ).values_list('location_id', flat=True)
 
         flat_df = DataFrame(list(DataPoint.objects.filter(
@@ -265,6 +270,13 @@ class DatapointResource(BaseNonModelResource):
                     ).values(*dp_df_columns)),columns=dp_df_columns)
 
         flat_df = self.get_time_group_series(flat_df, time_grouping)
+        flat_df['parent_location_id'] = parent_location_id
+
+        gb_df = DataFrame(flat_df\
+            .groupby(['indicator_id','time_grouping','parent_location_id'])\
+            ['value']\
+            .sum())\
+            .reset_index()
 
         latest_date_df = DataFrame(flat_df\
             .groupby(['indicator_id','time_grouping'])['data_date']\
@@ -275,29 +287,45 @@ class DatapointResource(BaseNonModelResource):
         latest_date_df['indicator_id'] = self\
             .ind_meta['latest_date']
 
-        district_count_df = DataFrame(flat_df\
-            .groupby(['time_grouping']).location_id
-            .nunique())\
-            .reset_index()
-        district_count_df['value'] = district_count_df['location_id']
-        district_count_df['indicator_id'] = self\
-            .ind_meta['district_count']
 
-        parent_location_df = DataFrame(list(Location.objects\
-            .filter(id__in = list(flat_df['location_id'].unique()))\
-            .values_list('id','parent_location_id')),\
-             columns = ['location_id','parent_location_id']
-        )
-        province_count_df = DataFrame(flat_df.merge(parent_location_df)\
-            .groupby(['time_grouping']).parent_location_id
-            .nunique())\
-            .reset_index()
-        province_count_df['value'] = province_count_df['parent_location_id']
-        province_count_df['indicator_id'] = self\
-            .ind_meta['province_count']
+        # print 'latest_date_d\n' * 5
 
-        concat_df = concat([latest_date_df, flat_df, district_count_df,\
-            province_count_df])
+        # gb_df[self.ind_meta['latest_date']] = latest_date_df['data_date']\
+        #     .map(lambda x: x.strftime('%b %d %Y'))
+        #
+        # print 'gb_df\n' * 5
+        # print gb_df
+        #
+        # return gb_df
+
+
+        #
+        # district_count_df = DataFrame(flat_df\
+        #     .groupby(['time_grouping']).location_id
+        #     .nunique())\
+        #     .reset_index()
+        # district_count_df['value'] = district_count_df['location_id']
+        # district_count_df['indicator_id'] = self\
+        #     .ind_meta['district_count']
+        #
+        # parent_location_df = DataFrame(list(Location.objects\
+        #     .filter(id__in = list(flat_df['location_id'].unique()))\
+        #     .values_list('id','parent_location_id')),\
+        #      columns = ['location_id','parent_location_id']
+        # )
+        # province_count_df = DataFrame(flat_df.merge(parent_location_df)\
+        #     .groupby(['time_grouping']).parent_location_id
+        #     .nunique())\
+        #     .reset_index()
+        # province_count_df['value'] = province_count_df['parent_location_id']
+        # province_count_df['indicator_id'] = self\
+        #     .ind_meta['province_count']
+        #
+        # concat_df = concat([latest_date_df, flat_df, district_count_df,\
+        #     province_count_df])
+
+        concat_df = concat([gb_df, latest_date_df])
+        concat_df['location_id'] = parent_location_id
 
         return concat_df
 
