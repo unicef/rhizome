@@ -207,7 +207,6 @@ class DatapointResource(BaseNonModelResource):
         else:
             gb_df = dp_df
 
-        print gb_df
         pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', \
             ['location_id','time_grouping'])
 
@@ -219,9 +218,6 @@ class DatapointResource(BaseNonModelResource):
             r = ResultObject()
             r.location = location_id
             r.campaign = str(time_group).replace('-','').replace('.0','')
-
-            print '=indicator_data=\n' * 2
-            print indicator_data
 
             r.indicators = [{
                 'computed': None,
@@ -287,44 +283,21 @@ class DatapointResource(BaseNonModelResource):
         latest_date_df['indicator_id'] = self\
             .ind_meta['latest_date']
 
+        district_count_df = DataFrame(flat_df\
+            .groupby(['time_grouping']).location_id
+            .nunique())\
+            .reset_index()
+        district_count_df['value'] = district_count_df['location_id']
+        district_count_df['indicator_id'] = self\
+            .ind_meta['district_count']
 
-        # print 'latest_date_d\n' * 5
+        parent_location_df = DataFrame(list(Location.objects\
+            .filter(id__in = list(flat_df['location_id'].unique()))\
+            .values_list('id','parent_location_id')),\
+             columns = ['location_id','parent_location_id']
+        )
 
-        # gb_df[self.ind_meta['latest_date']] = latest_date_df['data_date']\
-        #     .map(lambda x: x.strftime('%b %d %Y'))
-        #
-        # print 'gb_df\n' * 5
-        # print gb_df
-        #
-        # return gb_df
-
-
-        #
-        # district_count_df = DataFrame(flat_df\
-        #     .groupby(['time_grouping']).location_id
-        #     .nunique())\
-        #     .reset_index()
-        # district_count_df['value'] = district_count_df['location_id']
-        # district_count_df['indicator_id'] = self\
-        #     .ind_meta['district_count']
-        #
-        # parent_location_df = DataFrame(list(Location.objects\
-        #     .filter(id__in = list(flat_df['location_id'].unique()))\
-        #     .values_list('id','parent_location_id')),\
-        #      columns = ['location_id','parent_location_id']
-        # )
-        # province_count_df = DataFrame(flat_df.merge(parent_location_df)\
-        #     .groupby(['time_grouping']).parent_location_id
-        #     .nunique())\
-        #     .reset_index()
-        # province_count_df['value'] = province_count_df['parent_location_id']
-        # province_count_df['indicator_id'] = self\
-        #     .ind_meta['province_count']
-        #
-        # concat_df = concat([latest_date_df, flat_df, district_count_df,\
-        #     province_count_df])
-
-        concat_df = concat([gb_df, latest_date_df])
+        concat_df = concat([gb_df, latest_date_df,  district_count_df])
         concat_df['location_id'] = parent_location_id
 
         return concat_df
