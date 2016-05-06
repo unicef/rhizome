@@ -167,7 +167,9 @@ class DataPointResourceTest(ResourceTestCase):
     def test_get_no_params(self):
         resp = self.api_client.get('/api/v1/datapoint/',\
             format='json', authentication=self.get_credentials())
-        self.assertHttpApplicationError(resp)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['error'][0], "\"'indicator__in'\" is a required parameter!")
 
     # what happens if we request a non-existent datapoint
     def test_empty_response(self):
