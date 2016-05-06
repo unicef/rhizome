@@ -1,4 +1,4 @@
-import api from 'data/api'
+import api from 'utilities/api'
 import React from 'react'
 import page from 'page'
 import Reflux from 'reflux'

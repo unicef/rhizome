@@ -1,5 +1,5 @@
 import Reflux from 'reflux'
-import api from 'data/api'
+import api from 'utilities/api'
 
 const DashboardActions = Reflux.createActions({
   'fetchDashboards': { children: ['completed', 'failed'] },

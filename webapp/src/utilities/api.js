@@ -3,12 +3,12 @@
 const BASE_URL = '/api'
 
 import _ from 'lodash'
+import moment from 'moment'
 import request from 'superagent'
 import superagentPrefix from 'superagent-prefix'
 const prefix = superagentPrefix(BASE_URL)
 
-import treeify from 'data/transform/treeify'
-import campaign from 'data/model/campaign'
+import treeify from 'utilities/transform/treeify'
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
@@ -167,7 +167,7 @@ function datapoint (q) {
       var campaignData = data.meta.campaign_list
       var campaignIx = _.indexBy(campaignData, 'id')
       for (var i = data.objects.length - 1; i >= 0; --i) {
-        data.objects[i].campaign = campaign(campaignIx[data.objects[i].campaign])
+        data.objects[i].campaign = setCampaign(campaignIx[data.objects[i].campaign])
       }
       fulfill(data)
     }, reject)
@@ -176,6 +176,28 @@ function datapoint (q) {
 
 datapoint.toString = function (query, version) {
   return endPoint('/datapoint/').toString(query, version)
+}
+
+function setCampaign (obj) {
+  return obj
+    ? update({}, obj)
+    : {
+      id: null,
+      created_at: null,
+      start_date: null,
+      end_date: null,
+      name: null,
+      slug: null,
+      resource_uri: null
+    }
+}
+
+function update (campaign, obj) {
+  _.assign(campaign, _.omit(obj, 'created_at', 'start_date', 'end_date'))
+  campaign.created_at = moment(obj.created_at).toDate()
+  campaign.start_date = moment(obj.start_date, 'YYYY-MM-DD').toDate()
+  campaign.end_date = moment(obj.end_date, 'YYYY-MM-DD').toDate()
+  return campaign
 }
 
 function makeTagId (tId) {

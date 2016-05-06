@@ -2,8 +2,8 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import LocationActions from 'actions/LocationActions'
-import ancestryString from 'data/transform/ancestryString'
-import treeify from 'data/transform/treeify'
+import ancestryString from 'utilities/transform/ancestryString'
+import treeify from 'utilities/transform/treeify'
 
 var LocationStore = Reflux.createStore({
 

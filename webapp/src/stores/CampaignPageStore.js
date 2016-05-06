@@ -2,11 +2,11 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import moment from 'moment'
 
-import api from 'data/api'
+import api from 'utilities/api'
 import CampaignPageActions from 'actions/CampaignPageActions'
 
-import ancestryString from 'data/transform/ancestryString'
-import treeify from 'data/transform/treeify'
+import ancestryString from 'utilities/transform/ancestryString'
+import treeify from 'utilities/transform/treeify'
 
 let CampaignPageStore = Reflux.createStore({
   listenables: [CampaignPageActions],

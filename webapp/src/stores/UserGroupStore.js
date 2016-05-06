@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import Reflux from 'reflux'
-import api from 'data/api'
+import api from 'utilities/api'
 
 var UserGroupStore = Reflux.createStore({
   listenables: [require('actions/UserGroupActions')],

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
-import api from 'data/api'
+import api from 'utilities/api'
 
 import LocationSelect from 'components/atoms/select/LocationSelect'
 import DropdownButton from 'components/atoms/button/DropdownButton'

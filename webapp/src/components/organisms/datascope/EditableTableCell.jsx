@@ -8,8 +8,9 @@ import TableCell from 'components/organisms/datascope/TableCell'
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
 import DataEntryActions from 'actions/DataEntryActions'
-import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
 import DropdownButton from 'components/atoms/button/DropdownButton'
+
+import api from 'utilities/api'
 
 let EditableTableCell = React.createClass({
   mixins: [Reflux.connect(EditableTableCellStore)],
@@ -101,12 +102,31 @@ let EditableTableCell = React.createClass({
     }
   },
 
+  putComputedDatapoint: function (options) {
+    let fetch = api.endPoint('/computed_datapoint/' + options.computed_id, 'PATCH', 1)
+    return new Promise(function (fulfill, reject) {
+      fetch({value: options.value}, null, {'cache-control': 'no-cache'}).then(function (response) {
+        fulfill(response)
+      }, reject)
+    })
+  },
+
+  postComputedDatapoint: function (options) {
+    delete options['computed_id']
+    let fetch = api.endPoint('/computed_datapoint/', 'POST', 1)
+    return new Promise(function (fulfill, reject) {
+      fetch(options, null, {'cache-control': 'no-cache'}).then(function (response) {
+        fulfill(response)
+      }, reject)
+    })
+  },
+
   _queryDatapoint: function (query_params, new_value) {
     let api_response = {}
     if (this.computed_id) {
-      api_response = ComputedDatapointAPI.putComputedDatapoint(query_params)
+      api_response = this.putComputedDatapoint(query_params)
     } else {
-      api_response = ComputedDatapointAPI.postComputedDatapoint(query_params)
+      api_response = this.postComputedDatapoint(query_params)
     }
     api_response.then(response => {
       this.computed_id = response.objects.id

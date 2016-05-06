@@ -1,6 +1,6 @@
 import React from 'react'
 
-import api from 'data/api'
+import api from 'utilities/api'
 
 import d3TagsTree from './utils/d3TagsTree'
 

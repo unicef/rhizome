@@ -1,5 +1,5 @@
 import React from 'react'
-import api from 'data/api'
+import api from 'utilities/api'
 
 import AdminPage from 'components/organisms/manage-system/AdminPage'
 

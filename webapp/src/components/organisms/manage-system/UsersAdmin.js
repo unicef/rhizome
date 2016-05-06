@@ -7,7 +7,7 @@ import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTabl
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
-import api from 'data/api'
+import api from 'utilities/api'
 
 // display rules for datascope fields
 const checkmarkRenderer = (val) => val ? '✓' : ''

@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import IndicatorActions from 'actions/IndicatorActions'
-import treeify from 'data/transform/treeify'
+import treeify from 'utilities/transform/treeify'
 
 var IndicatorStore = Reflux.createStore({
 

@@ -1,5 +1,5 @@
 import Reflux from 'reflux'
-import api from 'data/api'
+import api from 'utilities/api'
 
 const DashboardChartsActions = Reflux.createActions({
   'fetchChart': { children: ['completed', 'failed'] }, // I think we can get rid of this
