@@ -118,6 +118,24 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['name'], 'something')
 
+    def test_post_campaign_with_id(self):
+        id_val =1345
+        data={
+            'name': 'something',
+            'top_lvl_location_id': self.top_lvl_location.id,
+            'top_lvl_indicator_tag_id': self.it.id,
+            'office_id': self.o.id,
+            'campaign_type_id': self.ct.id,
+            'start_date': '2016-05-01',
+            'end_date': '2016-05-01',
+            'pct_complete': 0.1,
+            'id': id_val
+        }
+        resp = self.ts.post(self, '/api/v1/campaign/', data=data)
+        response_data = self.deserialize(resp)
+        self.assertHttpCreated(resp)
+        self.assertEqual(response_data['id'], id_val)
+
     def test_post_campaign_missing_field(self):
         data={
             'top_lvl_indicator_tag_id': self.it.id,
