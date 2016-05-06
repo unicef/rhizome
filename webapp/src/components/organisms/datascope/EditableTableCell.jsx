@@ -7,6 +7,7 @@ import TableCell from 'components/organisms/datascope/TableCell'
 
 import EditableTableCellStore from 'stores/EditableTableCellStore'
 import EditableTableCellActions from 'actions/EditableTableCellActions'
+import DataEntryActions from 'actions/DataEntryActions'
 import ComputedDatapointAPI from 'data/requests/ComputedDatapointAPI'
 import DropdownButton from 'components/atoms/button/DropdownButton'
 
@@ -84,7 +85,7 @@ let EditableTableCell = React.createClass({
   },
 
   _deleteValue: function (query_params, new_value) {
-    ComputedDatapointAPI.deleteComputedDataPoint(this.computed_id)
+    DataEntryActions.deleteDatapoint(this.computed_id)
     this.computed_id = null
     this.display_value = ''
     this.setState({ isSaving: false, editMode: false, hasError: false })

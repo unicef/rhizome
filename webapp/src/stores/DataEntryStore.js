@@ -64,6 +64,37 @@ let DataEntryStore = Reflux.createStore({
   },
 
   // =========================================================================== //
+  //                              API CALL HANDLERS                              //
+  // =========================================================================== //
+
+  // ============================  Fetch  Datapoints  ========================== //
+  onPostDatapoint: function () {
+  },
+  onPostDatapointCompleted: function () {
+  },
+  onPostDatapointFailed: function () {
+  },
+
+  // ============================  Fetch  Datapoints  ========================== //
+  onPatchDatapoint: function () {
+  },
+  onPatchDatapointCompleted: function () {
+  },
+  onPatchDatapointFailed: function () {
+  },
+
+  // ============================  Fetch  Datapoints  ========================== //
+  onDeleteDataPoint: function () {
+    this.trigger(this.data)
+  },
+  onDeleteDataPointCompleted: function () {
+    this.trigger(this.data)
+  },
+  onDeleteDataPointFailed: function () {
+    this.trigger(this.data)
+  },
+
+  // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
   updateTable: function () {

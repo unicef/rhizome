@@ -49,7 +49,6 @@ var DatapointStore = Reflux.createStore({
       melted: this.melt(response.objects, response.meta.indicator_ids)
     })
   },
-
   onFetchDatapointsFailed: function (error) {
     this.setState({ error: error })
   },
