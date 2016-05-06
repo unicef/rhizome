@@ -1,4 +1,4 @@
-// require('./utilities/polyfill.js')
+require('utilities/polyfill.js')
 
 import React from 'react'
 import Reflux from 'reflux'

@@ -1,8 +1,6 @@
 import gulp from 'gulp'
 import path from 'path'
-import _ from 'lodash'
 
-const vendorBrowser = require(path.join(process.cwd(), gulp.config('base.src'), 'package.json')).browser
 const jsDestFolder = `${gulp.config('base.dist')}/static/js`
 const basedir = path.join(process.cwd(), gulp.config('base.src'))
 
@@ -13,14 +11,7 @@ export default {
       'options': {
         'basename': 'vendor',
         'basedir': basedir,
-        'debug': true,
-        'require': _.map(_.keys(vendorBrowser), function (key) {
-          return [
-            vendorBrowser[key], {
-              expose: key
-            }
-          ]
-        })
+        'debug': true
       }
     },
     {
@@ -28,13 +19,17 @@ export default {
       'dest': jsDestFolder,
       'options': {
         'debug': true,
-        'basename': 'main',
-        'external': _.keys(vendorBrowser)
+        'basename': 'main'
       }
     }
   ],
   options: {
     extensions: ['.jsx', '.js'],
+    'transform': [
+      'html-browserify',
+      'babelify',
+      'envify'
+    ],
     paths: [
       gulp.config('base.src')
     ],
