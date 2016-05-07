@@ -152,6 +152,8 @@ class DatapointResource(BaseNonModelResource):
 
     def group_by_time_transform(self):
 
+
+        results, all_time_groupings = [], []
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
@@ -168,13 +170,26 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
+        print 'HELLO\n' * 20
+        print dp_df
+
+        if not dp_df.empty:
+
+            dp_df = self.get_time_group_series(dp_df, time_grouping)
+            gb_df = DataFrame(dp_df\
+                .groupby(['indicator_id','time_grouping','location_id'])['value']\
+                .sum())\
+                .reset_index()
+
+
+            return self.time_grouped_df_to_results(gb_df)
+
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
 
-            sub_location_df = DataFrame(list(Location.objects\
+            sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
-                .values('id','parent_location_id')))
-            sub_location_ids = list(sub_location_df['id'].unique())
+                .values_list('id', flat=True)
 
             dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = sub_location_ids,
@@ -183,9 +198,8 @@ class DatapointResource(BaseNonModelResource):
 
             depth_level =+ 1
 
-        results, all_time_groupings = [], []
-
         dp_df = self.get_time_group_series(dp_df, time_grouping)
+
         if dp_df.empty:
             return []
 
@@ -195,6 +209,7 @@ class DatapointResource(BaseNonModelResource):
                 columns=['location_id','parent_location_id'])
 
         merged_df = dp_df.merge(location_tree_df)
+
         filtered_df = merged_df[merged_df['parent_location_id']\
             .isin(self.location_ids)]
 
