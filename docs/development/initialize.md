@@ -28,10 +28,9 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   sudo pip install django
   ```
   vagrant has synced folders so that you can use your computer's editor, while the files are on the VM instance.
-  the 'foo' folder will show in the directory of your vagrant image.
+  the 'rhizome' folder will show in the directory of your vagrant image.
   ```
-  mkdir /vagrant/foo
-  cd /vagrant/foo
+  cd /vagrant
   git clone https://github.com/unicef/rhizome.git
   cd rhizome
   ```
@@ -82,4 +81,7 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   ```
   gulp dev
   ```
+
+  Now you need 2 terminals running for the VM. One runs python server, the other runs gulp dev. You can have your text editor look at your local machine vagrant directory which syncs up to vagrant.
+
   done!
