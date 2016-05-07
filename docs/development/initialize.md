@@ -27,8 +27,11 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   sudo apt-get install python-psycopg2
   sudo pip install django
   ```
-  cd to your code/repo related folder.
+  vagrant has synced folders so that you can use your computer's editor, while the files are on the VM instance.
+  the 'foo' folder will show in the directory of your vagrant image.
   ```
+  mkdir /vagrant/foo
+  cd /vagrant/foo
   git clone https://github.com/unicef/rhizome.git
   cd rhizome
   ```
@@ -40,14 +43,13 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   - sudo swapon /swapfile
   sudo pip install -r requirements.txt
   ```
-  // this may take a few minutes when running for the first time.
-  // Vagrant has more configuration to be done to access the postgres database.
+  This may take a few minutes when running for the first time. Vagrant has more configuration to be done to access the postgres database.
   ```
   sudo vi /etc/postgresql/9.3/main/pg_hba.conf
   ```
-  edit the line:
+  Edit the line:
   - local   all             postgres                                peer
-  to:
+  To:
   - local   all             postgres                                trust
   ```
   sudo /etc/init.d/postgresql reload
@@ -58,13 +60,13 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   \q
   python manage.py syncdb
   ```
-  create a user name and password when prompted. dont forget it!
-  now we can run the server! congrats! this is the command for that:
+  Create a user name and password when prompted. dont forget it! Now we can run the server! congrats! This is the command for that:
   ```
   python manage.py runserver --nothreading
   ```
   - Node/Gulp configuration
-  there is a version 6 but currently we are using:
+
+  There is a version 6 but currently we are using:
   ```
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   sudo apt-get install -y nodejs
@@ -72,13 +74,11 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   sudo npm install -g gulp
   npm install
   ```
-  if npm install gives a permission error run with sudo npm install
-
-  this will take a few minutes.
+  If npm install gives a permission error run with sudo npm install. This will take a few minutes.
   ```
   npm rebuild node-sass
   ```
-  initiate javascript serving
+  Initiate javascript serving
   ```
   gulp dev
   ```
