@@ -70,14 +70,19 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   sudo apt-get install -y nodejs
   cd webapp/
-  sudo npm install -g gulp
-  npm install
   ```
-  If npm install gives a permission error run with sudo npm install. This will take a few minutes.
+  I had some permissions issues with the npm paths, run this command to set owner to current user
+  ```
+  sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
+  npm install
+  npm install -g gulp
+  npm install babel-register
+  ```
   ```
   npm rebuild node-sass
   ```
   Initiate javascript serving
+  //not functioning just yet.
   ```
   gulp dev
   ```
@@ -85,3 +90,4 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   Now you need 2 terminals running for the VM. One runs python server, the other runs gulp dev. You can have your text editor look at your local machine vagrant directory which syncs up to vagrant.
 
   done!
+
