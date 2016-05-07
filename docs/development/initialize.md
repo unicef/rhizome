@@ -70,19 +70,14 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
   sudo apt-get install -y nodejs
   cd webapp/
-  ```
-  I had some permissions issues with the npm paths, run this command to set owner to current user
-  ```
-  chown root:root /usr/bin/sudo && chmod 4755 /usr/bin/sudo
+  sudo npm install -g gulp
   npm install
-  npm install -g gulp
-  npm install babel-register
   ```
+  If npm install gives a permission error run with sudo npm install. This will take a few minutes.
   ```
   npm rebuild node-sass
   ```
   Initiate javascript serving
-  //not functioning just yet.
   ```
   gulp dev
   ```
