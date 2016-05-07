@@ -16,7 +16,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
     CalculatedIndicatorComponent
 
 from datetime import datetime
-from pprint import pprint
 
 class ResultObject(object):
     '''
@@ -169,14 +168,38 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
+        depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
+        while dp_df.empty and depth_level < max_depth:
+
+            sub_location_df = DataFrame(list(Location.objects\
+                .filter(parent_location_id__in=sub_location_ids)\
+                .values('id','parent_location_id')))
+            sub_location_ids = list(sub_location_df['id'].unique())
+
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                location_id__in = sub_location_ids,
+                indicator_id__in = self.parsed_params['indicator__in']
+            ).values(*cols)),columns=cols)
+
+            depth_level =+ 1
+
         results, all_time_groupings = [], []
 
         dp_df = self.get_time_group_series(dp_df, time_grouping)
         if dp_df.empty:
             return []
 
-        gb_df = DataFrame(dp_df\
-            .groupby(['indicator_id','time_grouping','location_id'])['value']\
+        location_tree_df = DataFrame(list(LocationTree.objects\
+            .filter(location_id__in = sub_location_ids)\
+            .values_list('location_id','parent_location_id')),\
+                columns=['location_id','parent_location_id'])
+
+        merged_df = dp_df.merge(location_tree_df)
+        filtered_df = merged_df[merged_df['parent_location_id']\
+            .isin(self.location_ids)]
+
+        gb_df = DataFrame(filtered_df\
+            .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
             .sum())\
             .reset_index()
 
@@ -186,8 +209,12 @@ class DatapointResource(BaseNonModelResource):
 
         all_time_groupings, results = [], []
 
-        pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
-            ['location_id','time_grouping'])
+        try:
+            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
+                ['parent_location_id','time_grouping'])
+        except KeyError:
+            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
+                ['location_id','time_grouping'])
 
         for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
             reverse=True):
