@@ -76,7 +76,6 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
   npm install
   npm install -g gulp
-  npm install babel-register
   ```
   ```
   npm rebuild node-sass
