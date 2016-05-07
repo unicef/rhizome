@@ -11,26 +11,12 @@ class StackedPercentColumnChart extends HighChart {
     this.state = { stack_mode: props.type_params.stack_mode }
   }
 
-  _toggleStackMode = () => {
-    const stack_modes = ['normal', 'percent', null]
-    const index = stack_modes.indexOf(this.state.stack_mode) + 1
-    const new_state = index === 3 ? stack_modes[0] : stack_modes[index]
-    this.setState({stack_mode: new_state})
-    this.props.updateTypeParams('stack_mode', new_state)
-    this.chart.series.forEach(s => s.update({stacking: new_state}, false))
-    const selected_indicator_data_format = this.props.selected_indicators[0].data_format
-    this.chart.yAxis[0].update({
-      labels: {
-        formatter: new_state === 'percent' ? undefined : function () { return format.autoFormat(this.value, selected_indicator_data_format)},
-        format: new_state === 'percent' ? '{value}%' : '{value}'},
-    })
-    this.chart.redraw()
-  }
-
   setConfig = function () {
+    const self = this
     const props = this.props
     const first_indicator = props.selected_indicators[0]
     const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
+
     this.config = {
       chart: {
         type: 'column'
@@ -39,10 +25,9 @@ class StackedPercentColumnChart extends HighChart {
       xAxis: this.setXAxis(multipleCampaigns),
       yAxis: {
         title: { text: '' },
-        labels: {
-          formatter: function () {
-            return format.autoFormat(this.value, first_indicator.data_format)
-          }
+        max: this.state.stack_mode === 'percent' ? 100 : null,
+        labels : {
+          formatter: function () { return self.yAxisFormatter(this) }
         }
       },
       exporting: {
@@ -115,6 +100,13 @@ class StackedPercentColumnChart extends HighChart {
     return xAxis
   }
 
+  yAxisFormatter = (point) => {
+    // If there are multiple indicators and they are not the same data_format, this breaks down
+    const first_indicator = this.props.selected_indicators[0]
+    const formatted_value = format.autoFormat(point.value, first_indicator.data_format, 1)
+    return this.state.stack_mode === 'percent' ? point.value + '%' : formatted_value
+  }
+
   _getGroupedCategories = function () {
     // This creates the necessary data structure for a Grouped Category chart.
     // But loading the plugin is troublesome.
@@ -133,6 +125,24 @@ class StackedPercentColumnChart extends HighChart {
     })
     return _.sortBy(grouped_categories, grouped_category => grouped_category.name)
   }
+
+  _toggleStackMode = () => {
+    const self = this
+    const stack_modes = ['normal', 'percent', null]
+    const index = stack_modes.indexOf(this.state.stack_mode) + 1
+    const new_state = index === 3 ? stack_modes[0] : stack_modes[index]
+    this.setState({stack_mode: new_state})
+    this.props.updateTypeParams('stack_mode', new_state)
+    this.chart.series.forEach(s => s.update({stacking: new_state}, false))
+    this.chart.yAxis[0].update({
+      labels : {
+        formatter: function () { return self.yAxisFormatter(this) }
+      },
+      max: new_state === 'percent' ? 100 : null
+    })
+    this.chart.redraw()
+  }
+
 }
 
 export default StackedPercentColumnChart
