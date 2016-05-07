@@ -4,6 +4,7 @@
 Utilizing a virtual machine we can spin up a fresh, clean, and isolated developer environment. Visit the [Vargant](https://www.vagrantup.com/) website to download it. Another dependency might be required - [Virtualbox](https://www.virtualbox.org/wiki/Downloads), any of these following steps fail.
 * Commands to follow(keep in mind this is the installation order for ubuntu operating system):
   ```bash
+  // - Python/Django/Postgres configuration
   vagrant init ubuntu/trusty64
   vagrant up --provider virtualbox
   vagrant ssh
@@ -47,5 +48,18 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   \q
   python manage.py syncdb
   //create a user name and password when prompted. dont forget it!
+  //now we can run the server! congrats! this is the command for that:
   python manage.py runserver --nothreading
+  // - NodeJS configuration
+  // there is a version 6 but currently we are using:
+  curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  cd webapp/
+  sudo npm install -g gulp
+  npm install
+  // this will take a few minutes.
+  // if you encounter an error run when attempting to run 'gulp dev' run this:
+  npm rebuild node-sass
+  // initiate javascript serving
+  gulp dev
   ```
