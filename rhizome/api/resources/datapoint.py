@@ -157,7 +157,7 @@ class DatapointResource(BaseNonModelResource):
         time_grouping =  self.parsed_params['group_by_time']
 
         if time_grouping =='all_time':
-            return self.map_bubble_transform(filtered_indicator_list)
+            return self.map_bubble_transform()
 
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
@@ -642,7 +642,7 @@ class DatapointResource(BaseNonModelResource):
         return high_chart_data
 
 
-    def map_bubble_transform(self, filtered_indicator_list):
+    def map_bubble_transform(self):
         '''
         This method right now is set up specifically to deal with polio cases.
 
@@ -662,7 +662,7 @@ class DatapointResource(BaseNonModelResource):
 
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
-            indicator_id__in = filtered_indicator_list
+            indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
         if dp_df.empty:
