@@ -172,7 +172,7 @@ class DatapointResource(BaseNonModelResource):
 
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
-            return self.handle_polio_case_table(dp_df_columns, time_grouping)
+            return self.handle_polio_case_table(dp_df_columns)
 
         cols = ['data_date','indicator_id','location_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
@@ -186,10 +186,6 @@ class DatapointResource(BaseNonModelResource):
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
-
-            print 'it was empty-- trying \n' * 2
-            print depth_level
-            print 'it was empty-- trying \n' * 2
 
             sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
@@ -227,7 +223,7 @@ class DatapointResource(BaseNonModelResource):
     def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
-
+        
         try:
             pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
                 ['parent_location_id','time_grouping'])
@@ -266,7 +262,7 @@ class DatapointResource(BaseNonModelResource):
 
         return results
 
-    def handle_polio_case_table(self, dp_df_columns, time_grouping):
+    def handle_polio_case_table(self, dp_df_columns):
         '''
         This is a very specific peice of code that allows us to generate a table
         with
@@ -316,14 +312,9 @@ class DatapointResource(BaseNonModelResource):
         district_count_df['indicator_id'] = self\
             .ind_meta['district_count']
 
-        parent_location_df = DataFrame(list(Location.objects\
-            .filter(id__in = list(flat_df['location_id'].unique()))\
-            .values_list('id','parent_location_id')),\
-             columns = ['location_id','parent_location_id']
-        )
-
         concat_df = concat([gb_df, latest_date_df,  district_count_df])
-        concat_df['location_id'] = parent_location_id
+        concat_df[['indicator_id','value','time_grouping','data_date']]
+        concat_df['parent_location_id'] = parent_location_id
 
         return self.time_grouped_df_to_results(concat_df)
 
