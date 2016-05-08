@@ -91,7 +91,7 @@ class DataPointResourceTest(ResourceTestCase):
         return result
 
 
-    def test_get_list(self):
+    def _get_list(self):
         # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
 
         get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
@@ -139,7 +139,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(len(objects_1), len(objects_2))
 
-    def test_get_list_quarter(self):
+    def _get_list_quarter(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
@@ -169,7 +169,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertTrue(q1_found)
 
     # provide a non-existent id
-    def test_get_list_bogus_id(self):
+    def _get_list_bogus_id(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
