@@ -18,8 +18,10 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   which python
   ```
   If this outputs a path you have python on your system.
+  let's download pip install for python: (as per python recommended download method)
   ```
-  sudo apt-get install python-pip --fix-missing
+  curl -O https://bootstrap.pypa.io/get-pip.py
+  python get-pip.py
   sudo apt-get install python-dev
   sudo apt-get install python-pandas --fix-missing
   sudo apt-get install libpq-dev
@@ -90,3 +92,46 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
 
   done!
 
+### Local setup with virtualenv
+We can also install locally.
+- Download git to your local machine.
+  ```
+  cd /directory/of/yours
+  git clone https://github.com/unicef/rhizome.git
+  ```
+  let's download pip install for python: (as per python recommended download method)
+  ```
+  curl -O https://bootstrap.pypa.io/get-pip.py
+  sudo python get-pip.py
+  cd rhizome
+  sudo pip install virtualenv
+  sudo apt-get install python-dev
+  sudo apt-get install libpq-dev
+  sudo apt-get install postgresql
+  sudo apt-get install python-pandas
+  virtualenv venv
+  source venv/bin/activate
+
+  pip install -r requirements.txt
+  ```
+  This may take a few minutes when running for the first time. Vagrant has more configuration to be done to access the postgres database.
+  ```
+  sudo vi /etc/postgresql/9.3/main/pg_hba.conf
+  ```
+  Edit the line:
+  - local   all             postgres                                peer
+  To:
+  - local   all             postgres                                trust
+  ```
+  sudo /etc/init.d/postgresql reload
+  createdb rhizome -U postgres
+  sudo -u postgres psql rhizome
+  CREATE USER djangoapp WITH SUPERUSER;
+  ALTER USER djangoapp password 'w3b@p01i0';
+  \q
+  python manage.py syncdb
+  ```
+  Create a user name and password when prompted. dont forget it! Now we can run the server! congrats! This is the command for that:
+  ```
+  python manage.py runserver --nothreading
+  ```
