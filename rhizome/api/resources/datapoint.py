@@ -138,8 +138,9 @@ class DatapointResource(BaseNonModelResource):
 
         return self.base_data
 
-    def get_time_group_series(self, dp_df, time_grouping):
+    def get_time_group_series(self, dp_df):
 
+        time_grouping = self.parsed_params['group_by_time']
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
@@ -150,8 +151,17 @@ class DatapointResource(BaseNonModelResource):
 
         return dp_df
 
-    def group_by_time_transform(self):
+    def handle_data_exists(self, df):
 
+        dp_df = self.get_time_group_series(df)
+        gb_df = DataFrame(dp_df\
+            .groupby(['indicator_id','time_grouping','location_id'])['value']\
+            .sum())\
+            .reset_index()
+
+        return gb_df
+
+    def group_by_time_transform(self):
 
         results, all_time_groupings = [], []
         dp_df_columns = ['data_date','indicator_id','location_id','value']
@@ -170,22 +180,16 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
-        print 'HELLO\n' * 20
-        print dp_df
-
         if not dp_df.empty:
-
-            dp_df = self.get_time_group_series(dp_df, time_grouping)
-            gb_df = DataFrame(dp_df\
-                .groupby(['indicator_id','time_grouping','location_id'])['value']\
-                .sum())\
-                .reset_index()
-
-
-            return self.time_grouped_df_to_results(gb_df)
+            dp_df = self.handle_data_exists(dp_df)
+            return self.time_grouped_df_to_results(dp_df)
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
+
+            print 'it was empty-- trying \n' * 2
+            print depth_level
+            print 'it was empty-- trying \n' * 2
 
             sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
@@ -198,7 +202,7 @@ class DatapointResource(BaseNonModelResource):
 
             depth_level =+ 1
 
-        dp_df = self.get_time_group_series(dp_df, time_grouping)
+        dp_df = self.get_time_group_series(dp_df)
 
         if dp_df.empty:
             return []
@@ -286,7 +290,7 @@ class DatapointResource(BaseNonModelResource):
                         indicator_id__in = self.parsed_params['indicator__in']
                     ).values(*dp_df_columns)),columns=dp_df_columns)
 
-        flat_df = self.get_time_group_series(flat_df, time_grouping)
+        flat_df = self.get_time_group_series(flat_df)
         flat_df['parent_location_id'] = parent_location_id
 
         gb_df = DataFrame(flat_df\
