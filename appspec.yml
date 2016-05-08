@@ -10,6 +10,10 @@ permissions:
     pattern: "**"
     mode: 777
 hooks:
+  BeforeInstall:
+    - location: bin/auto_deploy/cleanup.sh
+      timeout: 1800
+      runas: root
   ApplicationStop:
     - location: bin/auto_deploy/stop_apache.sh
       timeout: 1800
