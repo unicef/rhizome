@@ -138,103 +138,116 @@ class DatapointResource(BaseNonModelResource):
 
         return self.base_data
 
+    def get_time_group_series(self, dp_df):
+
+        time_grouping = self.parsed_params['group_by_time']
+        if time_grouping == 'year':
+            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
+        elif time_grouping == 'quarter':
+            dp_df['time_grouping'] = dp_df['data_date']\
+                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+        else:
+            dp_df = DataFrame()
+
+        return dp_df
+
+    def handle_data_exists(self, df):
+
+        dp_df = self.get_time_group_series(df)
+        gb_df = DataFrame(dp_df\
+            .groupby(['indicator_id','time_grouping','location_id'])['value']\
+            .sum())\
+            .reset_index()
+
+        return gb_df
+
     def group_by_time_transform(self):
+
+        results, all_time_groupings = [], []
+        dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
-        indicator_id_list = self.parsed_params['indicator__in']
-
-        if not 'latest_date' in self.ind_meta\
-        and not 'district_count' in self.ind_meta\
-        and not 'province_count' in self.ind_meta:
-            inicators_to_filter = []
-        else:
-            inicators_to_filter = set([self.ind_meta['latest_date'],\
-                self.ind_meta['district_count'],
-                self.ind_meta['province_count']])
-        filtered_indicator_list = list(set(indicator_id_list)\
-            .difference(set(inicators_to_filter)))
-
         if time_grouping =='all_time':
-            return self.map_bubble_transform(filtered_indicator_list)
+            return self.map_bubble_transform()
 
-        param_location_ids= self.location_ids
-        results = []
-        all_time_groupings = []
-        for param_location_id in param_location_ids:
-            location_ids = LocationTree.objects.filter(
-                    location__location_type__name = 'District',
-                    parent_location_id= param_location_id
-                ).values_list('location_id', flat=True)
-            cols = ['data_date','indicator_id','location_id','value']
+        if self.parsed_params['chart_uuid'] ==\
+            '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
+            return self.handle_polio_case_table(dp_df_columns)
+
+        cols = ['data_date','indicator_id','location_id','value']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = self.location_ids,
+            indicator_id__in = self.parsed_params['indicator__in']
+        ).values(*cols)),columns=cols)
+
+        if not dp_df.empty:
+            dp_df = self.handle_data_exists(dp_df)
+            return self.time_grouped_df_to_results(dp_df)
+
+        depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
+        while dp_df.empty and depth_level < max_depth:
+
+            sub_location_ids = Location.objects\
+                .filter(parent_location_id__in=sub_location_ids)\
+                .values_list('id', flat=True)
+
             dp_df = DataFrame(list(DataPoint.objects.filter(
-                location_id__in = location_ids,
-                indicator_id__in = filtered_indicator_list
+                location_id__in = sub_location_ids,
+                indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)),columns=cols)
 
-            agg_logic = 'SUM'
-            if dp_df.empty:
+            depth_level =+ 1
 
-                parent_location_filter = self\
-                    .parsed_params['parent_location_id__in']
+        dp_df = self.get_time_group_series(dp_df)
 
-                if parent_location_filter == None:
-                    parent_location_filter = self\
-                        .parsed_params['location_id__in']
-                    agg_logic = 'AVG'
+        if dp_df.empty:
+            return []
 
-                sub_location_ids = Location.objects.filter(
-                    parent_location_id = parent_location_filter
-                ).values_list('id', flat=True)
+        location_tree_df = DataFrame(list(LocationTree.objects\
+            .filter(location_id__in = sub_location_ids)\
+            .values_list('location_id','parent_location_id')),\
+                columns=['location_id','parent_location_id'])
 
-                dp_df = DataFrame(list(DataPoint.objects.filter(
-                            location_id__in = sub_location_ids,
-                            indicator_id__in = filtered_indicator_list
-                        ).values(*cols)),columns=cols)
+        merged_df = dp_df.merge(location_tree_df)
 
-            if dp_df.empty:
-                continue
+        filtered_df = merged_df[merged_df['parent_location_id']\
+            .isin(self.location_ids)]
 
-            ## Group Datapoints by Year / Quarter ##
-            if time_grouping == 'year':
-                dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
-            elif time_grouping == 'quarter':
-                dp_df['time_grouping'] = dp_df['data_date']\
-                    .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
-            else:
-                continue
+        gb_df = DataFrame(filtered_df\
+            .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
+            .sum())\
+            .reset_index()
 
-            if 'base_indicator' in self.ind_meta\
-            and self.ind_meta['base_indicator'] in filtered_indicator_list:
-                df_with_aggregate = self.add_aggregate_indicators(dp_df)
-            else:
-                df_with_aggregate = dp_df
+        return self.time_grouped_df_to_results(gb_df)
 
-            if agg_logic == 'AVG':
-                gb_df = DataFrame(df_with_aggregate\
-                    .groupby(['indicator_id','time_grouping'])['value']\
-                    .mean())\
-                    .reset_index()
-            else:
-                gb_df = DataFrame(df_with_aggregate\
-                    .groupby(['indicator_id','time_grouping'])['value']\
-                    .sum())\
-                    .reset_index()
-            pivoted_data = self.pivot_df(gb_df, ['indicator_id'], 'value', ['time_grouping'])
-            for time_group, indicator_data in sorted(pivoted_data.iteritems(),\
-                reverse=True):
+    def time_grouped_df_to_results(self, df):
 
-                r = ResultObject()
-                r.location = param_location_id
-                r.campaign = str(time_group).replace('-','').replace('.0','')
+        all_time_groupings, results = [], []
+        
+        try:
+            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
+                ['parent_location_id','time_grouping'])
+        except KeyError:
+            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
+                ['location_id','time_grouping'])
 
-                r.indicators = [{
-                    'computed': None,
-                    'indicator': k,
-                    'value': v
-                } for k,v in indicator_data.iteritems()]
+        for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
+            reverse=True):
 
-                results.append(r)
-                all_time_groupings.extend(list(dp_df['time_grouping'].unique()))
+            location_id, time_group = time_loc_tupl[0], time_loc_tupl[1]
+
+            r = ResultObject()
+            r.location = location_id
+            r.campaign = str(time_group).replace('-','').replace('.0','')
+
+            r.indicators = [{
+                'computed': None,
+                'indicator': k,
+                'value': v
+            } for k,v in indicator_data.iteritems()]
+
+            results.append(r)
+            all_time_groupings.extend(list(df['time_grouping'].unique()))
 
         all_time_groupings = list(set(all_time_groupings))
 
@@ -246,9 +259,10 @@ class DatapointResource(BaseNonModelResource):
             'office_id': 1,
             'created_at': datetime.now()
         } for time_grp in all_time_groupings]
+
         return results
 
-    def add_aggregate_indicators(self, flat_df):
+    def handle_polio_case_table(self, dp_df_columns):
         '''
         This is a very specific peice of code that allows us to generate a table
         with
@@ -260,6 +274,26 @@ class DatapointResource(BaseNonModelResource):
         caluclated_indicator_component.
         '''
         # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+
+        parent_location_id = self.parsed_params['location_id__in']
+
+        all_sub_locations = LocationTree.objects.filter(
+            parent_location_id = parent_location_id
+        ).values_list('location_id', flat=True)
+
+        flat_df = DataFrame(list(DataPoint.objects.filter(
+                        location_id__in = all_sub_locations,
+                        indicator_id__in = self.parsed_params['indicator__in']
+                    ).values(*dp_df_columns)),columns=dp_df_columns)
+
+        flat_df = self.get_time_group_series(flat_df)
+        flat_df['parent_location_id'] = parent_location_id
+
+        gb_df = DataFrame(flat_df\
+            .groupby(['indicator_id','time_grouping','parent_location_id'])\
+            ['value']\
+            .sum())\
+            .reset_index()
 
         latest_date_df = DataFrame(flat_df\
             .groupby(['indicator_id','time_grouping'])['data_date']\
@@ -278,23 +312,12 @@ class DatapointResource(BaseNonModelResource):
         district_count_df['indicator_id'] = self\
             .ind_meta['district_count']
 
-        parent_location_df = DataFrame(list(Location.objects\
-            .filter(id__in = list(flat_df['location_id'].unique()))\
-            .values_list('id','parent_location_id')),\
-             columns = ['location_id','parent_location_id']
-        )
-        province_count_df = DataFrame(flat_df.merge(parent_location_df)\
-            .groupby(['time_grouping']).parent_location_id
-            .nunique())\
-            .reset_index()
-        province_count_df['value'] = province_count_df['parent_location_id']
-        province_count_df['indicator_id'] = self\
-            .ind_meta['province_count']
+        concat_df = concat([gb_df, latest_date_df,  district_count_df])
+        concat_df[['indicator_id','value','time_grouping','data_date']]
+        concat_df['parent_location_id'] = parent_location_id
 
-        concat_df = concat([latest_date_df, flat_df, district_count_df,\
-            province_count_df])
+        return self.time_grouped_df_to_results(concat_df)
 
-        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -420,7 +443,8 @@ class DatapointResource(BaseNonModelResource):
             'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
-            'parent_location_id__in': None, 'group_by_time': None
+            'parent_location_id__in': None, 'group_by_time': None, \
+            'chart_uuid': None
         }
 
         for k, v in optional_params.iteritems():
@@ -655,7 +679,7 @@ class DatapointResource(BaseNonModelResource):
         return high_chart_data
 
 
-    def map_bubble_transform(self, filtered_indicator_list):
+    def map_bubble_transform(self):
         '''
         This method right now is set up specifically to deal with polio cases.
 
@@ -675,7 +699,7 @@ class DatapointResource(BaseNonModelResource):
 
         dp_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in = location_ids,
-            indicator_id__in = filtered_indicator_list
+            indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
 
         if dp_df.empty:
