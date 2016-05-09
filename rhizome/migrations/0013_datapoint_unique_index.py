@@ -6,10 +6,6 @@ from rhizome.models import DataPoint, Campaign
 from pandas import DataFrame
 import math
 import pandas as pd
-from rhizome.agg_tasks import AggRefresh
-from django.db import transaction
-from django.db.transaction import TransactionManagementError
-
 
 # helper function for upsert_unique_indices
 def add_unique_index(x):
@@ -45,20 +41,6 @@ def upsert_unique_indices(apps, schema_editor):
     print len(dps_to_delete)
     dps_to_delete.delete()
 
-def run_agg_refresh(apps, schema_editor):
-    campaigns = Campaign.objects.all()
-    print 'len(campaigns)'
-    print len(campaigns)
-    for campaign in campaigns:
-        ar = AggRefresh(campaign.id)
-        # try/except block hack because tests fail otherwise
-        try:
-            with transaction.atomic():
-                ar.main()
-        except TransactionManagementError as e:
-            print 'error'
-            pass
-    raise Exception("not done writing migration!")
 
 
 class Migration(migrations.Migration):
@@ -79,13 +61,6 @@ class Migration(migrations.Migration):
             field=models.CharField(default=-1, max_length=255, db_index=True),
         ),
         migrations.RunPython(upsert_unique_indices),
-        # # update field constraint
-        # migrations.AlterField(
-        #     model_name='datapoint',
-        #     name='unique_index',
-        #     field=models.CharField(default=-1, max_length=255,unique=True),
-        # ),
-        # run agg_refresh
-        migrations.RunPython(run_agg_refresh)
+
     ]
 
