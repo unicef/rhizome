@@ -19,8 +19,7 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   vagrant up --provider virtualbox
   vagrant ssh
   sudo apt-get update
-  sudo apt-get install -y
-  sudo apt-get install git-all
+  sudo apt-get install -y git-all
   ```
   You may already have python. you can check with the following command:
   ```
@@ -31,9 +30,9 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   ```
   curl -O https://bootstrap.pypa.io/get-pip.py
   sudo python get-pip.py
-  sudo apt-get install python-pandas --fix-missing
-  sudo apt-get install libpq-dev
-  sudo apt-get install postgresql
+  sudo apt-get install -y python-pandas --fix-missing
+  sudo apt-get install -y libpq-dev
+  sudo apt-get install -y postgresql
   ```
   vagrant has synced folders so that you can use your computer's editor, while the files are on the VM instance.
   the 'rhizome' folder will show in the directory of your vagrant image.
@@ -61,7 +60,7 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   ```
   Create a user name and password when prompted. dont forget it! Now we can run the server! congrats! This is the command for that:
   ```
-  python manage.py runserver --nothreading
+  python manage.py runserver --nothreading 192.168.77.77:8000
   ```
 
 ### Local setup with virtualenv
@@ -77,9 +76,9 @@ We can also install locally.
   sudo python get-pip.py
   cd rhizome
   sudo pip install virtualenv
-  sudo apt-get install python-dev
-  sudo apt-get install libpq-dev
-  sudo apt-get install postgresql
+  sudo apt-get install -y python-dev
+  sudo apt-get install -y libpq-dev
+  sudo apt-get install -y postgresql
   virtualenv venv
   source venv/bin/activate
 
@@ -103,24 +102,37 @@ We can also install locally.
   ```
   Create a user name and password when prompted. dont forget it! Now we can run the server! congrats! This is the command for that:
   ```
-  python manage.py runserver --nothreading
+  python manage.py runserver --nothreading 192.168.77.77:8000
   ```
 
 #### Node/Gulp configuration
+  First install node
   ```
   cd ~/
+  curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  ```
+  Now install npm
+  ```
   curl -L http://npmjs.org/install.sh | sudo sh
+  ```
+  ```
   cd /vagrant/rhizome/webapp
   ```
-  If you come across any permission issues trying running this command:
+  Run this command to avoid permissions issues with npm directories:
   ```
   sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
   ```
   ```
   npm install -g npm@latest
   npm install -g babel-eslint@4.1.6
-  npm install
+  ```
+  if you run into an error here. re-run npm install.
+  I came across an error here about lru-cache module missing. cd /usr/lib/node_modules/ && sudo git clone https://github.com/isaacs/node-lru-cache.git to fix. Re-run npm install.
+
+  ```
   npm install -g gulp
+  npm install
   ```
   ```
   npm rebuild node-sass
