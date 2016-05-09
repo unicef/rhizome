@@ -5,7 +5,7 @@ import LocationStore from '../LocationStore'
 import treeify from 'utilities/transform/treeify'
 import ancestryString from 'utilities/transform/ancestryString'
 
-describe (__filename,()=>{
+describe (__filename, () => {
   it ('exists.', () => {
     expect (LocationStore).to.exist
   })
