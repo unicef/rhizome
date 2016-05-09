@@ -7,12 +7,18 @@ Utilizing a virtual machine we can spin up a fresh, clean, and isolated develope
   ```bash
   vagrant init ubuntu/trusty64
   ```
-  In the 'Vagrantfile' add the following lines to your configuration:
+  In the 'Vagrantfile' add the following lines to your configuration(unless your vagrant config has other config!):
   ```
+Vagrant.configure(2) do |config|
+  config.vm.box = "ubuntu/trusty64"
+
   config.vm.network "forwarded_port", guest: 8000, host: 8000
+  config.vm.network "forwarded_port", guest: 80, host: 8080
+  config.vm.network "private_network", ip: "192.168.77.77"
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "2048"]
   end
+end
   ```
   This will allow you to connect to your python server and also upgrade the memory to allow properly installation of pandas.
   ```
