@@ -41,11 +41,7 @@
 //     })
 
 //     context ('receiving a successful response from get_all_meta API', () => {
-//       let mocked_response
-//       beforeEach (() => {
-//         RootStore.data = getEmptyData()
-//         mocked_response = getMockResponse()
-//       })
+//       const mocked_response = getMockResponse()
 //       it ('updates state of campaigns', () => {
 //         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'campaigns')
 //       })
