@@ -43,22 +43,22 @@
 //     context ('receiving a successful response from get_all_meta API', () => {
 //       const mocked_response = getMockResponse()
 //       it ('updates state of campaigns', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'campaigns')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'campaigns')
 //       })
 //       it ('updates state of indicators', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'indicators')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'indicators')
 //       })
 //       it ('updates state of locations', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'locations')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'locations')
 //       })
 //       it ('updates state of dashboards', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'dashboards')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'dashboards')
 //       })
 //       it ('updates state of offices', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'offices')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'offices')
 //       })
 //       it ('updates state of charts', () => {
-//         expect (() => { RootStore.onFetchAllMetaCompleted(mocked_response) }).to.change(RootStore.data, 'charts')
+//         expect (() => RootStore.onFetchAllMetaCompleted(mocked_response)).to.change(RootStore.data, 'charts')
 //       })
 //     })
 //   })
@@ -73,7 +73,7 @@
 //       })
 //       it.skip ('sets state error', () => { // needs to be fixed in code, api throws error
 //         const errorResponse = getMockError()
-//         expect(() => { RootStore.onFetchAllMetaFailed(errorResponse) }).to.change(RootStore.data, 'error')
+//         expect(() => RootStore.onFetchAllMetaFailed(errorResponse)).to.change(RootStore.data, 'error')
 //       })
 //     })
 //   })
