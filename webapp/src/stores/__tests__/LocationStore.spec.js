@@ -32,7 +32,7 @@ describe (__filename, () => {
       expect (LocationStore.onFetchLocations).to.exist
     })
     it ('modifies the state\'s \'raw\' property', () => {
-      expect (() => { LocationStore.onFetchLocations() }).to.change(LocationStore.state, 'raw')
+      expect (() => LocationStore.onFetchLocations()).to.change(LocationStore.state, 'raw')
     })
     it ('sets state of \'raw\' to empty array', () => {
       LocationStore.onFetchLocations()
@@ -46,19 +46,19 @@ describe (__filename, () => {
     context ('when passed a response argument', () => {
       const response = getMockResponse()
       it ('updates meta property of state', () => {
-        expect (() => { LocationStore.onFetchLocationsCompleted(response) }).to.change(LocationStore.state, 'meta')
+        expect (() => LocationStore.onFetchLocationsCompleted(response)).to.change(LocationStore.state, 'meta')
       })
       it.skip ('updates raw property of state', () => {
-        expect (() => { LocationStore.onFetchLocationsCompleted(response) }).to.change(LocationStore.state, 'raw')
+        expect (() => LocationStore.onFetchLocationsCompleted(response)).to.change(LocationStore.state, 'raw')
       })
       it ('updates index property of state', () => {
-        expect (() => { LocationStore.onFetchLocationsCompleted(response) }).to.change(LocationStore.state, 'index')
+        expect (() => LocationStore.onFetchLocationsCompleted(response)).to.change(LocationStore.state, 'index')
       })
       it ('updates list property of state', () => {
-        expect (() => { LocationStore.onFetchLocationsCompleted(response) }).to.change(LocationStore.state, 'list')
+        expect (() => LocationStore.onFetchLocationsCompleted(response)).to.change(LocationStore.state, 'list')
       })
       it ('updates filtered property of state', () => {
-        expect (() => { LocationStore.onFetchLocationsCompleted(response) }).to.change(LocationStore.state, 'filtered')
+        expect (() => LocationStore.onFetchLocationsCompleted(response)).to.change(LocationStore.state, 'filtered')
       })
     })
   })
