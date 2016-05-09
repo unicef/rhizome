@@ -624,8 +624,8 @@ class DataPoint(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey(SourceSubmission)
     cache_job = models.ForeignKey(CacheJob, default=-1)
-    unique_index = models.CharField(max_length=255, unique=True)
-    
+    unique_index = models.CharField(max_length=255, unique=True, default=-1)
+
     def get_val(self):
         return self.value
 
