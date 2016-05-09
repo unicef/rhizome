@@ -4,10 +4,12 @@ from django.utils import timezone
 from collections import defaultdict
 import json
 import re
+import pandas as pd
 from pandas import DataFrame, concat, notnull
 from bulk_update.helper import bulk_update
 import math
 from rhizome.models import *
+from datetime import datetime
 
 class MasterRefresh(object):
     '''
@@ -242,7 +244,7 @@ class MasterRefresh(object):
         campaign_ids = doc_dp_df['campaign_id'].unique()
 
         # min_date, max_date = doc_dp_df['data_date'].min(),\
-        #     doc_dp_df['data_date'].max()
+        #     doc_dp_df[''].max()
 
         pontential_conflict_doc_dp_df = DataFrame(list(DocDataPoint\
             .objects.filter(
@@ -263,6 +265,10 @@ class MasterRefresh(object):
         merged_df = dp_df.merge(ss_dp_df, left_on = 'source_submission_id', \
             right_on = 'id')
 
+
+        # add the unique index to merged_df
+        merged_df = merged_df.apply(self.add_unique_index, axis=1)
+
         ready_for_sync_tuple_dict = DataFrame(merged_df\
             .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
 
@@ -270,12 +276,28 @@ class MasterRefresh(object):
 
         merged_df = merged_df.where((notnull(merged_df)), None)
 
+        # delete old datapoints
+        potential_conflict_dp_df = DataFrame(list(DataPoint\
+            .objects.filter(
+                indicator_id__in = indicator_ids,
+                location_id__in = location_ids,
+            ).values_list('unique_index')), columns=['unique_index'])
+
+        # merge on potential conflicts to get actual conflicts
+        if not potential_conflict_dp_df.empty:
+            conflict_df = merged_df.merge(potential_conflict_dp_df, on='unique_index')
+
+            conflicting_indices = list(conflict_df['unique_index'])
+
+            # delete all existing conflicting datapoints
+            DataPoint.objects.filter(unique_index__in = conflicting_indices).delete()
+
+
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
                 row.indicator_id)]
 
             row_created_at = row.created_at.replace(tzinfo=None)
-
 
             if row_created_at == max_created_at or row.campaign_id is None:
                 dp_batch.append(DataPoint(**{
@@ -284,6 +306,7 @@ class MasterRefresh(object):
                     'campaign_id' : row.campaign_id,
                     'data_date' : row.data_date,
                     'value' : row.value,
+                    'unique_index' : row.unique_index,
                     'source_submission_id' : row.source_submission_id,
                 }))
 
@@ -304,6 +327,14 @@ class MasterRefresh(object):
                 doc_dp_batch.append(doc_dp)
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
+
+    # helper function to sync_datapoints
+    def add_unique_index(self, x):
+        if x['campaign_id'] and not math.isnan(x['campaign_id']):
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(x['campaign_id'])
+        else:
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+        return x    
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):

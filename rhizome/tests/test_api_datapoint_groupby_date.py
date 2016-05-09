@@ -81,7 +81,8 @@ class DataPointResourceTest(ResourceTestCase):
                 indicator_id = self.ind.id,
                 data_date = datetime.strptime(row.data_date, '%d-%m-%y'),
                 value = 1,
-                source_submission_id = 1
+                source_submission_id = 1,
+                unique_index = str(self.some_district.id) + str(self.ind.id) + str(row.data_date)
             )
 
 

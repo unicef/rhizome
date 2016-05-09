@@ -101,5 +101,65 @@ class DocTransformResourceTest(ResourceTestCase):
         resp = self.ts.get(self, '/api/v1/transform_upload/')
         self.assertHttpApplicationError(resp)
 
+    # datapoint should be overwritten for unique location/campaign/indicator
+    def test_duplicate_datapoint_campaign(self):
+        # upload document and run transform
+        doc = self.ts.create_arbitrary_document(document_docfile='eoc_post_campaign.csv')
+        get_data = {'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        self.assertHttpOK(resp)
+        self.assertEqual(DataPointComputed.objects.all()[0].value, 0.082670906)
+
+        # upload and transform again:
+        doc_2 = self.ts.create_arbitrary_document(document_docfile='eoc_post_campaign_2.csv', doc_title='eoc_post_campaign_2.csv')
+        get_data_2 = {'document_id':doc_2.id}
+        resp_2 = self.ts.get(self, '/api/v1/transform_upload/', get_data_2)
+        self.assertHttpOK(resp_2)
+
+        # the datapoint should be overwritten
+        self.assertEqual(DataPoint.objects.count(), 1)
+        # make sure we have the new value
+        self.assertEqual(DataPointComputed.objects.all()[0].value, 0.9)
+
+    # datapoint should be overwritten for unique location/data_date/indicator
+    def test_duplicate_datapoint_data_date(self):
+        # create required metadata
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code = 'AF001047005000000000',
+            content_type = 'location',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_location_id
+        )
+
+        self.mapped_indicator_with_data = self.ts.indicators[2].id
+
+        self.indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'polio_case',
+            content_type = 'indicator',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_indicator_with_data
+        )
+        doc = self.ts.create_arbitrary_document(document_docfile='AfgPolioCases.csv', doc_title='AfgPolioCases.csv')
+        get_data={'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        self.assertHttpOK(resp)
+        data_date = datetime(2014, 9, 1, 0, 0)
+        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,\
+            indicator=self.mapped_indicator_with_data,\
+            data_date=data_date)
+        self.assertEqual(len(dp), 1)
+        self.assertEqual(1, dp[0].value)
+
+        # do it again
+        doc = self.ts.create_arbitrary_document(document_docfile='AfgPolioCases_2.csv', doc_title='AfgPolioCases_2.csv')
+        get_data={'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        data_date = datetime(2014, 9, 1, 0, 0)
+        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,\
+            indicator=self.mapped_indicator_with_data,\
+            data_date=data_date)
+        self.assertEqual(len(dp), 1)
+        self.assertEqual(2, dp[0].value)
+
 
 
