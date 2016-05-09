@@ -54,6 +54,7 @@ end
   ```
   Edit the line:
   - local   all             postgres                                peer
+
   To:
   - local   all             postgres                                trust
   ```
