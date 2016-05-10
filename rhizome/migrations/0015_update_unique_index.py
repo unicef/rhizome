@@ -17,7 +17,7 @@ def add_unique_index(x):
 
 def upsert_unique_indices(apps, schema_editor):
     datapoint_values_list = ['id','created_at','indicator_id','location_id','campaign_id','data_date']
-    historical_dps = DataFrame(list(DataPoint.objects.filter(unique_index = -1)\
+    historical_dps = DataFrame(list(DataPoint.objects.all()\
         .values_list('id','created_at','indicator_id','location_id','campaign_id','data_date')), columns=datapoint_values_list)
     # create the unique index
     historical_dps = historical_dps.apply(add_unique_index, axis=1)
@@ -42,25 +42,13 @@ def upsert_unique_indices(apps, schema_editor):
     dps_to_delete.delete()
 
 
-
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0012_datapoint_campaign_nullable'),
+        ('rhizome', '0014_unique_index_agg_refresh'),
     ]
-
     operations = [
-        migrations.AddField(
-            model_name='datapoint',
-            name='unique_index',
-            field=models.CharField(default=-1, max_length=255),
-        ),
-        migrations.AddField(
-            model_name='historicaldatapointentry',
-            name='unique_index',
-            field=models.CharField(default=-1, max_length=255, db_index=True),
-        ),
-        migrations.RunPython(upsert_unique_indices),
+    	migrations.RunPython(upsert_unique_indices),
 
     ]
 

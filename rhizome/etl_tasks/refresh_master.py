@@ -268,7 +268,6 @@ class MasterRefresh(object):
 
         # add the unique index to merged_df
         merged_df = merged_df.apply(self.add_unique_index, axis=1)
-
         ready_for_sync_tuple_dict = DataFrame(merged_df\
             .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
 
@@ -286,12 +285,9 @@ class MasterRefresh(object):
         # merge on potential conflicts to get actual conflicts
         if not potential_conflict_dp_df.empty:
             conflict_df = merged_df.merge(potential_conflict_dp_df, on='unique_index')
-
             conflicting_indices = list(conflict_df['unique_index'])
-
             # delete all existing conflicting datapoints
             DataPoint.objects.filter(unique_index__in = conflicting_indices).delete()
-
 
         for ix, row in merged_df.iterrows():
             max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
@@ -314,7 +310,6 @@ class MasterRefresh(object):
                 dp_ids_to_delete.append(row.id_x)
         DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
         DataPoint.objects.bulk_create(dp_batch)
-
 
     def process_source_submission(self,row):
         doc_dp_batch = []
