@@ -62,7 +62,9 @@ class AggRefreshAPITestCase(ResourceTestCase):
             value = 1,
             data_date = '2016-01-01',
             cache_job_id = -1,
-            source_submission_id = self.ss_1
+            source_submission_id = self.ss_1,
+            unique_index =1
+
         )
 
         dp_2 = DataPoint.objects.create(
@@ -72,7 +74,9 @@ class AggRefreshAPITestCase(ResourceTestCase):
             value = 1,
             data_date = '2016-01-01',
             cache_job_id = -1,
-            source_submission_id = self.ss_1
+            source_submission_id = self.ss_1,
+            unique_index =2
+
         )
 
 
