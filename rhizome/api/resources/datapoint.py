@@ -186,7 +186,6 @@ class DatapointResource(BaseNonModelResource):
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
-
             sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
                 .values_list('id', flat=True)
@@ -195,8 +194,7 @@ class DatapointResource(BaseNonModelResource):
                 location_id__in = sub_location_ids,
                 indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)),columns=cols)
-
-            depth_level =+ 1
+            depth_level += 1
 
         dp_df = self.get_time_group_series(dp_df)
 
