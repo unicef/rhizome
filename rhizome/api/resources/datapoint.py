@@ -77,10 +77,10 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
-        self.chart_type_fn_lookup = {
-            'MapChart': self.transform_map_data,
-            'BubbleMap': self.transform_map_data
-        }
+        # self.chart_type_fn_lookup = {
+        #     'MapChart': self.transform_map_data,
+        #     'BubbleMap': self.transform_map_data
+        # }
 
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
@@ -146,6 +146,8 @@ class DatapointResource(BaseNonModelResource):
         elif time_grouping == 'quarter':
             dp_df['time_grouping'] = dp_df['data_date']\
                 .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+        elif time_grouping == 'all_time':
+            dp_df['time_grouping'] = 1
         else:
             dp_df = DataFrame()
 
@@ -167,9 +169,10 @@ class DatapointResource(BaseNonModelResource):
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
-        if time_grouping =='all_time':
-            return self.map_bubble_transform()
+        # if time_grouping =='all_time':
+        #     return self.map_bubble_transform()
 
+       # to do: put this somewhere else
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table(dp_df_columns)
@@ -194,7 +197,6 @@ class DatapointResource(BaseNonModelResource):
                 indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)),columns=cols)
             depth_level += 1
-
         dp_df = self.get_time_group_series(dp_df)
         if dp_df.empty:
             return []
@@ -389,11 +391,11 @@ class DatapointResource(BaseNonModelResource):
             data['error'] = None
 
 
-        try:
-            chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
-            data['meta']['chart_data'] = chart_data_fn()
-        except KeyError:
-            data['meta']['chart_data'] = []
+        # try:
+        #     chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
+        #     data['meta']['chart_data'] = chart_data_fn()
+        # except KeyError:
+        #     data['meta']['chart_data'] = []
 
         return data
 
@@ -649,96 +651,96 @@ class DatapointResource(BaseNonModelResource):
 
         return pivoted_data
 
-    def transform_map_data(self):
+    # def transform_map_data(self):
 
-        high_chart_data = []
-        for obj in self.base_data:
-            dp_dict = obj.__dict__
-            indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
-            indicator_value = indicator_dict['value']
-            location = dp_dict['location']
-            if self.chart_type == 'MapChart':
-                object_dict = {
-                    'location_id' : location, ## high_chart_code,
-                    'value' : indicator_value
-                }
-            elif self.chart_type == 'BubbleMap':
-                object_dict = {
-                    'location_id' : location, ## high_chart_code,
-                    'z' : indicator_value
-                }
-
-
-            high_chart_data.append(object_dict)
-
-        return high_chart_data
+    #     high_chart_data = []
+    #     for obj in self.base_data:
+    #         dp_dict = obj.__dict__
+    #         indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
+    #         indicator_value = indicator_dict['value']
+    #         location = dp_dict['location']
+    #         if self.chart_type == 'MapChart':
+    #             object_dict = {
+    #                 'location_id' : location, ## high_chart_code,
+    #                 'value' : indicator_value
+    #             }
+    #         elif self.chart_type == 'BubbleMap':
+    #             object_dict = {
+    #                 'location_id' : location, ## high_chart_code,
+    #                 'z' : indicator_value
+    #             }
 
 
-    def map_bubble_transform(self):
-        '''
-        This method right now is set up specifically to deal with polio cases.
+        #     high_chart_data.append(object_dict)
 
-        This needs to be removed and we need to figure out a better way to
-        Handle the polio case indicator / Bubble Map viz.
-        '''
+        # return high_chart_data
 
-        param_location_id = self.parsed_params['parent_location_id__in']
 
-        # get all the districts
-        location_ids = LocationTree.objects.filter(
-                location__location_type__name = 'District',
-                parent_location_id= param_location_id
-            ).values_list('location_id', flat=True)
+    # def map_bubble_transform(self):
+    #     '''
+    #     This method right now is set up specifically to deal with polio cases.
 
-        cols = ['data_date','indicator_id','location_id','value']
+    #     This needs to be removed and we need to figure out a better way to
+    #     Handle the polio case indicator / Bubble Map viz.
+    #     '''
 
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = location_ids,
-            indicator_id__in = self.parsed_params['indicator__in']
-        ).values(*cols)),columns=cols)
+    #     param_location_id = self.parsed_params['parent_location_id__in']
 
-        if dp_df.empty:
-            return []
+    #     # get all the districts
+    #     location_ids = LocationTree.objects.filter(
+    #             location__location_type__name = 'District',
+    #             parent_location_id= param_location_id
+    #         ).values_list('location_id', flat=True)
 
-        results = []
+    #     cols = ['data_date','indicator_id','location_id','value']
 
-        if self.parsed_params['parent_location_id__in'] == u'1':
-            # get all the parents of the districts (provinces), if we're looking at afghanistan
-            district_to_region_df = DataFrame(list(
-                Location.objects.filter(
-                    id__in = list(dp_df['location_id'].unique()))
-                .values_list('id','parent_location_id')),\
-                columns = ['location_id','parent_location_id'])
+    #     dp_df = DataFrame(list(DataPoint.objects.filter(
+    #         location_id__in = location_ids,
+    #         indicator_id__in = self.parsed_params['indicator__in']
+    #     ).values(*cols)),columns=cols)
 
-            merged_df = dp_df.merge(district_to_region_df)\
-                [['indicator_id','value','parent_location_id']]
+    #     if dp_df.empty:
+    #         return []
 
-            dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
+    #     results = []
 
-        # get the sums for each location
-        gb_df = DataFrame(dp_df\
-            .groupby(['location_id'])['value']\
-            .sum())\
-            .reset_index()
+    #     if self.parsed_params['parent_location_id__in'] == u'1':
+    #         # get all the parents of the districts (provinces), if we're looking at afghanistan
+    #         district_to_region_df = DataFrame(list(
+    #             Location.objects.filter(
+    #                 id__in = list(dp_df['location_id'].unique()))
+    #             .values_list('id','parent_location_id')),\
+    #             columns = ['location_id','parent_location_id'])
 
-        indicator_id = list(dp_df['indicator_id'].unique())[0]
-        campaign_id = self.parsed_params['campaign__in'][0]
+    #         merged_df = dp_df.merge(district_to_region_df)\
+    #             [['indicator_id','value','parent_location_id']]
 
-        for ix, row in gb_df.iterrows():
+    #         dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
 
-            indicator_objects = [{
-                'indicator': indicator_id,
-                'value': row.value
-            }]
+    #     # get the sums for each location
+    #     gb_df = DataFrame(dp_df\
+    #         .groupby(['location_id'])['value']\
+    #         .sum())\
+    #         .reset_index()
 
-            r = ResultObject()
-            r.location = row.location_id
-            r.campaign = campaign_id
-            r.indicators = indicator_objects
+    #     indicator_id = list(dp_df['indicator_id'].unique())[0]
+    #     campaign_id = self.parsed_params['campaign__in'][0]
 
-            results.append(r)
+    #     for ix, row in gb_df.iterrows():
 
-        return results
+    #         indicator_objects = [{
+    #             'indicator': indicator_id,
+    #             'value': row.value
+    #         }]
+
+    #         r = ResultObject()
+    #         r.location = row.location_id
+    #         r.campaign = campaign_id
+    #         r.indicators = indicator_objects
+
+    #         results.append(r)
+
+    #     return results
 
     def pivot_df(self, df, index_column_list, value, pivot_column_list):
 

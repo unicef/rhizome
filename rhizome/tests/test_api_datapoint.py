@@ -472,3 +472,13 @@ class DataPointResourceTest(ResourceTestCase):
         returned_indicators = response_data['objects']
         self.assertEqual(len(returned_indicators), 1)
         self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
+
+    # def test_location_type(self):
+    #     # create Afghanistan, region, and provinces
+    #     afghanistan = Location.objects.create(
+    #         name='Afghanistan',
+    #         location_code ='Afghanistan',
+    #         location_type_id =self.lt.id,
+    #         office_id = self.o.id
+    #     )
+    #     # create a bunch of datapoints at province level
