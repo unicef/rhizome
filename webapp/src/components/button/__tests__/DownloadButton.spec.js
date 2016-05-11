@@ -1,10 +1,8 @@
 import React from 'react'
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
 import { shallow } from 'enzyme'
 import DownloadButton from '../DownloadButton'
 import sinon from 'sinon'
-
-chai.config.truncateThreshold = 0
 
 describe ('DownloadButton', () => {
   it ('exists', () => {

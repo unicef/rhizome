@@ -1,5 +1,5 @@
 import React from 'react'
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
 import { shallow } from 'enzyme'
 import AsyncButton from '../AsyncButton'
 import sinon from 'sinon'
