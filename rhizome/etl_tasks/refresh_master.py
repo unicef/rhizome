@@ -228,7 +228,7 @@ class MasterRefresh(object):
                 doc_dps = self.process_source_submission(row)
 
     def sync_datapoint(self, ss_id_list = None):
-        #  python manage.py test rhizome.tests.test_transform_upload.TransformUploadTestCase --settings=rhizome.settings.test
+
         dp_batch = []
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
@@ -236,67 +236,23 @@ class MasterRefresh(object):
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
+
         if len(doc_dp_df) == 0:
             return
 
-        location_ids = doc_dp_df['location_id'].unique()
-        indicator_ids = doc_dp_df['indicator_id'].unique()
-        campaign_ids = doc_dp_df['campaign_id'].unique()
+        ## need to do this for date as well ##
+        doc_dp_df['unique_index'] = doc_dp_df\
+            .apply(lambda x: str(x.location_id) + '-' \
+            + str(x.indicator_id) + '-' + str(x.campaign_id) , axis=1)
 
-        # min_date, max_date = doc_dp_df['data_date'].min(),\
-        #     doc_dp_df[''].max()
+        doc_dp_unique_keys = doc_dp_df['unique_index'].unique()
 
-        pontential_conflict_doc_dp_df = DataFrame(list(DocDataPoint\
-            .objects.filter(
-                indicator_id__in = indicator_ids,
-                location_id__in = location_ids,
-                campaign_id__in = campaign_ids
-                # data_date__gte = min_date,
-                # data_date__lte = max_date,
-            ).values()))
+        dp_ids_to_delete = DataPoint\
+            .objects.filter(unique_index__in = doc_dp_unique_keys)\
+            .values_list('id', flat = True)
 
-        full_dp_df = concat([doc_dp_df,pontential_conflict_doc_dp_df])
-        dp_df = full_dp_df.drop_duplicates()
-
-        ss_columns = ['id','created_at']
-        ss_dp_df = DataFrame(list(SourceSubmission.objects.filter(
-            id__in = ss_id_list).values(*ss_columns)),columns=ss_columns)
-
-        merged_df = dp_df.merge(ss_dp_df, left_on = 'source_submission_id', \
-            right_on = 'id')
-
-
-        # add the unique index to merged_df
-        merged_df = merged_df.apply(self.add_unique_index, axis=1)
-        ready_for_sync_tuple_dict = DataFrame(merged_df\
-            .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
-
-        dp_batch, dp_ids_to_delete = [],[]
-
-        merged_df = merged_df.where((notnull(merged_df)), None)
-
-        # delete old datapoints
-        potential_conflict_dp_df = DataFrame(list(DataPoint\
-            .objects.filter(
-                indicator_id__in = indicator_ids,
-                location_id__in = location_ids,
-            ).values_list('unique_index')), columns=['unique_index'])
-
-        # merge on potential conflicts to get actual conflicts
-        if not potential_conflict_dp_df.empty:
-            conflict_df = merged_df.merge(potential_conflict_dp_df, on='unique_index')
-            conflicting_indices = list(conflict_df['unique_index'])
-            # delete all existing conflicting datapoints
-            DataPoint.objects.filter(unique_index__in = conflicting_indices).delete()
-
-        for ix, row in merged_df.iterrows():
-            max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
-                row.indicator_id)]
-
-            row_created_at = row.created_at.replace(tzinfo=None)
-
-            if row_created_at == max_created_at or row.campaign_id is None:
-                dp_batch.append(DataPoint(**{
+        for ix, row in doc_dp_df.iterrows():
+            dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
                     'campaign_id' : row.campaign_id,
@@ -306,8 +262,6 @@ class MasterRefresh(object):
                     'source_submission_id' : row.source_submission_id,
                 }))
 
-            else:
-                dp_ids_to_delete.append(row.id_x)
         DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
         DataPoint.objects.bulk_create(dp_batch)
 
@@ -329,7 +283,7 @@ class MasterRefresh(object):
             x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(x['campaign_id'])
         else:
             x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
-        return x    
+        return x
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):

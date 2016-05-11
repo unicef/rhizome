@@ -479,10 +479,12 @@ class RefreshMasterTestCase(TestCase):
             .filter(source_submission_id__in = ss_id_list)\
             .values_list('id', flat=True)
 
-        print 'doc_dp_id_list\n' * 10
-        print doc_dp_id_list
+        dp_id_list = DataPoint.objects\
+            .filter(source_submission_id__in = ss_id_list)\
+            .values_list('id', flat=True)
 
         self.assertEqual(len(ss_id_list), len(test_df))
+        self.assertEqual(len(doc_dp_id_list), len(dp_id_list))
 
     def model_df_to_data(self,model_df,model):
 
