@@ -42,7 +42,8 @@ class BaseResource(Resource):
         What they are permissioned to.
         '''
         if 'location_id__in' in request.GET:
-            return request.GET['location_id__in'].split(',')
+            locations = request.GET['location_id__in'].split(',')
+            return map(int, locations)
 
         elif 'location_level' in request.GET:
             location_type_id = LocationType.objects\
