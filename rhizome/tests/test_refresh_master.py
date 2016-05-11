@@ -8,6 +8,7 @@ from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import *
 
+
 class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -409,6 +410,81 @@ class RefreshMasterTestCase(TestCase):
             doc_detail_value = self.uq_code_input_column
         )
 
+    def test_campaign_data_ingest(self):
+        # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_campaign_data_ingest --settings=rhizome.settings.test
+
+        self.set_up()
+        test_file_location = 'allAccessData.csv'
+        test_df = read_csv('rhizome/tests/_data/' + test_file_location)
+
+        document = Document.objects.create(doc_title = 'allAccessData')
+        document.docfile = test_file_location
+        document.save()
+
+        ## create locatino_meta ##
+        distinct_location_codes = test_df['geocode'].unique()
+        for l in distinct_location_codes:
+            l_id = Location.objects.create(
+                name = l,
+                location_code = l,
+                location_type_id = 1,
+                office_id = 1
+            ).id
+            l_som = SourceObjectMap.objects.create(
+                    master_object_id = l_id,
+                    content_type = 'location',
+                    source_object_code = str(l)
+                )
+
+        ## create campaign meta ##
+        distinct_campaign_codes = test_df['campaign'].unique()
+        for i, (c) in enumerate(distinct_campaign_codes):
+            c_id = Campaign.objects.create(
+                name = c,
+                top_lvl_location_id = 1,
+                top_lvl_indicator_tag_id = 1,
+                office_id = 1,
+                campaign_type_id =1,
+                start_date = '2010-01-0' + str(i + 1),
+                end_date  = '2010-01-0' + str(i + 1)
+            ).id
+            c_som = SourceObjectMap.objects.create(
+                    master_object_id = c_id,
+                    content_type = 'campaign',
+                    source_object_code = str(c)
+                )
+
+        ## create indicator_meta ##
+        access_indicator_id = Indicator.objects.create(
+            name = 'access', short_name = 'access'
+        ).id
+
+        som_obj = SourceObjectMap.objects.create(
+            master_object_id = access_indicator_id,
+            content_type = 'indicator',
+            source_object_code = '# Missed children due to inaccessibility (NEPI)'
+        )
+
+        dt = ComplexDocTransform(self.user.id, document.id)
+        dt.main()
+
+        mr = MasterRefresh(self.user.id, document.id)
+        mr.main()
+
+        ss_id_list = SourceSubmission.objects\
+            .filter(document_id = document.id)\
+            .values_list('id', flat=True)
+
+        doc_dp_id_list = DocDataPoint.objects\
+            .filter(source_submission_id__in = ss_id_list)\
+            .values_list('id', flat=True)
+
+        dp_id_list = DataPoint.objects\
+            .filter(source_submission_id__in = ss_id_list)\
+            .values_list('id', flat=True)
+
+        self.assertEqual(len(ss_id_list), len(test_df))
+        self.assertEqual(len(doc_dp_id_list), len(dp_id_list))
 
     def model_df_to_data(self,model_df,model):
 
