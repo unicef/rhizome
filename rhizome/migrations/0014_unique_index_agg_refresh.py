@@ -15,7 +15,7 @@ def run_agg_refresh(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0012_reset_sql_sequence'),
+        ('rhizome', '0012_datapoint_campaign_nullable'),
     ]
 
     operations = [

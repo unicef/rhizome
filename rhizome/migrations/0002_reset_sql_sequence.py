@@ -21,6 +21,7 @@ from rhizome.models import CacheJob
 def pass_fn(apps, schema_editor):
 
     pass
+
 def reset_seq(apps, schema_editor):
 
     cj_1 = CacheJob.objects.create(
@@ -45,10 +46,9 @@ def reset_seq(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0012_datapoint_campaign_nullable'),
+        ('rhizome', '0002_populate_initial_meta_data'),
     ]
 
     operations = [
-        # migrations.RunPython(reset_seq),
-        migrations.RunPython(pass_fn),
+        migrations.RunPython(reset_seq),
     ]

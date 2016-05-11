@@ -226,7 +226,11 @@ class MasterRefresh(object):
                 row.process_status = 'missing location'
             else:
                 doc_dps = self.process_source_submission(row)
-                row.process_status = 'doc_dp_len: %s' % len(doc_dps)
+
+            print '===\n' * 5
+            print 'ROW PROCESS STATUS %s' % row.process_status
+            print '===\n' * 5
+
 
     def add_unique_index(self, x):
         if x['campaign_id'] and not math.isnan(x['campaign_id']):
@@ -297,8 +301,6 @@ class MasterRefresh(object):
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
-        return DocDataPoint.objects.filter(source_submission_id=row.id)
-
     # helper function to sync_datapoints
     def add_unique_index(self, x):
         if x['campaign_id'] and not math.isnan(x['campaign_id']):
@@ -306,7 +308,6 @@ class MasterRefresh(object):
         else:
             x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
         return x
-
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):
@@ -319,6 +320,7 @@ class MasterRefresh(object):
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
+            print ' == NO INDICATOR ==  \n ' * 3
             return None
 
         cleaned_val = None

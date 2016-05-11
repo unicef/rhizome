@@ -28,13 +28,14 @@ def process_geo_json(apps, schema_editor):
     ## IRAQ ##
     ## http://code.highcharts.com/mapdata/countries/iq/iq-all.geo.json ##
 
-    office = Office.objects.create(name = 'Iraq')
-    province_location_type_id = LocationType.objects.get(name = 'Province').id
+    office, created = Office.objects.get_or_create(name = 'Iraq')
+    country_location_type = LocationType.objects.get(name = 'Country')
+    province_location_type = LocationType.objects.get(name = 'Province')
     iraq_location_id = Location.objects.create(\
         name = 'Iraq',
         location_code = 'Iraq',
-        location_type_id = LocationType.objects.get(name = 'Country').id,
-        office = office
+        location_type_id = country_location_type.id,
+        office_id = office.id
         ).id
 
     with open('geo_json.txt') as data_file:
@@ -48,7 +49,7 @@ def process_geo_json(apps, schema_editor):
         location_object = Location.objects.create(
             name = location_name,
             location_code = location_name,
-            location_type_id = province_location_type_id,
+            location_type_id = province_location_type.id,
             parent_location_id = iraq_location_id,
             office = office
         )
@@ -64,7 +65,7 @@ def process_geo_json(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0002_populate_initial_meta_data'),
+        ('rhizome', '0002_reset_sql_sequence'),
     ]
 
     operations = [

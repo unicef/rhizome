@@ -31,7 +31,7 @@ def populate_source_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    odk_form_sheet_name = 'source-data_idp_odk_form'
+    odk_form_sheet_name = 'source-data-idp-trunc'
     xl = pd.ExcelFile('iraq_data.xlsx')
 
     source_sheet_df = xl.parse(odk_form_sheet_name)
@@ -41,24 +41,29 @@ def populate_source_data(apps, schema_editor):
 
     datapoint_id_list = DataPoint.objects.all().values_list('id', flat=True)
 
-    print '== LEN OF datapoint_id_list ==\n' * 5
-    print datapoint_id_list
-    print '===\n' * 5
+    # print '== LEN OF datapoint_id_list ==\n' * 5
+    # print datapoint_id_list
+    # print '===\n' * 5
+    #
+    # l = Location.objects.all().values()
+    # print '==='
+    # print l
+    # print '==='
 
     iraq_data = DataPointComputed.objects.filter(
         location__name = 'Iraq'
     ).values()
 
-    if len(iraq_data) == 0:
-        raise Exception('No data for Iraq')
+    # if len(datapoint_id_list) == 0:
+    #     raise Exception('No data for Iraq')
 
 class MetaDataGenerator:
 
     def __init__(self, source_sheet_df):
 
         self.country = 'Iraq'
-        self.campaign_type = CampaignType.objects.create(name='IDP Survey')
-        self.tag = IndicatorTag.objects.create(tag_name='IDP Survey')
+        self.campaign_type = CampaignType.objects.get(name='IDP Survey')
+        self.tag = IndicatorTag.objects.get(tag_name='IDP Survey')
         self.source_sheet_df = source_sheet_df
         self.source_sheet_df['COUNTRY'] = self.country
         self.office = Office.objects\
@@ -130,7 +135,6 @@ class MetaDataGenerator:
     def build_meta_data_from_source(self):
 
         indicator_ids = self.build_indicator_meta()
-        campaign_ids = self.build_campaign_meta()
         location_ids = self.build_location_meta()
 
     def build_indicator_meta(self):
@@ -334,7 +338,7 @@ class MetaDataGenerator:
     def process_source_sheet(self):
 
         user_id = -1
-        sheet_name = 'source-data_idp_odk_form'
+        sheet_name = 'source-data-idp-trunc'
         # file_loc = settings.MEDIA_ROOT + sheet_name
         # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
 
