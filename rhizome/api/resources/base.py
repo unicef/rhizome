@@ -87,6 +87,13 @@ class BaseResource(Resource):
 
             ## end hack ##
 
+            if request.GET['location_type']:
+                loc_type_id = int(request.GET['location_type'])
+                return LocationTree.objects.filter(
+                    location__location_type_id = loc_type_id,
+                    parent_location_id__in = pl_id_list
+                ).values_list('location_id', flat=True)
+
             return Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
