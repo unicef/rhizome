@@ -31,7 +31,7 @@ def populate_source_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    odk_form_sheet_name = 'source-data-idp-trunc'
+    odk_form_sheet_name = 'source-data_idp_odk_form'
     xl = pd.ExcelFile('iraq_data.xlsx')
 
     source_sheet_df = xl.parse(odk_form_sheet_name)
@@ -62,8 +62,8 @@ class MetaDataGenerator:
     def __init__(self, source_sheet_df):
 
         self.country = 'Iraq'
-        self.campaign_type = CampaignType.objects.get(name='IDP Survey')
-        self.tag = IndicatorTag.objects.get(tag_name='IDP Survey')
+        # self.campaign_type = CampaignType.objects.get(name='IDP Survey')
+        self.tag, created = IndicatorTag.objects.get_or_create(tag_name='IDP Survey')
         self.source_sheet_df = source_sheet_df
         self.source_sheet_df['COUNTRY'] = self.country
         self.office = Office.objects\
@@ -295,8 +295,8 @@ class MetaDataGenerator:
                 ## except.
                 existing_location_id = \
                     self.existing_location_map[loc[location_name_column]]
-                location_code = loc[location_name_column] + ' - ' + \
-                    admin_level
+                location_code = str(loc[location_name_column]) + ' - ' + \
+                    str(admin_level)
             except KeyError:
                 location_code = loc[location_name_column]
 
