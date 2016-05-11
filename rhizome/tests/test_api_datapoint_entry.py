@@ -60,6 +60,23 @@ class DatapointEntryResourceTest(ResourceTestCase):
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['value'], dp_value)
 
+    # delete methods should fail
+    def test_delete(self):
+        dp = DataPointEntry.objects.create(
+            location_id = self.top_lvl_location.id,
+            data_date = '2016-01-01',
+            indicator_id = self.ind.id,
+            value = 1234,
+            cache_job_id = -1,
+            source_submission_id = self.ss.id,
+            campaign_id = self.c.id
+        )
+        self.assertEqual(DataPointEntry.objects.count(),1)
+        delete_url = '/api/v1/datapointentry/?id='+ str(dp.id)
+        resp = self.ts.delete(self, delete_url)
+        self.assertEqual(DataPointEntry.objects.count(),1)
+
+
 # what happens when we create a duplicate datapoint
     def test_post_update_dp(self):
         dp_value = 4567
@@ -85,6 +102,20 @@ class DatapointEntryResourceTest(ResourceTestCase):
         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['objects'][0]['value'], new_val)
+
+
+    def test_post_invalid_campaign(self):
+        dp_value = 4567
+        data={
+        'campaign_id': 1234,
+        'location_id': self.top_lvl_location.id,
+        'indicator_id': self.ind.id,
+        'value': dp_value
+        }
+        resp = self.ts.post(self, '/api/v1/datapointentry/', data)
+        self.assertHttpApplicationError(resp)
+
+
 
 
 

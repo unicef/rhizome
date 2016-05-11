@@ -32,7 +32,7 @@ def populate_source_data(apps, schema_editor):
     '''
 
     odk_form_sheet_name = 'source-data_idp_odk_form'
-    xl = pd.ExcelFile('initial_data.xlsx')
+    xl = pd.ExcelFile('iraq_data.xlsx')
 
     source_sheet_df = xl.parse(odk_form_sheet_name)
 

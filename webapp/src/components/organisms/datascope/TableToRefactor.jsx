@@ -3,7 +3,7 @@ import React from 'react'
 import cx from 'classnames'
 
 import InterfaceMixin from 'utilities/InterfaceMixin'
-import TableHeaderCell from 'components/organisms/datascope/TableHeaderCell'
+import TableHeaderCellToRefactor from 'components/organisms/datascope/TableHeaderCellToRefactor'
 import SimpleDataTableCell from 'components/organisms/datascope/SimpleDataTableCell'
 
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
@@ -118,7 +118,7 @@ var TableToRefactor = React.createClass({
       sortIndicatorAscending: this.props.sortIndicatorAscending,
       sortIndicatorDescending: this.props.sortIndicatorDescending
     })
-  return React.createElement(TableHeaderCell, propsToPass);
+  return React.createElement(TableHeaderCellToRefactor, propsToPass);
   },
     renderRow: function (columns, row) {
         var _this = this;

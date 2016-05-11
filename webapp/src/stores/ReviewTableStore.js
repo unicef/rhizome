@@ -1,4 +1,4 @@
-import api from 'data/api'
+import api from 'utilities/api'
 import Reflux from 'reflux'
 import parseSchema from 'components/organisms/manage-system/utils/parseSchema'
 

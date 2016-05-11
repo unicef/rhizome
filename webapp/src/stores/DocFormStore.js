@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import api from 'data/api'
+import api from 'utilities/api'
 import Reflux from 'reflux'
 
 var DocFormStore = Reflux.createStore({

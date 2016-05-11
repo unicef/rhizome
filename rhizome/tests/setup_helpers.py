@@ -65,17 +65,17 @@ class TestSetupHelpers(ResourceTestCase):
 	            master_object_id = -1
 	        )
 
-	def create_arbitrary_document(self, document_docfile='eoc_post_campaign.csv', id=None):
+	def create_arbitrary_document(self, document_docfile='eoc_post_campaign.csv', doc_title='eoc_post_campaign.csv', id=None):
 		document =""
 		if id:
 			document = Document.objects.create(
-	        doc_title = 'eoc_post_campaign.csv',
+	        doc_title = doc_title,
 	        created_by_id = self.user.id,
 	        guid = 'test',
 	        id=id)
 		else:
 			document = Document.objects.create(
-	        doc_title = 'eoc_post_campaign.csv',
+	        doc_title = doc_title,
 	        created_by_id = self.user.id,
 	        guid = 'test')
 	 	document.docfile = document_docfile
@@ -108,6 +108,15 @@ class TestSetupHelpers(ResourceTestCase):
 		else:
 			return test_class.api_client.get(uri,\
     			format ='json', authentication= self.get_credentials(test_class))
+
+	def delete(self, test_class, uri, data=None):
+		if data:
+			return stest_class.api_client.delete(uri, format='json', data=data,\
+               authentication=self.get_credentials(test_class))
+		else:
+			return test_class.api_client.delete(uri, format='json',\
+               authentication=self.get_credentials(test_class))
+
 
 	def model_df_to_data(self,model_df,model):
 		meta_ids = []

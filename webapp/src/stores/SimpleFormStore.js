@@ -1,5 +1,5 @@
 import Reflux from 'reflux'
-import api from 'data/api'
+import api from 'utilities/api'
 import _ from 'lodash'
 
 import SimpleFormActions from 'actions/SimpleFormActions'
@@ -27,15 +27,15 @@ var SimpleFormStore = Reflux.createStore({
     var self = this
     var fnLookup = {'indicator': api.post_indicator, 'indicator_tag': api.post_indicator_tag}
     var form_data =
-      {'indicator': {
-        'name': '',
-        'short_name': '',
-        'data_format': '',
-        'description': '',
-        'source_name': '',
-        'bad_bound': '',
-        'good_bound': ''
-      },
+    {'indicator': {
+      'name': '',
+      'short_name': '',
+      'data_format': '',
+      'description': '',
+      'source_name': '',
+      'bad_bound': '',
+      'good_bound': ''
+    },
       'indicator_tag': {'tag_name': ''}
     }
 
@@ -47,24 +47,24 @@ var SimpleFormStore = Reflux.createStore({
     Promise.all([
       api_fn(all_data)
     ])
-    .then(_.spread(function (apiResponse) {
-      self.data.formData = form_data[content_type]
-      self.data.objectId = apiResponse.objects.id
-      self.data.dataObject = apiResponse
-      self.data.loading = false
-      self.data.saveSuccess = true
-      self.data.displayMsg = true
-      self.data.message = 'Indicator is successfully created.'
-      self.trigger(self.data)
-    }), function (error) {
-      self.data.formData = form_data[content_type]
-      self.data.displayMsg = true
-      self.data.dataObject = data_to_post
-      self.data.saveSuccess = false
-      self.data.message = error.msg
-      self.data.loading = false
-      self.trigger(self.data)
-    })
+      .then(_.spread(function (apiResponse) {
+        self.data.formData = form_data[content_type]
+        self.data.objectId = apiResponse.objects.id
+        self.data.dataObject = apiResponse
+        self.data.loading = false
+        self.data.saveSuccess = true
+        self.data.displayMsg = true
+        self.data.message = 'Indicator is successfully created.'
+        self.trigger(self.data)
+      }), function (error) {
+        self.data.formData = form_data[content_type]
+        self.data.displayMsg = true
+        self.data.dataObject = data_to_post
+        self.data.saveSuccess = false
+        self.data.message = error.msg
+        self.data.loading = false
+        self.trigger(self.data)
+      })
   },
 
   onInitialize: function (object_id, content_type) {
@@ -77,14 +77,14 @@ var SimpleFormStore = Reflux.createStore({
 
     var fnLookup = {'indicator': api.indicators, 'indicator_tag': api.get_indicator_tag}
     var form_data =
-      {'indicator': {
-        'name': '',
-        'short_name': '',
-        'data_format': '',
-        'description': '',
-        'source_name': '',
-        'bad_bound': '',
-        'good_bound': ''
+    {'indicator': {
+      'name': '',
+      'short_name': '',
+      'data_format': '',
+      'description': '',
+      'source_name': '',
+      'bad_bound': '',
+      'good_bound': ''
       },
       'indicator_tag': {'tag_name': ''}
     }
@@ -104,10 +104,10 @@ var SimpleFormStore = Reflux.createStore({
           'data_format': {
             type: 'select',
             settings: {options: [
-              { value: 'pct', label: 'pct' },
-              { value: 'bool', label: 'bool' },
-              { value: 'int', label: 'int' },
-              { value: 'class', label: 'class' }
+                { value: 'pct', label: 'pct' },
+                { value: 'bool', label: 'bool' },
+                { value: 'int', label: 'int' },
+                { value: 'class', label: 'class' }
             ]}
           },
           'description': {type: 'string'}
@@ -124,7 +124,7 @@ var SimpleFormStore = Reflux.createStore({
         self.data.dataObject = apiResponse.objects[0]
         self.data.loading = false
         console.log('self.data', self.data)
-        //code fails on trigger call
+        // code fails on trigger call
         self.trigger(self.data)
       })
 
@@ -133,7 +133,12 @@ var SimpleFormStore = Reflux.createStore({
       self.trigger(self.data)
     })
   },
-
+  onAddIndicatorToTag: function(indicator_id, tag_id) {
+    //console.log("This has been called");
+    api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
+      SimpleFormActions.refreshIndicators(tag_id)
+    })
+  },
   onAddTagToIndicator: function (indicator_id, tag_id) {
     api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
       SimpleFormActions.refreshTags(indicator_id)
@@ -159,6 +164,12 @@ var SimpleFormStore = Reflux.createStore({
   onRemoveCalculationFromIndicator: function (indicator_id, id) {
     api.remove_calc_from_indicator({ id: id }).then(function (response) {
       SimpleFormActions.refreshCalculation(indicator_id)
+    })
+  },
+
+  onRemoveIndicatorFromTag: function (id, tagId) {
+    api.remove_indicator_from_tag({ id: id }).then(function (response) {
+      SimpleFormActions.refreshIndicators(tagId)
     })
   },
 
@@ -190,6 +201,21 @@ var SimpleFormStore = Reflux.createStore({
     })
   },
 
+  onRefreshIndicators: function (tagId) {
+    var self = this
+    api.indicator_to_tag({ indicator_tag_id: tagId }, null, {'cache-control': 'no-cache'}).then(function (tags) {
+      var indicatorTags = _.map(tags.objects, function (row) {
+        return {
+          'id': row.id, displayId: row.id, 'display': row.indicator__short_name
+        }
+      })
+
+      self.data.componentData['indicator'].componentRows = indicatorTags
+      //self.data.loading = false
+      self.trigger(self.data)
+    })
+  },
+
   onInitIndicatorToCalc: function (indicatorId) {
     var self = this
 
@@ -217,6 +243,8 @@ var SimpleFormStore = Reflux.createStore({
   onInitIndicatorToTag: function (indicatorId) {
     var self = this
 
+    console.log('onInitIndicatorToTag  indicatorId ID: ', indicatorId)
+
     Promise.all([
       api.indicator_to_tag({ indicator_id: indicatorId }, null, {'cache-control': 'no-cache'}),
       api.tagTree({}, null, {'cache-control': 'no-cache'})
@@ -228,6 +256,27 @@ var SimpleFormStore = Reflux.createStore({
         })
 
         self.data.componentData['indicator_tag'] = {'componentRows': indicatorTags, 'dropDownData': allTags}
+        self.data.loading = false
+        self.trigger(self.data)
+      }))
+  },
+  onInitTagToIndicator: function (tagId) {
+    var self = this
+
+    Promise.all([
+      api.indicator_to_tag({ indicator_tag_id: tagId }, null, {'cache-control': 'no-cache'}),
+      api.indicatorsTree({}, null, {'cache-control': 'no-cache'})
+    ])
+      .then(_.spread(function (tags, indicators) {
+        var indicatorsData = _(indicators.objects).sortBy('title').value()
+        var indicatorTags = _.map(tags.objects, function (row) {
+          //console.log(row)
+          return {'id': row.id, displayId: row.id, 'display': row.indicator__short_name}
+        })
+
+        //console.log('dropDownData:', indicatorsData)
+
+        self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicatorsData}
         self.data.loading = false
         self.trigger(self.data)
       }))

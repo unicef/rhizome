@@ -1,6 +1,6 @@
 import React from 'react'
 
-import api from 'data/api'
+import api from 'utilities/api'
 
 import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTableColumn'
 import Paginator from 'components/organisms/datascope/Paginator'

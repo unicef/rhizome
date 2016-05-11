@@ -129,32 +129,32 @@ class TransformUploadTestCase(TestCase):
 
     #     location_code_column = 'SettlementCode'
     #     campaign_code_colum = 'DateOfReport'
-    #
+    
     #     input_df = read_csv('/Users/john/Downloads/vcm_birth_tracking_results.csv')
     #     # input_df = read_csv('/Users/john/Desktop/vcm_bitrth_tracking_sample.csv')
-    #
+    
     #     cleaned_df = input_df\
     #         [[location_code_column,campaign_code_colum,'VCM0Dose','VCMNameCAttended']]
-    #
+    
     #     bool_map = {'yes': 1, 'no': 0}
-    #
+    
     #     cleaned_df['VCM0Dose'] = cleaned_df['VCM0Dose'].map(bool_map)
     #     cleaned_df['VCMNameCAttended'] = cleaned_df['VCMNameCAttended'].map(bool_map)
-    #
+    
     #     cleaned_df = cleaned_df.where((notnull(cleaned_df)), 0)
-    #
+    
     #     grouped_df = DataFrame(cleaned_df\
     #         .groupby([location_code_column,campaign_code_colum])[['VCMNameCAttended','VCM0Dose']].sum())
-    #
+    
     #     print grouped_df
-    #
+    
     #     row_count_df = DataFrame(cleaned_df\
     #         .groupby([location_code_column,campaign_code_colum])\
     #         .count())[[location_code_column]]
-    #
+    
     #     final_df = grouped_df.merge(row_count_df,left_index=True,right_index=True)
     #     final_df.rename(columns={location_code_column:'location_campaign_code_count'}, inplace=True)
-    #
+    
     #     return final_df
 
 

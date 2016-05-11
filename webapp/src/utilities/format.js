@@ -10,11 +10,11 @@ function num (value, format = 'n') {
   return d3.format(format)(value)
 }
 
-function autoFormat (value, format) {
-  if (format === 'pct') {
-    return Math.floor(value * 100) + '%'
-  } else if (format === 'bool'){
-    const boolValues = ['No','Yes']
+function autoFormat (value, format, decimal_places = null) {
+  if (format === 'pct' && value !== '') {
+    return (isNaN(decimal_places) ? Math.floor(value * 100) : (value * 100).toFixed(decimal_places)) + '%'
+  } else if (format === 'bool') {
+    const boolValues = ['No', 'Yes']
     return boolValues[value]
   } else {
     return value
@@ -30,6 +30,11 @@ function timeAxis (value) {
   )
 }
 
+function monthYear (value) {
+  var m = moment(value)
+  return m.format("MMM YY'")
+}
+
 function unCamelCase (str) {
   return str
     // insert a space between lower & upper
@@ -43,6 +48,7 @@ function unCamelCase (str) {
 export default {
   general: general,
   autoFormat: autoFormat,
+  monthYear: monthYear,
   num: num,
   timeAxis: timeAxis,
   unCamelCase: unCamelCase

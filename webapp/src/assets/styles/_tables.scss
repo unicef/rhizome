@@ -1,16 +1,18 @@
+$table-color: rgba(107, 122, 131, 0.25);
+
 table {
-  border: 1px solid #DDDDDD;
+  border: none;
   border-collapse: collapse;
   margin-top: 10pt;
   width: 100%;
-
   thead {
+    background: $table-color;
     tr {
       th {
         color: $rhz-body-color;
         padding: 0.5rem 0.625rem 0.625rem;
         text-align: left;
-        text-transform: uppercase;
+        font-size: 1rem;
         font-family: proxima-bold;
         a {
           color: $rhz-body-color;
@@ -23,52 +25,94 @@ table {
   }
 
   tbody {
+    tr:nth-child(even) {
+      background: transparent;
+      td {
+        background: transparent;
+      }
+    }
+    tr:last-child {
+      td {
+        border-bottom: none;
+      }
+    }
     tr:not(.empty) {
       &:hover {
-        // td {
-          background-color: $ghost;
-        // }
+        background-color: #F1F1F1;
       }
-      td.editable {
+    }
+  }
+  tr {
+    td {
+      padding: 0.4625rem 0.625rem;
+      transition: background-color 300ms ease-in-out;
+      background-color: transparent;
+      cursor: default;
+      font-size: .9rem;
+      border-bottom: 1px solid $table-color;
+      input[type=text] {
+        font-size: .9rem;
+        text-align: left;
+        margin: 0;
+        &:focus {
+          background-color: rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+        }
+      }
+      &.editable {
+        cursor: pointer;
+        &.in-edit-mode {
+          padding: 0;
+        }
         &:hover {
-          border-bottom: 2px solid #ffcc67;
+          input[type=text]:focus {
+            background-color: transparent;
+          }
+        }
+        &.missing, &:hover {
+          background-color: rgba(0, 0, 0, 0.1);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+        }
+        &.error {
+          background-color: #FF9081;
+        }
+      }
+      &.table-row-actions {
+        padding: .4rem;
+      }
+      .button.icon-button, *[role="button"].icon-button {
+        top: 0;
+        padding: 0;
+      }
+      .boolean-dropdown {
+        font-family: proxima, Helvetica, sans-serif;
+        font-size: .9rem;
+        background: transparent;
+        min-height: 0.9rem;
+        width: 100%;
+        padding: 0 .5rem;
+        text-align: left;
+        color: $rhz-body-color;
+        margin: 0;
+        &:hover {
+          color: $rhz-body-color;
+          background: transparent;
         }
       }
     }
   }
 
-  td {
-    background-color: white;
-    cursor: default;
-    font-size: .6875rem;
-    padding: 3pt 0;
-    input[type=text] {
-      font-size: .85rem;
-      text-align: left;
-      margin: 0;
-    }
-    &.editable {
-      &.in-edit-mode {
-        padding: 0;
-      }
-      &:hover {
-        background: #DDDDDD;
-      }
-      &.missing {
-        background-color: #E2E2E2// #FFEB86// rgb(255, 235, 134);
-      }
-      &.error {
-        background-color: #FF9081;
-      }
-    }
-  }
-
   tfoot {
+    tr td {
+      padding-top: 1rem;
+      font-size: .8rem;
+    }
     td {
+      border: none;
       background-color: #FFFFFF;
       padding: 0;
       margin-top: 10;
-
+      font-weight: bold;
       &.more {
         font-size: rem-calc(10);
         text-align: center;
@@ -164,7 +208,7 @@ table {
 
   .header-background {
     height: $defaultHeaderHeight; /* height of header */
-    background-color: #F5F5F5;
+    // background-color: #F5F5F5;
     border: solid 1px $borderColor;
     border-bottom: none;
     position: absolute;
@@ -211,7 +255,7 @@ table {
       z-index: 900;
 
       border-left: 1px solid $borderColor;
-      background-color: #F5F5F5;
+      // background-color: #F5F5F5;
 
       /* to hide overflow text, and then reveal on hover: */
       white-space: nowrap;
@@ -259,9 +303,18 @@ $valueColumnWidth: 80px;
 .empty,
 .loading
 {
-  // background-color: #fafafa;
   background-color: transparent;
   color: #999;
   text-align: center;
   padding: 40px 0;
+}
+
+.percent-bar {
+  background: #f1f1f1;
+  width: 100%;
+  > div {
+    text-align: center;
+    display: inline-block;
+    min-width: 2rem;
+  }
 }

@@ -17,5 +17,8 @@ export default {
   ],
   rainbow: [
     'indianred', 'coral', 'gold', 'limegreen', 'turquoise', 'royalblue'
+  ],
+  full_rainbow: [
+    '#2D2525', '#54ef7d', '#54bdef', '#547fef', '#8054ef', '#d954ef', '#fc5899', '#ff6959', '#ffa359', '#ffc459', '#ffe559', '#f7ff59', '#b6fd59'
   ]
 }

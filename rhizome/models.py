@@ -583,7 +583,7 @@ class SourceSubmission(models.Model):
             l_id = SourceObjectMap.objects.get(content_type = 'location',\
                 source_object_code = self.location_code).master_object_id
         except ObjectDoesNotExist:
-            loc_id = None
+            l_id = None
 
         return l_id
 
@@ -619,18 +619,21 @@ class DataPoint(models.Model):
 
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    campaign = models.ForeignKey(Campaign, null=True)
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey(SourceSubmission)
     cache_job = models.ForeignKey(CacheJob, default=-1)
+    unique_index = models.CharField(max_length=255, unique=True, default=-1)
 
     def get_val(self):
         return self.value
 
     class Meta:
         db_table = 'datapoint'
+
+
 
 class DocDataPoint(models.Model):
     '''
@@ -640,7 +643,7 @@ class DocDataPoint(models.Model):
     document = models.ForeignKey(Document)  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign)
+    campaign = models.ForeignKey(Campaign, null=True)
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
     source_submission = models.ForeignKey(SourceSubmission)

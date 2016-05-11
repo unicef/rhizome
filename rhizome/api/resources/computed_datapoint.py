@@ -9,6 +9,14 @@ class ComputedDataPointResource(BaseModelResource):
             'document_id'
         - *Errors:*
             Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified
+    **POST Request** Create a computed datapoint
+        - *Required Parameters:*
+            'document_id', 'indicator_id', 'campaign_id', 'location_id', 'value'
+        - *Errors:*
+            Returns 500 error if information is missing.
+        - *To Note:*
+            The api does not validate any of these required parameters. It is possible to create datapoints with invalid campaign ids, etc.
+    **DELETE Request: Delete Detail** Delete a computed datapoint using the format '/api/v1/computed_datapoint/<datapoint_id>/'
         '''
 
     class Meta(BaseModelResource.Meta):
@@ -39,3 +47,7 @@ class ComputedDataPointResource(BaseModelResource):
         ).values('indicator_id','location__name','campaign__name','indicator__short_name' ,'value')
 
         return queryset
+
+    def delete_detail(self, request, **kwargs):
+
+        DataPointComputed.objects.get(id = kwargs['pk']).delete()

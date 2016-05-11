@@ -1,9 +1,9 @@
 import Reflux from 'reflux'
 import _ from 'lodash'
-import api from 'data/api'
+import api from 'utilities/api'
 
-import ancestryString from 'data/transform/ancestryString'
-import treeify from 'data/transform/treeify'
+import ancestryString from 'utilities/transform/ancestryString'
+import treeify from 'utilities/transform/treeify'
 
 var UserAccountStore = Reflux.createStore({
   listenables: [require('actions/UserAccountActions')],

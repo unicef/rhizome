@@ -74,7 +74,6 @@ protected_patterns = [
     url(r'^charts/$', views.charts, name='charts'),
     url(r'^charts/create$', views.chart_create, name='chart_create'),
     url(r'^charts/(?P<chart_id>[0-9]+)/$', views.chart, name='chart'),
-    url(r'^charts/(?P<chart_id>[0-9]+)/edit/$', views.chart_edit, name='chart_edit'),
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
     url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),

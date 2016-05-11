@@ -12,6 +12,7 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import DatapointsException
 from rhizome.api.resources.base import BaseResource
+from django.core.exceptions import ObjectDoesNotExist
 
 class BaseModelResource(ModelResource, BaseResource):
     '''

@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
- Location, LocationType, Office, ChartToDashboard
+ Location, LocationType, Office
 
 import json
 
@@ -121,34 +121,7 @@ class ChartResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         self.assertEqual(len(resp_data['objects']), 0)
 
-    def test_get_dashboard_id(self):
-        dash = CustomDashboard.objects.create(title='test')
-        title = 'NOW that\'s what I call a chart: Volume 3'
-        c1 = CustomChart.objects.create(title=title,\
-            chart_json={'yep': 'something'},
-            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
-        ChartToDashboard.objects.create(chart=c1, dashboard=dash)
-        get_data = {'dashboard_id' : dash.id}
-        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
-                                    data=get_data,
-                                    authentication=self.get_credentials())
-        resp_data = self.deserialize(resp)
-        self.assertHttpOK(resp)
-
-    def test_get_dashboard_id_invalid(self):
-        dash = CustomDashboard.objects.create(title='test2')
-        title = 'NOW that\'s what I call a chart: Volume 4'
-        c1 = CustomChart.objects.create(title=title,\
-            chart_json={'yep': 'something'},
-            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
-        ChartToDashboard.objects.create(chart=c1, dashboard=dash)
-        get_data = {'dashboard_id' : 1234}
-        resp = self.api_client.get('/api/v1/custom_chart/', format='json', \
-                                    data=get_data,
-                                    authentication=self.get_credentials())
-        resp_data = self.deserialize(resp)
-        self.assertHttpOK(resp)
-        self.assertEqual(len(resp_data['objects']), 0)
+ 
 
     def test_chart_delete(self):
         c1 = CustomChart.objects.create(title='L.O.X',\
@@ -157,11 +130,26 @@ class ChartResourceTest(ResourceTestCase):
         c2 = CustomChart.objects.create(title='J to the Muah',\
             chart_json={'goodnight': 'moon'},
             uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
-
+        self.assertEqual(CustomChart.objects.count(), 2)
         delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
 
         self.api_client.delete(delete_url, format='json', data={},
                                authentication=self.get_credentials())
 
         self.assertEqual(CustomChart.objects.count(), 1)
+
+    def test_chart_delete_detail(self):
+        c1 = CustomChart.objects.create(title='L.O.X',\
+            chart_json={'hello': 'world'},
+            uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
+
+        self.assertEqual(CustomChart.objects.count(), 1)
+        chart_id = CustomChart.objects.all()[0].id
+        delete_url = '/api/v1/custom_chart/%d/' %chart_id
+
+        self.api_client.delete(delete_url, format='json', data={},
+                               authentication=self.get_credentials())
+
+        self.assertEqual(CustomChart.objects.count(), 0)
+
 

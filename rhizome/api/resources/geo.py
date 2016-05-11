@@ -49,13 +49,9 @@ class GeoResource(BaseNonModelResource):
         polygon_values_list = MinGeo.objects.filter(location_id__in=\
             location_ids)
 
-
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
-
-            print '===='
-            print p.geo_json
 
             try:
                 geo_obj.geometry = p.geo_json['geometry']

@@ -27,37 +27,6 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
-    # def get_worst_performing(self, request, location_ids):
-    #
-    #     indicator_id = self.parsed_params['indicator__in'][0]
-    #     indicator_obj = Indicator.objects\
-    #         .get(id=indicator_id)
-    #
-    #     sub_location_ids = LocationTree.objects\
-    #         .filter(parent_location_id__in=location_ids)\
-    #         .values_list('location_id',flat=True)
-    #
-    #     latest_campaign = Campaign.objects\
-    #         .filter(id__in=self.parsed_params['campaign__in'])\
-    #         .order_by('-end_date')[0]
-    #
-    #     try:
-    #         if indicator_obj.good_bound > indicator_obj.bad_bound:
-    #             worst_performing = DataPointComputed.objects.filter(
-    #                 location_id__in=sub_location_ids,
-    #                 campaign=latest_campaign,
-    #                 indicator_id=indicator_id
-    #             ).order_by('value')[0].location_id
-    #         else:
-    #             worst_performing = DataPointComputed.objects.filter(
-    #                 location_id__in=sub_location_ids,
-    #                 campaign=latest_campaign,
-    #                 indicator_id=indicator_id
-    #             ).order_by('-value')[0].location_id
-    #     except IndexError:
-    #         return sub_location_ids[:1]
-    #
-    #     return [worst_performing]
 
     def get_locations_to_return_from_url(self, request):
         '''
@@ -74,23 +43,53 @@ class BaseResource(Resource):
         '''
         if 'location_id__in' in request.GET:
             return request.GET['location_id__in'].split(',')
+
+        elif 'location_level' in request.GET:
+            location_type_id = LocationType.objects\
+                .get(name = request.GET['location_level'])
+            pl_id_list = request.GET['parent_location_id__in'].split(',')
+
+            return LocationTree.objects.filter(
+                location__location_type_id = location_type_id,
+                parent_location_id__in = pl_id_list
+            ).values_list('location_id', flat=True)
+
         elif 'parent_location_id__in' in request.GET:
 
             pl_id_list = request.GET['parent_location_id__in'].split(',')
-            location_ids = Location.objects\
+            ## begin hack ##
+            #### Since we do not have shapes for Regions, we render the ####
+              ## shapes for provinces when Afghanistan is requested ##
+              ## thus we have to put this in to handle map requests for:
+                    # - geo api
+                    # - MapChart
+                    # - BubbleMap
+              ## NOTE : we can remove this hack if we are able to generate
+              ## region shapes for afghanistan ( south, north etc )
+
+            full_request = request.path + request.META['QUERY_STRING']
+            needs_to_be_hacked = any(x in full_request for x in \
+                ['geo','BubbleMap','MapChart'])
+
+            if pl_id_list == ['1'] and needs_to_be_hacked:
+                loc_type_id = LocationType.objects.get(name = 'Province').id
+                return LocationTree.objects.filter(
+                    location__location_type_id = loc_type_id,
+                    parent_location_id__in = pl_id_list
+                ).values_list('location_id', flat=True)
+            elif needs_to_be_hacked and pl_id_list != ['1']: ## regions show districts
+                loc_type_id = LocationType.objects.get(name = 'District').id
+                return LocationTree.objects.filter(
+                    location__location_type_id = loc_type_id,
+                    parent_location_id__in = pl_id_list
+                ).values_list('location_id', flat=True)
+
+            ## end hack ##
+
+            return Location.objects\
                 .filter(parent_location_id__in = pl_id_list)\
                 .values_list('id', flat=True)
-            ## begin hack ##
-            if pl_id_list == [u'1']: ## super hack way to
-                                  ## fix this long term with a "admin_levevel"
-                                  ## parameter that wll allow us to query for
-                                  ## all ancestors of the parent at a particluar
-                                  ## level
-                location_ids = Location.objects\
-                    .filter(parent_location_id__in = location_ids)\
-                    .values_list('id', flat=True)
-            ## end hack ##
-            return location_ids
+
         else:
             return Location.objects.all().values_list('id', flat=True)
 

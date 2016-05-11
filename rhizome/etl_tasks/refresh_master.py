@@ -4,10 +4,12 @@ from django.utils import timezone
 from collections import defaultdict
 import json
 import re
-from pandas import DataFrame, concat
+import pandas as pd
+from pandas import DataFrame, concat, notnull
 from bulk_update.helper import bulk_update
-
+import math
 from rhizome.models import *
+from datetime import datetime
 
 class MasterRefresh(object):
     '''
@@ -92,8 +94,8 @@ class MasterRefresh(object):
         ## during the DocTransform process we associate new AND existing mappings between
         ## the metadata assoicated with this doucment.
 
-        sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
-            self.document_id).values_list('source_object_map_id',flat=True)
+        # sm_ids = DocumentSourceObjectMap.objects.filter(document_id =\
+        #     self.document_id).values_list('source_object_map_id',flat=True)
 
         # create a tuple dict ex: {('location': "PAK") : 3 , ('location': "PAK") : 3}
         source_map_dict =  DataFrame(list(SourceObjectMap.objects\
@@ -105,7 +107,9 @@ class MasterRefresh(object):
             ,index= SourceObjectMap.objects.filter(master_object_id__gt=0)
                 # ,id__in = sm_ids)\
                 .values_list(*['content_type','source_object_code']))\
-                .to_dict()['master_object_id']
+
+
+        source_map_dict = source_map_dict.to_dict()['master_object_id']
 
         return source_map_dict
 
@@ -136,51 +140,6 @@ class MasterRefresh(object):
         self.submissions_to_doc_datapoints()
         self.delete_unmapped()
         self.sync_datapoint()
-        # self.mark_datapoints_with_needs_campaign()
-
-    # def mark_datapoints_with_needs_campaign(self):
-    #
-    #     new_dp_df = DataFrame(list(DataPoint.objects\
-    #         .filter(source_submission_id__in = \
-    #             self.ss_ids_to_process).values()))
-    #
-    #     date_series = new_dp_df['data_date']
-    #     mn_date, mx_date = min(date_series).date(), max(date_series).date()
-    #
-    #     office_lookup_df = DataFrame(list(Location.objects\
-    #         .filter(id__in = list(set(new_dp_df['location_id'])))\
-    #         .values_list('id','office_id')), \
-    #          columns = ['location_id', 'office_id'])
-    #
-    #     campaign_qs = Campaign.objects.filter(
-    #         end_date__gte = mn_date, start_date__lte = mx_date,
-    #         office_id__in = office_lookup_df\
-    #         ['office_id'].unique())
-    #
-    #     campaign_df = DataFrame(list(campaign_qs\
-    #         .values('office_id','start_date','end_date')))
-    #
-    #     if len(campaign_df) == 0:
-    #         ## no campaigns match the datapoitns so update all with cj_id = -2
-    #         DataPoint.objects.filter(id__in=new_dp_df['id'].unique())\
-    #             .update(cache_job_id = -2)
-    #         return
-    #
-    #     dp_merged_df = new_dp_df.merge(office_lookup_df)
-    #     cleaned_dp_df = dp_merged_df[['id','office_id','data_date']]
-    #
-    #     dp_ids_that_need_campaign = []
-    #     dp_merged_with_campaign = cleaned_dp_df.merge(campaign_df)
-    #
-    #     ## iterrate over the dps and check if there is a campaign ##
-    #     for ix, r in dp_merged_with_campaign.iterrows():
-    #         ## convert date time to date
-    #         r_date = r.data_date.date()
-    #         if r_date >= r.end_date or r_date < r.start_date:
-    #             dp_ids_that_need_campaign.append(r.id)
-    #
-    #     DataPoint.objects.filter(id__in=dp_ids_that_need_campaign)\
-    #         .update(cache_job_id = -2)
 
     def delete_unmapped(self):
         ## if a user re-maps data, we need to delete the
@@ -259,97 +218,95 @@ class MasterRefresh(object):
 
             row.location_id = row.get_location_id()
             row.campaign_id = row.get_campaign_id()
+
             ## if no mapping for campaign / location -- dont process
-            if row.campaign_id == -1:
-                row.process_status = 'missing campaign'
-            elif row.location_id == -1:
+            if (not row.campaign_id or row.campaign_id == -1) and not row.data_date:
+                row.process_status = 'missing campaign or data_date'
+            elif not row.location_id or row.location_id == -1:
                 row.process_status = 'missing location'
             else:
                 doc_dps = self.process_source_submission(row)
                 row.process_status = 'doc_dp_len: %s' % len(doc_dps)
 
-    def sync_datapoint(self, ss_id_list = None):
-        dp_batch = []
+    def add_unique_index(self, x):
+        if x['campaign_id'] and not math.isnan(x['campaign_id']):
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(int(x['campaign_id']))
+        else:
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+        return x
 
+    def filter_data_frame_conflicts(self, df):
+        '''
+        These are CONFLICTS and should be returned to the user.  For now,
+        we simply take the datapoint with the max soruce_submission_id
+        when there are two datapoints in one document for which exist the same
+        location, indicator, campaign combo.
+        '''
+
+        filtered_df = df.sort(['source_submission_id'], ascending=False)\
+            .groupby('unique_index').first().reset_index()
+
+        return filtered_df
+
+    def sync_datapoint(self, ss_id_list = None):
+
+        # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_latest_data_gets_synced --settings=rhizome.settings.test
+        dp_batch = []
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
                 .filter(document_id = self.document_id).values_list('id',flat=True)
 
         doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id = self.document_id).values()))
+
         if len(doc_dp_df) == 0:
             return
 
-        location_ids = doc_dp_df['location_id'].unique()
-        indicator_ids = doc_dp_df['indicator_id'].unique()
-        campaign_ids = doc_dp_df['campaign_id'].unique()
+        doc_dp_df = doc_dp_df.apply(self.add_unique_index, axis=1)
+        doc_dp_df = self.filter_data_frame_conflicts(doc_dp_df)
 
-        # min_date, max_date = doc_dp_df['data_date'].min(),\
-        #     doc_dp_df['data_date'].max()
+        doc_dp_unique_keys = doc_dp_df['unique_index'].unique()
 
-        pontential_conflict_doc_dp_df = DataFrame(list(DocDataPoint\
-            .objects.filter(
-                indicator_id__in = indicator_ids,
-                location_id__in = location_ids,
-                campaign_id__in = campaign_ids
-                # data_date__gte = min_date,
-                # data_date__lte = max_date,
-            ).values()))
+        dp_ids_to_delete = DataPoint\
+            .objects.filter(unique_index__in = doc_dp_unique_keys)\
+            .values_list('id', flat = True)
 
-        full_dp_df = concat([doc_dp_df,pontential_conflict_doc_dp_df])
-        dp_df = full_dp_df.drop_duplicates()
-
-        ss_columns = ['id','created_at']
-        ss_dp_df = DataFrame(list(SourceSubmission.objects.filter(
-            id__in = ss_id_list).values(*ss_columns)),columns=ss_columns)
-
-        merged_df = dp_df.merge(ss_dp_df, left_on = 'source_submission_id', \
-            right_on = 'id')
-
-        ready_for_sync_tuple_dict = DataFrame(merged_df\
-            .groupby(['location_id', 'indicator_id']).max())['created_at'].to_dict()
-
-        dp_batch, dp_ids_to_delete = [],[]
-        for ix, row in merged_df.iterrows():
-            max_created_at = ready_for_sync_tuple_dict[(row.location_id, \
-                row.indicator_id)]
-
-            row_created_at = row.created_at.replace(tzinfo=None)
-
-            if row_created_at == max_created_at:
-                dp_batch.append(DataPoint(**{
+        for ix, row in doc_dp_df.iterrows():
+            dp_batch.append(DataPoint(**{
                     'indicator_id' : row.indicator_id,
                     'location_id' : row.location_id,
                     'campaign_id' : row.campaign_id,
                     'data_date' : row.data_date,
                     'value' : row.value,
+                    'unique_index' : row.unique_index,
                     'source_submission_id' : row.source_submission_id,
                 }))
 
-            else:
-                dp_ids_to_delete.append(row.id_x)
-
         DataPoint.objects.filter(id__in = dp_ids_to_delete).delete()
         DataPoint.objects.bulk_create(dp_batch)
-
 
     def process_source_submission(self,row):
         doc_dp_batch = []
         submission  = row.submission_json
 
-        data_date = timezone.now().date()
-
         for k,v in submission.iteritems():
-
             doc_dp = self.source_submission_cell_to_doc_datapoint(row, k, v, \
-                data_date)
+                row.data_date)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
-
         DocDataPoint.objects.filter(source_submission_id=row.id).delete()
         DocDataPoint.objects.bulk_create(doc_dp_batch)
 
         return DocDataPoint.objects.filter(source_submission_id=row.id)
+
+    # helper function to sync_datapoints
+    def add_unique_index(self, x):
+        if x['campaign_id'] and not math.isnan(x['campaign_id']):
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(x['campaign_id'])
+        else:
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+        return x
+
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string, \
             value, data_date):
@@ -358,10 +315,7 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
-
-
-
-        ## it no indicator row dont process ##
+        ## if no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
         except KeyError:
@@ -381,7 +335,7 @@ class MasterRefresh(object):
             except ValueError:
                 return None
 
-        if cleaned_val:
+        if not cleaned_val == None:
             doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
@@ -400,8 +354,6 @@ class MasterRefresh(object):
         '''
         This needs alot of work but basically determines if a particular submission
         cell is alllowed.
-        Big point of future controversy... what do we do with zero values?  In order to
-        keep the size of the database manageable, we only accept non zero values.
         '''
         str_lookup = {'yes':1,'no':0}
         if val is None:

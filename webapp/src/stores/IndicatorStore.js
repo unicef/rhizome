@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import IndicatorActions from 'actions/IndicatorActions'
-import treeify from 'data/transform/treeify'
+import treeify from 'utilities/transform/treeify'
 
 var IndicatorStore = Reflux.createStore({
 
@@ -19,7 +19,7 @@ var IndicatorStore = Reflux.createStore({
     tree: []
   },
 
-  getInitialState () {
+  getInitialState: function () {
     return this.indicators
   },
 
@@ -28,36 +28,53 @@ var IndicatorStore = Reflux.createStore({
   // =========================================================================== //
 
   // ============================  Fetch Indicators  =========================== //
-  onFetchIndicators () {
+  onFetchIndicators: function () {
     this.setState({ raw: [] })
   },
-  onFetchIndicatorsCompleted (response) {
+  onFetchIndicatorsCompleted: function (response) {
     this.indicators.meta = response.meta
     this.indicators.raw = response.objects[0].indicators || response.objects
     this.indicators.filtered = this.indicators.raw
     this.indicators.index = _.indexBy(this.indicators.raw, 'id')
     this.processIndicators()
   },
-  onFetchIndicatorsFailed (error) {
+  onFetchIndicatorsFailed: function (error) {
     this.setState({ error: error })
   },
 
   // ===========================  Fetch Indicator Tags ========================= //
-  onFetchIndicatorTags () {
+  onFetchIndicatorTags: function () {
     this.setState({ raw: [] })
   },
-  onFetchIndicatorTagsCompleted (response) {
+  onFetchIndicatorTagsCompleted: function (response) {
     this.indicators.tags = response.objects[0].indicator_tags || response.objects
     this.processIndicators()
   },
-  onFetchIndicatorTagsFailed (error) {
+  onFetchIndicatorTagsFailed: function (error) {
+    this.setState({ error: error })
+  },
+
+  // ===========================  Fetch IndicatorsToTags ========================= //
+  onFetchIndicatorsToTags: function () {
+    this.setState({ raw: [] })
+  },
+  onFetchIndicatorsToTagsCompleted: function (response) {
+    const grouped_indicators_to_tags = _.groupBy(response.objects[0].indicators_to_tags, 'indicator_tag_id')
+    this.indicators.tags.forEach(tag => {
+      tag.indicators = _.map(grouped_indicators_to_tags[tag.id], indicator_to_tag => {
+        return this.indicators.index[indicator_to_tag.indicator_id]
+      })
+    })
+    this.processIndicators()
+  },
+  onFetchIndicatorsToTagsFailed: function (error) {
     this.setState({ error: error })
   },
 
   // =========================================================================== //
   //                                   UTILITIES                                 //
   // =========================================================================== //
-  processIndicators () {
+  processIndicators: function () {
     if (this.indicators.raw && this.indicators.tags) {
       this.indicators.tree = this.buildIndicatorsTree(this.indicators.raw, this.indicators.tags, true, true)
       this.indicators.list = _.sortBy(this.indicators.tree, 'title')
@@ -65,11 +82,11 @@ var IndicatorStore = Reflux.createStore({
     }
   },
 
-  makeTagId (tId) {
+  makeTagId: function (tId) {
     return 'tag-' + tId
   },
 
-  pickAllNodesInTrees (parent, nodes) {
+  pickAllNodesInTrees: function (parent, nodes) {
     let children = parent.children
     if (children && children.length) {
       children.forEach(item => this.pickAllNodesInTrees(item, nodes))
@@ -78,7 +95,7 @@ var IndicatorStore = Reflux.createStore({
     }
   },
 
-  removeIndicatorEmptyNode (sourceList) {
+  removeIndicatorEmptyNode: function (sourceList) {
     if (!sourceList || !sourceList.length) {
       return sourceList
     }
@@ -102,7 +119,7 @@ var IndicatorStore = Reflux.createStore({
     }
   },
 
-  buildIndicatorsTree (indicators, tags, isClone, isRemoveEmpty, indicatorFilterType) {
+  buildIndicatorsTree: function (indicators, tags, isClone, isRemoveEmpty, indicatorFilterType) {
     if (isClone) {
       tags = _.cloneDeep(tags)
       indicators = _.cloneDeep(indicators)

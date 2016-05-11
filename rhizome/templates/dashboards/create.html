@@ -1,12 +1,8 @@
 {% extends "base.html" %}
 
-{% block content %}
-
-{% endblock %}
 {% block scripts %}
-	<script>
-		// var None = null;
-		// Rhizome.DashboardBuilder(document.getElementById('main'),{{dashboard_id}});
-  	Rhizome.Dashboard(document.getElementById('main'))
-	</script>
+	<script>Rhizome.Dashboard(document.getElementById('main'));</script>
+
+  <script src="/static/vendor/grouped-categories.js"></script>
+  <script src="/static/vendor/custom-events.js"></script>
 {% endblock %}

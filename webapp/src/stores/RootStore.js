@@ -46,6 +46,7 @@ var RootStore = Reflux.createStore({
     this.setState({ loading: true })
   },
   onFetchAllMetaCompleted (response) {
+    this.data.superuser = response.objects[0].is_superuser
     this.data.campaigns = response.objects[0].campaigns
     this.data.charts = response.objects[0].charts
     this.data.dashboards = response.objects[0].dashboards
@@ -57,6 +58,7 @@ var RootStore = Reflux.createStore({
     DashboardActions.fetchDashboards.completed(response)
     IndicatorActions.fetchIndicators.completed(response)
     IndicatorActions.fetchIndicatorTags.completed(response)
+    IndicatorActions.fetchIndicatorsToTags.completed(response)
     LocationActions.fetchLocations.completed(response)
     OfficeActions.fetchOffices.completed(response)
     this.trigger(this.data)

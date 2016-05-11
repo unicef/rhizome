@@ -20,16 +20,16 @@ var DatapointStore = Reflux.createStore({
     melted: null
   },
 
-  init () {
+  init: function () {
     this.joinTrailing(LocationStore, IndicatorStore, this.onGetInintialStores)
   },
 
-  onGetInintialStores (locations, indicators) {
+  onGetInintialStores: function (locations, indicators) {
     this.indicators = indicators[0]
     this.locations = locations[0]
   },
 
-  getInitialState () {
+  getInitialState: function () {
     return this.datapoints
   },
 
@@ -38,10 +38,10 @@ var DatapointStore = Reflux.createStore({
   // =========================================================================== //
 
   // ============================  Fetch  Datapoints  ========================== //
-  onFetchDatapoints () {
+  onFetchDatapoints: function () {
     this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
-  onFetchDatapointsCompleted (response) {
+  onFetchDatapointsCompleted: function (response) {
     this.setState({
       meta: response.meta,
       raw: response.objects,
@@ -49,31 +49,31 @@ var DatapointStore = Reflux.createStore({
       melted: this.melt(response.objects, response.meta.indicator_ids)
     })
   },
-
-  onFetchDatapointsFailed (error) {
+  onFetchDatapointsFailed: function (error) {
     this.setState({ error: error })
   },
 
   // =========================================================================== //
   //                            REGULAR ACTION HANDLERS                          //
   // =========================================================================== //
-  onClearDatapoints () {
+  onClearDatapoints: function () {
     this.setState({ raw: null, meta: null, flattened: null, melted: null })
   },
 
   // =========================================================================== //
   //                                  UTILITIES                                  //
   // =========================================================================== //
-  flatten (datapoints) {
+  flatten: function (datapoints) {
     return _(datapoints)
       .flatten()
       .sortBy(_.method('campaign.start_date.getTime'))
       .map(datapoint => {
-        var base = _.omit(datapoint, 'indicators')
+        var base = _.omit(datapoint, ['indicators', 'location'])
         return datapoint.indicators.map(indicator => {
           return _.assign({
             computed: indicator.computed,
-            indicator: indicator.indicator,
+            indicator: this.indicators.index[indicator.indicator],
+            location: this.locations.index[datapoint.location],
             value: indicator.value
           }, base)
         })
@@ -82,7 +82,7 @@ var DatapointStore = Reflux.createStore({
       .value()
   },
 
-  melt (datapoints, indicator_ids) {
+  melt: function (datapoints, indicator_ids) {
     const selected_indicator_ids = indicator_ids.split(',')
     const baseIndicators = selected_indicator_ids.map(id => ({ indicator: parseInt(id, 0), value: 0 }))
     const melted_datapoints = _(datapoints).map(datapoint => {

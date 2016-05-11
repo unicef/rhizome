@@ -22,6 +22,11 @@ class DataPointResourceTest(ResourceTestCase):
                                         'eradicate@polio.com', self.password)
 
         self.lt = LocationType.objects.create(name='Country',admin_level = 0)
+        self.distr, created = \
+            LocationType.objects.get_or_create(name='District',admin_level = 1)
+        self.prov, created = \
+            LocationType.objects.get_or_create(name='Province',admin_level = 2)
+
         self.o = Office.objects.create(name = 'Earth')
 
         self.top_lvl_location = Location.objects.create(
@@ -105,7 +110,6 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(int(response_data['objects'][0]['indicators'][0]['indicator']), indicator.id)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], value)
 
-
     def test_get_class_datapoint(self):
         cache_job = CacheJob.objects.create(
             is_error=False,
@@ -160,10 +164,33 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
 
+    def test_get_no_params(self):
+        resp = self.api_client.get('/api/v1/datapoint/',\
+            format='json', authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['error'][0], "\"'indicator__in'\" is a required parameter!")
+
+    # what happens if we request a non-existent datapoint
+    def test_empty_response(self):
+        start_date = '2016-02-01'
+        end_date = '2016-02-01'
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
+            .format(1, start_date, end_date, self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']),0)
+
     # this tests for both MapChart and BubbleMap
     def test_map_transform(self):
 
         indicator_id = 1
+        indicator_object = Indicator.objects.create(
+            id = indicator_id,name = 'name', short_name = 'short_name'
+        )
         campaign_id = 2
         parent_location_id =3
         document = Document.objects.create(doc_title='some doc')
@@ -174,7 +201,7 @@ class DataPointResourceTest(ResourceTestCase):
             loc = Location.objects.create(
                 name = location,
                 location_code = location,
-                location_type_id = self.lt.id,
+                location_type_id = self.distr.id,
                 office_id = self.o.id,
                 parent_location_id = parent_location_id
             )
@@ -206,6 +233,9 @@ class DataPointResourceTest(ResourceTestCase):
             indicator_id = indicator_id,
             document_id = document.id
         )
+
+        ltr = LocationTreeCache()
+        ltr.main()
         get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&chart_type=MapChart'\
             .format(indicator_id, campaign_id, parent_location_id)
 
@@ -213,6 +243,8 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+
         chart_data = response_data['meta']['chart_data']
 
         self.assertEqual(len(chart_data), len(data))
@@ -234,6 +266,7 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         chart_data = response_data['meta']['chart_data']
         self.assertEqual(len(chart_data), len(data))
         if 'z' in chart_data[0].keys():
@@ -241,15 +274,16 @@ class DataPointResourceTest(ResourceTestCase):
         else:
             fail('returned object didn\'t contain a \'z\' for value')
 
-
     # make sure that the api returns an empty list if the parent location has no children
     def test_map_transform_no_children(self):
         indicator_id = 1
+        indicator_object = Indicator.objects.create(
+            id = indicator_id,name = 'name', short_name = 'short_name'
+        )
         campaign_id = 2
         parent_location_id = 3
 
         document = Document.objects.create(doc_title='some doc')
-
 
         # add a bunch of children for parent_location_id
         loc_and_value ={'Zamfara':0.054, 'Yobe':0.118, 'Taraba':0.221, 'Sokoto':0.032}
@@ -285,18 +319,19 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+
         self.assertEqual(len(response_data['objects']), 0)
         self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
-
-
     def test_indicator_filter(self):
         campaign_id = 2
-        province_lt = LocationType.objects.create(name='Province',admin_level = 1)
+        province_lt, created = LocationType.objects\
+            .get_or_create(name='Province',defaults = {'admin_level': 1})
+
         document = Document.objects.create(doc_title='some doc')
 
         #make a couple different types of indicators, and indicators with different values
-        indicator_names_to_values = {"LPD Status":[1,2], 
+        indicator_names_to_values = {"LPD Status":[1,2],
             'LQAS':[0, 1, 2]
         }
 
@@ -312,7 +347,7 @@ class DataPointResourceTest(ResourceTestCase):
 
 
         some_provinces = ['Kandahar', 'Kunar', 'Hilmand', 'Nimroz', 'Sari-Pul', 'Kabul', 'Paktika', 'Ghazni']
-       
+
         ind_id_keys = indicator_ids_to_values.keys()
         indicator_to_query = ind_id_keys[1]
 
@@ -345,8 +380,9 @@ class DataPointResourceTest(ResourceTestCase):
                 if indicator_id == indicator_to_filter and value_to_use == indicator_val_to_filter:
                     dps_to_track.append(dp)
 
-        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=MapChart'\
-            .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_to_filter, indicator_val_to_filter)
+        indicator_name_to_filter = Indicator.objects.get(id=indicator_to_filter);
+        get_parameter = 'indicator__in={0}&campaign__in={1}&parent_location_id__in={2}&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
+            .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
@@ -370,6 +406,69 @@ class DataPointResourceTest(ResourceTestCase):
         #  make sure the chart data isn't empty
 
 
+    def _get_cumulative(self): ## handling cumulative differntly
+        # add a couple different campaigns with different time frames
+        campaign_type = CampaignType.objects\
+            .create(name='National Immunization Days (NID)')
 
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
+        document = Document.objects.create(doc_title='uploadddd')
 
+        start_date_1 = '2016-01-01'
+        end_date_1 = '2016-01-01'
 
+        campaign_1 = Campaign.objects.create(office=self.o,\
+            campaign_type=campaign_type,start_date=start_date_1,end_date=end_date_1,\
+            top_lvl_indicator_tag_id = ind_tag.id,\
+            top_lvl_location_id = self.top_lvl_location.id)
+
+        start_date_2 = '2016-02-01'
+        end_date_2 = '2016-02-01'
+
+        campaign_2 = Campaign.objects.create(office=self.o,\
+            campaign_type=campaign_type,start_date=start_date_2,end_date=end_date_2,\
+            top_lvl_indicator_tag_id = ind_tag.id,\
+            top_lvl_location_id = self.top_lvl_location.id)
+
+        # create an indicator and location
+        indicator = Indicator.objects.create(short_name='number missed children', \
+                                     name='number missed children', \
+                                     data_format='int', )
+        province = Location.objects.create(
+                name = 'Kandahar',
+                location_code = 'Kandahar',
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+                parent_location_id = self.top_lvl_location.id
+            )
+        # add datapoints for these different campaigns
+        value_1 =12
+        value_2 =322
+        dp_1 = DataPointComputed.objects.create(
+                    location_id = province.id,
+                    value = value_1,
+                    campaign_id = campaign_1.id,
+                    indicator_id = indicator.id,
+                    document_id = document.id,
+                )
+
+        dp_2 = DataPointComputed.objects.create(
+                location_id = province.id,
+                value = value_2,
+                campaign_id = campaign_2.id,
+                indicator_id = indicator.id,
+                document_id = document.id,
+
+            )
+
+        # make sure that that api call returns cumulative values,
+        get_parameter = 'indicator__in={0}&start_date=2016-01-01&end_date=2016-02-02&parent_location_id__in={2}&chart_type=MapChart&cumulative=1'\
+            .format(indicator.id, campaign_1.id, self.top_lvl_location.id)
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        returned_indicators = response_data['objects']
+        self.assertEqual(len(returned_indicators), 1)
+        self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)

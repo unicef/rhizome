@@ -6,9 +6,12 @@ export default {
     'webapp*/public*/**/*.*',
     'docs*/_build/**/*.*',
     'manage.py',
+    'appspec.yml',
     'requirements.txt',
+    'migration_data*/**/*.*',
     'settings.py',
-    'initial_data.xlsx'
+    '*.xlsx',
+    '*.csv'
   ].map(file => {
     return path.join(process.cwd(), '..') + '/' + file
   }),

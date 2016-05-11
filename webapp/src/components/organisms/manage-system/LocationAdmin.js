@@ -5,7 +5,7 @@ import SimpleDataTableColumn from 'components/organisms/datascope/SimpleDataTabl
 import Paginator from 'components/organisms/datascope/Paginator'
 import SearchBar from 'components/organisms/datascope/SearchBar'
 
-import api from 'data/api'
+import api from 'utilities/api'
 
 import AdminPage from 'components/organisms/manage-system/AdminPage'
 
@@ -19,6 +19,7 @@ const fields = {
   },
   id: { title: 'ID', name: 'id' },
   name: { title: 'Name', name: 'name' },
+  location_code: { title: 'Location code', name: 'location_code' },
   created_at: { title: 'Created At', name: 'created_at', format: 'MMM D YYYY, h:mm a' }
 }
 
@@ -26,14 +27,14 @@ const schema = {
   created_at: { type: 'string', format: 'date-time' }
 }
 
-const fieldNamesOnTable = ['id', 'name', 'created_at', 'edit_link']
+const fieldNamesOnTable = ['id', 'name', 'location_code', 'created_at', 'edit_link']
 
-var RegionAdmin = React.createClass({
+var LocationAdmin = React.createClass({
   render () {
     var datascopeFilters =
       <div>
         <SearchBar
-          fieldNames={['name']}
+          fieldNames={['id', 'name', 'location_code']}
           placeholder='Search locations ...'
           />
       </div>
@@ -55,4 +56,4 @@ var RegionAdmin = React.createClass({
   }
 })
 
-export default RegionAdmin
+export default LocationAdmin

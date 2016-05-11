@@ -78,6 +78,14 @@ class DocumentResourceTest(ResourceTestCase):
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpApplicationError(resp)
 
+    def test_post_no_doc_title(self):
+        path = os.path.join(os.path.dirname(__file__), '_data/eoc_post_campaign.csv')
+        file = open(path).read()
+        encoded_data = base64.b64encode(file)
+        post_data = {'docfile':encoded_data}
+        resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
+        self.assertHttpApplicationError(resp)
+
     def create_metadata(self):
         '''
         Creating the Indicator, location, Campaign, meta data needed for the
