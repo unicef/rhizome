@@ -22,6 +22,7 @@ import pandas as pd
 from rhizome.models import *
 from rhizome.cache_meta import minify_geo_json
 
+
 def process_geo_json(apps, schema_editor):
 
     ## IRAQ ##
@@ -56,7 +57,6 @@ def process_geo_json(apps, schema_editor):
             location_id = location_object.id,
             geo_json = location_shape,
         )
-
 
     # minify_geo_json()
 

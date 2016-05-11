@@ -14,7 +14,7 @@ from rhizome.models import Location, LocationPolygon, Indicator, Campaign,\
     LocationType, Office, CampaignType, IndicatorTag, SourceObjectMap,\
     DataPointComputed
 
-from rhizome.models import Document, DocumentDetail, DocDetailType
+from rhizome.models import *
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
@@ -39,6 +39,18 @@ def populate_source_data(apps, schema_editor):
     mdf = MetaDataGenerator(source_sheet_df)
     mdf.main()
 
+    datapoint_id_list = DataPoint.objects.all().values_list('id', flat=True)
+
+    print '== LEN OF datapoint_id_list ==\n' * 5
+    print datapoint_id_list
+    print '===\n' * 5
+
+    iraq_data = DataPointComputed.objects.filter(
+        location__name = 'Iraq'
+    ).values()
+
+    if len(iraq_data) == 0:
+        raise Exception('No data for Iraq')
 
 class MetaDataGenerator:
 
@@ -334,6 +346,8 @@ class MetaDataGenerator:
             doc_title = doc_file_text,
             guid = 'test'
         )
+
+        self.document_id = new_doc.id
 
         create_doc_details(new_doc.id)
 
