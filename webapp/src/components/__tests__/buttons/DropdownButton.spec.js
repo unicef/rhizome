@@ -8,7 +8,7 @@ describe.skip ('DropdownButton', () => {
   it ('exists', () => {
     expect (DropdownButton).to.exist
   })
-  describe ('.propTypes', () => {
+  describe.skip ('.propTypes', () => {
     it ('is static and exists', () => {
       expect (DropdownButton.propTypes).to.exist
     })
@@ -16,7 +16,7 @@ describe.skip ('DropdownButton', () => {
       expect (DropdownButton.propTypes).to.have.all.keys('data', 'working', 'enable', 'text', 'cookieName', 'onClick', 'classes')
     })
   })
-  describe ('#defaults', () => {
+  describe.skip ('#defaults', () => {
     let mockDropdownButton
     beforeEach (() => {
       mockDropdownButton = new DropdownButton()
@@ -30,7 +30,7 @@ describe.skip ('DropdownButton', () => {
       expect (mockDropdownButton.defaults.url).to.eq(state.url)
     })
   })
-  describe ('#getInitialState()', () => {
+  describe.skip ('#getInitialState()', () => {
     it ('returns defaults', () => {
       const mockDropdownButton = new DropdownButton()
       expect (mockDropdownButton.getInitialState()).to.deep.eq(mockDropdownButton.defaults)
@@ -51,7 +51,7 @@ describe.skip ('DropdownButton', () => {
 
     })
   })
-  describe ('#render()', () => {
+  describe.skip ('#render()', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()}/>)
