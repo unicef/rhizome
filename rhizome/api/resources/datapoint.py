@@ -77,11 +77,6 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.parsed_params = None
 
-        # self.chart_type_fn_lookup = {
-        #     'MapChart': self.transform_map_data,
-        #     'BubbleMap': self.transform_map_data
-        # }
-
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
         """
@@ -650,97 +645,6 @@ class DatapointResource(BaseNonModelResource):
                     pivoted_data[tuple_dict_key] = {}
 
         return pivoted_data
-
-    # def transform_map_data(self):
-
-    #     high_chart_data = []
-    #     for obj in self.base_data:
-    #         dp_dict = obj.__dict__
-    #         indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
-    #         indicator_value = indicator_dict['value']
-    #         location = dp_dict['location']
-    #         if self.chart_type == 'MapChart':
-    #             object_dict = {
-    #                 'location_id' : location, ## high_chart_code,
-    #                 'value' : indicator_value
-    #             }
-    #         elif self.chart_type == 'BubbleMap':
-    #             object_dict = {
-    #                 'location_id' : location, ## high_chart_code,
-    #                 'z' : indicator_value
-    #             }
-
-
-        #     high_chart_data.append(object_dict)
-
-        # return high_chart_data
-
-
-    # def map_bubble_transform(self):
-    #     '''
-    #     This method right now is set up specifically to deal with polio cases.
-
-    #     This needs to be removed and we need to figure out a better way to
-    #     Handle the polio case indicator / Bubble Map viz.
-    #     '''
-
-    #     param_location_id = self.parsed_params['parent_location_id__in']
-
-    #     # get all the districts
-    #     location_ids = LocationTree.objects.filter(
-    #             location__location_type__name = 'District',
-    #             parent_location_id= param_location_id
-    #         ).values_list('location_id', flat=True)
-
-    #     cols = ['data_date','indicator_id','location_id','value']
-
-    #     dp_df = DataFrame(list(DataPoint.objects.filter(
-    #         location_id__in = location_ids,
-    #         indicator_id__in = self.parsed_params['indicator__in']
-    #     ).values(*cols)),columns=cols)
-
-    #     if dp_df.empty:
-    #         return []
-
-    #     results = []
-
-    #     if self.parsed_params['parent_location_id__in'] == u'1':
-    #         # get all the parents of the districts (provinces), if we're looking at afghanistan
-    #         district_to_region_df = DataFrame(list(
-    #             Location.objects.filter(
-    #                 id__in = list(dp_df['location_id'].unique()))
-    #             .values_list('id','parent_location_id')),\
-    #             columns = ['location_id','parent_location_id'])
-
-    #         merged_df = dp_df.merge(district_to_region_df)\
-    #             [['indicator_id','value','parent_location_id']]
-
-    #         dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
-
-    #     # get the sums for each location
-    #     gb_df = DataFrame(dp_df\
-    #         .groupby(['location_id'])['value']\
-    #         .sum())\
-    #         .reset_index()
-
-    #     indicator_id = list(dp_df['indicator_id'].unique())[0]
-    #     campaign_id = self.parsed_params['campaign__in'][0]
-
-    #     for ix, row in gb_df.iterrows():
-
-    #         indicator_objects = [{
-    #             'indicator': indicator_id,
-    #             'value': row.value
-    #         }]
-
-    #         r = ResultObject()
-    #         r.location = row.location_id
-    #         r.campaign = campaign_id
-    #         r.indicators = indicator_objects
-
-    #         results.append(r)
-
-    #     return results
 
     def pivot_df(self, df, index_column_list, value, pivot_column_list):
 

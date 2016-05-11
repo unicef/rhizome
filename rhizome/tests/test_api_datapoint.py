@@ -245,16 +245,6 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
 
-        chart_data = response_data['meta']['chart_data']
-
-        self.assertEqual(len(chart_data), len(data))
-        #since ordering can vary, check that each of the items is in the list
-        all_values_in_list = True
-        for datapoint in chart_data:
-            if datapoint not in data:
-                all_values_in_list = False
-
-        self.assertEqual(True, all_values_in_list)
 
         # test BubbleMap
         map_type ='BubbleMap'
@@ -267,12 +257,6 @@ class DataPointResourceTest(ResourceTestCase):
 
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
-        chart_data = response_data['meta']['chart_data']
-        self.assertEqual(len(chart_data), len(data))
-        if 'z' in chart_data[0].keys():
-            pass
-        else:
-            fail('returned object didn\'t contain a \'z\' for value')
 
     # make sure that the api returns an empty list if the parent location has no children
     def test_map_transform_no_children(self):
@@ -321,7 +305,6 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
 
         self.assertEqual(len(response_data['objects']), 0)
-        self.assertEqual(len(response_data['meta']['chart_data']), 0)
 
     def test_indicator_filter(self):
         campaign_id = 2
@@ -388,6 +371,7 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+        print response_data
         self.assertEqual(len(response_data['objects']), len(dps_to_track))
 
         # oof, nested for loop is okay since it's a small dataset
