@@ -433,7 +433,7 @@ class RefreshMasterTestCase(TestCase):
             l_som = SourceObjectMap.objects.create(
                     master_object_id = l_id,
                     content_type = 'location',
-                    source_object_code = l
+                    source_object_code = str(l)
                 )
 
         ## create campaign meta ##
@@ -451,7 +451,7 @@ class RefreshMasterTestCase(TestCase):
             c_som = SourceObjectMap.objects.create(
                     master_object_id = c_id,
                     content_type = 'campaign',
-                    source_object_code = c
+                    source_object_code = str(c)
                 )
 
         ## create indicator_meta ##
@@ -461,12 +461,15 @@ class RefreshMasterTestCase(TestCase):
 
         som_obj = SourceObjectMap.objects.create(
             master_object_id = access_indicator_id,
-            content_type = 'location',
+            content_type = 'indicator',
             source_object_code = '# Missed children due to inaccessibility (NEPI)'
         )
 
         dt = ComplexDocTransform(self.user.id, document.id)
         dt.main()
+
+        mr = MasterRefresh(self.user.id, document.id)
+        mr.main()
 
         ss_id_list = SourceSubmission.objects\
             .filter(document_id = document.id)\
@@ -476,15 +479,10 @@ class RefreshMasterTestCase(TestCase):
             .filter(source_submission_id__in = ss_id_list)\
             .values_list('id', flat=True)
 
-        print 'doc_dp_id_list\n' * 5
+        print 'doc_dp_id_list\n' * 10
         print doc_dp_id_list
-        print 'doc_dp_id_list\n' * 5
 
         self.assertEqual(len(ss_id_list), len(test_df))
-
-
-
-
 
     def model_df_to_data(self,model_df,model):
 
