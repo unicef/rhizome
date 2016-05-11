@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect } from 'chai'
 import { shallow } from 'enzyme'
-import DropdownButton from '../DropdownButton'
+import DropdownButton from '../../button/DropdownButton'
 import sinon from 'sinon'
 
 describe.skip ('DropdownButton', () => {

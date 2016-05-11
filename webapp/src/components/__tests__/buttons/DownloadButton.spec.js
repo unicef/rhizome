@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect } from 'chai'
 import { shallow } from 'enzyme'
-import DownloadButton from '../DownloadButton'
+import DownloadButton from '../../button/DownloadButton'
 import sinon from 'sinon'
 
 describe ('DownloadButton', () => {

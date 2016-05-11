@@ -1,7 +1,7 @@
 import React from 'react'
 import { expect } from 'chai'
 import { shallow } from 'enzyme'
-import AsyncButton from '../AsyncButton'
+import AsyncButton from '../../button/AsyncButton'
 import sinon from 'sinon'
 
 describe ('AsyncButton', () => {
