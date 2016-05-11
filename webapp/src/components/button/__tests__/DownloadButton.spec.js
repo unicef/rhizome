@@ -4,6 +4,8 @@ import { shallow } from 'enzyme'
 import DownloadButton from '../DownloadButton'
 import sinon from 'sinon'
 
+chai.config.truncateThreshold = 0
+
 describe ('DownloadButton', () => {
   it ('exists', () => {
     expect (DownloadButton).to.exist
@@ -25,8 +27,9 @@ describe ('DownloadButton', () => {
       expect (mockDownloadButton.defaults).to.have.all.keys('url', 'isWorking')
     })
     it ('has correct initial values', () => {
-      expect (mockDownloadButton.defaults.isWorking).to.eq(false)
-      expect (mockDownloadButton.defaults.url).to.eq('about:blank')
+      const state = DownloadButtonTest.getState()
+      expect (mockDownloadButton.defaults.isWorking).to.eq(state.isWorking)
+      expect (mockDownloadButton.defaults.url).to.eq(state.url)
     })
   })
   describe ('#getInitialState()', () => {
@@ -36,29 +39,90 @@ describe ('DownloadButton', () => {
     })
   })
   describe.skip ('#_completeDownload()', () => {
+    it.skip ('completes download', () => {
 
+    })
   })
   describe.skip ('#_download()', () => {
+    it.skip ('downloads', () => {
 
+    })
   })
   describe.skip ('#_getCookie()', () => {
+    it.skip ('gets cookie', () => {
 
+    })
   })
   describe ('#render()', () => {
-    it ('renders the proper ')
+    let wrapper, expectedComponent
+    beforeEach (() => {
+      wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()}/>)
+      expectedComponent = DownloadButtonTest.mockComponent()
+    })
+    it.skip ('renders correct components', () => {
+      expect (wrapper.equals(expectedComponent)).to.eq(true)
+    })
+    it ('contains a button', () => {
+      expect (wrapper.find('button')).to.have.length(1)
+    })
+    it.skip ('contains an inner component', () => {
+      expect (wrapper.contains(DownloadButtonTest.mockInnerComponent())).to.eq(true)
+    })
+    it ('simulates click events', () => {
+      let spy = sinon.spy(DownloadButton.prototype.__reactAutoBindMap, "_download")
+      wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()} />)
+      wrapper.find('button').simulate('click')
+      expect (spy.calledOnce).to.equal(true)
+      spy.restore()
+    })
   })
 })
 class DownloadButtonTest {
+  static getProps() {
+    //update working variable if isWorking is switched to true
+    return {
+      text: 'stuff',
+      enable: true,
+      classes: '',
+      working: 'bar',
+      cookieName: 'foo',
+      onClick: () => {}
+    }
+  }
+  static getState() {
+    return {
+      isWorking: false,
+      url: 'about:blank'
+    }
+  }
+  static _download () {
+
+  }
   static mockComponent() {
-    let text = this.state.isWorking ? this.props.working : this.props.text
-    let classesString = this.props.enable && !this.state.isWorking ? 'button success expand ' : 'button success expand disabled '
+    const props = this.getProps()
+    const state = this.getState()
+    let text = state.isWorking ? props.working : props.text
+    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
     return (
       <button role='button'
-        className={classesString + this.props.classes}
+        className={classesString + props.classes}
         onClick={this._download}>
         <i className='fa fa-fw fa-download' /> {text}
-        <iframe width='0' height='0' className='hidden' src={this.state.url}></iframe>
+        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
       </button>
+    )
+  }
+  static mockInnerComponent() {
+    const props = this.getProps()
+    const state = this.getState()
+    let text = state.isWorking ? props.working : props.text
+    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
+    //return needs to be fixed. div should be removed.
+    return (
+      <div>
+        <i className='fa fa-fw fa-download' /> {text}
+        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
+      </div>
     )
   }
 }
