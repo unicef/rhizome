@@ -20,8 +20,7 @@ describe ('AsyncButton', () => {
       expect (AsyncButton.propTypes).to.have.all.keys('text', 'alt_text', 'disabled', 'isBusy', 'onClick', 'icon', 'classes', 'style')
     })
     context ('instantiated without onClick prop', () => {
-      let spy
-      let wrapper
+      let spy, wrapper
       beforeEach(() => {
         spy = sinon.spy(console, 'warn')
         wrapper = shallow(<AsyncButton />)
@@ -52,24 +51,27 @@ describe ('AsyncButton', () => {
     })
   })
   describe ('#render()', () => {
-    let expectedComponent
-    let wrapper
+    let expectedComponent, wrapper
     beforeEach(() => {
       expectedComponent = AsyncButtonTest.mockComponent()
       wrapper = shallow(<AsyncButton {...AsyncButtonTest.getProps()}/>)
     })
+    it.skip ('renders correct components', () => {
+      expect (wrapper.equals(expectedComponent)).to.eq(true)
+    })
+
     it ('renders a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
     it ('has a span within', () => {
-      expect (wrapper.contains(AsyncButtonTest.getSpan())).to.eq(true)
+      expect (wrapper.contains(AsyncButtonTest.mockSpan())).to.eq(true)
     })
   })
   it ('simulates click events', () => {
-    const onButtonClick = sinon.spy()
-    const wrapper = shallow(<AsyncButton onClick={onButtonClick} />)
+    const spy = sinon.spy()
+    const wrapper = shallow(<AsyncButton onClick={spy} />)
     wrapper.find('button').simulate('click')
-    expect (onButtonClick.calledOnce).to.equal(true)
+    expect (spy.calledOnce).to.equal(true)
   })
 })
 class AsyncButtonTest {
@@ -88,11 +90,11 @@ class AsyncButtonTest {
     return (
       <button disabled={props.disabled} className={props.classes} onClick={props.onClick} style={props.style}>
         { props.icon ? <i className={'fa fa-' + icon_string}></i> : '' }
-        { this.getSpan() }
+        { this.mockSpan() }
       </button>
     )
   }
-  static getSpan() {
+  static mockSpan() {
     const props = this.getProps()
     return (
         <span>
