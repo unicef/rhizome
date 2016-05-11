@@ -132,7 +132,8 @@ class AggRefreshTestCase(TestCase):
             campaign_id = self.campaign_id,
             value = value,
             cache_job_id = -1,
-            source_submission_id = ss_id
+            source_submission_id = ss_id,
+            unique_index =str(location_id) + str(data_date) + str(self.campaign_id) + str(indicator_id)
         )
 
         return dp
@@ -250,7 +251,9 @@ class AggRefreshTestCase(TestCase):
             campaign_id = self.campaign_id,
             data_date = data_date,
             value = .2,
-            source_submission_id = self.ss
+            source_submission_id = self.ss,
+            unique_index =1
+
         )
 
         dp_2 = DataPoint.objects.create(
@@ -259,7 +262,9 @@ class AggRefreshTestCase(TestCase):
             campaign_id = self.campaign_id,
             data_date = data_date,
             value = .6,
-            source_submission_id = self.ss
+            source_submission_id = self.ss,
+            unique_index =2
+
         )
 
         ar = AggRefresh(self.campaign_id)
@@ -426,6 +431,7 @@ class AggRefreshTestCase(TestCase):
             value = val_1,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =1
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_2.id,
@@ -435,6 +441,8 @@ class AggRefreshTestCase(TestCase):
             value = val_2,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =2
+
         )
         dp_3 = DataPoint.objects.create(
             indicator_id = sub_indicator_3.id,
@@ -444,6 +452,8 @@ class AggRefreshTestCase(TestCase):
             value = val_3,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =3
+
         )
 
         cr = AggRefresh(self.campaign_id)
@@ -531,6 +541,8 @@ class AggRefreshTestCase(TestCase):
             value = x,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =1
+
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_part.id,
@@ -540,6 +552,8 @@ class AggRefreshTestCase(TestCase):
             value = y,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =2
+
         )
 
         cr = AggRefresh(self.campaign_id)
@@ -615,6 +629,8 @@ class AggRefreshTestCase(TestCase):
             value = val_1,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =1
+
         )
         dp_2 = DataPoint.objects.create(
             indicator_id = sub_indicator_2.id,
@@ -624,6 +640,8 @@ class AggRefreshTestCase(TestCase):
             value = val_2,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =2
+
         )
         cr = AggRefresh(self.campaign_id)
 
@@ -846,7 +864,8 @@ class AggRefreshTestCase(TestCase):
             'location_id': loc.id,
             'indicator_id': boolean_indicator.id,
             'source_submission_id': self.ss,
-            'value': 1
+            'value': 1,
+            'unique_index':str(self.campaign_id) + str(boolean_indicator.id) + str(loc.id)
         }) for loc in true_loc_list]
         DataPoint.objects.bulk_create(true_datapoint_batch)
 
@@ -928,6 +947,8 @@ class AggRefreshTestCase(TestCase):
             value = val_1,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =1
+
         )
 
         dp_2 = DataPoint.objects.create(
@@ -938,6 +959,8 @@ class AggRefreshTestCase(TestCase):
             value = val_2,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =2
+
         )
 
         dp_1_loc_2 = DataPoint.objects.create(
@@ -948,6 +971,8 @@ class AggRefreshTestCase(TestCase):
             value = val_1_loc_2,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =3
+
         )
 
         dp_2_loc_2 = DataPoint.objects.create(
@@ -958,6 +983,8 @@ class AggRefreshTestCase(TestCase):
             value = val_2_loc_2,
             source_submission_id = ss_id,
             cache_job_id = -1,
+            unique_index =4
+
         )
 
         cr = AggRefresh(self.campaign_id)

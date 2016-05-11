@@ -11,6 +11,7 @@ from random import randint
 
 import pandas as pd
 from datetime import datetime
+from pandas import DataFrame
 
 class DataPointResourceTest(ResourceTestCase):
 
@@ -81,7 +82,8 @@ class DataPointResourceTest(ResourceTestCase):
                 indicator_id = self.ind.id,
                 data_date = datetime.strptime(row.data_date, '%d-%m-%y'),
                 value = 1,
-                source_submission_id = 1
+                source_submission_id = 1,
+                unique_index = str(self.some_district.id) + str(self.ind.id) + str(row.data_date)
             )
 
 
@@ -91,15 +93,18 @@ class DataPointResourceTest(ResourceTestCase):
         return result
 
 
-    def _get_list(self):
+    def test_get_list(self):
         # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
-
         get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
-
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
-
+        get = {'group_by_time':'year',
+            'indicator__in' : self.ind.id,
+            'start_date' : '2013-01-01',
+            'end_date' : '2016-01-01',
+            'location_id__in' : self.top_lvl_location.id
+        }
+        resp = self.api_client.get('/api/v1/datapoint/', \
+            format='json', data=get, authentication=self.get_credentials())
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         objects = response_data['objects']
@@ -139,7 +144,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(len(objects_1), len(objects_2))
 
-    def _get_list_quarter(self):
+    def test_get_list_quarter(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
@@ -169,7 +174,7 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertTrue(q1_found)
 
     # provide a non-existent id
-    def _get_list_bogus_id(self):
+    def test_get_list_bogus_id(self):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 

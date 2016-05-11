@@ -179,14 +179,12 @@ class DatapointResource(BaseNonModelResource):
             location_id__in = self.location_ids,
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
-
         if not dp_df.empty:
             dp_df = self.handle_data_exists(dp_df)
             return self.time_grouped_df_to_results(dp_df)
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
-
             sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
                 .values_list('id', flat=True)
@@ -195,11 +193,9 @@ class DatapointResource(BaseNonModelResource):
                 location_id__in = sub_location_ids,
                 indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)),columns=cols)
-
-            depth_level =+ 1
+            depth_level += 1
 
         dp_df = self.get_time_group_series(dp_df)
-
         if dp_df.empty:
             return []
 
@@ -209,7 +205,6 @@ class DatapointResource(BaseNonModelResource):
                 columns=['location_id','parent_location_id'])
 
         merged_df = dp_df.merge(location_tree_df)
-
         filtered_df = merged_df[merged_df['parent_location_id']\
             .isin(self.location_ids)]
 
@@ -223,7 +218,7 @@ class DatapointResource(BaseNonModelResource):
     def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
-        
+
         try:
             pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
                 ['parent_location_id','time_grouping'])
