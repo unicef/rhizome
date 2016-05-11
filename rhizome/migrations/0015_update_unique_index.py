@@ -36,10 +36,23 @@ def upsert_unique_indices(apps, schema_editor):
         dp.save()
     
     # delete all the other duplicates
-    dps_to_delete = DataPoint.objects.filter(unique_index=-1)
+    dps_to_delete = DataPoint.objects.all().exclude(id__in=list(historical_dps['id']))
     print 'dps_to_delete'
     print len(dps_to_delete)
     dps_to_delete.delete()
+
+
+    dataframe_columns = ['id','created_at','indicator_id','location_id','campaign_id','data_date', 'unique_index']
+    
+    # make sure there aren't duplicate dps now.
+    all_dps = DataFrame(list(DataPoint.objects.all()\
+        .values_list('unique_index')), columns=['unique_index'])
+
+    all_dps = all_dps.groupby('unique_index').size()
+
+    for idx, dp in all_dps.iteritems():
+    	if dp != 1:
+    		raise Exception("there are duplicate datapoints")
 
 
 class Migration(migrations.Migration):
