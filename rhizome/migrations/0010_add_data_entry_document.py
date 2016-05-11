@@ -16,5 +16,5 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ('rhizome', '0005_populate_initial_source_data'),
+        ('rhizome', '0003_ingest_geojson'),
     ]

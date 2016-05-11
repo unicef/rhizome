@@ -13,7 +13,7 @@ def add_unique_index(x):
         x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(int(x['campaign_id']))
     else:
         x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
-    return x    
+    return x
 
 def upsert_unique_indices(apps, schema_editor):
     datapoint_values_list = ['id','created_at','indicator_id','location_id','campaign_id','data_date']
@@ -34,7 +34,7 @@ def upsert_unique_indices(apps, schema_editor):
         unique_index = historical_dps[historical_dps['id'] == dp.id].iloc[0]['unique_index']
         dp.unique_index = unique_index
         dp.save()
-    
+
     # delete all the other duplicates
     dps_to_delete = DataPoint.objects.filter(unique_index=-1)
     print 'dps_to_delete'
@@ -46,7 +46,7 @@ def upsert_unique_indices(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0012_datapoint_campaign_nullable'),
+        ('rhizome', '0012_reset_sql_sequence'),
     ]
 
     operations = [
@@ -63,4 +63,3 @@ class Migration(migrations.Migration):
         migrations.RunPython(upsert_unique_indices),
 
     ]
-

@@ -15,7 +15,7 @@ from rhizome.models import Location, LocationPolygon, Indicator, Campaign,\
     DataPointComputed
 
 from rhizome.models import *
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import DateDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
@@ -352,8 +352,8 @@ class MetaDataGenerator:
         create_doc_details(new_doc.id)
 
         ## document -> source_submissions ##
-        dt = ComplexDocTransform(user_id, new_doc.id, self.source_sheet_df)
-        dt.main()
+        dt = DateDocTransform(user_id, new_doc.id, self.source_sheet_df)
+        dt.process_file()
 
         ## source_submissions -> datapoints ##
         mr = MasterRefresh(user_id, new_doc.id)
@@ -382,7 +382,7 @@ def create_doc_details(doc_id):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0003_ingest_geojson'),
+        ('rhizome', '00015_update_unique_index'),
     ]
 
     operations = [

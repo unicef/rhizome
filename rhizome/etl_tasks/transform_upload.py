@@ -20,45 +20,32 @@ class BadFileHeaderException(Exception):
 class DocTransform(object):
 
     def __init__(self, user_id, document_id, raw_csv_df = None):
-<<<<<<< HEAD
-
-=======
->>>>>>> master
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
-            ['RRM_Distribution/Site_City','month_and_year', '_uuid']
+            ['geocode', 'campaign', 'unique_key']
 
         self.date_column = 'data_date'
         self.document = Document.objects.get(id=document_id)
         self.file_path = str(self.document.docfile)
 
-<<<<<<< HEAD
-
-=======
->>>>>>> master
         if not isinstance(raw_csv_df, DataFrame):
             raw_csv_df = read_csv(settings.MEDIA_ROOT + self.file_path)
 
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-<<<<<<< HEAD
-
-=======
->>>>>>> master
         ## if there is no uq id column -- make one ##
         if not self.uq_id_column in raw_csv_df.columns:
 
             try:
                 csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
             except Exception as err:
-<<<<<<< HEAD
-                dp_error_message = '%s is a required column.' %err.message
-                raise DatapointsException(message=dp_error_message)
-=======
+                print '===\n' * 5
+                print 'ERRRRORRROROROROR'
+                print err
+                print '===\n' * 5
                 if not self.date_column in csv_df.columns:
                     dp_error_message = '%s is a required column.' %err.message
-                    raise DatapointsException(message=dp_error_message)
->>>>>>> master
+                    raise Exception(dp_error_message)
 
         self.csv_df = csv_df
         self.file_header = csv_df.columns
@@ -316,16 +303,17 @@ class DateDocTransform(DocTransform):
 
     def clean_date(self, date_string):
 
-        try:
-            date = datetime.strptime(date_string, '%d-%m-%y')
-        except ValueError:
-            date = datetime.strptime(date_string, '%d-%m-%Y')
-        except ValueError:
-            date = datetime.strptime(date_string, '%d/%m/%y')
-        except ValueError:
-            date = None
+        # try:
+        #     date = datetime.strptime(date_string, '%d-%m-%y')
+        # except ValueError:
+        #     date = datetime.strptime(date_string, '%d-%m-%Y')
+        # except ValueError:
+        #     date = datetime.strptime(date_string, '%d/%m/%y')
+        # except ValueError:
+        #     date = None
 
-        return date
+
+        return date_string
 
     def process_raw_source_submission(self, submission):
 

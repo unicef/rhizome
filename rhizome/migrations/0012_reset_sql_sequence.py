@@ -45,7 +45,7 @@ def reset_seq(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0011_customdashboard_rows'),
+        ('rhizome', '0012_datapoint_campaign_nullable'),
     ]
 
     operations = [
