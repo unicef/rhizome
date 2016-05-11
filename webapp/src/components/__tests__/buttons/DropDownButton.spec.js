@@ -71,7 +71,7 @@ describe.skip ('DropdownButton', () => {
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
       wrapper.find('button').simulate('click')
       expect (spy.calledOnce).to.equal(true)
-      spy.restore()
+      spy.restore() //double check if this restores _download method
     })
   })
 })
@@ -93,7 +93,7 @@ class DropdownButtonTest {
       url: 'about:blank'
     }
   }
-  static _download () {
+  _download() {
 
   }
   static mockComponent() {
