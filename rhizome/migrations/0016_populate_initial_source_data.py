@@ -359,12 +359,6 @@ class MetaDataGenerator:
         mr = MasterRefresh(user_id, new_doc.id)
         mr.main()
 
-        ## datapoints -> computed datapoints ##
-        for c in Campaign.objects.all():
-            print 'processing campaign id: %s' % c.id
-            ar = AggRefresh(c.id)
-            print 'DWC COUNT %s' % len(DataPointComputed.objects\
-                .filter(campaign_id = c.id))
 
 def create_doc_details(doc_id):
 
@@ -382,7 +376,7 @@ def create_doc_details(doc_id):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '00015_update_unique_index'),
+        ('rhizome', '0014_unique_index_agg_refresh'),
     ]
 
     operations = [

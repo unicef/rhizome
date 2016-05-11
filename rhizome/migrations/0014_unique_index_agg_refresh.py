@@ -15,13 +15,13 @@ def run_agg_refresh(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0013_datapoint_unique_index'),
+        ('rhizome', '0012_reset_sql_sequence'),
     ]
 
     operations = [
 
         # update field constraint
-        migrations.AlterField(
+        migrations.AddField(
             model_name='datapoint',
             name='unique_index',
             field=models.CharField(default=-1, max_length=255,unique=True),
@@ -29,4 +29,3 @@ class Migration(migrations.Migration):
         # run agg_refresh
         migrations.RunPython(run_agg_refresh)
     ]
-
