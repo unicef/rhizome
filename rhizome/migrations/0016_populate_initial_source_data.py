@@ -31,7 +31,7 @@ def populate_source_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    odk_form_sheet_name = 'source-data_idp_odk_form'
+    odk_form_sheet_name = 'source-data-idp-trunc'
     xl = pd.ExcelFile('iraq_data.xlsx')
 
     source_sheet_df = xl.parse(odk_form_sheet_name)
@@ -54,8 +54,8 @@ def populate_source_data(apps, schema_editor):
         location__name = 'Iraq'
     ).values()
 
-    # if len(datapoint_id_list) == 0:
-    #     raise Exception('No data for Iraq')
+    if len(datapoint_id_list) == 0:
+        raise Exception('No data for Iraq')
 
 class MetaDataGenerator:
 
