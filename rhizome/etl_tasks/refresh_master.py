@@ -234,8 +234,22 @@ class MasterRefresh(object):
             x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
         return x
 
+    def filter_data_frame_conflicts(self, df):
+        '''
+        These are CONFLICTS and should be returned to the user.  For now,
+        we simply take the datapoint with the max soruce_submission_id
+        when there are two datapoints in one document for which exist the same
+        location, indicator, campaign combo.
+        '''
+
+        filtered_df = df.sort(['source_submission_id'], ascending=False)\
+            .groupby('unique_index').first().reset_index()
+
+        return filtered_df
+
     def sync_datapoint(self, ss_id_list = None):
 
+        # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_latest_data_gets_synced --settings=rhizome.settings.test
         dp_batch = []
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
@@ -248,6 +262,7 @@ class MasterRefresh(object):
             return
 
         doc_dp_df = doc_dp_df.apply(self.add_unique_index, axis=1)
+        doc_dp_df = self.filter_data_frame_conflicts(doc_dp_df)
 
         doc_dp_unique_keys = doc_dp_df['unique_index'].unique()
 
