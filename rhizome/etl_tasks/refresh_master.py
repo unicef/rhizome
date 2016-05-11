@@ -227,6 +227,13 @@ class MasterRefresh(object):
             else:
                 doc_dps = self.process_source_submission(row)
 
+    def add_unique_index(self, x):
+        if x['campaign_id'] and not math.isnan(x['campaign_id']):
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(int(x['campaign_id']))
+        else:
+            x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+        return x
+
     def sync_datapoint(self, ss_id_list = None):
 
         dp_batch = []
@@ -240,10 +247,7 @@ class MasterRefresh(object):
         if len(doc_dp_df) == 0:
             return
 
-        ## need to do this for date as well ##
-        doc_dp_df['unique_index'] = doc_dp_df\
-            .apply(lambda x: str(x.location_id) + '-' \
-            + str(x.indicator_id) + '-' + str(x.campaign_id) , axis=1)
+        doc_dp_df = doc_dp_df.apply(self.add_unique_index, axis=1)
 
         doc_dp_unique_keys = doc_dp_df['unique_index'].unique()
 
