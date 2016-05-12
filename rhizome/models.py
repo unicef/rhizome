@@ -579,7 +579,9 @@ class SourceSubmission(models.Model):
 
     def get_location_id(self):
 
-        
+        print '==self.location_code=='
+        print self.location_code
+        print '==\n' * 5
         try:
             l_id = SourceObjectMap.objects.get(content_type = 'location',\
                 source_object_code = self.location_code).master_object_id

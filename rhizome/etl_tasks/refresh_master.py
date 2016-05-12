@@ -227,11 +227,6 @@ class MasterRefresh(object):
             else:
                 doc_dps = self.process_source_submission(row)
 
-            print '===\n' * 5
-            print 'ROW PROCESS STATUS %s' % row.process_status
-            print '===\n' * 5
-
-
     def add_unique_index(self, x):
         if x['campaign_id'] and not math.isnan(x['campaign_id']):
             x['unique_index'] = str(x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(int(x['campaign_id']))
@@ -316,11 +311,15 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
+        print '==self.source_map_dict=='
+        print self.source_map_dict
+        print '==='
+
         ## if no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
+            print ' == INDICATOR ID ==  %s ' % indicator_id
         except KeyError:
-            print ' == NO INDICATOR ==  \n ' * 3
             return None
 
         cleaned_val = None

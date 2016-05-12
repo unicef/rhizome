@@ -41,15 +41,6 @@ def populate_source_data(apps, schema_editor):
 
     datapoint_id_list = DataPoint.objects.all().values_list('id', flat=True)
 
-    # print '== LEN OF datapoint_id_list ==\n' * 5
-    # print datapoint_id_list
-    # print '===\n' * 5
-    #
-    # l = Location.objects.all().values()
-    # print '==='
-    # print l
-    # print '==='
-
     iraq_data = DataPointComputed.objects.filter(
         location__name = 'Iraq'
     ).values()
@@ -119,6 +110,7 @@ class MetaDataGenerator:
 
     def main(self):
 
+        self.create_doc()
         self.build_meta_data_from_source()
 
         ## hack - fixme ##
@@ -154,11 +146,17 @@ class MetaDataGenerator:
                     'short_name':ind_name,
                     'description':ind_name
                 })
-                SourceObjectMap(**{
+                som_obj = SourceObjectMap.objects.create(**{
                     'master_object_id': ind.id,
                     'content_type': 'indicator',
                     'source_object_code': ind
                 })
+
+                doc_som = DocumentSourceObjectMap.objects.create(
+                    document_id = self.document.id,
+                    source_object_map_id = som_obj.id
+                )
+
             except KeyError:
                 pass
 
@@ -238,6 +236,7 @@ class MetaDataGenerator:
         district_column = self.odk_file_map['district_column']
         district_df = pd.DataFrame(\
             self.source_sheet_df[[district_column,province_column]])
+
         district_df.drop_duplicates(inplace=True)
         self.process_location_df(district_df, 'District')
 
@@ -334,10 +333,9 @@ class MetaDataGenerator:
 
         return meta_ids
 
+    def create_doc(self):
 
-    def process_source_sheet(self):
-
-        user_id = -1
+        self.user_id = -1
         sheet_name = 'source-data-idp-trunc'
         # file_loc = settings.MEDIA_ROOT + sheet_name
         # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
@@ -351,16 +349,18 @@ class MetaDataGenerator:
             guid = 'test'
         )
 
-        self.document_id = new_doc.id
+        self.document = new_doc
 
-        create_doc_details(new_doc.id)
+    def process_source_sheet(self):
+
+        create_doc_details(self.document.id)
 
         ## document -> source_submissions ##
-        dt = DateDocTransform(user_id, new_doc.id, self.source_sheet_df)
+        dt = DateDocTransform(self.user_id, self.document.id, self.source_sheet_df)
         dt.process_file()
 
         ## source_submissions -> datapoints ##
-        mr = MasterRefresh(user_id, new_doc.id)
+        mr = MasterRefresh(self.user_id, self.document.id)
         mr.main()
 
 
