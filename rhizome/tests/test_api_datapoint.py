@@ -449,8 +449,72 @@ class DataPointResourceTest(ResourceTestCase):
 
         self.assertEqual(sum_of_values, kandahar_value+hilmand_value)
 
+    def test_show_missing_data(self):
+        # create some campaigns and indicators
+        indicator_1 = Indicator.objects.create(short_name='stuff', \
+            name='stuff', \
+            data_format='int',\
+            description='some stuff that we want to count', )
 
+        indicator_2 = Indicator.objects.create(short_name='more_stuff',
+            name="more stuff to track",
+            data_format ='int'
+            )
 
+        start_date_1 = '2016-01-01'
+        end_date_1 = '2016-01-01'
+        
+        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
 
+        campaign_type = CampaignType.objects\
+            .create(name='National Immunization Days (NID)')
 
+        campaign_1 = Campaign.objects.create(office=self.o,\
+            start_date=start_date_1,end_date=end_date_1,\
+            top_lvl_location_id = self.top_lvl_location.id,
+            top_lvl_indicator_tag_id = ind_tag.id,
+            campaign_type_id = campaign_type.id)
+
+        start_date_2 = '2016-03-01'
+        end_date_2 = '2016-03-01'
+
+        campaign_2 = Campaign.objects.create(office=self.o,\
+            start_date=start_date_2,end_date=end_date_2,\
+            top_lvl_location_id = self.top_lvl_location.id,
+            top_lvl_indicator_tag_id = ind_tag.id,
+            campaign_type_id = campaign_type.id)
+
+        document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
+
+        dp= DataPointComputed.objects.create(
+            location_id = self.top_lvl_location.id,
+            value = 21,
+            campaign_id = campaign_1.id,
+            indicator_id = indicator_1.id,
+            document_id = document.id
+        )
+
+        # create another location
+
+        self.location_2 = Location.objects.create(
+                name = 'Afghanistan',
+                location_code = 'Afghanistan',
+                location_type_id = self.lt.id,
+                office_id = self.o.id,
+            )
+
+        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&show_missing_data=1'\
+            .format(indicator_1.id,\
+            str(campaign_1.id)+','+str(campaign_2.id),\
+            str(self.top_lvl_location.id) +',' + str(self.location_2.id))
+
+        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+            format='json', authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
+        # produce the cartesian product of location and campaign
+        self.assertEqual(len(response_data['objects']), 4)
+
+        self.assertEqual(DataPointComputed.objects.count(), 1)
 
