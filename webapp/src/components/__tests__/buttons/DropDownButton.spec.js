@@ -2,7 +2,57 @@ import React from 'react'
 import { expect } from 'chai'
 import { shallow } from 'enzyme'
 import DropdownButton from '../../button/DropdownButton'
+import Dropdown from '../../dropdown/Dropdown'
 import sinon from 'sinon'
+
+class DropdownButtonTest {
+  static getProps() {
+    return {
+      text: 'foo',
+      items: [{title: 'foobar', value: '1'}],
+      grouped: true,
+      uniqueOnly: false,
+      style: '',
+      item_plural_name: 'foos'
+    }
+  }
+  static getDefaultProps() {
+    return {
+      uniqueOnly: false,
+      multi: false,
+      grouped: false,
+      value_field: 'value',
+      title_field: 'title',
+      icon: 'plus'
+    }
+  }
+  _toggleMenu() {
+
+  }
+  static mockComponent() {
+    const props = this.getProps()
+    if (!props.items || props.items.length === 0) {
+      if (props.text) {
+        return (
+          <button className={props.style} role='button'>
+            <i className='fa fa-spinner fa-spin'></i> &nbsp;
+            Loading {_.capitalize(props.item_plural_name)}...
+          </button>
+        )
+      } else {
+        return <i className='fa fa-spinner fa-spin right'></i>
+      }
+    }
+
+    const icon = props.icon ? (<i className={['fa', props.icon].join(' ')} />) : null
+
+    return (
+        <button className={props.style} role='button' onClick={this._toggleMenu}>
+          {icon} {props.text}
+        </button>
+    )
+  }
+}
 
 describe ('DropdownButton', () => {
   let mockDropdownButton
@@ -11,6 +61,9 @@ describe ('DropdownButton', () => {
   })
   it ('exists', () => {
     expect (DropdownButton).to.exist
+  })
+  it ('extends Dropdown', () => {
+    expect (DropdownButton.prototype instanceof Dropdown).to.be.true
   })
   describe ('.propTypes', () => {
     it ('is static and exists', () => {
@@ -72,7 +125,7 @@ describe ('DropdownButton', () => {
     })
   })
   describe ('#componentWillUpdate()', () => {
-    const props = { items: [{title: 'foobar', value: '1'}], grouped: true, uniqueOnly: false }
+    const props = DropdownButtonTest.getProps()
     it ('exists with 2 arguments', () => {
       expect (mockDropdownButton.componentWillUpdate).to.exist.and.have.lengthOf(2)
     })
@@ -104,88 +157,37 @@ describe ('DropdownButton', () => {
       })
     })
   })
-  describe.skip ('#render()', () => {
+  describe ('#render()', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()}/>)
       expectedComponent = DropdownButtonTest.mockComponent()
     })
     it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.eq(true)
+      expect (wrapper.equals(expectedComponent)).to.be.true
     })
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
-    it.skip ('contains an inner component', () => {
-      expect (wrapper.contains(DropdownButtonTest.mockInnerComponent())).to.eq(true)
+    context.skip ('if props has `items`', () => {
+      it ('simulates click event', () => {
+        let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
+        wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
+        wrapper.find('button').simulate('click')
+        expect (spy.calledOnce).to.be.true
+        DropdownButton.prototype._toggleMenu.restore()
+      })
     })
-    it ('simulates click events', () => {
-      let spy = sinon.spy(DropdownButton.prototype.__reactAutoBindMap, "_download")
-      wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
-      wrapper.find('button').simulate('click')
-      expect (spy.calledOnce).to.be.true
-      spy.restore() //double check if this restores _download method
+    context.skip ('if props has no `items`', () => {
+      it ('does NOT simulate click event', () => {
+        let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
+        let props = DropdownButtonTest.getProps()
+        props.items = null
+        wrapper = shallow(<DropdownButton {...props} />)
+        wrapper.find('button').simulate('click')
+        expect (spy.called).to.be.false
+        DropdownButton.prototype._toggleMenu.restore()
+      })
     })
   })
 })
-class DropdownButtonTest {
-  static getProps() {
-    //update working variable if isWorking is switched to true
-    return {
-      text: 'stuff',
-      enable: true,
-      classes: '',
-      working: 'bar',
-      cookieName: 'foo',
-      onClick: () => {}
-    }
-  }
-  static getDefaultProps() {
-    return {
-      uniqueOnly: false,
-      multi: false,
-      grouped: false,
-      value_field: 'value',
-      title_field: 'title'
-    }
-  }
-  static getState() {
-    return {
-      uniqueOnly: false,
-      multi: false,
-      grouped: false,
-      value_field: 'value',
-      title_field: 'title'
-    }
-  }
-  _download() {
-
-  }
-  static mockComponent() {
-    const props = this.getProps()
-    const state = this.getState()
-    let text = state.isWorking ? props.working : props.text
-    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
-    return (
-      <button role='button'
-        className={classesString + props.classes}
-        onClick={this._download}>
-        <i className='fa fa-fw fa-download' /> {text}
-        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
-      </button>
-    )
-  }
-  static mockInnerComponent() {
-    const props = this.getProps()
-    const state = this.getState()
-    let text = state.isWorking ? props.working : props.text
-    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
-    //return needs to be fixed. div should be removed.
-    return (
-      <div>
-        <i className='fa fa-fw fa-download' /> {text}
-        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
-      </div>
-    )
-  }
-}
