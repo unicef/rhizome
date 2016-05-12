@@ -23,9 +23,9 @@ class ResultObject(object):
     location / campaign combination, and the remaing columns represent the
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
-    location = None
-    campaign = None
-    indicators = list()
+    # location = None
+    # campaign = None
+    # indicators = list()
 
 
 class DatapointResource(BaseNonModelResource):
@@ -44,11 +44,19 @@ class DatapointResource(BaseNonModelResource):
         -
     '''
 
+    # error = None
+    # parsed_params = {}
+    # location = fields.IntegerField(attribute='location')
+    # campaign = fields.IntegerField(attribute='campaign')
+    # indicators = fields.ListField(attribute='indicators')
     error = None
     parsed_params = {}
-    location = fields.IntegerField(attribute='location')
-    campaign = fields.IntegerField(attribute='campaign')
-    indicators = fields.ListField(attribute='indicators')
+    indicator_id = fields.IntegerField(attribute='indicator_id')
+    campaign_id = fields.IntegerField(attribute='campaign_id', null=True, blank=True)
+    data_date = fields.DateField(attribute='data_date', null=True, blank=True)
+    computed_id = fields.IntegerField(attribute='computed_id', null=True, blank=True)
+    location_id = fields.IntegerField(attribute='location_id')
+    value = fields.CharField(attribute='value')
 
     class Meta(BaseNonModelResource.Meta):
         '''
@@ -140,7 +148,7 @@ class DatapointResource(BaseNonModelResource):
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
             dp_df['time_grouping'] = dp_df['data_date']\
-                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+                .map(lambda x: str(x.year) + str((x.month-1) // 3 + 1))
         elif time_grouping == 'all_time':
             dp_df['time_grouping'] = 1
         else:
@@ -164,10 +172,9 @@ class DatapointResource(BaseNonModelResource):
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
-        # if time_grouping =='all_time':
-        #     return self.map_bubble_transform()
+        if time_grouping =='all_time':
+            return self.map_bubble_transform()
 
-       # to do: put this somewhere else
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table(dp_df_columns)
@@ -192,6 +199,7 @@ class DatapointResource(BaseNonModelResource):
                 indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)),columns=cols)
             depth_level += 1
+
         dp_df = self.get_time_group_series(dp_df)
         if dp_df.empty:
             return []
@@ -215,43 +223,14 @@ class DatapointResource(BaseNonModelResource):
     def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
-
-        try:
-            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
-                ['parent_location_id','time_grouping'])
-        except KeyError:
-            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
-                ['location_id','time_grouping'])
-
-        for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
-            reverse=True):
-
-            location_id, time_group = time_loc_tupl[0], time_loc_tupl[1]
-
-            r = ResultObject()
-            r.location = location_id
-            r.campaign = str(time_group).replace('-','').replace('.0','')
-
-            r.indicators = [{
-                'computed': None,
-                'indicator': k,
-                'value': v
-            } for k,v in indicator_data.iteritems()]
-
-            results.append(r)
-            all_time_groupings.extend(list(df['time_grouping'].unique()))
-
-        all_time_groupings = list(set(all_time_groupings))
-
-        self.campaign_qs = [{
-            'id': time_grp,
-            'name': str(time_grp),
-            'start_date': str(time_grp) + '-01-02',
-            'end_date': str(time_grp) + '-12-31',
-            'office_id': 1,
-            'created_at': datetime.now()
-        } for time_grp in all_time_groupings]
-
+        for idx,row in df.iterrows():
+            dp = ResultObject()
+            # for column_header in dwc_df_columns:
+            dp.indicator_id = row['indicator_id']
+            dp.campaign_id = int(row['time_grouping'])
+            dp.location_id = row['parent_location_id']
+            dp.value = row['value']
+            results.append(dp)
         return results
 
     def handle_polio_case_table(self, dp_df_columns):
@@ -563,9 +542,7 @@ class DatapointResource(BaseNonModelResource):
                 .intersection(location_ids_in_filter)
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        print 'dwc_df'
         dwc_df = dwc_df.drop('id',1)
-        print dwc_df
         results =[]
         for idx,row in dwc_df.iterrows():
             dp = ResultObject()
@@ -575,40 +552,32 @@ class DatapointResource(BaseNonModelResource):
             dp.location_id = row['location_id']
             dp.value = row['value']
             results.append(dp)
+        return results
 
-    def add_missing_data(self, pivoted_data):
-        '''
-        If the campaign / locaiton cobination has no related datapoitns, we
-        add the keys here so that we can see the row of data in data entry
-        or data browser.
+    # def add_missing_data(self, pivoted_data):
+    #     '''
+    #     If the campaign / locaiton cobination has no related datapoitns, we
+    #     add the keys here so that we can see the row of data in data entry
+    #     or data browser.
 
-        This in the future can be controlled with a parameter so that for
-        instance with a table chart for a large number of districts, we only
-        show those with data.
+    #     This in the future can be controlled with a parameter so that for
+    #     instance with a table chart for a large number of districts, we only
+    #     show those with data.
 
-        This is largely for Data entry so that we can see a row in the form
-        even when there is no existing data.
-        '''
+    #     This is largely for Data entry so that we can see a row in the form
+    #     even when there is no existing data.
+    #     '''
 
-        for loc in self.location_ids:
+    #     for loc in self.location_ids:
 
-            for camp in self.parsed_params['campaign__in']:
+    #         for camp in self.parsed_params['campaign__in']:
 
-                tuple_dict_key = (float(loc), float(camp))
+    #             tuple_dict_key = (float(loc), float(camp))
 
-                try:
-                    existing_data = pivoted_data[tuple_dict_key]
-                except KeyError:
-                    pivoted_data[tuple_dict_key] = {}
+    #             try:
+    #                 existing_data = pivoted_data[tuple_dict_key]
+    #             except KeyError:
+    #                 pivoted_data[tuple_dict_key] = {}
 
-        return pivoted_data
+    #     return pivoted_data
 
-    def pivot_df(self, df, index_column_list, value, pivot_column_list):
-
-        p_table = pivot_table(df, values=value, index=index_column_list,\
-                columns=pivot_column_list, aggfunc=np.sum)
-
-        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-        pivoted_dictionary = no_nan_pivoted_df.to_dict()
-
-        return pivoted_dictionary
