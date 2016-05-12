@@ -57,9 +57,9 @@ class LocationResourceTest(ResourceTestCase):
 
         resp = self.api_client.get('/api/v1/location/', format='json', \
                                     authentication=self.get_credentials())
-        self.assertHttpOK(resp)
 
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
 
         self.assertEqual(self.top_lvl_location.id,\
             response_data['meta']['top_lvl_location_id'])

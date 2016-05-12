@@ -14,10 +14,10 @@ class GeoResourceTest(ResourceTestCase):
         super(GeoResourceTest, self).setUp()
 
         self.ts = TestSetupHelpers()
-        self.lt = LocationType.objects.create(name='Region',admin_level=2)
+        self.lt = LocationType.objects.create(name='Region',admin_level=1)
 
         self.distr, created = \
-            LocationType.objects.get_or_create(name='District',admin_level = 1)
+            LocationType.objects.get_or_create(name='District',admin_level = 2)
 
         self.o = self.ts.create_arbitrary_office()
         location_df_from_csv= read_csv('rhizome/tests/_data/locations_nimroz.csv')
@@ -28,6 +28,10 @@ class GeoResourceTest(ResourceTestCase):
         for loc in locs:
             loc.location_type_id = self.distr.id
             loc.save()
+
+        parent = Location.objects.get(id=6)
+        parent.location_type_id = self.lt.id
+        parent.save()
 
         geo_json_df = read_csv('rhizome/tests/_data/geo_json.txt',delimiter = "|")
         location_df = DataFrame(list(Location.objects.all()\
@@ -43,19 +47,10 @@ class GeoResourceTest(ResourceTestCase):
             top_lvl_location_id = 1)
 
 
-    def test_get_geo_tree_lvl(self):
-        get_data ={'parent_location_id__in':6, 'tree_lvl':1}
+    def test_get_geo(self):
+        get_data ={'location_id__in':6, 'location_depth':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['features']), 5)
 
-    # make sure that the api returns the parent location
-
-    def test_check_parent_location(self):
-        get_data ={'parent_location_id__in':6, 'tree_lvl':1}
-
-        resp = self.ts.get(self, '/api/v1/geo/', get_data)
-
-        self.assertHttpOK(resp)
-        resp_data = self.deserialize(resp)
-        self.assertEqual(int(resp_data['parent_location_id__in']), 6)
+   
