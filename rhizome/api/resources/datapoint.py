@@ -519,7 +519,7 @@ class DatapointResource(BaseNonModelResource):
             new_val = self.class_indicator_map[ind_id][ind_val]
             x['value'] = new_val
         return x
-
+        
     def base_transform(self):
 
         results = []
@@ -563,61 +563,18 @@ class DatapointResource(BaseNonModelResource):
                 .intersection(location_ids_in_filter)
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-
-        try:
-            pivoted_data = self.pivot_df(dwc_df, \
-                ['indicator_id'], 'value', ['location_id', 'campaign_id'])
-
-            ## we need two dictionaries, one that has the value of the
-            ## datapoint_computed object and one with the id ##
-            pivoted_data_for_id = self.pivot_df(dwc_df, \
-                ['indicator_id'], 'id', ['location_id', 'campaign_id'])
-
-        except KeyError: ## there is no data, so fill it with empty indicator data ##
-            pivoted_data, pivoted_data_for_id = {}, {}
-            for location_id in self.location_ids:
-                try:
-                    tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
-                # there are no campaigns in the given range
-                except IndexError:
-                    return []
-                pivoted_data[tupl] = {}
-                pivoted_data_for_id[tupl] = {}
-
-        if self.parsed_params['show_missing_data'] == u'1':
-            all_pivoted_data = self.add_missing_data(pivoted_data)
-        else:
-            all_pivoted_data = pivoted_data
-
-        for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
-
-            if self.parsed_params['cumulative'] == '1':
-                indicator_objects = [{
-                    'indicator': k,
-                    'value': v
-                } for k, v in indicator_dict.iteritems()]
-            else:
-                indicator_objects = [{
-                    'indicator': k,
-                    'computed': pivoted_data_for_id[row][k],
-                    'value': v
-                } for k, v in indicator_dict.iteritems()]
-
-            # avail_indicators = set([x for x,y in indicator_dict.keys()])
-            missing_indicators = list(set(self.parsed_params['indicator__in']))
-            for ind in missing_indicators:
-                if ind not in indicator_dict.keys():
-                    indicator_objects.append({'indicator': ind, 'value': None,\
-                    'computed_id': None})
-
-            r = ResultObject()
-            r.location = row[0]
-            r.campaign = row[1]
-            r.indicators = indicator_objects
-
-            results.append(r)
-
-        return results
+        print 'dwc_df'
+        dwc_df = dwc_df.drop('id',1)
+        print dwc_df
+        results =[]
+        for idx,row in dwc_df.iterrows():
+            dp = ResultObject()
+            # for column_header in dwc_df_columns:
+            dp.indicator_id = row['indicator_id']
+            dp.campaign_id = row['campaign_id']
+            dp.location_id = row['location_id']
+            dp.value = row['value']
+            results.append(dp)
 
     def add_missing_data(self, pivoted_data):
         '''
