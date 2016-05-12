@@ -6,7 +6,7 @@ import django.db.models.deletion
 from django.db import models, migrations
 from django.conf import settings
 from django.db.models import get_app, get_models
-
+from django.db.utils import IntegrityError
 import pandas as pd
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
@@ -141,13 +141,13 @@ class MetaDataGenerator:
 
             try:
                 ind_name = self.indicator_lookup[ind]
-                ind = Indicator.objects.create(**{
+                ind_obj = Indicator.objects.create(**{
                     'name':ind_name,
                     'short_name':ind_name,
                     'description':ind_name
                 })
                 som_obj = SourceObjectMap.objects.create(**{
-                    'master_object_id': ind.id,
+                    'master_object_id': ind_obj.id,
                     'content_type': 'indicator',
                     'source_object_code': ind
                 })
@@ -159,7 +159,6 @@ class MetaDataGenerator:
 
             except KeyError:
                 pass
-
 
     def build_campaign_meta(self):
 
@@ -229,7 +228,6 @@ class MetaDataGenerator:
                     'location_type_id': LocationType.objects\
                         .get(name = 'Province').id
                 })
-
             self.existing_location_map[province_name] = location_obj.id
 
         # DISTRICT ##
@@ -254,8 +252,7 @@ class MetaDataGenerator:
             'content_type': 'location',
             'source_object_code': loc.location_code
         }) for loc in Location.objects.all()]
-        SourceObjectMap.objects.bulk_create(source_object_map_batch)
-
+        # SourceObjectMap.objects.bulk_create(source_object_map_batch)
 
         ## now let me change the names of the locations
         ##  so that they are familiar to the progam
@@ -269,7 +266,6 @@ class MetaDataGenerator:
                 l.save()
             except Location.DoesNotExist:  ## LOOK INTO THIS....
                 pass
-
 
     def process_location_df(self, location_df, admin_level):
 
@@ -318,6 +314,16 @@ class MetaDataGenerator:
         for locName, locId in location_name_to_id_list_of_lists:
             self.existing_location_map[locName] = locId
 
+        for k,v in self.existing_location_map.iteritems():
+            som_obj, created = SourceObjectMap.objects.get_or_create(
+                content_type = 'location',
+                source_object_code = k,
+                defaults = {'master_object_id': v}
+            )
+            doc_som_obj, created = DocumentSourceObjectMap.objects.get_or_create(
+                source_object_map_id = som_obj.id,
+                document_id = self.document.id
+            )
     ## make source object maps ##
     def model_df_to_data(model_df,model):
 

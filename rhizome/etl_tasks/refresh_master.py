@@ -311,9 +311,6 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
-        print '==self.source_map_dict=='
-        print self.source_map_dict
-        print '==='
 
         ## if no indicator row dont process ##
         try:
