@@ -87,7 +87,7 @@ class BaseResource(Resource):
 
             ## end hack ##
 
-            if request.GET['location_type']:
+            if 'location_type' in request.GET:
                 loc_type_id = int(request.GET['location_type'])
                 return LocationTree.objects.filter(
                     location__location_type_id = loc_type_id,
