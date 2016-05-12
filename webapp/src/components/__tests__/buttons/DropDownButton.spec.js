@@ -71,6 +71,39 @@ describe ('DropdownButton', () => {
       })
     })
   })
+  describe ('#componentWillUpdate()', () => {
+    const props = { items: [{title: 'foobar', value: '1'}], grouped: true, uniqueOnly: false }
+    it ('exists with 2 arguments', () => {
+      expect (mockDropdownButton.componentWillUpdate).to.exist.and.have.lengthOf(2)
+    })
+    context.skip ('when given 2 arguments and props.grouped is true', () => {
+      it ('calls #_getGroupedMenuItemComponents()', () => {
+        const spy = sinon.spy(DropdownButton.prototype, '_getGroupedMenuItemComponents')
+        const spyMockDropdownButton = new DropdownButton({ grouped: true })
+        spyMockDropdownButton.componentWillUpdate(props)
+        expect (spy.calledOnce).to.be.true
+        DropdownButton.prototype._getGroupedMenuItemComponents.restore()
+      })
+    })
+    context.skip ('when given 2 arguments and props.grouped is false', () => {
+      it ('calls #_getMenuItemComponents()', () => {
+        const spy = sinon.spy(DropdownButton.prototype, '_getMenuItemComponents')
+        const spyMockDropdownButton = new DropdownButton({ grouped: false })
+        spyMockDropdownButton.componentWillUpdate(props)
+        expect (spy.calledOnce).to.be.true
+        DropdownButton.prototype._getMenuItemComponents.restore()
+      })
+    })
+    context.skip ('when given 2 arguments', () => {
+      it ('calls #_setPattern()', () => {
+        const spy = sinon.spy(DropdownButton.prototype, '_setPattern')
+        const spyMockDropdownButton = new DropdownButton(props)
+        spyMockDropdownButton.componentWillUpdate(props)
+        expect (spy.calledOnce).to.be.true
+        DropdownButton.prototype._setPattern.restore()
+      })
+    })
+  })
   describe.skip ('#render()', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
@@ -90,7 +123,7 @@ describe ('DropdownButton', () => {
       let spy = sinon.spy(DropdownButton.prototype.__reactAutoBindMap, "_download")
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
       wrapper.find('button').simulate('click')
-      expect (spy.calledOnce).to.equal(true)
+      expect (spy.calledOnce).to.be.true
       spy.restore() //double check if this restores _download method
     })
   })
