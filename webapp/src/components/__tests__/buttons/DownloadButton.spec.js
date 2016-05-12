@@ -1,10 +1,16 @@
 import React from 'react'
+import { Component } from 'react'
+import _ from 'lodash'
 import { expect } from 'chai'
 import { shallow } from 'enzyme'
 import DownloadButton from '../../button/DownloadButton'
 import sinon from 'sinon'
 
 describe ('DownloadButton', () => {
+  let mockDownloadButton
+  beforeEach (() => {
+    mockDownloadButton = new DownloadButton()
+  })
   it ('exists', () => {
     expect (DownloadButton).to.exist
   })
@@ -17,10 +23,6 @@ describe ('DownloadButton', () => {
     })
   })
   describe ('#defaults', () => {
-    let mockDownloadButton
-    beforeEach (() => {
-      mockDownloadButton = new DownloadButton()
-    })
     it ('has specified properties', () => {
       expect (mockDownloadButton.defaults).to.have.all.keys('url', 'isWorking')
     })
