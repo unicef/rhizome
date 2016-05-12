@@ -4,7 +4,11 @@ import { shallow } from 'enzyme'
 import DropdownButton from '../../button/DropdownButton'
 import sinon from 'sinon'
 
-describe.skip ('DropdownButton', () => {
+describe ('DropdownButton', () => {
+  let mockDropdownButton
+  beforeEach (() => {
+    mockDropdownButton = new DropdownButton()
+  })
   it ('exists', () => {
     expect (DropdownButton).to.exist
   })
@@ -13,45 +17,61 @@ describe.skip ('DropdownButton', () => {
       expect (DropdownButton.propTypes).to.exist
     })
     it ('has specified properties', () => {
-      expect (DropdownButton.propTypes).to.have.all.keys('data', 'working', 'enable', 'text', 'cookieName', 'onClick', 'classes')
+      expect (DropdownButton.propTypes).to.have.all.keys('items', 'sendValue', 'item_plural_name', 'text', 'style', 'icon', 'value_field', 'title_field', 'uniqueOnly', 'multi', 'grouped')
+    })
+    context ('if component is mounted it warns for required props', () => {
+      let spy, wrapper
+      beforeEach(() => {
+        spy = sinon.spy(console, 'warn')
+        wrapper = shallow(<DropdownButton />)
+      })
+      afterEach (() => {
+        console.warn.restore()
+      })
+      it ('correct number of warnings', () => {
+        expect (spy.calledTwice).to.be.true
+      })
+      it.skip ('warns with proper message', () => {
+        expect (spy.calledWith('Warning: Failed propType: Required prop `items` was not specified in `DropdownButton`')).to.be.true
+        expect (spy.calledWith('Warning: Failed propType: Required prop `sendValue` was not specified in `DropdownButton`')).to.be.true
+      })
     })
   })
-  describe ('#defaults', () => {
-    let mockDropdownButton
-    beforeEach (() => {
-      mockDropdownButton = new DropdownButton()
-    })
+  describe ('#defaultProps', () => {
     it ('has specified properties', () => {
-      expect (mockDropdownButton.defaults).to.have.all.keys('url', 'isWorking')
+      expect (DropdownButton.defaultProps).to.have.all.keys('uniqueOnly', 'multi', 'grouped', 'value_field', 'title_field')
     })
     it ('has correct initial values', () => {
-      const state = DropdownButtonTest.getState()
-      expect (mockDropdownButton.defaults.isWorking).to.eq(state.isWorking)
-      expect (mockDropdownButton.defaults.url).to.eq(state.url)
+      const defaultProps = DropdownButtonTest.getDefaultProps()
+      expect (DropdownButton.defaultProps.uniqueOnly).to.eq(defaultProps.uniqueOnly)
+      expect (DropdownButton.defaultProps.multi).to.eq(defaultProps.multi)
+      expect (DropdownButton.defaultProps.grouped).to.eq(defaultProps.grouped)
+      expect (DropdownButton.defaultProps.value_field).to.eq(defaultProps.value_field)
+      expect (DropdownButton.defaultProps.title_field).to.eq(defaultProps.title_field)
     })
   })
-  describe ('#getInitialState()', () => {
-    it ('returns defaults', () => {
-      const mockDropdownButton = new DropdownButton()
-      expect (mockDropdownButton.getInitialState()).to.deep.eq(mockDropdownButton.defaults)
+  describe ('#componentWillRecieveProps()', () => {
+    it ('exists with 1 parameter', () => {
+      expect (mockDropdownButton.componentWillReceiveProps).to.exist.and.have.lengthOf(1)
+    })
+    context ('if an argument is passed in', () => {
+      it ('sets state of `open` to false', () => {
+        const props = { text: 'bar' }
+        const spyMockDropdownButton = new DropdownButton({ text: 'foo'})
+        spyMockDropdownButton.componentWillReceiveProps(props)
+        expect (spyMockDropdownButton.state.open).to.be.false
+      })
+      it ('sets state of `open`', () => {
+        const props = { text: 'bar' }
+        const spy = sinon.spy(DropdownButton.prototype, 'setState')
+        const spyMockDropdownButton = new DropdownButton({ text: 'foo'})
+        spyMockDropdownButton.componentWillReceiveProps(props)
+        expect (spy.calledOnce).to.be.true
+        DropdownButton.prototype.setState.restore()
+      })
     })
   })
-  describe.skip ('#_completeDownload()', () => {
-    it.skip ('completes download', () => {
-
-    })
-  })
-  describe.skip ('#_download()', () => {
-    it.skip ('downloads', () => {
-
-    })
-  })
-  describe.skip ('#_getCookie()', () => {
-    it.skip ('gets cookie', () => {
-
-    })
-  })
-  describe ('#render()', () => {
+  describe.skip ('#render()', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()}/>)
@@ -87,10 +107,22 @@ class DropdownButtonTest {
       onClick: () => {}
     }
   }
+  static getDefaultProps() {
+    return {
+      uniqueOnly: false,
+      multi: false,
+      grouped: false,
+      value_field: 'value',
+      title_field: 'title'
+    }
+  }
   static getState() {
     return {
-      isWorking: false,
-      url: 'about:blank'
+      uniqueOnly: false,
+      multi: false,
+      grouped: false,
+      value_field: 'value',
+      title_field: 'title'
     }
   }
   _download() {
