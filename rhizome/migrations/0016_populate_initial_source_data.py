@@ -31,7 +31,7 @@ def populate_source_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    odk_form_sheet_name = 'source-data-idp-trunc'
+    odk_form_sheet_name = 'source-data_idp_odk_form'
     xl = pd.ExcelFile('iraq_data.xlsx')
 
     source_sheet_df = xl.parse(odk_form_sheet_name)
@@ -105,7 +105,9 @@ class MetaDataGenerator:
 
         self.indicator_lookup = {
             'RRM_Distribution/group_distribution/rrm_kits': 'RRM Kits Distributed',
-            'RRM_Distribution/group_distribution/plumpy' : 'Plumpy Bars Distributed'
+            'RRM_Distribution/group_distribution/plumpy' : 'Plumpy Bars Distributed',
+            'RRM_Distribution/group_distribution/families': 'Families Seen',
+            'RRM_Distribution/group_distribution/singles': 'Singles Seen'
         }
 
     def main(self):
@@ -342,7 +344,7 @@ class MetaDataGenerator:
     def create_doc(self):
 
         self.user_id = -1
-        sheet_name = 'source-data-idp-trunc'
+        sheet_name = 'source-data_idp_odk_form'
         # file_loc = settings.MEDIA_ROOT + sheet_name
         # saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
 
