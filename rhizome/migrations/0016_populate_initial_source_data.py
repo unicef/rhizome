@@ -45,6 +45,22 @@ def populate_source_data(apps, schema_editor):
         location__name = 'Iraq'
     ).values()
 
+    ## the system doesnt work if there are no campaigns created.. ##
+    ct = CampaignType.objects.create(name = 'RRM')
+    office, created = Office.objects.get_or_create(name = 'Iraq')
+    location = Location.objects.get(name = 'Iraq')
+    tag = IndicatorTag.objects.create(tag_name = 'RRM Activity')
+    c = Campaign.objects.create(
+        name = 'Base RRM Campaign',
+        start_date = '2016-01-01',
+        end_date = '2016-01-01',
+        campaign_type_id = ct.id,
+        office_id = office.id,
+        top_lvl_indicator_tag_id = tag.id,
+        top_lvl_location_id = location.id
+    )
+
+
     if len(datapoint_id_list) == 0:
         raise Exception('No data for Iraq')
 

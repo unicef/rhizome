@@ -315,7 +315,6 @@ class MasterRefresh(object):
         ## if no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]
-            print ' == INDICATOR ID ==  %s ' % indicator_id
         except KeyError:
             return None
 
