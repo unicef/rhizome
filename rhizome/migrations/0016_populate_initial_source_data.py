@@ -64,6 +64,12 @@ def populate_source_data(apps, schema_editor):
     if len(datapoint_id_list) == 0:
         raise Exception('No data for Iraq')
 
+    ltc = LocationTreeCache()
+    ltc.main()
+
+    if len(LocationTree.objects.all().values_list('id', flat=True)) == 0:
+        raise Exception('loc cache')
+
 class MetaDataGenerator:
 
     def __init__(self, source_sheet_df):

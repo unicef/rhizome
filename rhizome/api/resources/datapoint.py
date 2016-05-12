@@ -186,6 +186,7 @@ class DatapointResource(BaseNonModelResource):
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
+            print 'DEPTH LEVEL: %s' % depth_level
             sub_location_ids = Location.objects\
                 .filter(parent_location_id__in=sub_location_ids)\
                 .values_list('id', flat=True)
@@ -196,10 +197,10 @@ class DatapointResource(BaseNonModelResource):
             ).values(*cols)),columns=cols)
             depth_level += 1
 
-        dp_df = self.get_time_group_series(dp_df)
-
         if dp_df.empty:
             return []
+
+        dp_df = self.get_time_group_series(dp_df)
 
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in = sub_location_ids)\
@@ -221,7 +222,7 @@ class DatapointResource(BaseNonModelResource):
     def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
-        
+
         try:
             pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
                 ['parent_location_id','time_grouping'])
