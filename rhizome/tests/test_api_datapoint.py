@@ -104,12 +104,10 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(response_data['meta']["total_count"], 1)
 
         self.assertEqual(len(response_data['objects']), 1)
-
-        self.assertEqual(response_data['objects'][0]['campaign'], campaign.id)
-        self.assertEqual(response_data['objects'][0]['location'], location.id)
-        self.assertEqual(len(response_data['objects'][0]['indicators']), 1)
-        self.assertEqual(int(response_data['objects'][0]['indicators'][0]['indicator']), indicator.id)
-        self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], value)
+        self.assertEqual(response_data['objects'][0]['campaign_id'], campaign.id)
+        self.assertEqual(response_data['objects'][0]['location_id'], location.id)
+        self.assertEqual(int(response_data['objects'][0]['indicator_id']), indicator.id)
+        self.assertEqual(float(response_data['objects'][0]['value']), value)
 
     def test_get_class_datapoint(self):
         cache_job = CacheJob.objects.create(
@@ -161,9 +159,9 @@ class DataPointResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
-        self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-        self.assertEqual(response_data['objects'][0]['indicators'][0]['value'], "Fail")
+        self.assertHttpOK(resp)
+        self.assertEqual(response_data['objects'][0]['value'], "Fail")
 
     def test_get_no_params(self):
         resp = self.api_client.get('/api/v1/datapoint/',\
@@ -253,14 +251,13 @@ class DataPointResourceTest(ResourceTestCase):
 
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), len(dps_to_track))
-
         # oof, nested for loop is okay since it's a small dataset
         # makes sure that all the campaign and location ids match
         for dp in dps_to_track:
             found_dp = False
             for resp_dp in response_data['objects']:
-                same_campaign = int(resp_dp['campaign']) == dp.campaign_id
-                same_location = int(resp_dp['location']) == dp.location_id
+                same_campaign = int(resp_dp['campaign_id']) == dp.campaign_id
+                same_location = int(resp_dp['location_id']) == dp.location_id
                 if same_location and same_campaign:
                     found_dp = True
             if not found_dp:
@@ -420,14 +417,13 @@ class DataPointResourceTest(ResourceTestCase):
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
-
         self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 2)
 
         # makes sure we're getting the right dp values, thus confirming that the provinces are returned
         sum_of_values = 0
         for return_indicator in response_data['objects']:
-            sum_of_values += return_indicator['indicators'][0]['value']
+            sum_of_values += float(return_indicator['value'])
 
         self.assertEqual(sum_of_values, kandahar_value+hilmand_value)
 
@@ -449,7 +445,7 @@ class DataPointResourceTest(ResourceTestCase):
         # makes sure we're getting the right dp values, thus confirming that the provinces are returned
         sum_of_values = 0
         for indicator in response_data['objects']:
-            sum_of_values += indicator['indicators'][0]['value']
+            sum_of_values += float(indicator['value'])
 
         self.assertEqual(sum_of_values, kandahar_value+hilmand_value)
 
