@@ -175,6 +175,7 @@ class DatapointResource(BaseNonModelResource):
         if time_grouping =='all_time':
             return self.map_bubble_transform()
 
+        # HACKK
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table(dp_df_columns)
@@ -340,21 +341,21 @@ class DatapointResource(BaseNonModelResource):
         except KeyError:
             indicator_ids = None
 
-        try:
-            self.chart_type = request.GET['chart_type']
-            data['meta']['chart_type'] = self.chart_type
-        except KeyError:
-            self.chart_type = None
+        # try:
+        #     self.chart_type = request.GET['chart_type']
+        #     data['meta']['chart_type'] = self.chart_type
+        # except KeyError:
+        #     self.chart_type = None
 
-        if self.chart_type == 'TableChart':
+        # if self.chart_type == 'TableChart':
 
-            p_loc_qs = Location.objects\
-                .filter(id__in = self.location_ids)\
-                .values('name','parent_location__name')\
-                .order_by('parent_location__name')
+        #     p_loc_qs = Location.objects\
+        #         .filter(id__in = self.location_ids)\
+        #         .values('name','parent_location__name')\
+        #         .order_by('parent_location__name')
 
-            data['meta']['parent_location_map'] = [l for l in p_loc_qs]
-            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
+        #     data['meta']['parent_location_map'] = [l for l in p_loc_qs]
+        #     data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
         data['meta']['campaign_list'] = self.get_campaign_qs()
 
@@ -414,8 +415,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
-            'parent_location_id__in': None, 'group_by_time': None, \
-            'chart_uuid': None
+             'group_by_time': None, 'chart_uuid': None
         }
 
         for k, v in optional_params.iteritems():
