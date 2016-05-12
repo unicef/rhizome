@@ -32,7 +32,8 @@ describe ('AsyncButton', () => {
         expect(spy.called).to.eq(true)
       })
       it.skip ('will warn with proper message', () => {
-        //copied exactly from console but this is still not passing....????
+        //copied exactly from console but this is still not passing....???? Even checked the React source code it is exactly this:
+        // console.warn(message) - no other parameters included.
         expect(spy.calledWith('Warning: Failed propType: Required prop `onClick` was not specified in `AsyncButton`.')).to.equal(true)
       })
     })
