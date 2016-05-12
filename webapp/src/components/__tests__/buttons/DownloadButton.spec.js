@@ -71,7 +71,7 @@ describe ('DownloadButton', () => {
       wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()} />)
       wrapper.find('button').simulate('click')
       expect (spy.calledOnce).to.equal(true)
-      spy.restore()
+      DownloadButton.prototype.__reactAutoBindMap._download.restore()
     })
   })
 })
