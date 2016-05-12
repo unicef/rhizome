@@ -58,19 +58,19 @@ describe ('DownloadButton', () => {
       expectedComponent = DownloadButtonTest.mockComponent()
     })
     it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.eq(true)
+      expect (wrapper.equals(expectedComponent)).to.be.true
     })
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
     it.skip ('contains an inner component', () => {
-      expect (wrapper.contains(DownloadButtonTest.mockInnerComponent())).to.eq(true)
+      expect (wrapper.contains(DownloadButtonTest.mockInnerComponent())).to.be.true
     })
     it ('simulates click events', () => {
       let spy = sinon.spy(DownloadButton.prototype.__reactAutoBindMap, "_download")
       wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()} />)
       wrapper.find('button').simulate('click')
-      expect (spy.calledOnce).to.equal(true)
+      expect (spy.calledOnce).to.be.true
       DownloadButton.prototype.__reactAutoBindMap._download.restore()
     })
   })

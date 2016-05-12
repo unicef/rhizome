@@ -79,7 +79,7 @@ describe ('Dropdown', () => {
         const diffEvent = { type: 'keydown', keyCode: 28 }
         const spy = sinon.spy(Dropdown.prototype, 'close')
         spyMockDropdown.handleEvent(diffEvent)
-        expect (spy.calledOnce).to.be.false
+        expect (spy.called).to.not.be.true
         Dropdown.prototype.close.restore()
       })
     })
@@ -106,7 +106,7 @@ describe ('Dropdown', () => {
         const spy = sinon.spy(Dropdown.prototype, 'setState')
         const open = mockDropdown.state.open
         mockDropdown._toggleMenu(event)
-        expect (spy.called).to.eq(true)
+        expect (spy.calledOnce).to.be.true
         expect (spy.calledWith({ open: !open })).to.be.true
         Dropdown.prototype.setState.restore()
       })
@@ -121,7 +121,7 @@ describe ('Dropdown', () => {
         const spy = sinon.spy(Dropdown.prototype, 'setState')
         const spyMockDropdown = new Dropdown()
         spyMockDropdown.close(event)
-        expect (spy.called).to.eq(true)
+        expect (spy.calledOnce).to.be.true
         expect (spy.calledWith({ open: false })).to.be.true
         Dropdown.prototype.setState.restore()
     })

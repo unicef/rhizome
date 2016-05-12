@@ -10,7 +10,7 @@ describe ('AsyncButton', () => {
   })
   it ('extends React Component', () => {
     const mockAsyncButton = new AsyncButton()
-    expect (mockAsyncButton instanceof React.Component).is.eq(true)
+    expect (mockAsyncButton instanceof React.Component).is.be.true
   })
   describe ('.propTypes', () => {
     it ('is static and exists', () => {
@@ -29,12 +29,12 @@ describe ('AsyncButton', () => {
         console.warn.restore()
       })
       it ('will warn in console because it is required', () => {
-        expect(spy.called).to.eq(true)
+        expect(spy.calledOnce).to.be.true
       })
       it.skip ('will warn with proper message', () => {
         //copied exactly from console but this is still not passing....???? Even checked the React source code it is exactly this:
         // console.warn(message) - no other parameters included.
-        expect(spy.calledWith('Warning: Failed propType: Required prop `onClick` was not specified in `AsyncButton`.')).to.equal(true)
+        expect(spy.calledWith('Warning: Failed propType: Required prop `onClick` was not specified in `AsyncButton`.')).to.be.true
       })
     })
   })
@@ -58,21 +58,21 @@ describe ('AsyncButton', () => {
       wrapper = shallow(<AsyncButton {...AsyncButtonTest.getProps()}/>)
     })
     it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.eq(true)
+      expect (wrapper.equals(expectedComponent)).to.be.true
     })
 
     it ('renders a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
     it ('has a span within', () => {
-      expect (wrapper.contains(AsyncButtonTest.mockSpan())).to.eq(true)
+      expect (wrapper.contains(AsyncButtonTest.mockSpan())).to.be.true
     })
   })
   it ('simulates click events', () => {
     const spy = sinon.spy()
     const wrapper = shallow(<AsyncButton onClick={spy} />)
     wrapper.find('button').simulate('click')
-    expect (spy.calledOnce).to.equal(true)
+    expect (spy.calledOnce).to.be.true
   })
 })
 class AsyncButtonTest {
