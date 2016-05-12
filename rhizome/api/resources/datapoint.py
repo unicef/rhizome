@@ -167,13 +167,9 @@ class DatapointResource(BaseNonModelResource):
         return gb_df
 
     def group_by_time_transform(self):
-
         results, all_time_groupings = [], []
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
-
-        if time_grouping =='all_time':
-            return self.map_bubble_transform()
 
         # HACKK
         if self.parsed_params['chart_uuid'] ==\
@@ -204,7 +200,6 @@ class DatapointResource(BaseNonModelResource):
         dp_df = self.get_time_group_series(dp_df)
         if dp_df.empty:
             return []
-
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in = sub_location_ids)\
             .values_list('location_id','parent_location_id')),\
@@ -219,6 +214,8 @@ class DatapointResource(BaseNonModelResource):
             .sum())\
             .reset_index()
 
+        gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+
         return self.time_grouped_df_to_results(gb_df)
 
     def time_grouped_df_to_results(self, df):
@@ -229,7 +226,7 @@ class DatapointResource(BaseNonModelResource):
             # for column_header in dwc_df_columns:
             dp.indicator_id = row['indicator_id']
             dp.campaign_id = int(row['time_grouping'])
-            dp.location_id = row['parent_location_id']
+            dp.location_id = row['location_id']
             dp.value = row['value']
             results.append(dp)
         return results
