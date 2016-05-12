@@ -14,7 +14,7 @@ from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent
-
+import math
 from datetime import datetime
 
 class ResultObject(object):
@@ -51,12 +51,12 @@ class DatapointResource(BaseNonModelResource):
     # indicators = fields.ListField(attribute='indicators')
     error = None
     parsed_params = {}
-    indicator_id = fields.IntegerField(attribute='indicator_id')
-    campaign_id = fields.IntegerField(attribute='campaign_id', null=True, blank=True)
-    data_date = fields.DateField(attribute='data_date', null=True, blank=True)
-    computed_id = fields.IntegerField(attribute='computed_id', null=True, blank=True)
+    indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
+    campaign_id = fields.IntegerField(attribute='campaign_id', null=True)
+    data_date = fields.DateField(attribute='data_date', null=True)
+    computed_id = fields.IntegerField(attribute='computed_id', null=True)
     location_id = fields.IntegerField(attribute='location_id')
-    value = fields.CharField(attribute='value')
+    value = fields.CharField(attribute='value', null=True)
 
     class Meta(BaseNonModelResource.Meta):
         '''
@@ -543,41 +543,50 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
         dwc_df = dwc_df.drop('id',1)
+        if self.parsed_params['show_missing_data'] == u'1':
+            dwc_df = self.add_missing_data(dwc_df)
         results =[]
         for idx,row in dwc_df.iterrows():
             dp = ResultObject()
             # for column_header in dwc_df_columns:
-            dp.indicator_id = row['indicator_id']
             dp.campaign_id = row['campaign_id']
             dp.location_id = row['location_id']
-            dp.value = row['value']
+            if not math.isnan(row['indicator_id']):
+                dp.indicator_id = row['indicator_id']
+            if not (type(row['value']) == float and math.isnan(row['value'])):
+                dp.value = row['value']
             results.append(dp)
         return results
 
-    # def add_missing_data(self, pivoted_data):
-    #     '''
-    #     If the campaign / locaiton cobination has no related datapoitns, we
-    #     add the keys here so that we can see the row of data in data entry
-    #     or data browser.
+    def add_missing_data(self, df):
+        '''
+        If the campaign / locaiton cobination has no related datapoitns, we
+        add the keys here so that we can see the row of data in data entry
+        or data browser.
 
-    #     This in the future can be controlled with a parameter so that for
-    #     instance with a table chart for a large number of districts, we only
-    #     show those with data.
+        This in the future can be controlled with a parameter so that for
+        instance with a table chart for a large number of districts, we only
+        show those with data.
 
-    #     This is largely for Data entry so that we can see a row in the form
-    #     even when there is no existing data.
-    #     '''
+        This is largely for Data entry so that we can see a row in the form
+        even when there is no existing data.
+        '''
+        for loc in self.location_ids:
+            for camp in self.parsed_params['campaign__in']:
+                add_val = False
+                df1= df[df['campaign_id'] == camp]
 
-    #     for loc in self.location_ids:
+                if df1.empty:
+                    add_val =True
+                else:
+                    df2=df1[df1['location_id'] == loc]
+                    if df2.empty:
+                        add_val = True
 
-    #         for camp in self.parsed_params['campaign__in']:
-
-    #             tuple_dict_key = (float(loc), float(camp))
-
-    #             try:
-    #                 existing_data = pivoted_data[tuple_dict_key]
-    #             except KeyError:
-    #                 pivoted_data[tuple_dict_key] = {}
-
-    #     return pivoted_data
-
+                if add_val:
+                    append_dict = {
+                        'campaign_id': camp, 
+                        'location_id': loc, 
+                    }
+                    df = df.append(append_dict, ignore_index=True)
+        return df
