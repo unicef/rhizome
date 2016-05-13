@@ -22,7 +22,7 @@ describe ('IconButtonDropdown', () => {
       expect (IconButtonDropdown.propTypes).to.have.all.keys('icon', 'color', 'text', 'className', 'onSearch', 'searchable')
     })
   })
-  describe ('#getDefaultProps()', () => {
+  describe ('#defaultProps', () => {
     it ('exists', () => {
       expect (IconButtonDropdown.defaultProps).to.exist
     })
