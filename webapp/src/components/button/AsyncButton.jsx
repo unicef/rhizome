@@ -25,7 +25,7 @@ class AsyncButton extends Component {
 
   render () {
     const props = this.props
-    const icon_string = this.props.isBusy ? 'spinner fa-spin saving-icon' : this.props.icon
+    const icon_string = props.isBusy ? 'spinner fa-spin saving-icon' : props.icon
     return (
       <button disabled={props.disabled} className={props.classes} onClick={props.onClick} style={props.style}>
         { props.icon ? <i className={'fa fa-' + icon_string}></i> : '' }
