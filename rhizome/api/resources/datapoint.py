@@ -215,7 +215,7 @@ class DatapointResource(BaseNonModelResource):
             .reset_index()
 
         gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
-
+        gb_df = gb_df.sort(['time_grouping'])
         return self.time_grouped_df_to_results(gb_df)
 
     def time_grouped_df_to_results(self, df):
@@ -541,6 +541,7 @@ class DatapointResource(BaseNonModelResource):
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
         if self.parsed_params['show_missing_data'] == u'1':
             dwc_df = self.add_missing_data(dwc_df)
+        dwc_df = dwc_df.sort('campaign_id')
         results =[]
         for idx,row in dwc_df.iterrows():
             dp = ResultObject()
