@@ -40,7 +40,6 @@ var CampaignStore = Reflux.createStore({
   onFetchCampaignsCompleted (response) {
     this.campaigns.meta = response.meta
     this.campaigns.raw = response.objects[0].campaigns || response.objects
-    this.campaigns.index = _.indexBy(this.campaigns.raw, 'id')
     this.processCampaigns()
   },
   onFetchCampaignsFailed (error) {
@@ -70,6 +69,7 @@ var CampaignStore = Reflux.createStore({
       .sortBy(_.method('start_date.getTime'))
       .reverse()
       .value()
+      this.campaigns.index = _.indexBy(this.campaigns.list, 'id')
       this.campaigns.filtered = this.campaigns.list
       this.trigger(this.campaigns)
     }

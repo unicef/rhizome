@@ -13,7 +13,10 @@ const DatapointActions = Reflux.createActions({
 // ---------------------------------------------------------------------------
 DatapointActions.fetchDatapoints.listen(params => {
   const query = _prepDatapointsQuery(params)
-  DatapointActions.fetchDatapoints.promise(api.datapoints(query))
+  const fetch = api.endPoint('/datapoint/')
+  DatapointActions.fetchDatapoints.promise(
+    fetch(query, null, {'cache-control': 'no-cache'})
+  )
 })
 
 // ACTION HELPERS
