@@ -1,5 +1,5 @@
-import React from 'react'
 import _ from 'lodash'
+import React from 'react'
 import HighChart from 'components/highchart/HighChart'
 import palettes from 'utilities/palettes'
 import format from 'utilities/format'
@@ -7,9 +7,9 @@ import format from 'utilities/format'
 class ComboMap extends HighChart {
 
   setConfig = function () {
-    const current_indicator = this.props.selected_indicators[0]
+    const color_indicator = this.props.selected_indicators[0]
     const palette = palettes[this.props.palette]
-    const integerWithBounds = current_indicator.data_format === 'int' && current_indicator.good_bound < 2 && current_indicator.bad_bound < 2
+    const integerWithBounds = color_indicator.data_format === 'int' && color_indicator.good_bound < 2 && color_indicator.bad_bound < 2
     this.config = {
       series: this.setSeries(),
       colorAxis: {min: 0},
@@ -23,16 +23,16 @@ class ComboMap extends HighChart {
     }
     if (!integerWithBounds) {
       this.config.colorAxis = {
-        dataClasses: this.getDataClasses(current_indicator, palette),
+        dataClasses: this.getDataClasses(color_indicator, palette),
       }
       this.config.legend = {
         layout: 'vertical',
         align: 'right',
         itemStyle: { 'fontSize': '14px' },
         labelFormatter: function () {
-          const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, current_indicator.data_format) : null
-          const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, current_indicator.data_format) : null
-          const isBool = current_indicator.data_format === 'bool'
+          const boundTo = !isNaN(this.to) ? format.autoFormat(this.to, color_indicator.data_format) : null
+          const boundFrom = !isNaN(this.from) ? format.autoFormat(this.from, color_indicator.data_format) : null
+          const isBool = color_indicator.data_format === 'bool'
           return (boundFrom || isBool ? '' : '0') + (isBool ? '': boundTo ? ' - ' : ' ') + (boundTo || isBool ? '' : '+')
         }
       }
@@ -56,7 +56,10 @@ class ComboMap extends HighChart {
   setSeries = function () {
     const self = this
     const props = this.props
-    const current_indicator = this.props.selected_indicators[0]
+    const color_indicator = this.props.selected_indicators[0]
+    const bubble_indicator = this.props.selected_indicators[1]
+    const grouped_datapoints = _.groupBy(this.props.datapoints.flattened, 'indicator.id')
+    console.log('grouped_datapoints', grouped_datapoints)
     const base_map_series = {
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
@@ -67,7 +70,7 @@ class ComboMap extends HighChart {
 
     const map_colors = Object.assign({}, base_map_series, {
       data: this.props.datapoints.meta.chart_data,
-      name: current_indicator.name,
+      name: color_indicator.name,
       borderColor: 'black',
       nullColor: '#D3D3D3',
       states: {
@@ -83,7 +86,7 @@ class ComboMap extends HighChart {
       joinBy: 'location_id',
       minSize: 4,
       maxSize: '12%',
-      color: this.props.indicator_colors[current_indicator.id]
+      color: this.props.indicator_colors[bubble_indicator.id]
     })
 
     return [map_colors, map_bubbles]
@@ -92,25 +95,25 @@ class ComboMap extends HighChart {
 
   tooltipFormatter = function (point) {
     const props = this.props
-    const current_indicator = this.props.selected_indicators[0]
+    const color_indicator = this.props.selected_indicators[0]
     const value = point.value || point.z
     return (
       `<span> ${props.locations_index[point.location_id].name}:
-      <strong> ${format.autoFormat(value, current_indicator.data_format, 1)} </strong>
+      <strong> ${format.autoFormat(value, color_indicator.data_format, 1)} </strong>
       </span>`
     )
   }
 
-  getDataClasses = function (current_indicator, palette) {
+  getDataClasses = function (color_indicator, palette) {
     let temp_good, temp_bad
-    if (current_indicator.good_bound < current_indicator.bad_bound) {
-      let temp_bound = current_indicator.good_bound
-      temp_good = current_indicator.bad_bound
+    if (color_indicator.good_bound < color_indicator.bad_bound) {
+      let temp_bound = color_indicator.good_bound
+      temp_good = color_indicator.bad_bound
       temp_bad = temp_bound
       palette = _.clone(palette).reverse()
     }
     let dataClasses = null
-    if (current_indicator.data_format === 'bool') {
+    if (color_indicator.data_format === 'bool') {
       dataClasses = [{to: temp_bad,color: palette[0]},
                      {from: temp_good,color: palette[2]}]
     } else {
