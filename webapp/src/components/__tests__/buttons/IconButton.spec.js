@@ -14,7 +14,7 @@ describe ('IconButton', () => {
     expect (IconButton).to.exist
   })
   describe ('.propTypes', () => {
-    it ('is exists', () => {
+    it ('exists', () => {
       expect (IconButton.propTypes).to.exist
     })
     it ('has specified properties', () => {
