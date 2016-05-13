@@ -1028,3 +1028,112 @@ class AggRefreshTestCase(TestCase):
 
         self.assertEqual(round(pct_dp,5), round((val_1 + val_1_loc_2)/float(val_2 + val_2_loc_2),5))
 
+
+    def test_multiple_calculations(self):
+
+        num_seen = Indicator.objects.create(
+            name = 'number children seen',
+            short_name = 'number children seen',
+            data_format = 'int'
+        )
+
+        num_vacc = Indicator.objects.create(
+            name = 'number children vaccinated',
+            short_name = 'number children vaccinated',
+            data_format = 'int'
+        )
+
+        num_missed = Indicator.objects.create(
+            name = 'number children missed',
+            short_name = 'number children missed',
+            data_format = 'int'
+        )
+
+        pct_missed = Indicator.objects.create(
+            name = 'pct childrent missed',
+            short_name = 'pct children missed',
+            data_format = 'pct'
+        )
+
+        indicator_calc_numerator = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_missed.id,
+            indicator_component_id = num_missed.id,
+            calculation = 'NUMERATOR'
+        )
+
+        indicator_calc_denominator = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_missed.id,
+            indicator_component_id = num_seen.id,
+            calculation = 'DENOMINATOR'
+        )
+
+        indicator_calc_part_of_diff = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_missed.id,
+            indicator_component_id = num_vacc.id,
+            calculation = 'PART_OF_DIFFERENCE'
+        )
+        indicator_calc_part_of_whole = CalculatedIndicatorComponent.objects.create(
+            indicator_id = pct_missed.id,
+            indicator_component_id = num_seen.id,
+            calculation = 'WHOLE_OF_DIFFERENCE'
+        )
+
+        num_missed_val = 45.0
+        num_seen_val = 100.0
+        num_vacc_val = 55.0
+
+        ss_id = SourceSubmission.objects.all()[0].id
+
+        dp_num_missed = DataPoint.objects.create(
+            indicator_id = num_missed.id,
+            location_id = self.top_lvl_location.id,
+            campaign_id = self.campaign_id,
+            value = num_missed_val,
+            source_submission_id = ss_id,
+            cache_job_id = -1,
+            unique_index =3
+        )
+
+        dp_num_seen = DataPoint.objects.create(
+            indicator_id = num_seen.id,
+            location_id = self.top_lvl_location.id,
+            campaign_id = self.campaign_id,
+            value = num_seen_val,
+            source_submission_id = ss_id,
+            cache_job_id = -1,
+            unique_index =4
+        )
+
+
+        cr = AggRefresh(self.campaign_id)
+
+        # check that numerator and denominator option work
+        cdp_pct_missed_1 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
+        self.assertEqual(cdp_pct_missed_1.value, num_missed_val/float(num_seen_val))
+        
+        dp_num_vaccinated = DataPoint.objects.create(
+            indicator_id = num_vacc.id,
+            location_id = self.top_lvl_location.id,
+            campaign_id = self.campaign_id,
+            value = num_vacc_val,
+            source_submission_id = ss_id,
+            cache_job_id = -1,
+            unique_index =5
+        )
+
+        cr = AggRefresh(self.campaign_id)
+        # check that this works when we can do whole/part of difference
+        cdp_pct_missed_2 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
+        expected_value = 1.0- float(num_vacc_val)/float(num_seen_val)
+
+        self.assertEqual(cdp_pct_missed_2.value, 0.45)
+
+        # check that this works when we can only do whole/part of difference
+        DataPoint.objects.filter(indicator_id = num_missed.id).delete()
+        
+        cr = AggRefresh(self.campaign_id)
+        cdp_pct_missed_3 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
+        self.assertEqual(cdp_pct_missed_3.value, 0.45)
+
+
+
