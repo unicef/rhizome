@@ -15,74 +15,72 @@ describe ('DropdownMenu', () => {
   it ('exists', () => {
     expect (DropdownMenu).to.exist
   })
+  it ('extends react component', () => {
+    expect (mockDropdownMenu instanceof React.Component).to.be.true
+  })
   describe ('.propTypes', () => {
     it ('exists', () => {
       expect (DropdownMenu.propTypes).to.exist
     })
     it ('has specified properties', () => {
-      expect (DropdownMenu.propTypes).to.have.all.keys('icon', 'color', 'alt_text', 'text', 'className', 'onClick', 'style', 'isBusy')
+      expect (DropdownMenu.propTypes).to.have.all.keys('onSearch', 'onBlur', 'searchable', 'x', 'y', 'children', 'search')
     })
   })
-  describe ('#getDefaultProps()', () => {
+  describe ('#defaultProps', () => {
     it ('exists', () => {
-      expect (DropdownMenu.getDefaultProps).to.exist
+      expect (DropdownMenu.defaultProps).to.exist
     })
     it ('returns specified properties', () => {
-      expect (DropdownMenu.getDefaultProps()).to.have.all.keys('color', 'icon', 'text', 'alt_text', 'isBusy', 'style')
+      const key = DropdownMenu.defaultProps
+      expect (key).to.have.all.keys('onSearch', 'onBlur', 'searchable', 'x', 'y')
     })
     it ('has correct initial values', () => {
       const expectedProps = DropdownMenuTest.getDefaultProps()
-      const actualProps = DropdownMenu.getDefaultProps()
-      expect (actualProps.color).to.eq(expectedProps.color)
-      expect (actualProps.icon).to.eq(expectedProps.icon)
-      expect (actualProps.text).to.eq(expectedProps.text)
-      expect (actualProps.alt_text).to.eq(expectedProps.alt_text)
-      expect (actualProps.isBusy).to.eq(expectedProps.isBusy)
-      expect (actualProps.style).to.deep.eq(expectedProps.style)
+      const actualProps = DropdownMenu.defaultProps
+      expect (actualProps.onSearch).to.eq(expectedProps.onSearch)
+      expect (actualProps.onBlur).to.eq(expectedProps.onBlur)
+      expect (actualProps.searchable).to.eq(expectedProps.searchable)
+      expect (actualProps.x).to.eq(expectedProps.x)
+      expect (actualProps.y).to.eq(expectedProps.y)
     })
   })
-  describe ('#getInitialState()', () => {
-    it ('exists', () => {
-      expect (mockDropdownMenu.getInitialState).to.exist
+  describe ('#constructor()', () => {
+    it ('has a constructor which has 1 parameter', () => {
+      expect (DropdownMenu.constructor).to.exist.and.have.lengthOf(1)
     })
-    it ('returns defaults', () => {
-      expect (mockDropdownMenu.getInitialState()).to.deep.eq({ tooltip: null })
-    })
-  })
-  describe ('#showTooltip()', () => {
-    it ('exists', () => {
-      expect (mockDropdownMenu.showTooltip).to.exist.and.have.lengthOf(1)
-    })
-    context ('when an event argument is given', () => {
-      const event = { pageX: 10, pageY: 11 }
-      context ('and the props text is undefined or null', () => {
-        it ('returns nothing', () => {
-          expect (mockDropdownMenu.showTooltip(event)).to.not.exist
-        })
+    context ('given an argument', () => {
+      const props = { foo: 'bar', bar: 'foo' }
+      it ('props passed should also be passed up to super', () => {
+        const spy = sinon.spy(React.Component.prototype, 'constructor')
+        const spyMockDropdownMenu = new DropdownMenu(props)
+        expect (spy.called).to.be.true
+        expect (spy.calledWith(props)).to.be.true
+        React.Component.prototype.constructor.restore()
       })
-      context ('and the props text has a value', () => {
-        it.skip ('sets state of `tooltip` as a tooltip component', () => {
-          const text = { text: 'foo' }
-          const mockIconButtonWithText = new DropdownMenu({ text })
-          const wrapper = shallow(<DropdownMenu text='foo'/>)
-          wrapper.instance().showTooltip(event)
-          const expectedTooltip = wrapper.instance().state.tooltip
-          const actualTooltip = <Tooltip left={event.pageX} top={event.pageY}>{ DropdownMenuTest.getDefaultProps().isBusy ? DropdownMenuTest.getDefaultProps().alt_text : text }</Tooltip>
-          expect (expectedTooltip.equals(actualTooltip)).to.be.true
-        })
+      it ('initializes instance variable `state`', () => {
+        mockDropdownMenu = new DropdownMenu(props)
+        const state = DropdownMenuTest.getState()
+        expect (mockDropdownMenu.state.maxHeight).to.eq(state.maxHeight)
+        expect (mockDropdownMenu.state.marginLeft).to.eq(state.marginLeft)
+        expect (mockDropdownMenu.state.orientation).to.eq(state.orientation)
+        expect (mockDropdownMenu.state.pattern).to.eq(state.pattern)
       })
     })
   })
-  describe ('#hideTooltip()', () => {
-    it ('exists', () => {
-      expect (mockDropdownMenu.hideTooltip).to.exist
-    })
-    it.skip ('destroys state of `tooltip` when called', () => {
-      //need to implement document react-layer
-      mockDropdownMenu.state.tooltip = shallow(<Tooltip />)
-      mockDropdownMenu.hideTooltip()
-      expect (mockDropdownMenu.state.tooltip).to.not.exist
-    })
+  describe ('#_onResize()', () => {
+
+  })
+  describe ('#componentWillUnmount()', () => {
+
+  })
+  describe ('#componentDidMount()', () => {
+
+  })
+  describe ('#componentDidUpdate()', () => {
+
+  })
+  describe ('#shouldComponentUpdate()', () => {
+
   })
   describe ('#render()', () => {
     let wrapper, expectedComponent
@@ -93,33 +91,16 @@ describe ('DropdownMenu', () => {
     it.skip ('renders correct components', () => {
       expect (wrapper.equals(expectedComponent)).to.be.true
     })
-    it ('contains a button', () => {
-      expect (wrapper.find('button')).to.have.length(1)
+    it ('contains 4 div\'s', () => {
+      expect (wrapper.find('div')).to.have.length(4)
     })
-    it.skip ('contains an inner component', () => {
-      expect (wrapper.contains(DropdownMenuTest.mockInnerComponent())).to.be.true
-    })
-    it ('simulates click events', () => {
-      let spy = sinon.spy()
-      wrapper = shallow(<DropdownMenu onClick={spy}/>)
-      wrapper.find('button').simulate('click')
+    it.skip ('simulates onBlur events for outter most div', () => {
+      let reactPrototype = DropdownMenu.prototype
+      let spy = sinon.spy(reactPrototype, 'onBlur')
+      let spyMockDropdownMenu = new DropdownMenu()
+      spyMockDropdownMenu.onBlur()
       expect (spy.calledOnce).to.be.true
-    })
-    it ('simulates mouseOver events', () => {
-      let reactPrototype = DropdownMenu.prototype.__reactAutoBindMap
-      let spy = sinon.spy(reactPrototype, 'showTooltip')
-      wrapper = shallow(<DropdownMenu />)
-      wrapper.find('button').simulate('mouseover')
-      expect (spy.calledOnce).to.be.true
-      reactPrototype.showTooltip.restore()
-    })
-    it ('simulates mouseOut events', () => {
-      let reactPrototype = DropdownMenu.prototype.__reactAutoBindMap
-      let spy = sinon.spy(reactPrototype, 'hideTooltip')
-      wrapper = shallow(<DropdownMenu />)
-      wrapper.find('button').simulate('mouseout')
-      expect (spy.calledOnce).to.be.true
-      reactPrototype.hideTooltip .restore()
+      reactPrototype.onBlur.restore()
     })
   })
 })
@@ -147,7 +128,10 @@ class DropdownMenuTest {
   }
   static getState() {
     return {
-      tooltip: null,
+      maxHeight: 'none',
+      marginLeft: 0,
+      orientation: 'center',
+      pattern: ''
     }
   }
   static mockComponent() {
@@ -179,15 +163,6 @@ class DropdownMenuTest {
 
         </div>
       </div>
-    )
-  }
-  static mockInnerComponent() {
-    const props = this.getProps()
-    return (
-      <i
-        className={'fa ' + (props.isBusy ? 'fa-spinner fa-spin' : props.icon)}
-        style={{color: props.color}}
-      />
     )
   }
 }
