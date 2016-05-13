@@ -113,6 +113,7 @@ class IconButtonTest {
       text: 'stuff',
       enable: true,
       classes: '',
+      className: 'foo',
       working: 'bar',
       cookieName: 'foo',
       onClick: () => {}
@@ -130,35 +131,29 @@ class IconButtonTest {
   }
   static getState() {
     return {
-      isWorking: false,
-      url: 'about:blank'
+      tooltip: null,
     }
   }
   static mockComponent() {
     const props = this.getProps()
     const state = this.getState()
-    let text = state.isWorking ? props.working : props.text
-    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
     return (
-      <button role='button'
-        className={classesString + props.classes}
-        onClick={this._download}>
-        <i className='fa fa-fw fa-download' /> {text}
-        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
+      <button
+        onClick={this.props.onClick}
+        onMouseOver={this.showTooltip}
+        onMouseOut={this.hideTooltip}
+        className={'button icon-button ' + this.props.className}>
+        {this.mockInnerComponent()}
       </button>
     )
   }
   static mockInnerComponent() {
     const props = this.getProps()
-    const state = this.getState()
-    let text = state.isWorking ? props.working : props.text
-    let classesString = props.enable && !state.isWorking ? 'button success expand ' : 'button success expand disabled '
-    //return needs to be fixed. div should be removed.
     return (
-      <div>
-        <i className='fa fa-fw fa-download' /> {text}
-        <iframe width='0' height='0' className='hidden' src={state.url}></iframe>
-      </div>
+      <i
+        className={'fa ' + (this.props.isBusy ? 'fa-spinner fa-spin' : this.props.icon)}
+        style={{color: this.props.color}}
+      />
     )
   }
 }
