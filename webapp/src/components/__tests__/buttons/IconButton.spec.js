@@ -97,12 +97,27 @@ describe ('IconButton', () => {
     it.skip ('contains an inner component', () => {
       expect (wrapper.contains(IconButtonTest.mockInnerComponent())).to.be.true
     })
-    it.skip ('simulates click events', () => {
-      let spy = sinon.spy(IconButton.prototype.__reactAutoBindMap, "_download")
-      wrapper = shallow(<IconButton {...IconButtonTest.getProps()} />)
+    it ('simulates click events', () => {
+      let spy = sinon.spy()
+      wrapper = shallow(<IconButton onClick={spy}/>)
       wrapper.find('button').simulate('click')
       expect (spy.calledOnce).to.be.true
-      IconButton.prototype.__reactAutoBindMap._download.restore()
+    })
+    it ('simulates mouseOver events', () => {
+      let reactPrototype = IconButton.prototype.__reactAutoBindMap
+      let spy = sinon.spy(reactPrototype, 'showTooltip')
+      wrapper = shallow(<IconButton />)
+      wrapper.find('button').simulate('mouseover')
+      expect (spy.calledOnce).to.be.true
+      reactPrototype.showTooltip.restore()
+    })
+    it ('simulates mouseOut events', () => {
+      let reactPrototype = IconButton.prototype.__reactAutoBindMap
+      let spy = sinon.spy(reactPrototype, 'hideTooltip')
+      wrapper = shallow(<IconButton />)
+      wrapper.find('button').simulate('mouseout')
+      expect (spy.calledOnce).to.be.true
+      reactPrototype.hideTooltip .restore()
     })
   })
 })
@@ -139,10 +154,10 @@ class IconButtonTest {
     const state = this.getState()
     return (
       <button
-        onClick={this.props.onClick}
+        onClick={props.onClick}
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
-        className={'button icon-button ' + this.props.className}>
+        className={'button icon-button ' + props.className}>
         {this.mockInnerComponent()}
       </button>
     )
@@ -151,8 +166,8 @@ class IconButtonTest {
     const props = this.getProps()
     return (
       <i
-        className={'fa ' + (this.props.isBusy ? 'fa-spinner fa-spin' : this.props.icon)}
-        style={{color: this.props.color}}
+        className={'fa ' + (props.isBusy ? 'fa-spinner fa-spin' : props.icon)}
+        style={{color: props.color}}
       />
     )
   }
