@@ -54,10 +54,10 @@ const MultiChartControls = React.createClass({
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
     const groupedChart = _.indexOf(builderDefinitions.grouped_charts, type) !== -1
-    const multiIndicator = type === 'TableChart' || type === 'RawData'
+    const multiIndicator = type === 'TableChart' || type === 'RawData' || type === 'MapChart'
     const multiLocation = type === 'TableChart'
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
-    const groupByLocation = groupedChart && chart.groupBy === 'indicator'
+    const groupByLocation = (groupedChart && chart.groupBy === 'indicator') || type === 'MapChart'
 
     const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
       <div className='medium-12 columns'>
