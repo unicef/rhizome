@@ -284,7 +284,8 @@ class DatapointResource(BaseNonModelResource):
         concat_df = concat([gb_df, latest_date_df,  district_count_df])
         concat_df[['indicator_id','value','time_grouping','data_date']]
         concat_df['parent_location_id'] = parent_location_id
-
+        concat_df = concat_df.drop('location_id', 1)
+        concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
         return self.time_grouped_df_to_results(concat_df)
 
 
@@ -497,7 +498,6 @@ class DatapointResource(BaseNonModelResource):
         return x
         
     def base_transform(self):
-
         results = []
 
         # Pivot the data on request instead of caching ##
