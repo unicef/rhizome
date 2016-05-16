@@ -74,7 +74,9 @@ describe ('DropdownMenu', () => {
 
   })
   describe ('#componentDidMount()', () => {
-
+    it ('exists', () => {
+      expect (mockDropdownMenu.componentDidMount).to.exist
+    })
   })
   describe ('#componentDidUpdate()', () => {
 
