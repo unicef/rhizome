@@ -25,6 +25,8 @@ class DocTransformResourceTest(ResourceTestCase):
         ltr.main()
 
         self.mapped_location_id = self.ts.locations[0].id
+        self.mapped_location_id_2 = self.ts.locations[1].id
+
         self.loc_map = SourceObjectMap.objects.create(
             source_object_code = 'AF001039003000000000',
             content_type = 'location',
@@ -131,6 +133,7 @@ class DocTransformResourceTest(ResourceTestCase):
             master_object_id = self.mapped_location_id
         )
 
+
         self.mapped_indicator_with_data = self.ts.indicators[2].id
 
         self.indicator_map = SourceObjectMap.objects.create(
@@ -162,4 +165,37 @@ class DocTransformResourceTest(ResourceTestCase):
         self.assertEqual(2, dp[0].value)
 
 
+    def test_class_indicator(self):
+        # create required metadata
 
+        self.mapped_indicator_with_data = self.ts.indicators[2].id
+
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code = 'AF001039006000000000',
+            content_type = 'location',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_location_id_2
+        )
+        
+        self.indicator_map = SourceObjectMap.objects.create(
+            source_object_code = 'LQAS',
+            content_type = 'indicator',
+            mapped_by_id = self.ts.user.id,
+            master_object_id = self.mapped_indicator_with_data
+        )
+
+        IndicatorClassMap.objects.create(
+            indicator_id = self.mapped_indicator_with_data,
+            string_value = 'pass',
+            enum_value = 1,
+            is_display = True
+        )
+
+        doc = self.ts.create_arbitrary_document(document_docfile='lqas_test.csv', doc_title='AfgPolioCases.csv')
+        get_data={'document_id':doc.id}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+        response_data = self.deserialize(resp)
+
+        dp_count = DataPoint.objects.count()
+
+        self.assertEqual(dp_count, 1)
