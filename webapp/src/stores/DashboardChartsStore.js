@@ -426,7 +426,7 @@ var DashboardChartsStore = Reflux.createStore({
 
   fetchDatapoints: function (uuid) {
     const chart = this.charts[uuid]
-    DatapointActions.fetchDatapoints({
+    const query = {
       indicator_filter: chart.indicator_filter,
       indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
       location_ids: chart.selected_locations.map(location => location.id),
@@ -435,7 +435,8 @@ var DashboardChartsStore = Reflux.createStore({
       end_date: chart.end_date,
       type: chart.type,
       uuid: uuid
-    })
+    }
+    DatapointActions.fetchDatapoints(query)
   },
 
   meltChart: function (chart) {
