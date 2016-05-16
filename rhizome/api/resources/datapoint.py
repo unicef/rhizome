@@ -539,6 +539,7 @@ class DatapointResource(BaseNonModelResource):
                 .intersection(location_ids_in_filter)
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+
         if self.parsed_params['show_missing_data'] == u'1':
             dwc_df = self.add_missing_data(dwc_df)
         dwc_df = dwc_df.sort('campaign_id')
@@ -550,7 +551,7 @@ class DatapointResource(BaseNonModelResource):
             dp.location_id = row['location_id']
             if not math.isnan(row['indicator_id']):
                 dp.indicator_id = row['indicator_id']
-            if not (type(row['value']) == float and math.isnan(row['value'])):
+            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
                 dp.value = row['value']
             if not math.isnan(row['id']):  
                 dp.computed_id = row['id']          
