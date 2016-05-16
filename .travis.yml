@@ -11,10 +11,12 @@ before_script:
 - sh -c "psql -c 'CREATE ROLE djangoapp WITH SUPERUSER LOGIN;' -U postgres; fi"
 - npm install -g npm@latest
 - npm install -g babel-eslint@4.1.6
-- cd webapp && npm install && npm install -g gulp && cd ..
+- cd webapp && npm install
+- npm install -g gulp && cd ..
 script:
 - python manage.py test --settings=rhizome.settings.test
-- cd webapp && gulp build && gulp mocha
+- cd webapp && gulp build
+- gulp mocha
 - npm run package && cd ..
 
 notifications:
