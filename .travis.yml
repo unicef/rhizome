@@ -4,8 +4,6 @@ python:
 
 cache:
   pip: true
-  directories:
-    - webapp/node_modules
 
 before_script:
 - sh -c "psql -c 'CREATE ROLE djangoapp WITH SUPERUSER LOGIN;' -U postgres; fi"
