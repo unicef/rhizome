@@ -54,7 +54,7 @@ class ColumnChart extends HighChart {
     const multiIndicator = this.props.selected_indicators.length > 1
     const groupByIndicator = this.props.groupBy === 'indicator'
     const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
-    const data = this.props.datapoints.melted
+    const data = this.props.datapoints.flattened
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
 
