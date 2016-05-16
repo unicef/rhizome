@@ -72,7 +72,7 @@ var DatapointStore = Reflux.createStore({
     const flattened = datapoints.map(d => {
       const datapoint = {
         id: d.computed_id,
-        value: parseFloat(d.value),
+        value: d.value ? parseFloat(d.value) : null,
         location: this.locations.index[d.location_id],
         indicator: this.indicators.index[d.indicator_id]
       }
