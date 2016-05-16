@@ -110,6 +110,32 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
+
+    const location_type_id = chart.selected_locations[0].location_type_id
+    let depth_titles = null
+    if (location_type_id <= 1) {
+      depth_titles = ['None', 'Region', 'Province', 'District']
+    } else  if (location_type_id === 6 ) {
+      depth_titles = ['None', 'Province', 'District']
+    } else if (location_type_id === 2) {
+      depth_titles = ['None', 'District']
+    }
+    let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
+    if (location_type_id <= 1 && chart.type === 'BubbleMap') {
+      depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
+    }
+    const location_depth_selector = depth_titles && chart.groupBy !== 'location' ? (
+      <div className='medium-12 columns radio-group'>
+        <h3>Split By</h3>
+        <RadioGroup
+          name={'location_depth' + chart.uuid}
+          value={chart.location_depth}
+          onChange={props.setLocationDepth}
+          horizontal
+          values={depth_options}/>
+      </div>
+    ) : null
+
     const campaign_selector = chartShowsOneCampaign ? (
       <CampaignMultiSelect
         campaigns={this.state.campaigns}
@@ -163,6 +189,7 @@ const MultiChartControls = React.createClass({
         { campaign_selector }
         { group_by_selector }
         { indicator_filter }
+        { location_depth_selector }
         { location_selector }
         { indicator_selector }
       </div>
