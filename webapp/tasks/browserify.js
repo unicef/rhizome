@@ -91,12 +91,14 @@ function browserifyOnce (config = {}) {
   })
   return bundleOnce(config)
 }
-
+function runTests (config = {}) {
+  gulp.start('mocha')
+}
 function browserifyTask () {
   return gulp.autoRegister(TASK_NAME, browserifyOnce, config => {
     config.bundler = browserify(_.merge({}, config.options, watchify.args))
     config.bundler = watchify(config.bundler)
-
+    config.bundler.on('bundle', runTests.bind(null, config))
     config.bundler.on('update', bundleWatch.bind(null, config))
     config.bundler.on('time', time => {
       gutil.log(gutil.colors.cyan('watchify'),
