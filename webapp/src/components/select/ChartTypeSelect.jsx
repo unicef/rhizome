@@ -5,11 +5,8 @@ import builderDefinitions from 'components/d3chart/utils/builderDefinitions'
 class ChartTypeSelect extends Component {
 
   static propTypes = {
-    value: React.PropTypes.oneOfType([
-      React.PropTypes.string,
-      React.PropTypes.number
-    ]),
-    onChange: React.PropTypes.func.isRequired
+    selected: PropTypes.string,
+    onChange: PropTypes.func.isRequired
   }
 
   _handleChange (event) {
@@ -20,7 +17,7 @@ class ChartTypeSelect extends Component {
     const charts = builderDefinitions.charts
     var chartBoxes = charts.map((chart, index) => {
       return (
-        <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === this.props.value ? 'active' : '')}>
+        <div key={chart.name} className={'chart-box-wrapper ' + (chart.name === this.props.selected ? 'active' : '')}>
           <div className='chart-box' onClick={this.props.onChange.bind(null, chart.name)}>
             <img className='chart-icon' src={'/static/img/chart-icons/' + chart.name + '.png'} />
             <p>{chart.name}</p>
@@ -28,7 +25,7 @@ class ChartTypeSelect extends Component {
         </div>
       )
     })
-    return (<div className='chart-select'>{chartBoxes}</div>)
+    return <div className='chart-select'>{chartBoxes}</div>
   }
 }
 
