@@ -18,6 +18,7 @@ var DatapointStore = Reflux.createStore({
     meta: null,
     raw: null,
     flattened: null,
+    grouped: null,
     melted: null
   },
 
@@ -41,7 +42,7 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints: function () {
-    this.setState({ raw: null, meta: null, flattened: null, melted: null })
+    this.setState({ raw: null, meta: null, grouped: null, flattened: null, melted: null })
   },
   onFetchDatapointsCompleted: function (response) {
     const datapoints = {
@@ -50,6 +51,7 @@ var DatapointStore = Reflux.createStore({
       flattened: this.flatten(response.objects),
       melted: this.melt(response.objects, response.meta.indicator_ids)
     }
+    datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
     this.setState(datapoints)
   },
   onFetchDatapointsFailed: function (error) {
