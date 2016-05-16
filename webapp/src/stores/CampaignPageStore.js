@@ -26,7 +26,6 @@ let CampaignPageStore = Reflux.createStore({
     campaignName: '',
     locationSelected: [],
     postData: {
-      id: -1,
       campaign_type_id: '',
       name: '',
       office_id: '',
@@ -83,7 +82,6 @@ let CampaignPageStore = Reflux.createStore({
         self.data.locationSelected[0] = self.data.locationMap[self.data.postData.top_lvl_location_id]
         self.data.tagSelected[0] = self.data.tagMap[self.data.postData.top_lvl_indicator_tag_id]
       } else {
-        self.data.postData.id = -1
         self.data.postData.name = ''
         self.data.postData.campaign_type_id = self.data.campaignTypes ? self.data.campaignTypes[0].id : ''
         self.data.campaign.start = new Date()
