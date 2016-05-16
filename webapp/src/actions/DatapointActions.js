@@ -19,7 +19,6 @@ DatapointActions.fetchDatapoints.listen(params => {
 // ACTION HELPERS
 // ---------------------------------------------------------------------------
 const _prepDatapointsQuery = (params) => {
-  const type = params.type
   let query = {
     campaign__in: params.campaign__in || params.campaign_ids,
     indicator__in: params.indicator_ids,
@@ -34,9 +33,8 @@ const _prepDatapointsQuery = (params) => {
     source_name: params.source_name,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
-    location_level: type === 'TableChart' ? 'District' : null
+    location_level: params.type === 'TableChart' ? 'District' : null
   }
-
   return query
 }
 
