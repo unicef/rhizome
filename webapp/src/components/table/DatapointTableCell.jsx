@@ -24,8 +24,8 @@ class DatapointTableCell extends Component {
 
   determineCellColor = function () {
     const value = this.props.datapoint.value
-    const good_bound = this.props.indicator.good_bound
-    const bad_bound = this.props.indicator.bad_bound
+    const good_bound = this.props.datapoint.indicator.good_bound
+    const bad_bound = this.props.datapoint.indicator.bad_bound
     const palette = good_bound > bad_bound ? palettes['traffic_light'] : palettes['traffic_light'].reverse()
     if (value < bad_bound && value > good_bound ) {
       return palette[1] // yellow
@@ -36,7 +36,7 @@ class DatapointTableCell extends Component {
   }
 
   renderCellContent = function () {
-    const data_format = this.props.indicator.data_format
+    const data_format = this.props.datapoint.indicator.data_format
     const value = this.props.datapoint.value
     const display_value = format.autoFormat(value, data_format)
 
