@@ -573,20 +573,26 @@ class DatapointResource(BaseNonModelResource):
         '''
         for loc in self.location_ids:
             for camp in self.parsed_params['campaign__in']:
-                add_val = False
-                df1= df[df['campaign_id'] == camp]
+                for ind in self.parsed_params['indicator__in']:
+                    add_val = False
+                    df1= df[df['campaign_id'] == camp]
 
-                if df1.empty:
-                    add_val =True
-                else:
-                    df2=df1[df1['location_id'] == loc]
-                    if df2.empty:
-                        add_val = True
+                    if df1.empty:
+                        add_val =True
+                    else:
+                        df2=df1[df1['location_id'] == loc]
+                        if df2.empty:
+                            add_val = True
+                        else:
+                            df3 = df2[df2['indicator_id'] == ind]
+                            if df3.empty:
+                                add_val = True 
 
-                if add_val:
-                    append_dict = {
-                        'campaign_id': camp, 
-                        'location_id': loc, 
-                    }
-                    df = df.append(append_dict, ignore_index=True)
+                    if add_val:
+                        append_dict = {
+                            'campaign_id': camp, 
+                            'location_id': loc, 
+                            'indicator_id' : ind
+                        }
+                        df = df.append(append_dict, ignore_index=True)
         return df
