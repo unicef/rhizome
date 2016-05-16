@@ -472,3 +472,4 @@ class DataPointResourceTest(ResourceTestCase):
         returned_indicators = response_data['objects']
         self.assertEqual(len(returned_indicators), 1)
         self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
+
