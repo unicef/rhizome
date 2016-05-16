@@ -67,12 +67,14 @@ describe ('AsyncButton', () => {
     it ('has a span within', () => {
       expect (wrapper.contains(AsyncButtonTest.mockSpan())).to.be.true
     })
-  })
-  it ('simulates click events', () => {
-    const spy = sinon.spy()
-    const wrapper = shallow(<AsyncButton onClick={spy} />)
-    wrapper.find('button').simulate('click')
-    expect (spy.calledOnce).to.be.true
+    describe ('events', () => {
+      it ('simulates click events', () => {
+        const spy = sinon.spy()
+        const wrapper = shallow(<AsyncButton onClick={spy} />)
+        wrapper.find('button').simulate('click')
+        expect (spy.calledOnce).to.be.true
+      })
+    })
   })
 })
 class AsyncButtonTest {

@@ -97,27 +97,29 @@ describe ('IconButton', () => {
     it.skip ('contains an inner component', () => {
       expect (wrapper.contains(IconButtonTest.mockInnerComponent())).to.be.true
     })
-    it ('simulates click events', () => {
-      let spy = sinon.spy()
-      wrapper = shallow(<IconButton onClick={spy}/>)
-      wrapper.find('button').simulate('click')
-      expect (spy.calledOnce).to.be.true
-    })
-    it ('simulates mouseOver events', () => {
-      let reactPrototype = IconButton.prototype.__reactAutoBindMap
-      let spy = sinon.spy(reactPrototype, 'showTooltip')
-      wrapper = shallow(<IconButton />)
-      wrapper.find('button').simulate('mouseover')
-      expect (spy.calledOnce).to.be.true
-      reactPrototype.showTooltip.restore()
-    })
-    it ('simulates mouseOut events', () => {
-      let reactPrototype = IconButton.prototype.__reactAutoBindMap
-      let spy = sinon.spy(reactPrototype, 'hideTooltip')
-      wrapper = shallow(<IconButton />)
-      wrapper.find('button').simulate('mouseout')
-      expect (spy.calledOnce).to.be.true
-      reactPrototype.hideTooltip .restore()
+    describe ('events', () => {
+      it ('simulates click events', () => {
+        let spy = sinon.spy()
+        wrapper = shallow(<IconButton onClick={spy}/>)
+        wrapper.find('button').simulate('click')
+        expect (spy.calledOnce).to.be.true
+      })
+      it ('simulates mouseOver events', () => {
+        let reactPrototype = IconButton.prototype.__reactAutoBindMap
+        let spy = sinon.spy(reactPrototype, 'showTooltip')
+        wrapper = shallow(<IconButton />)
+        wrapper.find('button').simulate('mouseover')
+        expect (spy.calledOnce).to.be.true
+        reactPrototype.showTooltip.restore()
+      })
+      it ('simulates mouseOut events', () => {
+        let reactPrototype = IconButton.prototype.__reactAutoBindMap
+        let spy = sinon.spy(reactPrototype, 'hideTooltip')
+        wrapper = shallow(<IconButton />)
+        wrapper.find('button').simulate('mouseout')
+        expect (spy.calledOnce).to.be.true
+        reactPrototype.hideTooltip .restore()
+      })
     })
   })
 })

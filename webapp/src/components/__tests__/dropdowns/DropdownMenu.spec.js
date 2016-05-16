@@ -94,13 +94,16 @@ describe ('DropdownMenu', () => {
     it ('contains 4 div\'s', () => {
       expect (wrapper.find('div')).to.have.length(4)
     })
-    it.skip ('simulates onBlur events for outter most div', () => {
-      let reactPrototype = DropdownMenu.prototype
-      let spy = sinon.spy(reactPrototype, 'onBlur')
-      let spyMockDropdownMenu = new DropdownMenu()
-      spyMockDropdownMenu.onBlur()
-      expect (spy.calledOnce).to.be.true
-      reactPrototype.onBlur.restore()
+    describe.skip ('events', () => {
+      it ('simulates onBlur events for outter most div', () => {
+        //possible transpiling issues for binding to methods with prototype. might need to refactor component or retest with new react.
+        let reactPrototype = DropdownMenu.prototype
+        let spy = sinon.spy(reactPrototype, 'onBlur')
+        let spyMockDropdownMenu = shallow(<DropdownMenu />)
+        spyMockDropdownMenu.simulates('blur')
+        expect (spy.calledOnce).to.be.true
+        reactPrototype.onBlur.restore()
+      })
     })
   })
 })
