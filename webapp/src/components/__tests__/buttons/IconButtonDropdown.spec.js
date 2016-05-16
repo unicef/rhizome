@@ -78,12 +78,14 @@ describe ('IconButtonDropdown', () => {
     it ('contains a button', () => {
       expect (wrapper.find('IconButton')).to.have.length(1)
     })
-    it.skip ('simulates click events', () => {
-      let spy = sinon.spy(IconButtonDropdown.prototype, '_toggleMenu')
-      wrapper = shallow(<IconButtonDropdown />)
-      wrapper.find('IconButton').simulate('click')
-      expect (spy.calledOnce).to.be.true
-      IconButtonDropdown.prototype._toggleMenu.restore()
+    describe.skip ('events', () => {
+      it ('simulates click events', () => {
+        let spy = sinon.spy(IconButtonDropdown.prototype, '_toggleMenu')
+        wrapper = shallow(<IconButtonDropdown />)
+        wrapper.find('IconButton').simulate('click')
+        expect (spy.calledOnce).to.be.true
+        IconButtonDropdown.prototype._toggleMenu.restore()
+      })
     })
   })
 })

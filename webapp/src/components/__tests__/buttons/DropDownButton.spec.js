@@ -169,24 +169,26 @@ describe ('DropdownButton', () => {
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
-    context.skip ('if props has `items`', () => {
-      it ('simulates click event', () => {
-        let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
-        wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
-        wrapper.find('button').simulate('click')
-        expect (spy.calledOnce).to.be.true
-        DropdownButton.prototype._toggleMenu.restore()
+    describe.skip ('events', () => {
+      context ('if props has `items`', () => {
+        it ('simulates click event', () => {
+          let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
+          wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()} />)
+          wrapper.find('button').simulate('click')
+          expect (spy.calledOnce).to.be.true
+          DropdownButton.prototype._toggleMenu.restore()
+        })
       })
-    })
-    context.skip ('if props has no `items`', () => {
-      it ('does NOT simulate click event', () => {
-        let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
-        let props = DropdownButtonTest.getProps()
-        props.items = null
-        wrapper = shallow(<DropdownButton {...props} />)
-        wrapper.find('button').simulate('click')
-        expect (spy.called).to.be.false
-        DropdownButton.prototype._toggleMenu.restore()
+      context ('if props has no `items`', () => {
+        it ('does NOT simulate click event', () => {
+          let spy = sinon.spy(DropdownButton.prototype, '_toggleMenu')
+          let props = DropdownButtonTest.getProps()
+          props.items = null
+          wrapper = shallow(<DropdownButton {...props} />)
+          wrapper.find('button').simulate('click')
+          expect (spy.called).to.be.false
+          DropdownButton.prototype._toggleMenu.restore()
+        })
       })
     })
   })
