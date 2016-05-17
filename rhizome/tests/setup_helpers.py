@@ -16,10 +16,10 @@ from rhizome.cache_meta import LocationTreeCache
 class TestSetupHelpers(ResourceTestCase):
 
 	def __init__(self):
-		self.username = "test_user" 
-		self.password = "test_password" 
+		self.username = "test_user"
+		self.password = "test_password"
 		self.user = User.objects\
-            .create_user(self.username,'test@test.com', self.password)  
+            .create_user(self.username,'test@test.com', self.password)
 
 	def get_credentials(self, test_class):
 		result = test_class.api_client.client.login(username=self.username, password=self.password)
@@ -54,8 +54,7 @@ class TestSetupHelpers(ResourceTestCase):
 	            source_object_code = source_object_code,
 	            content_type = 'indicator',
 	            mapped_by_id = self.user.id,
-	            master_object_id = -1,
-	            id=id
+	            master_object_id = id,
 	        )
    		else:
    			return SourceObjectMap.objects.create(
@@ -168,7 +167,7 @@ class TestSetupHelpers(ResourceTestCase):
 		campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 		campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
 		campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
-		
+
 		location_df= read_csv('rhizome/tests/_data/locations.csv')
 		indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
@@ -180,4 +179,3 @@ class TestSetupHelpers(ResourceTestCase):
 		self.locations = self.model_df_to_data(location_df,Location)
 		self.campaigns = self.model_df_to_data(campaign_df,Campaign)
 		self.indicators = self.model_df_to_data(indicator_df,Indicator)
-

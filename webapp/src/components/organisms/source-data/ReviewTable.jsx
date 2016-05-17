@@ -86,7 +86,7 @@ var ReviewTable = React.createClass({
               key={id}/>
           } else if (this.props.doc_tab === 'doc_index') {
             return <a href={'/source-data/viewraw/' + id}>View Raw Data</a>
-          } else if (this.props.doc_tab === 'meta-data') {
+          } else if (this.props.doc_tab === 'un-mapped' || this.props.doc_tab === 'mapped') {
             return <MapForm
               source_object_map_id={id}
               onModalClose={this._callApi}/>

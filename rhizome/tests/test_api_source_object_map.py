@@ -23,16 +23,16 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         self.not_allowed_to_see_location = self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
 
         self.indicator_map = self.test_setup.create_arbitrary_som(
-            source_object_code = 'Percent missed children_PCA', 
+            source_object_code = 'Percent missed children_PCA',
             id=21)
 
         self.test_setup.create_arbitrary_som(
-            source_object_code = 'Percent missed due to other reasons', 
+            source_object_code = 'Percent missed due to other reasons',
             id=24)
 
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         self.indicators = self.test_setup.model_df_to_data(indicator_df,Indicator)
-        
+
         self.document = self.test_setup.create_arbitrary_document(id=22)
 
         self.dsom= self.test_setup.create_arbitrary_dsom(self.document.id, self.indicator_map.id, 23)
@@ -72,12 +72,12 @@ class SourceObjectMapResourceTest(ResourceTestCase):
             'mapped_by_id': self.user.id
         }
         post_resp = self.test_setup.post(self, '/api/v1/source_object_map/', post_data)
-    
+
         self.assertHttpApplicationError(post_resp)
 
     def test_som_get_id(self):
         get_data ={'id':self.indicator_map.id}
-        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_to_map/', get_data)
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
@@ -87,6 +87,9 @@ class SourceObjectMapResourceTest(ResourceTestCase):
     def test_som_get_doc_id(self):
         get_data ={'document_id':self.document.id}
         get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
+
+        print 'SELF dot indicatr map'
+        print self.indicator_map.id
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
@@ -114,5 +117,3 @@ class SourceObjectMapResourceTest(ResourceTestCase):
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(len(get_data['objects']),0)
-
-
