@@ -21,7 +21,7 @@ def populate_initial_data(apps, schema_editor):
     '''
 
     process_meta_data()
-    process_geo_json()
+    # process_geo_json()
 
 def process_meta_data():
 
