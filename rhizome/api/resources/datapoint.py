@@ -215,6 +215,9 @@ class DatapointResource(BaseNonModelResource):
             .reset_index()
 
         gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+        if self.parsed_params['show_missing_data'] == u'1':
+            gb_df = self.add_missing_data(gb_df)
+
         gb_df = gb_df.sort(['time_grouping'])
         return self.time_grouped_df_to_results(gb_df)
 
@@ -227,7 +230,8 @@ class DatapointResource(BaseNonModelResource):
             dp.indicator_id = row['indicator_id']
             dp.campaign_id = int(row['time_grouping'])
             dp.location_id = row['location_id']
-            dp.value = row['value']
+            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+                dp.value = row['value']
             results.append(dp)
         return results
 
@@ -574,8 +578,10 @@ class DatapointResource(BaseNonModelResource):
             for camp in self.parsed_params['campaign__in']:
                 for ind in self.parsed_params['indicator__in']:
                     add_val = False
-                    df1= df[df['campaign_id'] == camp]
-
+                    if 'campaign_id' in df.columns:
+                        df1= df[df['campaign_id'] == camp]
+                    else:
+                        df1= df[df['time_grouping'] == camp]
                     if df1.empty:
                         add_val =True
                     else:
@@ -586,10 +592,16 @@ class DatapointResource(BaseNonModelResource):
                             df3 = df2[df2['indicator_id'] == ind]
                             if df3.empty:
                                 add_val = True 
-
-                    if add_val:
+                    if add_val and 'campaign_id' in df.columns:
                         append_dict = {
                             'campaign_id': camp, 
+                            'location_id': loc, 
+                            'indicator_id' : ind
+                        }
+                        df = df.append(append_dict, ignore_index=True)
+                    elif add_val and 'time_grouping' in df.columns:
+                        append_dict = {
+                            'time_grouping': camp, 
                             'location_id': loc, 
                             'indicator_id' : ind
                         }
