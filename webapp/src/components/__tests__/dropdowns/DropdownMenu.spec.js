@@ -77,6 +77,13 @@ describe ('DropdownMenu', () => {
     it ('exists', () => {
       expect (mockDropdownMenu.componentDidMount).to.exist
     })
+    it.skip ('calls method #_onResize()', () => {
+      const spyMockDropdownMenu = new DropdownMenu()
+      const spy = sinon.spy(spyMockDropdownMenu, '_onResize')
+      spyMockDropdownMenu.componentDidMount()
+      expect (spy.calledOnce).to.be.true
+      spyMockDropdownMenu._onResize.restore()
+    })
   })
   describe ('#componentDidUpdate()', () => {
 

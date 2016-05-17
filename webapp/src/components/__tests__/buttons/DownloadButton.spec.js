@@ -130,6 +130,7 @@ describe ('DownloadButton', () => {
       it ('returns cookie', () => {
 
       })
+    })
     context ('if cookie length is greater than 0', () => {
       it ('returns empty string', () => {
 
