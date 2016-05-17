@@ -64,23 +64,21 @@ describe ('Dropdown', () => {
     it ('exists with correct number of parameters required', () => {
       expect (mockDropdown.handleEvent).to.exist.and.have.lengthOf(1)
     })
-    context.skip ('when given an event keyCode is 27 and type keyup as an argument', () => {
+    context ('when given an event keyCode is 27 and type keyup as an argument', () => {
       it ('triggers close method', () => {
-        //not recognizing 'close' method, fix test once react is updated
-        const spy = sinon.spy(Dropdown.prototype, 'close')
-        const spyMockDropdown = new Dropdown()
-        spyMockDropdown.handleEvent(event)
+        const spy = sinon.spy(mockDropdown, 'close')
+        mockDropdown.handleEvent(event)
         expect (spy.calledOnce).to.be.true
-        Dropdown.prototype.close.restore()
+        mockDropdown.close.restore()
       })
     })
-    context.skip ('when given any even other than keyCode 27 and type keyup', () => {
+    context ('when given any even other than keyCode 27 and type keyup', () => {
       it ('does nothing', () => {
         const diffEvent = { type: 'keydown', keyCode: 28 }
-        const spy = sinon.spy(Dropdown.prototype, 'close')
-        spyMockDropdown.handleEvent(diffEvent)
+        const spy = sinon.spy(mockDropdown, 'close')
+        mockDropdown.handleEvent(diffEvent)
         expect (spy.called).to.not.be.true
-        Dropdown.prototype.close.restore()
+        mockDropdown.close.restore()
       })
     })
   })
@@ -94,14 +92,7 @@ describe ('Dropdown', () => {
         mockDropdown._toggleMenu(spy)
         expect (spy.preventDefault.called).to.be.true
       })
-      it.skip ('sets state property of `open` to opposite of it\'s current value', () => {
-        const event = { preventDefault: () => {} }
-        //need to render component instead of instantiating class, however mock render flags 'no render method' found, even though it is extended from 'Component'.
-        const open = mockDropdown.state.open
-        mockDropdown._toggleMenu(event)
-        expect (mockDropdown.state.open).to.eq(!open)
-      })
-      it ('sets state property of `open` to opposite of it\'s current value', () => {
+      it ('sets state property of `open` to opposite of it\'s current value once, and with proper key/value', () => {
         const event = { preventDefault: () => {} }
         const spy = sinon.spy(Dropdown.prototype, 'setState')
         const open = mockDropdown.state.open
