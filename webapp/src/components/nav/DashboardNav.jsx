@@ -13,7 +13,7 @@ let DashboardNav = React.createClass({
     Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 
-  getInitialState() {
+  getInitialState () {
     return {
       charts: [],
       dashboards: []
@@ -41,18 +41,7 @@ let DashboardNav = React.createClass({
       }
     })
 
-    const premade_dashboards = dashboards.map(dashboard => {
-      if (dashboard.builtin && dashboard.dashboardType === 'EocCampaign') {
-        return (
-          <NavMenuItem key={dashboard.id} href={'/dashboards/' + _.kebabCase(dashboard.title)}>
-            {dashboard.title}
-          </NavMenuItem>
-        )
-      }
-    })
-
-    const charts = _.sortBy(this.state.charts, 'title')
-    const custom_charts = charts.map(chart =>
+    const custom_charts = this.state.charts.map(chart =>
       <NavMenuItem key={chart.id} href={'/charts/' + chart.id}>
         { chart.title }
       </NavMenuItem>
