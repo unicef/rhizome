@@ -45,8 +45,8 @@ class GeoResource(BaseNonModelResource):
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
-            geo_obj.geometry = p.geo_json['geometry']
-            geo_obj.type = p.geo_json['type']
+            geo_obj.geometry = { "type": "Polygon", "coordinates": json.loads(p.geo_json)[0] }
+            geo_obj.type = "Feature"
             geo_obj.properties = {'location_id': p.location.id}
             geo_obj.parent_location_id =\
                 p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
