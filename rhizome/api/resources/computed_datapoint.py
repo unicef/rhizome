@@ -42,8 +42,14 @@ class ComputedDataPointResource(BaseModelResource):
         except KeyError:
             document_id = None
 
+        indicator_id_list = DocumentSourceObjectMap.objects.filter(
+            document_id = document_id,
+            source_object_map__content_type = 'indicator',
+            source_object_map__master_object_id__gt = 0
+        ).values_list('source_object_map__master_object_id', flat=True)
+
         queryset = DataPointComputed.objects.filter(
-            document_id=document_id
+            document_id=document_id, indicator_id__in = indicator_id_list
         ).values('indicator_id','location__name','campaign__name','indicator__short_name' ,'value')
 
         return queryset
