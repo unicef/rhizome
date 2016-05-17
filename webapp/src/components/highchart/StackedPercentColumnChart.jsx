@@ -15,7 +15,7 @@ class StackedPercentColumnChart extends HighChart {
     const self = this
     const props = this.props
     const first_indicator = props.selected_indicators[0]
-    const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
+    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     this.config = {
       chart: {
         type: 'column'
