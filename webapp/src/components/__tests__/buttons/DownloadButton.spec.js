@@ -125,8 +125,15 @@ describe ('DownloadButton', () => {
     })
   })
   describe.skip ('#_getCookie()', () => {
-    it.skip ('gets cookie', () => {
+    //currently being skipped because this method is not being used
+    context ('if cookie length is greater than 0', () => {
+      it ('returns cookie', () => {
 
+      })
+    context ('if cookie length is greater than 0', () => {
+      it ('returns empty string', () => {
+
+      })
     })
   })
   describe ('#render()', () => {
