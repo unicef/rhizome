@@ -51,7 +51,8 @@ let DashboardNav = React.createClass({
       }
     })
 
-    const custom_charts = this.state.charts.map(chart =>
+    const charts = _.sortBy(this.state.charts, 'title')
+    const custom_charts = charts.map(chart =>
       <NavMenuItem key={chart.id} href={'/charts/' + chart.id}>
         { chart.title }
       </NavMenuItem>
