@@ -153,7 +153,7 @@ class DatapointResource(BaseNonModelResource):
             dp_df['time_grouping'] = 1
         else:
             dp_df = DataFrame()
-
+        self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
         return dp_df
 
     def handle_data_exists(self, df):
@@ -355,8 +355,7 @@ class DatapointResource(BaseNonModelResource):
         #     data['meta']['parent_location_map'] = [l for l in p_loc_qs]
         #     data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
 
-        data['meta']['campaign_list'] = self.get_campaign_qs()
-
+        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
         # add errors if it exists
         if self.error:
             data['error'] = self.error
