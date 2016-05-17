@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
@@ -77,10 +78,21 @@ var DatapointStore = Reflux.createStore({
         indicator: this.indicators.index[d.indicator_id]
       }
       if (d.data_date) { datapoint.data_date = d.data_date }
-      if (d.campaign_id) { datapoint.campaign = this.campaigns.index[d.campaign_id] }
+      if (d.campaign_id) {
+        datapoint.campaign = this.campaigns.index[d.campaign_id] || this._createYearCampaign(d.campaign_id)
+      }
       return datapoint
     })
     return flattened
+  },
+
+  _createYearCampaign: function (year) {
+    return {
+      id: year,
+      name: year,
+      start_date: moment(year + '-01-01', 'YYYY-MM-DD').toDate(),
+      end_date: moment(year + '-12-31', 'YYYY-MM-DD').toDate()
+    }
   },
 
   melt: function (datapoints, indicator_ids) {
