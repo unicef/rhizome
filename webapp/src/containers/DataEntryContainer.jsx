@@ -39,7 +39,7 @@ const DataEntryContainer = React.createClass({
 
     const data_table = (
       <DatabrowserTable
-        data={state.datapoints.raw}
+        data={state.datapoints.flattened}
         selected_locations={state.selected_locations}
         selected_indicators={state.selected_indicator_tag ? state.selected_indicator_tag.indicators : []}
         rowAction={DataEntryActions.removeLocation}
@@ -80,7 +80,7 @@ const DataEntryContainer = React.createClass({
         </header>
         <div className='row'>
           <div className='medium-12 columns'>
-            { state.datapoints.raw ? data_table : placeholder }
+            { state.datapoints.flattened ? data_table : placeholder }
           </div>
         </div>
       </div>

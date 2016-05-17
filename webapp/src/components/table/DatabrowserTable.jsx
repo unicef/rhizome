@@ -38,34 +38,24 @@ let DatabrowserTable = React.createClass({
     return ''
   },
 
-  extractItemsFromData: function (datapoints) {
-    return datapoints.map(item => {
-      let result = _.pick(item, 'location')
-      result.campaign = moment(item.campaign.start_date).format('MMM YYYY')
-      result.location_id = item.location
-      result.campaign_id = item.campaign
-      item.indicators.forEach(indicator => {
-        result[indicator.indicator] = { // indicator.indicator is the id
-          value: this._format(indicator.value),
-          computed: indicator.computed
-        }
+  getRowData: function () {
+    const rows = []
+    const grouped_by_location = _.groupBy(this.props.data, 'location.id')
+    _.map(grouped_by_location, datapoint_group => {
+      const first_datapoint = datapoint_group[0]
+      const row = {
+        campaign: moment(first_datapoint.campaign.start_date).format('MMM YYYY'),
+        campaign_id: first_datapoint.campaign.id,
+        location: first_datapoint.location.name,
+        location_id: first_datapoint.location.id
+      }
+      datapoint_group.forEach(datapoint => row[datapoint.indicator.id] = {
+        value: this._format(datapoint.value),
+        computed: datapoint.id
       })
-      return result
+      rows.push(row)
     })
-  },
-
-  getData: function (items, locations) {
-    let data = []
-    items.forEach(item => {
-      locations.forEach(location => {
-        if (item.location === location.id) {
-          item.location = location.name
-          data.push(item)
-          return
-        }
-      })
-    })
-    return data
+    return rows
   },
 
   render: function () {
@@ -83,8 +73,8 @@ let DatabrowserTable = React.createClass({
         fields[indicator.id] = {title: indicator.short_name, name: indicator.id, 'computed': indicator.computed, 'source_name': indicator.source_name, 'data_format': indicator.data_format}
         columns.push(indicator.id)
       })
-      const items = this.extractItemsFromData(props.data || [])
-      const data = this.getData(items, props.selected_locations)
+
+      const data = this.getRowData()
       const schema = parseSchema(props.data)
       schema.items.properties = fields
 
