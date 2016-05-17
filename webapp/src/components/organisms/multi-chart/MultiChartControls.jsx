@@ -126,7 +126,7 @@ const MultiChartControls = React.createClass({
     }
     const location_depth_selector = depth_titles && chart.groupBy !== 'location' ? (
       <div className='medium-12 columns radio-group'>
-        <h3>Split By</h3>
+        <h3>Aggregate By</h3>
         <RadioGroup
           name={'location_depth' + chart.uuid}
           value={chart.location_depth}
