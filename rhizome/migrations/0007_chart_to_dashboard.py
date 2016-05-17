@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0006_add_campaign_column'),
+        ('rhizome', '0005_reset_sql_sequence'),
     ]
 
     operations = [

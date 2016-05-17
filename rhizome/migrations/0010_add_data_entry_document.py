@@ -16,5 +16,5 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ('rhizome', '0009_add_regions'),
+        ('rhizome', '0008_indicator_class_map_table'),
     ]
