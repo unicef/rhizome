@@ -19,7 +19,7 @@ var DownloadButton = React.createClass({
   getInitialState () {
     return this.defaults
   },
-
+  //this method is not being used. if it will be used, we must write the appropriate tests
   _getCookie (name) {
     if (document.cookie.length > 0) {
       var c_start = document.cookie.indexOf(name + '=')
