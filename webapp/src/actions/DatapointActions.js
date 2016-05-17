@@ -1,5 +1,7 @@
+import _ from 'lodash'
 import Reflux from 'reflux'
 import api from 'utilities/api'
+import builderDefinitions from 'components/d3chart/utils/builderDefinitions'
 
 const DatapointActions = Reflux.createActions({
   'fetchDatapoints': { children: ['completed', 'failed'], asyncResult: true },
@@ -19,6 +21,7 @@ DatapointActions.fetchDatapoints.listen(params => {
 // ACTION HELPERS
 // ---------------------------------------------------------------------------
 const _prepDatapointsQuery = (params) => {
+  const chartNeedsNullData = _.indexOf(builderDefinitions.need_missing_data_charts, params.type) !== -1
   let query = {
     campaign__in: params.campaign__in || params.campaign_ids,
     indicator__in: params.indicator_ids,
@@ -28,7 +31,7 @@ const _prepDatapointsQuery = (params) => {
     campaign_end: params.end_date,
     chart_type: params.type,
     chart_uuid: params.uuid,
-    show_missing_data: params.show_missing_data,
+    show_missing_data: chartNeedsNullData ? 1 : params.show_missing_data,
     group_by_time: params.group_by_time,
     source_name: params.source_name,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
