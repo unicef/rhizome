@@ -9,7 +9,7 @@ import sinon from 'sinon'
 describe ('DownloadButton', () => {
   let mockDownloadButton
   beforeEach (() => {
-    mockDownloadButton = new DownloadButton()
+    mockDownloadButton = new DownloadButton(DownloadButtonTest.getProps())
   })
   it ('exists', () => {
     expect (DownloadButton).to.exist
@@ -23,6 +23,9 @@ describe ('DownloadButton', () => {
     })
   })
   describe ('#defaults', () => {
+    it ('exists', () => {
+      expect (mockDownloadButton.defaults).to.exist
+    })
     it ('has specified properties', () => {
       expect (mockDownloadButton.defaults).to.have.all.keys('url', 'isWorking')
     })
@@ -33,19 +36,92 @@ describe ('DownloadButton', () => {
     })
   })
   describe ('#getInitialState()', () => {
+    it ('exists', () => {
+      expect (mockDownloadButton.getInitialState).to.exist
+    })
     it ('returns defaults', () => {
       const mockDownloadButton = new DownloadButton()
       expect (mockDownloadButton.getInitialState()).to.deep.eq(mockDownloadButton.defaults)
     })
   })
-  describe.skip ('#_completeDownload()', () => {
-    it.skip ('completes download', () => {
-
+  describe ('#_completeDownload()', () => {
+    it ('exists and has a parameter length of 1', () => {
+      expect (mockDownloadButton._completeDownload).to.exist.and.have.lengthOf(1)
+    })
+    it ('sets state of `isWorking` and `url` to proper values', () => {
+      const spyMockDownloadButton = new DownloadButton({ cookieName: '0'})
+      const spy = sinon.spy(spyMockDownloadButton, 'setState')
+      spyMockDownloadButton._completeDownload(0)
+      expect (spy.calledOnce).to.be.true
+      spyMockDownloadButton.setState.restore()
+    })
+    it ('document.cookie is set to proper value', () => {
+      const spyMockDownloadButton = new DownloadButton({ cookieName: '0'})
+      spyMockDownloadButton._completeDownload(0)
+      expect (document._cookie).to.eq('0=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;')
+    })
+    it ('calls clearInterval with proper arg', () => {
+      const spyMockDownloadButton = new DownloadButton({ cookieName: '0'})
+      const spy = sinon.spy(window, 'clearInterval')
+      spyMockDownloadButton._completeDownload(0)
+      expect (spy.called).to.be.true
+      expect (spy.calledWith(0)).to.be.true
+      window.clearInterval.restore()
     })
   })
-  describe.skip ('#_download()', () => {
-    it.skip ('downloads', () => {
-
+  describe ('#_download()', () => {
+    let setStateSpy, windowSetIntervalSpy, _completeDownloadSpy, onClickSpy
+    beforeEach (() => {
+      setStateSpy = sinon.spy(mockDownloadButton, 'setState')
+      windowSetIntervalSpy = sinon.spy(window, 'setInterval')
+      _completeDownloadSpy = sinon.spy(mockDownloadButton, '_completeDownload')
+      onClickSpy = sinon.spy(mockDownloadButton.props, 'onClick')
+    })
+    afterEach (() => {
+      mockDownloadButton.setState.restore()
+      window.setInterval.restore()
+      mockDownloadButton._completeDownload.restore()
+      mockDownloadButton.props.onClick.restore()
+    })
+    context ('if not enabled or isWorking', () => {
+      it ('returns as guard case if `isWorking`', () => {
+        const spyMockDownloadButton = new DownloadButton({ isWorking: true})
+        setStateSpy = sinon.spy(spyMockDownloadButton, 'setState')
+        _completeDownloadSpy = sinon.spy(spyMockDownloadButton, '_completeDownload')
+        expect (setStateSpy.called).to.be.false
+        expect (windowSetIntervalSpy.called).to.be.false
+        expect (_completeDownloadSpy.called).to.be.false
+        expect (onClickSpy.called).to.be.false
+      })
+      it ('returns as guard case if not `enabled`', () => {
+        const spyMockDownloadButton = new DownloadButton({ enable: false})
+        setStateSpy = sinon.spy(spyMockDownloadButton, 'setState')
+        _completeDownloadSpy = sinon.spy(spyMockDownloadButton, '_completeDownload')
+        expect (setStateSpy.called).to.be.false
+        expect (windowSetIntervalSpy.called).to.be.false
+        expect (_completeDownloadSpy.called).to.be.false
+        expect (onClickSpy.called).to.be.false
+      })
+    })
+    context ('if enabled or not isWorking', () => {
+      it ('sets state for `url` and `isWorking`', () => {
+        mockDownloadButton._download()
+        expect (setStateSpy.calledOnce).to.be.true
+        expect (setStateSpy.calledWith({ url: DownloadButtonTest.getProps().onClick(), isWorking: true })).to.be.true
+      })
+      it ('calls window.setInterval', () => {
+        mockDownloadButton._download()
+        expect (windowSetIntervalSpy.calledOnce).to.be.true
+        //this appears to not validate even when I force a false positive. need to research this perhaps a deep
+        //equals is required
+        // expect (windowSetIntervalSpy.calledWith(windowSetIntervalSpy.args[0], windowSetIntervalSpy.args[1])).to.be.true
+      })
+      it.skip ('calls #_completeDownload()', () => {
+        //need to research into hooking into asyncrhonous calls with window
+        mockDownloadButton._download()
+        expect (_completeDownloadSpy.calledOnce).to.be.true
+        // expect (_completeDownloadSpy.calledWith(0)).to.be.true
+      })
     })
   })
   describe.skip ('#_getCookie()', () => {
@@ -88,8 +164,16 @@ class DownloadButtonTest {
       classes: '',
       working: 'bar',
       cookieName: 'foo',
-      onClick: () => {}
+      onClick: () => 'empty'
     }
+  }
+  static getRefreshIntervalArgs() {
+    return [ () => {
+      // var cookieValue = self._getCookie(self.props.cookieName)
+      // if (cookieValue === 'true') {
+      _this._completeDownload(refreshIntervalId);
+      // }
+    }, 1000]
   }
   static getState() {
     return {
