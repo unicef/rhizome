@@ -53,7 +53,7 @@ var SourceDataContainer = React.createClass({
     var doc_tab = this.state.doc_tab || 'doc_index'
     var doc_id = this.state.doc_id
     var doc_tabs = CSVMenuItem.fromArray(
-      _.map(['viewraw', 'meta-data', 'results', 'doc_index'], d => {
+      _.map(['viewraw', 'mapped', 'un-mapped', 'results', 'doc_index'], d => {
         return {
           title: d,
           value: d
