@@ -9,15 +9,38 @@ Rhizome Documentation
 Contents:
 
 .. toctree::
+   :hidden:
    :maxdepth: 2
 
+   user-guide/build_docs
    user-guide/userGuide
+   development/initialize
+   development/coding_standards
+   development/tests
+   deploy/initialize
    back-end/backendComponents
    back-end/aggregationDetail
    back-end/api
 
+User Guide
+----------
+- :doc:`user-guide/build_docs`
+- :doc:`user-guide/userGuide`
 
-Indices and tables
-==================
+Development
+-----------
+- :doc:`development/initialize`
+- :doc:`development/coding_standards`
+- :doc:`development/tests`
+
+Deploy
+------
+- :doc:`deploy/initialize`
+
+Back-end details
+----------------
+- :doc:`back-end/backendComponents`
+
+
 
 * :ref:`search`
