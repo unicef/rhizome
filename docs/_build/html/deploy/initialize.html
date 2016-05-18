@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Deploying &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../index.html" />
+    <link rel="next" title="Backend Principle Components" href="../back-end/backendComponents.html" />
+    <link rel="prev" title="Running Tests" href="../development/tests.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../back-end/backendComponents.html" title="Backend Principle Components"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../development/tests.html" title="Running Tests"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="deploying">
+<h1>Deploying<a class="headerlink" href="#deploying" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installing-dependencies-on-the-server">
+<h2>Installing Dependencies on the Server<a class="headerlink" href="#installing-dependencies-on-the-server" title="Permalink to this headline">¶</a></h2>
+<p>When spinning up a new ubuntu instance nstall the following dependencies:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get update
+sudo apt-get install apache2 --fix-missing
+sudo apt-get install unzip --fix-missing
+sudo apt-get install python-pip --fix-missing
+sudo apt-get install python-pandas --fix-missing
+sudo apt-get install python-dev
+sudo apt-get install libpq-dev
+sudo apt-get install postgresql-9.3
+sudo apt-get install python-psycopg2
+sudo apt-get install libapache2-mod-wsgi
+sudo apt-get install apache2 apache2 apache2-mpm-prefork apache2-utils libexpat1 ssl-cert
+</pre></div>
+</div>
+<p>To set up the database:</p>
+<div class="highlight-python"><div class="highlight"><pre>CREATE USER djangoapp WITH PASSWORD &#39;somepassword&#39; SUPERUSER LOGIN;
+</pre></div>
+</div>
+<p>Then create the directory for the rhizome django app, and static files:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo mkdir /var/www/apps/
+sudo mkdir /var/www/apps/rhizome/
+</pre></div>
+</div>
+</div>
+<div class="section" id="serving-the-django-application-with-apache">
+<h2>Serving the Django Application with Apache.<a class="headerlink" href="#serving-the-django-application-with-apache" title="Permalink to this headline">¶</a></h2>
+<p>You&#8217;ll need to configure Apache and WSGI on whatever server you&#8217;re deploying to, and set up a PostgreSQL database for the application first. Make sure that Apache is configured to use the <a class="reference external" href="https://httpd.apache.org/docs/2.4/mpm.html">prefork MPM</a>; the worker and event MPMs result in incorrect responses returned for requests when multiple requests are made to the server.</p>
+<p>For more information on deploying applications, see the <a class="reference external" href="https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/">Django documentation</a>.</p>
+<p>You will also want to set up apache to server the files in the /static and /media directories.</p>
+<div class="section" id="serving-static-files">
+<h3>Serving Static files<a class="headerlink" href="#serving-static-files" title="Permalink to this headline">¶</a></h3>
+<p>The frontend files can be served statically by any webserver. Make sure that
+the <cite>STATIC_URL</cite> setting in the backend&#8217;s <cite>settings.py</cite> is set to wherever you
+deploy the static files. ([Read more about static files in Django.][static-files])</p>
+<p><a class="reference external" href="https://docs.djangoproject.com/en/1.7/howto/static-files/">static-files</a></p>
+</div>
+</div>
+<div class="section" id="packaging-files-for-server">
+<h2>Packaging Files for Server<a class="headerlink" href="#packaging-files-for-server" title="Permalink to this headline">¶</a></h2>
+<p>We now gather all the files required for the apache server to send out to the users:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd webapp
+npm run package
+</pre></div>
+</div>
+<p>This will create a new file under the dist/ folder <cite>rhizome.zip</cite>. Now we move this file to the server and unzip. into the /var/www/apps/rhizome/ folder. To install all of the required dependencies we run:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install -r requirements.txt
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Deploying</a><ul>
+<li><a class="reference internal" href="#installing-dependencies-on-the-server">Installing Dependencies on the Server</a></li>
+<li><a class="reference internal" href="#serving-the-django-application-with-apache">Serving the Django Application with Apache.</a><ul>
+<li><a class="reference internal" href="#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#packaging-files-for-server">Packaging Files for Server</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../development/tests.html"
+                        title="previous chapter">Running Tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../back-end/backendComponents.html"
+                        title="next chapter">Backend Principle Components</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../back-end/backendComponents.html" title="Backend Principle Components"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../development/tests.html" title="Running Tests"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

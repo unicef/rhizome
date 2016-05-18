@@ -1,0 +1,307 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Setting Up the Developer Environment &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../index.html" />
+    <link rel="next" title="Coding Standards" href="coding_standards.html" />
+    <link rel="prev" title="Application User Guide" href="../user-guide/userGuide.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="coding_standards.html" title="Coding Standards"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../user-guide/userGuide.html" title="Application User Guide"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="setting-up-the-developer-environment">
+<h1>Setting Up the Developer Environment<a class="headerlink" href="#setting-up-the-developer-environment" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="back-end-setup">
+<h2>Back-end setup<a class="headerlink" href="#back-end-setup" title="Permalink to this headline">¶</a></h2>
+<p>There are two options to set up the developer environment for the backend, one is through a virtual machine. The second option would be to configure a virtualenv.</p>
+<div class="section" id="set-up-with-vagrant-optional-recommended">
+<h3>Set up with Vagrant(optional, recommended)<a class="headerlink" href="#set-up-with-vagrant-optional-recommended" title="Permalink to this headline">¶</a></h3>
+<p>Utilizing a virtual machine we can spin up a fresh, clean, and isolated developer environment. Visit the <a class="reference external" href="https://www.vagrantup.com/">Vagrant</a> website to download it. Another dependency might be required - <a class="reference external" href="https://www.virtualbox.org/wiki/Downloads">Virtualbox</a>, any of these following steps fail.</p>
+<div class="section" id="python-django-postgres-configuration">
+<h4>Python/Django/Postgres configuration<a class="headerlink" href="#python-django-postgres-configuration" title="Permalink to this headline">¶</a></h4>
+<p>Commands to follow(keep in mind this is the installation order for ubuntu operating system):</p>
+<ul class="simple">
+<li>In your terminal go to a new folder to keep your vagrant image and files within and start with the following:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>vagrant init ubuntu/trusty64
+</pre></div>
+</div>
+<ul class="simple">
+<li>In the &#8216;Vagrantfile&#8217; add the following lines to your configuration(unless your vagrant config has other config!):</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>Vagrant.configure(2) do |config|
+  config.vm.box = &quot;ubuntu/trusty64&quot;
+
+  config.vm.network &quot;forwarded_port&quot;, guest: 8000, host: 8000
+  config.vm.network &quot;forwarded_port&quot;, guest: 80, host: 8080
+  config.vm.network &quot;private_network&quot;, ip: &quot;192.168.77.77&quot;
+  config.vm.provider &quot;virtualbox&quot; do |vb|
+    vb.customize [&quot;modifyvm&quot;, :id, &quot;--memory&quot;, &quot;2048&quot;]
+  end
+end
+</pre></div>
+</div>
+<p>This will allow you to connect to your python server and also upgrade the memory to allow properly installation of pandas.</p>
+<div class="highlight-python"><div class="highlight"><pre>vagrant up --provider virtualbox
+vagrant ssh
+sudo apt-get update
+sudo apt-get install -y git-all
+</pre></div>
+</div>
+<p>Note: You may already have python. you can check with the following command:</p>
+<div class="highlight-python"><div class="highlight"><pre>which python
+</pre></div>
+</div>
+<p>If this outputs a path you have python on your system.
+* Let&#8217;s download pip to install our dependencies for python: (as per python recommended download method)</p>
+<div class="highlight-python"><div class="highlight"><pre>curl -O https://bootstrap.pypa.io/get-pip.py
+sudo python get-pip.py
+sudo apt-get install -y python-pandas --fix-missing
+sudo apt-get install -y libpq-dev
+sudo apt-get install -y postgresql
+</pre></div>
+</div>
+<p>Vagrant has synced folders so that you can use your computer&#8217;s editor, while the files are on the VM instance.
+The &#8216;rhizome&#8217; folder will show in the directory of your vagrant image.</p>
+<div class="highlight-python"><div class="highlight"><pre>cd /vagrant
+git clone https://github.com/unicef/rhizome.git
+// rhizome folder will now show in your Mac/Windows folder as well now where your Vagrant image is located/
+cd rhizome
+sudo pip install -r requirements.txt
+</pre></div>
+</div>
+<p>This may take a few minutes when running for the first time. Vagrant has more configuration to be done to access the postgres database.</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo vi /etc/postgresql/9.3/main/pg_hba.conf
+</pre></div>
+</div>
+<ul class="simple">
+<li>Edit the line:</li>
+</ul>
+<p>local   all             postgres                                peer</p>
+<ul class="simple">
+<li>To:</li>
+</ul>
+<p>local   all             postgres                                trust</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo /etc/init.d/postgresql reload
+createdb rhizome -U postgres
+sudo -u postgres psql rhizome
+CREATE USER djangoapp WITH SUPERUSER PASSWORD &#39;w3b@p01i0&#39;;
+\q
+python manage.py syncdb
+</pre></div>
+</div>
+<ul class="simple">
+<li>Create a user name and password when prompted. dont forget it! Now we can run the server. This is the command for that:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>python manage.py runserver --nothreading 192.168.77.77:8000
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="local-setup-with-virtualenv">
+<h3>Local setup with virtualenv<a class="headerlink" href="#local-setup-with-virtualenv" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id1">
+<h4>Python/Django/Postgres configuration<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<p>We can also install locally rather than virtual machine, within a virtual environment.
+* Download git to your local machine.</p>
+<div class="highlight-python"><div class="highlight"><pre>cd /directory/of/yours
+git clone https://github.com/unicef/rhizome.git
+</pre></div>
+</div>
+<p>Let&#8217;s download pip install for python(as per python recommended download method):</p>
+<div class="highlight-python"><div class="highlight"><pre>curl -O https://bootstrap.pypa.io/get-pip.py
+sudo python get-pip.py
+cd rhizome
+sudo pip install virtualenv
+sudo apt-get install -y python-dev
+sudo apt-get install -y libpq-dev
+sudo apt-get install -y postgresql
+virtualenv venv
+source venv/bin/activate
+pip install -r requirements.txt
+</pre></div>
+</div>
+<p>This may take a few minutes when running for the first time. Vagrant has more configuration to be done to access the postgres database.</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo vi /etc/postgresql/9.3/main/pg_hba.conf
+</pre></div>
+</div>
+<ul class="simple">
+<li>Edit the line:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>local   all             postgres                                peer
+</pre></div>
+</div>
+<ul class="simple">
+<li>To:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>local   all             postgres                                trust
+</pre></div>
+</div>
+<div class="highlight-python"><div class="highlight"><pre>sudo /etc/init.d/postgresql reload
+createdb rhizome -U postgres
+sudo -u postgres psql rhizome
+CREATE USER djangoapp WITH SUPERUSER PASSWORD &#39;w3b@p01i0&#39;;
+\q
+python manage.py syncdb
+</pre></div>
+</div>
+<ul class="simple">
+<li>Create a user name and password when prompted. dont forget it! Now we can run the server! congrats! This is the command for that:</li>
+</ul>
+<div class="highlight-python"><div class="highlight"><pre>python manage.py runserver --nothreading 192.168.77.77:8000
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="section" id="front-end-setup">
+<h2>Front-end setup<a class="headerlink" href="#front-end-setup" title="Permalink to this headline">¶</a></h2>
+<p>First install node</p>
+<div class="highlight-python"><div class="highlight"><pre>cd ~/
+curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+sudo apt-get install -y nodejs
+</pre></div>
+</div>
+<p>Now install npm</p>
+<div class="highlight-python"><div class="highlight"><pre>curl -L http://npmjs.org/install.sh | sudo sh
+cd /vagrant/rhizome/webapp
+</pre></div>
+</div>
+<p>Run this command to avoid permissions issues with npm directories:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo chown -R $(whoami) $(npm config get prefix)/{lib/node_modules,bin,share}
+
+npm install -g npm@latest
+npm install -g babel-eslint@4.1.6
+</pre></div>
+</div>
+<p>Note: npm installation are sometimes fragile. If you come across any errors please try to research them via npm resources.</p>
+<div class="highlight-python"><div class="highlight"><pre>npm install -g gulp
+npm install
+
+npm rebuild node-sass
+</pre></div>
+</div>
+<p>initiating the watch and building of the JavaScript for the front end:</p>
+<div class="highlight-python"><div class="highlight"><pre>gulp dev
+</pre></div>
+</div>
+<p>Now you need 2 terminals running for the VM. One runs python server`python manage.py runserver &#8211;nothreading`, the other runs <cite>gulp dev</cite>. You can have your text editor look at your local machine vagrant directory which syncs up to vagrant.</p>
+<p>done!</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting Up the Developer Environment</a><ul>
+<li><a class="reference internal" href="#back-end-setup">Back-end setup</a><ul>
+<li><a class="reference internal" href="#set-up-with-vagrant-optional-recommended">Set up with Vagrant(optional, recommended)</a><ul>
+<li><a class="reference internal" href="#python-django-postgres-configuration">Python/Django/Postgres configuration</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#local-setup-with-virtualenv">Local setup with virtualenv</a><ul>
+<li><a class="reference internal" href="#id1">Python/Django/Postgres configuration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#front-end-setup">Front-end setup</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../user-guide/userGuide.html"
+                        title="previous chapter">Application User Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="coding_standards.html"
+                        title="next chapter">Coding Standards</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="coding_standards.html" title="Coding Standards"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../user-guide/userGuide.html" title="Application User Guide"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

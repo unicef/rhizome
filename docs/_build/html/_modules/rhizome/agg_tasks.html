@@ -1,0 +1,547 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rhizome.agg_tasks &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for rhizome.agg_tasks</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">concat</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">notnull</span>
+
+<span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">rhizome.cache_meta</span> <span class="kn">import</span> <span class="n">IndicatorCache</span>
+<span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="n">SourceSubmission</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="AggRefresh"><a class="viewcode-back" href="../../old-docs/backend.html#rhizome.agg_tasks.AggRefresh">[docs]</a><span class="k">class</span> <span class="nc">AggRefresh</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Any time a user wants to refresh the cache, that is make any changes in the</span>
+<span class="sd">    datapoint table avalaible to the API and the platform as a whole, the</span>
+<span class="sd">    AggRefresh object is instatiated.  The flow of data is as follows:</span>
+<span class="sd">        - Create a row in the ETL Job table.  This record will track the</span>
+<span class="sd">          time each tasks takes, and in addition this ID is used as a key</span>
+<span class="sd">          in the datapoints table so we can see when and why the cache was</span>
+<span class="sd">          updated for this datapoint.</span>
+<span class="sd">        - If the datapoint_id list is empty get the default (limit to 1000)</span>
+<span class="sd">          list of datapoint_ids to process.</span>
+<span class="sd">        - Find the indicator_ids (both computed and raw) that need to be</span>
+<span class="sd">          processed.</span>
+<span class="sd">        - Executes stored pSQL stored procedures to first aggregate, then</span>
+<span class="sd">          calculate information.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        If there is a job running, return to with a status code of</span>
+<span class="sd">        &quot;cache_running&quot;.</span>
+
+<span class="sd">        If passed an explicit list of datapoints ids, then we process those</span>
+<span class="sd">        other wise the datapoint IDs to process are handled in the set_up()</span>
+<span class="sd">        method.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">campaign_id</span><span class="p">:</span>
+            <span class="n">campaign_id_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_campaign_ids_to_process</span><span class="p">()</span>
+            <span class="n">campaign_id</span> <span class="o">=</span> <span class="n">campaign_id_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span> <span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span>\
+            <span class="s">&#39;value&#39;</span><span class="p">,</span><span class="s">&#39;cache_job_id&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span> <span class="o">=</span> <span class="p">[],{}</span>
+
+        <span class="c"># if CacheJob.objects.filter(response_msg = &#39;PENDING&#39;):</span>
+        <span class="c">#     return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span> <span class="o">=</span> <span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">campaign_id</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span> <span class="o">=</span> <span class="n">CacheJob</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+            <span class="n">is_error</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+            <span class="n">response_msg</span> <span class="o">=</span> <span class="s">&#39;PENDING&#39;</span>
+        <span class="p">)</span>
+
+
+        <span class="c">## set the document_id to the newest for this campaign ##</span>
+        <span class="n">latest_dp_source</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span> <span class="o">=</span> \
+            <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s">&#39;-created_at&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">source_submission_id</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">document_id</span> <span class="o">=</span> <span class="n">SourceSubmission</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">latest_dp_source</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">document_id</span>
+
+        <span class="n">response_msg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+
+        <span class="c">## mark job as completed and save</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">date_completed</span> <span class="o">=</span> <span class="n">timezone</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">response_msg</span> <span class="o">=</span> <span class="n">response_msg</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AggRefresh.main"><a class="viewcode-back" href="../../old-docs/backend.html#rhizome.agg_tasks.AggRefresh.main">[docs]</a>    <span class="k">def</span> <span class="nf">main</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s">&#39;ANOTHER_AGG_IN_PROCESS&#39;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">agg_datapoints</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">calc_datapoints</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">is_error</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">response_msg</span> <span class="o">=</span> <span class="n">err</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">err</span>
+
+        <span class="n">ic</span> <span class="o">=</span> <span class="n">IndicatorCache</span><span class="p">()</span>
+        <span class="n">ic</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+        <span class="k">return</span> <span class="s">&#39;SUCCESS&#39;</span>
+</div>
+    <span class="k">def</span> <span class="nf">get_campaign_ids_to_process</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">one_dp_that_needs_agg</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span>\
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">cache_job_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">value__gte</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">location_id</span> <span class="o">=</span> <span class="n">one_dp_that_needs_agg</span><span class="o">.</span><span class="n">location_id</span>
+        <span class="n">data_date</span> <span class="o">=</span> <span class="n">one_dp_that_needs_agg</span><span class="o">.</span><span class="n">data_date</span>
+        <span class="n">date_no_datetime</span> <span class="o">=</span> <span class="n">data_date</span><span class="o">.</span><span class="n">date</span><span class="p">()</span>
+        <span class="n">campaigns_in_date_range</span> <span class="o">=</span> <span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">start_date__lte</span> <span class="o">=</span> <span class="n">date_no_datetime</span><span class="p">,</span> <span class="n">end_date__gte</span> <span class="o">=</span> <span class="n">data_date</span><span class="p">)</span>
+        <span class="n">parent_location_list</span> <span class="o">=</span> <span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">location_id</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">campaigns_in_date_range</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AggRefresh.agg_datapoints"><a class="viewcode-back" href="../../old-docs/backend.html#rhizome.agg_tasks.AggRefresh.agg_datapoints">[docs]</a>    <span class="k">def</span> <span class="nf">agg_datapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Regional Aggregation based on the adjacency list built on top of the</span>
+<span class="sd">        parent_location_id column.</span>
+
+<span class="sd">        Data stored in the DataPoint table for a location with the same</span>
+<span class="sd">        indicator, campaign will always override the aggregated values, that is</span>
+<span class="sd">        if the indicator is an integer ( summing percents and booleans</span>
+<span class="sd">        regionally doesnt make sense.)</span>
+
+<span class="sd">        Here, we create a tuple_dict in which the unique key of (locaiton,</span>
+<span class="sd">        indicator, campaign) represents the key, and the cooresponding value</span>
+<span class="sd">        is the value.  This way we add to the dict the aggregated values, then</span>
+<span class="sd">        iterrate through the raw values, adding or updating the data in the</span>
+<span class="sd">        tuple dict before bulk inserting the data.</span>
+
+<span class="sd">        The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">agg_dp_batch</span><span class="p">,</span> <span class="n">tuple_dict</span> <span class="o">=</span> <span class="p">[],{}</span>
+        <span class="n">location_tree_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span>
+
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+
+        <span class="c">## NaN to None</span>
+        <span class="n">no_nan_dp_df</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">notnull</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)),</span> <span class="bp">None</span><span class="p">)</span>
+        <span class="c">## represents the location heirarchy as a cache from the location table</span>
+        <span class="n">location_tree_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">dp_df</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="n">location_tree_columns</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="n">location_tree_columns</span><span class="p">)</span>
+
+        <span class="c">## join the location tree to the datapoints</span>
+        <span class="n">joined_location_df</span> <span class="o">=</span> <span class="n">no_nan_dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">location_tree_df</span><span class="p">)</span>
+
+        <span class="c">## filter the joined dataframe so that we aggregate at the highest</span>
+        <span class="c">## level for which there is stored data.  If we do not do this, then</span>
+        <span class="c">## if we ingest both, district and province level data, the national</span>
+        <span class="c">## will be double the value that it should be.</span>
+
+        <span class="n">max_location_lvl_for_indicator_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">joined_location_df</span>\
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">])[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="c"># highest lvl per indicator</span>
+        <span class="n">max_location_lvl_for_indicator_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">integer_indicators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Indicator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_format</span> <span class="o">=</span> <span class="s">&#39;int&#39;</span><span class="p">,</span>
+            <span class="n">id__in</span> <span class="o">=</span> <span class="n">max_location_lvl_for_indicator_df</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+        <span class="n">boolean_indicators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Indicator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_format</span> <span class="o">=</span> <span class="s">&#39;bool&#39;</span><span class="p">,</span>
+            <span class="n">id__in</span> <span class="o">=</span> <span class="n">max_location_lvl_for_indicator_df</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+        <span class="c">## filter df to keep the data for the highest level per indicator ##</span>
+        <span class="n">prepped_df</span> <span class="o">=</span> <span class="n">joined_location_df</span>\
+            <span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">max_location_lvl_for_indicator_df</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;lvl&#39;</span><span class="p">])</span>
+
+        <span class="n">prepped_df</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prepped_df</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+        <span class="c">## group by parent_location_id and take the sum ##</span>
+        <span class="n">grouped_df_sum</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">prepped_df</span>\
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">])</span>\
+            <span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+        <span class="n">grouped_df_mean</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">prepped_df</span>\
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">])</span>\
+            <span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">grouped_df_sum</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c">## only aggregate integers ( not boolean or pct )</span>
+            <span class="k">if</span> <span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">integer_indicators</span><span class="p">:</span>
+                <span class="n">tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">grouped_df_mean</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c">## get the avg for boolean indicators</span>
+            <span class="k">if</span> <span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">boolean_indicators</span><span class="p">:</span>
+                <span class="n">tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c">## now add the raw data to the dict ( overriding agregate if exists )</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">no_nan_dp_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s">&#39;NaN&#39;</span> <span class="p">:</span>
+                <span class="c">## dont override null value from parent if sum exists for children</span>
+                <span class="n">tuple_dict</span><span class="p">[(</span><span class="n">dp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c"># pandas treats NaN as zero it seems so do this explicity</span>
+                <span class="n">tuple_dict</span><span class="p">[(</span><span class="n">dp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+
+        <span class="c">## now prep the batch for the bulk insert ##</span>
+        <span class="k">for</span> <span class="n">dp_unique_key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+            <span class="n">dp_dict</span> <span class="o">=</span>  <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;indicator_id&#39;</span><span class="p">)</span>\
+                <span class="p">,</span><span class="n">dp_unique_key</span><span class="p">))</span>
+
+            <span class="n">dp_dict</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">dp_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="n">dp_dict</span><span class="p">[</span><span class="s">&#39;cache_job_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">id</span>
+
+            <span class="n">agg_dp_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AggDataPoint</span><span class="p">(</span><span class="o">**</span><span class="n">dp_dict</span><span class="p">))</span>
+
+        <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">agg_dp_batch</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AggRefresh.calc_datapoints"><a class="viewcode-back" href="../../old-docs/backend.html#rhizome.agg_tasks.AggRefresh.calc_datapoints">[docs]</a>    <span class="k">def</span> <span class="nf">calc_datapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        When the agg_datapoint method runs, it will leave the agg_datapoint table</span>
+<span class="sd">        in a state that all of the rows that were altered, and need to be cached</span>
+<span class="sd">        thats is the ``calc_refreshed`` column will = &#39;f&#39; for all of the rows</span>
+<span class="sd">        that this task effected.</span>
+
+<span class="sd">        To find out more about how calculation works, take a look at the</span>
+<span class="sd">        fn_calc_datapoint stored procedures</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c">## the order of these calculations defines their priority, meaning</span>
+        <span class="c">## since raw data is the last calculation, this will override all else</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_of_parts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_over_whole</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_of_difference</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsert_computed</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</div>
+    <span class="k">def</span> <span class="nf">build_calc_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">calc_list</span><span class="p">):</span>
+
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">CalculatedIndicatorComponent</span><span class="o">.</span><span class="n">objects</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">calculation__in</span><span class="o">=</span> <span class="n">calc_list</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">,</span><span class="s">&#39;calculation&#39;</span><span class="p">))</span>\
+            <span class="p">,</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">,</span><span class="s">&#39;calc&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">calc_df</span>
+
+    <span class="k">def</span> <span class="nf">build_dp_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">indicator_id_list</span><span class="p">):</span>
+
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>\
+            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">indicator_id__in</span> <span class="o">=</span> <span class="n">indicator_id_list</span>\
+                <span class="o">.</span><span class="n">unique</span><span class="p">(),</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dp_df</span>
+
+    <span class="k">def</span> <span class="nf">join_dp_to_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c">## join the above two dataframes in order to determine ##</span>
+            <span class="c">## which indicators require which caluclations ##</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span><span class="n">left_on</span><span class="o">=</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="n">right_on</span><span class="o">=</span>\
+            <span class="s">&#39;indicator_component_id&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dp_df_with_calc</span>
+
+    <span class="k">def</span> <span class="nf">build_recursive_sum_calc_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_calc_df</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        TO DO -- handle test_recursive_sum test case</span>
+<span class="sd">        This only handles one level of recursion.. i.e. the following calc will</span>
+<span class="sd">        roll up properly.</span>
+
+<span class="sd">        &quot;odk missed due to refusal&quot; &gt;&gt; &quot;odk missed total&quot;</span>
+
+<span class="sd">        but this one below.. will not:</span>
+
+<span class="sd">        &quot;odk missed due to refusal -- male&quot; &gt;&gt; &quot;odk missed due to refusal&quot; &gt;&gt;</span>
+<span class="sd">        &quot;odk missed total&quot;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">lvl_1_calc_df</span> <span class="o">=</span>  <span class="n">initial_calc_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">initial_calc_df</span><span class="p">,</span>\
+            <span class="n">left_on</span><span class="o">=</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span><span class="n">right_on</span><span class="o">=</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">)</span>
+
+        <span class="n">lvl_1_df</span> <span class="o">=</span>  <span class="n">lvl_1_calc_df</span><span class="p">[[</span><span class="s">&#39;calc_indicator_id_y&#39;</span><span class="p">,</span>\
+            <span class="s">&#39;indicator_component_id_x&#39;</span><span class="p">]]</span>
+
+        <span class="n">lvl_1_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_component_id&#39;</span><span class="p">]</span>
+
+        <span class="n">lvl_1_df</span><span class="p">[</span><span class="s">&#39;calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;PART_TO_BE_SUMMED&#39;</span>
+        <span class="n">lvl_1_df</span><span class="p">[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">initial_calc_df</span><span class="p">[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">final_df</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">initial_calc_df</span><span class="p">,</span><span class="n">lvl_1_df</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">final_df</span>
+
+    <span class="k">def</span> <span class="nf">raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Add the raw indicator data to the tuple dict.  This happens last so</span>
+<span class="sd">        the raw indicator data will always override the calculated.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">adp</span> <span class="ow">in</span> <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+            <span class="n">adp_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">adp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">adp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">adp_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">adp</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">sum_of_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For more info on this see:</span>
+<span class="sd">        https://github.com/unicef/rhizome/blob/master/docs/spec.rst#aggregation-and-calculation</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c">## get the indicator_ids we need to make the calculation ##</span>
+        <span class="n">initial_calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">([</span><span class="s">&#39;PART_TO_BE_SUMMED&#39;</span><span class="p">])</span>
+
+        <span class="c">## handle recursive calculations ( see spec.rst link above ) ##</span>
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_recursive_sum_calc_df</span><span class="p">(</span><span class="n">initial_calc_df</span><span class="p">)</span>
+
+        <span class="n">self_join_calc_df</span> <span class="o">=</span> <span class="n">calc_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">left_on</span> <span class="o">=</span>\
+            <span class="s">&#39;indicator_component_id&#39;</span><span class="p">,</span><span class="n">right_on</span><span class="o">=</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span><span class="n">how</span><span class="o">=</span><span class="s">&#39;left&#39;</span><span class="p">)</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">)</span>
+
+        <span class="c">## take the sum of all of the component indicators ##</span>
+        <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>\
+            <span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">part_over_whole</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This calculation is dependent on the &quot;sum_of_parts&quot; calculation, so in</span>
+<span class="sd">        addition to the datapoint_df, we need to get the newly computed</span>
+<span class="sd">        datapoints from the previous calculation ( dependent_calculation_dp_df )</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">([</span><span class="s">&#39;NUMERATOR&#39;</span><span class="p">,</span><span class="s">&#39;DENOMINATOR&#39;</span><span class="p">])</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## now get a dataframe (dependent_calculation_dp_df) that represents ##</span>
+        <span class="c">## the newly calculated data.  This is necessary because the ##</span>
+        <span class="c">## denominator for the part/whole calculation is often a SUM ##</span>
+
+        <span class="n">dwc_list_of_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">v</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">id</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span>\
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+        <span class="n">dependent_calculation_dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">dwc_list_of_list</span><span class="p">,</span><span class="n">columns</span><span class="o">=</span>\
+            <span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+        <span class="n">unioned_dp_df</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">dp_df</span><span class="p">,</span><span class="n">dependent_calculation_dp_df</span><span class="p">])</span>
+
+        <span class="c">## add the calculation metadata to the df</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">unioned_dp_df</span><span class="p">)</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">prepped_for_calc_df</span> <span class="o">=</span> <span class="n">dp_df_with_calc</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">,</span>\
+            <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## iterate through the dataframe, perform the calculation and add</span>
+        <span class="c">## to the dwc_tuple_dict.  ( this could use some clean up )</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">prepped_for_calc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_x</span> <span class="o">==</span> <span class="s">&#39;NUMERATOR&#39;</span> \
+                <span class="ow">and</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_y</span> <span class="o">==</span> <span class="s">&#39;DENOMINATOR&#39;</span><span class="p">:</span>
+
+                <span class="n">row_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_indicator_id</span><span class="p">)</span>
+
+                <span class="c">## this one line is where the calculation happens ##</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span> <span class="o">/</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value_y</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">row_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_value</span>
+
+
+    <span class="k">def</span> <span class="nf">part_of_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        (x - y) / x</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">calc_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;WHOLE_OF_DIFFERENCE&#39;</span><span class="p">,</span><span class="s">&#39;PART_OF_DIFFERENCE&#39;</span><span class="p">]</span>
+
+        <span class="c">## get the indicator_ids we need to make the calculation ##</span>
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">(</span><span class="n">calc_list</span><span class="p">)</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids and join with dps ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">)</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">prepped_for_calc_df</span> <span class="o">=</span> <span class="n">dp_df_with_calc</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">,</span>\
+            <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## iterrate through the dataframe above, determine the calculated value</span>
+        <span class="c">## and finally, create the tuple dict calue for the - calculated data</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">prepped_for_calc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_x</span> <span class="o">==</span> <span class="s">&#39;WHOLE_OF_DIFFERENCE&#39;</span> \
+                <span class="ow">and</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_y</span> <span class="o">==</span> <span class="s">&#39;PART_OF_DIFFERENCE&#39;</span><span class="p">:</span>
+
+                <span class="n">row_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_indicator_id</span><span class="p">)</span>
+
+                <span class="c">## this one line is where the calculation happens ##</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span> <span class="o">-</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value_y</span><span class="p">)</span> <span class="o">/</span> \
+                        <span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span>
+                <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">row_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_value</span>
+
+
+    <span class="k">def</span> <span class="nf">upsert_computed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Using the tuple dict that defined the unique key and associated value</span>
+<span class="sd">        for the various calculations, prepare this bulk insert, delete the</span>
+<span class="sd">        existing campaign data then perform the bulk insert.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">uq_tuple</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+            <span class="n">dwc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;location_id&#39;</span><span class="p">:</span> <span class="n">uq_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s">&#39;indicator_id&#39;</span><span class="p">:</span> <span class="n">uq_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                <span class="s">&#39;campaign_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">val</span><span class="p">,</span>
+                <span class="s">&#39;cache_job_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_job</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                <span class="s">&#39;document_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">document_id</span>
+            <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DataPointComputed</span><span class="p">(</span><span class="o">**</span><span class="n">dwc_dict</span><span class="p">))</span>
+        <span class="n">DataPointComputed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">campaign</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">DataPointComputed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get_datapoints_to_agg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">limit</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Since there are complicated dependencies for location aggregation, as</span>
+<span class="sd">        well as the interrationship between indicators, processing one campaign</span>
+<span class="sd">        at a time makes our code much simpler.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">dp_ids</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_id</span><span class="p">)</span>\
+            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dp_ids</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

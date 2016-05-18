@@ -1,0 +1,434 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rhizome.api.resources.datapoint_entry &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for rhizome.api.resources.datapoint_entry</h1><div class="highlight"><pre>
+<span class="kn">import</span> <span class="nn">traceback</span>
+
+<span class="kn">from</span> <span class="nn">tastypie</span> <span class="kn">import</span> <span class="n">fields</span>
+<span class="kn">from</span> <span class="nn">tastypie</span> <span class="kn">import</span> <span class="n">http</span>
+<span class="kn">from</span> <span class="nn">tastypie.resources</span> <span class="kn">import</span> <span class="n">ALL</span>
+<span class="kn">from</span> <span class="nn">tastypie.exceptions</span> <span class="kn">import</span> <span class="n">ImmediateHttpResponse</span>
+
+<span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="kn">import</span> <span class="n">ObjectDoesNotExist</span>
+<span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="kn">import</span> <span class="n">User</span>
+<span class="kn">from</span> <span class="nn">django.contrib.sessions.models</span> <span class="kn">import</span> <span class="n">Session</span>
+
+<span class="kn">from</span> <span class="nn">rhizome.api.resources.base_model</span> <span class="kn">import</span> <span class="n">BaseModelResource</span>
+<span class="kn">from</span> <span class="nn">rhizome.api.exceptions</span> <span class="kn">import</span> <span class="n">InputException</span>
+<span class="kn">from</span> <span class="nn">rhizome.api.serialize</span> <span class="kn">import</span> <span class="n">CustomJSONSerializer</span>
+<span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="n">Campaign</span><span class="p">,</span> <span class="n">Location</span><span class="p">,</span> <span class="n">Indicator</span><span class="p">,</span> <span class="n">DataPointEntry</span><span class="p">,</span> <span class="n">DataPoint</span>
+
+<div class="viewcode-block" id="DatapointEntryResource"><a class="viewcode-back" href="../../../../back-end/api.html#rhizome.api.resources.datapoint_entry.DatapointEntryResource">[docs]</a><span class="k">class</span> <span class="nc">DatapointEntryResource</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **GET Request:**</span>
+<span class="sd">        - *Required Parameters:*</span>
+<span class="sd">            &#39;campaign__in&#39; A list of campaign ids</span>
+<span class="sd">            &#39;indicator__in&#39; A list of indicator ids</span>
+<span class="sd">        - *Errors:*</span>
+<span class="sd">            if a campaign or indicator id is invalid, the API will return a 500 status code</span>
+<span class="sd">    **POST Request:** Create a new datapoint or update an existing one. </span>
+<span class="sd">        - *Required Parameters:*</span>
+<span class="sd">            &#39;campaign_id&#39;</span>
+<span class="sd">            &#39;location_id&#39;</span>
+<span class="sd">            &#39;indicator_id&#39;</span>
+<span class="sd">            &#39;value&#39;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">required_keys</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="c"># &#39;datapoint_id&#39;,</span>
+        <span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;location_id&#39;</span><span class="p">,</span>
+        <span class="s">&#39;campaign_id&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">,</span>  <span class="c"># &#39;changed_by_id&#39;,</span>
+    <span class="p">]</span>
+    <span class="c"># for validating foreign keys</span>
+    <span class="n">keys_models</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;location_id&#39;</span><span class="p">:</span> <span class="n">Location</span><span class="p">,</span>
+        <span class="s">&#39;campaign_id&#39;</span><span class="p">:</span> <span class="n">Campaign</span><span class="p">,</span>
+        <span class="s">&#39;indicator_id&#39;</span><span class="p">:</span> <span class="n">Indicator</span>
+    <span class="p">}</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s">&#39;location_id&#39;</span><span class="p">)</span>
+    <span class="c"># campaign = fields.IntegerField(attribute=&#39;campaign_id&#39;)</span>
+    <span class="n">indicator</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s">&#39;indicator_id&#39;</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">():</span>
+        <span class="c"># note - auth inherited from parent class #</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">DataPointEntry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">allowed_methods</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;get&#39;</span><span class="p">,</span> <span class="s">&#39;post&#39;</span><span class="p">]</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;datapointentry&#39;</span>
+        <span class="n">always_return_data</span> <span class="o">=</span> <span class="bp">True</span>
+        <span class="n">max_limit</span> <span class="o">=</span> <span class="bp">None</span>  <span class="c"># no pagination</span>
+        <span class="n">filtering</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;indicator&#39;</span><span class="p">:</span> <span class="n">ALL</span><span class="p">,</span>
+            <span class="s">&#39;campaign&#39;</span><span class="p">:</span> <span class="n">ALL</span><span class="p">,</span>
+            <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="n">ALL</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">serializer</span> <span class="o">=</span> <span class="n">CustomJSONSerializer</span><span class="p">()</span>
+
+
+    <span class="k">def</span> <span class="nf">apply_filters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">applicable_filters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        An ORM-specific implementation of ``apply_filters``.</span>
+
+<span class="sd">        The default simply applies the ``applicable_filters`` as ``**kwargs``,</span>
+<span class="sd">        but should make it possible to do more advanced things.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object_list</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="c">#.filter(**applicable_filters)</span>
+
+    <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">campaign_param</span><span class="p">,</span> <span class="n">indicator_param</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;campaign__in&#39;</span><span class="p">],</span> \
+            <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;indicator__in&#39;</span><span class="p">]</span>
+
+        <span class="n">indicator__in</span> <span class="o">=</span> <span class="n">indicator_param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">)</span>
+
+        <span class="n">campaign_obj</span> <span class="o">=</span> <span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">campaign_param</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                <span class="n">data_date__gte</span> <span class="o">=</span> <span class="n">campaign_obj</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span>
+                <span class="n">data_date__lte</span> <span class="o">=</span> <span class="n">campaign_obj</span><span class="o">.</span><span class="n">end_date</span><span class="p">,</span>
+                <span class="n">location_id</span> <span class="o">=</span> <span class="n">campaign_obj</span><span class="o">.</span><span class="n">top_lvl_location_id</span><span class="p">,</span>
+                <span class="n">indicator__in</span> <span class="o">=</span> <span class="n">indicator__in</span>
+            <span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="n">skip_errors</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Overriding Tastypie save method here because the</span>
+<span class="sd">        authorized_update_detail of this resource is failing.  Will need more</span>
+<span class="sd">        research here, but commenting this out for now as authorization is</span>
+<span class="sd">        handled separately.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_valid</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">bundle</span><span class="o">.</span><span class="n">errors</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">skip_errors</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">ImmediateHttpResponse</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="bp">self</span>\
+                <span class="o">.</span><span class="n">error_response</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">request</span><span class="p">,</span> <span class="n">bundle</span><span class="o">.</span><span class="n">errors</span><span class="p">))</span>
+
+        <span class="c"># Check if they&#39;re authorized.</span>
+        <span class="c"># if bundle.obj.pk:</span>
+        <span class="c">#     self.authorized_update_detail(self.get_object_list(bundle.request), bundle)</span>
+        <span class="c"># else:</span>
+        <span class="c">#     self.authorized_create_detail(self.get_object_list(bundle.request), bundle)</span>
+
+        <span class="c"># Save FKs just in case.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_related</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+
+        <span class="c"># Save the main object.</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">objects_saved</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">create_identifier</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="p">))</span>
+
+        <span class="c"># Now pick up the M2M bits.</span>
+        <span class="n">m2m_bundle</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">hydrate_m2m</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_m2m</span><span class="p">(</span><span class="n">m2m_bundle</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">bundle</span>
+
+    <span class="k">def</span> <span class="nf">obj_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Make sure the data is valid, then save it.</span>
+<span class="sd">        All POST requests come through here, whether they&#39;re truly</span>
+<span class="sd">        &#39;obj_create&#39; or actually &#39;obj_update&#39;.</span>
+<span class="sd">        Also, if a request comes in with value=NULL, that means set the value</span>
+<span class="sd">        of that obect = 0.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">validate_object</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+            <span class="c"># Determine what kind of request this is: create, update, or delete</span>
+            <span class="c"># throw error if can&#39;t get a real user id</span>
+            <span class="n">user_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_user_id</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">user_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s">&#39;Could not get User ID from cookie&#39;</span><span class="p">)</span>
+            <span class="n">existing_datapoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_existing_datapoint</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">existing_datapoint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+
+                <span class="n">bundle</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">success_response</span><span class="p">()</span> <span class="c">##?</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">obj_update</span><span class="p">(</span><span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s">&#39;id&#39;</span><span class="p">:</span> <span class="n">existing_datapoint</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+
+            <span class="k">else</span><span class="p">:</span> <span class="c"># CREATE</span>
+                <span class="n">data_to_insert</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span>
+                <span class="c"># find the campaign object from the parameter</span>
+                <span class="n">campaign_obj</span> <span class="o">=</span> <span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span>\
+                    <span class="n">data_to_insert</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]))</span>
+                <span class="c">## create the dictionary used to insert into datapoint ##</span>
+                <span class="n">data_to_insert</span><span class="p">[</span><span class="s">&#39;data_date&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">campaign_obj</span><span class="o">.</span><span class="n">start_date</span>
+                <span class="n">data_to_insert</span><span class="p">[</span><span class="s">&#39;source_submission_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c"># data_entry</span>
+                <span class="n">data_to_insert</span><span class="p">[</span><span class="s">&#39;cache_job_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="c"># to process</span>
+                <span class="c">## insert into datpaoint table ##</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="o">**</span><span class="n">data_to_insert</span><span class="p">)</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">id</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="n">campaign_obj</span><span class="o">.</span><span class="n">id</span>
+                <span class="k">return</span> <span class="n">bundle</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">e</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_response</span><span class="p">(</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="n">request</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_error_response</span><span class="p">(</span><span class="n">e</span><span class="p">),</span>
+                <span class="n">response_class</span><span class="o">=</span><span class="n">http</span><span class="o">.</span><span class="n">HttpApplicationError</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="n">ImmediateHttpResponse</span><span class="p">(</span><span class="n">response</span><span class="o">=</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">obj_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Overriding this tastypie method so we can explicitly set the value to</span>
+<span class="sd">        NULL when the value comes in as NaN.  This method is how the system</span>
+<span class="sd">        handles &quot;deletes&quot; that is we do not remove the row all together, just</span>
+<span class="sd">        set the value to null so the history can be maintained, and we are</span>
+<span class="sd">        more easily able to queue up changes for caching.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">value_to_update</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">value_to_update</span> <span class="o">==</span> <span class="s">&#39;NaN&#39;</span><span class="p">:</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
+
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+        <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value_to_update</span>
+        <span class="n">dp</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">dp</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]</span>
+
+        <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">dp</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_to_update</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">bundle</span>
+
+    <span class="k">def</span> <span class="nf">get_user_id</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+        <span class="n">request</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">request</span>
+
+        <span class="k">if</span> <span class="s">&#39;sessionid&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span><span class="p">:</span>
+            <span class="n">session</span> <span class="o">=</span> <span class="n">Session</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">pk</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span><span class="p">[</span><span class="s">&#39;sessionid&#39;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="s">&#39;_auth_user_id&#39;</span> <span class="ow">in</span> <span class="n">session</span><span class="o">.</span><span class="n">get_decoded</span><span class="p">():</span>
+                <span class="n">user</span> <span class="o">=</span> <span class="n">User</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">get_decoded</span><span class="p">()[</span><span class="s">&#39;_auth_user_id&#39;</span><span class="p">])</span>
+                <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="n">id</span>
+
+    <span class="c"># def is_delete_request(self, bundle):</span>
+    <span class="c">#     if &#39;value&#39; in bundle.data and bundle.data[&#39;value&#39;] is None:</span>
+    <span class="c">#         return True</span>
+    <span class="c">#     else:</span>
+    <span class="c">#         return False</span>
+
+    <span class="k">def</span> <span class="nf">obj_delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This is here to prevent an objects from ever being deleted.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">obj_delete_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This is here to prevent a list of objects from</span>
+<span class="sd">        ever being deleted.&quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">get_existing_datapoint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assumes data is valid</span>
+<span class="sd">        (i.e. data should have passed validate_object first)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">campaign</span> <span class="o">=</span> <span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">DataPointEntry</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="n">location_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]),</span>
+                <span class="n">data_date</span><span class="o">=</span><span class="n">campaign</span><span class="o">.</span><span class="n">start_date</span><span class="p">,</span>
+                <span class="n">indicator_id</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]),</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="n">obj</span>
+        <span class="k">except</span> <span class="n">ObjectDoesNotExist</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">return</span>
+
+    <span class="k">def</span> <span class="nf">hydrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bundle</span><span class="p">,</span> <span class="s">&#39;obj&#39;</span><span class="p">)</span> \
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="n">DataPointEntry</span><span class="p">)</span> \
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;location_id&#39;</span><span class="p">)</span> \
+            <span class="ow">and</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">location_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;campaign_id&#39;</span><span class="p">)</span> \
+            <span class="ow">and</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">location_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> \
+            <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">)</span> \
+                <span class="ow">and</span> <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">location_id</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="c"># we get here if there&#39;s an existing datapoint being modified</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># we get here if we&#39;re inserting a brand new datapoint</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">DataPointEntry</span><span class="p">()</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">])</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">])</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">indicator_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">])</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+
+        <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">cache_job_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span><span class="o">.</span><span class="n">source_submission_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">bundle</span>
+
+    <span class="k">def</span> <span class="nf">dehydrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+        <span class="c"># hack: bundle will only have a response attr if this is a POST or PUT request</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">bundle</span><span class="p">,</span> <span class="s">&#39;response&#39;</span><span class="p">):</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">response</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c"># otherwise, this is a GET request</span>
+            <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;datapoint_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+            <span class="k">del</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>
+            <span class="c"># for key in [&#39;campaign&#39;, &#39;indicator&#39;, &#39;location&#39;]:</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;indicator&#39;</span><span class="p">,</span> <span class="s">&#39;location&#39;</span><span class="p">]:</span>
+                <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;{0}_id&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&#39;created_at&#39;</span><span class="p">,</span> <span class="s">&#39;resource_uri&#39;</span><span class="p">]:</span>
+                <span class="k">del</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">bundle</span>
+
+    <span class="k">def</span> <span class="nf">validate_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check that object has all the right fields, yadda yadda yadda.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_keys</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">obj</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&#39;Required metadata missing: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+        <span class="c"># ensure that metadata values are valid</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys_models</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">key_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">obj</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="s">&#39;Invalid metadata value: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">key_id</span><span class="p">)</span>
+            <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">ObjectDoesNotExist</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">InputException</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;Could not find record for metadata value: {0}&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+   <span class="c"># MEP: I commented this out because it doesn&#39;t appear to be used anywhere</span>
+
+    <span class="c"># def validate_object_update(self, obj):</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     When updating an object, validate the new data.</span>
+    <span class="c">#     &quot;&quot;&quot;</span>
+    <span class="c">#     # what should we do about id, url, created_at ?</span>
+    <span class="c">#     # those all get filled in automatically, right?</span>
+
+    <span class="c">#     # TODO uncomment once authorization is in place</span>
+    <span class="c">#     # should this be a required key? yeah</span>
+    <span class="c">#     # assert obj.has_key(&#39;changed_by_id&#39;)</span>
+    <span class="c">#     # user_id = int(obj[&#39;changed_by_id&#39;])</span>
+    <span class="c">#     # User.objects.get(id=user_id)</span>
+
+    <span class="c">#     # ensure that location, campaign, and indicator, if present, are valid values</span>
+    <span class="c">#     if &#39;location_id&#39; in obj:</span>
+    <span class="c">#         location_id = int(obj[&#39;location_id&#39;])</span>
+    <span class="c">#         Location.objects.get(id=location_id)</span>
+
+    <span class="c">#     if &#39;campaign_id&#39; in obj:</span>
+    <span class="c">#         campaign_id = int(obj[&#39;campaign_id&#39;])</span>
+    <span class="c">#         Campaign.objects.get(id=campaign_id)</span>
+
+    <span class="c">#     if &#39;indicator_id&#39; in obj:</span>
+    <span class="c">#         indicator_id = int(obj[&#39;indicator_id&#39;])</span>
+    <span class="c">#         Indicator.objects.get(id=indicator_id)</span>
+
+    <span class="k">def</span> <span class="nf">success_response</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;success&#39;</span><span class="p">:</span> <span class="mi">1</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">response</span>
+
+    <span class="k">def</span> <span class="nf">make_error_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;success&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s">&#39;error&#39;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s">&#39;code&#39;</span><span class="p">:</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s">&#39;code&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+                <span class="s">&#39;message&#39;</span><span class="p">:</span> <span class="n">error</span><span class="o">.</span><span class="n">message</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="s">&#39;data&#39;</span><span class="p">):</span>
+            <span class="n">response</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">][</span><span class="s">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">error</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">response</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

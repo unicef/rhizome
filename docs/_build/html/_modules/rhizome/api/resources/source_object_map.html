@@ -1,0 +1,194 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>rhizome.api.resources.source_object_map &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../../../../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for rhizome.api.resources.source_object_map</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">rhizome.api.resources.base_model</span> <span class="kn">import</span> <span class="n">BaseModelResource</span>
+<span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="n">Indicator</span><span class="p">,</span> <span class="n">Location</span><span class="p">,</span> <span class="n">Campaign</span>
+<span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="n">SourceObjectMap</span><span class="p">,</span> <span class="n">DocumentSourceObjectMap</span>
+
+
+<div class="viewcode-block" id="SourceObjectMapResource"><a class="viewcode-back" href="../../../../back-end/api.html#rhizome.api.resources.source_object_map.SourceObjectMapResource">[docs]</a><span class="k">class</span> <span class="nc">SourceObjectMapResource</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    **GET Request** Returns all Source Object Maps</span>
+<span class="sd">        - *Optional Parameters:*</span>
+<span class="sd">            &#39;id&#39;: return only the id(s) specified</span>
+<span class="sd">            &#39;document_id&#39;: returns only Source Object Maps associated with the given document id(s)</span>
+<span class="sd">        - *Errors:*</span>
+<span class="sd">            If an error occurs, the API returns 200 code and an empty list of Source Object Maps</span>
+
+<span class="sd">    **POST Request** Changes the master object for an existing source object map</span>
+<span class="sd">        - *Required Parameters:*</span>
+<span class="sd">           &#39;master_object_id&#39; &#39;mapped_by_id&#39; &#39;id&#39;</span>
+<span class="sd">        - *Errors:*</span>
+<span class="sd">            if any of the required fields are missing or incorrect, the API returns a 500 error code.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;source_object_map&#39;</span>
+
+    <span class="k">def</span> <span class="nf">obj_create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">post_data</span> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">som_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">post_data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span>
+
+        <span class="n">som_obj</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">som_id</span><span class="p">)</span>
+
+        <span class="n">master_object_id</span> <span class="o">=</span> <span class="n">post_data</span><span class="p">[</span><span class="s">&#39;master_object_id&#39;</span><span class="p">]</span>
+        <span class="n">som_obj</span><span class="o">.</span><span class="n">master_object_id</span> <span class="o">=</span> <span class="n">master_object_id</span>
+        <span class="n">som_obj</span><span class="o">.</span><span class="n">master_object_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_master_object_name</span><span class="p">(</span><span class="n">som_obj</span><span class="p">)</span>
+        <span class="n">som_obj</span><span class="o">.</span><span class="n">mapped_by_id</span> <span class="o">=</span> <span class="n">post_data</span><span class="p">[</span><span class="s">&#39;mapped_by_id&#39;</span><span class="p">]</span>
+        <span class="n">som_obj</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+        <span class="n">bundle</span><span class="o">.</span><span class="n">obj</span> <span class="o">=</span> <span class="n">som_obj</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">som_obj</span><span class="o">.</span><span class="n">id</span>
+        <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s">&#39;master_object_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">som_obj</span><span class="o">.</span><span class="n">master_object_name</span>
+
+        <span class="k">return</span> <span class="n">bundle</span>
+
+    <span class="k">def</span> <span class="nf">get_master_object_name</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">som_obj</span><span class="p">):</span>
+
+        <span class="n">qs_map</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s">&#39;indicator&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;short_name&#39;</span><span class="p">,</span><span class="n">Indicator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">],</span>
+            <span class="s">&#39;location&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="n">Location</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">],</span>
+            <span class="s">&#39;campaign&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s">&#39;name&#39;</span><span class="p">,</span><span class="n">Campaign</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">],</span>
+        <span class="p">}</span>
+
+        <span class="n">obj_display_field</span> <span class="o">=</span> <span class="n">qs_map</span><span class="p">[</span><span class="n">som_obj</span><span class="o">.</span><span class="n">content_type</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">qs</span> <span class="o">=</span> <span class="n">qs_map</span><span class="p">[</span><span class="n">som_obj</span><span class="o">.</span><span class="n">content_type</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">master_obj</span> <span class="o">=</span> <span class="n">qs</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">som_obj</span><span class="o">.</span><span class="n">master_object_id</span><span class="p">)</span><span class="o">.</span><span class="n">__dict__</span>
+        <span class="n">master_object_name</span> <span class="o">=</span> <span class="n">master_obj</span><span class="p">[</span><span class="n">obj_display_field</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">master_object_name</span>
+
+
+    <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+
+        <span class="n">qs</span> <span class="o">=</span><span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="s">&#39;document_id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+
+            <span class="n">som_ids</span> <span class="o">=</span> <span class="n">DocumentSourceObjectMap</span><span class="o">.</span><span class="n">objects</span> \
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">document_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;document_id&#39;</span><span class="p">])</span><span class="o">.</span> \
+                <span class="n">values_list</span><span class="p">(</span><span class="s">&#39;source_object_map_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">som_ids</span><span class="p">,</span>\
+                <span class="n">master_object_id__gt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="s">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">qs</span>
+</div>
+<span class="k">class</span> <span class="nc">SourceObjectToMapResource</span><span class="p">(</span><span class="n">SourceObjectMapResource</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
+        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;source_object_to_map&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        
+        <span class="n">qs</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
+        <span class="k">if</span> <span class="s">&#39;document_id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+
+            <span class="n">som_ids</span> <span class="o">=</span> <span class="n">DocumentSourceObjectMap</span><span class="o">.</span><span class="n">objects</span> \
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">document_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;document_id&#39;</span><span class="p">])</span><span class="o">.</span> \
+                <span class="n">values_list</span><span class="p">(</span><span class="s">&#39;source_object_map_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">som_ids</span><span class="p">,</span>\
+                <span class="n">master_object_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="s">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">qs</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../../../index.html">polio 0.1 documentation</a> &raquo;</li>
+          <li class="nav-item nav-item-1"><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

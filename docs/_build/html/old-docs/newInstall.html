@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>New Install &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="new-install">
+<h1>New Install<a class="headerlink" href="#new-install" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="creating-a-new-server-on-aws">
+<h2>Creating a New Server on AWS<a class="headerlink" href="#creating-a-new-server-on-aws" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="launching-new-ec2-instance">
+<h3>Launching new EC2 Instance<a class="headerlink" href="#launching-new-ec2-instance" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul>
+<li><p class="first">Go to AWS &#8211; Click &#8220;Ec2&#8221;</p>
+</li>
+<li><dl class="first docutils">
+<dt>Launch Instance</dt>
+<dd><p class="first last">-&gt; Ubuntu Server 14.04 LTS (HVM), SSD Volume Type
+-&gt; type m4.large</p>
+</dd>
+</dl>
+<p>click &#8220;Configure Instance Details&#8221; &#8211; NOT review and launch
+use the default selected here.. and click add storage</p>
+</li>
+<li><p class="first">Storage Screen - Select 64-g, only one volumne needed, next click &#8220;tag Instance&#8221;</p>
+</li>
+<li><p class="first">Tag Instance * whatever you want *</p>
+</li>
+<li><dl class="first docutils">
+<dt>Configure Security Group</dt>
+<dd><p class="first last">-&gt; Choose &#8220;Rhizome Prod Secuity Group&#8221;</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Click &#8220;review and launch&#8221;</p>
+</li>
+</ul>
+</div></blockquote>
+<p>At this point your server should spin up .. now lets set up an Elastic IP</p>
+</div>
+<div class="section" id="elastic-i-p">
+<h3>Elastic I.P.<a class="headerlink" href="#elastic-i-p" title="Permalink to this headline">¶</a></h3>
+<p>the point of an elastic I.P. is that you can assign mutliple machines to this address so that if you have to swap out the server, or spin up a new one, and it has a different i.p. you can simply associate the old instance to the elastic IP.</p>
+<dl class="docutils">
+<dt>Once the server is &#8220;running&#8221; * ( see console.aws.amazon.com/ec2  ) go to &#8220;elastic IPS&#8221;</dt>
+<dd><ul class="first">
+<li><p class="first">Allocate New Address -&gt; this creates a publc I.P. that can be used via a domain name router like go datddy or network solutions.</p>
+</li>
+<li><p class="first">Select the new instance by clicking the check box at the left</p>
+</li>
+<li><dl class="first docutils">
+<dt>click actions &gt;&gt; asscoiate addres</dt>
+<dd><ul class="first last simple">
+<li>choose the instance that you just created and click &#8220;associate&#8221;</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">For conveninve you will want to add the new &#8220;public IP&#8221; along wiht your ssh information to your ~/.ssh/config</p>
+</li>
+</ul>
+<p class="last">for instance</p>
+</dd>
+<dt>Host myServer</dt>
+<dd>User john
+HostName my.ip.adr.01
+IdentityFile ~/.ssh/some_key.pem</dd>
+</dl>
+<p>Once that it set up, you should be able to .ssh into the machine simply by running:</p>
+<p>ssh myServer</p>
+</div>
+<div class="section" id="security-groups-and-firewall">
+<h3>Security Groups and Firewall<a class="headerlink" href="#security-groups-and-firewall" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="base-system-packages">
+<h2>Base System Packages<a class="headerlink" href="#base-system-packages" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-linux-packages">
+<h3>Basic Linux Packages<a class="headerlink" href="#basic-linux-packages" title="Permalink to this headline">¶</a></h3>
+<p>unzip &#8211; <cite>sudo apt-get install unzip</cite>
+pip &#8211; <cite>sudo apt-get install python-pip</cite>
+python-dev &#8211; sudo apt-get install python-dev</p>
+<blockquote>
+<div>-&gt; used by pandas installer</div></blockquote>
+</div>
+<div class="section" id="apache">
+<h3>Apache<a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>ssh into your machine and run:</li>
+</ol>
+<blockquote>
+<div><cite>sudo apt-get install apache2</cite></div></blockquote>
+<p>We will know that this task is complete, by hitting the server URL ( elastic IP for AWS ) in our brower and seeing the apache startup page.</p>
+</div>
+<div class="section" id="postgres">
+<h3>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="installing">
+<h4>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h4>
+<p><cite>sudo apt-get update</cite>
+<cite>sudo apt-get install postgresql postgresql-contrib</cite></p>
+<p>you shoudl see somethign like this:</p>
+<dl class="docutils">
+<dt>Removing obsolete dictionary files:</dt>
+<dd><ul class="first last simple">
+<li>No PostgreSQL clusters exist; see &#8220;man pg_createcluster&#8221;</li>
+</ul>
+</dd>
+</dl>
+<p>Processing triggers for ureadahead (0.100.0-16) ...
+Setting up postgresql-9.3 (9.3.11-0ubuntu0.14.04) ...
+Creating new cluster 9.3/main ...</p>
+<blockquote>
+<div>config /etc/postgresql/9.3/main
+data   /var/lib/postgresql/9.3/main
+locale en_US.UTF-8
+port   5432</div></blockquote>
+<p>Now login to the postgres user with this command:</p>
+<p><cite>sudo -i -u postgres</cite></p>
+<p>then enter the psql shell by running:</p>
+<p><cite>psql postgres</cite></p>
+<p>now you should be able to create datases and roles.</p>
+</div>
+<div class="section" id="adding-additional-linux-helper-packages">
+<h4>Adding additional Linux Helper Packages<a class="headerlink" href="#adding-additional-linux-helper-packages" title="Permalink to this headline">¶</a></h4>
+<p><cite>sudo apt-get install python-psycopg2</cite>
+<cite>sudo apt-get install libpq-dev</cite></p>
+</div>
+<div class="section" id="setting-up-users-and-creating-the-db">
+<h4>Setting up Users and Creating the DB<a class="headerlink" href="#setting-up-users-and-creating-the-db" title="Permalink to this headline">¶</a></h4>
+<p>In the settings.py file that will be used by the application to handle sensitive information, branding and the management of packages, we will have a database host and user cofiguration.  So whatever you decide to call your database here, will be the information that is used by the application to access the Database.</p>
+<ol class="arabic simple">
+<li>Create a User:</li>
+</ol>
+<blockquote>
+<div><p>WHile in the postgres shell run:</p>
+<p><cite>CREATE ROLE djangoapp WITH PASSWORD &#8216;mySecurePassword&#8217; LOGIN SUPERUSER;</cite></p>
+</div></blockquote>
+<p>Make sure your password is secure and uses numbers, letters and special characaters</p>
+<p>after exiting the psql shell with postgres user, Make sure this user was created by logging in like so :</p>
+<p><cite>pql postgres -U djangoapp</cite></p>
+<p>and follow the prompt for password.</p>
+<dl class="docutils">
+<dt>If you see this error:</dt>
+<dd>-&gt; psql: FATAL:  Peer authentication failed for user &#8220;djangoapp&#8221;</dd>
+</dl>
+<p>You likely will have to go to your pg_hba.conf file and make sure  local requests are handled with &#8220;md5&#8221; and NOT peer authentication.</p>
+<p>see more here:
+<a class="reference external" href="http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge">http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge</a></p>
+<dl class="docutils">
+<dt>you will want to reload postgres by running:</dt>
+<dd>&#8211;&gt; sudo /etc/init.d/postgresql reload</dd>
+</dl>
+<p>For more on postgres, installing and debugging see here:
+<a class="reference external" href="https://help.ubuntu.com/community/PostgreSQL">https://help.ubuntu.com/community/PostgreSQL</a></p>
+<ol class="arabic simple" start="2">
+<li>Create the database</li>
+</ol>
+<p>CREATE DATABASE afg_eoc WITH OWNER djangoapp;</p>
+<p>now make sure you can login to the database with:</p>
+<p>psql afg_eoc -U djangoapp</p>
+<p>NOTE:
+- the config for postgres is /etc/postgresql/9.3/main
+- the data for postgres is /var/lib/postgresql/9.3/main</p>
+<p>3. create all of the necessary application files and diretories.
+Create App Directory and File System
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+<p>If you look at fabfile.py at the root of the directory, it relies on a few directories to be in place in order to deploy and serve up the applicaion.</p>
+<p>remote_work_path = &#8216;~/deploy/rhizome-work&#8217;
+remote_backend_path = &#8216;/var/www/apps/rhizome/&#8217;
+remote_frontend_path = &#8216;/var/www/apps/rhizome/webapp/public/static/&#8217;</p>
+<p>Give ownership to the user that deploys your system.. so if your ssh config for the new remote server is</p>
+<p>myUser</p>
+<p>execute on your machine:</p>
+<p><cite>sudo chown -R myUser /var/www/apps/rhizome/</cite></p>
+<p>To make sure that you are able to create and access the above directores.</p>
+<p>Finally create the &#8220;venv&#8221; path which is where we store all of the packages of application.</p>
+<p><cite>mkdir /var/www/apps/rhizome/venv</cite></p>
+<ol class="arabic simple" start="4">
+<li>push up the code using the fabfile.</li>
+</ol>
+<p>If you have the .ssh/config set up like above you can deploy by</p>
+<ol class="arabic simple">
+<li>entering the virtualenv with:</li>
+</ol>
+<blockquote>
+<div>source/venv/bin/activate</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>fab -H mySshConfig deploy</li>
+</ol>
+<p>Check for failiures.. the execution should tell you at the bottom exactly what line failed.. so ssh into the server, run that command and see if you can track down the issue.</p>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">New Install</a><ul>
+<li><a class="reference internal" href="#creating-a-new-server-on-aws">Creating a New Server on AWS</a><ul>
+<li><a class="reference internal" href="#launching-new-ec2-instance">Launching new EC2 Instance</a></li>
+<li><a class="reference internal" href="#elastic-i-p">Elastic I.P.</a></li>
+<li><a class="reference internal" href="#security-groups-and-firewall">Security Groups and Firewall</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#base-system-packages">Base System Packages</a><ul>
+<li><a class="reference internal" href="#basic-linux-packages">Basic Linux Packages</a></li>
+<li><a class="reference internal" href="#apache">Apache</a></li>
+<li><a class="reference internal" href="#postgres">Postgres</a><ul>
+<li><a class="reference internal" href="#installing">Installing</a></li>
+<li><a class="reference internal" href="#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li><a class="reference internal" href="#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

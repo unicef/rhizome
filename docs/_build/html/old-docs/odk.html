@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>ODK Notes &mdash; polio 0.1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/pyramid.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="polio 0.1 documentation" href="../index.html" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Neuton&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Nobile:regular,italic,bold,bolditalic&amp;subset=latin" type="text/css" media="screen" charset="utf-8" />
+<!--[if lte IE 6]>
+<link rel="stylesheet" href="../_static/ie6.css" type="text/css" media="screen" charset="utf-8" />
+<![endif]-->
+
+  </head>
+  <body role="document">
+
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="odk-notes">
+<h1>ODK Notes<a class="headerlink" href="#odk-notes" title="Permalink to this headline">¶</a></h1>
+<p><strong>ODK Overview</strong></p>
+<p>ODK (Open Data Kit) is a platform that allows users to post data via their android devices to a remote data store.</p>
+<p>There are 4 main components to ODK:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://opendatakit.org/use/build/">Build</a>  - a tool to build data collection forms or surveys<ul>
+<li>The output of this tool is XML</li>
+<li>Also available for more complex forms is XLSForm</li>
+</ul>
+</li>
+<li><a class="reference external" href="http://opendatakit.org/use/collect/">Collect</a> - An Android app that allows user to input data on a mobile device using the forms built with Build or XlSForm and send it to a server</li>
+<li><a class="reference external" href="http://opendatakit.org/use/aggregate/">Aggregate</a>  - The backend system where the collected data is stored and visualized with a simple web page.</li>
+</ul>
+<p>In Addition the following ODK products are also</p>
+<ul class="simple">
+<li><a class="reference external" href="http://opendatakit.org/use/briefcase/">ODK Brief Case</a> -  Tool to push and pull data from ODK Aggregate</li>
+<li><a class="reference external" href="http://opendatakit.org/2014/02/odk-aggregate-1-4-1-with-enketo-webforms-integration-is-now-available/">Enekto Web Forms</a> -  Not sure about this yet, but this may be a way to build a web form for the Android input forms used in Collect</li>
+</ul>
+<img alt="http://oi60.tinypic.com/68ag3p.jpg" src="http://oi60.tinypic.com/68ag3p.jpg" />
+<p><strong>Tutorials and Resources</strong></p>
+<p><a class="reference external" href="https://www.google.com/earth/outreach/tutorials/odk_gettingstarted.html">https://www.google.com/earth/outreach/tutorials/odk_gettingstarted.html</a></p>
+<p><strong>Moving Forward</strong></p>
+<p>There are two major directions that we can go with this:</p>
+<ul class="simple">
+<li>Implement Process that constant checks the App Engine Instance for new data, transforms it and loads into our backend system.</li>
+<li>Directly hookup our backend system with the ODK Collect application</li>
+</ul>
+<p>BOTH OF THESE ARE DEPENDENT ON APP ENGINE SERVER DETAILS FROM NIGERIA</p>
+<p><strong>What we need from Nigeria to Move forward</strong></p>
+<ul class="simple">
+<li>App Engine Credentials!</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../index.html">polio 0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.3.1.
+    </div>
+  </body>
+</html>

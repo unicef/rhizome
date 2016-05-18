@@ -11,7 +11,8 @@ include
 .coverage
 /htmlcov
 /media
-/docs/_build
+/docs/_build/.buildinfo
+/docs/_build/doctrees
 /docs/_static
 /docs/_templates
 /build
