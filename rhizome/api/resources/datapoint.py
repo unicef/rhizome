@@ -142,7 +142,6 @@ class DatapointResource(BaseNonModelResource):
         return self.base_data
 
     def get_time_group_series(self, dp_df):
-
         time_grouping = self.parsed_params['group_by_time']
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
