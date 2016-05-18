@@ -65,7 +65,7 @@ class MapChart extends HighChart {
     const props = this.props
     const current_indicator = this.props.selected_indicators[0]
     return [{
-      data: this.props.datapoints.meta.chart_data,
+      data: props.datapoints.flattened.map(d => ({value: d.value, location_id: d.location.id})),
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
       joinBy: 'location_id',
       name: current_indicator.name,
