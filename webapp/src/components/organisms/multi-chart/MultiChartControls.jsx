@@ -111,21 +111,22 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-
-    const location_type_id = chart.selected_locations[0].location_type_id
     let depth_titles = null
-    if (location_type_id <= 1) {
-      depth_titles = ['Country', 'Region', 'Province', 'District']
-    } else  if (location_type_id === 6 ) {
-      depth_titles = ['Region', 'Province', 'District']
-    } else if (location_type_id === 2) {
-      depth_titles = ['Province', 'District']
+    if (chart.selected_locations.length > 0) {
+      const location_type_id = chart.selected_locations[0].location_type_id
+      if (location_type_id <= 1) {
+        depth_titles = ['Country', 'Region', 'Province', 'District']
+      } else  if (location_type_id === 6 ) {
+        depth_titles = ['Region', 'Province', 'District']
+      } else if (location_type_id === 2) {
+        depth_titles = ['Province', 'District']
+      }
+      let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
+      if (location_type_id <= 1 && chart.type === 'BubbleMap') {
+        depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
+      }
+      const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
     }
-    let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
-    if (location_type_id <= 1 && chart.type === 'BubbleMap') {
-      depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
-    }
-    const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
     const location_depth_selector = depth_titles && chart.groupBy !== 'location' ? (
       <div className='medium-12 columns radio-group'>
         <h3>Aggregation
