@@ -26,7 +26,7 @@ const _prepDatapointsQuery = (params) => {
     campaign__in: params.campaign__in || params.campaign_ids,
     indicator__in: params.indicator_ids,
     location_id__in: params.location_ids,
-    location_depth: params.location_depth,
+    location_depth: params.location_depth <= 0 ? null : params.location_depth,
     campaign_start: params.start_date,
     campaign_end: params.end_date,
     chart_type: params.type,
