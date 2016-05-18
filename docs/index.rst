@@ -40,7 +40,8 @@ Deploy
 Back-end details
 ----------------
 - :doc:`back-end/backendComponents`
-
+- :doc:`back-end/aggregationDetail`
+- :doc:`back-end/api`
 
 
 * :ref:`search`
