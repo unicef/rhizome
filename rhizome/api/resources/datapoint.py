@@ -272,7 +272,7 @@ class DatapointResource(BaseNonModelResource):
             .max())\
             .reset_index()
         latest_date_df['value'] = latest_date_df['data_date']\
-            .map(lambda x: x.strftime('%b %d %Y'))
+            .map(lambda x: x.strftime('%Y-%m-%d'))
         latest_date_df['indicator_id'] = self\
             .ind_meta['latest_date']
 
