@@ -1,5 +1,5 @@
 
-Setting up the developer environment
+Setting Up the Developer Environment
 ------------------------------------
 
 Back-end setup

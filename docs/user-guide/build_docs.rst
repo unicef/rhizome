@@ -1,5 +1,5 @@
 ##########################
-Creating the documentation
+Creating the Documentation
 ##########################
 
 To build this documentation, we will utilize Sphinx library for Python. Once the repository is cloned:
@@ -11,7 +11,7 @@ Building back-end documentation
 * make html
 * Docs files now available here: docs/_build/html
 
-Building front-end technical documentation
+Building front-end documentation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 * cd webapp
 * gulp doc
