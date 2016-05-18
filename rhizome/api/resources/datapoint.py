@@ -1,7 +1,7 @@
 import numpy as np
 import sys
+import itertools
 from pandas import DataFrame, pivot_table, notnull, concat
-
 from django.http import HttpResponse
 
 from tastypie import fields
@@ -343,35 +343,12 @@ class DatapointResource(BaseNonModelResource):
         except KeyError:
             indicator_ids = None
 
-        # try:
-        #     self.chart_type = request.GET['chart_type']
-        #     data['meta']['chart_type'] = self.chart_type
-        # except KeyError:
-        #     self.chart_type = None
-
-        # if self.chart_type == 'TableChart':
-
-        #     p_loc_qs = Location.objects\
-        #         .filter(id__in = self.location_ids)\
-        #         .values('name','parent_location__name')\
-        #         .order_by('parent_location__name')
-
-        #     data['meta']['parent_location_map'] = [l for l in p_loc_qs]
-        #     data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
-
         data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
         # add errors if it exists
         if self.error:
             data['error'] = self.error
         else:
             data['error'] = None
-
-
-        # try:
-        #     chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
-        #     data['meta']['chart_data'] = chart_data_fn()
-        # except KeyError:
-        #     data['meta']['chart_data'] = []
 
         return data
 
@@ -574,36 +551,15 @@ class DatapointResource(BaseNonModelResource):
         This is largely for Data entry so that we can see a row in the form
         even when there is no existing data.
         '''
-        for loc in self.location_ids:
-            for camp in self.parsed_params['campaign__in']:
-                for ind in self.parsed_params['indicator__in']:
-                    add_val = False
-                    if 'campaign_id' in df.columns:
-                        df1= df[df['campaign_id'] == camp]
-                    else:
-                        df1= df[df['time_grouping'] == camp]
-                    if df1.empty:
-                        add_val =True
-                    else:
-                        df2=df1[df1['location_id'] == loc]
-                        if df2.empty:
-                            add_val = True
-                        else:
-                            df3 = df2[df2['indicator_id'] == ind]
-                            if df3.empty:
-                                add_val = True 
-                    if add_val and 'campaign_id' in df.columns:
-                        append_dict = {
-                            'campaign_id': camp, 
-                            'location_id': loc, 
-                            'indicator_id' : ind
-                        }
-                        df = df.append(append_dict, ignore_index=True)
-                    elif add_val and 'time_grouping' in df.columns:
-                        append_dict = {
-                            'time_grouping': camp, 
-                            'location_id': loc, 
-                            'indicator_id' : ind
-                        }
-                        df = df.append(append_dict, ignore_index=True)
+        list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
+        cart_product = list(itertools.product(*list_of_lists))
+        cart_prod_df = DataFrame(cart_product)
+        if 'campaign_id' in df.columns:
+            columns_list = ['indicator_id','location_id', 'campaign_id']
+        else:
+            columns_list = ['indicator_id','location_id', 'time_grouping'] 
+        
+        cart_prod_df.columns = columns_list 
+        df = df.merge(cart_prod_df, how='outer', on=columns_list)       
+        
         return df
