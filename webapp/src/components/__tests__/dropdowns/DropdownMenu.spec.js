@@ -77,16 +77,20 @@ describe ('DropdownMenu', () => {
     it ('exists', () => {
       expect (mockDropdownMenu.componentDidMount).to.exist
     })
-    it.skip ('calls method #_onResize()', () => {
-      const spyMockDropdownMenu = new DropdownMenu()
-      const spy = sinon.spy(spyMockDropdownMenu, '_onResize')
-      spyMockDropdownMenu.componentDidMount()
-      expect (spy.calledOnce).to.be.true
-      spyMockDropdownMenu._onResize.restore()
-    })
+    it ('calls `window.addEventListener()  with correct arguments')
   })
   describe ('#componentDidUpdate()', () => {
-
+    it ('exists', () => {
+      expect (mockDropdownMenu.componentDidUpdate).to.exist
+    })
+    it ('calls method #_onResize()', () => {
+      // const wrapper = shallow(<FakeComponent />)
+      // const spyMockDropdownMenu = new DropdownMenu()
+      // const spy = sinon.spy(wrapper, '_onResize')
+      // wrapper.componentDidUpdate()
+      // expect (spy.calledOnce).to.be.true
+      // spyMockDropdownMenu._onResize.restore()
+    })
   })
   describe ('#shouldComponentUpdate()', () => {
 
@@ -116,6 +120,7 @@ describe ('DropdownMenu', () => {
     })
   })
 })
+
 class DropdownMenuTest {
   static getProps() {
     //update working variable if isWorking is switched to true
