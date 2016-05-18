@@ -10,9 +10,14 @@ class MapChart extends HighChart {
     const current_indicator = this.props.selected_indicators[0]
     const palette = palettes[this.props.palette]
     const integerWithBounds = current_indicator.data_format === 'int' && current_indicator.good_bound < 2 && current_indicator.bad_bound < 2
+    const color = this.props.indicator_colors[current_indicator.id]
     this.config = {
       series: this.setSeries(),
-      colorAxis: {min: 0},
+      colorAxis: {
+        min: 0,
+        minColor: '#FFFFFF',
+        maxColor: color
+      },
       mapNavigation: {
         enabled: false,
         enableTouchZoom: false,
