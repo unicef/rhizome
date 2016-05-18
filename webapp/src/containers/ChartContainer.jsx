@@ -88,6 +88,7 @@ const ChartContainer = React.createClass({
           deselectIndicator={(id) => DashboardChartsActions.deselectIndicator(id, chart.uuid)}
           reorderIndicator={(indicators) => DashboardChartsActions.reorderIndicator(indicators, chart.uuid)}
           clearSelectedIndicators={() => DashboardChartsActions.clearSelectedIndicators(chart.uuid)}
+          setLocationDepth={depth => DashboardChartsActions.setLocationDepth(depth, chart.uuid)}
           setLocations={(locations) => DashboardChartsActions.setLocations(locations, chart.uuid)}
           selectLocation={(id) => DashboardChartsActions.selectLocation(id, chart.uuid)}
           deselectLocation={(id) => DashboardChartsActions.deselectLocation(id, chart.uuid)}

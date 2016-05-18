@@ -15,8 +15,7 @@ class StackedPercentColumnChart extends HighChart {
     const self = this
     const props = this.props
     const first_indicator = props.selected_indicators[0]
-    const multipleCampaigns = props.datapoints.meta.campaign_list.length > 1
-
+    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     this.config = {
       chart: {
         type: 'column'
@@ -82,7 +81,7 @@ class StackedPercentColumnChart extends HighChart {
   }
 
   setXAxis = function (multipleCampaigns) {
-    const locations = this.props.datapoints.raw.map(d => this.props.locations_index[d.location])
+    const locations = this.props.datapoints.flattened.map(d => d.location)
     if (!multipleCampaigns) {
       return {categories: locations}
     }
@@ -111,7 +110,8 @@ class StackedPercentColumnChart extends HighChart {
     // This creates the necessary data structure for a Grouped Category chart.
     // But loading the plugin is troublesome.
     // There is no npm package for it + Importing manually doesnt seem to work
-    const data = this.props.datapoints.melted
+
+    const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const grouped_categories = []

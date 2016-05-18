@@ -311,6 +311,7 @@ class MasterRefresh(object):
         DocDataPoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
+
         ## if no indicator row dont process ##
         try:
             indicator_id = self.source_map_dict[('indicator',indicator_string)]

@@ -9,7 +9,7 @@ class DatapointTable extends Table {
   constructor (props) {
     super(props)
     this.groupByIndicator = this.props.groupBy === 'indicator'
-    this.rows = this.groupByIndicator ? _.groupBy(this.props.datapoints.flattened, 'indicator.id') : this.props.datapoints.raw
+    this.rows = this.groupByIndicator ? _.groupBy(this.props.datapoints.flattened, 'indicator.id') : this.props.datapoints.grouped
   }
 
   onSave = function () {
@@ -17,9 +17,9 @@ class DatapointTable extends Table {
   }
 
   renderHeaderRow = function () {
-    const first_row = this.groupByIndicator ? _.toArray(this.rows)[0] : _.toArray(this.rows)[0].indicators
+    const first_row = _.toArray(this.rows)[0]
     const header_cells = first_row.map(datapoint => {
-      const entity = this.groupByIndicator ? datapoint.campaign : this.props.indicators_index[datapoint.indicator]
+      const entity = this.groupByIndicator ? datapoint.campaign : datapoint.indicator
       return <th>{entity.short_name || entity.name}</th>
     })
     return (
@@ -33,25 +33,17 @@ class DatapointTable extends Table {
 
   renderRows = function () {
     return _.map(this.rows, (row, key) => {
+      const first_cell = row[0]
+      const entity = this.groupByIndicator ? first_cell.indicator : first_cell.location
       const indicator = this.props.indicators_index[key]
-      const entity = this.groupByIndicator ? indicator : this.props.locations_index[row.location]
       const date_format = this.props.groupByTime === 'year' ? 'YYYY' : 'MMM YYYY'
       return (
         <tr>
           <td><strong>{entity.name}</strong></td>
-          { !this.groupByIndicator ? <td>{moment(row.campaign.start_date).format(date_format)}</td> : null}
-          { this.renderCells(row, indicator) }
+          { !this.groupByIndicator ? <td>{moment(first_cell.campaign.start_date).format(date_format)}</td> : null}
+          { _.map(row, datapoint =>  <DatapointTableCell datapoint={datapoint} onSave={this.props.editable ? this.onSave : null} />) }
         </tr>
       )
-    })
-  }
-
-  renderCells = function (row, indicator) {
-    const saveHandler = this.props.editable ? this.onSave : null
-    const cells = this.groupByIndicator ? row : row.indicators
-    return _.map(cells, datapoint => {
-      indicator = this.groupByIndicator ? indicator : this.props.indicators_index[datapoint.indicator]
-      return <DatapointTableCell indicator={indicator} datapoint={datapoint} onSave={saveHandler} />
     })
   }
 

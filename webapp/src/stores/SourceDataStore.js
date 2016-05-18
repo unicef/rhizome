@@ -47,8 +47,16 @@ var SourceDataStore = Reflux.createStore({
         'header': ['id', 'doc_title', 'created_at', 'edit_link'],
         'search_fields': ['id', 'doc_title']
       },
-      'meta-data': {
-        'data_fn': api.docMap,
+      'mapped': {
+        'display_name': 'Meta Data ( Mapped )',
+        'data_fn': api.docMapped,
+        'fields': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
+        'header': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
+        'search_fields': ['content_type', 'source_object_code', 'master_object_name']
+      },
+      'un-mapped': {
+        'display_name': 'Meta Data ( Mapped )',
+        'data_fn': api.docToMap,
         'fields': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
         'header': ['content_type', 'source_object_code', 'master_object_name', 'edit_link'],
         'search_fields': ['content_type', 'source_object_code', 'master_object_name']

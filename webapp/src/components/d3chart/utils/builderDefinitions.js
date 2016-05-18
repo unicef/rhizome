@@ -18,6 +18,7 @@ export default {
   single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap', 'StackedColumnChart'],
   grouped_charts: ['LineChart', 'ColumnChart', 'StackedColumnChart', 'StackedPercentColumnChart', 'RawData'],
   multi_location_charts: ['TableChart', 'MapChart', 'BubbleMap', 'StackedColumnChart', 'StackedPercentColumnChart'],
+  need_missing_data_charts: ['StackedPercentColumnChart', 'TableChart', 'RawData'],
   groups: [
     { value: 'indicator', title: 'Indicators' },
     { value: 'location', title: 'Locations' }

@@ -1,7 +1,7 @@
 import numpy as np
 import sys
+import itertools
 from pandas import DataFrame, pivot_table, notnull, concat
-
 from django.http import HttpResponse
 
 from tastypie import fields
@@ -14,7 +14,7 @@ from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent
-
+import math
 from datetime import datetime
 
 class ResultObject(object):
@@ -23,9 +23,9 @@ class ResultObject(object):
     location / campaign combination, and the remaing columns represent the
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
-    location = None
-    campaign = None
-    indicators = list()
+    # location = None
+    # campaign = None
+    # indicators = list()
 
 
 class DatapointResource(BaseNonModelResource):
@@ -44,11 +44,19 @@ class DatapointResource(BaseNonModelResource):
         -
     '''
 
+    # error = None
+    # parsed_params = {}
+    # location = fields.IntegerField(attribute='location')
+    # campaign = fields.IntegerField(attribute='campaign')
+    # indicators = fields.ListField(attribute='indicators')
     error = None
     parsed_params = {}
-    location = fields.IntegerField(attribute='location')
-    campaign = fields.IntegerField(attribute='campaign')
-    indicators = fields.ListField(attribute='indicators')
+    indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
+    campaign_id = fields.IntegerField(attribute='campaign_id', null=True)
+    data_date = fields.DateField(attribute='data_date', null=True)
+    computed_id = fields.IntegerField(attribute='computed_id', null=True)
+    location_id = fields.IntegerField(attribute='location_id')
+    value = fields.CharField(attribute='value', null=True)
 
     class Meta(BaseNonModelResource.Meta):
         '''
@@ -76,11 +84,6 @@ class DatapointResource(BaseNonModelResource):
         super(DatapointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
-
-        self.chart_type_fn_lookup = {
-            'MapChart': self.transform_map_data,
-            'BubbleMap': self.transform_map_data
-        }
 
     def create_response(self, request, data, response_class=HttpResponse,
                         **response_kwargs):
@@ -139,16 +142,17 @@ class DatapointResource(BaseNonModelResource):
         return self.base_data
 
     def get_time_group_series(self, dp_df):
-
         time_grouping = self.parsed_params['group_by_time']
         if time_grouping == 'year':
             dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
             dp_df['time_grouping'] = dp_df['data_date']\
-                .map(lambda x: str(x.year) + '-' + str((x.month-1) // 3 + 1))
+                .map(lambda x: str(x.year) + str((x.month-1) // 3 + 1))
+        elif time_grouping == 'all_time':
+            dp_df['time_grouping'] = 1
         else:
             dp_df = DataFrame()
-
+        self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
         return dp_df
 
     def handle_data_exists(self, df):
@@ -162,14 +166,11 @@ class DatapointResource(BaseNonModelResource):
         return gb_df
 
     def group_by_time_transform(self):
-
         results, all_time_groupings = [], []
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
-        if time_grouping =='all_time':
-            return self.map_bubble_transform()
-
+        # HACKK
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table(dp_df_columns)
@@ -198,7 +199,6 @@ class DatapointResource(BaseNonModelResource):
         dp_df = self.get_time_group_series(dp_df)
         if dp_df.empty:
             return []
-
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in = sub_location_ids)\
             .values_list('location_id','parent_location_id')),\
@@ -213,48 +213,25 @@ class DatapointResource(BaseNonModelResource):
             .sum())\
             .reset_index()
 
+        gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+        if self.parsed_params['show_missing_data'] == u'1':
+            gb_df = self.add_missing_data(gb_df)
+
+        gb_df = gb_df.sort(['time_grouping'])
         return self.time_grouped_df_to_results(gb_df)
 
     def time_grouped_df_to_results(self, df):
 
         all_time_groupings, results = [], []
-
-        try:
-            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
-                ['parent_location_id','time_grouping'])
-        except KeyError:
-            pivoted_data = self.pivot_df(df, ['indicator_id'], 'value', \
-                ['location_id','time_grouping'])
-
-        for time_loc_tupl, indicator_data in sorted(pivoted_data.iteritems(),\
-            reverse=True):
-
-            location_id, time_group = time_loc_tupl[0], time_loc_tupl[1]
-
-            r = ResultObject()
-            r.location = location_id
-            r.campaign = str(time_group).replace('-','').replace('.0','')
-
-            r.indicators = [{
-                'computed': None,
-                'indicator': k,
-                'value': v
-            } for k,v in indicator_data.iteritems()]
-
-            results.append(r)
-            all_time_groupings.extend(list(df['time_grouping'].unique()))
-
-        all_time_groupings = list(set(all_time_groupings))
-
-        self.campaign_qs = [{
-            'id': time_grp,
-            'name': str(time_grp),
-            'start_date': str(time_grp) + '-01-02',
-            'end_date': str(time_grp) + '-12-31',
-            'office_id': 1,
-            'created_at': datetime.now()
-        } for time_grp in all_time_groupings]
-
+        for idx,row in df.iterrows():
+            dp = ResultObject()
+            # for column_header in dwc_df_columns:
+            dp.indicator_id = row['indicator_id']
+            dp.campaign_id = int(row['time_grouping'])
+            dp.location_id = row['location_id']
+            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+                dp.value = row['value']
+            results.append(dp)
         return results
 
     def handle_polio_case_table(self, dp_df_columns):
@@ -310,7 +287,8 @@ class DatapointResource(BaseNonModelResource):
         concat_df = concat([gb_df, latest_date_df,  district_count_df])
         concat_df[['indicator_id','value','time_grouping','data_date']]
         concat_df['parent_location_id'] = parent_location_id
-
+        concat_df = concat_df.drop('location_id', 1)
+        concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
         return self.time_grouped_df_to_results(concat_df)
 
 
@@ -364,36 +342,12 @@ class DatapointResource(BaseNonModelResource):
         except KeyError:
             indicator_ids = None
 
-        try:
-            self.chart_type = request.GET['chart_type']
-            data['meta']['chart_type'] = self.chart_type
-        except KeyError:
-            self.chart_type = None
-
-        if self.chart_type == 'TableChart':
-
-            p_loc_qs = Location.objects\
-                .filter(id__in = self.location_ids)\
-                .values('name','parent_location__name')\
-                .order_by('parent_location__name')
-
-            data['meta']['parent_location_map'] = [l for l in p_loc_qs]
-            data['meta']['default_sort_order'] = [l['name'] for l in p_loc_qs]
-
-        data['meta']['campaign_list'] = self.get_campaign_qs()
-
+        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
         # add errors if it exists
         if self.error:
             data['error'] = self.error
         else:
             data['error'] = None
-
-
-        try:
-            chart_data_fn = self.chart_type_fn_lookup[self.chart_type]
-            data['meta']['chart_data'] = chart_data_fn()
-        except KeyError:
-            data['meta']['chart_data'] = []
 
         return data
 
@@ -438,8 +392,7 @@ class DatapointResource(BaseNonModelResource):
             'campaign__in': None, 'location__in': None,'location_id__in':None,\
             'filter_indicator':None, 'filter_value': None,\
             'show_missing_data':None, 'cumulative':0, \
-            'parent_location_id__in': None, 'group_by_time': None, \
-            'chart_uuid': None
+             'group_by_time': None, 'chart_uuid': None
         }
 
         for k, v in optional_params.iteritems():
@@ -522,9 +475,8 @@ class DatapointResource(BaseNonModelResource):
             new_val = self.class_indicator_map[ind_id][ind_val]
             x['value'] = new_val
         return x
-
+        
     def base_transform(self):
-
         results = []
 
         # Pivot the data on request instead of caching ##
@@ -567,62 +519,25 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
 
-        try:
-            pivoted_data = self.pivot_df(dwc_df, \
-                ['indicator_id'], 'value', ['location_id', 'campaign_id'])
-
-            ## we need two dictionaries, one that has the value of the
-            ## datapoint_computed object and one with the id ##
-            pivoted_data_for_id = self.pivot_df(dwc_df, \
-                ['indicator_id'], 'id', ['location_id', 'campaign_id'])
-
-        except KeyError: ## there is no data, so fill it with empty indicator data ##
-            pivoted_data, pivoted_data_for_id = {}, {}
-            for location_id in self.location_ids:
-                try:
-                    tupl = (int(location_id), int(self.parsed_params['campaign__in'][0]))
-                # there are no campaigns in the given range
-                except IndexError:
-                    return []
-                pivoted_data[tupl] = {}
-                pivoted_data_for_id[tupl] = {}
-
         if self.parsed_params['show_missing_data'] == u'1':
-            all_pivoted_data = self.add_missing_data(pivoted_data)
-        else:
-            all_pivoted_data = pivoted_data
-
-        for i, (row, indicator_dict) in enumerate(all_pivoted_data.iteritems()):
-
-            if self.parsed_params['cumulative'] == '1':
-                indicator_objects = [{
-                    'indicator': k,
-                    'value': v
-                } for k, v in indicator_dict.iteritems()]
-            else:
-                indicator_objects = [{
-                    'indicator': k,
-                    'computed': pivoted_data_for_id[row][k],
-                    'value': v
-                } for k, v in indicator_dict.iteritems()]
-
-            # avail_indicators = set([x for x,y in indicator_dict.keys()])
-            missing_indicators = list(set(self.parsed_params['indicator__in']))
-            for ind in missing_indicators:
-                if ind not in indicator_dict.keys():
-                    indicator_objects.append({'indicator': ind, 'value': None,\
-                    'computed_id': None})
-
-            r = ResultObject()
-            r.location = row[0]
-            r.campaign = row[1]
-            r.indicators = indicator_objects
-
-            results.append(r)
-
+            dwc_df = self.add_missing_data(dwc_df)
+        dwc_df = dwc_df.sort('campaign_id')
+        results =[]
+        for idx,row in dwc_df.iterrows():
+            dp = ResultObject()
+            # for column_header in dwc_df_columns:
+            dp.campaign_id = row['campaign_id']
+            dp.location_id = row['location_id']
+            if not math.isnan(row['indicator_id']):
+                dp.indicator_id = row['indicator_id']
+            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+                dp.value = row['value']
+            if not math.isnan(row['id']):  
+                dp.computed_id = row['id']          
+            results.append(dp)
         return results
 
-    def add_missing_data(self, pivoted_data):
+    def add_missing_data(self, df):
         '''
         If the campaign / locaiton cobination has no related datapoitns, we
         add the keys here so that we can see the row of data in data entry
@@ -635,117 +550,15 @@ class DatapointResource(BaseNonModelResource):
         This is largely for Data entry so that we can see a row in the form
         even when there is no existing data.
         '''
-
-        for loc in self.location_ids:
-
-            for camp in self.parsed_params['campaign__in']:
-
-                tuple_dict_key = (float(loc), float(camp))
-
-                try:
-                    existing_data = pivoted_data[tuple_dict_key]
-                except KeyError:
-                    pivoted_data[tuple_dict_key] = {}
-
-        return pivoted_data
-
-    def transform_map_data(self):
-
-        high_chart_data = []
-        for obj in self.base_data:
-            dp_dict = obj.__dict__
-            indicator_dict = dp_dict['indicators'][0] ## for a map there is 1 indicator object
-            indicator_value = indicator_dict['value']
-            location = dp_dict['location']
-            if self.chart_type == 'MapChart':
-                object_dict = {
-                    'location_id' : location, ## high_chart_code,
-                    'value' : indicator_value
-                }
-            elif self.chart_type == 'BubbleMap':
-                object_dict = {
-                    'location_id' : location, ## high_chart_code,
-                    'z' : indicator_value
-                }
-
-
-            high_chart_data.append(object_dict)
-
-        return high_chart_data
-
-
-    def map_bubble_transform(self):
-        '''
-        This method right now is set up specifically to deal with polio cases.
-
-        This needs to be removed and we need to figure out a better way to
-        Handle the polio case indicator / Bubble Map viz.
-        '''
-
-        param_location_id = self.parsed_params['parent_location_id__in']
-
-        # get all the districts
-        location_ids = LocationTree.objects.filter(
-                location__location_type__name = 'District',
-                parent_location_id= param_location_id
-            ).values_list('location_id', flat=True)
-
-        cols = ['data_date','indicator_id','location_id','value']
-
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = location_ids,
-            indicator_id__in = self.parsed_params['indicator__in']
-        ).values(*cols)),columns=cols)
-
-        if dp_df.empty:
-            return []
-
-        results = []
-
-        if self.parsed_params['parent_location_id__in'] == u'1':
-            # get all the parents of the districts (provinces), if we're looking at afghanistan
-            district_to_region_df = DataFrame(list(
-                Location.objects.filter(
-                    id__in = list(dp_df['location_id'].unique()))
-                .values_list('id','parent_location_id')),\
-                columns = ['location_id','parent_location_id'])
-
-            merged_df = dp_df.merge(district_to_region_df)\
-                [['indicator_id','value','parent_location_id']]
-
-            dp_df = merged_df.rename(columns={'parent_location_id':'location_id'})
-
-        # get the sums for each location
-        gb_df = DataFrame(dp_df\
-            .groupby(['location_id'])['value']\
-            .sum())\
-            .reset_index()
-
-        indicator_id = list(dp_df['indicator_id'].unique())[0]
-        campaign_id = self.parsed_params['campaign__in'][0]
-
-        for ix, row in gb_df.iterrows():
-
-            indicator_objects = [{
-                'indicator': indicator_id,
-                'value': row.value
-            }]
-
-            r = ResultObject()
-            r.location = row.location_id
-            r.campaign = campaign_id
-            r.indicators = indicator_objects
-
-            results.append(r)
-
-        return results
-
-    def pivot_df(self, df, index_column_list, value, pivot_column_list):
-
-        p_table = pivot_table(df, values=value, index=index_column_list,\
-                columns=pivot_column_list, aggfunc=np.sum)
-
-        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
-        pivoted_dictionary = no_nan_pivoted_df.to_dict()
-
-        return pivoted_dictionary
+        list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
+        cart_product = list(itertools.product(*list_of_lists))
+        cart_prod_df = DataFrame(cart_product)
+        if 'campaign_id' in df.columns:
+            columns_list = ['indicator_id','location_id', 'campaign_id']
+        else:
+            columns_list = ['indicator_id','location_id', 'time_grouping'] 
+        
+        cart_prod_df.columns = columns_list 
+        df = df.merge(cart_prod_df, how='outer', on=columns_list)       
+        
+        return df

@@ -34,66 +34,39 @@ class BaseResource(Resource):
         on the values parsed from the URL parameters find the locations needed
         to fulfill the request based on the four rules below.
 
-        1. location_id__in =
-        2. parent_location_id__in =
-
-
         TO DO -- Check Location Permission so that the user can only see
         What they are permissioned to.
         '''
+
         if 'location_id__in' in request.GET:
-            locations = request.GET['location_id__in'].split(',')
-            return map(int, locations)
-
-        elif 'location_level' in request.GET:
-            location_type_id = LocationType.objects\
-                .get(name = request.GET['location_level'])
-            pl_id_list = request.GET['parent_location_id__in'].split(',')
-
-            return LocationTree.objects.filter(
-                location__location_type_id = location_type_id,
-                parent_location_id__in = pl_id_list
-            ).values_list('location_id', flat=True)
-
-        elif 'parent_location_id__in' in request.GET:
-
-            pl_id_list = request.GET['parent_location_id__in'].split(',')
-            ## begin hack ##
-            #### Since we do not have shapes for Regions, we render the ####
-              ## shapes for provinces when Afghanistan is requested ##
-              ## thus we have to put this in to handle map requests for:
-                    # - geo api
-                    # - MapChart
-                    # - BubbleMap
-              ## NOTE : we can remove this hack if we are able to generate
-              ## region shapes for afghanistan ( south, north etc )
-
-            full_request = request.path + request.META['QUERY_STRING']
-            needs_to_be_hacked = any(x in full_request for x in \
-                ['geo','BubbleMap','MapChart'])
-
-            if pl_id_list == ['1'] and needs_to_be_hacked:
-                loc_type_id = LocationType.objects.get(name = 'Province').id
+            location_ids = map(int, request.GET['location_id__in'].split(','))
+            
+            if 'location_type' in request.GET:
+                loc_type_id = int(request.GET['location_type'])
                 return LocationTree.objects.filter(
                     location__location_type_id = loc_type_id,
-                    parent_location_id__in = pl_id_list
-                ).values_list('location_id', flat=True)
-            elif needs_to_be_hacked and pl_id_list != ['1']: ## regions show districts
-                loc_type_id = LocationType.objects.get(name = 'District').id
-                return LocationTree.objects.filter(
-                    location__location_type_id = loc_type_id,
-                    parent_location_id__in = pl_id_list
+                    parent_location_id__in = location_ids
                 ).values_list('location_id', flat=True)
 
-            ## end hack ##
+            elif 'location_depth' in request.GET:
+                return_locations =[]
+                for location_id in location_ids:
+                    # this can probably be condensed into fewer queries...
+                    parent_location_type = Location.objects.get(id = location_id).location_type_id
+                    parent_admin_level = LocationType.objects.get(id = parent_location_type).admin_level
+                    location_depth = int(request.GET['location_depth'])
+                    descendant_location_type = LocationType.objects.get(admin_level= parent_admin_level + location_depth)
+                    descendant_ids = LocationTree.objects.filter(
+                        location__location_type_id = descendant_location_type.id,
+                        parent_location_id = location_id
+                        ).values_list('location_id', flat=True)
+                    return_locations.extend(descendant_ids)
+                return return_locations
 
-            return Location.objects\
-                .filter(parent_location_id__in = pl_id_list)\
-                .values_list('id', flat=True)
-
+            else:
+                return location_ids
         else:
             return Location.objects.all().values_list('id', flat=True)
-
 
     def dispatch(self, request_type, request, **kwargs):
         """

@@ -145,20 +145,24 @@ class TableChartRenderer {
       .on('click', (d, i) => this.options.onRowClick(d, i, this))
   }
 
-  // Z AXIS
-  // ---------------------------------------------------------------------------
+  // // Z AXIS
+  // // ---------------------------------------------------------------------------
   renderZAxis () {
+    console.log('this.options', this.options.parent_location_map)
     this.svg.select('.z.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(20,10)'})
       .call(d3.svg.axis()
         .scale(this.yScale)
-        .tickFormat(d => this.options.parent_location_map[d].parent_location__name)
+        .tickFormat(d => {
+          console.log('d', d)
+          return this.options.parent_location_map[d].parent_location_name
+        })
         .orient('left')
         .outerTickSize(0))
     this.svg.selectAll('.z.axis text')
       .style('font-size', this.options.fontSize)
-      .on('click', (d, i) => this.options.onRowClick(this.options.parent_location_map[d].parent_location__name, i, this))
+      .on('click', (d, i) => this.options.onRowClick(this.options.parent_location_map[d].parent_location_name, i, this))
   }
 
   // FOOTER

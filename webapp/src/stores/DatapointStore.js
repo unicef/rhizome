@@ -1,7 +1,9 @@
 import _ from 'lodash'
+import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 
+import CampaignStore from 'stores/CampaignStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import LocationStore from 'stores/LocationStore'
 
@@ -17,16 +19,18 @@ var DatapointStore = Reflux.createStore({
     meta: null,
     raw: null,
     flattened: null,
+    grouped: null,
     melted: null
   },
 
   init: function () {
-    this.joinTrailing(LocationStore, IndicatorStore, this.onGetInintialStores)
+    this.joinTrailing(LocationStore, IndicatorStore, CampaignStore, this.onGetInintialStores)
   },
 
-  onGetInintialStores: function (locations, indicators) {
+  onGetInintialStores: function (locations, indicators, campaigns) {
     this.indicators = indicators[0]
     this.locations = locations[0]
+    this.campaigns = campaigns[0]
   },
 
   getInitialState: function () {
@@ -39,15 +43,17 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints: function () {
-    this.setState({ raw: null, meta: null, flattened: null, melted: null })
+    this.setState({ raw: null, meta: null, grouped: null, flattened: null, melted: null })
   },
   onFetchDatapointsCompleted: function (response) {
-    this.setState({
+    const datapoints = {
       meta: response.meta,
       raw: response.objects,
       flattened: this.flatten(response.objects),
       melted: this.melt(response.objects, response.meta.indicator_ids)
-    })
+    }
+    datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
+    this.setState(datapoints)
   },
   onFetchDatapointsFailed: function (error) {
     this.setState({ error: error })
@@ -64,22 +70,29 @@ var DatapointStore = Reflux.createStore({
   //                                  UTILITIES                                  //
   // =========================================================================== //
   flatten: function (datapoints) {
-    return _(datapoints)
-      .flatten()
-      .sortBy(_.method('campaign.start_date.getTime'))
-      .map(datapoint => {
-        var base = _.omit(datapoint, ['indicators', 'location'])
-        return datapoint.indicators.map(indicator => {
-          return _.assign({
-            computed: indicator.computed,
-            indicator: this.indicators.index[indicator.indicator],
-            location: this.locations.index[datapoint.location],
-            value: indicator.value
-          }, base)
-        })
-      })
-      .flatten()
-      .value()
+    const flattened = datapoints.map(d => {
+      const datapoint = {
+        id: d.computed_id,
+        value: d.value ? parseFloat(d.value) : null,
+        location: this.locations.index[d.location_id],
+        indicator: this.indicators.index[d.indicator_id]
+      }
+      if (d.data_date) { datapoint.data_date = d.data_date }
+      if (d.campaign_id) {
+        datapoint.campaign = this.campaigns.index[d.campaign_id] || this._createYearCampaign(d.campaign_id)
+      }
+      return datapoint
+    })
+    return flattened
+  },
+
+  _createYearCampaign: function (year) {
+    return {
+      id: year,
+      name: year,
+      start_date: moment(year + '-01-01', 'YYYY-MM-DD').toDate(),
+      end_date: moment(year + '-12-31', 'YYYY-MM-DD').toDate()
+    }
   },
 
   melt: function (datapoints, indicator_ids) {

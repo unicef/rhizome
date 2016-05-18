@@ -33,7 +33,7 @@ class BubbleMap extends HighChart {
       name: current_indicator.name,
       type: 'mapbubble',
       mapData: {'features': this.props.features, 'type': 'FeatureCollection'},
-      data: this.props.datapoints.meta.chart_data,
+      data: props.datapoints.flattened.map(d => ({z: d.value, location_id: d.location.id})),
       joinBy: 'location_id',
       minSize: 4,
       maxSize: '12%',

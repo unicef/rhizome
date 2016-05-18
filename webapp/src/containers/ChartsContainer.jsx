@@ -42,7 +42,8 @@ var ChartsContainer = React.createClass({
         indicator_ids: chart_def.indicator_ids,
         indicator_colors: chart_def.indicator_colors,
         groupBy: chart_def.groupBy,
-        groupByTime: chart_def.groupByTime
+        groupByTime: chart_def.groupByTime,
+        location_depth: chart_def.location_depth
       })
     })
   },

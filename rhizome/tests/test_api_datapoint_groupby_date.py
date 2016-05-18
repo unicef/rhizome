@@ -105,15 +105,15 @@ class DataPointResourceTest(ResourceTestCase):
         }
         resp = self.api_client.get('/api/v1/datapoint/', \
             format='json', data=get, authentication=self.get_credentials())
-        self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         objects = response_data['objects']
 
         self.assertEqual(3, len(objects)) # one for each year #
 
         case_dict = {}
         for obj in objects:
-            case_dict[obj['campaign']] = obj['indicators'][0]['value']
+            case_dict[obj['campaign_id']] = float(obj['value'])
 
         self.assertEqual(28.00, case_dict[2014])
         self.assertEqual(20.00, case_dict[2015])
@@ -151,8 +151,8 @@ class DataPointResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
-        self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         dps_q1_2014 = DataPoint.objects.filter(
             data_date__range=('2014-01-01', '2014-03-31'),\
             indicator = self.ind.id
@@ -165,9 +165,9 @@ class DataPointResourceTest(ResourceTestCase):
         q1_found = False
 
         for indicator in response_data['objects']:
-            campaign = indicator['campaign']
+            campaign = indicator['campaign_id']
             if campaign == 20141:
-                value = indicator['indicators'][0]['value']
+                value = float(indicator['value'])
                 self.assertEqual(value, total)
                 q1_found = True
 

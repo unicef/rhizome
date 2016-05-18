@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, { PropTypes } from 'react'
 
 import Chart from 'components/d3chart/Chart'
@@ -22,47 +23,50 @@ class TableChart extends Chart {
 
   setData = function () {
     const selected_campaign_id = this.props.selected_campaigns[0].id
-    const filtered_datapoints = this.props.data.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
-    this.data = filtered_datapoints.map(datapoint => {
+    const filtered_datapoints = this.props.datapoints.flattened.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
+    const data = _.groupBy(filtered_datapoints, 'location.id')
+    this.options.default_sort_order = _.map(data, datapoint_group => datapoint_group[0].location.name)
+    this.options.parent_location_map = _.map(data, datapoint_group => ({
+      name: datapoint_group[0].location.name,
+      parent_location_name: this.props.locations_index[datapoint_group[0].location.parent_location_id].name
+    }))
+    this.options.parent_location_map = _.indexBy(this.options.parent_location_map, 'name')
+    this.data = _.toArray(data).map(datapoint_group => {
       const values = []
-      datapoint.indicators.forEach(i => {
-        const indicator_id = i.indicator
-        if (i.value != null) {
-          let displayValue = i.value
-          if (this.props.indicators_index[indicator_id].data_format === 'pct') {
-            displayValue = (i.value * 100).toFixed(1) + ' %'
-          } else if (this.props.indicators_index[indicator_id].data_format === 'bool' && i.value === 0) {
-            displayValue = 'No'
-            i.value = -1 // temporary hack to deal with coloring the booleans.
-          } else if (this.props.indicators_index[indicator_id].data_format === 'bool' && i.value > 0) {
-            displayValue = 'Yes'
-            i.value = 2 // temporary hack to deal with coloring the booleans.
-          }
-          values.push({
-            indicator: this.props.indicators_index[indicator_id],
-            value: i.value,
-            campaign: datapoint.campaign,
-            displayValue: displayValue,
-            location: this.props.locations_index[datapoint.location]
-          })
-        } else {
-          values.push({
-            indicator: this.props.indicators_index[indicator_id],
-            value: null,
-            campaign: datapoint.campaign,
-            displayValue: '',
-            location: this.props.locations_index[datapoint.location]
-          })
-        }
+      datapoint_group.forEach(datapoint => {
+        values.push({
+          indicator: datapoint.indicator,
+          value: datapoint.value,
+          campaign: datapoint.campaign,
+          displayValue: this.getFormattedValue(datapoint),
+          location: datapoint.location
+        })
       })
       return {
-        name: this.props.locations_index[datapoint.location].name,
-        parent_location_id: this.props.locations_index[datapoint.location].parent_location_id,
+        name: datapoint_group[0].location.name,
+        parent_location_id: datapoint_group[0].location.parent_location_id,
         values: values,
-        campaign_id: datapoint.campaign.id
+        campaign_id: datapoint_group[0].campaign.id
       }
     })
     return this.data
+  }
+
+  getFormattedValue = function (datapoint) {
+    const data_format = datapoint.indicator.data_format
+    if (!datapoint.value) {
+      return ''
+    } else if (data_format === 'pct') {
+      return (datapoint.value * 100).toFixed(1) + ' %'
+    } else if (data_format === 'bool' && datapoint.value === 0) {
+      datapoint.value = -1 // temporary hack to deal with coloring the booleans.
+      return 'No'
+    } else if (data_format === 'bool' && datapoint.value > 0) {
+      datapoint.value = 2 // temporary hack to deal with coloring the booleans.
+      return 'Yes'
+    } else {
+      return datapoint.value
+    }
   }
 
   setOptions = function () {
@@ -97,7 +101,6 @@ TableChart.propTypes = {
   // Chart Data
   data: PropTypes.array,
   headers: PropTypes.array,
-  default_sort_order: PropTypes.array,
   parent_location_map: PropTypes.object,
   selected_campaigns: PropTypes.array,
   // Look and Feel

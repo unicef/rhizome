@@ -25,6 +25,7 @@ class ChartState {
     this.data_format = 'pct'
     this.groupBy = 'indicator'
     this.groupByTime = 'campaign'
+    this.location_depth = null
     this.palette = 'traffic_light'
     this.locations_index = null
     this.indicators_index = null
@@ -145,7 +146,8 @@ var DashboardChartsStore = Reflux.createStore({
         indicator_colors: chart.indicator_colors,
         type_params: chart.type_params,
         groupBy: chart.groupBy,
-        groupByTime: chart.groupByTime
+        groupByTime: chart.groupByTime,
+        location_depth: chart.location_depth
       })
     })
   },
@@ -206,6 +208,11 @@ var DashboardChartsStore = Reflux.createStore({
     } else {
       this.charts[uuid].selected_locations = this.couldBeId(locations) ? [this.locations.index[locations]] : [locations]
     }
+    this.updateChart(uuid)
+  },
+  onSetLocationDepth: function (location_depth, uuid) {
+    this.toggleLoading(uuid)
+    this.charts[uuid].location_depth = location_depth
     this.updateChart(uuid)
   },
   onSelectLocation: function (id, uuid) {
@@ -415,7 +422,7 @@ var DashboardChartsStore = Reflux.createStore({
       const type = this.charts[uuid].type
       if (type === 'ChoroplethMap' || type === 'MapChart' || type === 'BubbleMap') {
         this.charts[uuid].fetching_map = true
-        return DashboardChartsActions.fetchMapFeatures(this.charts[uuid].selected_locations.map(location => location.id))
+        return DashboardChartsActions.fetchMapFeatures(this.charts[uuid].selected_locations.map(location => location.id), this.charts[uuid].location_depth)
       }
       this.fetchDatapoints(uuid)
     } else {
@@ -426,16 +433,18 @@ var DashboardChartsStore = Reflux.createStore({
 
   fetchDatapoints: function (uuid) {
     const chart = this.charts[uuid]
-    DatapointActions.fetchDatapoints({
+    const query = {
       indicator_filter: chart.indicator_filter,
       indicator_ids: chart.selected_indicators.map(indicator => indicator.id),
       location_ids: chart.selected_locations.map(location => location.id),
+      location_depth: chart.location_depth,
       group_by_time: chart.groupByTime,
       start_date: chart.start_date,
       end_date: chart.end_date,
       type: chart.type,
       uuid: uuid
-    })
+    }
+    DatapointActions.fetchDatapoints(query)
   },
 
   meltChart: function (chart) {
@@ -453,6 +462,7 @@ var DashboardChartsStore = Reflux.createStore({
     new_chart.type_params = chart.chart_json.type_params || {}
     new_chart.groupBy = chart.chart_json.groupBy
     new_chart.groupByTime = chart.chart_json.groupByTime || 'campaign'
+    new_chart.location_depth = chart.chart_json.location_depth || 0
     new_chart.selectTypeMode = false
     new_chart.editMode = false
     return new_chart

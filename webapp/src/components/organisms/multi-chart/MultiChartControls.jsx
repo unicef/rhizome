@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import moment from 'moment'
+import SwitchButton from 'components/form/SwitchButton'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
 
@@ -55,7 +56,7 @@ const MultiChartControls = React.createClass({
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
     const groupedChart = _.indexOf(builderDefinitions.grouped_charts, type) !== -1
     const multiIndicator = type === 'TableChart' || type === 'RawData' || type === 'MapChart'
-    const multiLocation = type === 'TableChart'
+    const multiLocation = chart.location_depth < 0
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = (groupedChart && chart.groupBy === 'indicator') || type === 'MapChart'
 
@@ -89,12 +90,12 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const indicator_filter = (
+    const indicator_filter = !multiLocation ? (
       <div className='medium-12 columns'>
         <h3>Filter By</h3>
         <DistrictSelect selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
       </div>
-    )
+    ) : null
 
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
@@ -109,6 +110,48 @@ const MultiChartControls = React.createClass({
           ]}/>
       </div>
     ) : null
+
+    let depth_titles = null
+    let location_depth_selector = null
+    if (chart.selected_locations.length > 0) {
+      const location_type_id = chart.selected_locations[0].location_type_id
+      if (location_type_id <= 1) {
+        depth_titles = ['Country', 'Region', 'Province', 'District']
+      } else  if (location_type_id === 6 ) {
+        depth_titles = ['Region', 'Province', 'District']
+      } else if (location_type_id === 2) {
+        depth_titles = ['Province', 'District']
+      }
+      let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
+      if (location_type_id <= 1 && chart.type === 'BubbleMap') {
+        depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
+      }
+      const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
+      location_depth_selector = depth_titles && chart.groupBy !== 'location' ? (
+        <div className='medium-12 columns radio-group'>
+          <h3>Aggregation
+            <SwitchButton
+              name='location_depth'
+              title='location_depth'
+              id='location_depth'
+              checked={chart.location_depth >= 0}
+              onChange={toggleAggregation}
+            />
+          </h3>
+          {
+            chart.location_depth >= 0 ? (
+              <RadioGroup
+                name={'location_depth' + chart.uuid}
+                value={chart.location_depth}
+                onChange={props.setLocationDepth}
+                horizontal
+                values={depth_options}
+              />
+            ) : <br/>
+          }
+        </div>
+      ) : null
+    }
 
     const campaign_selector = chartShowsOneCampaign ? (
       <CampaignMultiSelect
@@ -131,7 +174,7 @@ const MultiChartControls = React.createClass({
         deselectLocation={props.deselectLocation}
         setLocations={props.setLocations}
         clearSelectedLocations={props.clearSelectedLocations}
-        classes={multiLocation || groupByIndicator ? 'medium-6 columns' : 'medium-12 columns'}
+        classes={multiLocation && multiIndicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiLocation || groupByIndicator}
         hideLastLevel={chart.type === 'MapChart'}
       />
@@ -148,7 +191,7 @@ const MultiChartControls = React.createClass({
         deselectIndicator={props.deselectIndicator}
         clearSelectedIndicators={props.clearSelectedIndicators}
         reorderIndicator={props.reorderIndicator}
-        classes={multiIndicator && !groupByLocation ? 'medium-6 columns' : 'medium-12 columns'}
+        classes={multiLocation && multiIndicator ? 'medium-6 columns' : 'medium-12 columns'}
         multi={multiIndicator || groupByLocation}
         avoidBooleans={chart.type === 'LineChart'}
         filterByFormat={chart.type !== 'TableChart' && chart.type !== 'RawData'}
@@ -163,6 +206,7 @@ const MultiChartControls = React.createClass({
         { campaign_selector }
         { group_by_selector }
         { indicator_filter }
+        { location_depth_selector }
         { location_selector }
         { indicator_selector }
       </div>

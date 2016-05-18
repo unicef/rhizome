@@ -27,6 +27,7 @@ const DashboardChartsActions = Reflux.createActions({
   'setIndicatorColor': 'setIndicatorColor',
   'updateTypeParams': 'updateTypeParams',
   // Locations
+  'setLocationDepth': 'setLocationDepth',
   'setLocations': 'setLocations',
   'selectLocation': 'selectLocation',
   'deselectLocation': 'deselectLocation',
@@ -51,9 +52,12 @@ DashboardChartsActions.fetchChart.listenAndPromise(chart_id => {
   return fetch(null, null, {'cache-control': 'no-cache'})
 })
 
-DashboardChartsActions.fetchMapFeatures.listen(location_ids => {
+DashboardChartsActions.fetchMapFeatures.listen((location_ids, location_depth) => {
   DashboardChartsActions.fetchMapFeatures.promise(
-    api.geo({parent_location_id__in: location_ids}, null, {'cache-control': 'max-age=604800, public'})
+    api.geo({
+      location_id__in: location_ids,
+      location_depth: location_depth <= 0 ? null : location_depth
+    }, null, {'cache-control': 'max-age=604800, public'})
   )
 })
 

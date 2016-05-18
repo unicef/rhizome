@@ -85,7 +85,7 @@ const MultiChart = React.createClass({
     const chart_type_selector = (
       <div className='medium-10 medium-centered text-center columns' style={{position: 'relative', marginTop: '-1.5rem', padding: '4rem 0'}}>
         <h4>View Data As</h4>
-        <ChartTypeSelect onChange={this.props.setType}/>
+        <ChartTypeSelect onChange={this.props.setType} selected={this.props.chart.type}/>
         { this.props.selectChart ? chart_selector : null }
       </div>
     )

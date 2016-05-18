@@ -11,10 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   userGuide
-   ../back-end/backendComponents
-   ../back-end/aggregationDetail
-   ../back-end/api
+   user-guide/userGuide
+   back-end/backendComponents
+   back-end/aggregationDetail
+   back-end/api
 
 
 Indices and tables
