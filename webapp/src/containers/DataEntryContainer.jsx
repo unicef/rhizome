@@ -74,6 +74,7 @@ const DataEntryContainer = React.createClass({
                 item_plural_name='Locations'
                 text='Add Locations'
                 style='button'
+                searchable
                 uniqueOnly/>
             </div>
           </div>
