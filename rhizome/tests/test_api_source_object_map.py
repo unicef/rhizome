@@ -87,10 +87,6 @@ class SourceObjectMapResourceTest(ResourceTestCase):
     def test_som_get_doc_id(self):
         get_data ={'document_id':self.document.id}
         get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
-
-        print 'SELF dot indicatr map'
-        print self.indicator_map.id
-
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
