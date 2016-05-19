@@ -15,6 +15,7 @@ class ColumnChart extends HighChart {
     const self = this
     const props = this.props
     const first_indicator = props.selected_indicators[0]
+    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     this.config = {
       chart: {
@@ -22,13 +23,22 @@ class ColumnChart extends HighChart {
       },
       series: this.setSeries(),
       xAxis: this.setXAxis(multipleCampaigns),
-      yAxis: {
-        title: { text: '' },
-        max: this.state.stack_mode === 'percent' ? 100 : null,
-        labels : {
-          formatter: function () { return self.yAxisFormatter(this) }
-        }
-      },
+      yAxis: [
+        {
+          title: { text: '' },
+          max: this.state.stack_mode === 'percent' ? 100 : null,
+          labels : {
+            formatter: function () { return self.yAxisFormatter(this) }
+          }
+        },
+        {
+          title: { text: '' },
+          labels: {
+            formatter: function () { return format.autoFormat(this.value, last_indicator.data_format) }
+          },
+          opposite: true
+        },
+      ],
       exporting: {
         buttons: {
           customButton: {
@@ -64,19 +74,33 @@ class ColumnChart extends HighChart {
     const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
+    const first_indicator = this.props.selected_indicators[0]
+    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const series = []
     _.forEach(grouped_data, group_collection => {
       const first_datapoint = group_collection[0]
       const color = this.props.indicator_colors[first_datapoint.indicator.id]
       group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
       group_collection = _.sortBy(group_collection, group => group.location.name)
-      series.push({
-        name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
-        data: group_collection.map(datapoint => datapoint.value),
-        stacking: this.state.stack_mode,
-        color: color
-      })
+      if (first_datapoint.indicator.data_format !== first_indicator.data_format) {
+        // If the last indicator selected is of a different data type than the rest, turn it into a line
+        series.push({
+          yAxis: 1,
+          name: last_indicator.name,
+          color: this.props.indicator_colors[last_indicator.id],
+          type: 'spline',
+          data: group_collection.map(datapoint => datapoint.value)
+        })
+      } else {
+        series.push({
+          name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
+          data: group_collection.map(datapoint => datapoint.value),
+          stacking: this.state.stack_mode,
+          color: color
+        })
+      }
     })
+
     return series
   }
 
@@ -100,7 +124,6 @@ class ColumnChart extends HighChart {
   }
 
   yAxisFormatter = (point) => {
-    // If there are multiple indicators and they are not the same data_format, this breaks down
     const first_indicator = this.props.selected_indicators[0]
     const formatted_value = format.autoFormat(point.value, first_indicator.data_format, 1)
     return this.state.stack_mode === 'percent' ? point.value + '%' : formatted_value
