@@ -119,7 +119,7 @@ describe ('DownloadButton', () => {
         // expect (windowSetIntervalSpy.calledWith(windowSetIntervalSpy.args[0], windowSetIntervalSpy.args[1])).to.be.true
       })
       it.skip ('calls #_completeDownload()', () => {
-        //need to research into hooking into asyncrhonous calls with window
+        //need to research into hooking into JS task queue with window
         mockDownloadButton._download()
         expect (_completeDownloadSpy.calledOnce).to.be.true
         // expect (_completeDownloadSpy.calledWith(0)).to.be.true
