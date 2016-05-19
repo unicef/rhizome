@@ -60,7 +60,7 @@ class LocationPermissionResourceTest(ResourceTestCase):
 		resp = self.ts.post(self, '/api/v1/location_responsibility/', data=data)
 		response_data = self.deserialize(resp)
 		self.assertHttpCreated(resp)
-		self.assertEqual(response_data['user_id'], self.ts.user.id)3
+		self.assertEqual(response_data['user_id'], self.ts.user.id)
 		self.assertEqual(response_data['location_id'], new_location.id)
 
 
