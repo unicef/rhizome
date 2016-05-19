@@ -74,7 +74,7 @@ var MenuItem = React.createClass({
     const hasChildren = !props.filtered && _.isArray(props.children) && props.children.length > 0
     const isLastParent = props.children && props.children.filter(child => child.children).length < 1
     const hideArrow = isLastParent && props.hideLastLevel
-    const prefix = props.filtered ? _.get(this.props, 'ancestryString', '') : ''
+    const prefix = props.filtered ? _.get(props, 'ancestryString', '') : ''
     const title = prefix + (props.displayTitle === null ? props.title : props.displayTitle)
 
     var children = null
