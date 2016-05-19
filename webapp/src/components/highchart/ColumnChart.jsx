@@ -6,87 +6,143 @@ import format from 'utilities/format'
 
 class ColumnChart extends HighChart {
 
+  constructor (props) {
+    super(props)
+    this.state = { stack_mode: props.type_params.stack_mode }
+  }
+
   setConfig = function () {
-    const first_indicator = this.props.selected_indicators[0]
-    const first_location = this.props.selected_locations[0]
-    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
+    const self = this
     const props = this.props
+    const first_indicator = props.selected_indicators[0]
+    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     this.config = {
-      xAxis: {
-        type: 'datetime',
-        labels: {
-          format: '{value:%b %Y}'
+      chart: {
+        type: 'column'
+      },
+      series: this.setSeries(),
+      xAxis: this.setXAxis(multipleCampaigns),
+      yAxis: {
+        title: { text: '' },
+        max: this.state.stack_mode === 'percent' ? 100 : null,
+        labels : {
+          formatter: function () { return self.yAxisFormatter(this) }
         }
       },
-      yAxis: [
-        {
-          title: { text: '' },
-          labels: {
-            formatter: function () {
-              return format.autoFormat(this.value, first_indicator.data_format)
+      exporting: {
+        buttons: {
+          customButton: {
+            text: 'Column Stacking',
+            onclick: this._toggleStackMode,
+            x: -65,
+            y: -30,
+            theme: {
+              style: {
+                color: '#039',
+                textDecoration: 'underline'
+              }
             }
           }
-        },
-        {
-          title: { text: '' },
-          labels: {
-            formatter: function () {
-              return format.autoFormat(this.value, last_indicator.data_format)
-            }
-          },
-          opposite: true
-        },
-      ],
-      tooltip: {
-        xDateFormat: '%b %Y',
-        pointFormatter: function () {
-          const data_format = this.series.name === last_indicator.name ? last_indicator.data_format : first_indicator.data_format
-          const value = format.autoFormat(this.y, data_format, 1)
-          const secondary_text = props.groupBy === 'indicator' ? first_location.name : first_indicator.name
-          return `<b>${secondary_text}</b><br/>${this.series.name}: <b>${value}</b><br/>`
         }
       },
-      series: this.setSeries()
+      tooltip: {
+        headerFormat: '<b>{series.name}</b><br/>',
+        pointFormatter: function () {
+          const value = format.autoFormat(this.y, first_indicator.data_format, 1)
+          if (multipleCampaigns) {
+            const date = format.monthYear(this.category.name)
+            const location = this.category.parent.name
+            return `${location}: <strong>${value}</strong><br/>${date}`
+          }
+          return `${this.category}: <strong>${value}</strong><br/>`
+        }
+      }
     }
   }
 
   setSeries = function () {
-    const multiIndicator = this.props.selected_indicators.length > 1
-    const groupByIndicator = this.props.groupBy === 'indicator'
-    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const data = this.props.datapoints.flattened
+    const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
-
-    // Set column data for all indicators except the last one
-    // In the case of a multi-indicator chart, the last indicator is displayed as a line
-    _.forEach(grouped_data, (group_collection, key) => {
-      if (!multiIndicator || parseInt(last_indicator.id) !== parseInt(key)) {
-        const sorted_column_data = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
-        const color = this.props.indicator_colors[sorted_column_data[0].indicator.id]
-        series.push({
-          name: groupByIndicator ? sorted_column_data[0].indicator.name : sorted_column_data[0].location.name,
-          color: color,
-          type: 'column',
-          data: sorted_column_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
-        })
-      }
-    })
-
-    // Set the line data for the last indicator
-    if (multiIndicator) {
-      const sorted_line_data = _.sortBy(grouped_data[last_indicator.id], group => group.campaign.start_date.getTime())
-      const color = this.props.indicator_colors[last_indicator.id]
+    _.forEach(grouped_data, group_collection => {
+      const first_datapoint = group_collection[0]
+      const color = this.props.indicator_colors[first_datapoint.indicator.id]
+      group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
+      group_collection = _.sortBy(group_collection, group => group.location.name)
       series.push({
-        yAxis: 1,
-        name: last_indicator.name,
-        color: color,
-        type: 'spline',
-        data: sorted_line_data.map(datapoint => [datapoint.campaign.start_date.getTime(), datapoint.value])
+        name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
+        data: group_collection.map(datapoint => datapoint.value),
+        stacking: this.state.stack_mode,
+        color: color
       })
-    }
+    })
     return series
   }
+
+  setXAxis = function (multipleCampaigns) {
+    const locations = this.props.datapoints.flattened.map(d => d.location)
+    if (!multipleCampaigns) {
+      return {categories: locations}
+    }
+    let xAxis = {categories: this._getGroupedCategories()}
+    if (this.props.groupByTime === 'year') {
+      xAxis.labels = {
+        format: '{value:%Y}',
+        style: { fontFamily: 'proxima-bold' }
+      }
+    } else {
+      xAxis.labels = {
+        format: "{value:%b <br/> %y'}"
+      }
+    }
+    return xAxis
+  }
+
+  yAxisFormatter = (point) => {
+    // If there are multiple indicators and they are not the same data_format, this breaks down
+    const first_indicator = this.props.selected_indicators[0]
+    const formatted_value = format.autoFormat(point.value, first_indicator.data_format, 1)
+    return this.state.stack_mode === 'percent' ? point.value + '%' : formatted_value
+  }
+
+  _getGroupedCategories = function () {
+    // This creates the necessary data structure for a Grouped Category chart.
+    // But loading the plugin is troublesome.
+    // There is no npm package for it + Importing manually doesnt seem to work
+
+    const data = this.props.datapoints.flattened
+    const groupByIndicator = this.props.groupBy === 'indicator'
+    const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
+    const grouped_categories = []
+    _.forEach(grouped_data, (group, key) => {
+      const subGrouped = _.groupBy(group, 'campaign.id')
+      const subGroupedAndSorted = _.sortBy(subGrouped, group => group[0].campaign.start_date.getTime())
+      grouped_categories.push({
+        name: this.props.locations_index[key].name,
+        categories: _.map(subGroupedAndSorted, group => group[0].campaign.start_date.getTime())
+      })
+    })
+    return _.sortBy(grouped_categories, grouped_category => grouped_category.name)
+  }
+
+  _toggleStackMode = () => {
+    const self = this
+    const stack_modes = ['normal', 'percent', null]
+    const index = stack_modes.indexOf(this.state.stack_mode) + 1
+    const new_state = index === 3 ? stack_modes[0] : stack_modes[index]
+    this.setState({stack_mode: new_state})
+    this.props.updateTypeParams('stack_mode', new_state)
+    this.chart.series.forEach(s => s.update({stacking: new_state}, false))
+    this.chart.yAxis[0].update({
+      labels : {
+        formatter: function () { return self.yAxisFormatter(this) }
+      },
+      max: new_state === 'percent' ? 100 : null
+    })
+    this.chart.redraw()
+  }
+
 }
 
 export default ColumnChart

@@ -68,16 +68,27 @@ describe ('DropdownMenu', () => {
     })
   })
   describe ('#_onResize()', () => {
-
+    it ('exists' , () => {
+      expect (mockDropdownMenu._onResize).to.exist
+    })
   })
   describe ('#componentWillUnmount()', () => {
-
+    it ('exists', () => {
+      expect (mockDropdownMenu.componentWillUnmount).to.exist
+    })
+    it.skip ('calls window.removeEventListener with correct arguments', () => {
+      const spy = sinon.spy(window, 'removeEventListener')
+      mockDropdownMenu.componentWillUnmount()
+      expect (spy.calledOnce).to.be.true
+      expect (spy.calledWith('resize', mockDropdownMenu._onResize))
+      window.removeEventListener.restore()
+    })
   })
   describe ('#componentDidMount()', () => {
     it ('exists', () => {
       expect (mockDropdownMenu.componentDidMount).to.exist
     })
-    it ('calls `window.addEventListener()  with correct arguments')
+    it ('calls `window.addEventListener() with correct arguments')
   })
   describe ('#componentDidUpdate()', () => {
     it ('exists', () => {
@@ -93,7 +104,46 @@ describe ('DropdownMenu', () => {
     })
   })
   describe ('#shouldComponentUpdate()', () => {
+    let props
+    beforeEach(() => {
+      props = { maxHeight: 'none', marginLeft: 0, orientation: 'center', pattern: '' }
+    })
+    it ('exists', () => {
+      expect (mockDropdownMenu.shouldComponentUpdate).to.exist.and.have.lengthOf(2)
+    })
+    context ('if props equal to nextProps', () => {
+      it ('returns false', () => {
+        mockDropdownMenu = new DropdownMenu(props)
+        const returnValue = mockDropdownMenu.shouldComponentUpdate(props, props)
+        expect (returnValue).to.be.false
+      })
+    })
+    context ('if props not equal to nextProps', () => {
+      it ('returns true', () => {
+        let nextProps = props
+        nextProps.maxHeight = ''
+        const returnValue = mockDropdownMenu.shouldComponentUpdate(nextProps, props)
+        expect (returnValue).to.be.true
 
+      })
+    })
+    context ('if state not equal to nextState', () => {
+      it ('returns true', () => {
+        mockDropdownMenu = new DropdownMenu(props)
+        let nextState = props
+        nextState.maxHeight = ''
+        const returnValue = mockDropdownMenu.shouldComponentUpdate(props, nextState)
+        expect (returnValue).to.be.true
+      })
+    })
+    context ('if state equal to nextState', () => {
+      it ('returns false', () => {
+        mockDropdownMenu = new DropdownMenu(props)
+        let nextState = props
+        const returnValue = mockDropdownMenu.shouldComponentUpdate(props, nextState)
+        expect (returnValue).to.be.false
+      })
+    })
   })
   describe ('#render()', () => {
     let wrapper, expectedComponent

@@ -12,8 +12,6 @@ import MapChart from 'components/highchart/MapChart'
 import BubbleMapChart from 'components/highchart/BubbleMapChart'
 import LineChart from 'components/highchart/LineChart'
 import ColumnChart from 'components/highchart/ColumnChart'
-import StackedColumnChart from 'components/highchart/StackedColumnChart'
-import StackedPercentColumnChart from 'components/highchart/StackedPercentColumnChart'
 import TableChart from 'components/d3chart/TableChart'
 import ChoroplethMap from 'components/d3chart/ChoroplethMap'
 
@@ -58,11 +56,7 @@ const MultiChart = React.createClass({
     } else if (type === 'MapChart') {
       return <MapChart {...this.props.chart} onMapClick={this.props.primaryChartClick}/>
     } else if (type === 'ColumnChart') {
-      return <ColumnChart {...this.props.chart} />
-    } else if (type === 'StackedColumnChart') {
-      return <StackedColumnChart {...this.props.chart} />
-    } else if (type === 'StackedPercentColumnChart') {
-      return <StackedPercentColumnChart {...this.props.chart} updateTypeParams={this.props.updateTypeParams} />
+      return <ColumnChart {...this.props.chart} {...this.props.chart} updateTypeParams={this.props.updateTypeParams}/>
     } else if (type === 'BubbleMap') {
       return <BubbleMapChart {...this.props.chart} />
     } else if (type === 'BarChart') {
