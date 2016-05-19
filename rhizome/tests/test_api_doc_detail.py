@@ -20,26 +20,62 @@ class DocDetailResourceTest(ResourceTestCase):
     	doc = Document.objects.create(doc_title='test')
     	doc_detail_type = DocDetailType.objects.create(name='test type')
     	url = '/api/v1/doc_detail/'
+        value =1232
     	data = {
     		'document_id':doc.id, 
     		'doc_detail_type_id':doc_detail_type.id,
-    		'doc_detail_value':1
-		}
+    		'doc_detail_value': value
+    	}
     	resp = self.ts.post(self, url, data=data)
     	self.assertHttpCreated(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['doc_detail_value'], value)
 
-# WHY WON"T THIS TEST RUN???
-	def test_get_doc_detail_by_type(self):
-		doc = Document.objects.create(doc_title='test')
-		doc_detail_type = DocDetailType.objects.create(name='test type')
-		doc_detail = DocumentDetail.objects.create(document_id = doc.id,\
-			doc_detail_type_id = doc_detail_type.id,\
-			doc_detail_value = 1
-		)
-		url = '/api/v1/doc_detail/'
-		data ={'doc_detail_type':doc_detail_type.id}
-		resp = self.ts.get(self, url, data=data)
-		self.assertHttpOk(resp)
-		response_data = self.deserialize(resp)
-		print response_data
-    	# self.assertEqual(response_data[])
+    def test_get_doc_detail_by_type(self):
+        doc = Document.objects.create(doc_title='test')
+        doc_detail_type = DocDetailType.objects.create(name='test type')
+        doc_detail = DocumentDetail.objects.create(document_id = doc.id,\
+            doc_detail_type_id = doc_detail_type.id,\
+            doc_detail_value = 1
+        )
+        url = '/api/v1/doc_detail/'
+        data ={'doc_detail_type':doc_detail_type.name}
+        resp = self.ts.get(self, url, data=data)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+    	self.assertEqual(len(response_data['objects']), 1)
+        self.assertEqual(response_data['objects'][0]['id'], doc_detail.id)
+
+    def test_get_doc_detail_by_id(self):
+        doc = Document.objects.create(doc_title='test')
+        doc_detail_type = DocDetailType.objects.create(name='test type')
+        doc_detail = DocumentDetail.objects.create(document_id = doc.id,\
+            doc_detail_type_id = doc_detail_type.id,\
+            doc_detail_value = 1
+        )
+        url = '/api/v1/doc_detail/'
+        data ={'document_id':doc.id}
+        resp = self.ts.get(self, url, data=data)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), 1)
+        self.assertEqual(response_data['objects'][0]['id'], doc_detail.id)
+
+    def test_get_all_doc_detail(self):
+        doc = Document.objects.create(doc_title='test')
+        doc_2 = Document.objects.create(doc_title='test2')
+        doc_detail_type = DocDetailType.objects.create(name='test type')
+        doc_detail_1 = DocumentDetail.objects.create(document_id = doc.id,\
+            doc_detail_type_id = doc_detail_type.id,\
+            doc_detail_value = 1
+        )
+        doc_detail_2 = DocumentDetail.objects.create(document_id = doc_2.id,\
+            doc_detail_type_id = doc_detail_type.id,\
+            doc_detail_value = 1
+        )
+        url = '/api/v1/doc_detail/'
+        resp = self.ts.get(self, url)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(len(response_data['objects']), 2)
+

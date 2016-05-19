@@ -79,9 +79,7 @@ class GeoResource(BaseNonModelResource):
         data.pop("objects", None)
         data.pop("meta", None)
 
-        if 'parent_location_id__in' in request.GET:
-            data['parent_location_id__in'] = request.GET['parent_location_id__in']
-        elif 'location_id__in' in request.GET:
+        if 'location_id__in' in request.GET:
             data['location_id__in'] = request.GET['location_id__in']
 
 
