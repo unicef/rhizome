@@ -14,9 +14,9 @@ class ColumnChart extends HighChart {
   setConfig = function () {
     const self = this
     const props = this.props
+    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     const first_indicator = props.selected_indicators[0]
     const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
-    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
     this.config = {
       chart: {
         type: 'column'
@@ -74,6 +74,7 @@ class ColumnChart extends HighChart {
     const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
+    const multipleIndicators = this.props.selected_indicators.length > 1
     const first_indicator = this.props.selected_indicators[0]
     const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const series = []
@@ -82,7 +83,7 @@ class ColumnChart extends HighChart {
       const color = this.props.indicator_colors[first_datapoint.indicator.id]
       group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
       group_collection = _.sortBy(group_collection, group => group.location.name)
-      if (first_datapoint.indicator.data_format !== first_indicator.data_format) {
+      if (multipleIndicators && first_datapoint.indicator.data_format !== first_indicator.data_format) {
         // If the last indicator selected is of a different data type than the rest, turn it into a line
         series.push({
           yAxis: 1,
