@@ -24,9 +24,9 @@ describe ('Dropdown', () => {
       it ('props passed should also be passed up to super', () => {
         const spy = sinon.spy(React.Component.prototype, 'constructor')
         const spyMockDropdown = new Dropdown(props)
+        React.Component.prototype.constructor.restore()
         expect (spy.called).to.be.true
         expect (spy.calledWith(props)).to.be.true
-        React.Component.prototype.constructor.restore()
       })
       it ('initializes instance variable `state`', () => {
         mockDropdown = new Dropdown(props)
@@ -68,8 +68,8 @@ describe ('Dropdown', () => {
       it ('triggers close method', () => {
         const spy = sinon.spy(mockDropdown, 'close')
         mockDropdown.handleEvent(event)
-        expect (spy.calledOnce).to.be.true
         mockDropdown.close.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
     context ('when given any even other than keyCode 27 and type keyup', () => {
@@ -77,8 +77,8 @@ describe ('Dropdown', () => {
         const diffEvent = { type: 'keydown', keyCode: 28 }
         const spy = sinon.spy(mockDropdown, 'close')
         mockDropdown.handleEvent(diffEvent)
-        expect (spy.called).to.not.be.true
         mockDropdown.close.restore()
+        expect (spy.called).to.not.be.true
       })
     })
   })
@@ -97,9 +97,9 @@ describe ('Dropdown', () => {
         const spy = sinon.spy(Dropdown.prototype, 'setState')
         const open = mockDropdown.state.open
         mockDropdown._toggleMenu(event)
+        Dropdown.prototype.setState.restore()
         expect (spy.calledOnce).to.be.true
         expect (spy.calledWith({ open: !open })).to.be.true
-        Dropdown.prototype.setState.restore()
       })
     })
   })
@@ -112,9 +112,9 @@ describe ('Dropdown', () => {
         const spy = sinon.spy(Dropdown.prototype, 'setState')
         const spyMockDropdown = new Dropdown()
         spyMockDropdown.close(event)
+        Dropdown.prototype.setState.restore()
         expect (spy.calledOnce).to.be.true
         expect (spy.calledWith({ open: false })).to.be.true
-        Dropdown.prototype.setState.restore()
     })
   })
 })
