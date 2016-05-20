@@ -70,10 +70,13 @@ describe ('IconButtonDropdown', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<IconButtonDropdown {...IconButtonDropdownTest.getProps()}/>)
-      expectedComponent = IconButtonDropdownTest.mockComponent()
+      expectedComponent = IconButtonDropdownTest.getComponent()
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it.skip ('renders proper jsx', () => {
+      const props = IconButtonDropdownTest.getProps()
+      const actualComponent = shallow(<IconButtonDropdown {...props}/>).debug()
+      const expectedComponent = shallow(IconButtonDropdownTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
     it ('contains a button', () => {
       expect (wrapper.find('IconButton')).to.have.length(1)
@@ -107,10 +110,10 @@ class IconButtonDropdownTest {
       onSearch: () => null
     }
   }
-  _toggleMenu() {
+  static _toggleMenu() {
 
   }
-  static mockComponent() {
+  static getComponent() {
     const props = this.getProps()
     return (
       <IconButton {...props} onClick={this._toggleMenu}/>

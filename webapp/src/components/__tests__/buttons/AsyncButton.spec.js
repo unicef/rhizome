@@ -54,18 +54,20 @@ describe ('AsyncButton', () => {
   describe ('#render()', () => {
     let expectedComponent, wrapper
     beforeEach(() => {
-      expectedComponent = AsyncButtonTest.mockComponent()
+      expectedComponent = AsyncButtonTest.getComponent()
       wrapper = shallow(<AsyncButton {...AsyncButtonTest.getProps()}/>)
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it ('renders correct jsx', () => {
+      const props = AsyncButtonTest.getProps()
+      const actualComponent = shallow(<AsyncButton {...props}/>).debug()
+      const expectedComponent = shallow(AsyncButtonTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
-
     it ('renders a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
     })
     it ('has a span within', () => {
-      expect (wrapper.contains(AsyncButtonTest.mockSpan())).to.be.true
+      expect (wrapper.contains(AsyncButtonTest.getSpan())).to.be.true
     })
     describe ('events', () => {
       it ('simulates click events', () => {
@@ -87,17 +89,17 @@ class AsyncButtonTest {
       onClick: () => {}
     }
   }
-  static mockComponent() {
+  static getComponent() {
     const props = this.getProps()
     const icon_string = props.isBusy ? 'spinner fa-spin saving-icon' : props.icon
     return (
       <button disabled={props.disabled} className={props.classes} onClick={props.onClick} style={props.style}>
         { props.icon ? <i className={'fa fa-' + icon_string}></i> : '' }
-        { this.mockSpan() }
+        { this.getSpan() }
       </button>
     )
   }
-  static mockSpan() {
+  static getSpan() {
     const props = this.getProps()
     return (
         <span>

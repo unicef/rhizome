@@ -86,16 +86,16 @@ describe ('IconButton', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<IconButton {...IconButtonTest.getProps()}/>)
-      expectedComponent = IconButtonTest.mockComponent()
+      expectedComponent = IconButtonTest.getComponent()
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it ('renders proper jsx', () => {
+      const props = IconButtonTest.getProps()
+      const actualComponent = shallow(<IconButton {...props}/>).debug()
+      const expectedComponent = shallow(IconButtonTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
-    })
-    it.skip ('contains an inner component', () => {
-      expect (wrapper.contains(IconButtonTest.mockInnerComponent())).to.be.true
     })
     describe ('events', () => {
       it ('simulates click events', () => {
@@ -109,16 +109,16 @@ describe ('IconButton', () => {
         let spy = sinon.spy(reactPrototype, 'showTooltip')
         wrapper = shallow(<IconButton />)
         wrapper.find('button').simulate('mouseover')
-        expect (spy.calledOnce).to.be.true
         reactPrototype.showTooltip.restore()
+        expect (spy.calledOnce).to.be.true
       })
       it ('simulates mouseOut events', () => {
         let reactPrototype = IconButton.prototype.__reactAutoBindMap
         let spy = sinon.spy(reactPrototype, 'hideTooltip')
         wrapper = shallow(<IconButton />)
         wrapper.find('button').simulate('mouseout')
-        expect (spy.calledOnce).to.be.true
         reactPrototype.hideTooltip .restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
   })
@@ -133,6 +133,7 @@ class IconButtonTest {
       className: 'foo',
       working: 'bar',
       cookieName: 'foo',
+      icon: 'info-circle',
       onClick: () => {}
     }
   }
@@ -151,7 +152,13 @@ class IconButtonTest {
       tooltip: null,
     }
   }
-  static mockComponent() {
+  static showTooltip() {
+
+  }
+  static hideTooltip() {
+
+  }
+  static getComponent() {
     const props = this.getProps()
     const state = this.getState()
     return (
@@ -160,11 +167,11 @@ class IconButtonTest {
         onMouseOver={this.showTooltip}
         onMouseOut={this.hideTooltip}
         className={'button icon-button ' + props.className}>
-        {this.mockInnerComponent()}
+        {this.getInnerComponent()}
       </button>
     )
   }
-  static mockInnerComponent() {
+  static getInnerComponent() {
     const props = this.getProps()
     return (
       <i
