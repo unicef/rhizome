@@ -28,10 +28,10 @@ class DropdownButtonTest {
       icon: 'plus'
     }
   }
-  _toggleMenu() {
+  static _toggleMenu() {
 
   }
-  static mockComponent() {
+  static getComponent() {
     const props = this.getProps()
     if (!props.items || props.items.length === 0) {
       if (props.text) {
@@ -121,8 +121,8 @@ describe ('DropdownButton', () => {
         const spy = sinon.spy(DropdownButton.prototype, 'setState')
         const spyMockDropdownButton = new DropdownButton({ text: 'foo'})
         spyMockDropdownButton.componentWillReceiveProps(props)
-        expect (spy.calledOnce).to.be.true
         DropdownButton.prototype.setState.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
   })
@@ -138,8 +138,8 @@ describe ('DropdownButton', () => {
         const spyMockDropdownButton = new DropdownButton(props)
         const spy = sinon.spy(spyMockDropdownButton, '_getGroupedMenuItemComponents')
         spyMockDropdownButton.componentWillUpdate(props)
-        expect (spy.calledOnce).to.be.true
         spyMockDropdownButton._getGroupedMenuItemComponents.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
     context.skip ('when given 2 arguments and props.grouped is false', () => {
@@ -149,8 +149,8 @@ describe ('DropdownButton', () => {
         const spyMockDropdownButton = new DropdownButton(props)
         const spy = sinon.spy(spyMockDropdownButton, '_getGroupedMenuItemComponents')
         spyMockDropdownButton.componentWillUpdate(props)
-        expect (spy.calledOnce).to.be.true
         spyMockDropdownButton._getMenuItemComponents.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
     context.skip ('when given 2 arguments', () => {
@@ -158,8 +158,8 @@ describe ('DropdownButton', () => {
         const spyMockDropdownButton = new DropdownButton(props)
         const spy = sinon.spy(spyMockDropdownButton, '_setPattern')
         spyMockDropdownButton.componentWillUpdate(props)
-        expect (spy.calledOnce).to.be.true
         spyMockDropdownButton._setPattern.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
   })
@@ -167,10 +167,13 @@ describe ('DropdownButton', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DropdownButton {...DropdownButtonTest.getProps()}/>)
-      expectedComponent = DropdownButtonTest.mockComponent()
+      expectedComponent = DropdownButtonTest.getComponent()
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it ('renders proper jsx', () => {
+      const props = DropdownButtonTest.getProps()
+      const actualComponent = shallow(<DropdownButton {...props}/>).debug()
+      const expectedComponent = shallow(DropdownButtonTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
@@ -181,8 +184,8 @@ describe ('DropdownButton', () => {
           let spyMockDropdownButton = new DropdownButton()
           let spy = sinon.spy(spyMockDropdownButton, '_toggleMenu')
           wrapper.find('button').simulate('click',{ preventDefault: () => {} })
-          expect (spy.calledOnce).to.be.true
           wrapper._toggleMenu.restore()
+          expect (spy.calledOnce).to.be.true
         })
       })
       context ('if props has no `items`', () => {
@@ -192,8 +195,8 @@ describe ('DropdownButton', () => {
           props.items = null
           wrapper = shallow(<DropdownButton {...props} />)
           wrapper.find('button').simulate('click')
-          expect (spy.called).to.be.false
           DropdownButton.prototype._toggleMenu.restore()
+          expect (spy.called).to.be.false
         })
       })
     })

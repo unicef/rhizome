@@ -53,9 +53,9 @@ describe ('DropdownMenu', () => {
       it ('props passed should also be passed up to super', () => {
         const spy = sinon.spy(React.Component.prototype, 'constructor')
         const spyMockDropdownMenu = new DropdownMenu(props)
+        React.Component.prototype.constructor.restore()
         expect (spy.called).to.be.true
         expect (spy.calledWith(props)).to.be.true
-        React.Component.prototype.constructor.restore()
       })
       it ('initializes instance variable `state`', () => {
         mockDropdownMenu = new DropdownMenu(props)
@@ -79,9 +79,9 @@ describe ('DropdownMenu', () => {
     it.skip ('calls window.removeEventListener with correct arguments', () => {
       const spy = sinon.spy(window, 'removeEventListener')
       mockDropdownMenu.componentWillUnmount()
+      window.removeEventListener.restore()
       expect (spy.calledOnce).to.be.true
       expect (spy.calledWith('resize', mockDropdownMenu._onResize))
-      window.removeEventListener.restore()
     })
   })
   describe ('#componentDidMount()', () => {
@@ -149,10 +149,13 @@ describe ('DropdownMenu', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DropdownMenu {...DropdownMenuTest.getProps()}/>)
-      expectedComponent = DropdownMenuTest.mockComponent()
+      expectedComponent = DropdownMenuTest.getComponent()
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it ('renders proper jsx', () => {
+      const props = DropdownMenuTest.getProps()
+      const actualComponent = shallow(<DropdownMenu {...props}/>).debug()
+      const expectedComponent = shallow(DropdownMenuTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
     it ('contains 4 div\'s', () => {
       expect (wrapper.find('div')).to.have.length(4)
@@ -164,8 +167,8 @@ describe ('DropdownMenu', () => {
         let spy = sinon.spy(reactPrototype, 'onBlur')
         let spyMockDropdownMenu = shallow(<DropdownMenu />)
         spyMockDropdownMenu.simulates('blur')
-        expect (spy.calledOnce).to.be.true
         reactPrototype.onBlur.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
   })
@@ -201,7 +204,10 @@ class DropdownMenuTest {
       pattern: ''
     }
   }
-  static mockComponent() {
+  static onBlur() {
+
+  }
+  static getComponent() {
     const props = this.getProps()
     const state = this.getState()
     let itemlistStyle = { maxHeight: state.maxHeight }

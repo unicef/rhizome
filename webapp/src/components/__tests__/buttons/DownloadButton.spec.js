@@ -53,8 +53,8 @@ describe ('DownloadButton', () => {
       const spyMockDownloadButton = new DownloadButton({ cookieName: '0'})
       const spy = sinon.spy(spyMockDownloadButton, 'setState')
       spyMockDownloadButton._completeDownload('0')
-      expect (spy.calledOnce).to.be.true
       spyMockDownloadButton.setState.restore()
+      expect (spy.calledOnce).to.be.true
     })
     it ('document.cookie is set to proper value', () => {
       const spyMockDownloadButton = new DownloadButton({ cookieName: '0'})
@@ -65,9 +65,9 @@ describe ('DownloadButton', () => {
       const spyMockDownloadButton = shallow(<DownloadButton cookieName='0' />).instance()
       const spy = sinon.spy(window, 'clearInterval')
       spyMockDownloadButton._completeDownload('0')
+      window.clearInterval.restore()
       expect (spy.called).to.be.true
       expect (spy.calledWith('0')).to.be.true
-      window.clearInterval.restore()
     })
   })
   describe ('#_download()', () => {
@@ -143,24 +143,24 @@ describe ('DownloadButton', () => {
     let wrapper, expectedComponent
     beforeEach (() => {
       wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()}/>)
-      expectedComponent = DownloadButtonTest.mockComponent()
+      expectedComponent = DownloadButtonTest.getComponent()
     })
-    it.skip ('renders correct components', () => {
-      expect (wrapper.equals(expectedComponent)).to.be.true
+    it ('renders proper jsx', () => {
+      const props = DownloadButtonTest.getProps()
+      const actualComponent = shallow(<DownloadButton {...props}/>).debug()
+      const expectedComponent = shallow(DownloadButtonTest.getComponent()).debug()
+      expect (actualComponent).to.equal(expectedComponent)
     })
     it ('contains a button', () => {
       expect (wrapper.find('button')).to.have.length(1)
-    })
-    it.skip ('contains an inner component', () => {
-      expect (wrapper.contains(DownloadButtonTest.mockInnerComponent())).to.be.true
     })
     describe ('events', () => {
       it ('simulates click events', () => {
         let spy = sinon.spy(DownloadButton.prototype.__reactAutoBindMap, "_download")
         wrapper = shallow(<DownloadButton {...DownloadButtonTest.getProps()} />)
         wrapper.find('button').simulate('click')
-        expect (spy.calledOnce).to.be.true
         DownloadButton.prototype.__reactAutoBindMap._download.restore()
+        expect (spy.calledOnce).to.be.true
       })
     })
   })
@@ -194,7 +194,7 @@ class DownloadButtonTest {
   static _download () {
 
   }
-  static mockComponent() {
+  static getComponent() {
     const props = this.getProps()
     const state = this.getState()
     let text = state.isWorking ? props.working : props.text
@@ -208,7 +208,7 @@ class DownloadButtonTest {
       </button>
     )
   }
-  static mockInnerComponent() {
+  static getInnerComponent() {
     const props = this.getProps()
     const state = this.getState()
     let text = state.isWorking ? props.working : props.text
