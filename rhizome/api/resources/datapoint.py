@@ -147,14 +147,6 @@ class DatapointResource(BaseNonModelResource):
         self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
         return dp_df
 
-    def handle_data_exists(self, df):
-
-        dp_df = self.get_time_group_series(df)
-        gb_df = DataFrame(dp_df\
-            .groupby(['indicator_id','time_grouping','location_id'])['value']\
-            .sum())\
-            .reset_index()
-        return gb_df
 
     def transform_df_to_results(self, df):
         # the following line is a hack. TODO: figure out where empty list is being returned from
@@ -184,40 +176,47 @@ class DatapointResource(BaseNonModelResource):
             location_id__in = self.location_ids,
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
+
         if not dp_df.empty:
-            return self.handle_data_exists(dp_df)
+            dp_df = self.get_time_group_series(dp_df)
+            gb_df = DataFrame(dp_df\
+                .groupby(['indicator_id','time_grouping','location_id'])['value']\
+                .sum())\
+                .reset_index()
+            return gb_df
+        # need to look at sublocations if the data isn't available at the current level
+        else:
+            depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
+            while dp_df.empty and depth_level < max_depth:
+                sub_location_ids = Location.objects\
+                    .filter(parent_location_id__in=sub_location_ids)\
+                    .values_list('id', flat=True)
 
-        depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
-        while dp_df.empty and depth_level < max_depth:
-            sub_location_ids = Location.objects\
-                .filter(parent_location_id__in=sub_location_ids)\
-                .values_list('id', flat=True)
+                dp_df = DataFrame(list(DataPoint.objects.filter(
+                    location_id__in = sub_location_ids,
+                    indicator_id__in = self.parsed_params['indicator__in']
+                ).values(*cols)),columns=cols)
+                depth_level += 1
 
-            dp_df = DataFrame(list(DataPoint.objects.filter(
-                location_id__in = sub_location_ids,
-                indicator_id__in = self.parsed_params['indicator__in']
-            ).values(*cols)),columns=cols)
-            depth_level += 1
+            dp_df = self.get_time_group_series(dp_df)
+            if dp_df.empty:
+                return []
+            location_tree_df = DataFrame(list(LocationTree.objects\
+                .filter(location_id__in = sub_location_ids)\
+                .values_list('location_id','parent_location_id')),\
+                    columns=['location_id','parent_location_id'])
 
-        dp_df = self.get_time_group_series(dp_df)
-        if dp_df.empty:
-            return []
-        location_tree_df = DataFrame(list(LocationTree.objects\
-            .filter(location_id__in = sub_location_ids)\
-            .values_list('location_id','parent_location_id')),\
-                columns=['location_id','parent_location_id'])
+            merged_df = dp_df.merge(location_tree_df)
+            filtered_df = merged_df[merged_df['parent_location_id']\
+                .isin(self.location_ids)]
 
-        merged_df = dp_df.merge(location_tree_df)
-        filtered_df = merged_df[merged_df['parent_location_id']\
-            .isin(self.location_ids)]
+            gb_df = DataFrame(filtered_df\
+                .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
+                .sum())\
+                .reset_index()
 
-        gb_df = DataFrame(filtered_df\
-            .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
-            .sum())\
-            .reset_index()
-
-        gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
-        return gb_df
+            gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+            return gb_df
 
     def df_to_result_obj(self, row, results_list):
         dp = ResultObject()
@@ -315,13 +314,16 @@ class DatapointResource(BaseNonModelResource):
             objects = []
         return objects
 
-    def obj_get(self, bundle, **kwargs):
-        # get one object from data source
-        pk = int(kwargs['pk'])
-        try:
-            return bundle.data[pk]
-        except KeyError:
-            raise NotFound("Object not found")
+    # IS THIS EVER USED????
+    # |
+    # v
+    # def obj_get(self, bundle, **kwargs):
+    #     # get one object from data source
+    #     pk = int(kwargs['pk'])
+    #     try:
+    #         return bundle.data[pk]
+    #     except KeyError:
+    #         raise NotFound("Object not found")
 
     def alter_list_data_to_serialize(self, request, data):
         '''
@@ -335,12 +337,6 @@ class DatapointResource(BaseNonModelResource):
             data['meta']['location_ids'] = location_ids
         except KeyError:
             location_ids = None
-
-        try:
-            parent_location_ids = request.GET['parent_location_id__in']
-            data['meta']['parent_location_ids'] = parent_location_ids
-        except KeyError:
-            parent_location_ids = None
 
         try:
             indicator_ids = request.GET['indicator__in']
