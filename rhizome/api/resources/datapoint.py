@@ -162,7 +162,8 @@ class DatapointResource(BaseNonModelResource):
             .groupby(['indicator_id','time_grouping','location_id'])['value']\
             .sum())\
             .reset_index()
-
+        if self.parsed_params['show_missing_data'] == u'1':
+            gb_df = self.add_missing_data(gb_df)
         return gb_df
 
     def group_by_time_transform(self):
@@ -560,5 +561,4 @@ class DatapointResource(BaseNonModelResource):
         
         cart_prod_df.columns = columns_list 
         df = df.merge(cart_prod_df, how='outer', on=columns_list)       
-        
         return df
