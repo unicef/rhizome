@@ -95,7 +95,7 @@ let EditableTableCell = React.createClass({
   _getQueryParams: function (new_value) {
     return {
       location_id: this.props.row.location_id,
-      campaign_id: this.props.row.campaign_id.id,
+      campaign_id: this.props.row.campaign_id,
       indicator_id: this.props.field.key,
       computed_id: this.computed_id,
       value: new_value
