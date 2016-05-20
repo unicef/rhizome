@@ -481,7 +481,6 @@ class CustomDashboardResource(BaseModelResource):
             'id': dash_id,
             'title': title,
             'description': description,
-            'owner_id': user_id,
             'default_office_id': default_office_id,
             'layout': layout
         }

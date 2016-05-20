@@ -471,7 +471,6 @@ class CustomDashboard(models.Model):
 
     title = models.CharField(max_length=255, unique=True)
     description = models.CharField(max_length=1000)
-    owner = models.ForeignKey('auth.User')
     default_office = models.ForeignKey(Office, null=True)
     layout = models.IntegerField(default=0, null=True)
 

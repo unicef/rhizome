@@ -38,7 +38,7 @@ class ChartResourceTest(ResourceTestCase):
         self.assertEqual(post_data['chart_json'], response_data['chart_json'])
 
     def test_chart_delete(self):
-        d = CustomDashboard.objects.create(owner_id=self.user.id, title='test')
+        d = CustomDashboard.objects.create(title='test')
         c1 = CustomChart.objects.create(dashboard_id=d.id, chart_json={'hello': 'world'})
         c2 = CustomChart.objects.create(dashboard_id=d.id, chart_json={'goodnight': 'moon'})
 
