@@ -136,7 +136,9 @@ USE_TZ = True
 
 # Template configuration
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'templates'),
+    os.path.join(BASE_DIR, 'datapoints/templates'),
+    os.path.join(BASE_DIR, 'source_data/templates'),    
+    os.path.join(BASE_DIR, 'templates',),
 )
 
 ## API SETTINGS ##
