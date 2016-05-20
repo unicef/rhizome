@@ -98,8 +98,9 @@ class DataPointResourceTest(ResourceTestCase):
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
-        self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
+        print response_data
+        self.assertHttpOK(resp)
         self.assertEqual(response_data['error'], None)
         self.assertEqual(response_data['meta']["total_count"], 1)
 

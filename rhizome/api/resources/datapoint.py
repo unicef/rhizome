@@ -183,7 +183,10 @@ class DatapointResource(BaseNonModelResource):
         ).values(*cols)),columns=cols)
         if not dp_df.empty:
             dp_df = self.handle_data_exists(dp_df)
-            return self.time_grouped_df_to_results(dp_df)
+            results =[]
+            if not type(dp_df) == list:
+                dp_df.apply(self.df_to_result_obj, args=(results,), axis=1)
+            return results
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
@@ -219,21 +222,24 @@ class DatapointResource(BaseNonModelResource):
             gb_df = self.add_missing_data(gb_df)
 
         gb_df = gb_df.sort(['time_grouping'])
-        return self.time_grouped_df_to_results(gb_df)
+        results =[]
+        if not type(gb_df) == list:
+            gb_df.apply(self.df_to_result_obj, args=(results,), axis=1)
 
-    def time_grouped_df_to_results(self, df):
-
-        all_time_groupings, results = [], []
-        for idx,row in df.iterrows():
-            dp = ResultObject()
-            # for column_header in dwc_df_columns:
-            dp.indicator_id = row['indicator_id']
-            dp.campaign_id = int(row['time_grouping'])
-            dp.location_id = row['location_id']
-            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
-                dp.value = row['value']
-            results.append(dp)
         return results
+
+    def df_to_result_obj(self, row, results_list):
+        dp = ResultObject()
+        if not math.isnan(row['indicator_id']):
+            dp.indicator_id = row['indicator_id']
+        if 'campaign_id' in row:
+            dp.campaign_id = row['campaign_id']
+        else:
+            dp.campaign_id = row['time_grouping']
+        dp.location_id = row['location_id']
+        if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+            dp.value = row['value']
+        results_list.append(dp)
 
     def handle_polio_case_table(self, dp_df_columns):
         '''
@@ -290,8 +296,10 @@ class DatapointResource(BaseNonModelResource):
         concat_df['parent_location_id'] = parent_location_id
         concat_df = concat_df.drop('location_id', 1)
         concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
-        return self.time_grouped_df_to_results(concat_df)
-
+        results =[]
+        if not type(concat_df) == list:
+            concat_df.apply(self.df_to_result_obj, args=(results,), axis=1)
+        return results
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -524,18 +532,8 @@ class DatapointResource(BaseNonModelResource):
             dwc_df = self.add_missing_data(dwc_df)
         dwc_df = dwc_df.sort('campaign_id')
         results =[]
-        for idx,row in dwc_df.iterrows():
-            dp = ResultObject()
-            # for column_header in dwc_df_columns:
-            dp.campaign_id = row['campaign_id']
-            dp.location_id = row['location_id']
-            if not math.isnan(row['indicator_id']):
-                dp.indicator_id = row['indicator_id']
-            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
-                dp.value = row['value']
-            if not math.isnan(row['id']):  
-                dp.computed_id = row['id']          
-            results.append(dp)
+        if not type(dwc_df) == list:
+            dwc_df.apply(self.df_to_result_obj, args=(results,), axis=1)
         return results
 
     def add_missing_data(self, df):
