@@ -10,14 +10,14 @@ export default React.createClass({
     title: React.PropTypes.string,
     onChange: React.PropTypes.func.isRequired
   },
-  getDefaultProps: function () {
+  getDefaultProps () {
     return {
       prefix: '',
       horizontal: false
     }
   },
-  render: function () {
-    var radios = this.props.values.map((radio, index) => {
+  render () {
+    const radios = this.props.values.map((radio, index) => {
       return (
         <div key={radio.value} className={this.props.horizontal ? 'horizontal' : null}>
           <input type='radio' name={this.props.name} id={`${this.props.prefix}${radio.value}`}
