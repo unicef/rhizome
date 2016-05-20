@@ -71,11 +71,12 @@ var DatapointStore = Reflux.createStore({
   // =========================================================================== //
   flatten: function (datapoints) {
     const flattened = datapoints.map(d => {
+      const indicator = this.indicators.index[d.indicator_id]
       const datapoint = {
         id: d.computed_id,
-        value: d.value ? parseFloat(d.value) : null,
+        value: d.value ? this._formatValue(d.value, indicator.data_format) : null,
         location: this.locations.index[d.location_id],
-        indicator: this.indicators.index[d.indicator_id]
+        indicator: indicator
       }
       if (d.data_date) { datapoint.data_date = d.data_date }
       if (d.campaign_id) {
@@ -84,6 +85,16 @@ var DatapointStore = Reflux.createStore({
       return datapoint
     })
     return flattened
+  },
+
+  _formatValue: function (value, data_format) {
+    if (data_format === 'int' || data_format === 'pct') {
+      return parseFloat(value)
+    } else if (data_format === 'date') {
+      return moment(value, 'YYYY-MM-DD').toDate()
+    } else {
+      return value
+    }
   },
 
   _createYearCampaign: function (year) {
