@@ -25,7 +25,7 @@ class ChartState {
     this.data_format = 'pct'
     this.groupBy = 'indicator'
     this.groupByTime = 'campaign'
-    this.location_depth = null
+    this.location_depth = 0
     this.palette = 'traffic_light'
     this.locations_index = null
     this.indicators_index = null
