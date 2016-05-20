@@ -40,7 +40,6 @@ class Indicator(models.Model):
     description = models.CharField(max_length=255)
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
-    slug = AutoSlugField(populate_from='name', unique=True, max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
@@ -207,7 +206,6 @@ class Location(models.Model):
     office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
-    slug = AutoSlugField(populate_from='name', max_length=255, unique=True)
     created_at = models.DateTimeField(auto_now=True)
     parent_location = models.ForeignKey("self", null=True)
 
@@ -284,19 +282,21 @@ class Campaign(models.Model):
     A period in time in wich a campaign was initaited by the country office.
     '''
 
+    name = models.CharField(max_length=255)
+    top_lvl_location = models.ForeignKey(Location)
+    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag)
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    slug = AutoSlugField(populate_from='get_full_name', unique=True)
-    management_dash_pct_complete = models.FloatField(default=.001)
+    pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
-        return unicode(self.slug)
+        return unicode(self.name)
 
     def get_full_name(self):
-        return unicode(self.office.name + '-' + unicode(self.start_date))
+        return unicode(self.name)
 
     class Meta:
         db_table = 'campaign'
