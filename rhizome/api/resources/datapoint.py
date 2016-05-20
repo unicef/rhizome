@@ -363,15 +363,6 @@ class DatapointResource(BaseNonModelResource):
 
         return data
 
-    def get_campaign_qs(self):
-
-        try:
-            campaign_data = [c for c in self.campaign_qs.values()]
-        except AttributeError:
-            campaign_data = self.campaign_qs
-
-        return campaign_data
-
     def dehydrate(self, bundle):
         '''
         This method allws me to remove or add information to each data object,
