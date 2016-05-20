@@ -7,6 +7,9 @@ export default class CheckBoxGroup extends React.Component {
   static defaultProps = {
     prefix: ''
   }
+  //in render method throws exception for indexOf if given a number.
+  //in proptypes "number" type is required for proptype.
+  //research which is the correct type required.
   static propTypes = {
     values: React.PropTypes.array.isRequired,
     value: React.PropTypes.number.isRequired,
