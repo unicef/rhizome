@@ -145,7 +145,6 @@ class AggRefresh(object):
         location_tree_df = DataFrame(list(LocationTree.objects\
             .filter(location_id__in=list(dp_df['location_id'].unique()))
             .values_list(*location_tree_columns)),columns=location_tree_columns)
-
         ## join the location tree to the datapoints
         joined_location_df = no_nan_dp_df.merge(location_tree_df)
 

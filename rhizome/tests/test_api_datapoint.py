@@ -92,8 +92,9 @@ class DataPointResourceTest(ResourceTestCase):
             campaign=campaign, document=document)
 
         # 6 Request To The API
-        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
-            .format(indicator.id, start_date,end_date, location.id)
+        chart_uuid = 'abc123'
+        get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}&chart_uuid={4}'\
+            .format(indicator.id, start_date,end_date, location.id, chart_uuid)
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
@@ -108,6 +109,12 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(response_data['objects'][0]['location_id'], location.id)
         self.assertEqual(int(response_data['objects'][0]['indicator_id']), indicator.id)
         self.assertEqual(float(response_data['objects'][0]['value']), value)
+
+        # check the meta data
+        self.assertEqual(int(response_data['meta']['indicator_ids']), indicator.id)
+        self.assertEqual(response_data['meta']['chart_uuid'], chart_uuid)
+        self.assertEqual(response_data['meta']['campaign_ids'], [campaign.id])
+        self.assertEqual(int(response_data['meta']['location_ids']), location.id)
 
     def test_get_class_datapoint(self):
         cache_job = CacheJob.objects.create(
