@@ -44,11 +44,6 @@ class DatapointResource(BaseNonModelResource):
         -
     '''
 
-    # error = None
-    # parsed_params = {}
-    # location = fields.IntegerField(attribute='location')
-    # campaign = fields.IntegerField(attribute='campaign')
-    # indicators = fields.ListField(attribute='indicators')
     error = None
     parsed_params = {}
     indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
@@ -479,8 +474,6 @@ class DatapointResource(BaseNonModelResource):
     def base_transform(self):
         results = []
 
-        # Pivot the data on request instead of caching ##
-        # in the datapoint_abstracted table ##
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
         computed_datapoints = DataPointComputed.objects.filter(
@@ -490,6 +483,7 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
+        
         # do an inner join on the filter indicator
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']

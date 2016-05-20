@@ -12,8 +12,6 @@ class RefreshMasterResource(BaseModelResource):
         resource_name = 'refresh_master'
 
     def get_object_list(self, request):
-        document_id = request.GET['document_id']
-
         try:
             doc_id = request.GET['document_id']
         except KeyError:
@@ -26,7 +24,6 @@ class RefreshMasterResource(BaseModelResource):
         doc_campaign_ids = set(list(DataPoint.objects\
             .filter(source_submission__document_id = doc_id)\
             .values_list('campaign_id',flat=True)))
-
         for c_id in doc_campaign_ids:
             ar = AggRefresh(c_id)
 

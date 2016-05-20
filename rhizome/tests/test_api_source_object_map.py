@@ -77,8 +77,7 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
     def test_som_get_id(self):
         get_data ={'id':self.indicator_map.id}
-        get_resp = self.test_setup.get(self, '/api/v1/source_object_to_map/', get_data)
-
+        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/', get_data)
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
@@ -93,9 +92,8 @@ class SourceObjectMapResourceTest(ResourceTestCase):
 
     def test_som_get(self):
         get_resp = self.test_setup.get(self, '/api/v1/source_object_map/')
-
-        self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
+        self.assertHttpOK(get_resp)
         self.assertEqual(len(get_data['objects']), 2)
 
     def test_som_get_doc_id_invalid(self):
