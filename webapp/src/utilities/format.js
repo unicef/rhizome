@@ -16,6 +16,8 @@ function autoFormat (value, format, decimal_places = null) {
   } else if (format === 'bool') {
     const boolValues = ['No', 'Yes']
     return boolValues[value]
+  } else if (format === 'date') {
+    return moment(value).format('MMM DD YYYY')
   } else {
     return value
   }
