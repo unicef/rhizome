@@ -52,7 +52,7 @@ describe ('ExpandableMenuItem', () => {
       expect (defaultState.disabled).to.eq(expectedInitialState.disabled)
     })
   })
-  describe ('componentDidMount', () => {
+  describe ('#componentDidMount()', () => {
     it ('exists', () => {
       expect (mockExpandableMenuItem.componentDidMount).to.exist
     })
@@ -61,10 +61,110 @@ describe ('ExpandableMenuItem', () => {
       const spy = sinon.spy(prototype, 'setState')
       const wrapper = shallow(<ExpandableMenuItem {...ExpandableMenuItemTest.getProps()}/>)
       wrapper.instance().componentDidMount()
+      prototype.setState.restore()
       expect (wrapper.instance().state.disabled).to.eq(ExpandableMenuItemTest.getProps().disabled)
       expect (spy.calledOnce).to.be.true
       expect (spy.calledWith({disabled: ExpandableMenuItemTest.getProps().disabled})).to.be.true
+    })
+  })
+  describe ('#componentWillUpdate()', () => {
+    it ('exists with correct parameters', () => {
+      expect (mockExpandableMenuItem.componentWillUpdate).to.exist.and.have.lengthOf(2)
+    })
+    context ('when props.disabled not equal to nextProps.disabled', () => {
+      it ('sets state of `disabled` to nextProps.disabled', () => {
+        const prototype = ExpandableMenuItem.prototype
+        const spy = sinon.spy(prototype, 'setState')
+        const props = ExpandableMenuItemTest.getProps()
+        const nextProps = { disabled: !props.disabled }
+        const wrapper = shallow(<ExpandableMenuItem {...props}/>)
+        wrapper.instance().componentWillUpdate(nextProps)
+        prototype.setState.restore()
+        expect (wrapper.instance().state.disabled).to.eq(nextProps.disabled)
+        expect (spy.calledOnce).to.be.true
+        expect (spy.calledWith({disabled: nextProps.disabled})).to.be.true
+      })
+      it ('sets state of `disabled` to nextProps.disabled', () => {
+        const prototype = ExpandableMenuItem.prototype
+        const spy = sinon.spy(prototype, 'setState')
+        const props = ExpandableMenuItemTest.getProps()
+        const wrapper = shallow(<ExpandableMenuItem {...props}/>)
+        wrapper.instance().componentWillUpdate(props)
+        prototype.setState.restore()
+        expect (wrapper.instance().state.disabled).to.eq(props.disabled)
+        expect (spy.called).to.be.false
+      })
+    })
+  })
+  describe ('#_toggleChildren()', () => {
+    it ('exists with correct parameters', () => {
+      expect (mockExpandableMenuItem._toggleChildren).to.exist.and.have.lengthOf(1)
+    })
+    it ('calls stopPropagation on event', () => {
+      const spy = sinon.spy()
+      mockExpandableMenuItem._toggleChildren({type: 'keyup', stopPropagation: spy})
+      expect (spy.calledOnce).to.be.true
+    })
+    it ('sets state `open` to opposite of current state.open', () => {
+      const prototype = ExpandableMenuItem.prototype
+      const spy = sinon.spy(prototype, 'setState')
+      const props = ExpandableMenuItemTest.getProps()
+      const wrapper = shallow(<ExpandableMenuItem {...props}/>)
+      const state = wrapper.instance().state
+      wrapper.instance()._toggleChildren({type: 'keyup', stopPropagation: () => null})
       prototype.setState.restore()
+      expect (wrapper.instance().state.open).to.not.eq(state.open)
+      expect (spy.calledOnce).to.be.true
+      expect (spy.calledWith({open: !state.open})).to.be.true
+    })
+  })
+  describe ('#_handleClick()', () => {
+    it ('exists with correct parameters', () => {
+      expect (mockExpandableMenuItem._handleClick).to.exist.and.have.lengthOf(1)
+    })
+    context ('if props.noValue is false and state.disabled is false', () => {
+      it ('calls props.sendValue and setState', () => {
+        let props = ExpandableMenuItemTest.getProps()
+        const sendValueSpy = sinon.spy()
+        props.sendValue = sendValueSpy
+        props.noValue = false
+        const prototype = ExpandableMenuItem.prototype
+        const setStateSpy = sinon.spy(prototype, 'setState')
+        mockExpandableMenuItem = shallow(<ExpandableMenuItem {...props} />).instance()
+        mockExpandableMenuItem._handleClick({type: 'keyup'})
+        prototype.setState.restore()
+        expect (sendValueSpy.calledOnce).to.be.true
+        expect (sendValueSpy.calledWith(props.value)).to.be.true
+        expect (setStateSpy.calledOnce).to.be.true
+        expect (setStateSpy.calledWith({disabled: true})).to.be.true
+      })
+    })
+    context ('if props.noValue or state.disabled is false', () => {
+      const e = {type: 'keyup', stopPropagation: () => null}
+      it ('calls #_toggleChildren()', () => {
+        let props = ExpandableMenuItemTest.getProps()
+        props.noValue = false
+        const spy = sinon.spy(ExpandableMenuItem.prototype.__reactAutoBindMap, '_toggleChildren')
+        mockExpandableMenuItem = shallow(<ExpandableMenuItem {...props} />).instance()
+        mockExpandableMenuItem.state.disabled = true
+        mockExpandableMenuItem._handleClick(e)
+        const calledOnce = spy.calledOnce
+        const calledWith = spy.calledWith(e)
+        ExpandableMenuItem.prototype.__reactAutoBindMap._toggleChildren.restore()
+        expect (calledOnce).to.be.true
+        expect (calledWith).to.be.true
+      })
+      it ('calls #_toggleChildren()', () => {
+        let props = ExpandableMenuItemTest.getProps()
+        props.noValue = true
+        const spy = sinon.spy(ExpandableMenuItem.prototype.__reactAutoBindMap, '_toggleChildren')
+        mockExpandableMenuItem = shallow(<ExpandableMenuItem {...props} />).instance()
+        mockExpandableMenuItem.state.disabled = false
+        mockExpandableMenuItem._handleClick(e)
+        ExpandableMenuItem.prototype.__reactAutoBindMap._toggleChildren.restore()
+        expect (spy.calledOnce).to.be.true
+        expect (spy.calledWith(e)).to.be.true
+      })
     })
   })
   describe ('#render()', () => {
@@ -90,7 +190,7 @@ class ExpandableMenuItemTest {
       hideLastLevel: false,
       displayTitle: null,
       classes: '',
-      onClick: this._handleClick
+      onClick: this._handleClick,
     }
   }
   static getState() {
