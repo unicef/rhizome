@@ -60,7 +60,6 @@ class IndicatorResult(object):
     id = int()
     description = unicode()
     short_name = unicode()
-    slug = unicode()
     name = unicode()
     data_format = unicode()
     bound_json = list()
@@ -72,7 +71,6 @@ class IndicatorResource(BaseNonModelResource):
     id = fields.IntegerField(attribute='id', null=True)
     name = fields.CharField(attribute='name')
     short_name = fields.CharField(attribute='short_name')
-    slug = fields.CharField(attribute='slug', null=True)
     description = fields.CharField(attribute='description')
     data_format = fields.CharField(attribute='data_format', null=True)
     bound_json = fields.ListField(attribute='bound_json', null=True)
@@ -215,8 +213,8 @@ class IndicatorResource(BaseNonModelResource):
 
             # create the ResultObject and assign the basic variables
             ir = IndicatorResult()
-            ir.id, ir.name, ir.description, ir.short_name, ir.slug, ir.data_format \
-                = row.id, row.name, row.description, row.short_name, row.slug, row.data_format \
+            ir.id, ir.name, ir.description, ir.short_name, ir.data_format \
+                = row.id, row.name, row.description, row.short_name, row.data_format \
 
             # look up the bounds / tags from the data two DFs created above
             filtered_tag_df = tag_df[tag_df['indicator_id'] == row.id]
@@ -725,7 +723,7 @@ class DocDataPointResource(BaseModelResource):
             document_id=request.GET['document_id'],
             # campaign_id=campaign_id,
             # location_id__in=all_location_ids,
-        )[:50].values('location__name', 'indicator__short_name', 'campaign__slug', 'value')
+        )[:50].values('location__name', 'indicator__short_name', 'campaign__name', 'value')
 
         return queryset
 
@@ -797,7 +795,7 @@ class SourceObjectMapResource(BaseModelResource):
 
         # som_obj = SourceObjectMap.objects.get(id=3078)
         qs_map = {
-            'campaign': ['slug',Campaign.objects.get],
+            'campaign': ['name',Campaign.objects.get],
             'indicator': ['short_name',Indicator.objects.get],
             'location': ['name',Location.objects.get],
         }
