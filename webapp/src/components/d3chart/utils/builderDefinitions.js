@@ -16,7 +16,7 @@ export default {
   single_campaign_charts: ['TableChart', 'MapChart', 'BubbleMap'],
   grouped_charts: ['LineChart', 'ColumnChart', 'RawData'],
   multi_location_charts: ['TableChart', 'MapChart', 'BubbleMap', 'ColumnChart'],
-  need_missing_data_charts: ['TableChart', 'RawData'],
+  need_missing_data_charts: ['TableChart', 'RawData', 'ColumnChart'],
   groups: [
     { value: 'indicator', title: 'Indicators' },
     { value: 'location', title: 'Locations' }

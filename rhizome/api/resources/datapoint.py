@@ -132,14 +132,11 @@ class DatapointResource(BaseNonModelResource):
         self.location_ids = self.get_locations_to_return_from_url(request)
         time_gb = self.parsed_params['group_by_time']
         if time_gb == 'campaign' or time_gb is None:
-            self.base_data = self.base_transform()
+            self.base_data_df = self.base_transform()
         else:
-            # try:
-            self.base_data = self.group_by_time_transform()
-            # except AttributeError: ## clean this up ##
-            #     self.base_data = self.base_transform()
+            self.base_data_df = self.group_by_time_transform()
 
-        return self.base_data
+        return self.transform_df_to_results(self.base_data_df)
 
     def get_time_group_series(self, dp_df):
         time_grouping = self.parsed_params['group_by_time']
@@ -162,12 +159,23 @@ class DatapointResource(BaseNonModelResource):
             .groupby(['indicator_id','time_grouping','location_id'])['value']\
             .sum())\
             .reset_index()
-        if self.parsed_params['show_missing_data'] == u'1':
-            gb_df = self.add_missing_data(gb_df)
         return gb_df
 
+    def transform_df_to_results(self, df):
+        # the following line is a hack. TODO: figure out where empty list is being returned from
+        if type(df) == list:
+            return []
+        if self.parsed_params['show_missing_data'] == u'1':
+            df = self.add_missing_data(df)
+        if 'campaign_id' in df.columns:
+            df = df.sort('campaign_id')
+        else:
+            df = df.sort('time_grouping')
+        results =[]
+        df.apply(self.df_to_result_obj, args=(results,), axis=1)
+        return results
+
     def group_by_time_transform(self):
-        results, all_time_groupings = [], []
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
@@ -182,8 +190,7 @@ class DatapointResource(BaseNonModelResource):
             indicator_id__in = self.parsed_params['indicator__in']
         ).values(*cols)),columns=cols)
         if not dp_df.empty:
-            dp_df = self.handle_data_exists(dp_df)
-            return self.time_grouped_df_to_results(dp_df)
+            return self.handle_data_exists(dp_df)
 
         depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
         while dp_df.empty and depth_level < max_depth:
@@ -215,25 +222,20 @@ class DatapointResource(BaseNonModelResource):
             .reset_index()
 
         gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
-        if self.parsed_params['show_missing_data'] == u'1':
-            gb_df = self.add_missing_data(gb_df)
+        return gb_df
 
-        gb_df = gb_df.sort(['time_grouping'])
-        return self.time_grouped_df_to_results(gb_df)
-
-    def time_grouped_df_to_results(self, df):
-
-        all_time_groupings, results = [], []
-        for idx,row in df.iterrows():
-            dp = ResultObject()
-            # for column_header in dwc_df_columns:
+    def df_to_result_obj(self, row, results_list):
+        dp = ResultObject()
+        if not math.isnan(row['indicator_id']):
             dp.indicator_id = row['indicator_id']
-            dp.campaign_id = int(row['time_grouping'])
-            dp.location_id = row['location_id']
-            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
-                dp.value = row['value']
-            results.append(dp)
-        return results
+        if 'campaign_id' in row:
+            dp.campaign_id = row['campaign_id']
+        else:
+            dp.campaign_id = row['time_grouping']
+        dp.location_id = row['location_id']
+        if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+            dp.value = row['value']
+        results_list.append(dp)
 
     def handle_polio_case_table(self, dp_df_columns):
         '''
@@ -247,6 +249,21 @@ class DatapointResource(BaseNonModelResource):
         caluclated_indicator_component.
         '''
         # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
+            objects.filter(indicator__name = 'Polio Cases').values()
+
+        if len(calc_indicator_data_for_polio_cases) > 0:
+            self.ind_meta = {'base_indicator': \
+                calc_indicator_data_for_polio_cases[0]['indicator_id']
+            }
+        else:
+            self.ind_meta = {}
+
+        for row in calc_indicator_data_for_polio_cases:
+            calc = row['calculation']
+            ind_id = row['indicator_component_id']
+            self.ind_meta[calc] = ind_id
+
 
         parent_location_id = self.parsed_params['location_id__in']
 
@@ -290,8 +307,7 @@ class DatapointResource(BaseNonModelResource):
         concat_df['parent_location_id'] = parent_location_id
         concat_df = concat_df.drop('location_id', 1)
         concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
-        return self.time_grouped_df_to_results(concat_df)
-
+        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -425,23 +441,6 @@ class DatapointResource(BaseNonModelResource):
 
         self.parsed_params = parsed_params
 
-        ## popluate this in caluclated_indicator_component ##
-
-        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
-            objects.filter(indicator__name = 'Polio Cases').values()
-
-        if len(calc_indicator_data_for_polio_cases) > 0:
-            self.ind_meta = {'base_indicator': \
-                calc_indicator_data_for_polio_cases[0]['indicator_id']
-            }
-        else:
-            self.ind_meta = {}
-
-        for row in calc_indicator_data_for_polio_cases:
-            calc = row['calculation']
-            ind_id = row['indicator_component_id']
-            self.ind_meta[calc] = ind_id
-
         return None
 
     def get_campaign_list(self, campaign_start, campaign_end):
@@ -519,24 +518,7 @@ class DatapointResource(BaseNonModelResource):
                 .intersection(location_ids_in_filter)
 
         dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-
-        if self.parsed_params['show_missing_data'] == u'1':
-            dwc_df = self.add_missing_data(dwc_df)
-        dwc_df = dwc_df.sort('campaign_id')
-        results =[]
-        for idx,row in dwc_df.iterrows():
-            dp = ResultObject()
-            # for column_header in dwc_df_columns:
-            dp.campaign_id = row['campaign_id']
-            dp.location_id = row['location_id']
-            if not math.isnan(row['indicator_id']):
-                dp.indicator_id = row['indicator_id']
-            if not (isinstance(row['value'], float) and math.isnan(row['value'])):
-                dp.value = row['value']
-            if not math.isnan(row['id']):  
-                dp.computed_id = row['id']          
-            results.append(dp)
-        return results
+        return dwc_df
 
     def add_missing_data(self, df):
         '''
