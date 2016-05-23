@@ -18,7 +18,6 @@ class UserGroupResource(BaseModelResource):
     def obj_delete_list(self, bundle, **kwargs):
         """
         """
-
         user_id = int(bundle.request.GET[u'user_id'])
         group_id = int(bundle.request.GET[u'group_id'])
         UserGroup.objects.filter(user_id=user_id, group_id=group_id)\
