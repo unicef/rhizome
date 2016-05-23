@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import AsyncButton from 'components/button/AsyncButton'
 import IconButton from 'components/button/IconButton'
 import TitleInput from 'components/TitleInput'
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardContainerActions from 'actions/DashboardContainerActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import CampaignSelect from 'components/select/CampaignSelect'
 import LocationSelect from 'components/select/LocationSelect'
@@ -36,7 +36,7 @@ const DashboardHeader = React.createClass({
 
   _toggleTitleEdit: function (title) {
     if (_.isString(title)) {
-      DashboardPageActions.setDashboardTitle(title)
+      DashboardContainerActions.setDashboardTitle(title)
     }
     this.setState({titleEditMode: !this.state.titleEditMode})
   },
@@ -57,7 +57,7 @@ const DashboardHeader = React.createClass({
         text='Save Dashboard'
         alt_text='Saving ...'
         isBusy={props.saving}
-        onClick={() => DashboardPageActions.saveDashboard(props.dashboard_id)}
+        onClick={() => DashboardContainerActions.saveDashboard(props.dashboard_id)}
       />
     ) : null
 
@@ -66,22 +66,22 @@ const DashboardHeader = React.createClass({
         <CampaignSelect
           campaigns={this.state.campaigns.raw || []}
           selected={props.selected_campaigns[0]}
-          sendValue={DashboardPageActions.setCampaign}
+          sendValue={DashboardContainerActions.setCampaign}
         />
         <LocationSelect
           locations={this.state.locations.raw || []}
           selected={props.selected_locations[0]}
-          sendValue={DashboardPageActions.setLocation}
+          sendValue={DashboardContainerActions.setLocation}
           hideLastLevel
         />
-        <DistrictSelect selected={props.indicator_filter} sendValue={DashboardPageActions.setIndicatorFilter} />
+        <DistrictSelect selected={props.indicator_filter} sendValue={DashboardContainerActions.setIndicatorFilter} />
       </div>
     )
 
     const edit_mode_toggle =  editMode ? (
-      <IconButton onClick={DashboardPageActions.toggleEditMode} icon='fa-times' />
+      <IconButton onClick={DashboardContainerActions.toggleEditMode} icon='fa-times' />
     ) : (
-      <button className='button' onClick={DashboardPageActions.toggleEditMode}>
+      <button className='button' onClick={DashboardContainerActions.toggleEditMode}>
         Edit
       </button>
     )

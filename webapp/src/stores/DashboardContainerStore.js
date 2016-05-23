@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import DashboardChartsStore from 'stores/DashboardChartsStore'
 
 import DashboardActions from 'actions/DashboardActions'
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardContainerActions from 'actions/DashboardContainerActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 
 class Row {
@@ -15,9 +15,9 @@ class Row {
   }
 }
 
-const DashboardPageStore = Reflux.createStore({
+const DashboardContainerStore = Reflux.createStore({
 
-  listenables: DashboardPageActions,
+  listenables: DashboardContainerActions,
 
   dashboard: {
     title: '',
@@ -183,7 +183,7 @@ const DashboardPageStore = Reflux.createStore({
   }
 })
 
-export default DashboardPageStore
+export default DashboardContainerStore
 
 Array.prototype.move = function (old_index, new_index) {
   if (new_index >= this.length) {
