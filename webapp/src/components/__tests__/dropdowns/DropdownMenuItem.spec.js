@@ -22,15 +22,15 @@ describe ('DropdownMenuItem', () => {
       expect (mockDropdownMenuItem.render).to.exist
     })
     it ('renders correct jsx', () => {
-      const props = DropdownMenuItemText.getProps()
+      const props = DropdownMenuItemTest.getProps()
       const actualComponent = shallow(<DropdownMenuItem {...props}/>).debug()
-      const expectedComponent = shallow(DropdownMenuItemText.getComponent()).debug()
+      const expectedComponent = shallow(DropdownMenuItemTest.getComponent()).debug()
       expect (actualComponent).to.equal(expectedComponent)
     })
   })
 })
 
-class DropdownMenuItemText {
+class DropdownMenuItemTest {
   static getProps() {
     return {
       key: 'foo',

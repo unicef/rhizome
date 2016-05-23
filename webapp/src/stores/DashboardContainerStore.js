@@ -5,7 +5,7 @@ import Reflux from 'reflux'
 import DashboardChartsStore from 'stores/DashboardChartsStore'
 
 import DashboardActions from 'actions/DashboardActions'
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardContainerActions from 'actions/DashboardContainerActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 
 class Row {
@@ -15,9 +15,9 @@ class Row {
   }
 }
 
-const DashboardPageStore = Reflux.createStore({
+const DashboardContainerStore = Reflux.createStore({
 
-  listenables: DashboardPageActions,
+  listenables: DashboardContainerActions,
 
   dashboard: {
     title: '',
@@ -57,6 +57,11 @@ const DashboardPageStore = Reflux.createStore({
 
   onSetDashboardTitle: function (title) {
     this.dashboard.title = title
+    this.trigger(this.dashboard)
+  },
+
+  onSetDashboardDescription: function (description) {
+    this.dashboard.description = description
     this.trigger(this.dashboard)
   },
 
@@ -157,6 +162,7 @@ const DashboardPageStore = Reflux.createStore({
     const query = {
       id: dashboard_id,
       title: this.dashboard.title,
+      description: this.dashboard.description,
       rows: JSON.stringify(this.dashboard.rows)
     }
     DashboardActions.postDashboard(query)
@@ -171,6 +177,7 @@ const DashboardPageStore = Reflux.createStore({
   },
   onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.objects.title
+    this.dashboard.description = response.objects.description
     response.objects.rows.forEach(row => {
       row.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
       row.charts = row.charts.map(chart => chart.uuid)
@@ -183,7 +190,7 @@ const DashboardPageStore = Reflux.createStore({
   }
 })
 
-export default DashboardPageStore
+export default DashboardContainerStore
 
 Array.prototype.move = function (old_index, new_index) {
   if (new_index >= this.length) {

@@ -9,18 +9,18 @@ import DashboardRow from 'components/organisms/dashboard/DashboardRow'
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
 import CampaignStore from 'stores/CampaignStore'
-import DashboardPageStore from 'stores/DashboardPageStore'
+import DashboardContainerStore from 'stores/DashboardContainerStore'
 import DashboardChartsStore from 'stores/DashboardChartsStore'
 
 import RootActions from 'actions/RootActions'
 import DashboardActions from 'actions/DashboardActions'
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardContainerActions from 'actions/DashboardContainerActions'
 
 const DashboardContainer = React.createClass({
 
   mixins: [
     Reflux.connect(DashboardChartsStore, 'charts'),
-    Reflux.connect(DashboardPageStore, 'dashboard'),
+    Reflux.connect(DashboardContainerStore, 'dashboard'),
     Reflux.connect(LocationStore, 'locations'),
     Reflux.connect(CampaignStore, 'campaigns'),
     Reflux.connect(IndicatorStore, 'indicators')
@@ -44,10 +44,10 @@ const DashboardContainer = React.createClass({
     // Wait for initial data to be ready and either fetch the dashboard or load a fresh chart
     this.listenTo(RootActions.fetchAllMeta.completed, (response) => {
       if (this.props.dashboard_id) {
-        DashboardPageActions.fetchDashboard(this.props.dashboard_id)
+        DashboardContainerActions.fetchDashboard(this.props.dashboard_id)
       } else {
-        DashboardPageActions.addRow()
-        DashboardPageActions.toggleEditMode()
+        DashboardContainerActions.addRow()
+        DashboardContainerActions.toggleEditMode()
       }
     })
     // If the dashboard is saved for the first time, redirect to the dashboard page
@@ -109,12 +109,27 @@ const DashboardContainer = React.createClass({
         <br/><br/><br/><br/><br/><br/>
         <button
           className='button large'
-          onClick={DashboardPageActions.addRow}
+          onClick={DashboardContainerActions.addRow}
           style={{marginTop: '1rem'}}>
           Add Row
         </button>
       </div>
     ) : null
+
+    const description = editMode ? (
+      <form className={'dashboard-description'}>
+        <textarea
+          rows='3'
+          ref='title_input'
+          value={dashboard.description}
+          onChange={e => DashboardContainerActions.setDashboardDescription(e.currentTarget.value)}
+          placeholder='Enter Description'/>
+      </form>
+    ) : (
+      <p onClick={this._toggleTitleEdit} className='dashboard-description'>
+        { dashboard.description }
+      </p>
+    )
 
     return (
       <section className='dashboard'>
@@ -124,6 +139,7 @@ const DashboardContainer = React.createClass({
           selected_locations={selected_locations}
           indicator_filter={indicator_filter}
         />
+        { description }
         { loading ? <Placeholder height={600} /> : rows }
         { add_row_button }
       </section>

@@ -59,10 +59,37 @@ $total-columns: 7;
 	}
 }
 
+
+.dashboard-description {
+	margin-left: 1.5rem;
+	color: white;
+	font-size: 1.6em;
+	width: 40rem;
+	textarea {
+		line-height: 1.5;
+		color: white;
+		font-size: 1em;
+	  background: rgba(0, 0, 0, 0.1);
+	  width: 90%;
+	  display: inline-block;
+	  &::placeholder {
+	    color: rgba(255, 255, 255, 0.5);
+	  }
+	  &:focus {
+	    background-color: rgba(0, 0, 0, 0.2);
+	    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+	    color: white;
+	  }
+	}
+	i.fa {
+		color: white;
+	}
+}
+
+
 .page-header {
 	background: $rhz-header-bg-color;
 	border-top: 1px solid black;
-	margin-bottom: 2rem;
 	&.fixed {
 		transition: all .4s ease 0s;
 		background: black;

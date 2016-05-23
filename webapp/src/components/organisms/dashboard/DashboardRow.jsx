@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import React, {PropTypes} from 'react'
 import Reflux from 'reflux'
-import DashboardPageActions from 'actions/DashboardPageActions'
+import DashboardContainerActions from 'actions/DashboardContainerActions'
 import DashboardChartsActions from 'actions/DashboardChartsActions'
 import IconButton from 'components/button/IconButton'
 import MultiChart from 'components/organisms/multi-chart/MultiChart'
@@ -29,7 +29,7 @@ const DashboardRow = React.createClass({
   onChartClick: function (value, chart) {
     const selected_location_type = chart.selected_locations[0].location_type_id
     if (chart.type === 'MapChart' && selected_location_type < 2) {
-      DashboardPageActions.setLocation(value, chart.uuid)
+      DashboardContainerActions.setLocation(value, chart.uuid)
     }
   },
 
@@ -41,10 +41,10 @@ const DashboardRow = React.createClass({
         primaryChartClick={value => this.onChartClick(value, chart)}
         linkCampaigns={() => DashboardChartsActions.toggleCampaignLink(chart.uuid)}
         duplicateChart={DashboardChartsActions.duplicateChart}
-        selectChart={new_chart => DashboardPageActions.selectChart(new_chart, chart.uuid, this.props.rowIndex, chart_index)}
+        selectChart={new_chart => DashboardContainerActions.selectChart(new_chart, chart.uuid, this.props.rowIndex, chart_index)}
         toggleSelectTypeMode={() => DashboardChartsActions.toggleSelectTypeMode(chart.uuid)}
         toggleEditMode={() => DashboardChartsActions.toggleChartEditMode(chart.uuid)}
-        removeChart={() => DashboardPageActions.removeChart(this.props.rowIndex, chart_index)}
+        removeChart={() => DashboardContainerActions.removeChart(this.props.rowIndex, chart_index)}
         saveChart={() => DashboardChartsActions.saveChart(chart.uuid)}
         updateTypeParams={(key, value) => DashboardChartsActions.updateTypeParams(key, value, chart.uuid)}
         setDateRange={(key, value) => DashboardChartsActions.setDateRange(key, value, chart.uuid)}
@@ -80,12 +80,12 @@ const DashboardRow = React.createClass({
       <div className='row-position-buttons'>
         {
           rowIndex !== 0
-          ? <IconButton onClick={() => DashboardPageActions.moveRowUp(rowIndex)} icon='fa-arrow-up' />
+          ? <IconButton onClick={() => DashboardContainerActions.moveRowUp(rowIndex)} icon='fa-arrow-up' />
           : null
         }
         {
           rowIndex !== this.props.totalRows - 1
-          ? <IconButton onClick={() => DashboardPageActions.moveRowDown(rowIndex)} icon='fa-arrow-down' />
+          ? <IconButton onClick={() => DashboardContainerActions.moveRowDown(rowIndex)} icon='fa-arrow-down' />
           : null
         }
       </div>
@@ -141,7 +141,7 @@ const DashboardRow = React.createClass({
     }
 
     const layout_options = layouts.map(layout =>
-      <button className='layout-preview' onClick={() => DashboardPageActions.selectRowLayout(layout)}>
+      <button className='layout-preview' onClick={() => DashboardContainerActions.selectRowLayout(layout)}>
        { this.renderRow(layout) }
       </button>
     )
