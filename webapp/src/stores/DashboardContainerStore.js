@@ -60,6 +60,11 @@ const DashboardContainerStore = Reflux.createStore({
     this.trigger(this.dashboard)
   },
 
+  onSetDashboardDescription: function (description) {
+    this.dashboard.description = description
+    this.trigger(this.dashboard)
+  },
+
   onAddRow: function () {
     const row = new Row()
     this.dashboard.rows.push(row)
@@ -171,6 +176,7 @@ const DashboardContainerStore = Reflux.createStore({
   },
   onFetchDashboardCompleted: function (response) {
     this.dashboard.title = response.objects.title
+    this.dashboard.description = response.objects.description
     response.objects.rows.forEach(row => {
       row.charts.forEach(chart => DashboardChartsActions.fetchChart.completed(chart))
       row.charts = row.charts.map(chart => chart.uuid)

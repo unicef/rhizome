@@ -90,6 +90,7 @@ const DashboardHeader = React.createClass({
       <header className='row page-header'>
         <div className='medium-5 columns medium-text-left small-text-center'>
           { editMode ? title_bar : <h1>{props.title || 'Untitled Dashboard'}</h1> }
+          <p>{ props.description }</p>
         </div>
         <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
           { dashboard_filters }
