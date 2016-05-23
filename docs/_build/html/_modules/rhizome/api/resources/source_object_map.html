@@ -126,33 +126,7 @@
 
         <span class="k">else</span><span class="p">:</span>
             <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">qs</span>
-</div>
-<span class="k">class</span> <span class="nc">SourceObjectToMapResource</span><span class="p">(</span><span class="n">SourceObjectMapResource</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">    &#39;&#39;&#39;</span>
-
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
-        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;source_object_to_map&#39;</span>
-
-
-    <span class="k">def</span> <span class="nf">get_object_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
-        
-        <span class="n">qs</span> <span class="o">=</span> <span class="s">&#39;&#39;</span>
-        <span class="k">if</span> <span class="s">&#39;document_id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
-
-            <span class="n">som_ids</span> <span class="o">=</span> <span class="n">DocumentSourceObjectMap</span><span class="o">.</span><span class="n">objects</span> \
-                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">document_id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;document_id&#39;</span><span class="p">])</span><span class="o">.</span> \
-                <span class="n">values_list</span><span class="p">(</span><span class="s">&#39;source_object_map_id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
-
-            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">id__in</span><span class="o">=</span><span class="n">som_ids</span><span class="p">,</span>\
-                <span class="n">master_object_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-
-        <span class="k">elif</span> <span class="s">&#39;id&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">:</span>
-            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">qs</span> <span class="o">=</span> <span class="n">SourceObjectMap</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">qs</span>
+        <span class="k">return</span> <span class="n">qs</span></div>
 </pre></div>
 
           </div>

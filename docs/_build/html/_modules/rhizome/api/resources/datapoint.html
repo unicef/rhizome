@@ -97,11 +97,6 @@
 <span class="sd">        -</span>
 <span class="sd">    &#39;&#39;&#39;</span>
 
-    <span class="c"># error = None</span>
-    <span class="c"># parsed_params = {}</span>
-    <span class="c"># location = fields.IntegerField(attribute=&#39;location&#39;)</span>
-    <span class="c"># campaign = fields.IntegerField(attribute=&#39;campaign&#39;)</span>
-    <span class="c"># indicators = fields.ListField(attribute=&#39;indicators&#39;)</span>
     <span class="n">error</span> <span class="o">=</span> <span class="bp">None</span>
     <span class="n">parsed_params</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">indicator_id</span> <span class="o">=</span> <span class="n">fields</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">attribute</span><span class="o">=</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -185,14 +180,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_locations_to_return_from_url</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
         <span class="n">time_gb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;group_by_time&#39;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">time_gb</span> <span class="o">==</span> <span class="s">&#39;campaign&#39;</span> <span class="ow">or</span> <span class="n">time_gb</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_transform</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_transform</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="c"># try:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_by_time_transform</span><span class="p">()</span>
-            <span class="c"># except AttributeError: ## clean this up ##</span>
-            <span class="c">#     self.base_data = self.base_transform()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_data_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_by_time_transform</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_data</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_df_to_results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_data_df</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">get_time_group_series</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">):</span>
         <span class="n">time_grouping</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;group_by_time&#39;</span><span class="p">]</span>
@@ -208,18 +200,22 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;campaign__in&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dp_df</span><span class="o">.</span><span class="n">time_grouping</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">dp_df</span>
 
-    <span class="k">def</span> <span class="nf">handle_data_exists</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
 
-        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_group_series</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-        <span class="n">gb_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">dp_df</span>\
-            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;time_grouping&#39;</span><span class="p">,</span><span class="s">&#39;location_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>\
-            <span class="o">.</span><span class="n">sum</span><span class="p">())</span>\
-            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">gb_df</span>
+    <span class="k">def</span> <span class="nf">transform_df_to_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="c"># the following line is a hack. TODO: figure out where empty list is being returned from</span>
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">==</span> <span class="nb">list</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;show_missing_data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">u&#39;1&#39;</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_missing_data</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s">&#39;campaign_id&#39;</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;campaign_id&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;time_grouping&#39;</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="n">df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df_to_result_obj</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">results</span><span class="p">,),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">results</span>
 
     <span class="k">def</span> <span class="nf">group_by_time_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">results</span><span class="p">,</span> <span class="n">all_time_groupings</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
         <span class="n">dp_df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;data_date&#39;</span><span class="p">,</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
         <span class="n">time_grouping</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;group_by_time&#39;</span><span class="p">]</span>
 
@@ -233,59 +229,60 @@
             <span class="n">location_id__in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span><span class="p">,</span>
             <span class="n">indicator_id__in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;indicator__in&#39;</span><span class="p">]</span>
         <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="ow">not</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">handle_data_exists</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_grouped_df_to_results</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)</span>
+            <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_group_series</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)</span>
+            <span class="n">gb_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">dp_df</span>\
+                <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;time_grouping&#39;</span><span class="p">,</span><span class="s">&#39;location_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>\
+                <span class="o">.</span><span class="n">sum</span><span class="p">())</span>\
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">gb_df</span>
+        <span class="c"># need to look at sublocations if the data isn&#39;t available at the current level</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">depth_level</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">sub_location_ids</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span>
+            <span class="k">while</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">depth_level</span> <span class="o">&lt;</span> <span class="n">max_depth</span><span class="p">:</span>
+                <span class="n">sub_location_ids</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">objects</span>\
+                    <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">parent_location_id__in</span><span class="o">=</span><span class="n">sub_location_ids</span><span class="p">)</span>\
+                    <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-        <span class="n">depth_level</span><span class="p">,</span> <span class="n">max_depth</span><span class="p">,</span> <span class="n">sub_location_ids</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span>
-        <span class="k">while</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">depth_level</span> <span class="o">&lt;</span> <span class="n">max_depth</span><span class="p">:</span>
-            <span class="n">sub_location_ids</span> <span class="o">=</span> <span class="n">Location</span><span class="o">.</span><span class="n">objects</span>\
-                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">parent_location_id__in</span><span class="o">=</span><span class="n">sub_location_ids</span><span class="p">)</span>\
-                <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+                <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+                    <span class="n">location_id__in</span> <span class="o">=</span> <span class="n">sub_location_ids</span><span class="p">,</span>
+                    <span class="n">indicator_id__in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;indicator__in&#39;</span><span class="p">]</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
+                <span class="n">depth_level</span> <span class="o">+=</span> <span class="mi">1</span>
 
-            <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
-                <span class="n">location_id__in</span> <span class="o">=</span> <span class="n">sub_location_ids</span><span class="p">,</span>
-                <span class="n">indicator_id__in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;indicator__in&#39;</span><span class="p">]</span>
-            <span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="o">*</span><span class="n">cols</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="n">cols</span><span class="p">)</span>
-            <span class="n">depth_level</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_group_series</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[]</span>
+            <span class="n">location_tree_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>\
+                <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id__in</span> <span class="o">=</span> <span class="n">sub_location_ids</span><span class="p">)</span>\
+                <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">)),</span>\
+                    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">])</span>
 
-        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_group_series</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">[]</span>
-        <span class="n">location_tree_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>\
-            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id__in</span> <span class="o">=</span> <span class="n">sub_location_ids</span><span class="p">)</span>\
-            <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">)),</span>\
-                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">])</span>
+            <span class="n">merged_df</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">location_tree_df</span><span class="p">)</span>
+            <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="n">merged_df</span><span class="p">[</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">]</span>\
+                <span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span><span class="p">)]</span>
 
-        <span class="n">merged_df</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">location_tree_df</span><span class="p">)</span>
-        <span class="n">filtered_df</span> <span class="o">=</span> <span class="n">merged_df</span><span class="p">[</span><span class="n">merged_df</span><span class="p">[</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">]</span>\
-            <span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">location_ids</span><span class="p">)]</span>
+            <span class="n">gb_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">filtered_df</span>\
+                <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;time_grouping&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>\
+                <span class="o">.</span><span class="n">sum</span><span class="p">())</span>\
+                <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
-        <span class="n">gb_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">filtered_df</span>\
-            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span><span class="s">&#39;time_grouping&#39;</span><span class="p">,</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>\
-            <span class="o">.</span><span class="n">sum</span><span class="p">())</span>\
-            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="n">gb_df</span> <span class="o">=</span> <span class="n">gb_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;parent_location_id&#39;</span> <span class="p">:</span> <span class="s">&#39;location_id&#39;</span><span class="p">})</span>
+            <span class="k">return</span> <span class="n">gb_df</span>
 
-        <span class="n">gb_df</span> <span class="o">=</span> <span class="n">gb_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;parent_location_id&#39;</span> <span class="p">:</span> <span class="s">&#39;location_id&#39;</span><span class="p">})</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;show_missing_data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">u&#39;1&#39;</span><span class="p">:</span>
-            <span class="n">gb_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_missing_data</span><span class="p">(</span><span class="n">gb_df</span><span class="p">)</span>
-
-        <span class="n">gb_df</span> <span class="o">=</span> <span class="n">gb_df</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&#39;time_grouping&#39;</span><span class="p">])</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_grouped_df_to_results</span><span class="p">(</span><span class="n">gb_df</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">time_grouped_df_to_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
-
-        <span class="n">all_time_groupings</span><span class="p">,</span> <span class="n">results</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">dp</span> <span class="o">=</span> <span class="n">ResultObject</span><span class="p">()</span>
-            <span class="c"># for column_header in dwc_df_columns:</span>
+    <span class="k">def</span> <span class="nf">df_to_result_obj</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">,</span> <span class="n">results_list</span><span class="p">):</span>
+        <span class="n">dp</span> <span class="o">=</span> <span class="n">ResultObject</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]):</span>
             <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
-            <span class="n">dp</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;time_grouping&#39;</span><span class="p">])</span>
-            <span class="n">dp</span><span class="o">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])):</span>
-                <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">results</span>
+        <span class="k">if</span> <span class="s">&#39;campaign_id&#39;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">dp</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dp</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;time_grouping&#39;</span><span class="p">]</span>
+        <span class="n">dp</span><span class="o">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])):</span>
+            <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
+        <span class="n">results_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">handle_polio_case_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dp_df_columns</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -299,6 +296,21 @@
 <span class="sd">        caluclated_indicator_component.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="c"># http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&amp;location_id__in=1&amp;campaign_start=2015-04-26&amp;campaign_end=2016-04-26&amp;chart_type=RawData&amp;chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&amp;group_by_time=year&amp;format=json</span>
+        <span class="n">calc_indicator_data_for_polio_cases</span> <span class="o">=</span> <span class="n">CalculatedIndicatorComponent</span><span class="o">.</span>\
+            <span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">indicator__name</span> <span class="o">=</span> <span class="s">&#39;Polio Cases&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">calc_indicator_data_for_polio_cases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;base_indicator&#39;</span><span class="p">:</span> \
+                <span class="n">calc_indicator_data_for_polio_cases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
+            <span class="p">}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">calc_indicator_data_for_polio_cases</span><span class="p">:</span>
+            <span class="n">calc</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;calculation&#39;</span><span class="p">]</span>
+            <span class="n">ind_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span> <span class="o">=</span> <span class="n">ind_id</span>
+
 
         <span class="n">parent_location_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;location_id__in&#39;</span><span class="p">]</span>
 
@@ -342,8 +354,7 @@
         <span class="n">concat_df</span><span class="p">[</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_location_id</span>
         <span class="n">concat_df</span> <span class="o">=</span> <span class="n">concat_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
         <span class="n">concat_df</span> <span class="o">=</span> <span class="n">concat_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s">&#39;parent_location_id&#39;</span> <span class="p">:</span> <span class="s">&#39;location_id&#39;</span><span class="p">})</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_grouped_df_to_results</span><span class="p">(</span><span class="n">concat_df</span><span class="p">)</span>
-
+        <span class="k">return</span> <span class="n">concat_df</span>
 
     <span class="k">def</span> <span class="nf">obj_get_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -356,13 +367,16 @@
             <span class="n">objects</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">return</span> <span class="n">objects</span>
 
-    <span class="k">def</span> <span class="nf">obj_get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="c"># get one object from data source</span>
-        <span class="n">pk</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s">&#39;pk&#39;</span><span class="p">])</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">bundle</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">pk</span><span class="p">]</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">NotFound</span><span class="p">(</span><span class="s">&quot;Object not found&quot;</span><span class="p">)</span>
+    <span class="c"># IS THIS EVER USED????</span>
+    <span class="c"># |</span>
+    <span class="c"># v</span>
+    <span class="c"># def obj_get(self, bundle, **kwargs):</span>
+    <span class="c">#     # get one object from data source</span>
+    <span class="c">#     pk = int(kwargs[&#39;pk&#39;])</span>
+    <span class="c">#     try:</span>
+    <span class="c">#         return bundle.data[pk]</span>
+    <span class="c">#     except KeyError:</span>
+    <span class="c">#         raise NotFound(&quot;Object not found&quot;)</span>
 
     <span class="k">def</span> <span class="nf">alter_list_data_to_serialize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -376,12 +390,6 @@
             <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta&#39;</span><span class="p">][</span><span class="s">&#39;location_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">location_ids</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">location_ids</span> <span class="o">=</span> <span class="bp">None</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">parent_location_ids</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;parent_location_id__in&#39;</span><span class="p">]</span>
-            <span class="n">data</span><span class="p">[</span><span class="s">&#39;meta&#39;</span><span class="p">][</span><span class="s">&#39;parent_location_ids&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_location_ids</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-            <span class="n">parent_location_ids</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">indicator_ids</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="p">[</span><span class="s">&#39;indicator__in&#39;</span><span class="p">]</span>
@@ -403,15 +411,6 @@
             <span class="n">data</span><span class="p">[</span><span class="s">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">None</span>
 
         <span class="k">return</span> <span class="n">data</span>
-
-    <span class="k">def</span> <span class="nf">get_campaign_qs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">campaign_data</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_qs</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
-        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
-            <span class="n">campaign_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">campaign_qs</span>
-
-        <span class="k">return</span> <span class="n">campaign_data</span>
 
     <span class="k">def</span> <span class="nf">dehydrate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -477,23 +476,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span> <span class="o">=</span> <span class="n">parsed_params</span>
 
-        <span class="c">## popluate this in caluclated_indicator_component ##</span>
-
-        <span class="n">calc_indicator_data_for_polio_cases</span> <span class="o">=</span> <span class="n">CalculatedIndicatorComponent</span><span class="o">.</span>\
-            <span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">indicator__name</span> <span class="o">=</span> <span class="s">&#39;Polio Cases&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">calc_indicator_data_for_polio_cases</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;base_indicator&#39;</span><span class="p">:</span> \
-                <span class="n">calc_indicator_data_for_polio_cases</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
-            <span class="p">}</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">calc_indicator_data_for_polio_cases</span><span class="p">:</span>
-            <span class="n">calc</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;calculation&#39;</span><span class="p">]</span>
-            <span class="n">ind_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">ind_meta</span><span class="p">[</span><span class="n">calc</span><span class="p">]</span> <span class="o">=</span> <span class="n">ind_id</span>
-
         <span class="k">return</span> <span class="bp">None</span>
 
     <span class="k">def</span> <span class="nf">get_campaign_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">campaign_start</span><span class="p">,</span> <span class="n">campaign_end</span><span class="p">):</span>
@@ -532,8 +514,6 @@
     <span class="k">def</span> <span class="nf">base_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c"># Pivot the data on request instead of caching ##</span>
-        <span class="c"># in the datapoint_abstracted table ##</span>
         <span class="n">df_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;campaign_id&#39;</span><span class="p">,</span> <span class="s">&#39;location_id&#39;</span><span class="p">,</span>\
             <span class="s">&#39;value&#39;</span><span class="p">]</span>
         <span class="n">computed_datapoints</span> <span class="o">=</span> <span class="n">DataPointComputed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
@@ -543,6 +523,7 @@
 
         <span class="n">dwc_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">computed_datapoints</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="n">df_columns</span><span class="p">)),</span>\
             <span class="n">columns</span><span class="o">=</span><span class="n">df_columns</span><span class="p">)</span>
+        
         <span class="c"># do an inner join on the filter indicator</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;filter_indicator&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;filter_value&#39;</span><span class="p">]:</span>
             <span class="n">merge_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">,</span> <span class="s">&#39;location_id&#39;</span><span class="p">]</span>
@@ -571,24 +552,7 @@
                 <span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">location_ids_in_filter</span><span class="p">)</span>
 
         <span class="n">dwc_df</span> <span class="o">=</span> <span class="n">dwc_df</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">add_class_indicator_val</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parsed_params</span><span class="p">[</span><span class="s">&#39;show_missing_data&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s">u&#39;1&#39;</span><span class="p">:</span>
-            <span class="n">dwc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">add_missing_data</span><span class="p">(</span><span class="n">dwc_df</span><span class="p">)</span>
-        <span class="n">dwc_df</span> <span class="o">=</span> <span class="n">dwc_df</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s">&#39;campaign_id&#39;</span><span class="p">)</span>
-        <span class="n">results</span> <span class="o">=</span><span class="p">[]</span>
-        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span><span class="n">row</span> <span class="ow">in</span> <span class="n">dwc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
-            <span class="n">dp</span> <span class="o">=</span> <span class="n">ResultObject</span><span class="p">()</span>
-            <span class="c"># for column_header in dwc_df_columns:</span>
-            <span class="n">dp</span><span class="o">.</span><span class="n">campaign_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]</span>
-            <span class="n">dp</span><span class="o">.</span><span class="n">location_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]):</span>
-                <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">and</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">])):</span>
-                <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">math</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]):</span>  
-                <span class="n">dp</span><span class="o">.</span><span class="n">computed_id</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s">&#39;id&#39;</span><span class="p">]</span>          
-            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dp</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">dwc_df</span>
 
     <span class="k">def</span> <span class="nf">add_missing_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;</span>
@@ -613,7 +577,6 @@
         
         <span class="n">cart_prod_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">columns_list</span> 
         <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">cart_prod_df</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s">&#39;outer&#39;</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="n">columns_list</span><span class="p">)</span>       
-        
         <span class="k">return</span> <span class="n">df</span></div>
 </pre></div>
 

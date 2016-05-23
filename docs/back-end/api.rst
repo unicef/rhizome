@@ -201,23 +201,7 @@ sub-locations, would be associated with the Nigeria office.
 ``/api/v1/campaign_type/``
 ++++++++++++++++++++++++++
 
-A key to the 'campaign' resource, while all campaigns in the system are
-"National Immunication Days" UNICEF/WHO do implement different types of
-campaigns ( for instance a mop-up in the area surrounding a new case ).
-
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      name:<String>,
-    }],
-
-    errors: {...}
-  }
+.. autoclass:: rhizome.api.resources.campaign_type.CampaignTypeResource
 
 ``/api/v1/location_type/``
 ++++++++++++++++++++++++++
@@ -443,7 +427,7 @@ TODO - Needs documentation
 ``/api/v1/doc_datapoint/``
 ++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.doc_datapoint.DocDataPointResource
 
 ``/api/v1/doc_detail_type/``
 ++++++++++++++++++++++++++++

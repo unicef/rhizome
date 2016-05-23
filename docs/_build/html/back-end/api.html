@@ -397,21 +397,19 @@ sub-locations, would be associated with the Nigeria office.</p>
 </div>
 <div class="section" id="api-v1-campaign-type">
 <h3><code class="docutils literal"><span class="pre">/api/v1/campaign_type/</span></code><a class="headerlink" href="#api-v1-campaign-type" title="Permalink to this headline">¶</a></h3>
-<p>A key to the &#8216;campaign&#8217; resource, while all campaigns in the system are
-&#8220;National Immunication Days&#8221; UNICEF/WHO do implement different types of
-campaigns ( for instance a mop-up in the area surrounding a new case ).</p>
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
+<dl class="class">
+<dt id="rhizome.api.resources.campaign_type.CampaignTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.campaign_type.</code><code class="descname">CampaignTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/campaign_type.html#CampaignTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.campaign_type.CampaignTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all campaign types</dt>
+<dd><ul class="first last simple">
+<li><em>Optional Parameters:</em> 
+none</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
-  objects: [{
-    id: &lt;Number&gt;,
-    name:&lt;String&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
 </div>
 <div class="section" id="api-v1-location-type">
 <h3><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code><a class="headerlink" href="#api-v1-location-type" title="Permalink to this headline">¶</a></h3>
@@ -805,7 +803,35 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-doc-datapoint">
 <h3><code class="docutils literal"><span class="pre">/api/v1/doc_datapoint/</span></code><a class="headerlink" href="#api-v1-doc-datapoint" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.doc_datapoint.DocDataPointResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_datapoint.</code><code class="descname">DocDataPointResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_datapoint.html#DocDataPointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_datapoint.DocDataPointResource" title="Permalink to this definition">¶</a></dt>
+<dd><ul>
+<li><dl class="first docutils">
+<dt><strong>GET Requests:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217; the document id for which doc datapoints should be returned</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Errors:</strong></dt>
+<dd><ul class="first last simple">
+<li>if no document_id is provided, API returns a 500 error</li>
+<li>if an invalid document_id is provided, API returns an empty list</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-doc-detail-type">
 <h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code><a class="headerlink" href="#api-v1-doc-detail-type" title="Permalink to this headline">¶</a></h3>

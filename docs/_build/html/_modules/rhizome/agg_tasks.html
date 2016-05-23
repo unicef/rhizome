@@ -198,7 +198,6 @@
         <span class="n">location_tree_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>\
             <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id__in</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">dp_df</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
             <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="n">location_tree_columns</span><span class="p">)),</span><span class="n">columns</span><span class="o">=</span><span class="n">location_tree_columns</span><span class="p">)</span>
-
         <span class="c">## join the location tree to the datapoints</span>
         <span class="n">joined_location_df</span> <span class="o">=</span> <span class="n">no_nan_dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">location_tree_df</span><span class="p">)</span>
 
