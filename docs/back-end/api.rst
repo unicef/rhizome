@@ -295,20 +295,7 @@ pass:
 ``/api/v1/group/``
 ++++++++++++++++++
 
-The list of groups in the application.
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      name: <Text>,
-    }],
-
-    errors: {...}
-  }
+.. autoclass:: rhizome.api.resources.group.GroupResource
 
 
 ``/api/v1/user/``
@@ -443,12 +430,12 @@ TODO - Needs documentation
 ``/api/v1/doc_detail/``
 +++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.document_detail.DocumentDetailResource
 
 ``/api/v1/geo/``
 ++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.geo.GeoResource
 
 
 ``/api/v1/homepage/``

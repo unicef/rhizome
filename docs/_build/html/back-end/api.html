@@ -533,19 +533,23 @@ pass:</p>
 </div>
 <div class="section" id="api-v1-group">
 <h3><code class="docutils literal"><span class="pre">/api/v1/group/</span></code><a class="headerlink" href="#api-v1-group" title="Permalink to this headline">¶</a></h3>
-<p>The list of groups in the application.</p>
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
+<dl class="class">
+<dt id="rhizome.api.resources.group.GroupResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.group.</code><code class="descname">GroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/group.html#GroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.group.GroupResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns the list of all groups in the application.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">none</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
-  objects: [{
-    id: &lt;Number&gt;,
-    name: &lt;Text&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
 </div>
 <div class="section" id="api-v1-user">
 <h3><code class="docutils literal"><span class="pre">/api/v1/user/</span></code><a class="headerlink" href="#api-v1-user" title="Permalink to this headline">¶</a></h3>
@@ -868,11 +872,69 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-doc-detail">
 <h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code><a class="headerlink" href="#api-v1-doc-detail" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.document_detail.DocumentDetailResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.document_detail.</code><code class="descname">DocumentDetailResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/document_detail.html#DocumentDetailResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.document_detail.DocumentDetailResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>POST Request</strong> </dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;document_id&#8217;
+&#8216;doc_detail_type_id&#8217;
+&#8216;doc_detail_value&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>GET Request</strong> returns all doc details unless one of the optional parameters is supplied</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;doc_detail_type&#8217; returns all doc details with the given doc detail type supplied
+&#8216;document_id&#8217; returns all doc details for the given document id</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-geo">
 <h3><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code><a class="headerlink" href="#api-v1-geo" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.geo.GeoResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.geo.</code><code class="descname">GeoResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/geo.html#GeoResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.geo.GeoResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> A non model resource that allows us to query for shapefiles based on a colletion of parameters.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;location_id__in&#8217; the location of the shape file that we wish to retrieve</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;location_depth&#8217; the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all &#8220;grandchildren&#8221;
+&#8216;location_type&#8217; return the descendants of the location_id param that have the given location_type id.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-homepage">
 <h3><code class="docutils literal"><span class="pre">/api/v1/homepage/</span></code><a class="headerlink" href="#api-v1-homepage" title="Permalink to this headline">¶</a></h3>
