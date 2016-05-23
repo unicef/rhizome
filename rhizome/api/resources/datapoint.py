@@ -169,6 +169,8 @@ class DatapointResource(BaseNonModelResource):
         # HACKK
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
+
+            self.parsed_params['show_missing_data'] = 1
             return self.handle_polio_case_table(dp_df_columns)
 
         cols = ['data_date','indicator_id','location_id','value']
@@ -284,7 +286,7 @@ class DatapointResource(BaseNonModelResource):
             .max())\
             .reset_index()
         latest_date_df['value'] = latest_date_df['data_date']\
-            .map(lambda x: x.strftime('%Y-%m-%d'))
+            .map(lambda x: x.strftime('%b %d %Y'))
         latest_date_df['indicator_id'] = self\
             .ind_meta['latest_date']
 
@@ -457,7 +459,7 @@ class DatapointResource(BaseNonModelResource):
             new_val = self.class_indicator_map[ind_id][ind_val]
             x['value'] = new_val
         return x
-        
+
     def base_transform(self):
         results = []
 
@@ -470,7 +472,7 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
-        
+
         # do an inner join on the filter indicator
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
@@ -520,8 +522,8 @@ class DatapointResource(BaseNonModelResource):
         if 'campaign_id' in df.columns:
             columns_list = ['indicator_id','location_id', 'campaign_id']
         else:
-            columns_list = ['indicator_id','location_id', 'time_grouping'] 
-        
-        cart_prod_df.columns = columns_list 
-        df = df.merge(cart_prod_df, how='outer', on=columns_list)       
+            columns_list = ['indicator_id','location_id', 'time_grouping']
+
+        cart_prod_df.columns = columns_list
+        df = df.merge(cart_prod_df, how='outer', on=columns_list)
         return df
