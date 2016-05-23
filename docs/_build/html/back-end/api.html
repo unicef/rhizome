@@ -183,8 +183,8 @@ https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups</li>
 <dt><strong>GET Request</strong> Returns campaigns from the database</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;id&#8217;: a comma delimited list of campaign ids. 
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217;: a comma delimited list of campaign ids.
 If the parameter is not set, the API will return all campaigns</p>
 </dd>
 </dl>
@@ -210,7 +210,7 @@ an empty list of campaigns.</p>
 </dd>
 <dt><strong>POST Reguest:</strong> Create a camapaign</dt>
 <dd><dl class="first last docutils">
-<dt>-<em>Required Parameters:</em> </dt>
+<dt>-<em>Required Parameters:</em></dt>
 <dd>&#8216;name&#8217;,&#8217;top_lvl_location_id&#8217;,
 #&#8217;top_lvl_indicator_tag_id&#8217;, &#8216;office_id&#8217;,&#8217;campaign_type_id&#8217;,
 #&#8217;start_date&#8217;,&#8217;end_date&#8217;,&#8217;pct_complete&#8217;</dd>
@@ -335,6 +335,23 @@ represent different parts of the organization that oversee locations. For exampl
 there might be an office for Nigeria that represents the Nigerian Country
 Office. The location Nigeria that represents the country, as well as all of its
 sub-locations, would be associated with the Nigeria office.</p>
+<dl class="class">
+<dt id="rhizome.api.resources.office.OfficeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.office.</code><code class="descname">OfficeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/office.html#OfficeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.office.OfficeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all office objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -368,8 +385,23 @@ none</li>
 </div>
 <div class="section" id="api-v1-location-type">
 <h3><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code><a class="headerlink" href="#api-v1-location-type" title="Permalink to this headline">¶</a></h3>
-<p>List of location types ( each location must have a location type ).  For now we are
-dealing with Country, Province, District, Sub-District and Settlement.</p>
+<dl class="class">
+<dt id="rhizome.api.resources.location_type.LocationTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_type.</code><code class="descname">LocationTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_type.html#LocationTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_type.LocationTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all location type objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -505,8 +537,6 @@ pass:</p>
 </div>
 <div class="section" id="api-v1-user">
 <h3><code class="docutils literal"><span class="pre">/api/v1/user/</span></code><a class="headerlink" href="#api-v1-user" title="Permalink to this headline">¶</a></h3>
-<p>The list of users in the application.  All filters outlined above are avaliable
-here to all of the fields included in the response.</p>
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -530,7 +560,42 @@ here to all of the fields included in the response.</p>
 </div>
 <div class="section" id="api-v1-location-responsiblity">
 <h3><code class="docutils literal"><span class="pre">/api/v1/location_responsiblity/</span></code><a class="headerlink" href="#api-v1-location-responsiblity" title="Permalink to this headline">¶</a></h3>
-<p>This endpoint tells which locations a user is responsible for.</p>
+<dl class="class">
+<dt id="rhizome.api.resources.location_permission.LocationPermissionResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_permission.</code><code class="descname">LocationPermissionResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_permission.html#LocationPermissionResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_permission.LocationPermissionResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> This endpoint tells which locations a user is responsible for. </dt>
+<dd><ul class="first">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="last docutils">
+<dt>-<em>Errors</em></dt>
+<dd>API returns a 500 error if a required parameter is not supplied</dd>
+</dl>
+</dd>
+<dt><strong>POST Request</strong></dt>
+<dd><ul class="first">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217;
+&#8216;location_id&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+<dl class="last docutils">
+<dt>-<em>Errors</em></dt>
+<dd>API returns a 500 error if a required parameter is not supplied</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -548,10 +613,41 @@ here to all of the fields included in the response.</p>
 </div>
 <div class="section" id="api-v1-user-group">
 <h3><code class="docutils literal"><span class="pre">/api/v1/user_group/</span></code><a class="headerlink" href="#api-v1-user-group" title="Permalink to this headline">¶</a></h3>
-<p>This endpoint tells which groups a user is in and vice versa.</p>
-<p>For instance to see all the groups user_id 1 is in .. simply pass the following
-url to the application:</p>
-<p>&#8216;/api/v1/user_group/?user=1&#8217;</p>
+<dl class="class">
+<dt id="rhizome.api.resources.user_group.UserGroupResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.user_group.</code><code class="descname">UserGroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/user_group.html#UserGroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.user_group.UserGroupResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns the list of all user_groups in the application unless an optional parameter is specified</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217; the id of the user for which we want to get user groups</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request</strong> Create a user-&gt;group assignment</dt>
+<dd><dl class="first last docutils">
+<dt>-<em>Required Parameters:</em></dt>
+<dd>&#8216;user_id&#8217;
+&#8216;group_id&#8217;</dd>
+<dt>-<em>Errors</em></dt>
+<dd>The api returns a 500 error if any of the required parameters are missing</dd>
+</dl>
+</dd>
+<dt><strong>DELETE Request</strong></dt>
+<dd><dl class="first last docutils">
+<dt>-<em>Required Parameters:</em></dt>
+<dd>&#8216;user_id&#8217;
+&#8216;group_id&#8217;</dd>
+<dt>-<em>Errors</em></dt>
+<dd>The api returns a 500 error if any of the required parameters are missing</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -793,7 +889,19 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 <dl class="class">
 <dt id="rhizome.api.resources.doc_detail_type.DocDetailTypeResource">
 <em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_detail_type.</code><code class="descname">DocDetailTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_detail_type.html#DocDetailTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_detail_type.DocDetailTypeResource" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all doc_detail_type objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 </div>
 <div class="section" id="api-v1-transform-upload">
@@ -955,11 +1063,55 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-queue-process">
 <h3><code class="docutils literal"><span class="pre">/api/v1/queue_process/</span></code><a class="headerlink" href="#api-v1-queue-process" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.queue_process.QueueProcessResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.queue_process.</code><code class="descname">QueueProcessResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/queue_process.html#QueueProcessResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.queue_process.QueueProcessResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request:</strong> Sets SourceSubmission objects for a given document id to &#8220;to process&#8221;</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns a 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-refresh-master">
 <h3><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code><a class="headerlink" href="#api-v1-refresh-master" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.refresh_master.RefreshMasterResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.refresh_master.</code><code class="descname">RefreshMasterResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/refresh_master.html#RefreshMasterResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.refresh_master.RefreshMasterResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Runs refresh master, and agg refresh for a given document</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;document_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error if no document id is provided</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-source-object-map">
 <h3><code class="docutils literal"><span class="pre">/api/v1/source_object_map/</span></code><a class="headerlink" href="#api-v1-source-object-map" title="Permalink to this headline">¶</a></h3>
@@ -1006,7 +1158,29 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-source-submission">
 <h3><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code><a class="headerlink" href="#api-v1-source-submission" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.source_submission.SourceSubmissionResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.source_submission.</code><code class="descname">SourceSubmissionResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/source_submission.html#SourceSubmissionResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.source_submission.SourceSubmissionResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all SourceSubmissions unless an optional parameter is specified</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217;: return only the source submissions with the specified document ids</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">if an incorrect document id is provided, returns an empty object list</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-odk-form-id">
 <h3><code class="docutils literal"><span class="pre">/api/v1/odk_form_id/</span></code><a class="headerlink" href="#api-v1-odk-form-id" title="Permalink to this headline">¶</a></h3>

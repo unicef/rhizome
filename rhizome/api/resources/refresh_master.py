@@ -8,6 +8,13 @@ from rhizome.models import DocumentDetail, DocDetailType, SourceSubmission
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
 class RefreshMasterResource(BaseModelResource):
+    '''
+    **GET Request** Runs refresh master, and agg refresh for a given document
+        - *Required Parameters:* 
+            'document_id'
+        - *Errors:*
+            returns 500 error if no document id is provided          
+    '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
 

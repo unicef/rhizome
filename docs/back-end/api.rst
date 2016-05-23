@@ -183,6 +183,8 @@ there might be an office for Nigeria that represents the Nigerian Country
 Office. The location Nigeria that represents the country, as well as all of its
 sub-locations, would be associated with the Nigeria office.
 
+.. autoclass:: rhizome.api.resources.office.OfficeResource
+
 .. code-block:: json
 
   {
@@ -205,9 +207,7 @@ sub-locations, would be associated with the Nigeria office.
 
 ``/api/v1/location_type/``
 ++++++++++++++++++++++++++
-
-List of location types ( each location must have a location type ).  For now we are
-dealing with Country, Province, District, Sub-District and Settlement.
+.. autoclass:: rhizome.api.resources.location_type.LocationTypeResource
 
 .. code-block:: json
 
@@ -300,8 +300,7 @@ pass:
 ``/api/v1/user/``
 +++++++++++++++++
 
-The list of users in the application.  All filters outlined above are avaliable
-here to all of the fields included in the response.
+.. autoclass:: rhizome.api.resources.user.UserResource
 
 .. code-block:: json
 
@@ -328,7 +327,8 @@ here to all of the fields included in the response.
 ``/api/v1/location_responsiblity/``
 +++++++++++++++++++++++++++++++++++
 
-This endpoint tells which locations a user is responsible for. 
+.. autoclass:: rhizome.api.resources.location_permission.LocationPermissionResource
+
 
 .. code-block:: json
 
@@ -349,13 +349,7 @@ This endpoint tells which locations a user is responsible for.
 ``/api/v1/user_group/``
 +++++++++++++++++++++++++
 
-This endpoint tells which groups a user is in and vice versa.
-
-For instance to see all the groups user_id 1 is in .. simply pass the following
-url to the application:
-
-'/api/v1/user_group/?user=1'
-
+.. autoclass:: rhizome.api.resources.user_group.UserGroupResource
 
 .. code-block:: json
 
@@ -451,12 +445,12 @@ TODO - Needs documentation
 ``/api/v1/queue_process/``
 ++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.queue_process.QueueProcessResource
 
 ``/api/v1/refresh_master/``
 +++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.refresh_master.RefreshMasterResource
 
 ``/api/v1/source_object_map/``
 ++++++++++++++++++++++++++++++
@@ -466,7 +460,7 @@ TODO - Needs documentation
 ``/api/v1/source_submission/``
 ++++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.source_submission.SourceSubmissionResource
 
 ``/api/v1/odk_form_id/``
 ++++++++++++++++++++++++

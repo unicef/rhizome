@@ -55,9 +55,14 @@
 <span class="kn">from</span> <span class="nn">rhizome.models</span> <span class="kn">import</span> <span class="n">DocDetailType</span>
 
 <div class="viewcode-block" id="DocDetailTypeResource"><a class="viewcode-back" href="../../../../back-end/api.html#rhizome.api.resources.doc_detail_type.DocDetailTypeResource">[docs]</a><span class="k">class</span> <span class="nc">DocDetailTypeResource</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="p">):</span>
-    <span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
-        <span class="n">queryset</span> <span class="o">=</span> <span class="n">DocDetailType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-        <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;doc_detail_type&#39;</span></div>
+	<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">	**GET Request** Returns all doc_detail_type objects</span>
+<span class="sd">	    - *Required Parameters:* </span>
+<span class="sd">			None	</span>
+<span class="sd">	&#39;&#39;&#39;</span>
+	<span class="k">class</span> <span class="nc">Meta</span><span class="p">(</span><span class="n">BaseModelResource</span><span class="o">.</span><span class="n">Meta</span><span class="p">):</span>
+	    <span class="n">queryset</span> <span class="o">=</span> <span class="n">DocDetailType</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+	    <span class="n">resource_name</span> <span class="o">=</span> <span class="s">&#39;doc_detail_type&#39;</span></div>
 </pre></div>
 
           </div>

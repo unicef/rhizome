@@ -34,3 +34,7 @@ class QueueProcessResourceTest(ResourceTestCase):
 		self.assertHttpOK(resp)
 		self.assertEqual(len(response_data['objects']), 1)
 		self.assertEqual(response_data['objects'][0]['id'], doc_detail.id)
+
+	def test_get_no_param(self):
+		resp = self.ts.get(self, '/api/v1/queue_process/')
+		self.assertHttpApplicationError(resp)

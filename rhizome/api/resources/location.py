@@ -2,6 +2,12 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Location
 
 class LocationResource(BaseModelResource):
+    '''
+    **GET Request** Returns locations objects. All location objects will be returned if an optional parameter is not set.
+        - *Optional Parameters:* 
+            'location_depth' the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all "grandchildren"
+            'location_type' return the descendants of the location_id param that have the given location_type id.
+    '''
     class Meta(BaseModelResource.Meta):
         queryset = Location.objects.all().values()
         resource_name = 'location'

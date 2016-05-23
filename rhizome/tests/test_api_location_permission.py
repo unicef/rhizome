@@ -16,18 +16,21 @@ class LocationPermissionResourceTest(ResourceTestCase):
 	        location_name='Nigeria')
 
 	def test_get_location_permission(self):
-	    lp = LocationPermission.objects.create(user_id = self.ts.user.id,\
-	        top_lvl_location_id = self.top_lvl_location.id)
+		lp = LocationPermission.objects.create(user_id = self.ts.user.id,\
+	    	top_lvl_location_id = self.top_lvl_location.id)
 
-	    data ={
-	    	'user_id':self.ts.user.id
-	    }
+		data ={
+			'user_id':self.ts.user.id
+		}
 
-	    resp = self.ts.get(self, '/api/v1/location_responsibility/', data=data)
+		resp = self.ts.get(self, '/api/v1/location_responsibility/', data=data)
+		response_data = self.deserialize(resp)
+		self.assertHttpOK(resp)
+		self.assertEqual(response_data['objects'][0]['id'], lp.id)
 
-	    response_data = self.deserialize(resp)
-	    self.assertHttpOK(resp)
-	    self.assertEqual(response_data['objects'][0]['id'], lp.id)
+	def test_get_location_permission_no_id(self):
+		resp = self.ts.get(self, '/api/v1/location_responsibility/')
+		self.assertHttpApplicationError(resp)
 
 	def test_create_location_permission(self):
 		data = {
@@ -41,6 +44,14 @@ class LocationPermissionResourceTest(ResourceTestCase):
 		self.assertHttpCreated(resp)
 		self.assertEqual(response_data['user_id'], self.ts.user.id)
 		self.assertEqual(response_data['location_id'], self.top_lvl_location.id)
+
+	def test_create_location_permission_missing_id(self):
+		data = {
+			'user_id': self.ts.user.id
+		}
+
+		resp = self.ts.post(self, '/api/v1/location_responsibility/', data=data)
+		self.assertHttpApplicationError(resp)
 
 	def test_update_location_permission(self):
 		lp = LocationPermission.objects.create(user_id = self.ts.user.id,\
