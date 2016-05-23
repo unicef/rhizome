@@ -453,7 +453,6 @@ implemented in the group edit page.</p>
 </div>
 <div class="section" id="api-v1-source-doc">
 <h3><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code><a class="headerlink" href="#api-v1-source-doc" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
 </div>
 <div class="section" id="api-v1-document-review">
 <h3><code class="docutils literal"><span class="pre">/api/v1/document_review/</span></code><a class="headerlink" href="#api-v1-document-review" title="Permalink to this headline">¶</a></h3>
@@ -835,11 +834,52 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-doc-detail-type">
 <h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code><a class="headerlink" href="#api-v1-doc-detail-type" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.doc_detail_type.DocDetailTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_detail_type.</code><code class="descname">DocDetailTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_detail_type.html#DocDetailTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_detail_type.DocDetailTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><ul>
+<li><dl class="first docutils">
+<dt><strong>GET Requests:</strong> returns all DocDetailType objects </dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">none</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-transform-upload">
 <h3><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code><a class="headerlink" href="#api-v1-transform-upload" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.doc_trans_form.DocTransFormResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_trans_form.</code><code class="descname">DocTransFormResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_trans_form.html#DocTransFormResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_trans_form.DocTransFormResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Runs document transform, refresh master, and agg refresh for a given document</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;document_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error if no document id is provided</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-doc-detail">
 <h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code><a class="headerlink" href="#api-v1-doc-detail" title="Permalink to this headline">¶</a></h3>

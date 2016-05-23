@@ -253,7 +253,8 @@ TODO - Needs documentation
 
 ``/api/v1/source_doc/``
 +++++++++++++++++++++++
-TODO - Needs documentation
+
+.. autoclass:: rhizome.api.resources.document.DocumentResource
 
 
 ``/api/v1/document_review/``
@@ -432,12 +433,12 @@ TODO - Needs documentation
 ``/api/v1/doc_detail_type/``
 ++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.doc_detail_type.DocDetailTypeResource
 
 ``/api/v1/transform_upload/``
 +++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.doc_trans_form.DocTransFormResource
 
 ``/api/v1/doc_detail/``
 +++++++++++++++++++++++
