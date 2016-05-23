@@ -6,8 +6,8 @@ from rhizome.models import Campaign
 class CampaignResource(BaseModelResource):
     '''
     **GET Request** Returns campaigns from the database
-        - *Optional Parameters:* 
-            'id': a comma delimited list of campaign ids. 
+        - *Optional Parameters:*
+            'id': a comma delimited list of campaign ids.
             If the parameter is not set, the API will return all campaigns
         - *Errors:*
             if an invalid id is provided, the API returns a 200 code with
@@ -18,7 +18,7 @@ class CampaignResource(BaseModelResource):
             if an id is invalid, the API returns a 500 error code.
 
     **POST Reguest:** Create a camapaign
-        -*Required Parameters:* 
+        -*Required Parameters:*
             'name','top_lvl_location_id',
             #'top_lvl_indicator_tag_id', 'office_id','campaign_type_id',
             #'start_date','end_date','pct_complete'
@@ -36,11 +36,8 @@ class CampaignResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        if self.top_lvl_location_id == 4721: ## hack to get sherine off my back !
-            qs = Campaign.objects.all()
-        else:
-            qs = Campaign.objects.filter(\
-                top_lvl_location_id = self.top_lvl_location_id)
+        qs = Campaign.objects.filter(\
+            top_lvl_location_id = self.top_lvl_location_id)
 
         if 'id__in' in request.GET:
             requested_ids = request.GET['id__in'].split(",")

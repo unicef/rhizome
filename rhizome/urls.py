@@ -37,7 +37,6 @@ v1_api.register(document.DocumentResource())
 v1_api.register(document_detail.DocumentDetailResource())
 v1_api.register(geo.GeoResource())
 v1_api.register(group.GroupResource())
-v1_api.register(homepage.HomePageResource())
 v1_api.register(indicator.IndicatorResource())
 v1_api.register(indicator_tag.IndicatorTagResource())
 v1_api.register(indicator_to_tag.IndicatorToTagResource())
@@ -84,9 +83,6 @@ urlpatterns = patterns(
     '',
 
     (r'^api/', include(v1_api.urls)),
-
-    # url(r'^$', login_required(TemplateView.as_view(template_name='homepage.html')), name='homepage'),
-    # url(r'^$', login_required(RedirectView.as_view(url='/dashboards/eoc-post-campaign/')), name='homepage'),
 
     url(r'^about$', views.about, name='about'),
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
