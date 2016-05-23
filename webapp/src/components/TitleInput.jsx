@@ -35,7 +35,7 @@ export default React.createClass({
 
   render: function () {
     return (
-      <form onSubmit={event => event.preventDefault()} >
+      <form onSubmit={event => event.preventDefault()}>
         <input type='text'
           ref='title_input'
           className={'title-input ' + this.props.className}

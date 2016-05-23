@@ -162,6 +162,7 @@ const DashboardContainerStore = Reflux.createStore({
     const query = {
       id: dashboard_id,
       title: this.dashboard.title,
+      description: this.dashboard.description,
       rows: JSON.stringify(this.dashboard.rows)
     }
     DashboardActions.postDashboard(query)

@@ -116,6 +116,21 @@ const DashboardContainer = React.createClass({
       </div>
     ) : null
 
+    const description = editMode ? (
+      <form className={'dashboard-description'}>
+        <textarea
+          rows='3'
+          ref='title_input'
+          value={dashboard.description}
+          onChange={e => DashboardContainerActions.setDashboardDescription(e.currentTarget.value)}
+          placeholder='Enter Description'/>
+      </form>
+    ) : (
+      <p onClick={this._toggleTitleEdit} className='dashboard-description'>
+        { dashboard.description }
+      </p>
+    )
+
     return (
       <section className='dashboard'>
         <DashboardHeader {...dashboard}
@@ -124,6 +139,7 @@ const DashboardContainer = React.createClass({
           selected_locations={selected_locations}
           indicator_filter={indicator_filter}
         />
+        { description }
         { loading ? <Placeholder height={600} /> : rows }
         { add_row_button }
       </section>
