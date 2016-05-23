@@ -58,7 +58,8 @@ class ColumnChart extends HighChart {
       tooltip: {
         headerFormat: '<b>{series.name}</b><br/>',
         pointFormatter: function () {
-          const value = format.autoFormat(this.y, first_indicator.data_format, 1)
+          const data_format = this.series.type === 'spline' ? last_indicator.data_format : first_indicator.data_format
+          const value = format.autoFormat(this.y, data_format, 1)
           if (multipleCampaigns) {
             const date = format.monthYear(this.category.name)
             const location = this.category.parent.name
@@ -106,9 +107,9 @@ class ColumnChart extends HighChart {
   }
 
   setXAxis = function (multipleCampaigns) {
-    const locations = this.props.datapoints.flattened.map(d => d.location)
+    const locations = _.uniq(this.props.datapoints.flattened.map(d => d.location.name))
     if (!multipleCampaigns) {
-      return {categories: locations}
+      return {categories: locations.sort()}
     }
     let xAxis = {categories: this._getGroupedCategories()}
     if (this.props.groupByTime === 'year') {
