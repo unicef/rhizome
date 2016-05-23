@@ -152,7 +152,6 @@ class DatapointResource(BaseNonModelResource):
         # the following line is a hack. TODO: figure out where empty list is being returned from
         if type(df) == list:
             return []
-
         if self.parsed_params['show_missing_data'] == u'1':
             df = self.add_missing_data(df)
         if 'campaign_id' in df.columns:
@@ -160,7 +159,6 @@ class DatapointResource(BaseNonModelResource):
         else:
             df = df.sort('time_grouping')
         results =[]
-
         df.apply(self.df_to_result_obj, args=(results,), axis=1)
         return results
 
@@ -245,9 +243,6 @@ class DatapointResource(BaseNonModelResource):
         caluclated_indicator_component.
         '''
         # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
-
-        self.parsed_params['show_missing_data'] = 0
-
         calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
             objects.filter(indicator__name = 'Polio Cases').values()
 
@@ -306,6 +301,7 @@ class DatapointResource(BaseNonModelResource):
         concat_df['parent_location_id'] = parent_location_id
         concat_df = concat_df.drop('location_id', 1)
         concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
+        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -317,6 +313,17 @@ class DatapointResource(BaseNonModelResource):
         if not objects:
             objects = []
         return objects
+
+    # IS THIS EVER USED????
+    # |
+    # v
+    # def obj_get(self, bundle, **kwargs):
+    #     # get one object from data source
+    #     pk = int(kwargs['pk'])
+    #     try:
+    #         return bundle.data[pk]
+    #     except KeyError:
+    #         raise NotFound("Object not found")
 
     def alter_list_data_to_serialize(self, request, data):
         '''
@@ -450,7 +457,7 @@ class DatapointResource(BaseNonModelResource):
             new_val = self.class_indicator_map[ind_id][ind_val]
             x['value'] = new_val
         return x
-
+        
     def base_transform(self):
         results = []
 
@@ -463,7 +470,7 @@ class DatapointResource(BaseNonModelResource):
 
         dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
             columns=df_columns)
-
+        
         # do an inner join on the filter indicator
         if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
             merge_columns = ['campaign_id', 'location_id']
@@ -508,16 +515,13 @@ class DatapointResource(BaseNonModelResource):
         even when there is no existing data.
         '''
         list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
-
         cart_product = list(itertools.product(*list_of_lists))
         cart_prod_df = DataFrame(cart_product)
-
         if 'campaign_id' in df.columns:
             columns_list = ['indicator_id','location_id', 'campaign_id']
         else:
-            columns_list = ['indicator_id','location_id', 'time_grouping']
-
-        cart_prod_df.columns = columns_list
-        df = df.merge(cart_prod_df, how='outer', on=columns_list)
-
+            columns_list = ['indicator_id','location_id', 'time_grouping'] 
+        
+        cart_prod_df.columns = columns_list 
+        df = df.merge(cart_prod_df, how='outer', on=columns_list)       
         return df
