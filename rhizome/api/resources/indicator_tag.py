@@ -4,6 +4,22 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import IndicatorTag
 
 class IndicatorTagResource(BaseModelResource):
+    '''
+    **GET Request** Returns all indicator tags
+        - *Optional Parameters:* 
+            'show_leaf'only return leaf level nodes of the indicator_tag tree
+            'id' return the indicator_tag associated with the given id
+        - *Errors:*
+    
+    **POST Request** Creates an indicator tag
+        - *Required Parameters:*
+            'tag_name'
+        - *Optional Parameters:* 
+            'parent_tag_id'
+        - *Errors:* 
+            if a required parameter is not supplied, the API will return a 500 error
+    '''
+
     class Meta(BaseModelResource.Meta):
         queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
         resource_name = 'indicator_tag'

@@ -114,7 +114,7 @@ API Methods
 
 ``/api/v1/indicator/``
 ++++++++++++++++++++++
-.. autoclass:: rhizome.api.resources.campaign.CampaignResource
+
 .. autoclass:: rhizome.api.resources.indicator.IndicatorResource
 
 ``/api/v1/location/``
@@ -226,9 +226,8 @@ dealing with Country, Province, District, Sub-District and Settlement.
 ``/api/v1/indicator_tag/``
 ++++++++++++++++++++++++++
 
-The list of tags that each indicator can be attributed to.  Notice the
-parent_tag_id field, this is used to build the indicator heirarchy dropdown
-implemented in the group edit page.
+.. autoclass:: rhizome.api.resources.indicator_tag.IndicatorTagResource
+
 
 .. code-block:: json
 
@@ -447,7 +446,7 @@ TODO - Needs documentation
 ``/api/v1/indicator_to_tag/``
 +++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.indicator_to_tag.IndicatorToTagResource
 
 ``/api/v1/queue_process/``
 ++++++++++++++++++++++++++

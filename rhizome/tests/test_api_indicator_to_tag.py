@@ -40,6 +40,14 @@ class IndicatorToTagResourceTest(ResourceTestCase):
 		self.assertEqual(len(response_data['objects']),1)
 		self.assertEqual(response_data['objects'][0]['id'],IndicatorToTag.objects.all()[0].id)
 
+	def test_obj_get_ind_id_invalid(self):
+		data = {
+			'indicator_id':3232
+		}
+		resp =self.ts.get(self, '/api/v1/indicator_to_tag/', data =data)
+		response_data = self.deserialize(resp)
+		self.assertEqual(len(response_data['objects']), 0)
+
 	def test_obj_get_ind_tag_id(self):
 		ind_to_tag = IndicatorToTag.objects.create(indicator_id = self.ind.id,\
 			indicator_tag_id=self.ind_tag.id)

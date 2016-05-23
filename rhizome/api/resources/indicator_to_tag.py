@@ -2,6 +2,27 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import IndicatorToTag
 
 class IndicatorToTagResource(BaseModelResource):
+    '''
+    **GET Request** returns all indicator_to_tag objects, unless one of the optional parameters below is set
+        - *Optional Parameters:* 
+            'indicator_id' return indicator_to_tags with the given indicator_id
+            'indicator_tag_id' return indicator_to_tags with the given indicator_tag_id
+        - *Errors:*
+            if an invalid id is passed, the API returns an empty list of objects
+    **POST Request**
+        - *Required Parameters:*
+            'indicator_id'
+            'indicator_tag_id'
+        - *Errors:* 
+            returns a 500 error if a required parameter is not passed
+    **DELETE Request**
+        - *Required Parameters:*
+            'indicator_id'
+            'indicator_tag_id'
+        - *Errors:* 
+            returns a 500 error if a required parameter is not passed            
+    '''
+
     class Meta(BaseModelResource.Meta):
         # queryset = IndicatorToTag.objects.all().values()
         resource_name = 'indicator_to_tag'

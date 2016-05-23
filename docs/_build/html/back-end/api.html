@@ -225,51 +225,6 @@ an empty list of campaigns.</p>
 <div class="section" id="api-v1-indicator">
 <h3><code class="docutils literal"><span class="pre">/api/v1/indicator/</span></code><a class="headerlink" href="#api-v1-indicator" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt>
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.campaign.</code><code class="descname">CampaignResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/campaign.html#CampaignResource"><span class="viewcode-link">[source]</span></a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns campaigns from the database</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;id&#8217;: a comma delimited list of campaign ids. 
-If the parameter is not set, the API will return all campaigns</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">if an invalid id is provided, the API returns a 200 code with
-an empty list of campaigns.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>GET Request: Request Detail</strong> Another way to query for campaigns using the format: /api/v1/campaign/&lt;campaign_id&gt;/</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">if an id is invalid, the API returns a 500 error code.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Reguest:</strong> Create a camapaign</dt>
-<dd><dl class="first last docutils">
-<dt>-<em>Required Parameters:</em> </dt>
-<dd>&#8216;name&#8217;,&#8217;top_lvl_location_id&#8217;,
-#&#8217;top_lvl_indicator_tag_id&#8217;, &#8216;office_id&#8217;,&#8217;campaign_type_id&#8217;,
-#&#8217;start_date&#8217;,&#8217;end_date&#8217;,&#8217;pct_complete&#8217;</dd>
-<dt>-<em>Errors:</em></dt>
-<dd>If any of the fields are missing, the system returns a 500 error.</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="class">
 <dt id="rhizome.api.resources.indicator.IndicatorResource">
 <em class="property">class </em><code class="descclassname">rhizome.api.resources.indicator.</code><code class="descname">IndicatorResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/indicator.html#IndicatorResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.indicator.IndicatorResource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
@@ -430,9 +385,6 @@ dealing with Country, Province, District, Sub-District and Settlement.</p>
 </div>
 <div class="section" id="api-v1-indicator-tag">
 <h3><code class="docutils literal"><span class="pre">/api/v1/indicator_tag/</span></code><a class="headerlink" href="#api-v1-indicator-tag" title="Permalink to this headline">¶</a></h3>
-<p>The list of tags that each indicator can be attributed to.  Notice the
-parent_tag_id field, this is used to build the indicator heirarchy dropdown
-implemented in the group edit page.</p>
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
@@ -942,7 +894,64 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </div>
 <div class="section" id="api-v1-indicator-to-tag">
 <h3><code class="docutils literal"><span class="pre">/api/v1/indicator_to_tag/</span></code><a class="headerlink" href="#api-v1-indicator-to-tag" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
+<dl class="class">
+<dt id="rhizome.api.resources.indicator_to_tag.IndicatorToTagResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.indicator_to_tag.</code><code class="descname">IndicatorToTagResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/indicator_to_tag.html#IndicatorToTagResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.indicator_to_tag.IndicatorToTagResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> returns all indicator_to_tag objects, unless one of the optional parameters below is set</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;indicator_id&#8217; return indicator_to_tags with the given indicator_id
+&#8216;indicator_tag_id&#8217; return indicator_to_tags with the given indicator_tag_id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">if an invalid id is passed, the API returns an empty list of objects</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;indicator_id&#8217;
+&#8216;indicator_tag_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em> </dt>
+<dd><p class="first last">returns a 500 error if a required parameter is not passed</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>DELETE Request</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;indicator_id&#8217;
+&#8216;indicator_tag_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em> </dt>
+<dd><p class="first last">returns a 500 error if a required parameter is not passed</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="api-v1-queue-process">
 <h3><code class="docutils literal"><span class="pre">/api/v1/queue_process/</span></code><a class="headerlink" href="#api-v1-queue-process" title="Permalink to this headline">¶</a></h3>

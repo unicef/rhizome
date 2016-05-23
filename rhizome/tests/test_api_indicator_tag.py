@@ -64,6 +64,11 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.assertEqual(response_data['tag_name'], tag_name_2)
         self.assertEqual(response_data['parent_tag_id'], tag_1_id)
 
+    def test_create_indicator_tag_no_vals(self):
+        resp = self.ts.post(self, '/api/v1/indicator_tag/')
+        response_data = self.deserialize(resp)
+        self.assertHttpApplicationError(resp)
+
     def test_get_indicator_tag_no_params(self):
     	tag_name_0 = 'tag1'
         ind_tag_0 = IndicatorTag.objects.create(tag_name=tag_name_0)

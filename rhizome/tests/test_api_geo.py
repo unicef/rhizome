@@ -49,7 +49,7 @@ class GeoResourceTest(ResourceTestCase):
 
     def test_get_geo(self):
         get_data ={'location_id__in':6, 'location_depth':1}
-        resp = self.ts.get(self, '/api/v1/geo/', get_data)
+        resp = self.ts.get(self, 'pyt/api/v1/geo/', get_data)
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(len(self.deserialize(resp)['features']), 5)
