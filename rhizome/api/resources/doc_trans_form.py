@@ -10,6 +10,11 @@ from django.db.transaction import TransactionManagementError
 
 class DocTransFormResource(BaseModelResource):
     '''
+    **GET Request** Runs document transform, refresh master, and agg refresh for a given document
+        - *Required Parameters:* 
+            'document_id'
+        - *Errors:*
+            returns 500 error if no document id is provided          
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'transform_upload'

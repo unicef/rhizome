@@ -15,6 +15,18 @@ from rhizome.api.exceptions import DatapointsException
 import os
 
 class DocumentResource(BaseModelResource):
+    '''
+    **POST Request** uploads a document to the rhizome server.
+        - *Required Parameters:* 
+            'docfile' the base64 encoded file: csv, xls, xlsx file format
+            'doc_title' the title of the document
+        - *Optional Parameters:* 
+            'doc_id' an id for the document
+        - *Errors:*
+            returns 500 error of the document is empty
+            returns 500 error if a required parameter is not supplied
+    '''
+
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
     class Meta(BaseModelResource.Meta):
