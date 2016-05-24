@@ -41,7 +41,7 @@ class LineChart extends HighChart {
   }
 
   setSeries = function () {
-    const data = this.props.datapoints.melted
+    const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const series = []
