@@ -41,7 +41,10 @@ let DashboardNav = React.createClass({
       }
     })
 
-    const charts = _.sortBy(this.state.charts, 'title')
+    let charts = _.sortBy(this.state.charts, 'title')
+    if (!_.isUndefined(charts) && charts.length > 10) {
+      charts = _.slice(charts, 0, 10)
+    }
     const custom_charts = charts.map(chart =>
       <NavMenuItem key={chart.id} href={'/charts/' + chart.id}>
         { chart.title }
@@ -63,6 +66,9 @@ let DashboardNav = React.createClass({
           <ul className='dashboard-menu'>
             { create_chart_button }
             { custom_charts }
+            <li className='separator'><hr />
+              <a href='/charts'>See All Charts</a>
+            </li>
           </ul>
         </li>
         <li>
