@@ -17,7 +17,7 @@ class ComputedDataPointResource(BaseModelResource):
         - *To Note:*
             The api does not validate any of these required parameters. It is possible to create datapoints with invalid campaign ids, etc.
     **DELETE Request** Delete Detail: Delete a computed datapoint using the format '/api/v1/computed_datapoint/<datapoint_id>/'
-        '''
+    '''
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'computed_datapoint'

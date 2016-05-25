@@ -161,7 +161,7 @@ This may take a few minutes when running for the first time. Vagrant has more co
   python manage.py runserver --nothreading 192.168.77.77:8000
 
 Front-end setup
-+++++++++++++++
+^^^^^^^^^^^^^^^
 
 Gulp configuration
 ##################

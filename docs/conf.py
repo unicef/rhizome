@@ -14,7 +14,7 @@
 
 import sys
 import os
-
+import django
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -47,7 +47,7 @@ extensions = [
 # DJANGO_SETTINGS_MODULE = '/Users/johndingee_seed/code/polio/polio/settings.py'
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rhizome.settings.test")
-
+django.setup()
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
