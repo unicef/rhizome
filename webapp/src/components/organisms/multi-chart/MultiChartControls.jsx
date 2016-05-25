@@ -90,13 +90,6 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const indicator_filter = !multiLocation ? (
-      <div className='medium-12 columns'>
-        <h3>Filter By</h3>
-        <DistrictSelect selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
-      </div>
-    ) : null
-
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
         <RadioGroup
@@ -207,7 +200,6 @@ const MultiChartControls = React.createClass({
         { date_range_picker }
         { campaign_selector }
         { group_by_selector }
-        { indicator_filter }
         { location_depth_selector }
         { location_selector }
         { indicator_selector }
