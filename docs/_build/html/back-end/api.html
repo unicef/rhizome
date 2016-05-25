@@ -565,21 +565,23 @@ pass:</p>
 <em class="property">class </em><code class="descclassname">rhizome.api.resources.location_permission.</code><code class="descname">LocationPermissionResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_permission.html#LocationPermissionResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_permission.LocationPermissionResource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
 <dt><strong>GET Request</strong> This endpoint tells which locations a user is responsible for. </dt>
-<dd><ul class="first">
+<dd><ul class="first last">
 <li><dl class="first docutils">
 <dt><em>Required Parameters:</em> </dt>
 <dd><p class="first last">&#8216;user_id&#8217;</p>
 </dd>
 </dl>
 </li>
-</ul>
-<dl class="last docutils">
-<dt>-<em>Errors</em></dt>
-<dd>API returns a 500 error if a required parameter is not supplied</dd>
+<li><dl class="first docutils">
+<dt><em>Errors</em></dt>
+<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
+</dd>
 </dl>
+</li>
+</ul>
 </dd>
 <dt><strong>POST Request</strong></dt>
-<dd><ul class="first">
+<dd><ul class="first last">
 <li><dl class="first docutils">
 <dt><em>Required Parameters:</em> </dt>
 <dd><p class="first last">&#8216;user_id&#8217;
@@ -587,11 +589,13 @@ pass:</p>
 </dd>
 </dl>
 </li>
-</ul>
-<dl class="last docutils">
-<dt>-<em>Errors</em></dt>
-<dd>API returns a 500 error if a required parameter is not supplied</dd>
+<li><dl class="first docutils">
+<dt><em>Errors</em></dt>
+<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
+</dd>
 </dl>
+</li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -755,7 +759,7 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </ul>
 </dd>
 </dl>
-<p><strong>DELETE Request: Delete Detail</strong> Delete a computed datapoint using the format &#8216;/api/v1/computed_datapoint/&lt;datapoint_id&gt;/&#8217;</p>
+<p><strong>DELETE Request</strong> Delete Detail: Delete a computed datapoint using the format &#8216;/api/v1/computed_datapoint/&lt;datapoint_id&gt;/&#8217;</p>
 </dd></dl>
 
 </div>

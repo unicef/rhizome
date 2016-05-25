@@ -6,13 +6,14 @@ class LocationPermissionResource(BaseModelResource):
     **GET Request** This endpoint tells which locations a user is responsible for. 
         - *Required Parameters:* 
             'user_id'
-        -*Errors*
+        - *Errors*
             API returns a 500 error if a required parameter is not supplied
+
     **POST Request**
         - *Required Parameters:* 
             'user_id'
             'location_id'
-        -*Errors*
+        - *Errors*
             API returns a 500 error if a required parameter is not supplied
     '''
 
