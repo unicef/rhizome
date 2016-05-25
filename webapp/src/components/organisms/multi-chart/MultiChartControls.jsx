@@ -121,6 +121,8 @@ const MultiChartControls = React.createClass({
         depth_titles = ['Region', 'Province', 'District']
       } else if (location_type_id === 2) {
         depth_titles = ['Province', 'District']
+      } else if (location_type_id === 3) {
+        depth_titles = ['District', 'Cluster']
       }
       let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
       if (location_type_id <= 1 && chart.type === 'BubbleMap') {
