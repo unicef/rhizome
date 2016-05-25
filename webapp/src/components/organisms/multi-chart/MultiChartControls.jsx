@@ -118,7 +118,7 @@ const MultiChartControls = React.createClass({
         depth_titles = ['District', 'Cluster']
       }
       let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
-      if (location_type_id <= 1 && chart.type === 'BubbleMap') {
+      if (location_type_id <= 1 && (chart.type === 'BubbleMap' || chart.type === 'MapChart')) {
         depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
       }
       const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
