@@ -90,13 +90,6 @@ const MultiChartControls = React.createClass({
       </div>
     ) : null
 
-    const indicator_filter = !multiLocation ? (
-      <div className='medium-12 columns'>
-        <h3>Filter By</h3>
-        <DistrictSelect selected={chart.indicator_filter} sendValue={props.setIndicatorFilter}/>
-      </div>
-    ) : null
-
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
         <RadioGroup
@@ -121,9 +114,11 @@ const MultiChartControls = React.createClass({
         depth_titles = ['Region', 'Province', 'District']
       } else if (location_type_id === 2) {
         depth_titles = ['Province', 'District']
+      } else if (location_type_id === 3) {
+        depth_titles = ['District', 'Cluster']
       }
       let depth_options = depth_titles.map((title, index) => ({value: index, title: title}))
-      if (location_type_id <= 1 && chart.type === 'BubbleMap') {
+      if (location_type_id <= 1 && (chart.type === 'BubbleMap' || chart.type === 'MapChart')) {
         depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
       }
       const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
@@ -205,7 +200,6 @@ const MultiChartControls = React.createClass({
         { date_range_picker }
         { campaign_selector }
         { group_by_selector }
-        { indicator_filter }
         { location_depth_selector }
         { location_selector }
         { indicator_selector }
