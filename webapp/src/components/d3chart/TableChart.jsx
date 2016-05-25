@@ -26,10 +26,13 @@ class TableChart extends Chart {
     const filtered_datapoints = this.props.datapoints.flattened.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
     const data = _.groupBy(filtered_datapoints, 'location.id')
     this.options.default_sort_order = _.map(data, datapoint_group => datapoint_group[0].location.name)
-    this.options.parent_location_map = _.map(data, datapoint_group => ({
-      name: datapoint_group[0].location.name,
-      parent_location_name: this.props.locations_index[datapoint_group[0].location.parent_location_id].name
-    }))
+    this.options.parent_location_map = _.map(data, datapoint_group => {
+      const parent_location = this.props.locations_index[datapoint_group[0].location.parent_location_id]
+      return {
+        name: datapoint_group[0].location.name,
+        parent_location_name: parent_location? parent_location.name : ''
+      }
+    })
     this.options.parent_location_map = _.indexBy(this.options.parent_location_map, 'name')
     this.data = _.toArray(data).map(datapoint_group => {
       const values = []
@@ -54,9 +57,11 @@ class TableChart extends Chart {
 
   getFormattedValue = function (datapoint) {
     const data_format = datapoint.indicator.data_format
-    if (!datapoint.value) {
+    if (_.isNull(datapoint.value)) {
       return ''
-    } else if (data_format === 'pct') {
+    } else if (data_format === 'pct' && datapoint.value === 0) {
+      return '0 %'
+    } else if (data_format === 'pct' && datapoint.value !== 0) {
       return (datapoint.value * 100).toFixed(1) + ' %'
     } else if (data_format === 'bool' && datapoint.value === 0) {
       datapoint.value = -1 // temporary hack to deal with coloring the booleans.

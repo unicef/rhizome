@@ -103,9 +103,11 @@ class TableChartRenderer {
         'x': this.x,
         'width': this.xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': this.fill })
-      .transition().duration(500)
-      .style('opacity', 1)
+      .style({ 'opacity': 1, 'fill': this.fill })
+      // Uncomment to make cell color fade in
+      // .style({ 'opacity': 0, 'fill': this.fill })
+      // .transition().duration(500)
+      // .style('opacity', 1)
     cg.append('text')
       .attr({
         'height': this.yScale.rangeBand(),
@@ -148,16 +150,12 @@ class TableChartRenderer {
   // // Z AXIS
   // // ---------------------------------------------------------------------------
   renderZAxis () {
-    console.log('this.options', this.options.parent_location_map)
     this.svg.select('.z.axis')
       .transition().duration(500)
       .attr({'transform': 'translate(20,10)'})
       .call(d3.svg.axis()
         .scale(this.yScale)
-        .tickFormat(d => {
-          console.log('d', d)
-          return this.options.parent_location_map[d].parent_location_name
-        })
+        .tickFormat(d => this.options.parent_location_map[d].parent_location_name)
         .orient('left')
         .outerTickSize(0))
     this.svg.selectAll('.z.axis text')

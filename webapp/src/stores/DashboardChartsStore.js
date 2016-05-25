@@ -294,8 +294,8 @@ var DashboardChartsStore = Reflux.createStore({
     if (chartShowsOneCampaign) {
       const campaign_start_date = this.charts[uuid].selected_campaigns[0].start_date
       const campaign_end_date = this.charts[uuid].selected_campaigns[0].end_date
-      this.charts[uuid].start_date = campaign_start_date
-      this.charts[uuid].end_date = campaign_end_date
+      this.charts[uuid].start_date = moment(campaign_start_date).format('YYYY-MM-DD')
+      this.charts[uuid].end_date = moment(campaign_end_date).format('YYYY-MM-DD')
       if (campaign_start_date === campaign_end_date) {
         this.charts[uuid].end_date = moment(campaign_end_date).add(1, 'M').format('YYYY-MM-DD')
       }
@@ -313,6 +313,8 @@ var DashboardChartsStore = Reflux.createStore({
     this.toggleLoading(uuid)
     this.charts[uuid].type = type
     this.charts[uuid].selectTypeMode = false
+    const campaign_ids = this.selected_campaigns ? this.selected_campaigns.map(campaign => campaign.id) : this.campaigns.list[0]
+    this._assignCampaigns(campaign_ids, uuid)
     this.updateChart(uuid)
   },
   onSetPalette: function (palette, uuid) {
