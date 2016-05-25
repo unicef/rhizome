@@ -1,5 +1,6 @@
 /webapp/npm-debug.log
 .Python
+.editorconfig
 env
 include
 .DS_Store
