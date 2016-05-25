@@ -166,7 +166,7 @@ class DatapointResource(BaseNonModelResource):
         dp_df_columns = ['data_date','indicator_id','location_id','value']
         time_grouping =  self.parsed_params['group_by_time']
 
-        # HACKK
+        # HACKK for situational dashboard
         if self.parsed_params['chart_uuid'] ==\
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
 
@@ -186,7 +186,9 @@ class DatapointResource(BaseNonModelResource):
                 .sum())\
                 .reset_index()
             return gb_df
-        # need to look at sublocations if the data isn't available at the current level
+
+        # need to recurse down to a subloaction with data
+         # if the data isn't available at the current level
         else:
             depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
             while dp_df.empty and depth_level < max_depth:
@@ -209,9 +211,11 @@ class DatapointResource(BaseNonModelResource):
                     columns=['location_id','parent_location_id'])
 
             merged_df = dp_df.merge(location_tree_df)
+
             filtered_df = merged_df[merged_df['parent_location_id']\
                 .isin(self.location_ids)]
 
+            # sum all values for locations with the same parent location
             gb_df = DataFrame(filtered_df\
                 .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
                 .sum())\
