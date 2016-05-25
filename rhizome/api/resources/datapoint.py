@@ -40,8 +40,6 @@ class DatapointResource(BaseNonModelResource):
             'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
             'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
             'cumulative'
-    - **Errors:**
-        -
     '''
 
     error = None

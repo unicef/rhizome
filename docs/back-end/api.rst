@@ -35,237 +35,323 @@ Want to Pull Data from Rhizome?
 Contact dingeej@gmail.com to get an API key
 
 
-Global Parameters and Query Filters
------------------------------------
-
-``limit``
-  default: 20
-
-``offset``
-  default: 0
-
-  The offset into the list of matched objects. For example, if ``offset=10`` is
-  passed to an endpoint, the first 10 records that match the query will not be
-  returned, the response will begin with the 11th object
-
-  *note - For the /v1 api, the limit / offset is applied after the queryset is
-  returned.  Since most of the object lists are small this isnt a huge issue
-  , however it is to be of note when querying the location endpoint which returns
-  20k+ results*
-
-``format``
-  default: ``json``
-
-  One of either ``json`` or ``csv`` that determines the format of the response
-
-``simple_evaluation``
-
-.. code-block:: json
-
-  /api/v1/indicator/?id=21
-  /api/v1/indicator/?slug=number-of-all-missed-children
-
-
-``__in``
-
-pass a list of values and retrieve one result for each match
-
-.. code-block:: json
-
-    /api/v1/indicator/?id__in=21,164
-
-
-``__gt; __lt; __gte; __lte``
-
-.. code-block:: json
-
-    /api/v1/campaign/?start_date__lte=2015-01-01
-    /api/v1/campaign/?start_date__gte=2015-01-01
-    /api/v1/office/?id__gt=2
-    /api/v1/office/?id__lt=2
-
-``__contains; __starts_with``
-
-filter resources with simple string functions.
-
-.. code-block:: json
-
-  /api/v1/indicator/?name__startswith=Number
-  /api/v1/indicator/?name__contains=polio
-
-
-* Note - These query parameters are taken directly from the Django ORM.  For
-  more on how these work see here:*
-  https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups
-
 API Methods
 -----------
 
-``/api/v1/datapoint/``
-++++++++++++++++++++++
 
-.. autoclass:: rhizome.api.resources.datapoint.DatapointResource
+``/api/v1/agg_refresh/``
+++++++++++++++++++++++++
 
+.. autoclass:: rhizome.api.resources.agg_refresh.AggRefreshResource
+
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      campaign_type_id: <Integer>,
+      created_at: <Date>,
+      start_date: <Date>,
+      end_date: <Date>,
+      id: <Integer>,
+      name: <String>,
+      office_id: <Integer>,
+      pct_complete: <Float>, 
+      top_lvl_indicator_tag_id: <Integer>,
+      top_lvl_location_id: <Integer>,
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/cache_meta/``
++++++++++++++++++++++++
+
+TODO - Needs documentation
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        id: <Integer>,
+        name: <String>,
+        created_at: <Date>
+      ],
+      errors: {}
+   }
 
 ``/api/v1/campaign/``
 +++++++++++++++++++++
 
 .. autoclass:: rhizome.api.resources.campaign.CampaignResource
 
-``/api/v1/indicator/``
-++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.indicator.IndicatorResource
-
-``/api/v1/location/``
-+++++++++++++++++++++
-
-Return a list of location definitions in accordance to the schema melow.
-
-This endpoint will only return locations that the user has permissions for.  In
-this case, and in all other instances of GET requests dealing with locations,
-and location_ids, we use the ``fn_get_authorized_locations_by_user`` stored
-procedure which gets recursively the list of location_ids that a user can
-access.
-
-
-Custom Parameters
-~~~~~~~~~~~~~~~~~
-
-``depth_level``
-  - default = 0
-  - the depth parameter controls how far down the location tree the API should
-    traverse when returning location data.
-  - a parameter of 0 returns ALL data, while a parameter of 1 retreives
-    locations at most one level underneath the locations avaliable to that user.
-    -> that is if a user has permission to see Nigeria only, and they pass
-    a depth=1 parameter, they will see data Nigeria, as well as for the
-    provinces but not for districts, sub-districts and settlemnts.
-
-``read_write``
-  - default = r
-  - This controls whether or not the application needs to see data a user can
-    READ or WRITE to.
-
+Response Format
+~~~~~~~~~~~~~~~
 .. code-block:: json
 
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      name: <String>,
-      slug: <String>
-      latitude: <Number>,
-      longitude: <Number>,
-      location_code: <String>,
-      location_type: <String>,
-      shape_file_path: <String>,
-      office: <reference>,
-      parent_location: <reference>,
-      resource_uri: <String>,
-      created_at: "YYYY-MM-DDTHH:MM:SS.sss",
-    }],
-
-    errors: {...}
-  }
-
-Properties with type ``<reference>`` can contain an ID (``Number``), name, slug,
-or URI (all of type ``String``) depending on the value of the ``uri_format``
-parameter.
-
-``/api/v1/office/``
-+++++++++++++++++++
-
-Return a list of office definitions. Offices are administrative concepts that
-represent different parts of the organization that oversee locations. For example,
-there might be an office for Nigeria that represents the Nigerian Country
-Office. The location Nigeria that represents the country, as well as all of its
-sub-locations, would be associated with the Nigeria office.
-
-.. autoclass:: rhizome.api.resources.office.OfficeResource
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      name: <String>,
-      resource_uri: <String>,
-      created_at: "YYYY-MM-DDTHH:MM:SS.sss",
-    }],
-
-    errors: {...}
-  }
+   {
+      meta: {},
+      objects: [
+        campaign_type_id: <Integer>,
+        created_at: <Date>,
+        start_date: <Date>,
+        end_date: <Date>,
+        id: <Integer>,
+        name: <String>,
+        office_id: <Integer>,
+        pct_complete: <Float>, 
+        top_lvl_indicator_tag_id: <Integer>,
+        top_lvl_location_id: <Integer>,
+      ],
+      errors: {}
+   }
 
 ``/api/v1/campaign_type/``
 ++++++++++++++++++++++++++
 
 .. autoclass:: rhizome.api.resources.campaign_type.CampaignTypeResource
 
-``/api/v1/location_type/``
-++++++++++++++++++++++++++
-.. autoclass:: rhizome.api.resources.location_type.LocationTypeResource
-
+Response Format
+~~~~~~~~~~~~~~~
 .. code-block:: json
 
-  {
-    meta: {...},
+   {
+      meta: {},
+      objects: [
+        id: <Integer>,
+        name: <String>
+      ],
+      errors: {}
+   }
 
-    objects: [{
-      id: <Number>,
-      name:<String>,
-    }],
-
-    errors: {...}
-  }
-
-
-``/api/v1/indicator_tag/``
-++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.indicator_tag.IndicatorTagResource
-
-
-.. code-block:: json
-
-  {
-    meta: {...},
-
-    objects: [{
-      id: <Number>,
-      tag_name:<String>,
-      parent_tag_id:<Number>
-    }],
-
-    errors: {...}
-  }
-
-
-``/api/v1/location_map/``
-+++++++++++++++++++++++++
-
-TODO - Needs documentation
-
-
-``/api/v1/source_doc/``
+``/api/v1/chart_type/``
 +++++++++++++++++++++++
 
-.. autoclass:: rhizome.api.resources.document.DocumentResource
+.. autoclass:: rhizome.api.resources.chart_type.ChartTypeResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name: <String>
+    }],
+
+    errors: {...}
+  }
 
 
-``/api/v1/document_review/``
-+++++++++++++++++++++++++++++
+``/api/v1/computed_datapoint/``
++++++++++++++++++++++++++++++++
 
-TODO - Needs documentation
+.. autoclass:: rhizome.api.resources.computed_datapoint.ComputedDataPointResource
 
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      indicator_id: <Number>,
+      location_name: <String>,
+      campaign_name: <String>,
+      indicator_short_name:<String>,
+      value: <Float>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/custom_chart/``
++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.custom_chart.CustomChartResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      uuid: <String>,
+      title: <String>,
+      chart_json: <JSON>
+    }],
+
+    errors: {...}
+  }
 
 ``/api/v1/custom_dashboard/``
 +++++++++++++++++++++++++++++
 
 .. autoclass:: rhizome.api.resources.custom_dashboard.CustomDashboardResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        id: <Integer>,
+        title: <String>,
+        description: <String>,
+        layout: <Integer>,
+        rows: <JSON>,
+      ],
+      errors: {}
+   }
+
+``/api/v1/datapoint/``
+++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.datapoint.DatapointResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        indicator_id: <Integer>,
+        campaign_id: <Integer>,
+        data_date: <Date>,
+        computed_id: <Integer>,
+        location_id: <Integer>,
+        value: <String>
+      ],
+      errors: {}
+   }
+
+
+``/api/v1/datapointentry/``
++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.datapoint_entry.DatapointEntryResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        indicator_id: <Integer>,
+        campaign_id: <Integer>,
+        data_date: <Date>,
+        created_at: <Date>,
+        computed_id: <Integer>,
+        location_id: <Integer>,
+        source_submission_id: <Integer>,
+        cache_job_id: <Integer>,
+        unique_index: <String>
+        value: <String>
+      ],
+      errors: {}
+   }
+
+
+``/api/v1/doc_datapoint/``
+++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.doc_datapoint.DocDataPointResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        location_name: <String>,
+        indicator_short_name: <String>,
+        campaign_name: <String>,
+        value: <float>
+      ],
+      errors: {}
+   }
+
+``/api/v1/doc_detail/``
++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.document_detail.DocumentDetailResource
+'id','doc_detail_type_id','doc_detail_type__name',\
+                    'document_id', 'doc_detail_value'
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Integer>,
+      doc_detail_type_id: <Integer>,
+      doc_detail_type_name: <String>,
+      document_id: <Integer>,
+      doc_detail_value: <String>
+    }],
+
+    errors: {...}
+  }
+     
+
+``/api/v1/doc_detail_type/``
+++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.doc_detail_type.DocDetailTypeResource
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name: <String>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/group/``
+++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.group.GroupResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        id: <Integer>,
+        name: <String>
+      ],
+      errors: {}
+   }
 
 ``/api/v1/group_permission/``
 +++++++++++++++++++++++++++++
@@ -291,16 +377,40 @@ pass:
   }
 
 
-``/api/v1/group/``
-++++++++++++++++++
+``/api/v1/indicator/``
+++++++++++++++++++++++
 
-.. autoclass:: rhizome.api.resources.group.GroupResource
+.. autoclass:: rhizome.api.resources.indicator.IndicatorResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+   {
+      meta: {},
+      objects: [
+        short_name: <String>,
+        name: <String>,
+        description: <String>,
+        is_reported: <Boolean>,
+        data_format: <String>,
+        created_at: <Date>,
+        bound_json: <JSON>,
+        tag_json: <JSON>,
+        office_id: <JSON>,
+        good_bound: <Float>,
+        bad_bound: <Float>,
+        source_name: <String>
+      ],
+      errors: {}
+   }
 
 
-``/api/v1/user/``
-+++++++++++++++++
+``/api/v1/indicator_tag/``
+++++++++++++++++++++++++++
 
-.. autoclass:: rhizome.api.resources.user.UserResource
+.. autoclass:: rhizome.api.resources.indicator_tag.IndicatorTagResource
+
 
 .. code-block:: json
 
@@ -309,19 +419,66 @@ pass:
 
     objects: [{
       id: <Number>,
-      username: <Text>,
-      first_name: <Text>,
-      last_name: <Text>,
-      is_active: <Boolean>,
-      is_superuser: <Boolean>,
-      is_staff: <Boolean>,
-      last_login: <Datetime>,
-      email: <Text>,
-      date_joined:<Datetime>,
+      tag_name:<String>,
+      parent_tag_id:<Number>
     }],
 
     errors: {...}
   }
+
+
+``/api/v1/indicator_to_tag/``
++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.indicator_to_tag.IndicatorToTagResource
+{"id": 146, "indicator__short_name": "Polio From Saliva", "indicator_id": 123, "indicator_tag__tag_name": "Perceived Threat", "indicator_tag_id": 19
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Integer>,
+      indicator_short_name: <String>,
+      indicator_id: <Integer>,
+      indicator_tag_name: <String>,
+      indicator_tag_id: <Integer>,
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/location/``
++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.location.LocationResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name: <String>,
+      latitude: <Number>,
+      longitude: <Number>,
+      location_code: <String>,
+      location_type: <String>,
+      office_id: <Number>,
+      parent_location_id: <Number>,
+      resource_uri: <String>,
+      created_at: "YYYY-MM-DDTHH:MM:SS.sss",
+    }],
+
+    errors: {...}
+  }
+
 
 
 ``/api/v1/location_responsiblity/``
@@ -346,11 +503,158 @@ pass:
   }
 
 
+
+``/api/v1/location_type/``
+++++++++++++++++++++++++++
+.. autoclass:: rhizome.api.resources.location_type.LocationTypeResource
+
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name:<String>,
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/office/``
++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.office.OfficeResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      name: <String>,
+      resource_uri: <String>,
+      created_at: "YYYY-MM-DDTHH:MM:SS.sss",
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/source_doc/``
++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.document.DocumentResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      docfile: <String>,
+      doc_title: <String>,
+      file_header: <JSON>,
+      guid: <String>,
+      created_at: <Date>,
+      id: <Integer>,
+      resource_uri: <String>
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/source_object_map/``
+++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.source_object_map.SourceObjectMapResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Integer>,
+      content_type: <String>,
+      mapped_by_id: <Integer>,
+      master_object_id: <Integer>,
+      master_object_name: <String>,
+      source_object_code: <String>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/transform_upload/``
++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.doc_trans_form.DocTransFormResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      docfile: <String>,
+      doc_title: <String>,
+      file_header: <JSON>,
+      guid: <String>,
+      created_at: <Date>,
+      id: <Integer>,
+      resource_uri: <String>
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/user/``
++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.user.UserResource
+
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Number>,
+      username: <Text>,
+      first_name: <Text>,
+      last_name: <Text>,
+      is_active: <Boolean>,
+      is_superuser: <Boolean>,
+      is_staff: <Boolean>,
+      last_login: <Datetime>,
+      email: <Text>,
+      date_joined:<Datetime>,
+    }],
+
+    errors: {...}
+  }
+
 ``/api/v1/user_group/``
 +++++++++++++++++++++++++
 
 .. autoclass:: rhizome.api.resources.user_group.UserGroupResource
 
+Response Format
+~~~~~~~~~~~~~~~
 .. code-block:: json
 
   {
@@ -365,66 +669,7 @@ pass:
     errors: {...}
   }
 
-``/api/v1/agg_refresh/``
-++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.agg_refresh.AggRefreshResource
-
-``/api/v1/cache_meta/``
-+++++++++++++++++++++++
-
-TODO - Needs documentation
-
-``/api/v1/location_map/``
-+++++++++++++++++++++++++
-
-TODO - Needs documentation
-
-``/api/v1/indicator_id/``
-+++++++++++++++++++++++++
-
-TODO - Needs documentation
-
-``/api/v1/chart_type/``
-+++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.chart_type.ChartTypeResource
-
-``/api/v1/computed_datapoint/``
-+++++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.computed_datapoint.ComputedDataPointResource
-
-``/api/v1/custom_chart/``
-+++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.custom_chart.CustomChartResource
-
-``/api/v1/datapointentry/``
-+++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.datapoint_entry.DatapointEntryResource
-
-``/api/v1/doc_datapoint/``
-++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.doc_datapoint.DocDataPointResource
-
-``/api/v1/doc_detail_type/``
-++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.doc_detail_type.DocDetailTypeResource
-
-``/api/v1/transform_upload/``
-+++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.doc_trans_form.DocTransFormResource
-
-``/api/v1/doc_detail/``
-+++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.document_detail.DocumentDetailResource
-
+               
 ``/api/v1/geo/``
 ++++++++++++++++
 
@@ -437,11 +682,6 @@ TODO - Needs documentation
 TODO - Needs documentation
 
 
-``/api/v1/indicator_to_tag/``
-+++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.indicator_to_tag.IndicatorToTagResource
-
 ``/api/v1/queue_process/``
 ++++++++++++++++++++++++++
 
@@ -452,10 +692,6 @@ TODO - Needs documentation
 
 .. autoclass:: rhizome.api.resources.refresh_master.RefreshMasterResource
 
-``/api/v1/source_object_map/``
-++++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.source_object_map.SourceObjectMapResource
 
 ``/api/v1/source_submission/``
 ++++++++++++++++++++++++++++++
