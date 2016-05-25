@@ -5,4 +5,4 @@ Built with Python, JavaScript, React, Django and many other libraries.
 
 # Documentation
 
-Start here by checking out our [documentation](http://htmlpreview.github.io/?https://github.com/unicef/rhizome/blob/dev/docs/_build/html/index.html).
+Start here by checking out our [documentation](unicef.github.io/rhizome).
