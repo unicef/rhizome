@@ -57,9 +57,11 @@ class TableChart extends Chart {
 
   getFormattedValue = function (datapoint) {
     const data_format = datapoint.indicator.data_format
-    if (!datapoint.value) {
+    if (_.isNull(datapoint.value)) {
       return ''
-    } else if (data_format === 'pct') {
+    } else if (data_format === 'pct' && datapoint.value === 0) {
+      return '0 %'
+    } else if (data_format === 'pct' && datapoint.value !== 0) {
       return (datapoint.value * 100).toFixed(1) + ' %'
     } else if (data_format === 'bool' && datapoint.value === 0) {
       datapoint.value = -1 // temporary hack to deal with coloring the booleans.
