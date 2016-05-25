@@ -26,10 +26,13 @@ class TableChart extends Chart {
     const filtered_datapoints = this.props.datapoints.flattened.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
     const data = _.groupBy(filtered_datapoints, 'location.id')
     this.options.default_sort_order = _.map(data, datapoint_group => datapoint_group[0].location.name)
-    this.options.parent_location_map = _.map(data, datapoint_group => ({
-      name: datapoint_group[0].location.name,
-      parent_location_name: this.props.locations_index[datapoint_group[0].location.parent_location_id].name
-    }))
+    this.options.parent_location_map = _.map(data, datapoint_group => {
+      const parent_location = this.props.locations_index[datapoint_group[0].location.parent_location_id]
+      return {
+        name: datapoint_group[0].location.name,
+        parent_location_name: parent_location? parent_location.name : ''
+      }
+    })
     this.options.parent_location_map = _.indexBy(this.options.parent_location_map, 'name')
     this.data = _.toArray(data).map(datapoint_group => {
       const values = []
