@@ -313,6 +313,8 @@ var DashboardChartsStore = Reflux.createStore({
     this.toggleLoading(uuid)
     this.charts[uuid].type = type
     this.charts[uuid].selectTypeMode = false
+    const campaign_ids = this.selected_campaigns ? this.selected_campaigns.map(campaign => campaign.id) : this.campaigns.list[0]
+    this._assignCampaigns(campaign_ids, uuid)
     this.updateChart(uuid)
   },
   onSetPalette: function (palette, uuid) {
