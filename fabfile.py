@@ -18,11 +18,12 @@ def deploy(venv_path=None):
     global local_venv_path
     local_venv_path = venv_path;
 
-    # on local machine
+    # on local mac  hine
     _build_dependencies()
-    run_tests()
+    # run_tests()
 
     # on target machine
+
     stop_apache()
     _push_to_remote()
     start_apache()
@@ -95,7 +96,7 @@ def _push_to_remote():
         run("pip install -r requirements.txt")
 
         # echo "== SYNCDB / MIGRATE =="
-        run("python manage.py migrate --settings=settings")
+        # run("python manage.py migrate --settings=settings")
 
         ## building documentation ##
         # run("cd docs/ && make clean && make html")
