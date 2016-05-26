@@ -8,8 +8,10 @@ from rhizome.models import *
 from pandas import read_csv, notnull, to_datetime, DataFrame, Series
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
+from pprint import pprint
 
 class GeoResourceTest(ResourceTestCase):
+    # ./manage.py test rhizome.tests.test_api_geo --settings=rhizome.settings.test
     def setUp(self):
         super(GeoResourceTest, self).setUp()
 
@@ -20,10 +22,21 @@ class GeoResourceTest(ResourceTestCase):
             LocationType.objects.get_or_create(name='District',admin_level = 2)
 
         self.o = self.ts.create_arbitrary_office()
+        self.planet_location_type = LocationType.objects\
+            .create(name = 'Planet', admin_level = 0)
+
+        self.ultimate_parent = Location.objects.create(
+            id = 1,
+            name = 'Earth',
+            location_code = 'Earth',
+            office_id = self.o.id,
+            location_type_id = self.planet_location_type.id
+        )
+
         location_df_from_csv= read_csv('rhizome/tests/_data/locations_nimroz.csv')
         locations = self.ts.model_df_to_data(location_df_from_csv,Location)
 
-        # make sure that the proper level is set for the 
+        # make sure that the proper level is set for the
         locs = Location.objects.filter(parent_location_id=6)
         for loc in locs:
             loc.location_type_id = self.distr.id
@@ -37,12 +50,18 @@ class GeoResourceTest(ResourceTestCase):
         location_df = DataFrame(list(Location.objects.all()\
 		    .values_list('id','location_code')),columns=['location_id','location_code'])
         location_tree_df = DataFrame(list(Location.objects.all()\
-		    .values_list('id','parent_location_id')),columns=['location_id','parent_location_id'])
+		    .values_list('id','parent_location_id'))\
+            ,columns=['location_id','parent_location_id'])
+
+        location_tree_df['parent_location_id'].fillna(self.ultimate_parent.id,\
+            inplace=True)
+
         location_tree_df['lvl'] = Series(1, index=location_tree_df.index)
         location_tree = self.ts.model_df_to_data(location_tree_df, LocationTree)
         merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
         self.ts.model_df_to_data(merged_df, LocationPolygon)
         minify_geo_json()
+
         LocationPermission.objects.create(user_id = self.ts.user.id,
             top_lvl_location_id = 1)
 
@@ -53,5 +72,3 @@ class GeoResourceTest(ResourceTestCase):
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(len(self.deserialize(resp)['features']), 5)
-
-   

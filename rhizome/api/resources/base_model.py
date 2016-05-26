@@ -156,12 +156,12 @@ class BaseModelResource(ModelResource, BaseResource):
 
         return self.create_response(request, response_data)
 
-    def get_response_meta(self, request, data):
+    def get_response_meta(self, request, objects):
 
         meta_dict = {
             'top_lvl_location_id': self.top_lvl_location_id,
             'limit': None,  # paginator.get_limit(),
             'offset': None,  # paginator.get_offset(),
-            'total_count': len(data['objects']),
+            'total_count': len(objects),
         }
         return meta_dict

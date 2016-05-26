@@ -285,7 +285,8 @@ class DatapointResource(BaseModelResource):
             indicator_ids = None
 
         meta['campaign_ids'] = self.parsed_params['campaign__in']
-        # add errors if it exists
+        meta['total_count'] = len(objects)
+
         if self.error:
             response_data['error'] = self.error
         else:
