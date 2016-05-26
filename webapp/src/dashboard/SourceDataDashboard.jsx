@@ -120,7 +120,7 @@ var SourceDataDashboard = React.createClass({
           />
       </div>)
 
-    var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.slug + doc_id + doc_tab
+    var table_key = _.kebabCase(this.props.location.name) + this.props.campaign.id + doc_id + doc_tab
 
     // data table //
     var review_table = (<ReviewTable

@@ -98,7 +98,7 @@ WSGI_APPLICATION = 'rhizome.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'rhizome',
+        'NAME': 'global_rhizome',
         'USER': 'djangoapp',
         'PASSWORD': 'w3b@p01i0',
         'HOST': '127.0.0.1',
@@ -137,7 +137,7 @@ USE_TZ = True
 # Template configuration
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR, 'datapoints/templates'),
-    os.path.join(BASE_DIR, 'source_data/templates'),    
+    os.path.join(BASE_DIR, 'source_data/templates'),
     os.path.join(BASE_DIR, 'templates',),
 )
 

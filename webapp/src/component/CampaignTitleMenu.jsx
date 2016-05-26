@@ -16,7 +16,7 @@ var CampaignTitleMenu = React.createClass({
   render: function () {
     let campaigns = this.props.campaigns.map(campaign => {
       return _.assign({}, campaign, {
-        slug: campaign.slug
+        name: campaign.name
       })
     })
     let campaignItems = CampaignMenuItem.fromArray(campaigns, this.props.sendValue)

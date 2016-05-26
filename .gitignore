@@ -43,3 +43,6 @@ rhizome/lib/
 dev/
 webapp/npm-debug.log
 rhizome/settings/private.py
+rhizome/templates/
+rhizome/tests/
+webapp/coverage/
