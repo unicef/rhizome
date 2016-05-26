@@ -49,10 +49,10 @@ class BaseNonModelResource(BaseResource):
 
         to_be_serialized = {
             'objects': bundles,
-            'meta': {},  # add paginator info here..
+            'meta': {'total_count': len(objects)},  # add paginator info here..
             'error': None,
         }
-    
+
         to_be_serialized[self._meta.collection_name] = bundles
         to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
         return self.create_response(request, to_be_serialized)
