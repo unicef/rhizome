@@ -81,98 +81,118 @@ the different requests</dd>
 <p>Contact <a class="reference external" href="mailto:dingeej&#37;&#52;&#48;gmail&#46;com">dingeej<span>&#64;</span>gmail<span>&#46;</span>com</a> to get an API key</p>
 </div>
 </div>
-<div class="section" id="global-parameters-and-query-filters">
-<h2>Global Parameters and Query Filters<a class="headerlink" href="#global-parameters-and-query-filters" title="Permalink to this headline">¶</a></h2>
-<dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">limit</span></code></dt>
-<dd>default: 20</dd>
-<dt><code class="docutils literal"><span class="pre">offset</span></code></dt>
-<dd><p class="first">default: 0</p>
-<p>The offset into the list of matched objects. For example, if <code class="docutils literal"><span class="pre">offset=10</span></code> is
-passed to an endpoint, the first 10 records that match the query will not be
-returned, the response will begin with the 11th object</p>
-<p class="last"><em>note - For the /v1 api, the limit / offset is applied after the queryset is
-returned.  Since most of the object lists are small this isnt a huge issue
-, however it is to be of note when querying the location endpoint which returns
-20k+ results</em></p>
-</dd>
-<dt><code class="docutils literal"><span class="pre">format</span></code></dt>
-<dd><p class="first">default: <code class="docutils literal"><span class="pre">json</span></code></p>
-<p class="last">One of either <code class="docutils literal"><span class="pre">json</span></code> or <code class="docutils literal"><span class="pre">csv</span></code> that determines the format of the response</p>
-</dd>
-</dl>
-<p><code class="docutils literal"><span class="pre">simple_evaluation</span></code></p>
-<div class="highlight-json"><div class="highlight"><pre>/api/v1/indicator/?id=21
-/api/v1/indicator/?slug=number-of-all-missed-children
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">__in</span></code></p>
-<p>pass a list of values and retrieve one result for each match</p>
-<div class="highlight-json"><div class="highlight"><pre>/api/v1/indicator/?id__in=21,164
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">__gt;</span> <span class="pre">__lt;</span> <span class="pre">__gte;</span> <span class="pre">__lte</span></code></p>
-<div class="highlight-json"><div class="highlight"><pre>/api/v1/campaign/?start_date__lte=2015-01-01
-/api/v1/campaign/?start_date__gte=2015-01-01
-/api/v1/office/?id__gt=2
-/api/v1/office/?id__lt=2
-</pre></div>
-</div>
-<p><code class="docutils literal"><span class="pre">__contains;</span> <span class="pre">__starts_with</span></code></p>
-<p>filter resources with simple string functions.</p>
-<div class="highlight-json"><div class="highlight"><pre>/api/v1/indicator/?name__startswith=Number
-/api/v1/indicator/?name__contains=polio
-</pre></div>
-</div>
-<ul class="simple">
-<li>Note - These query parameters are taken directly from the Django ORM.  For
-more on how these work see here:*
-https://docs.djangoproject.com/en/1.8/topics/db/queries/#field-lookups</li>
-</ul>
-</div>
 <div class="section" id="api-methods">
 <h2>API Methods<a class="headerlink" href="#api-methods" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="api-v1-datapoint">
-<h3><code class="docutils literal"><span class="pre">/api/v1/datapoint/</span></code><a class="headerlink" href="#api-v1-datapoint" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="api-v1-agg-refresh">
+<h3><code class="docutils literal"><span class="pre">/api/v1/agg_refresh/</span></code><a class="headerlink" href="#api-v1-agg-refresh" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="rhizome.api.resources.datapoint.DatapointResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.datapoint.</code><code class="descname">DatapointResource</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/datapoint.html#DatapointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.datapoint.DatapointResource" title="Permalink to this definition">¶</a></dt>
-<dd><ul>
+<dt id="rhizome.api.resources.agg_refresh.AggRefreshResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.agg_refresh.</code><code class="descname">AggRefreshResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/agg_refresh.html#AggRefreshResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.agg_refresh.AggRefreshResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Runs AggRefresh on the backend</dt>
+<dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><strong>GET Requests:</strong></dt>
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217;: campaign id of the campaign to run agg refresh on.
+If the parameter is not set, the API will run agg refresh on a randomly chosen campaign that needs to be aggregated.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">if an invalid id is provided, the API returns a 500 error</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id1">
+<h4>Response Format<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    campaign_type_id: &lt;Integer&gt;,
+    created_at: &lt;Date&gt;,
+    start_date: &lt;Date&gt;,
+    end_date: &lt;Date&gt;,
+    id: &lt;Integer&gt;,
+    name: &lt;String&gt;,
+    office_id: &lt;Integer&gt;,
+    pct_complete: &lt;Float&gt;,
+    top_lvl_indicator_tag_id: &lt;Integer&gt;,
+    top_lvl_location_id: &lt;Integer&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-all-meta">
+<h3><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code><a class="headerlink" href="#api-v1-all-meta" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.all_meta.AllMetaResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.all_meta.</code><code class="descname">AllMetaResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/all_meta.html#AllMetaResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.all_meta.AllMetaResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all camapaigns, charts, dashboards, indicators,indicator_tags, locations and offices in the database.</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
 <dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;indicator__in&#8217; A comma-separated list of indicator IDs to fetch. By default, all indicators
-&#8216;chart_type&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em></dt>
-<dd><p class="first last">&#8216;location__in&#8217; A comma-separated list of location IDs
-&#8216;campaign_start&#8217; format: <code class="docutils literal"><span class="pre">YYYY-MM-DD</span></code>  Include only datapoints from campaigns that began on or after the supplied date
-&#8216;campaign_end&#8217; format: <code class="docutils literal"><span class="pre">YYYY-MM-DD</span></code>  Include only datapoints from campaigns that ended on or before the supplied date
-&#8216;campaign__in&#8217;   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
-&#8216;cumulative&#8217;</p>
+<dd><p class="first last">none</p>
 </dd>
 </dl>
 </li>
 </ul>
 </dd>
 </dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>Errors:</strong></dt>
-<dd><ul class="first last simple">
-<li></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
 </dd></dl>
 
+<div class="section" id="id2">
+<h4>Response Format<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    campaigns: &lt;List&gt;,
+    charts: &lt;List&gt;,
+    dashboards: &lt;List&gt;,
+    indicators: &lt;List&gt;,
+    indicator_tags: &lt;List&gt;,
+    indicator_to_tags: &lt;List&gt;,
+    locations: &lt;List&gt;,
+    offices: &lt;List&gt;,
+    is_supeuser: &lt;Boolean&gt;
+
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-cache-meta">
+<h3><code class="docutils literal"><span class="pre">/api/v1/cache_meta/</span></code><a class="headerlink" href="#api-v1-cache-meta" title="Permalink to this headline">¶</a></h3>
+<p>TODO - Needs documentation</p>
+<div class="section" id="id3">
+<h4>Response Format<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     id: &lt;Integer&gt;,
+     name: &lt;String&gt;,
+     created_at: &lt;Date&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api-v1-campaign">
 <h3><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code><a class="headerlink" href="#api-v1-campaign" title="Permalink to this headline">¶</a></h3>
@@ -221,6 +241,639 @@ an empty list of campaigns.</p>
 </dl>
 </dd></dl>
 
+<div class="section" id="id4">
+<h4>Response Format<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     campaign_type_id: &lt;Integer&gt;,
+     created_at: &lt;Date&gt;,
+     start_date: &lt;Date&gt;,
+     end_date: &lt;Date&gt;,
+     id: &lt;Integer&gt;,
+     name: &lt;String&gt;,
+     office_id: &lt;Integer&gt;,
+     pct_complete: &lt;Float&gt;,
+     top_lvl_indicator_tag_id: &lt;Integer&gt;,
+     top_lvl_location_id: &lt;Integer&gt;,
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-campaign-type">
+<h3><code class="docutils literal"><span class="pre">/api/v1/campaign_type/</span></code><a class="headerlink" href="#api-v1-campaign-type" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.campaign_type.CampaignTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.campaign_type.</code><code class="descname">CampaignTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/campaign_type.html#CampaignTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.campaign_type.CampaignTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all campaign types</dt>
+<dd><ul class="first last simple">
+<li><em>Optional Parameters:</em> 
+none</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id5">
+<h4>Response Format<a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     id: &lt;Integer&gt;,
+     name: &lt;String&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-chart-type">
+<h3><code class="docutils literal"><span class="pre">/api/v1/chart_type/</span></code><a class="headerlink" href="#api-v1-chart-type" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.chart_type.ChartTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.chart_type.</code><code class="descname">ChartTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/chart_type.html#ChartTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.chart_type.ChartTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><p><strong>GET Request</strong> Returns all Chart type names and ids</p>
+</dd></dl>
+
+<div class="section" id="id6">
+<h4>Response Format<a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    name: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-computed-datapoint">
+<h3><code class="docutils literal"><span class="pre">/api/v1/computed_datapoint/</span></code><a class="headerlink" href="#api-v1-computed-datapoint" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.computed_datapoint.ComputedDataPointResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.computed_datapoint.</code><code class="descname">ComputedDataPointResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/computed_datapoint.html#ComputedDataPointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.computed_datapoint.ComputedDataPointResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns computed datapoints for a given document</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request</strong> Create a computed datapoint</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217;, &#8216;indicator_id&#8217;, &#8216;campaign_id&#8217;, &#8216;location_id&#8217;, &#8216;value&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">Returns 500 error if information is missing.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>To Note:</em></dt>
+<dd><p class="first last">The api does not validate any of these required parameters. It is possible to create datapoints with invalid campaign ids, etc.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p><strong>DELETE Request</strong> Delete Detail: Delete a computed datapoint using the format &#8216;/api/v1/computed_datapoint/&lt;datapoint_id&gt;/&#8217;</p>
+</dd></dl>
+
+<div class="section" id="id7">
+<h4>Response Format<a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    indicator_id: &lt;Number&gt;,
+    location_name: &lt;String&gt;,
+    campaign_name: &lt;String&gt;,
+    indicator_short_name:&lt;String&gt;,
+    value: &lt;Float&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-custom-chart">
+<h3><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code><a class="headerlink" href="#api-v1-custom-chart" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.custom_chart.CustomChartResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.custom_chart.</code><code class="descname">CustomChartResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/custom_chart.html#CustomChartResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.custom_chart.CustomChartResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Requests:</strong> returns charts from the API. If no parameters are given, returns all the charts</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217; &#8211; returns the chart with the given id
+&#8216;dashboard_id&#8217; &#8211; returns a chart associated with the given dashboard id</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">If an invalid id is passed, the API returns an empty list of objects and a status code of 200</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>DELETE Requests:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Requests:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;uuid&#8217;, &#8216;title&#8217;, &#8216;chart_json&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">If any of the required parameters are missing, the API returns a 500 error</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id8">
+<h4>Response Format<a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    uuid: &lt;String&gt;,
+    title: &lt;String&gt;,
+    chart_json: &lt;JSON&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-custom-dashboard">
+<h3><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code><a class="headerlink" href="#api-v1-custom-dashboard" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.custom_dashboard.CustomDashboardResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.custom_dashboard.</code><code class="descname">CustomDashboardResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/custom_dashboard.html#CustomDashboardResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.custom_dashboard.CustomDashboardResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Requests:</strong> Get a dashboard. If no params are passed, returns all the dashboards</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>GET Request get detail:</strong></dt>
+<dd><ul class="first last simple">
+<li>to access a specific chart, send a get request to /api/v1/custom_dashboard/&lt;dashboard_id&gt;/</li>
+</ul>
+</dd>
+<dt><strong>POST Requests:</strong> Create a dashboard</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;title&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;chart_uuids&#8217;: this associates the given chart() with a dashboard</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">If a title is not supplied. The API will return a 500 error.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>DELETE Requests:</strong> There are two ways to submit a delete request to API</dt>
+<dd><ul class="first last simple">
+<li>to delete a resource, HTTP delete request to /api/v1/custom_dashboard/&lt;dashboard_id&gt;/</li>
+<li>or delete request to /api/v1/custom_dashboard/ with param &#8216;id&#8217;</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id9">
+<h4>Response Format<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     id: &lt;Integer&gt;,
+     title: &lt;String&gt;,
+     description: &lt;String&gt;,
+     layout: &lt;Integer&gt;,
+     rows: &lt;JSON&gt;,
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-datapoint">
+<h3><code class="docutils literal"><span class="pre">/api/v1/datapoint/</span></code><a class="headerlink" href="#api-v1-datapoint" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.datapoint.DatapointResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.datapoint.</code><code class="descname">DatapointResource</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/datapoint.html#DatapointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.datapoint.DatapointResource" title="Permalink to this definition">¶</a></dt>
+<dd><ul>
+<li><dl class="first docutils">
+<dt><strong>GET Requests:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;indicator__in&#8217; A comma-separated list of indicator IDs to fetch. By default, all indicators
+&#8216;chart_type&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em></dt>
+<dd><p class="first last">&#8216;location__in&#8217; A comma-separated list of location IDs
+&#8216;campaign_start&#8217; format: <code class="docutils literal"><span class="pre">YYYY-MM-DD</span></code>  Include only datapoints from campaigns that began on or after the supplied date
+&#8216;campaign_end&#8217; format: <code class="docutils literal"><span class="pre">YYYY-MM-DD</span></code>  Include only datapoints from campaigns that ended on or before the supplied date
+&#8216;campaign__in&#8217;   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
+&#8216;cumulative&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<div class="section" id="id10">
+<h4>Response Format<a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     indicator_id: &lt;Integer&gt;,
+     campaign_id: &lt;Integer&gt;,
+     data_date: &lt;Date&gt;,
+     computed_id: &lt;Integer&gt;,
+     location_id: &lt;Integer&gt;,
+     value: &lt;String&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-datapointentry">
+<h3><code class="docutils literal"><span class="pre">/api/v1/datapointentry/</span></code><a class="headerlink" href="#api-v1-datapointentry" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.datapoint_entry.DatapointEntryResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.datapoint_entry.</code><code class="descname">DatapointEntryResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/datapoint_entry.html#DatapointEntryResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.datapoint_entry.DatapointEntryResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;campaign__in&#8217; A list of campaign ids
+&#8216;indicator__in&#8217; A list of indicator ids</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">if a campaign or indicator id is invalid, the API will return a 500 status code</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request:</strong> Create a new datapoint or update an existing one. </dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;campaign_id&#8217;
+&#8216;location_id&#8217;
+&#8216;indicator_id&#8217;
+&#8216;value&#8217;</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id11">
+<h4>Response Format<a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     indicator_id: &lt;Integer&gt;,
+     campaign_id: &lt;Integer&gt;,
+     data_date: &lt;Date&gt;,
+     created_at: &lt;Date&gt;,
+     computed_id: &lt;Integer&gt;,
+     location_id: &lt;Integer&gt;,
+     source_submission_id: &lt;Integer&gt;,
+     cache_job_id: &lt;Integer&gt;,
+     unique_index: &lt;String&gt;
+     value: &lt;String&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-doc-datapoint">
+<h3><code class="docutils literal"><span class="pre">/api/v1/doc_datapoint/</span></code><a class="headerlink" href="#api-v1-doc-datapoint" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.doc_datapoint.DocDataPointResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_datapoint.</code><code class="descname">DocDataPointResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_datapoint.html#DocDataPointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_datapoint.DocDataPointResource" title="Permalink to this definition">¶</a></dt>
+<dd><ul>
+<li><dl class="first docutils">
+<dt><strong>GET Requests:</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;document_id&#8217; the document id for which doc datapoints should be returned</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><strong>Errors:</strong></dt>
+<dd><ul class="first last simple">
+<li>if no document_id is provided, API returns a 500 error</li>
+<li>if an invalid document_id is provided, API returns an empty list</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ul>
+</dd></dl>
+
+<div class="section" id="id12">
+<h4>Response Format<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     location_name: &lt;String&gt;,
+     indicator_short_name: &lt;String&gt;,
+     campaign_name: &lt;String&gt;,
+     value: &lt;float&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-doc-detail">
+<h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code><a class="headerlink" href="#api-v1-doc-detail" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.document_detail.DocumentDetailResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.document_detail.</code><code class="descname">DocumentDetailResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/document_detail.html#DocumentDetailResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.document_detail.DocumentDetailResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>POST Request</strong> </dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;document_id&#8217;
+&#8216;doc_detail_type_id&#8217;
+&#8216;doc_detail_value&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>GET Request</strong> returns all doc details unless one of the optional parameters is supplied</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;doc_detail_type&#8217; returns all doc details with the given doc detail type supplied
+&#8216;document_id&#8217; returns all doc details for the given document id</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="docutils">
+<dt>&#8216;id&#8217;,&#8217;doc_detail_type_id&#8217;,&#8217;doc_detail_type__name&#8217;,</dt>
+<dd>&#8216;document_id&#8217;, &#8216;doc_detail_value&#8217;</dd>
+</dl>
+<div class="section" id="id13">
+<h4>Response Format<a class="headerlink" href="#id13" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Integer&gt;,
+    doc_detail_type_id: &lt;Integer&gt;,
+    doc_detail_type_name: &lt;String&gt;,
+    document_id: &lt;Integer&gt;,
+    doc_detail_value: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-doc-detail-type">
+<h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code><a class="headerlink" href="#api-v1-doc-detail-type" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.doc_detail_type.DocDetailTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_detail_type.</code><code class="descname">DocDetailTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_detail_type.html#DocDetailTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_detail_type.DocDetailTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all doc_detail_type objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id14">
+<h4>Response Format<a class="headerlink" href="#id14" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    name: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-geo">
+<h3><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code><a class="headerlink" href="#api-v1-geo" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.geo.GeoResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.geo.</code><code class="descname">GeoResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/geo.html#GeoResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.geo.GeoResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> A non model resource that allows us to query for shapefiles based on a colletion of parameters.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;location_id__in&#8217; the location of the shape file that we wish to retrieve</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;location_depth&#8217; the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all &#8220;grandchildren&#8221;
+&#8216;location_type&#8217; return the descendants of the location_id param that have the given location_type id.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id15">
+<h4>Response Format<a class="headerlink" href="#id15" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    location_id: &lt;Integer&gt;,
+    type: &lt;String&gt;,
+    properties &lt;Dictionary&gt;,
+    geometry: &lt;Dictionary&gt;,
+    parent_location_id: &lt;Integer&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-group">
+<h3><code class="docutils literal"><span class="pre">/api/v1/group/</span></code><a class="headerlink" href="#api-v1-group" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.group.GroupResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.group.</code><code class="descname">GroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/group.html#GroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.group.GroupResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns the list of all groups in the application.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">none</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id16">
+<h4>Response Format<a class="headerlink" href="#id16" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+   meta: {},
+   objects: [
+     id: &lt;Integer&gt;,
+     name: &lt;String&gt;
+   ],
+   errors: {}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-group-permission">
+<h3><code class="docutils literal"><span class="pre">/api/v1/group_permission/</span></code><a class="headerlink" href="#api-v1-group-permission" title="Permalink to this headline">¶</a></h3>
+<p>The list of indicators each group has permissions to and vice versa.
+For instance to see what groups have permission to view indicator_id 21, simply
+pass:</p>
+<p>&#8216;/api/v1/group_permission/?indicator=21&#8217;</p>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    indicator_id &lt;Number&gt;,
+    group_id &lt;Number&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
 </div>
 <div class="section" id="api-v1-indicator">
 <h3><code class="docutils literal"><span class="pre">/api/v1/indicator/</span></code><a class="headerlink" href="#api-v1-indicator" title="Permalink to this headline">¶</a></h3>
@@ -269,81 +922,63 @@ an empty list of campaigns.</p>
 </dl>
 </dd></dl>
 
-</div>
-<div class="section" id="api-v1-location">
-<h3><code class="docutils literal"><span class="pre">/api/v1/location/</span></code><a class="headerlink" href="#api-v1-location" title="Permalink to this headline">¶</a></h3>
-<p>Return a list of location definitions in accordance to the schema melow.</p>
-<p>This endpoint will only return locations that the user has permissions for.  In
-this case, and in all other instances of GET requests dealing with locations,
-and location_ids, we use the <code class="docutils literal"><span class="pre">fn_get_authorized_locations_by_user</span></code> stored
-procedure which gets recursively the list of location_ids that a user can
-access.</p>
-<div class="section" id="custom-parameters">
-<h4>Custom Parameters<a class="headerlink" href="#custom-parameters" title="Permalink to this headline">¶</a></h4>
-<dl class="docutils">
-<dt><code class="docutils literal"><span class="pre">depth_level</span></code></dt>
-<dd><ul class="first last simple">
-<li>default = 0</li>
-<li>the depth parameter controls how far down the location tree the API should
-traverse when returning location data.</li>
-<li>a parameter of 0 returns ALL data, while a parameter of 1 retreives
-locations at most one level underneath the locations avaliable to that user.
--&gt; that is if a user has permission to see Nigeria only, and they pass
-a depth=1 parameter, they will see data Nigeria, as well as for the
-provinces but not for districts, sub-districts and settlemnts.</li>
-</ul>
-</dd>
-<dt><code class="docutils literal"><span class="pre">read_write</span></code></dt>
-<dd><ul class="first last simple">
-<li>default = r</li>
-<li>This controls whether or not the application needs to see data a user can
-READ or WRITE to.</li>
-</ul>
-</dd>
-</dl>
+<div class="section" id="id17">
+<h4>Response Format<a class="headerlink" href="#id17" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    name: &lt;String&gt;,
-    slug: &lt;String&gt;
-    latitude: &lt;Number&gt;,
-    longitude: &lt;Number&gt;,
-    location_code: &lt;String&gt;,
-    location_type: &lt;String&gt;,
-    shape_file_path: &lt;String&gt;,
-    office: &lt;reference&gt;,
-    parent_location: &lt;reference&gt;,
-    resource_uri: &lt;String&gt;,
-    created_at: &quot;YYYY-MM-DDTHH:MM:SS.sss&quot;,
-  }],
-
-  errors: {...}
+   meta: {},
+   objects: [
+     short_name: &lt;String&gt;,
+     name: &lt;String&gt;,
+     description: &lt;String&gt;,
+     is_reported: &lt;Boolean&gt;,
+     data_format: &lt;String&gt;,
+     created_at: &lt;Date&gt;,
+     bound_json: &lt;JSON&gt;,
+     tag_json: &lt;JSON&gt;,
+     office_id: &lt;JSON&gt;,
+     good_bound: &lt;Float&gt;,
+     bad_bound: &lt;Float&gt;,
+     source_name: &lt;String&gt;
+   ],
+   errors: {}
 }
 </pre></div>
 </div>
-<p>Properties with type <code class="docutils literal"><span class="pre">&lt;reference&gt;</span></code> can contain an ID (<code class="docutils literal"><span class="pre">Number</span></code>), name, slug,
-or URI (all of type <code class="docutils literal"><span class="pre">String</span></code>) depending on the value of the <code class="docutils literal"><span class="pre">uri_format</span></code>
-parameter.</p>
 </div>
 </div>
-<div class="section" id="api-v1-office">
-<h3><code class="docutils literal"><span class="pre">/api/v1/office/</span></code><a class="headerlink" href="#api-v1-office" title="Permalink to this headline">¶</a></h3>
-<p>Return a list of office definitions. Offices are administrative concepts that
-represent different parts of the organization that oversee locations. For example,
-there might be an office for Nigeria that represents the Nigerian Country
-Office. The location Nigeria that represents the country, as well as all of its
-sub-locations, would be associated with the Nigeria office.</p>
+<div class="section" id="api-v1-indicator-calculation">
+<h3><code class="docutils literal"><span class="pre">/api/v1/indicator_calculation/</span></code><a class="headerlink" href="#api-v1-indicator-calculation" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="rhizome.api.resources.office.OfficeResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.office.</code><code class="descname">OfficeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/office.html#OfficeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.office.OfficeResource" title="Permalink to this definition">¶</a></dt>
+<dt id="rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.calculated_indicator_component.</code><code class="descname">CalculatedIndicatorComponentResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/calculated_indicator_component.html#CalculatedIndicatorComponentResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns all office objects</dt>
+<dt><strong>GET Request:</strong> Returns a calculated indicator component</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">None</p>
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;indicator_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">If &#8216;indicator_id&#8217; is invalid or not set, the API returns 200 with an empty list</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>DELETE Request:</strong> Delete a calculated indicator component</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em></dt>
+<dd><p class="first last">&#8216;id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">If and invalid id is supplied, the request returns with 204. If no id parameter is supplied, the status code returned is 500.</p>
 </dd>
 </dl>
 </li>
@@ -352,67 +987,23 @@ sub-locations, would be associated with the Nigeria office.</p>
 </dl>
 </dd></dl>
 
+<div class="section" id="id18">
+<h4>Response Format<a class="headerlink" href="#id18" title="Permalink to this headline">¶</a></h4>
 <div class="highlight-json"><div class="highlight"><pre>{
   meta: {...},
 
   objects: [{
-    id: &lt;Number&gt;,
-    name: &lt;String&gt;,
-    resource_uri: &lt;String&gt;,
-    created_at: &quot;YYYY-MM-DDTHH:MM:SS.sss&quot;,
+    id: &lt;Integer&gt;,
+    indicator_id: &lt;Integer&gt;,
+    indicator_component_id: &lt;Integer&gt;,
+    indicator_component_short_name: &lt;String&gt;,
+    calculation: &lt;String&gt;
   }],
 
   errors: {...}
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="api-v1-campaign-type">
-<h3><code class="docutils literal"><span class="pre">/api/v1/campaign_type/</span></code><a class="headerlink" href="#api-v1-campaign-type" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.campaign_type.CampaignTypeResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.campaign_type.</code><code class="descname">CampaignTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/campaign_type.html#CampaignTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.campaign_type.CampaignTypeResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns all campaign types</dt>
-<dd><ul class="first last simple">
-<li><em>Optional Parameters:</em> 
-none</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-location-type">
-<h3><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code><a class="headerlink" href="#api-v1-location-type" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.location_type.LocationTypeResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_type.</code><code class="descname">LocationTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_type.html#LocationTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_type.LocationTypeResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns all location type objects</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">None</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    name:&lt;String&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
 </div>
 </div>
 <div class="section" id="api-v1-indicator-tag">
@@ -472,627 +1063,6 @@ none</li>
 }
 </pre></div>
 </div>
-</div>
-<div class="section" id="api-v1-location-map">
-<h3><code class="docutils literal"><span class="pre">/api/v1/location_map/</span></code><a class="headerlink" href="#api-v1-location-map" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
-</div>
-<div class="section" id="api-v1-source-doc">
-<h3><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code><a class="headerlink" href="#api-v1-source-doc" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.document.DocumentResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.document.</code><code class="descname">DocumentResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/document.html#DocumentResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.document.DocumentResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>POST Request</strong> uploads a document to the rhizome server.</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;docfile&#8217; the base64 encoded file: csv, xls, xlsx file format
-&#8216;doc_title&#8217; the title of the document</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;doc_id&#8217; an id for the document</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">returns 500 error of the document is empty
-returns 500 error if a required parameter is not supplied</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-document-review">
-<h3><code class="docutils literal"><span class="pre">/api/v1/document_review/</span></code><a class="headerlink" href="#api-v1-document-review" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
-</div>
-<div class="section" id="api-v1-custom-dashboard">
-<h3><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code><a class="headerlink" href="#api-v1-custom-dashboard" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.custom_dashboard.CustomDashboardResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.custom_dashboard.</code><code class="descname">CustomDashboardResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/custom_dashboard.html#CustomDashboardResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.custom_dashboard.CustomDashboardResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Requests:</strong> Get a dashboard. If no params are passed, returns all the dashboards</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em></dt>
-<dd><p class="first last">&#8216;id&#8217;</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>GET Request get detail:</strong></dt>
-<dd><ul class="first last simple">
-<li>to access a specific chart, send a get request to /api/v1/custom_dashboard/&lt;dashboard_id&gt;/</li>
-</ul>
-</dd>
-<dt><strong>POST Requests:</strong> Create a dashboard</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;title&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em></dt>
-<dd><p class="first last">&#8216;chart_uuids&#8217;: this associates the given chart() with a dashboard</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">If a title is not supplied. The API will return a 500 error.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>DELETE Requests:</strong> There are two ways to submit a delete request to API</dt>
-<dd><ul class="first last simple">
-<li>to delete a resource, HTTP delete request to /api/v1/custom_dashboard/&lt;dashboard_id&gt;/</li>
-<li>or delete request to /api/v1/custom_dashboard/ with param &#8216;id&#8217;</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-group-permission">
-<h3><code class="docutils literal"><span class="pre">/api/v1/group_permission/</span></code><a class="headerlink" href="#api-v1-group-permission" title="Permalink to this headline">¶</a></h3>
-<p>The list of indicators each group has permissions to and vice versa.
-For instance to see what groups have permission to view indicator_id 21, simply
-pass:</p>
-<p>&#8216;/api/v1/group_permission/?indicator=21&#8217;</p>
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    indicator_id &lt;Number&gt;,
-    group_id &lt;Number&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
-</div>
-<div class="section" id="api-v1-group">
-<h3><code class="docutils literal"><span class="pre">/api/v1/group/</span></code><a class="headerlink" href="#api-v1-group" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.group.GroupResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.group.</code><code class="descname">GroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/group.html#GroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.group.GroupResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns the list of all groups in the application.</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">none</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-user">
-<h3><code class="docutils literal"><span class="pre">/api/v1/user/</span></code><a class="headerlink" href="#api-v1-user" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.user.UserResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.user.</code><code class="descname">UserResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/user.html#UserResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.user.UserResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns the list of users in the application.  </dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">None</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    username: &lt;Text&gt;,
-    first_name: &lt;Text&gt;,
-    last_name: &lt;Text&gt;,
-    is_active: &lt;Boolean&gt;,
-    is_superuser: &lt;Boolean&gt;,
-    is_staff: &lt;Boolean&gt;,
-    last_login: &lt;Datetime&gt;,
-    email: &lt;Text&gt;,
-    date_joined:&lt;Datetime&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
-</div>
-<div class="section" id="api-v1-location-responsiblity">
-<h3><code class="docutils literal"><span class="pre">/api/v1/location_responsiblity/</span></code><a class="headerlink" href="#api-v1-location-responsiblity" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.location_permission.LocationPermissionResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_permission.</code><code class="descname">LocationPermissionResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_permission.html#LocationPermissionResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_permission.LocationPermissionResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> This endpoint tells which locations a user is responsible for. </dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;user_id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors</em></dt>
-<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Request</strong></dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;user_id&#8217;
-&#8216;location_id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors</em></dt>
-<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    read_write: &lt;Text&gt;,
-    user_id: &lt;Number&gt;,
-    location_id: &lt;Number&gt;
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
-</div>
-<div class="section" id="api-v1-user-group">
-<h3><code class="docutils literal"><span class="pre">/api/v1/user_group/</span></code><a class="headerlink" href="#api-v1-user-group" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.user_group.UserGroupResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.user_group.</code><code class="descname">UserGroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/user_group.html#UserGroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.user_group.UserGroupResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns the list of all user_groups in the application unless an optional parameter is specified</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;user_id&#8217; the id of the user for which we want to get user groups</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Request</strong> Create a user-&gt;group assignment</dt>
-<dd><dl class="first last docutils">
-<dt>-<em>Required Parameters:</em></dt>
-<dd>&#8216;user_id&#8217;
-&#8216;group_id&#8217;</dd>
-<dt>-<em>Errors</em></dt>
-<dd>The api returns a 500 error if any of the required parameters are missing</dd>
-</dl>
-</dd>
-<dt><strong>DELETE Request</strong></dt>
-<dd><dl class="first last docutils">
-<dt>-<em>Required Parameters:</em></dt>
-<dd>&#8216;user_id&#8217;
-&#8216;group_id&#8217;</dd>
-<dt>-<em>Errors</em></dt>
-<dd>The api returns a 500 error if any of the required parameters are missing</dd>
-</dl>
-</dd>
-</dl>
-</dd></dl>
-
-<div class="highlight-json"><div class="highlight"><pre>{
-  meta: {...},
-
-  objects: [{
-    id: &lt;Number&gt;,
-    group_id: &lt;Number&gt;,
-    user_id: &lt;Number&gt;,
-  }],
-
-  errors: {...}
-}
-</pre></div>
-</div>
-</div>
-<div class="section" id="api-v1-agg-refresh">
-<h3><code class="docutils literal"><span class="pre">/api/v1/agg_refresh/</span></code><a class="headerlink" href="#api-v1-agg-refresh" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.agg_refresh.AggRefreshResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.agg_refresh.</code><code class="descname">AggRefreshResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/agg_refresh.html#AggRefreshResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.agg_refresh.AggRefreshResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Runs AggRefresh on the backend</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em></dt>
-<dd><p class="first last">&#8216;id&#8217;: campaign id of the campaign to run agg refresh on.
-If the parameter is not set, the API will run agg refresh on a randomly chosen campaign that needs to be aggregated.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">if an invalid id is provided, the API returns a 500 error</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-cache-meta">
-<h3><code class="docutils literal"><span class="pre">/api/v1/cache_meta/</span></code><a class="headerlink" href="#api-v1-cache-meta" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
-</div>
-<div class="section" id="id1">
-<h3><code class="docutils literal"><span class="pre">/api/v1/location_map/</span></code><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
-</div>
-<div class="section" id="api-v1-indicator-id">
-<h3><code class="docutils literal"><span class="pre">/api/v1/indicator_id/</span></code><a class="headerlink" href="#api-v1-indicator-id" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
-</div>
-<div class="section" id="api-v1-chart-type">
-<h3><code class="docutils literal"><span class="pre">/api/v1/chart_type/</span></code><a class="headerlink" href="#api-v1-chart-type" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.chart_type.ChartTypeResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.chart_type.</code><code class="descname">ChartTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/chart_type.html#ChartTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.chart_type.ChartTypeResource" title="Permalink to this definition">¶</a></dt>
-<dd><p><strong>GET Request</strong> Returns all Chart type names and ids</p>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-computed-datapoint">
-<h3><code class="docutils literal"><span class="pre">/api/v1/computed_datapoint/</span></code><a class="headerlink" href="#api-v1-computed-datapoint" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.computed_datapoint.ComputedDataPointResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.computed_datapoint.</code><code class="descname">ComputedDataPointResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/computed_datapoint.html#ComputedDataPointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.computed_datapoint.ComputedDataPointResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns computed datapoints for a given document</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;document_id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">Returns 200 code with an empty set of objects if the id is invalid, or an id is not specified</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Request</strong> Create a computed datapoint</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;document_id&#8217;, &#8216;indicator_id&#8217;, &#8216;campaign_id&#8217;, &#8216;location_id&#8217;, &#8216;value&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">Returns 500 error if information is missing.</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>To Note:</em></dt>
-<dd><p class="first last">The api does not validate any of these required parameters. It is possible to create datapoints with invalid campaign ids, etc.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-<p><strong>DELETE Request</strong> Delete Detail: Delete a computed datapoint using the format &#8216;/api/v1/computed_datapoint/&lt;datapoint_id&gt;/&#8217;</p>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-custom-chart">
-<h3><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code><a class="headerlink" href="#api-v1-custom-chart" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.custom_chart.CustomChartResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.custom_chart.</code><code class="descname">CustomChartResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/custom_chart.html#CustomChartResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.custom_chart.CustomChartResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Requests:</strong> returns charts from the API. If no parameters are given, returns all the charts</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em></dt>
-<dd><p class="first last">&#8216;id&#8217; &#8211; returns the chart with the given id
-&#8216;dashboard_id&#8217; &#8211; returns a chart associated with the given dashboard id</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">If an invalid id is passed, the API returns an empty list of objects and a status code of 200</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>DELETE Requests:</strong></dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;id&#8217;</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Requests:</strong></dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;uuid&#8217;, &#8216;title&#8217;, &#8216;chart_json&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">If any of the required parameters are missing, the API returns a 500 error</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-datapointentry">
-<h3><code class="docutils literal"><span class="pre">/api/v1/datapointentry/</span></code><a class="headerlink" href="#api-v1-datapointentry" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.datapoint_entry.DatapointEntryResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.datapoint_entry.</code><code class="descname">DatapointEntryResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/datapoint_entry.html#DatapointEntryResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.datapoint_entry.DatapointEntryResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request:</strong></dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;campaign__in&#8217; A list of campaign ids
-&#8216;indicator__in&#8217; A list of indicator ids</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">if a campaign or indicator id is invalid, the API will return a 500 status code</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>POST Request:</strong> Create a new datapoint or update an existing one. </dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;campaign_id&#8217;
-&#8216;location_id&#8217;
-&#8216;indicator_id&#8217;
-&#8216;value&#8217;</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-doc-datapoint">
-<h3><code class="docutils literal"><span class="pre">/api/v1/doc_datapoint/</span></code><a class="headerlink" href="#api-v1-doc-datapoint" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.doc_datapoint.DocDataPointResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_datapoint.</code><code class="descname">DocDataPointResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_datapoint.html#DocDataPointResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_datapoint.DocDataPointResource" title="Permalink to this definition">¶</a></dt>
-<dd><ul>
-<li><dl class="first docutils">
-<dt><strong>GET Requests:</strong></dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;document_id&#8217; the document id for which doc datapoints should be returned</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><strong>Errors:</strong></dt>
-<dd><ul class="first last simple">
-<li>if no document_id is provided, API returns a 500 error</li>
-<li>if an invalid document_id is provided, API returns an empty list</li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-doc-detail-type">
-<h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code><a class="headerlink" href="#api-v1-doc-detail-type" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.doc_detail_type.DocDetailTypeResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_detail_type.</code><code class="descname">DocDetailTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_detail_type.html#DocDetailTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_detail_type.DocDetailTypeResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns all doc_detail_type objects</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">None</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-transform-upload">
-<h3><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code><a class="headerlink" href="#api-v1-transform-upload" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.doc_trans_form.DocTransFormResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_trans_form.</code><code class="descname">DocTransFormResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_trans_form.html#DocTransFormResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_trans_form.DocTransFormResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> Runs document transform, refresh master, and agg refresh for a given document</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;document_id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">returns 500 error if no document id is provided</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-doc-detail">
-<h3><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code><a class="headerlink" href="#api-v1-doc-detail" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.document_detail.DocumentDetailResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.document_detail.</code><code class="descname">DocumentDetailResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/document_detail.html#DocumentDetailResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.document_detail.DocumentDetailResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>POST Request</strong> </dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;document_id&#8217;
-&#8216;doc_detail_type_id&#8217;
-&#8216;doc_detail_value&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">returns 500 error if a required parameter is not supplied</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>GET Request</strong> returns all doc details unless one of the optional parameters is supplied</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;doc_detail_type&#8217; returns all doc details with the given doc detail type supplied
-&#8216;document_id&#8217; returns all doc details for the given document id</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-geo">
-<h3><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code><a class="headerlink" href="#api-v1-geo" title="Permalink to this headline">¶</a></h3>
-<dl class="class">
-<dt id="rhizome.api.resources.geo.GeoResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.geo.</code><code class="descname">GeoResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/geo.html#GeoResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.geo.GeoResource" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="docutils">
-<dt><strong>GET Request</strong> A non model resource that allows us to query for shapefiles based on a colletion of parameters.</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em> </dt>
-<dd><p class="first last">&#8216;location_id__in&#8217; the location of the shape file that we wish to retrieve</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Optional Parameters:</em> </dt>
-<dd><p class="first last">&#8216;location_depth&#8217; the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all &#8220;grandchildren&#8221;
-&#8216;location_type&#8217; return the descendants of the location_id param that have the given location_type id.</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-</div>
-<div class="section" id="api-v1-homepage">
-<h3><code class="docutils literal"><span class="pre">/api/v1/homepage/</span></code><a class="headerlink" href="#api-v1-homepage" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
 </div>
 <div class="section" id="api-v1-indicator-to-tag">
 <h3><code class="docutils literal"><span class="pre">/api/v1/indicator_to_tag/</span></code><a class="headerlink" href="#api-v1-indicator-to-tag" title="Permalink to this headline">¶</a></h3>
@@ -1154,6 +1124,199 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<p>{&#8220;id&#8221;: 146, &#8220;indicator__short_name&#8221;: &#8220;Polio From Saliva&#8221;, &#8220;indicator_id&#8221;: 123, &#8220;indicator_tag__tag_name&#8221;: &#8220;Perceived Threat&#8221;, &#8220;indicator_tag_id&#8221;: 19</p>
+<div class="section" id="id19">
+<h4>Response Format<a class="headerlink" href="#id19" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Integer&gt;,
+    indicator_short_name: &lt;String&gt;,
+    indicator_id: &lt;Integer&gt;,
+    indicator_tag_name: &lt;String&gt;,
+    indicator_tag_id: &lt;Integer&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-location">
+<h3><code class="docutils literal"><span class="pre">/api/v1/location/</span></code><a class="headerlink" href="#api-v1-location" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.location.LocationResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.location.</code><code class="descname">LocationResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location.html#LocationResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location.LocationResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns locations objects. All location objects will be returned if an optional parameter is not set.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;location_depth&#8217; the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all &#8220;grandchildren&#8221;
+&#8216;location_type&#8217; return the descendants of the location_id param that have the given location_type id.</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id20">
+<h4>Response Format<a class="headerlink" href="#id20" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    name: &lt;String&gt;,
+    latitude: &lt;Number&gt;,
+    longitude: &lt;Number&gt;,
+    location_code: &lt;String&gt;,
+    location_type: &lt;String&gt;,
+    office_id: &lt;Number&gt;,
+    parent_location_id: &lt;Number&gt;,
+    resource_uri: &lt;String&gt;,
+    created_at: &quot;YYYY-MM-DDTHH:MM:SS.sss&quot;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-location-responsiblity">
+<h3><code class="docutils literal"><span class="pre">/api/v1/location_responsiblity/</span></code><a class="headerlink" href="#api-v1-location-responsiblity" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.location_permission.LocationPermissionResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_permission.</code><code class="descname">LocationPermissionResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_permission.html#LocationPermissionResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_permission.LocationPermissionResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> This endpoint tells which locations a user is responsible for. </dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors</em></dt>
+<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request</strong></dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217;
+&#8216;location_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors</em></dt>
+<dd><p class="first last">API returns a 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    read_write: &lt;Text&gt;,
+    user_id: &lt;Number&gt;,
+    location_id: &lt;Number&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="api-v1-location-type">
+<h3><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code><a class="headerlink" href="#api-v1-location-type" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.location_type.LocationTypeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.location_type.</code><code class="descname">LocationTypeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/location_type.html#LocationTypeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.location_type.LocationTypeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all location type objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    name:&lt;String&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+<div class="section" id="api-v1-odk-form-id">
+<h3><code class="docutils literal"><span class="pre">/api/v1/odk_form_id/</span></code><a class="headerlink" href="#api-v1-odk-form-id" title="Permalink to this headline">¶</a></h3>
+<p>TODO - Needs documentation</p>
+</div>
+<div class="section" id="api-v1-office">
+<h3><code class="docutils literal"><span class="pre">/api/v1/office/</span></code><a class="headerlink" href="#api-v1-office" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.office.OfficeResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.office.</code><code class="descname">OfficeResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/office.html#OfficeResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.office.OfficeResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns all office objects</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id21">
+<h4>Response Format<a class="headerlink" href="#id21" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    name: &lt;String&gt;,
+    resource_uri: &lt;String&gt;,
+    created_at: &quot;YYYY-MM-DDTHH:MM:SS.sss&quot;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api-v1-queue-process">
 <h3><code class="docutils literal"><span class="pre">/api/v1/queue_process/</span></code><a class="headerlink" href="#api-v1-queue-process" title="Permalink to this headline">¶</a></h3>
@@ -1180,6 +1343,24 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id22">
+<h4>Response Format<a class="headerlink" href="#id22" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Integer&gt;,
+    doc_detail_type_id: &lt;Integer&gt;,
+    doc_detail_type_name: &lt;String&gt;,
+    document_id: &lt;Integer&gt;,
+    doc_detail_value: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api-v1-refresh-master">
 <h3><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code><a class="headerlink" href="#api-v1-refresh-master" title="Permalink to this headline">¶</a></h3>
@@ -1206,6 +1387,80 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id23">
+<h4>Response Format<a class="headerlink" href="#id23" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    docfile: &lt;String&gt;,
+    doc_title: &lt;String&gt;,
+    file_header: &lt;JSON&gt;,
+    guid: &lt;String&gt;,
+    created_at: &lt;Date&gt;,
+    id: &lt;Integer&gt;,
+    resource_uri: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-source-doc">
+<h3><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code><a class="headerlink" href="#api-v1-source-doc" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.document.DocumentResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.document.</code><code class="descname">DocumentResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/document.html#DocumentResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.document.DocumentResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>POST Request</strong> uploads a document to the rhizome server.</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;docfile&#8217; the base64 encoded file: csv, xls, xlsx file format
+&#8216;doc_title&#8217; the title of the document</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;doc_id&#8217; an id for the document</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error of the document is empty
+returns 500 error if a required parameter is not supplied</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id24">
+<h4>Response Format<a class="headerlink" href="#id24" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    docfile: &lt;String&gt;,
+    doc_title: &lt;String&gt;,
+    file_header: &lt;JSON&gt;,
+    guid: &lt;String&gt;,
+    created_at: &lt;Date&gt;,
+    id: &lt;Integer&gt;,
+    resource_uri: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api-v1-source-object-map">
 <h3><code class="docutils literal"><span class="pre">/api/v1/source_object_map/</span></code><a class="headerlink" href="#api-v1-source-object-map" title="Permalink to this headline">¶</a></h3>
@@ -1249,6 +1504,25 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id25">
+<h4>Response Format<a class="headerlink" href="#id25" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Integer&gt;,
+    content_type: &lt;String&gt;,
+    mapped_by_id: &lt;Integer&gt;,
+    master_object_id: &lt;Integer&gt;,
+    master_object_name: &lt;String&gt;,
+    source_object_code: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
 </div>
 <div class="section" id="api-v1-source-submission">
 <h3><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code><a class="headerlink" href="#api-v1-source-submission" title="Permalink to this headline">¶</a></h3>
@@ -1275,22 +1549,47 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id26">
+<h4>Response Format<a class="headerlink" href="#id26" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    document_id: &lt;Integer&gt;,
+    instance_guid: &lt;String&gt;,
+    row_number: &lt;Integer&gt;,
+    data_date: &lt;Date&gt;,
+    location_code: &lt;String&gt;,
+    campaign_code: &lt;String&gt;,
+    location_display: &lt;String&gt;,
+    submission_json: &lt;JSON&gt;,
+    created_at: &lt;Date&gt;,
+    process_status: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
 </div>
-<div class="section" id="api-v1-odk-form-id">
-<h3><code class="docutils literal"><span class="pre">/api/v1/odk_form_id/</span></code><a class="headerlink" href="#api-v1-odk-form-id" title="Permalink to this headline">¶</a></h3>
-<p>TODO - Needs documentation</p>
 </div>
-<div class="section" id="api-v1-all-meta">
-<h3><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code><a class="headerlink" href="#api-v1-all-meta" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="api-v1-transform-upload">
+<h3><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code><a class="headerlink" href="#api-v1-transform-upload" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="rhizome.api.resources.all_meta.AllMetaResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.all_meta.</code><code class="descname">AllMetaResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/all_meta.html#AllMetaResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.all_meta.AllMetaResource" title="Permalink to this definition">¶</a></dt>
+<dt id="rhizome.api.resources.doc_trans_form.DocTransFormResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.doc_trans_form.</code><code class="descname">DocTransFormResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_trans_form.html#DocTransFormResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_trans_form.DocTransFormResource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
-<dt><strong>GET Request</strong> Returns all camapaigns, charts, dashboards, indicators,indicator_tags, locations and offices in the database.</dt>
+<dt><strong>GET Request</strong> Runs document transform, refresh master, and agg refresh for a given document</dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">none</p>
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">&#8216;document_id&#8217;</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt><em>Errors:</em></dt>
+<dd><p class="first last">returns 500 error if no document id is provided</p>
 </dd>
 </dl>
 </li>
@@ -1299,40 +1598,38 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id27">
+<h4>Response Format<a class="headerlink" href="#id27" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    docfile: &lt;String&gt;,
+    doc_title: &lt;String&gt;,
+    file_header: &lt;JSON&gt;,
+    guid: &lt;String&gt;,
+    created_at: &lt;Date&gt;,
+    id: &lt;Integer&gt;,
+    resource_uri: &lt;String&gt;
+  }],
+
+  errors: {...}
+}
+</pre></div>
 </div>
-<div class="section" id="api-v1-indicator-calculation">
-<h3><code class="docutils literal"><span class="pre">/api/v1/indicator_calculation/</span></code><a class="headerlink" href="#api-v1-indicator-calculation" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="api-v1-user">
+<h3><code class="docutils literal"><span class="pre">/api/v1/user/</span></code><a class="headerlink" href="#api-v1-user" title="Permalink to this headline">¶</a></h3>
 <dl class="class">
-<dt id="rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource">
-<em class="property">class </em><code class="descclassname">rhizome.api.resources.calculated_indicator_component.</code><code class="descname">CalculatedIndicatorComponentResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/calculated_indicator_component.html#CalculatedIndicatorComponentResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource" title="Permalink to this definition">¶</a></dt>
+<dt id="rhizome.api.resources.user.UserResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.user.</code><code class="descname">UserResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/user.html#UserResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.user.UserResource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="docutils">
-<dt><strong>GET Request:</strong> Returns a calculated indicator component</dt>
+<dt><strong>GET Request</strong> Returns the list of users in the application.  </dt>
 <dd><ul class="first last">
 <li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;indicator_id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">If &#8216;indicator_id&#8217; is invalid or not set, the API returns 200 with an empty list</p>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-<dt><strong>DELETE Request:</strong> Delete a calculated indicator component</dt>
-<dd><ul class="first last">
-<li><dl class="first docutils">
-<dt><em>Required Parameters:</em></dt>
-<dd><p class="first last">&#8216;id&#8217;</p>
-</dd>
-</dl>
-</li>
-<li><dl class="first docutils">
-<dt><em>Errors:</em></dt>
-<dd><p class="first last">If and invalid id is supplied, the request returns with 204. If no id parameter is supplied, the status code returned is 500.</p>
+<dt><em>Required Parameters:</em> </dt>
+<dd><p class="first last">None</p>
 </dd>
 </dl>
 </li>
@@ -1341,6 +1638,83 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 </dl>
 </dd></dl>
 
+<div class="section" id="id28">
+<h4>Response Format<a class="headerlink" href="#id28" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    username: &lt;Text&gt;,
+    first_name: &lt;Text&gt;,
+    last_name: &lt;Text&gt;,
+    is_active: &lt;Boolean&gt;,
+    is_superuser: &lt;Boolean&gt;,
+    is_staff: &lt;Boolean&gt;,
+    last_login: &lt;Datetime&gt;,
+    email: &lt;Text&gt;,
+    date_joined:&lt;Datetime&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="api-v1-user-group">
+<h3><code class="docutils literal"><span class="pre">/api/v1/user_group/</span></code><a class="headerlink" href="#api-v1-user-group" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.api.resources.user_group.UserGroupResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.user_group.</code><code class="descname">UserGroupResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/user_group.html#UserGroupResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.user_group.UserGroupResource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt><strong>GET Request</strong> Returns the list of all user_groups in the application unless an optional parameter is specified</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt><em>Optional Parameters:</em> </dt>
+<dd><p class="first last">&#8216;user_id&#8217; the id of the user for which we want to get user groups</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+<dt><strong>POST Request</strong> Create a user-&gt;group assignment</dt>
+<dd><dl class="first last docutils">
+<dt>-<em>Required Parameters:</em></dt>
+<dd>&#8216;user_id&#8217;
+&#8216;group_id&#8217;</dd>
+<dt>-<em>Errors</em></dt>
+<dd>The api returns a 500 error if any of the required parameters are missing</dd>
+</dl>
+</dd>
+<dt><strong>DELETE Request</strong></dt>
+<dd><dl class="first last docutils">
+<dt>-<em>Required Parameters:</em></dt>
+<dd>&#8216;user_id&#8217;
+&#8216;group_id&#8217;</dd>
+<dt>-<em>Errors</em></dt>
+<dd>The api returns a 500 error if any of the required parameters are missing</dd>
+</dl>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="id29">
+<h4>Response Format<a class="headerlink" href="#id29" title="Permalink to this headline">¶</a></h4>
+<div class="highlight-json"><div class="highlight"><pre>{
+  meta: {...},
+
+  objects: [{
+    id: &lt;Number&gt;,
+    group_id: &lt;Number&gt;,
+    user_id: &lt;Number&gt;,
+  }],
+
+  errors: {...}
+}
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1358,50 +1732,128 @@ If the parameter is not set, the API will run agg refresh on a randomly chosen c
 <li><a class="reference internal" href="#want-to-pull-data-from-rhizome">Want to Pull Data from Rhizome?</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#global-parameters-and-query-filters">Global Parameters and Query Filters</a></li>
 <li><a class="reference internal" href="#api-methods">API Methods</a><ul>
-<li><a class="reference internal" href="#api-v1-datapoint"><code class="docutils literal"><span class="pre">/api/v1/datapoint/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-indicator"><code class="docutils literal"><span class="pre">/api/v1/indicator/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
-<li><a class="reference internal" href="#custom-parameters">Custom Parameters</a></li>
+<li><a class="reference internal" href="#api-v1-agg-refresh"><code class="docutils literal"><span class="pre">/api/v1/agg_refresh/</span></code></a><ul>
+<li><a class="reference internal" href="#id1">Response Format</a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#api-v1-office"><code class="docutils literal"><span class="pre">/api/v1/office/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-campaign-type"><code class="docutils literal"><span class="pre">/api/v1/campaign_type/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-location-type"><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-indicator-tag"><code class="docutils literal"><span class="pre">/api/v1/indicator_tag/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-location-map"><code class="docutils literal"><span class="pre">/api/v1/location_map/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-document-review"><code class="docutils literal"><span class="pre">/api/v1/document_review/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a></li>
+<li><a class="reference internal" href="#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li><a class="reference internal" href="#id2">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-cache-meta"><code class="docutils literal"><span class="pre">/api/v1/cache_meta/</span></code></a><ul>
+<li><a class="reference internal" href="#id3">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li><a class="reference internal" href="#id4">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-campaign-type"><code class="docutils literal"><span class="pre">/api/v1/campaign_type/</span></code></a><ul>
+<li><a class="reference internal" href="#id5">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-chart-type"><code class="docutils literal"><span class="pre">/api/v1/chart_type/</span></code></a><ul>
+<li><a class="reference internal" href="#id6">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-computed-datapoint"><code class="docutils literal"><span class="pre">/api/v1/computed_datapoint/</span></code></a><ul>
+<li><a class="reference internal" href="#id7">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li><a class="reference internal" href="#id8">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li><a class="reference internal" href="#id9">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-datapoint"><code class="docutils literal"><span class="pre">/api/v1/datapoint/</span></code></a><ul>
+<li><a class="reference internal" href="#id10">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-datapointentry"><code class="docutils literal"><span class="pre">/api/v1/datapointentry/</span></code></a><ul>
+<li><a class="reference internal" href="#id11">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-doc-datapoint"><code class="docutils literal"><span class="pre">/api/v1/doc_datapoint/</span></code></a><ul>
+<li><a class="reference internal" href="#id12">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-doc-detail"><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code></a><ul>
+<li><a class="reference internal" href="#id13">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-doc-detail-type"><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code></a><ul>
+<li><a class="reference internal" href="#id14">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li><a class="reference internal" href="#id15">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-group"><code class="docutils literal"><span class="pre">/api/v1/group/</span></code></a><ul>
+<li><a class="reference internal" href="#id16">Response Format</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#api-v1-group-permission"><code class="docutils literal"><span class="pre">/api/v1/group_permission/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-group"><code class="docutils literal"><span class="pre">/api/v1/group/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-user"><code class="docutils literal"><span class="pre">/api/v1/user/</span></code></a></li>
+<li><a class="reference internal" href="#api-v1-indicator"><code class="docutils literal"><span class="pre">/api/v1/indicator/</span></code></a><ul>
+<li><a class="reference internal" href="#id17">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-indicator-calculation"><code class="docutils literal"><span class="pre">/api/v1/indicator_calculation/</span></code></a><ul>
+<li><a class="reference internal" href="#id18">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-indicator-tag"><code class="docutils literal"><span class="pre">/api/v1/indicator_tag/</span></code></a></li>
+<li><a class="reference internal" href="#api-v1-indicator-to-tag"><code class="docutils literal"><span class="pre">/api/v1/indicator_to_tag/</span></code></a><ul>
+<li><a class="reference internal" href="#id19">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li><a class="reference internal" href="#id20">Response Format</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#api-v1-location-responsiblity"><code class="docutils literal"><span class="pre">/api/v1/location_responsiblity/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-user-group"><code class="docutils literal"><span class="pre">/api/v1/user_group/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-agg-refresh"><code class="docutils literal"><span class="pre">/api/v1/agg_refresh/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-cache-meta"><code class="docutils literal"><span class="pre">/api/v1/cache_meta/</span></code></a></li>
-<li><a class="reference internal" href="#id1"><code class="docutils literal"><span class="pre">/api/v1/location_map/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-indicator-id"><code class="docutils literal"><span class="pre">/api/v1/indicator_id/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-chart-type"><code class="docutils literal"><span class="pre">/api/v1/chart_type/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-computed-datapoint"><code class="docutils literal"><span class="pre">/api/v1/computed_datapoint/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-datapointentry"><code class="docutils literal"><span class="pre">/api/v1/datapointentry/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-doc-datapoint"><code class="docutils literal"><span class="pre">/api/v1/doc_datapoint/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-doc-detail-type"><code class="docutils literal"><span class="pre">/api/v1/doc_detail_type/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-doc-detail"><code class="docutils literal"><span class="pre">/api/v1/doc_detail/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-homepage"><code class="docutils literal"><span class="pre">/api/v1/homepage/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-indicator-to-tag"><code class="docutils literal"><span class="pre">/api/v1/indicator_to_tag/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-queue-process"><code class="docutils literal"><span class="pre">/api/v1/queue_process/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-source-object-map"><code class="docutils literal"><span class="pre">/api/v1/source_object_map/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a></li>
+<li><a class="reference internal" href="#api-v1-location-type"><code class="docutils literal"><span class="pre">/api/v1/location_type/</span></code></a></li>
 <li><a class="reference internal" href="#api-v1-odk-form-id"><code class="docutils literal"><span class="pre">/api/v1/odk_form_id/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a></li>
-<li><a class="reference internal" href="#api-v1-indicator-calculation"><code class="docutils literal"><span class="pre">/api/v1/indicator_calculation/</span></code></a></li>
+<li><a class="reference internal" href="#api-v1-office"><code class="docutils literal"><span class="pre">/api/v1/office/</span></code></a><ul>
+<li><a class="reference internal" href="#id21">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-queue-process"><code class="docutils literal"><span class="pre">/api/v1/queue_process/</span></code></a><ul>
+<li><a class="reference internal" href="#id22">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li><a class="reference internal" href="#id23">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li><a class="reference internal" href="#id24">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-source-object-map"><code class="docutils literal"><span class="pre">/api/v1/source_object_map/</span></code></a><ul>
+<li><a class="reference internal" href="#id25">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li><a class="reference internal" href="#id26">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li><a class="reference internal" href="#id27">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-user"><code class="docutils literal"><span class="pre">/api/v1/user/</span></code></a><ul>
+<li><a class="reference internal" href="#id28">Response Format</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#api-v1-user-group"><code class="docutils literal"><span class="pre">/api/v1/user_group/</span></code></a><ul>
+<li><a class="reference internal" href="#id29">Response Format</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>

@@ -68,6 +68,36 @@ Response Format
     errors: {...}
   }
 
+
+``/api/v1/all_meta/``
++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.all_meta.AllMetaResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      campaigns: <List>,
+      charts: <List>,
+      dashboards: <List>,
+      indicators: <List>,
+      indicator_tags: <List>,
+      indicator_to_tags: <List>,
+      locations: <List>,
+      offices: <List>,
+      is_supeuser: <Boolean>
+
+    }],
+
+    errors: {...}
+  }
+
+
 ``/api/v1/cache_meta/``
 +++++++++++++++++++++++
 
@@ -334,6 +364,29 @@ Response Format
     errors: {...}
   }
 
+``/api/v1/geo/``
+++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.geo.GeoResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      location_id: <Integer>,
+      type: <String>,
+      properties <Dictionary>,
+      geometry: <Dictionary>,
+      parent_location_id: <Integer>
+    }],
+
+    errors: {...}
+  }
+
 
 ``/api/v1/group/``
 ++++++++++++++++++
@@ -405,6 +458,28 @@ Response Format
       errors: {}
    }
 
+``/api/v1/indicator_calculation/``
+++++++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+    
+    objects: [{
+      id: <Integer>,
+      indicator_id: <Integer>,
+      indicator_component_id: <Integer>,
+      indicator_component_short_name: <String>,
+      calculation: <String>
+    }],
+
+    errors: {...}
+  }
 
 ``/api/v1/indicator_tag/``
 ++++++++++++++++++++++++++
@@ -521,6 +596,15 @@ Response Format
     errors: {...}
   }
 
+
+
+``/api/v1/odk_form_id/``
+++++++++++++++++++++++++
+
+TODO - Needs documentation
+
+
+
 ``/api/v1/office/``
 +++++++++++++++++++
 
@@ -538,6 +622,56 @@ Response Format
       name: <String>,
       resource_uri: <String>,
       created_at: "YYYY-MM-DDTHH:MM:SS.sss",
+    }],
+
+    errors: {...}
+  }
+
+``/api/v1/queue_process/``
+++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.queue_process.QueueProcessResource
+
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      id: <Integer>,
+      doc_detail_type_id: <Integer>,
+      doc_detail_type_name: <String>,
+      document_id: <Integer>,
+      doc_detail_value: <String>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/refresh_master/``
++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.refresh_master.RefreshMasterResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      docfile: <String>,
+      doc_title: <String>,
+      file_header: <JSON>,
+      guid: <String>,
+      created_at: <Date>,
+      id: <Integer>,
+      resource_uri: <String>
     }],
 
     errors: {...}
@@ -588,6 +722,35 @@ Response Format
       master_object_id: <Integer>,
       master_object_name: <String>,
       source_object_code: <String>
+    }],
+
+    errors: {...}
+  }
+
+
+``/api/v1/source_submission/``
+++++++++++++++++++++++++++++++
+
+.. autoclass:: rhizome.api.resources.source_submission.SourceSubmissionResource
+
+Response Format
+~~~~~~~~~~~~~~~
+.. code-block:: json
+
+  {
+    meta: {...},
+
+    objects: [{
+      document_id: <Integer>,
+      instance_guid: <String>,
+      row_number: <Integer>,
+      data_date: <Date>,
+      location_code: <String>,
+      campaign_code: <String>,
+      location_display: <String>,
+      submission_json: <JSON>,
+      created_at: <Date>,
+      process_status: <String>
     }],
 
     errors: {...}
@@ -669,49 +832,5 @@ Response Format
     errors: {...}
   }
 
-               
-``/api/v1/geo/``
-++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.geo.GeoResource
-
-
-``/api/v1/homepage/``
-+++++++++++++++++++++
-
-TODO - Needs documentation
-
-
-``/api/v1/queue_process/``
-++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.queue_process.QueueProcessResource
-
-``/api/v1/refresh_master/``
-+++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.refresh_master.RefreshMasterResource
-
-
-``/api/v1/source_submission/``
-++++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.source_submission.SourceSubmissionResource
-
-``/api/v1/odk_form_id/``
-++++++++++++++++++++++++
-
-TODO - Needs documentation
-
-
-``/api/v1/all_meta/``
-+++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.all_meta.AllMetaResource
-
-``/api/v1/indicator_calculation/``
-++++++++++++++++++++++++++++++++++
-
-.. autoclass:: rhizome.api.resources.calculated_indicator_component.CalculatedIndicatorComponentResource
 
 
