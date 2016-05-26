@@ -37,3 +37,22 @@ class BaseNonModelResource(BaseResource):
         '''
 
         return super(BaseNonModelResource, self).dispatch(request_type, request, **kwargs)
+
+    def get_list(self, request, **kwargs):
+        """
+        Overriden from Tastypie..
+        """
+
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle)
+        bundles = [obj.__dict__ for obj in objects]
+
+        response_meta = {} # self.get_response_meta(len(objects))
+
+        response_data = {
+            'objects': bundles,
+            'meta': response_meta,  # add paginator info here..
+            'error': None,
+        }
+
+        return self.create_response(request, response_data)
