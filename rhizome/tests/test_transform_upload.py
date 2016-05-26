@@ -4,7 +4,7 @@ from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
-from rhizome.models import *
+from rhizome.models import Document, Location, IndicatorTag, Office, CacheJob, DocDetailType, CampaignType, Campaign, Indicator, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, DataPoint, IndicatorClassMap
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
 
