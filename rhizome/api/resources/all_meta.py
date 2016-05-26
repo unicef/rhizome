@@ -1,6 +1,6 @@
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models import *
+from rhizome.models import Campaign, CustomChart, CustomDashboard, Indicator, IndicatorTag, IndicatorToTag,Location, Office, User
 
 class AllMetaResult(object):
     campaigns = list()

@@ -3,8 +3,7 @@ from pandas import read_csv, notnull
 from numpy import isnan
 from django.test import TestCase
 
-from rhizome.models import *
-
+from rhizome.models import Office, CacheJob, LocationType, Campaign, Location, CampaignType, Document, SourceSubmission, Indicator, IndicatorTag, IndicatorToTag, CampaignToIndicator, CalculatedIndicatorComponent, DataPoint, DataPointComputed, AggDataPoint
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
 from setup_helpers import TestSetupHelpers

@@ -6,8 +6,7 @@ from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
-from rhizome.models import *
-
+from rhizome.models import Document, Location, IndicatorTag, Office, CacheJob, DocDetailType, CampaignType, Campaign, Indicator, CalculatedIndicatorComponent, DocumentDetail, SourceSubmission, SourceObjectMap, DocDataPoint, DataPoint
 
 class RefreshMasterTestCase(TestCase):
 
