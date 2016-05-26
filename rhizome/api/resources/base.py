@@ -40,7 +40,7 @@ class BaseResource(Resource):
 
         if 'location_id__in' in request.GET:
             location_ids = map(int, request.GET['location_id__in'].split(','))
-            
+
             if 'location_type' in request.GET:
                 loc_type_id = int(request.GET['location_type'])
                 return LocationTree.objects.filter(
@@ -73,12 +73,12 @@ class BaseResource(Resource):
         Overrides Tastypie and calls get_list.
         """
 
-        try:
-            self.top_lvl_location_id = LocationPermission.objects.get(
-                user_id = request.user.id).top_lvl_location_id
-        except LocationPermission.DoesNotExist:
-            self.top_lvl_location_id = Location.objects\
-                .filter(parent_location_id = None)[0].id
+        # try:
+        #     self.top_lvl_location_id = LocationPermission.objects.get(
+        #         user_id = request.user.id).top_lvl_location_id
+        # except LocationPermission.DoesNotExist:
+        self.top_lvl_location_id = Location.objects\
+            .filter(parent_location_id = None)[0].id
 
         allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
         #

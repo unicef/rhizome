@@ -9,13 +9,17 @@ from tastypie.utils.mime import build_content_type
 from tastypie.exceptions import NotFound
 
 from rhizome.api.serialize import CustomSerializer
-from rhizome.api.resources.base_non_model import BaseNonModelResource
+from rhizome.api.resources.base_model import BaseModelResource
+from rhizome.api.custom_logic import handle_polio_case_table
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent
+
 import math
 from datetime import datetime
+
+from pprint import pprint
 
 class ResultObject(object):
     '''
@@ -28,7 +32,7 @@ class ResultObject(object):
     # indicators = list()
 
 
-class DatapointResource(BaseNonModelResource):
+class DatapointResource(BaseModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -51,7 +55,7 @@ class DatapointResource(BaseNonModelResource):
     location_id = fields.IntegerField(attribute='location_id')
     value = fields.CharField(attribute='value', null=True)
 
-    class Meta(BaseNonModelResource.Meta):
+    class Meta(BaseModelResource.Meta):
         '''
         As this is a NON model resource, we must specify the object_class
         that will represent the data returned to the applicaton.  In this case
@@ -65,7 +69,7 @@ class DatapointResource(BaseNonModelResource):
         note - authentication inherited from parent class
         '''
 
-        object_class = ResultObject  # use the class above to define response
+        # object_class = ResultObject  # use the class above to define response
         resource_name = 'datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
@@ -125,7 +129,7 @@ class DatapointResource(BaseNonModelResource):
         self.location_ids = self.get_locations_to_return_from_url(request)
         time_gb = self.parsed_params['group_by_time']
         if time_gb == 'campaign' or time_gb is None:
-            self.base_data_df = self.base_transform()
+            return self.base_transform()
         else:
             self.base_data_df = self.group_by_time_transform()
 
@@ -169,7 +173,7 @@ class DatapointResource(BaseNonModelResource):
             '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
 
             self.parsed_params['show_missing_data'] = 1
-            return self.handle_polio_case_table(dp_df_columns)
+            return handle_polio_case_table(self, dp_df_columns)
 
         cols = ['data_date','indicator_id','location_id','value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
@@ -223,6 +227,7 @@ class DatapointResource(BaseNonModelResource):
             return gb_df
 
     def df_to_result_obj(self, row, results_list):
+
         dp = ResultObject()
         if not math.isnan(row['indicator_id']):
             dp.indicator_id = row['indicator_id']
@@ -235,77 +240,6 @@ class DatapointResource(BaseNonModelResource):
             dp.value = row['value']
         results_list.append(dp)
 
-    def handle_polio_case_table(self, dp_df_columns):
-        '''
-        This is a very specific peice of code that allows us to generate a table
-        with
-            - date of latest case
-            - infected district count
-            - infected province count
-
-        THis relies on certain calcluations to be made in
-        caluclated_indicator_component.
-        '''
-        # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
-        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
-            objects.filter(indicator__name = 'Polio Cases').values()
-
-        if len(calc_indicator_data_for_polio_cases) > 0:
-            self.ind_meta = {'base_indicator': \
-                calc_indicator_data_for_polio_cases[0]['indicator_id']
-            }
-        else:
-            self.ind_meta = {}
-
-        for row in calc_indicator_data_for_polio_cases:
-            calc = row['calculation']
-            ind_id = row['indicator_component_id']
-            self.ind_meta[calc] = ind_id
-
-
-        parent_location_id = self.parsed_params['location_id__in']
-
-        all_sub_locations = LocationTree.objects.filter(
-            parent_location_id = parent_location_id
-        ).values_list('location_id', flat=True)
-
-        flat_df = DataFrame(list(DataPoint.objects.filter(
-                        location_id__in = all_sub_locations,
-                        indicator_id__in = self.parsed_params['indicator__in']
-                    ).values(*dp_df_columns)),columns=dp_df_columns)
-
-        flat_df = self.get_time_group_series(flat_df)
-        flat_df['parent_location_id'] = parent_location_id
-
-        gb_df = DataFrame(flat_df\
-            .groupby(['indicator_id','time_grouping','parent_location_id'])\
-            ['value']\
-            .sum())\
-            .reset_index()
-
-        latest_date_df = DataFrame(flat_df\
-            .groupby(['indicator_id','time_grouping'])['data_date']\
-            .max())\
-            .reset_index()
-        latest_date_df['value'] = latest_date_df['data_date']\
-            .map(lambda x: x.strftime('%Y-%m-%d'))
-        latest_date_df['indicator_id'] = self\
-            .ind_meta['latest_date']
-
-        district_count_df = DataFrame(flat_df\
-            .groupby(['time_grouping']).location_id
-            .nunique())\
-            .reset_index()
-        district_count_df['value'] = district_count_df['location_id']
-        district_count_df['indicator_id'] = self\
-            .ind_meta['district_count']
-
-        concat_df = concat([gb_df, latest_date_df,  district_count_df])
-        concat_df[['indicator_id','value','time_grouping','data_date']]
-        concat_df['parent_location_id'] = parent_location_id
-        concat_df = concat_df.drop('location_id', 1)
-        concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
-        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -318,50 +252,48 @@ class DatapointResource(BaseNonModelResource):
             objects = []
         return objects
 
-    # IS THIS EVER USED????
-    # |
-    # v
-    # def obj_get(self, bundle, **kwargs):
-    #     # get one object from data source
-    #     pk = int(kwargs['pk'])
-    #     try:
-    #         return bundle.data[pk]
-    #     except KeyError:
-    #         raise NotFound("Object not found")
-
-    def alter_list_data_to_serialize(self, request, data):
+    def get_response_meta(self, request, objects):
         '''
         If there is an error for this resource, add that to the response.  If
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
 
+        meta = {}
+        response_data = {
+            'meta':{},
+            'error': None,
+            'objects': objects
+        }
+
         try:
             location_ids = request.GET['location_id__in']
-            data['meta']['location_ids'] = location_ids
+            meta['location_ids'] = location_ids
         except KeyError:
             location_ids = None
 
         try:
             indicator_ids = request.GET['indicator__in']
-            data['meta']['indicator_ids'] = indicator_ids
+            meta['indicator_ids'] = indicator_ids
         except KeyError:
             indicator_ids = None
 
         try:
             chart_uuid = request.GET['chart_uuid']
-            data['meta']['chart_uuid'] = chart_uuid
+            meta['chart_uuid'] = chart_uuid
         except KeyError:
             indicator_ids = None
 
-        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
+        meta['campaign_ids'] = self.parsed_params['campaign__in']
         # add errors if it exists
         if self.error:
-            data['error'] = self.error
+            response_data['error'] = self.error
         else:
-            data['error'] = None
+            response_data['error'] = None
 
-        return data
+        response_data['meta'] = meta
+
+        return response_data
 
     def dehydrate(self, bundle):
         '''
@@ -465,45 +397,49 @@ class DatapointResource(BaseNonModelResource):
     def base_transform(self):
         results = []
 
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+        response_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
-        computed_datapoints = DataPointComputed.objects.filter(
+
+        results = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])
+                indicator__in=self.parsed_params['indicator__in'])\
+                .values(*response_fields)
 
-        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
-            columns=df_columns)
+        return results
 
-        # do an inner join on the filter indicator
-        if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
-            merge_columns = ['campaign_id', 'location_id']
-            indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
-            filter_value_list = [self.parsed_params['filter_value']]
+        # dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
+        #     columns=df_columns)
 
-            if filter_value_list == ['-1']: ## this means "show all classes"
-                filter_value_list = [1,2,3]
-                ## this only works for LPDS... this should be --
-                ## IndicatorClassMap.objects.filter(indicator = indicator)\
-                ##    .values_list(enum_value, flat = True)
-
-            filter_datapoints = DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator_id=indicator_id,
-                value__in = filter_value_list
-                )
-            filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
-            columns=merge_columns)
-            dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
-
-            ## now only show the locations that match that filter..
-            location_ids_in_filter = set(filter_df['location_id'])
-            self.location_ids = set(self.location_ids)\
-                .intersection(location_ids_in_filter)
-
-        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        return dwc_df
+        # # do an inner join on the filter indicator
+        # if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
+        #     merge_columns = ['campaign_id', 'location_id']
+        #     indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
+        #     filter_value_list = [self.parsed_params['filter_value']]
+        #
+        #     if filter_value_list == ['-1']: ## this means "show all classes"
+        #         filter_value_list = [1,2,3]
+        #         ## this only works for LPDS... this should be --
+        #         ## IndicatorClassMap.objects.filter(indicator = indicator)\
+        #         ##    .values_list(enum_value, flat = True)
+        #
+        #     filter_datapoints = DataPointComputed.objects.filter(
+        #         campaign__in=self.parsed_params['campaign__in'],
+        #         location__in=self.location_ids,
+        #         indicator_id=indicator_id,
+        #         value__in = filter_value_list
+        #         )
+        #     filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
+        #     columns=merge_columns)
+        #     dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
+        #
+        #     ## now only show the locations that match that filter..
+        #     location_ids_in_filter = set(filter_df['location_id'])
+        #     self.location_ids = set(self.location_ids)\
+        #         .intersection(location_ids_in_filter)
+        #
+        # dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+        # return dwc_df
 
     def add_missing_data(self, df):
         '''
