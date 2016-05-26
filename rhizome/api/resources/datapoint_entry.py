@@ -210,12 +210,10 @@ class DatapointEntryResource(BaseModelResource):
 
     def obj_delete(self, bundle, **kwargs):
         """This is here to prevent an objects from ever being deleted."""
-        pass
 
     def obj_delete_list(self, bundle, **kwargs):
         """This is here to prevent a list of objects from
         ever being deleted."""
-        pass
 
     def get_existing_datapoint(self, data):
         """
@@ -232,7 +230,7 @@ class DatapointEntryResource(BaseModelResource):
                 indicator_id=int(data['indicator_id']),
             )
             return obj
-        except ObjectDoesNotExist as err:
+        except ObjectDoesNotExist:
             return
 
     def hydrate(self, bundle):

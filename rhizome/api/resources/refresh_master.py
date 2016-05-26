@@ -1,10 +1,9 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import DocDataPoint, DataPoint, Document
+from rhizome.models import DataPoint
+from rhizome.models import Document
 from rhizome.api.exceptions import DatapointsException
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.agg_tasks import AggRefresh
 
-from rhizome.models import DocumentDetail, DocDetailType, SourceSubmission
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
 class RefreshMasterResource(BaseModelResource):
@@ -32,6 +31,6 @@ class RefreshMasterResource(BaseModelResource):
             .filter(source_submission__document_id = doc_id)\
             .values_list('campaign_id',flat=True)))
         for c_id in doc_campaign_ids:
-            ar = AggRefresh(c_id)
+            AggRefresh(c_id)
 
         return Document.objects.filter(id=doc_id).values()

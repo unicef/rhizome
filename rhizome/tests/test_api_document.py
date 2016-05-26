@@ -1,6 +1,4 @@
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
@@ -9,11 +7,9 @@ from setup_helpers import TestSetupHelpers
 from pandas import read_csv, notnull, to_datetime
 import base64
 import os
-from pandas import read_excel
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models import *
 
-from rhizome.cache_meta import LocationTreeCache
 
 class DocumentResourceTest(ResourceTestCase):
     def setUp(self):
@@ -27,7 +23,7 @@ class DocumentResourceTest(ResourceTestCase):
         encoded_data = base64.b64encode(file)
         post_data = {'docfile':encoded_data, 'doc_title': 'eoc_post_campaign.csv'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
-        resp_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpCreated(resp)
 
     def test_obj_create_xlsx(self):
@@ -36,7 +32,7 @@ class DocumentResourceTest(ResourceTestCase):
         encoded_data = base64.b64encode(file)
         post_data = {'docfile':encoded_data, 'doc_title': 'eoc_post_campaign.xlsx'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
-        resp_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpCreated(resp)
 
     def test_obj_create_xlsx_transform(self):
@@ -112,7 +108,7 @@ class DocumentResourceTest(ResourceTestCase):
 
         locations = self.model_df_to_data(location_df,Location)
         campaigns = self.model_df_to_data(campaign_df,Campaign)
-        indicators = self.model_df_to_data(indicator_df,Indicator)
+        self.model_df_to_data(indicator_df,Indicator)
         self.user_id = User.objects.create_user('test','test@test.com', 'test').id
         self.mapped_location_id = locations[0].id
         loc_map = SourceObjectMap.objects.create(

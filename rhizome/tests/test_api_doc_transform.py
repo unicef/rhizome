@@ -1,16 +1,8 @@
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
-from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
-import base64
-import os
-from pandas import read_excel
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models import *
 from datetime import datetime
 
@@ -194,7 +186,7 @@ class DocTransformResourceTest(ResourceTestCase):
         doc = self.ts.create_arbitrary_document(document_docfile='lqas_test.csv', doc_title='AfgPolioCases.csv')
         get_data={'document_id':doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
 
         dp_count = DataPoint.objects.count()
 

@@ -1,5 +1,4 @@
 from tastypie.test import ResourceTestCase
-from rhizome.models import CalculatedIndicatorComponent
 from setup_helpers import TestSetupHelpers
 
 class CalculatedIndicatorResourceTest(ResourceTestCase):

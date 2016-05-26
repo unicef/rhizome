@@ -103,9 +103,11 @@ class TableChartRenderer {
         'x': this.x,
         'width': this.xScale.rangeBand()
       })
-      .style({ 'opacity': 0, 'fill': this.fill })
-      .transition().duration(500)
-      .style('opacity', 1)
+      .style({ 'opacity': 1, 'fill': this.fill })
+      // Uncomment to make cell color fade in
+      // .style({ 'opacity': 0, 'fill': this.fill })
+      // .transition().duration(500)
+      // .style('opacity', 1)
     cg.append('text')
       .attr({
         'height': this.yScale.rangeBand(),

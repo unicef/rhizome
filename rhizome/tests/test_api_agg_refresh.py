@@ -1,5 +1,5 @@
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull
+from pandas import read_csv
 from rhizome.models import *
 from tastypie.test import ResourceTestCase
 

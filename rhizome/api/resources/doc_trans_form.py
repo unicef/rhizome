@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
-from rhizome.models import Document, DataPoint, SourceSubmission
+from rhizome.models import DataPoint
+from rhizome.models import Document
 # from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform, DateDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
@@ -47,7 +48,7 @@ class DocTransFormResource(BaseModelResource):
         except Exception as err:
             try:
                 dt = DateDocTransform(request.user.id, doc_id)
-                ssids = dt.process_file()
+                dt.process_file()
 
             except Exception as err:
                 raise DatapointsException(message=err.message)
@@ -66,6 +67,6 @@ class DocTransFormResource(BaseModelResource):
                 try:
                     with transaction.atomic():
                         ar.main()
-                except TransactionManagementError as e:
+                except TransactionManagementError:
                     pass
         return Document.objects.filter(id=doc_id).values()

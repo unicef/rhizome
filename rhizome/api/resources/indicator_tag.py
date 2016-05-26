@@ -40,7 +40,7 @@ class IndicatorTagResource(BaseModelResource):
 
 
         try:
-            show_leaf = request.GET['show_leaf']
+            request.GET['show_leaf']
             all_parents = list(set(IndicatorTag.objects\
                 .filter(parent_tag_id__gt=0)\
                 .values_list('parent_tag_id', flat=True)))

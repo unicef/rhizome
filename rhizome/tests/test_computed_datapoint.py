@@ -1,4 +1,3 @@
-import json
 
 from tastypie.test import ResourceTestCase
 from django.contrib.auth.models import User
@@ -80,7 +79,7 @@ class ComputedDatapointResourceTest(ResourceTestCase):
 
         delete_url = '/api/v1/computed_datapoint/%d/' %dpc.id
 
-        resp = self.ts.delete(self, delete_url)
+        self.ts.delete(self, delete_url)
 
         dpc_query = DataPointComputed.objects.filter(id = dpc.id)
         self.assertEqual(len(dpc_query), 0)
@@ -112,7 +111,7 @@ class ComputedDatapointResourceTest(ResourceTestCase):
 
         locations = self.model_df_to_data(location_df,Location)
         campaigns = self.model_df_to_data(campaign_df,Campaign)
-        indicators = self.model_df_to_data(indicator_df,Indicator)
+        self.model_df_to_data(indicator_df,Indicator)
         self.user_id = User.objects.create_user('test','test@test.com', 'test').id
         self.mapped_location_id = locations[0].id
         loc_map = SourceObjectMap.objects.create(

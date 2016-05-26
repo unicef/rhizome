@@ -1,8 +1,6 @@
 from django.test import TestCase
 from rhizome.models import *
-from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
-from datetime import datetime
 from datetime import date, timedelta
 
 
@@ -35,7 +33,7 @@ class IndicatorTagTest(MasterModelTestCase):
         self.set_up()
         test_tag = IndicatorTag.objects.get(tag_name = self.tag_name)
 
-        ind_ds = test_tag.get_indicator_ids_for_tag()
+        test_tag.get_indicator_ids_for_tag()
 
 
 class CampaignTest(MasterModelTestCase):

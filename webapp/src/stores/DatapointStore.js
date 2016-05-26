@@ -89,7 +89,7 @@ var DatapointStore = Reflux.createStore({
 
   _formatValue: function (value, data_format) {
     if (data_format === 'int' || data_format === 'pct') {
-      return parseFloat(value)
+      return value === 0.0 || value === '0.0' ? 0 : parseFloat(value)
     } else if (data_format === 'date') {
       return moment(value, 'YYYY-MM-DD').toDate()
     } else {

@@ -1,6 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
@@ -136,7 +135,7 @@ class TransformUploadTestCase(TestCase):
 
         locations = self.model_df_to_data(location_df,Location)
         campaigns = self.model_df_to_data(campaign_df,Campaign)
-        indicators = self.model_df_to_data(indicator_df,Indicator)
+        self.model_df_to_data(indicator_df,Indicator)
         self.user_id = User.objects.create_user('test','test@test.com', 'test').id
         self.mapped_location_id = locations[0].id
         loc_map = SourceObjectMap.objects.create(

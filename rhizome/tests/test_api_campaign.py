@@ -1,5 +1,4 @@
 from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from rhizome.cache_meta import LocationTreeCache

@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from tastypie.resources import ALL
 from tastypie.bundle import Bundle
 from tastypie.exceptions import ImmediateHttpResponse
-from tastypie.utils import is_valid_jsonp_callback_value, dict_strip_unicode_keys
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Indicator

@@ -1,7 +1,6 @@
-import json
 
-from pandas import read_csv, notnull, DataFrame
-from numpy import nan,isnan
+from pandas import DataFrame
+from pandas import notnull
 from django.test import TestCase
 
 from rhizome.models import LocationType, Location, LocationTree, Office,\
