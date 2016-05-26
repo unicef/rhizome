@@ -47,12 +47,12 @@ class BaseNonModelResource(BaseResource):
         objects = self.obj_get_list(bundle=base_bundle)
         bundles = [obj.__dict__ for obj in objects]
 
-        response_meta = {} # self.get_response_meta(len(objects))
-
-        response_data = {
+        to_be_serialized = {
             'objects': bundles,
-            'meta': response_meta,  # add paginator info here..
+            'meta': {},  # add paginator info here..
             'error': None,
         }
-
-        return self.create_response(request, response_data)
+    
+        to_be_serialized[self._meta.collection_name] = bundles
+        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        return self.create_response(request, to_be_serialized)
