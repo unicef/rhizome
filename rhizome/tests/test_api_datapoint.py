@@ -1,4 +1,3 @@
-
 from django.test import TestCase
 from tastypie.test import ResourceTestCase
 from tastypie.models import ApiKey

@@ -19,8 +19,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 import math
 from datetime import datetime
 
-from pprint import pprint
-
 class ResultObject(object):
     '''
     This is the same as a row in the CSV export in which one row has a distinct
@@ -389,11 +387,16 @@ class DatapointResource(BaseModelResource):
         response_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
 
-        results = DataPointComputed.objects.filter(
+        results = list(DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
                 indicator__in=self.parsed_params['indicator__in'])\
-                .values(*response_fields)
+                .values(*response_fields))
+
+        if self.parsed_params['show_missing_data'] == u'1':
+            df = self.add_missing_data(DataFrame(results))
+            df = df.where((notnull(df)),None)
+            results = df.to_dict('records')
 
         return results
 
@@ -443,6 +446,8 @@ class DatapointResource(BaseModelResource):
         This is largely for Data entry so that we can see a row in the form
         even when there is no existing data.
         '''
+
+
         list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
         cart_product = list(itertools.product(*list_of_lists))
         cart_prod_df = DataFrame(cart_product)
@@ -453,4 +458,5 @@ class DatapointResource(BaseModelResource):
 
         cart_prod_df.columns = columns_list
         df = df.merge(cart_prod_df, how='outer', on=columns_list)
+
         return df
