@@ -182,7 +182,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         for indicator in response_data['objects']:
             campaign = indicator['campaign_id']
-            if campaign == 20141:
+            if campaign == '20141':
                 value = float(indicator['value'])
                 self.assertEqual(value, total)
                 q1_found = True
