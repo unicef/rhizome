@@ -10,9 +10,8 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
 
-from pprint import pprint
-
 class DataPointResourceTest(ResourceTestCase):
+    # ./manage.py test rhizome.tests.test_api_datapoint --settings=rhizome.settings.test
 
     def setUp(self):
         super(DataPointResourceTest, self).setUp()
@@ -176,11 +175,11 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(response_data['objects'][0]['value'], "Fail")
 
     def test_get_no_params(self):
+
         resp = self.api_client.get('/api/v1/datapoint/',\
             format='json', authentication=self.get_credentials())
-        self.assertHttpOK(resp)
-        response_data = self.deserialize(resp)
-        self.assertEqual(response_data['error'][0], "\"'indicator__in'\" is a required parameter!")
+
+        self.assertHttpApplicationError(resp)
 
     # what happens if we request a non-existent datapoint
     def test_empty_response(self):
@@ -197,6 +196,8 @@ class DataPointResourceTest(ResourceTestCase):
 
 
     def test_indicator_filter(self):
+        #  ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_indicator_filter --settings=rhizome.settings.test
+
         campaign_id = 2
 
         document = Document.objects.create(doc_title='some doc')

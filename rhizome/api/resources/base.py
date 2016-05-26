@@ -61,12 +61,31 @@ class BaseResource(Resource):
                         parent_location_id = location_id
                         ).values_list('location_id', flat=True)
                     return_locations.extend(descendant_ids)
-                return return_locations
 
-            else:
-                return location_ids
+                location_ids = return_locations
+
         else:
-            return Location.objects.all().values_list('id', flat=True)
+            location_ids =  Location.objects.all().values_list('id', flat=True)
+
+        if self.parsed_params['filter_indicator']:
+            location_ids = self.get_locations_from_filter_param(location_ids)
+
+        return location_ids
+
+    def get_locations_from_filter_param(self, location_ids):
+        '''
+        '''
+
+        value_filter = self.parsed_params['filter_value'].split(',')
+
+        location_ids = DataPointComputed.objects.filter(
+            campaign__in = self.parsed_params['campaign__in'],
+            location__in = location_ids,
+            indicator__short_name =  self.parsed_params['filter_indicator'],
+            value__in = value_filter)\
+                .values_list('location_id', flat=True)
+
+        return location_ids
 
     def dispatch(self, request_type, request, **kwargs):
         """
