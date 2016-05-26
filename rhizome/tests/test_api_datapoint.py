@@ -10,6 +10,8 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
 
+from pprint import pprint
+
 class DataPointResourceTest(ResourceTestCase):
 
     def setUp(self):
@@ -55,6 +57,8 @@ class DataPointResourceTest(ResourceTestCase):
 
 
     def test_get_list(self):
+        # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_list --settings=rhizome.settings.test
+
         # Create the data, need input value to the DataPointComputed model.
         # 1. The CacheJob value
         cache_job = CacheJob.objects.create(
@@ -102,6 +106,7 @@ class DataPointResourceTest(ResourceTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
         self.assertEqual(response_data['error'], None)
+
         self.assertEqual(response_data['meta']["total_count"], 1)
 
         self.assertEqual(len(response_data['objects']), 1)
@@ -470,7 +475,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
-        
+
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
 
         campaign_type = CampaignType.objects\
@@ -524,4 +529,3 @@ class DataPointResourceTest(ResourceTestCase):
         self.assertEqual(len(response_data['objects']), 4)
 
         self.assertEqual(DataPointComputed.objects.count(), 1)
-

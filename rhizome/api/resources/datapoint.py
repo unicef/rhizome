@@ -260,11 +260,6 @@ class DatapointResource(BaseModelResource):
         '''
 
         meta = {}
-        response_data = {
-            'meta':{},
-            'error': None,
-            'objects': objects
-        }
 
         try:
             location_ids = request.GET['location_id__in']
@@ -287,14 +282,7 @@ class DatapointResource(BaseModelResource):
         meta['campaign_ids'] = self.parsed_params['campaign__in']
         meta['total_count'] = len(objects)
 
-        if self.error:
-            response_data['error'] = self.error
-        else:
-            response_data['error'] = None
-
-        response_data['meta'] = meta
-
-        return response_data
+        return meta
 
     def dehydrate(self, bundle):
         '''
