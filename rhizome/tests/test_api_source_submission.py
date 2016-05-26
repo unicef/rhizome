@@ -1,15 +1,8 @@
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
-from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
-import base64
-import os
-from pandas import read_excel
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
 

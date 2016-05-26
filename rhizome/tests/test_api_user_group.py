@@ -65,7 +65,7 @@ class UserGroupResourceTest(ResourceTestCase):
 		user_group = UserGroup.objects.create(user=user, group=group)
 		self.assertEqual(UserGroup.objects.count(), 1)
 		delete_url = '/api/v1/user_group/?user_id='+ str(user.id) + '&group_id=' + str(group.id)
-		resp = self.ts.delete(self, delete_url)
+		self.ts.delete(self, delete_url)
 		self.assertEqual(UserGroup.objects.count(), 0)
 
 

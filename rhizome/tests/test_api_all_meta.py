@@ -1,5 +1,4 @@
 from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
  Location, LocationType, Office
 from setup_helpers import TestSetupHelpers

@@ -1,12 +1,8 @@
-import json
 
 from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
-from rhizome.cache_meta import LocationTreeCache
-from rhizome.models import SourceObjectMap
-from pandas import read_csv, notnull
+from pandas import read_csv
 from rhizome.models import *
 from setup_helpers import TestSetupHelpers
 

@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
 from setup_helpers import TestSetupHelpers
-from rhizome.models import IndicatorTag, Indicator, IndicatorToTag
+from rhizome.models import IndicatorTag
+from rhizome.models import IndicatorToTag
 
 class IndicatorToTagResourceTest(ResourceTestCase):
 	def setUp(self):
@@ -77,7 +77,7 @@ class IndicatorToTagResourceTest(ResourceTestCase):
 			indicator_tag_id=self.ind_tag.id)
 		self.assertEqual(IndicatorToTag.objects.count(), 1)
 		delete_url = '/api/v1/indicator_to_tag/?id='+ str(ind_to_tag.id)
-		resp = self.ts.delete(self, delete_url)
+		self.ts.delete(self, delete_url)
 		self.assertEqual(IndicatorToTag.objects.count(), 0)
 
 

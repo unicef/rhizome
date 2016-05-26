@@ -1,14 +1,11 @@
-import json
 
 from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent,IndicatorToTag, IndicatorBound, \
     LocationPermission, Location, LocationType, Office
 
-from rhizome.cache_meta import IndicatorCache
 
 
 class IndicatorCalculationResourceTest(ResourceTestCase):

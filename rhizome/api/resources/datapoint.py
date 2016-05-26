@@ -1,12 +1,10 @@
-import numpy as np
-import sys
 import itertools
-from pandas import DataFrame, pivot_table, notnull, concat
+from pandas import DataFrame
+from pandas import concat
 from django.http import HttpResponse
 
 from tastypie import fields
 from tastypie.utils.mime import build_content_type
-from tastypie.exceptions import NotFound
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_non_model import BaseNonModelResource
@@ -15,7 +13,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent
 import math
-from datetime import datetime
 
 class ResultObject(object):
     '''
@@ -116,7 +113,6 @@ class DatapointResource(BaseNonModelResource):
         self.error = None
         self.class_indicator_map = self.build_class_indicator_map();
 
-        results = []
         err = self.parse_url_params(request.GET)
         if err:
             self.error = err
@@ -162,7 +158,7 @@ class DatapointResource(BaseNonModelResource):
 
     def group_by_time_transform(self):
         dp_df_columns = ['data_date','indicator_id','location_id','value']
-        time_grouping =  self.parsed_params['group_by_time']
+        self.parsed_params['group_by_time']
 
         # HACKK for situational dashboard
         if self.parsed_params['chart_uuid'] ==\
@@ -463,7 +459,7 @@ class DatapointResource(BaseNonModelResource):
         return x
 
     def base_transform(self):
-        results = []
+        pass
 
         df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']

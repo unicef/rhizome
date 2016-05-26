@@ -88,7 +88,7 @@ class DocumentResource(BaseModelResource):
             the_file = open(new_file_path)
             try:
                 file_df=read_excel(the_file)
-            except Exception as err:
+            except Exception:
                 os.remove(new_file_path)
                 raise DatapointsException(message='There was an error with your file. Please check the upload and try again')
             file_content = ContentFile(file_df.to_csv())

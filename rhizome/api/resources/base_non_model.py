@@ -1,6 +1,5 @@
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
-from tastypie.resources import Resource
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication

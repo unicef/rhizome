@@ -1,7 +1,5 @@
 
-from django.test import TestCase
 from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
@@ -270,7 +268,6 @@ class DataPointResourceTest(ResourceTestCase):
             if not found_dp:
                 fail("the datapoints from the respnse do not match the system")
                 break
-        pass
         #  make sure the chart data isn't empty
 
 

@@ -1,6 +1,6 @@
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull
-from numpy import nan, isnan
+from numpy import isnan
 from django.test import TestCase
 
 from rhizome.models import *
@@ -42,7 +42,7 @@ class AggRefreshTestCase(TestCase):
         system to aggregate / caclulate.
         '''
 
-        campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
+        read_csv('rhizome/tests/_data/campaigns.csv')
         location_df= read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
@@ -182,7 +182,7 @@ class AggRefreshTestCase(TestCase):
 
         sum_dp_value = sum([y for x,y in dps if not isnan(y)])
 
-        agg_r = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
@@ -224,7 +224,7 @@ class AggRefreshTestCase(TestCase):
         agg_override_dp = self.create_datapoint(agg_location_id,data_date,\
             indicator_id, override_value)
 
-        ar = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         override_value_in_agg = AggDataPoint.objects.get(\
             campaign_id = self.campaign_id ,\
@@ -267,7 +267,7 @@ class AggRefreshTestCase(TestCase):
 
         )
 
-        ar = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         try:
             agg_dp_qs = AggDataPoint.objects.get(
@@ -305,9 +305,9 @@ class AggRefreshTestCase(TestCase):
             ).values_list('value',flat=True)
 
 
-        sum_dp_value = sum(dp_values)
+        sum(dp_values)
 
-        ar = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
@@ -456,7 +456,7 @@ class AggRefreshTestCase(TestCase):
 
         )
 
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -556,7 +556,7 @@ class AggRefreshTestCase(TestCase):
 
         )
 
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         calc_value = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -643,7 +643,7 @@ class AggRefreshTestCase(TestCase):
             unique_index =2
 
         )
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id = parent_indicator.id,
@@ -806,7 +806,7 @@ class AggRefreshTestCase(TestCase):
         for k,v in values_to_insert.iteritems():
             self.create_datapoint(location_id, data_date, k, v)
 
-        ar = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
@@ -871,7 +871,7 @@ class AggRefreshTestCase(TestCase):
 
         ## run the agg refresh ( this is the code that will actually transofrm
         ## the booleans to numerics. )
-        ar = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         ## now get the expected aggrgated data and compare it with the percentage
         ## value that we expect given how we split up the locations above.
@@ -987,7 +987,7 @@ class AggRefreshTestCase(TestCase):
 
         )
 
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         calc_value_pct = DataPointComputed.objects.get(
             indicator_id = pct_indicator.id,
@@ -1105,7 +1105,7 @@ class AggRefreshTestCase(TestCase):
         )
 
 
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
 
         # check that numerator and denominator option work
         cdp_pct_missed_1 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
@@ -1121,17 +1121,17 @@ class AggRefreshTestCase(TestCase):
             unique_index =5
         )
 
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
         # check that this works when we can do whole/part of difference
         cdp_pct_missed_2 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
-        expected_value = 1.0- float(num_vacc_val)/float(num_seen_val)
+        1.0- float(num_vacc_val)/float(num_seen_val)
 
         self.assertEqual(cdp_pct_missed_2.value, 0.45)
 
         # check that this works when we can only do whole/part of difference
         DataPoint.objects.filter(indicator_id = num_missed.id).delete()
         
-        cr = AggRefresh(self.campaign_id)
+        AggRefresh(self.campaign_id)
         cdp_pct_missed_3 = DataPointComputed.objects.filter(indicator_id = pct_missed.id)[0]
         self.assertEqual(cdp_pct_missed_3.value, 0.45)
 

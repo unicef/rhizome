@@ -1,6 +1,5 @@
-import json
 
-from rhizome.models import MinGeo, Location
+from rhizome.models import MinGeo
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from tastypie import fields
 from tastypie.resources import ALL

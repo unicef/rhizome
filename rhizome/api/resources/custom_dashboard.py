@@ -68,7 +68,7 @@ class CustomDashboardResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
-        user_id = bundle.request.user.id
+        bundle.request.user.id
 
         try:
             dash_id = int(post_data['id'])

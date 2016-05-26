@@ -6,7 +6,6 @@ from pandas import read_csv, notnull, to_datetime
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.models import *
 from rhizome.etl_tasks.refresh_master import MasterRefresh
-from rhizome.agg_tasks import AggRefresh
 
 
 class TransformUploadTestCase(TestCase):
@@ -65,12 +64,11 @@ class TransformUploadTestCase(TestCase):
             fail('should raise an exception')
         except Exception as err:
             self.assertEqual('campaign is a required column.', err.message)
-            pass
 
     def test_duplicate_rows(self):
         doc_id = self.ingest_file('dupe_datapoints.csv')
         dt = ComplexDocTransform(self.user.id, doc_id)
-        source_submissions = dt.main()
+        dt.main()
         mr = MasterRefresh(self.user.id, doc_id)
         mr.main()
         dps = DataPoint.objects.all()

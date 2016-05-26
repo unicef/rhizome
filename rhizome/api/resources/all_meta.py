@@ -1,8 +1,6 @@
-import json
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models import *
-from rhizome.api.serialize import CustomSerializer
 
 class AllMetaResult(object):
     campaigns = list()

@@ -1,6 +1,5 @@
 import json
 
-from django.http import HttpResponse
 
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
@@ -10,7 +9,6 @@ from tastypie import http
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
-from rhizome.api.exceptions import DatapointsException
 from rhizome.api.resources.base import BaseResource
 from django.core.exceptions import ObjectDoesNotExist
 

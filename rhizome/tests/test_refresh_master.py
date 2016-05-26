@@ -255,7 +255,7 @@ class RefreshMasterTestCase(TestCase):
 
         location_code = first_submission[self.location_code_input_column]
         campaign_code = first_submission[self.campaign_code_input_column]
-        data_date = first_submission[self.data_date_input_column]
+        first_submission[self.data_date_input_column]
         raw_indicator_list = [k for k,v in first_submission.iteritems()]
 
         indicator_code = raw_indicator_list[-1]
@@ -378,13 +378,13 @@ class RefreshMasterTestCase(TestCase):
 
         campaign_type = CampaignType.objects.create(id=1,name="test")
 
-        location_ids = self.model_df_to_data(location_df,Location)
+        self.model_df_to_data(location_df,Location)
 
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
-        campaign_ids = self.model_df_to_data(campaign_df,Campaign)
+        self.model_df_to_data(campaign_df,Campaign)
 
-        indicator_ids = self.model_df_to_data(indicator_df,Indicator)
+        self.model_df_to_data(indicator_df,Indicator)
         calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
             CalculatedIndicatorComponent)
 

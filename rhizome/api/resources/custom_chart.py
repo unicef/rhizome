@@ -75,7 +75,6 @@ class CustomChartResource(BaseModelResource):
         CustomChart.objects.filter(id=obj_id).delete()
 
     def get_object_list(self, request):
-        chart_id_list = []
         if 'id' in request.GET:
             return CustomChart.objects.filter(id=request.GET['id']) \
                 .values()
