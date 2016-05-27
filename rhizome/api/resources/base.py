@@ -150,3 +150,5 @@ class BaseResource(Resource):
             return http.HttpNoContent()
 
         return response
+
+### raw_datapoint / datapoint helpter methods ###

@@ -33,6 +33,15 @@ class DatapointResource(BaseModelResource):
             'cumulative'
     '''
 
+    error = None
+    parsed_params = {}
+    indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
+    campaign_id = fields.IntegerField(attribute='campaign_id', null=True)
+    data_date = fields.DateField(attribute='data_date', null=True)
+    computed_id = fields.IntegerField(attribute='computed_id', null=True)
+    location_id = fields.IntegerField(attribute='location_id')
+    value = fields.CharField(attribute='value', null=True)
+
     class Meta(BaseModelResource.Meta):
         '''
         As this is a NON model resource, we must specify the object_class
@@ -47,6 +56,7 @@ class DatapointResource(BaseModelResource):
         note - authentication inherited from parent class
         '''
 
+        # object_class = ResultObject  # use the class above to define response
         resource_name = 'datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
@@ -95,6 +105,7 @@ class DatapointResource(BaseModelResource):
         '''
 
         self.error = None
+        self.class_indicator_map = self.build_class_indicator_map();
 
         results = []
         err = self.parse_url_params(request.GET)
@@ -103,7 +114,118 @@ class DatapointResource(BaseModelResource):
             return []
 
         self.location_ids = self.get_locations_to_return_from_url(request)
-        return self.base_transform()
+        time_gb = self.parsed_params['group_by_time']
+        if time_gb == 'campaign' or time_gb is None:
+            return self.base_transform()
+        else:
+            self.base_data_df = self.group_by_time_transform()
+
+        return self.transform_df_to_results(self.base_data_df)
+
+    def get_time_group_series(self, dp_df):
+        time_grouping = self.parsed_params['group_by_time']
+        if time_grouping == 'year':
+            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
+        elif time_grouping == 'quarter':
+            dp_df['time_grouping'] = dp_df['data_date']\
+                .map(lambda x: str(x.year) + str((x.month-1) // 3 + 1))
+        elif time_grouping == 'all_time':
+            dp_df['time_grouping'] = 1
+        else:
+            dp_df = DataFrame()
+        self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
+        return dp_df
+
+
+    def transform_df_to_results(self, df):
+        # the following line is a hack. TODO: figure out where empty list is being returned from
+        if type(df) == list:
+            return []
+        if self.parsed_params['show_missing_data'] == u'1':
+            df = self.add_missing_data(df)
+        if 'campaign_id' in df.columns:
+            df = df.sort('campaign_id')
+        else:
+            df = df.sort('time_grouping')
+        results =[]
+        df.apply(self.df_to_result_obj, args=(results,), axis=1)
+        return results
+
+    def group_by_time_transform(self):
+        dp_df_columns = ['data_date','indicator_id','location_id','value']
+        time_grouping =  self.parsed_params['group_by_time']
+
+        # HACKK for situational dashboard
+        if self.parsed_params['chart_uuid'] ==\
+            '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
+
+            self.parsed_params['show_missing_data'] = 1
+            return handle_polio_case_table(self, dp_df_columns)
+
+        cols = ['data_date','indicator_id','location_id','value']
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in = self.location_ids,
+            indicator_id__in = self.parsed_params['indicator__in']
+        ).values(*cols)),columns=cols)
+
+        if not dp_df.empty:
+            dp_df = self.get_time_group_series(dp_df)
+            gb_df = DataFrame(dp_df\
+                .groupby(['indicator_id','time_grouping','location_id'])['value']\
+                .sum())\
+                .reset_index()
+            return gb_df
+
+        # need to recurse down to a subloaction with data
+         # if the data isn't available at the current level
+        else:
+            depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
+            while dp_df.empty and depth_level < max_depth:
+                sub_location_ids = Location.objects\
+                    .filter(parent_location_id__in=sub_location_ids)\
+                    .values_list('id', flat=True)
+
+                dp_df = DataFrame(list(DataPoint.objects.filter(
+                    location_id__in = sub_location_ids,
+                    indicator_id__in = self.parsed_params['indicator__in']
+                ).values(*cols)),columns=cols)
+                depth_level += 1
+
+            dp_df = self.get_time_group_series(dp_df)
+            if dp_df.empty:
+                return []
+            location_tree_df = DataFrame(list(LocationTree.objects\
+                .filter(location_id__in = sub_location_ids)\
+                .values_list('location_id','parent_location_id')),\
+                    columns=['location_id','parent_location_id'])
+
+            merged_df = dp_df.merge(location_tree_df)
+
+            filtered_df = merged_df[merged_df['parent_location_id']\
+                .isin(self.location_ids)]
+
+            # sum all values for locations with the same parent location
+            gb_df = DataFrame(filtered_df\
+                .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
+                .sum())\
+                .reset_index()
+
+            gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+            return gb_df
+
+    def df_to_result_obj(self, row, results_list):
+
+        dp = ResultObject()
+        if not math.isnan(row['indicator_id']):
+            dp.indicator_id = row['indicator_id']
+        if 'campaign_id' in row:
+            dp.campaign_id = row['campaign_id']
+        else:
+            dp.campaign_id = row['time_grouping']
+        dp.location_id = row['location_id']
+        if not (isinstance(row['value'], float) and math.isnan(row['value'])):
+            dp.value = row['value']
+        results_list.append(dp)
 
 
     def obj_get_list(self, bundle, **kwargs):
@@ -271,7 +393,6 @@ class DatapointResource(BaseModelResource):
             .filter(id__in = self.parsed_params['indicator__in'])\
             .values_list('data_format', flat=True):
 
-            self.class_indicator_map = self.build_class_indicator_map()
             df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
             results = df.to_dict('records')
 
