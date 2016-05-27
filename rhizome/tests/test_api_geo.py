@@ -1,17 +1,16 @@
-import json
 
-from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
-from rhizome.models import *
-from pandas import read_csv, notnull, to_datetime, DataFrame, Series
-from rhizome.cache_meta import minify_geo_json, LocationTreeCache
+from pandas import read_csv
+from rhizome.models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
+from pandas import DataFrame
+from pandas import Series
+from pandas import read_csv
+from rhizome.cache_meta import minify_geo_json
 
 from pprint import pprint
 
-class GeoResourceTest(ResourceTestCase):
-    # ./manage.py test rhizome.tests.test_api_geo --settings=rhizome.settings.test
+class GeoResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(GeoResourceTest, self).setUp()
 
@@ -34,7 +33,7 @@ class GeoResourceTest(ResourceTestCase):
         )
 
         location_df_from_csv= read_csv('rhizome/tests/_data/locations_nimroz.csv')
-        locations = self.ts.model_df_to_data(location_df_from_csv,Location)
+        self.ts.model_df_to_data(location_df_from_csv,Location)
 
         # make sure that the proper level is set for the
         locs = Location.objects.filter(parent_location_id=6)
@@ -57,7 +56,7 @@ class GeoResourceTest(ResourceTestCase):
             inplace=True)
 
         location_tree_df['lvl'] = Series(1, index=location_tree_df.index)
-        location_tree = self.ts.model_df_to_data(location_tree_df, LocationTree)
+        self.ts.model_df_to_data(location_tree_df, LocationTree)
         merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
         self.ts.model_df_to_data(merged_df, LocationPolygon)
         minify_geo_json()
@@ -70,5 +69,5 @@ class GeoResourceTest(ResourceTestCase):
         get_data ={'location_id__in':6, 'location_depth':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
         self.assertHttpOK(resp)
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertEqual(len(self.deserialize(resp)['features']), 5)

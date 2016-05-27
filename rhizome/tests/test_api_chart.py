@@ -1,11 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
  Location, LocationType, Office
 
 import json
 
-class ChartResourceTest(ResourceTestCase):
+class ChartResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(ChartResourceTest, self).setUp()
 
@@ -49,7 +49,7 @@ class ChartResourceTest(ResourceTestCase):
                                     data=post_data,
                                     authentication=self.get_credentials())
 
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpCreated(resp)
         # self.assertEqual(post_data['chart_json'], json.loads(response_data['chart_json']))
 
@@ -63,7 +63,7 @@ class ChartResourceTest(ResourceTestCase):
                                     data=post_data,
                                     authentication=self.get_credentials())
 
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
 
         self.assertHttpApplicationError(resp)
 

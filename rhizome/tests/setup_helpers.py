@@ -1,19 +1,14 @@
-import json
-import re
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
-from rhizome.cache_meta import LocationTreeCache
 from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull, to_datetime
-from rhizome.models import *
+from rhizome.models import Office, Location, LocationType, SourceObjectMap, DocumentSourceObjectMap, Document, Campaign, Indicator, IndicatorTag, CacheJob, SourceSubmission
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
-import ast
-from rhizome.cache_meta import LocationTreeCache
 
 
-class TestSetupHelpers(ResourceTestCase):
+class TestSetupHelpers(RhizomeAPITestCase):
 
 	def __init__(self):
 		self.username = "test_user"

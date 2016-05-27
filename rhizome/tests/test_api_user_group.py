@@ -1,9 +1,9 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import UserGroup
 from setup_helpers import TestSetupHelpers
 from django.contrib.auth.models import User, Group
 
-class UserGroupResourceTest(ResourceTestCase):
+class UserGroupResourceTest(RhizomeAPITestCase):
 	
 	def setUp(self):
 	    super(UserGroupResourceTest, self).setUp()
@@ -65,7 +65,7 @@ class UserGroupResourceTest(ResourceTestCase):
 		user_group = UserGroup.objects.create(user=user, group=group)
 		self.assertEqual(UserGroup.objects.count(), 1)
 		delete_url = '/api/v1/user_group/?user_id='+ str(user.id) + '&group_id=' + str(group.id)
-		resp = self.ts.delete(self, delete_url)
+		self.ts.delete(self, delete_url)
 		self.assertEqual(UserGroup.objects.count(), 0)
 
 

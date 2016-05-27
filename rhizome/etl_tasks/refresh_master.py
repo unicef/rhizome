@@ -8,7 +8,7 @@ import pandas as pd
 from pandas import DataFrame, concat, notnull
 from bulk_update.helper import bulk_update
 import math
-from rhizome.models import *
+from rhizome.models import Document, DocDetailType, DocumentDetail, SourceObjectMap, IndicatorClassMap, SourceSubmission, DocDataPoint, DataPoint, DocumentSourceObjectMap
 from datetime import datetime
 
 class MasterRefresh(object):

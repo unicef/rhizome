@@ -1,8 +1,8 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import LocationType
 
-class LocationTypeResourceTest(ResourceTestCase):
+class LocationTypeResourceTest(RhizomeAPITestCase):
     def setUp(self):
 
         ## instantiate the test client and all other methods ##

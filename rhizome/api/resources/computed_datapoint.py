@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DataPointComputed
-from rhizome.models import SourceObjectMap, DocumentSourceObjectMap, Document
+from rhizome.models import Document
+from rhizome.models import DocumentSourceObjectMap
 
 class ComputedDataPointResource(BaseModelResource):
     '''

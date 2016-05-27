@@ -1,8 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
-from rhizome.models import Document, DocDataPoint, Indicator, CampaignType, IndicatorTag
+from rhizome.models import CampaignType
+from rhizome.models import DocDataPoint
+from rhizome.models import Document
+from rhizome.models import IndicatorTag
 
-class DocDataPointResourceTest(ResourceTestCase):
+class DocDataPointResourceTest(RhizomeAPITestCase):
     def setUp(self):
 
         ## instantiate the test client and all other methods ##
@@ -54,7 +57,7 @@ class DocDataPointResourceTest(ResourceTestCase):
             agg_on_location=False )
         url = '/api/v1/doc_datapoint/'
         resp = self.ts.get(self, url)
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
     def test_doc_dp_get_invalid_id(self):

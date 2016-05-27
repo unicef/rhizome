@@ -1,11 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
     Location, LocationType, Office
 
 import json
 
-class DashboardResourceTest(ResourceTestCase):
+class DashboardResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(DashboardResourceTest, self).setUp()
 
@@ -59,7 +59,7 @@ class DashboardResourceTest(ResourceTestCase):
         resp = self.api_client.post('/api/v1/custom_dashboard/', format='json', \
                                     data=post_data, authentication=self.get_credentials())
         self.assertHttpCreated(resp)
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertEqual(CustomDashboard.objects.count(), 1)
         dboard = CustomDashboard.objects.get(title = dboard_title)
         self.assertEqual(json.dumps(dboard.rows), dboard_rows)

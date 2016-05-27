@@ -30,8 +30,8 @@ class AggRefreshResource(BaseModelResource):
 
      try:
          campaign_id = request.GET['campaign_id']
-         ar = AggRefresh(campaign_id)
+         AggRefresh(campaign_id)
          return Campaign.objects.filter(id=campaign_id).values()
      except KeyError:
-         ar = AggRefresh()
+         AggRefresh()
          return Office.objects.all().values()

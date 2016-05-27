@@ -1,6 +1,4 @@
-from django.test import TestCase
-from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
@@ -9,8 +7,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
 
-class DataPointResourceTest(ResourceTestCase):
-    # ./manage.py test rhizome.tests.test_api_datapoint --settings=rhizome.settings.test
+class DataPointResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(DataPointResourceTest, self).setUp()
@@ -284,7 +281,6 @@ class DataPointResourceTest(ResourceTestCase):
             if not found_dp:
                 fail("the datapoints from the respnse do not match the system")
                 break
-        pass
         #  make sure the chart data isn't empty
 
 

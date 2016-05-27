@@ -1,10 +1,9 @@
-import numpy as np
-import sys
-from pandas import DataFrame, pivot_table, notnull, concat
+from pandas import DataFrame
+from pandas import concat
 from django.http import HttpResponse
 
 from tastypie import fields
-from tastypie.exceptions import NotFound
+from tastypie.utils.mime import build_content_type
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
@@ -15,7 +14,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
     CalculatedIndicatorComponent
 
 import math
-from datetime import datetime
 
 class DatapointResource(BaseModelResource):
     '''
@@ -68,7 +66,6 @@ class DatapointResource(BaseModelResource):
         url paremeters, get the list of locations based on the parameters passed
         in the url as well as the permissions granted to the user responsible
         for the request.
-
         Using the location_ids from the get_locations_to_return_from_url method
         we query the datapoint abstracted table, then iterate through these
         values cleaning the indicator_json based in the indicator_ids passed

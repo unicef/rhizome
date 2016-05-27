@@ -1,12 +1,9 @@
-import json
 
-from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
-from rhizome.models import *
+from rhizome.models import LocationPermission
 
-class ChartTypeResourceTest(ResourceTestCase):
+class ChartTypeResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(ChartTypeResourceTest, self).setUp()
 

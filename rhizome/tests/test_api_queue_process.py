@@ -1,9 +1,11 @@
-from tastypie.test import ResourceTestCase
-from rhizome.models import Document, DocumentDetail, SourceSubmission, DocDetailType
+from base_test_case import RhizomeAPITestCase
+from rhizome.models import DocDetailType
+from rhizome.models import Document
+from rhizome.models import DocumentDetail
 from setup_helpers import TestSetupHelpers
 
 
-class QueueProcessResourceTest(ResourceTestCase):
+class QueueProcessResourceTest(RhizomeAPITestCase):
 	def setUp(self):
 	    super(QueueProcessResourceTest, self).setUp()
 

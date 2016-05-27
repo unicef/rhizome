@@ -1,8 +1,7 @@
-from tastypie.test import ResourceTestCase
-from rhizome.models import CalculatedIndicatorComponent
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 
-class CalculatedIndicatorResourceTest(ResourceTestCase):
+class CalculatedIndicatorResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(CalculatedIndicatorResourceTest, self).setUp()

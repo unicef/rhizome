@@ -1,8 +1,8 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import Document, DocDetailType, DocumentDetail
 
-class DocDetailResourceTest(ResourceTestCase):
+class DocDetailResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(DocDetailResourceTest, self).setUp()

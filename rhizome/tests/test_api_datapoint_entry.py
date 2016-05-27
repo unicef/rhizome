@@ -1,12 +1,9 @@
-import json
 
-from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
-from rhizome.models import *
+from rhizome.models import LocationPermission, CampaignType, IndicatorTag, DataPointEntry
 
-class DatapointEntryResourceTest(ResourceTestCase):
+class DatapointEntryResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(DatapointEntryResourceTest, self).setUp()
 
@@ -73,7 +70,7 @@ class DatapointEntryResourceTest(ResourceTestCase):
         )
         self.assertEqual(DataPointEntry.objects.count(),1)
         delete_url = '/api/v1/datapointentry/?id='+ str(dp.id)
-        resp = self.ts.delete(self, delete_url)
+        self.ts.delete(self, delete_url)
         self.assertEqual(DataPointEntry.objects.count(),1)
 
 

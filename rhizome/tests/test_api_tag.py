@@ -1,9 +1,9 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import Indicator,IndicatorToTag, IndicatorTag, LocationPermission, Location,\
     LocationType, Office
 
-class IndicatorTagResourceTest(ResourceTestCase):
+class IndicatorTagResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(IndicatorTagResourceTest, self).setUp()
 

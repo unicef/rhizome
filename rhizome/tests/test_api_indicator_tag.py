@@ -1,16 +1,13 @@
-import json
 
-from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent,IndicatorToTag, IndicatorBound, \
     LocationPermission, Location, LocationType, Office
 
-from rhizome.cache_meta import IndicatorCache
 
-class IndicatorTagResourceTest(ResourceTestCase):
+class IndicatorTagResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(IndicatorTagResourceTest, self).setUp()
 
@@ -66,7 +63,7 @@ class IndicatorTagResourceTest(ResourceTestCase):
 
     def test_create_indicator_tag_no_vals(self):
         resp = self.ts.post(self, '/api/v1/indicator_tag/')
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
     def test_get_indicator_tag_no_params(self):

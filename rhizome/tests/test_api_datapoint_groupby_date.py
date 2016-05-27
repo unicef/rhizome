@@ -1,19 +1,15 @@
-from django.test import TestCase
-from tastypie.test import ResourceTestCase
-from tastypie.models import ApiKey
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, IndicatorClassMap, DataPointComputed
 
 from rhizome.cache_meta import LocationTreeCache
-from random import randint
 
 import pandas as pd
 from datetime import datetime
-from pandas import DataFrame
 
-class DataPointResourceTest(ResourceTestCase):
+class DataPointResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(DataPointResourceTest, self).setUp()
@@ -222,7 +218,7 @@ class DataPointResourceTest(ResourceTestCase):
 
         resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
-        response_data = self.deserialize(resp)
+        self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
 

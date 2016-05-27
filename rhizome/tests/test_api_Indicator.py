@@ -1,7 +1,5 @@
-import json
 
-from tastypie.test import ResourceTestCase
-from django.contrib.auth.models import User
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
@@ -10,7 +8,7 @@ from rhizome.models import Indicator, IndicatorTag, \
 
 from rhizome.cache_meta import IndicatorCache
 
-class IndicatorResourceTest(ResourceTestCase):
+class IndicatorResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(IndicatorResourceTest, self).setUp()
 
@@ -143,8 +141,8 @@ class IndicatorResourceTest(ResourceTestCase):
         bound_dict_1 = {'indicator_id': ind.id, u'mn_val':20,\
             u'mx_val':30,u'bound_name':u'Bad'}
 
-        ind_bound_0 = IndicatorBound.objects.create(**bound_dict_0)
-        ind_bound_1 = IndicatorBound.objects.create(**bound_dict_1)
+        IndicatorBound.objects.create(**bound_dict_0)
+        IndicatorBound.objects.create(**bound_dict_1)
 
         ## cache the indicator id ##
         ic = IndicatorCache([ind.id])

@@ -1,8 +1,8 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import LocationPermission
 from setup_helpers import TestSetupHelpers
 
-class LocationPermissionResourceTest(ResourceTestCase):
+class LocationPermissionResourceTest(RhizomeAPITestCase):
 	def setUp(self):
 	    super(LocationPermissionResourceTest, self).setUp()
 

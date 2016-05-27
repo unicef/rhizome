@@ -1,12 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, LocationPermission
 
 from rhizome.cache_meta import LocationTreeCache
 
-
-class LocationResourceTest(ResourceTestCase):
-    # ./manage.py test rhizome.tests.test_api_location.LocationResourceTest --settings=rhizome.settings.test
+class LocationResourceTest(RhizomeAPITestCase):
+    
     def setUp(self):
 
         ## instantiate the test client and all other methods ##
