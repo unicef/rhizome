@@ -178,13 +178,13 @@ class DataPointResourceTest(RhizomeAPITestCase):
 
         for indicator in response_data['objects']:
             campaign = indicator['campaign_id']
-            if campaign == '20141':
+            if campaign == 20141:
                 value = float(indicator['value'])
                 self.assertEqual(value, total)
                 q1_found = True
 
         self.assertTrue(q1_found)
-
+        
         get_parameter = 'group_by_time=all_time&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
         resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
