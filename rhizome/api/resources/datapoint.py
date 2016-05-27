@@ -56,6 +56,7 @@ class DatapointResource(BaseModelResource):
         '''
 
         super(DatapointResource, self).__init__(*args, **kwargs)
+
         self.error = None
         self.parsed_params = None
 
@@ -81,12 +82,13 @@ class DatapointResource(BaseModelResource):
 
         return response
 
-    def get_object_list(self, request):
+    def obj_get_list(self, bundle, **kwargs):
         '''
         This is where the action happens in this resource.  AFter passing the
         url paremeters, get the list of locations based on the parameters passed
         in the url as well as the permissions granted to the user responsible
         for the request.
+
         Using the location_ids from the get_locations_to_return_from_url method
         we query the datapoint abstracted table, then iterate through these
         values cleaning the indicator_json based in the indicator_ids passed
@@ -94,28 +96,37 @@ class DatapointResource(BaseModelResource):
         response.
         '''
 
-        self.error = None
-
+        request = bundle.request
         results = []
-        err = self.parse_url_params(request.GET)
-        if err:
-            self.error = err
-            return []
 
+        self.parsed_params = self.parse_url_params(request.GET)
         self.location_ids = self.get_locations_to_return_from_url(request)
-        return self.base_transform()
 
+        response_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
+            'value']
 
-    def obj_get_list(self, bundle, **kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
+        results = list(DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=self.location_ids,
+                indicator__in=self.parsed_params['indicator__in'])\
+                .values(*response_fields))
 
-        objects = self.get_object_list(bundle.request)
-        if not objects:
-            objects = []
-        return objects
+        ## fill in missing data if requested ##
+        if self.parsed_params['show_missing_data'] == u'1':
+            df = self.add_missing_data(DataFrame(results))
+            df = df.where((notnull(df)),None)
+            results = df.to_dict('records')
+
+        ## add enumeration for 'class' indicators
+        if 'class' in Indicator.objects\
+            .filter(id__in = self.parsed_params['indicator__in'])\
+            .values_list('data_format', flat=True):
+
+            self.class_indicator_map = self.build_class_indicator_map()
+            df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
+            results = df.to_dict('records')
+
+        return results
 
     def get_response_meta(self, request, objects):
         '''
@@ -211,9 +222,7 @@ class DatapointResource(BaseModelResource):
         self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
         parsed_params['campaign__in'] = campaign_ids
 
-        self.parsed_params = parsed_params
-
-        return None
+        return parsed_params
 
     def get_campaign_list(self, campaign_start, campaign_end):
         '''
@@ -247,35 +256,6 @@ class DatapointResource(BaseModelResource):
             new_val = self.class_indicator_map[ind_id][ind_val]
             x['value'] = new_val
         return x
-
-    def base_transform(self):
-        results = []
-
-        response_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
-
-        results = list(DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])\
-                .values(*response_fields))
-
-        ## fill in missing data if requested ##
-        if self.parsed_params['show_missing_data'] == u'1':
-            df = self.add_missing_data(DataFrame(results))
-            df = df.where((notnull(df)),None)
-            results = df.to_dict('records')
-
-        ## add enumeration for 'class' indicators
-        if 'class' in Indicator.objects\
-            .filter(id__in = self.parsed_params['indicator__in'])\
-            .values_list('data_format', flat=True):
-
-            self.class_indicator_map = self.build_class_indicator_map()
-            df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
-            results = df.to_dict('records')
-
-        return results
 
 
     def add_missing_data(self, df):
