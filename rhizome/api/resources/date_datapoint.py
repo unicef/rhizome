@@ -26,7 +26,7 @@ class ResultObject(object):
     # indicators = list()
 
 
-class DatapointResource(BaseNonModelResource):
+class DateDatapointResource(BaseNonModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -64,7 +64,7 @@ class DatapointResource(BaseNonModelResource):
         '''
 
         object_class = ResultObject  # use the class above to define response
-        resource_name = 'datapoint'  # cooresponds to the URL of the resource
+        resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
@@ -72,7 +72,7 @@ class DatapointResource(BaseNonModelResource):
         '''
         '''
 
-        super(DatapointResource, self).__init__(*args, **kwargs)
+        super(DateDatapointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
 
@@ -240,7 +240,6 @@ class DatapointResource(BaseNonModelResource):
             - date of latest case
             - infected district count
             - infected province count
-
         THis relies on certain calcluations to be made in
         caluclated_indicator_component.
         '''
@@ -509,11 +508,9 @@ class DatapointResource(BaseNonModelResource):
         If the campaign / locaiton cobination has no related datapoitns, we
         add the keys here so that we can see the row of data in data entry
         or data browser.
-
         This in the future can be controlled with a parameter so that for
         instance with a table chart for a large number of districts, we only
         show those with data.
-
         This is largely for Data entry so that we can see a row in the form
         even when there is no existing data.
         '''

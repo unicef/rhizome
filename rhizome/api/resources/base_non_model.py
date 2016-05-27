@@ -6,7 +6,6 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base import BaseResource
 
-
 class BaseNonModelResource(BaseResource):
     '''
     NOTE: This applies to only the V1 API.  This is only used for the

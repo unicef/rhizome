@@ -4,7 +4,6 @@ from rhizome.models import Office, LocationType, Location, LocationPermission
 
 from rhizome.cache_meta import LocationTreeCache
 
-
 class LocationResourceTest(RhizomeAPITestCase):
 
     def setUp(self):

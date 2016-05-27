@@ -146,7 +146,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
             bundles.append(obj)
 
-        response_meta = self.get_response_meta(len(objects))
+        response_meta = self.get_response_meta(request, bundles)
 
         response_data = {
             'objects': bundles,
@@ -155,13 +155,3 @@ class BaseModelResource(ModelResource, BaseResource):
         }
 
         return self.create_response(request, response_data)
-
-    def get_response_meta(self, object_len):
-
-        meta_dict = {
-            'top_lvl_location_id': self.top_lvl_location_id,
-            'limit': None,  # paginator.get_limit(),
-            'offset': None,  # paginator.get_offset(),
-            'total_count': object_len,
-        }
-        return meta_dict
