@@ -1,5 +1,4 @@
-from pandas import DataFrame
-from pandas import concat
+from pandas import DataFrame, concat, notnull
 from django.http import HttpResponse
 
 from tastypie import fields
