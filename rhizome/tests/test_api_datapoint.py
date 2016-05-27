@@ -95,7 +95,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}&chart_uuid={4}'\
             .format(indicator.id, start_date,end_date, location.id, chart_uuid)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -165,7 +165,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
             .format(indicator.id, start_date,end_date, location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -178,7 +178,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         '''
         # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_no_params --settings=rhizome.settings.test
 
-        resp = self.api_client.get('/api/v1/datapoint/',\
+        resp = self.api_client.get('/api/v1/campaign_datapoint/',\
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -193,7 +193,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\
             .format(1, start_date, end_date, self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
@@ -264,7 +264,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_depth=2&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
             .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -343,7 +343,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&start_date=2016-01-01&end_date=2016-02-02&location_id__in={2}&location_depth=1&chart_type=MapChart&cumulative=1'\
             .format(indicator.id, campaign_1.id, self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -430,7 +430,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_type={3}'\
             .format(indicator.id, campaign.id, afghanistan.id, self.prov.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -452,7 +452,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_depth=2'\
             .format(indicator.id, campaign.id, afghanistan.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -525,7 +525,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
             str(campaign_1.id)+','+str(campaign_2.id),\
             str(self.top_lvl_location.id) +',' + str(self.location_2.id))
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)

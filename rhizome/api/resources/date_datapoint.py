@@ -1,25 +1,32 @@
-import numpy as np
-import sys
 import itertools
-from pandas import DataFrame, pivot_table, notnull, concat
+from pandas import DataFrame
+from pandas import concat
 from django.http import HttpResponse
 
 from tastypie import fields
 from tastypie.utils.mime import build_content_type
-from tastypie.exceptions import NotFound
 
 from rhizome.api.serialize import CustomSerializer
-from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.custom_logic import handle_polio_case_table
+from rhizome.api.resources.base_non_model import BaseNonModelResource
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent
-
 import math
-from datetime import datetime
 
-class DateDatapointResource(BaseModelResource):
+
+class ResultObject(object):
+    '''
+    This is the same as a row in the CSV export in which one row has a distinct
+    location / campaign combination, and the remaing columns represent the
+    indicators requested.  Indicators are a list of IndicatorObjects.
+    '''
+    # location = None
+    # campaign = None
+    # indicators = list()
+
+
+class DateDatapointResource(BaseNonModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -42,7 +49,7 @@ class DateDatapointResource(BaseModelResource):
     location_id = fields.IntegerField(attribute='location_id')
     value = fields.CharField(attribute='value', null=True)
 
-    class Meta(BaseModelResource.Meta):
+    class Meta(BaseNonModelResource.Meta):
         '''
         As this is a NON model resource, we must specify the object_class
         that will represent the data returned to the applicaton.  In this case
@@ -56,7 +63,7 @@ class DateDatapointResource(BaseModelResource):
         note - authentication inherited from parent class
         '''
 
-        # object_class = ResultObject  # use the class above to define response
+        object_class = ResultObject  # use the class above to define response
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
@@ -83,7 +90,7 @@ class DateDatapointResource(BaseModelResource):
         serialized = self.serialize(request, data, desired_format)
 
         response = response_class(content=serialized,
-            content_type=build_content_type(desired_format),**response_kwargs)
+                                  content_type=build_content_type(desired_format), **response_kwargs)
 
         if desired_format == 'text/csv':
             response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
@@ -105,9 +112,8 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         self.error = None
-        self.class_indicator_map = self.build_class_indicator_map();
+        self.class_indicator_map = self.build_class_indicator_map()
 
-        results = []
         err = self.parse_url_params(request.GET)
         if err:
             self.error = err
@@ -116,7 +122,7 @@ class DateDatapointResource(BaseModelResource):
         self.location_ids = self.get_locations_to_return_from_url(request)
         time_gb = self.parsed_params['group_by_time']
         if time_gb == 'campaign' or time_gb is None:
-            return self.base_transform()
+            self.base_data_df = self.base_transform()
         else:
             self.base_data_df = self.group_by_time_transform()
 
@@ -125,10 +131,11 @@ class DateDatapointResource(BaseModelResource):
     def get_time_group_series(self, dp_df):
         time_grouping = self.parsed_params['group_by_time']
         if time_grouping == 'year':
-            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
+            dp_df['time_grouping'] = dp_df[
+                'data_date'].map(lambda x: int(x.year))
         elif time_grouping == 'quarter':
             dp_df['time_grouping'] = dp_df['data_date']\
-                .map(lambda x: str(x.year) + str((x.month-1) // 3 + 1))
+                .map(lambda x: str(x.year) + str((x.month - 1) // 3 + 1))
         elif time_grouping == 'all_time':
             dp_df['time_grouping'] = 1
         else:
@@ -136,9 +143,9 @@ class DateDatapointResource(BaseModelResource):
         self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
         return dp_df
 
-
     def transform_df_to_results(self, df):
-        # the following line is a hack. TODO: figure out where empty list is being returned from
+        # the following line is a hack. TODO: figure out where empty list is
+        # being returned from
         if type(df) == list:
             return []
         if self.parsed_params['show_missing_data'] == u'1':
@@ -147,32 +154,32 @@ class DateDatapointResource(BaseModelResource):
             df = df.sort('campaign_id')
         else:
             df = df.sort('time_grouping')
-        results =[]
+        results = []
         df.apply(self.df_to_result_obj, args=(results,), axis=1)
         return results
 
     def group_by_time_transform(self):
-        dp_df_columns = ['data_date','indicator_id','location_id','value']
-        time_grouping =  self.parsed_params['group_by_time']
+        dp_df_columns = ['data_date', 'indicator_id', 'location_id', 'value']
+        self.parsed_params['group_by_time']
 
         # HACKK for situational dashboard
         if self.parsed_params['chart_uuid'] ==\
-            '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
+                '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
 
             self.parsed_params['show_missing_data'] = 1
-            return handle_polio_case_table(self, dp_df_columns)
+            return self.handle_polio_case_table(dp_df_columns)
 
-        cols = ['data_date','indicator_id','location_id','value']
+        cols = ['data_date', 'indicator_id', 'location_id', 'value']
         dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = self.location_ids,
-            indicator_id__in = self.parsed_params['indicator__in']
-        ).values(*cols)),columns=cols)
+            location_id__in=self.location_ids,
+            indicator_id__in=self.parsed_params['indicator__in']
+        ).values(*cols)), columns=cols)
 
         if not dp_df.empty:
             dp_df = self.get_time_group_series(dp_df)
-            gb_df = DataFrame(dp_df\
-                .groupby(['indicator_id','time_grouping','location_id'])['value']\
-                .sum())\
+            gb_df = DataFrame(dp_df
+                              .groupby(['indicator_id', 'time_grouping', 'location_id'])['value']
+                              .sum())\
                 .reset_index()
             return gb_df
 
@@ -186,35 +193,34 @@ class DateDatapointResource(BaseModelResource):
                     .values_list('id', flat=True)
 
                 dp_df = DataFrame(list(DataPoint.objects.filter(
-                    location_id__in = sub_location_ids,
-                    indicator_id__in = self.parsed_params['indicator__in']
-                ).values(*cols)),columns=cols)
+                    location_id__in=sub_location_ids,
+                    indicator_id__in=self.parsed_params['indicator__in']
+                ).values(*cols)), columns=cols)
                 depth_level += 1
 
             dp_df = self.get_time_group_series(dp_df)
             if dp_df.empty:
                 return []
-            location_tree_df = DataFrame(list(LocationTree.objects\
-                .filter(location_id__in = sub_location_ids)\
-                .values_list('location_id','parent_location_id')),\
-                    columns=['location_id','parent_location_id'])
+            location_tree_df = DataFrame(list(LocationTree.objects
+                                              .filter(location_id__in=sub_location_ids)
+                                              .values_list('location_id', 'parent_location_id')),
+                                         columns=['location_id', 'parent_location_id'])
 
             merged_df = dp_df.merge(location_tree_df)
 
-            filtered_df = merged_df[merged_df['parent_location_id']\
-                .isin(self.location_ids)]
+            filtered_df = merged_df[merged_df['parent_location_id']
+                                    .isin(self.location_ids)]
 
             # sum all values for locations with the same parent location
-            gb_df = DataFrame(filtered_df\
-                .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
-                .sum())\
+            gb_df = DataFrame(filtered_df
+                              .groupby(['indicator_id', 'time_grouping', 'parent_location_id'])['value']
+                              .sum())\
                 .reset_index()
 
-            gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
+            gb_df = gb_df.rename(columns={'parent_location_id': 'location_id'})
             return gb_df
 
     def df_to_result_obj(self, row, results_list):
-
         dp = ResultObject()
         if not math.isnan(row['indicator_id']):
             dp.indicator_id = row['indicator_id']
@@ -227,6 +233,77 @@ class DateDatapointResource(BaseModelResource):
             dp.value = row['value']
         results_list.append(dp)
 
+    def handle_polio_case_table(self, dp_df_columns):
+        '''
+        This is a very specific peice of code that allows us to generate a table
+        with
+            - date of latest case
+            - infected district count
+            - infected province count
+        THis relies on certain calcluations to be made in
+        caluclated_indicator_component.
+        '''
+        # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
+        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
+            objects.filter(indicator__name='Polio Cases').values()
+
+        if len(calc_indicator_data_for_polio_cases) > 0:
+            self.ind_meta = {'base_indicator':
+                             calc_indicator_data_for_polio_cases[
+                                 0]['indicator_id']
+                             }
+        else:
+            self.ind_meta = {}
+
+        for row in calc_indicator_data_for_polio_cases:
+            calc = row['calculation']
+            ind_id = row['indicator_component_id']
+            self.ind_meta[calc] = ind_id
+
+        parent_location_id = self.parsed_params['location_id__in']
+
+        all_sub_locations = LocationTree.objects.filter(
+            parent_location_id=parent_location_id
+        ).values_list('location_id', flat=True)
+
+        flat_df = DataFrame(list(DataPoint.objects.filter(
+            location_id__in=all_sub_locations,
+            indicator_id__in=self.parsed_params['indicator__in']
+        ).values(*dp_df_columns)), columns=dp_df_columns)
+
+        flat_df = self.get_time_group_series(flat_df)
+        flat_df['parent_location_id'] = parent_location_id
+
+        gb_df = DataFrame(flat_df
+                          .groupby(['indicator_id', 'time_grouping', 'parent_location_id'])
+                          ['value']
+                          .sum())\
+            .reset_index()
+
+        latest_date_df = DataFrame(flat_df
+                                   .groupby(['indicator_id', 'time_grouping'])['data_date']
+                                   .max())\
+            .reset_index()
+        latest_date_df['value'] = latest_date_df['data_date']\
+            .map(lambda x: x.strftime('%Y-%m-%d'))
+        latest_date_df['indicator_id'] = self\
+            .ind_meta['latest_date']
+
+        district_count_df = DataFrame(flat_df
+                                      .groupby(['time_grouping']).location_id
+                                      .nunique())\
+            .reset_index()
+        district_count_df['value'] = district_count_df['location_id']
+        district_count_df['indicator_id'] = self\
+            .ind_meta['district_count']
+
+        concat_df = concat([gb_df, latest_date_df,  district_count_df])
+        concat_df[['indicator_id', 'value', 'time_grouping', 'data_date']]
+        concat_df['parent_location_id'] = parent_location_id
+        concat_df = concat_df.drop('location_id', 1)
+        concat_df = concat_df.rename(
+            columns={'parent_location_id': 'location_id'})
+        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -239,37 +316,50 @@ class DateDatapointResource(BaseModelResource):
             objects = []
         return objects
 
-    def get_response_meta(self, request, objects):
+    # IS THIS EVER USED????
+    # |
+    # v
+    # def obj_get(self, bundle, **kwargs):
+    #     # get one object from data source
+    #     pk = int(kwargs['pk'])
+    #     try:
+    #         return bundle.data[pk]
+    #     except KeyError:
+    #         raise NotFound("Object not found")
+
+    def alter_list_data_to_serialize(self, request, data):
         '''
         If there is an error for this resource, add that to the response.  If
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
 
-        meta = {}
-
         try:
             location_ids = request.GET['location_id__in']
-            meta['location_ids'] = location_ids
+            data['meta']['location_ids'] = location_ids
         except KeyError:
             location_ids = None
 
         try:
             indicator_ids = request.GET['indicator__in']
-            meta['indicator_ids'] = indicator_ids
+            data['meta']['indicator_ids'] = indicator_ids
         except KeyError:
             indicator_ids = None
 
         try:
             chart_uuid = request.GET['chart_uuid']
-            meta['chart_uuid'] = chart_uuid
+            data['meta']['chart_uuid'] = chart_uuid
         except KeyError:
             indicator_ids = None
 
-        meta['campaign_ids'] = self.parsed_params['campaign__in']
-        meta['total_count'] = len(objects)
+        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
+        # add errors if it exists
+        if self.error:
+            data['error'] = self.error
+        else:
+            data['error'] = None
 
-        return meta
+        return data
 
     def dehydrate(self, bundle):
         '''
@@ -300,10 +390,10 @@ class DateDatapointResource(BaseModelResource):
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None,'location_id__in':None,\
-            'filter_indicator':None, 'filter_value': None,\
-            'show_missing_data':None, 'cumulative':0, \
-             'group_by_time': None, 'chart_uuid': None
+            'campaign__in': None, 'location__in': None, 'location_id__in': None,
+            'filter_indicator': None, 'filter_value': None,
+            'show_missing_data': None, 'cumulative': 0,
+            'group_by_time': None, 'chart_uuid': None
         }
 
         for k, v in optional_params.iteritems():
@@ -324,7 +414,6 @@ class DateDatapointResource(BaseModelResource):
 
         if campaign_in_param:
             campaign_ids = [int(c_id) for c_id in campaign_in_param.split(',')]
-
 
         else:
             campaign_ids = self.get_campaign_list(
@@ -353,11 +442,11 @@ class DateDatapointResource(BaseModelResource):
 
     def build_class_indicator_map(self):
         query_results = IndicatorClassMap.objects.filter(is_display=True) \
-            .values_list('indicator','enum_value','string_value')
-        class_indicator_map ={}
+            .values_list('indicator', 'enum_value', 'string_value')
+        class_indicator_map = {}
         for query in query_results:
             if query[0] not in class_indicator_map:
-                class_indicator_map[query[0]] ={}
+                class_indicator_map[query[0]] = {}
             class_indicator_map[query[0]][query[1]] = query[2]
 
         return class_indicator_map
@@ -371,58 +460,69 @@ class DateDatapointResource(BaseModelResource):
         return x
 
     def base_transform(self):
-        results = []
+        pass
 
-        response_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
+        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',
+                      'value']
+        computed_datapoints = DataPointComputed.objects.filter(
+            campaign__in=self.parsed_params['campaign__in'],
+            location__in=self.location_ids,
+            indicator__in=self.parsed_params['indicator__in'])
 
-        results = list(DataPointComputed.objects.filter(
+        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),
+                           columns=df_columns)
+
+        # do an inner join on the filter indicator
+        if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
+            merge_columns = ['campaign_id', 'location_id']
+            indicator_id = Indicator.objects.get(
+                short_name=self.parsed_params['filter_indicator'])
+            filter_value_list = [self.parsed_params['filter_value']]
+
+            if filter_value_list == ['-1']:  # this means "show all classes"
+                filter_value_list = [1, 2, 3]
+                # this only works for LPDS... this should be --
+                ## IndicatorClassMap.objects.filter(indicator = indicator)\
+                # .values_list(enum_value, flat = True)
+
+            filter_datapoints = DataPointComputed.objects.filter(
                 campaign__in=self.parsed_params['campaign__in'],
                 location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])\
-                .values(*response_fields))
+                indicator_id=indicator_id,
+                value__in=filter_value_list
+            )
+            filter_df = DataFrame(list(filter_datapoints.values_list(*merge_columns)),
+                                  columns=merge_columns)
+            dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
 
-        ## fill in missing data if requested ##
-        if self.parsed_params['show_missing_data'] == u'1':
-            df = self.add_missing_data(DataFrame(results))
-            df = df.where((notnull(df)),None)
-            results = df.to_dict('records')
+            # now only show the locations that match that filter..
+            location_ids_in_filter = set(filter_df['location_id'])
+            self.location_ids = set(self.location_ids)\
+                .intersection(location_ids_in_filter)
 
-        ## add enumeration for 'class' indicators
-        if 'class' in Indicator.objects\
-            .filter(id__in = self.parsed_params['indicator__in'])\
-            .values_list('data_format', flat=True):
-
-            df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
-            results = df.to_dict('records')
-
-        return results
-
+        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
+        return dwc_df
 
     def add_missing_data(self, df):
         '''
         If the campaign / locaiton cobination has no related datapoitns, we
         add the keys here so that we can see the row of data in data entry
         or data browser.
-
         This in the future can be controlled with a parameter so that for
         instance with a table chart for a large number of districts, we only
         show those with data.
-
         This is largely for Data entry so that we can see a row in the form
         even when there is no existing data.
         '''
-
-
-        list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
+        list_of_lists = [self.parsed_params['indicator__in'],
+                         self.location_ids, self.parsed_params['campaign__in']]
         cart_product = list(itertools.product(*list_of_lists))
         cart_prod_df = DataFrame(cart_product)
         if 'campaign_id' in df.columns:
-            columns_list = ['indicator_id','location_id', 'campaign_id']
+            columns_list = ['indicator_id', 'location_id', 'campaign_id']
         else:
-            columns_list = ['indicator_id','location_id', 'time_grouping']
+            columns_list = ['indicator_id', 'location_id', 'time_grouping']
 
         cart_prod_df.columns = columns_list
         df = df.merge(cart_prod_df, how='outer', on=columns_list)
-
         return df

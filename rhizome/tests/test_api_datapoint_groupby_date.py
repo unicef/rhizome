@@ -99,7 +99,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
             'end_date' : '2016-01-01',
             'location_id__in' : self.top_lvl_location.id
         }
-        resp = self.api_client.get('/api/v1/datapoint/', \
+        resp = self.api_client.get('/api/v1/date_datapoint/', \
             format='json', data=get, authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
@@ -121,7 +121,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         location_id = 4321
         get_parameter = 'group_by_time=all_time&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', location_id)
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
@@ -138,7 +138,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         self.assertHttpOK(resp)
@@ -148,7 +148,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter_2 = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2016-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp_2 = self.api_client.get('/api/v1/datapoint/?' + get_parameter_2, \
+        resp_2 = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter_2, \
             format='json', authentication=self.get_credentials())
 
         self.assertHttpOK(resp_2)
@@ -161,7 +161,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
@@ -187,7 +187,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
 
         get_parameter = 'group_by_time=all_time&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
@@ -204,7 +204,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
 
         self.assertHttpOK(resp)
@@ -216,7 +216,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'group_by_time=week&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
             .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
@@ -232,9 +232,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}&show_missing_data=1'\
             .format(str(self.ind.id)+','+str(rando_ind.id), '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/datapoint/?' + get_parameter, \
+        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 6)
-
-
