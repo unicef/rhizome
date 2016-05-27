@@ -199,6 +199,35 @@ class DashboardResourceTest(RhizomeAPITestCase):
 
     # TODO: test for duplicate dashboard
 
+    def test_dashboard_json(self):
+                ## create two charts ##
+        c1 = CustomChart.objects.create(uuid='a', title='a', chart_json=json.dumps({
+                                        'foo': 'bar', 'title': 'sometitle'}))
+        c2 = CustomChart.objects.create(uuid='b', title='b', chart_json=json.dumps({
+                                        'foo1': 'bar1', 'title1': 'sometitle1'}))
+        c3 = CustomChart.objects.create(uuid='c', title='c', chart_json=json.dumps({
+                                        'c1': 'c2', 'title2': 'sometitle2'}))
+        dboard_rows = [{'charts': [c1.uuid], 'layout':1},
+                       {'charts': [c2.uuid, c3.uuid], 'layout':2}]
+        d = CustomDashboard.objects.create(title="1 d-board", rows=dboard_rows)
+
+        resp = self.api_client.get('/api/v1/custom_dashboard/%s/' % d.id,
+                                   format='json',
+                                   authentication=self.get_credentials())
+
+        response_data = self.deserialize(resp)
+        for row in response_data['rows']:
+            for chart in row['charts']:
+                json_obj = chart['chart_json']
+                try:
+                    json_obj = json.loads(json_obj)
+                except:
+                    print "expected json object, got a %s for obj:" %str(type(json_obj))
+                    print json_obj
+                    self.assertTrue(False)
+        self.assertTrue(True)
+
+
     def test_delete_dashboard(self):
         dashboard_name = 'some d-board!'
         dashboard = CustomDashboard.objects.create(
