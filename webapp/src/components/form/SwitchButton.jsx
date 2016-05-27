@@ -26,11 +26,11 @@ class SwitchButton extends React.Component {
       onChange: this.handleChange
     }
 
-    handleChange = function () {
+    handleChange() {
       // Override
     }
 
-    render = function () {
+    render() {
       const id = this.props.id || this.props.name
       let label
       let labelRight
@@ -40,7 +40,7 @@ class SwitchButton extends React.Component {
       }
 
       if (this.props.labelRight != '') {
-        labelRight = <label htmlFor={id}>this.props.labelRight</label>
+        labelRight = <label htmlFor={id}>{this.props.labelRight}</label>
       }
 
       return (
