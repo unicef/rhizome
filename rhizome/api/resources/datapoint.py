@@ -19,17 +19,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 import math
 from datetime import datetime
 
-class ResultObject(object):
-    '''
-    This is the same as a row in the CSV export in which one row has a distinct
-    location / campaign combination, and the remaing columns represent the
-    indicators requested.  Indicators are a list of IndicatorObjects.
-    '''
-    # location = None
-    # campaign = None
-    # indicators = list()
-
-
 class DatapointResource(BaseModelResource):
     '''
     - **GET Requests:**
@@ -393,45 +382,22 @@ class DatapointResource(BaseModelResource):
                 indicator__in=self.parsed_params['indicator__in'])\
                 .values(*response_fields))
 
+        ## fill in missing data if requested ##
         if self.parsed_params['show_missing_data'] == u'1':
             df = self.add_missing_data(DataFrame(results))
             df = df.where((notnull(df)),None)
             results = df.to_dict('records')
 
+        ## add enumeration for 'class' indicators
+        if 'class' in Indicator.objects\
+            .filter(id__in = self.parsed_params['indicator__in'])\
+            .values_list('data_format', flat=True):
+
+            df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
+            results = df.to_dict('records')
+
         return results
 
-        # dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
-        #     columns=df_columns)
-
-        # # do an inner join on the filter indicator
-        # if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
-        #     merge_columns = ['campaign_id', 'location_id']
-        #     indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
-        #     filter_value_list = [self.parsed_params['filter_value']]
-        #
-        #     if filter_value_list == ['-1']: ## this means "show all classes"
-        #         filter_value_list = [1,2,3]
-        #         ## this only works for LPDS... this should be --
-        #         ## IndicatorClassMap.objects.filter(indicator = indicator)\
-        #         ##    .values_list(enum_value, flat = True)
-        #
-        #     filter_datapoints = DataPointComputed.objects.filter(
-        #         campaign__in=self.parsed_params['campaign__in'],
-        #         location__in=self.location_ids,
-        #         indicator_id=indicator_id,
-        #         value__in = filter_value_list
-        #         )
-        #     filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
-        #     columns=merge_columns)
-        #     dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
-        #
-        #     ## now only show the locations that match that filter..
-        #     location_ids_in_filter = set(filter_df['location_id'])
-        #     self.location_ids = set(self.location_ids)\
-        #         .intersection(location_ids_in_filter)
-        #
-        # dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        # return dwc_df
 
     def add_missing_data(self, df):
         '''
