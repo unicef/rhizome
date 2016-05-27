@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import IndicatorToTag
 
+
 class IndicatorToTagResource(BaseModelResource):
     '''
     **GET Request** returns all indicator_to_tag objects, unless one of the optional parameters below is set
@@ -44,8 +45,8 @@ class IndicatorToTagResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        response_columns = ['id', 'indicator_id', 'indicator_tag_id', \
-            'indicator__short_name', 'indicator_tag__tag_name']
+        response_columns = ['id', 'indicator_id', 'indicator_tag_id',
+                            'indicator__short_name', 'indicator_tag__tag_name']
 
         try:
             indicator_id = request.GET['indicator_id']

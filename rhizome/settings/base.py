@@ -11,13 +11,15 @@ https://docs.djangoproject.com/en/1.6/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 STATIC_URL = '/static/'
-SITE_ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)),'')
-STATIC_ROOT = os.path.join(SITE_ROOT,'../static')
+SITE_ROOT = os.path.join(os.path.abspath(os.path.dirname(__file__)), '')
+STATIC_ROOT = os.path.join(SITE_ROOT, '../static')
 
-# todo for hashed we can use this http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
+# todo for hashed we can use this
+# http://blogs.skicelab.com/maurizio/django-serving-hashed-static-files-with-nginx.html
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'webapp/public/static')
@@ -29,7 +31,8 @@ LOGIN_REDIRECT_URL = '/datapoints'
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY =  os.getenv('SECRET_KEY', '7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f')
+SECRET_KEY = os.getenv(
+    'SECRET_KEY', '7i_%j5chyhx2k3#874-!8kwwlcr88sn9blbsb7$%58h&t#n84f')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -110,18 +113,19 @@ DATABASES = {
 }
 
 ODK_SETTINGS = {
-    'JAR_FILE': '', ## download here: https://opendatakit.org/downloads/download-info/odk-briefcase/
-    'RHIZOME_USERNAME':'', ##
-    'RHIZOME_KEY':'', ##'get an API key.. http://stackoverflow.com/questions/10940983/
-    'STORAGE_DIRECTORY':'', ## /my/storage/dir',
-    'EXPORT_DIRECTORY':'', ##' /my/output/dir,
-    'ODK_USER':'', ## my_odk_username
-    'ODK_PASS':'', ## my_odk_password
-    'AGGREGATE_URL':'', ##:'https://my-odk-server.appspot.com/',
-    'API_ROOT':'http://localhost:8000/api/v1/',
+    # download here:
+    # https://opendatakit.org/downloads/download-info/odk-briefcase/
+    'JAR_FILE': '',
+    'RHIZOME_USERNAME': '',
+    # 'get an API key.. http://stackoverflow.com/questions/10940983/
+    'RHIZOME_KEY': '',
+    'STORAGE_DIRECTORY': '',  # /my/storage/dir',
+    'EXPORT_DIRECTORY': '',  # ' /my/output/dir,
+    'ODK_USER': '',  # my_odk_username
+    'ODK_PASS': '',  # my_odk_password
+    'AGGREGATE_URL': '',  # :'https://my-odk-server.appspot.com/',
+    'API_ROOT': 'http://localhost:8000/api/v1/',
 }
-
-
 
 
 # Internationalization
@@ -138,7 +142,7 @@ USE_L10N = True
 USE_TZ = True
 
 # Template configuration
-#TEMPLATE_DIRS = (
+# TEMPLATE_DIRS = (
 #    os.path.join(BASE_DIR, 'templates'),
 #)
 
@@ -170,7 +174,7 @@ TASTYPIE_DEFAULT_FORMATS = ['json']
 API_LIMIT_PER_PAGE = 0
 TASTYPIE_FULL_DEBUG = True
 
-INTERNAL_IPS=('127.0.0.1',)
+INTERNAL_IPS = ('127.0.0.1',)
 
 
 ## Customization SETTINGS ##

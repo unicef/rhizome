@@ -43,9 +43,9 @@ class SourceObjectMapResource(BaseModelResource):
     def get_master_object_name(self, som_obj):
 
         qs_map = {
-            'indicator': ['short_name',Indicator.objects.get],
-            'location': ['name',Location.objects.get],
-            'campaign': ['name',Campaign.objects.get],
+            'indicator': ['short_name', Indicator.objects.get],
+            'location': ['name', Location.objects.get],
+            'campaign': ['name', Campaign.objects.get],
         }
 
         obj_display_field = qs_map[som_obj.content_type][0]
@@ -55,18 +55,17 @@ class SourceObjectMapResource(BaseModelResource):
 
         return master_object_name
 
-
     def get_object_list(self, request):
 
-        qs =''
+        qs = ''
         if 'document_id' in request.GET:
 
             som_ids = DocumentSourceObjectMap.objects \
                 .filter(document_id=request.GET['document_id']). \
                 values_list('source_object_map_id', flat=True)
 
-            qs = SourceObjectMap.objects.filter(id__in=som_ids,\
-                master_object_id__gt = 0).values()
+            qs = SourceObjectMap.objects.filter(id__in=som_ids,
+                                                master_object_id__gt=0).values()
 
         elif 'id' in request.GET:
             qs = SourceObjectMap.objects.filter(id=request.GET['id']).values()

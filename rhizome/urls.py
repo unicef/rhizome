@@ -21,14 +21,16 @@ admin.autodiscover()
 v1_api = Api(api_name='v1')
 v1_api.register(agg_refresh.AggRefreshResource())
 v1_api.register(cache_meta.CacheMetaResource())
-v1_api.register(calculated_indicator_component.CalculatedIndicatorComponentResource())
+v1_api.register(
+    calculated_indicator_component.CalculatedIndicatorComponentResource())
 v1_api.register(campaign.CampaignResource())
 v1_api.register(campaign_type.CampaignTypeResource())
 v1_api.register(chart_type.ChartTypeResource())
 v1_api.register(computed_datapoint.ComputedDataPointResource())
 v1_api.register(custom_chart.CustomChartResource())
 v1_api.register(custom_dashboard.CustomDashboardResource())
-v1_api.register(datapoint.DatapointResource())
+v1_api.register(campaign_datapoint.CampaignDatapointResource())
+v1_api.register(date_datapoint.DateDatapointResource())
 v1_api.register(datapoint_entry.DatapointEntryResource())
 v1_api.register(doc_datapoint.DocDataPointResource())
 v1_api.register(doc_detail_type.DocDetailTypeResource())
@@ -58,15 +60,18 @@ protected_patterns = [
 
     url(r'^$', RedirectView.as_view(url='dashboards/'), name='homepage-redirect'),
 
-    url(r'^permissions_needed/$', TemplateView.as_view(template_name='permissions_needed.html'), name='permissions_needed'),
+    url(r'^permissions_needed/$', TemplateView.as_view(
+        template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system/', views.manage_system, name='manage_system'),
-    url(r'^campaign/', views.update_campaign, name='update_campaign'), ## NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
+    # NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
+    url(r'^campaign/', views.update_campaign, name='update_campaign'),
     url(r'^export_file/?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_create, name='chart_create'),
     url(r'^entry/$', views.data_entry, name='datapoint_entry'),
 
     url(r'^users/create/$', views.UserCreateView.as_view(), name='create_user'),
-    url(r'^users/update/(?P<pk>[0-9]+)/$', views.UserEditView.as_view(), name='user_update'),
+    url(r'^users/update/(?P<pk>[0-9]+)/$',
+        views.UserEditView.as_view(), name='user_update'),
 
     url(r'^source-data/', views.source_data, name='source_data'),
 
@@ -76,7 +81,8 @@ protected_patterns = [
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
     url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),
-    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$', views.dashboard, name='dashboard'),
+    url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$',
+        views.dashboard, name='dashboard'),
 ]
 
 urlpatterns = patterns(
@@ -88,7 +94,8 @@ urlpatterns = patterns(
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    url(r'^', decorator_include(login_required, protected_patterns, namespace='datapoints')),
+    url(r'^', decorator_include(login_required,
+                                protected_patterns, namespace='datapoints')),
 
     # Waffle PATH
     url(r'^', include('waffle.urls')),

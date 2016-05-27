@@ -8,6 +8,7 @@ from tastypie.serializers import Serializer
 
 from rhizome.models import Campaign, Indicator, Location
 
+
 class CustomJSONSerializer(Serializer):
     """Does not allow out of range float values
     (in strict compliance with the JSON specification).
@@ -17,15 +18,15 @@ class CustomJSONSerializer(Serializer):
     content_types = {
         'json': 'application/json',
         'urlencode': 'application/x-www-form-urlencoded',
-        }
+    }
 
-    def from_urlencode(self, data,options=None):
+    def from_urlencode(self, data, options=None):
         """ handles basic formencoded url posts """
-        qs = dict((k, v if len(v)>1 else v[0] )
-            for k, v in urlparse.parse_qs(data).iteritems())
+        qs = dict((k, v if len(v) > 1 else v[0])
+                  for k, v in urlparse.parse_qs(data).iteritems())
         return qs
 
-    def to_urlencode(self,content):
+    def to_urlencode(self, content):
         pass
 
     def to_json(self, data, options=None):
@@ -39,6 +40,7 @@ class CustomJSONSerializer(Serializer):
             cls=NanEncoder,
             sort_keys=True,
             ensure_ascii=False)
+
 
 class NanEncoder(djangojson.DjangoJSONEncoder):
 
@@ -69,8 +71,8 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
                 return _orig_encoder(o)
 
         def floatstr(o, allow_nan=self.allow_nan,
-                _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY,
-                _neginf=-json.encoder.INFINITY):
+                     _repr=json.encoder.FLOAT_REPR, _inf=json.encoder.INFINITY,
+                     _neginf=-json.encoder.INFINITY):
             # Check for specials.  Note that this type of test is processor
             # and/or platform-specific, so do tests which don't depend on the
             # internals.
@@ -91,7 +93,6 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
 
             return text
 
-
         if (_one_shot and json.encoder.c_make_encoder is not None
                 and self.indent is None and not self.sort_keys):
             _iterencode = json.encoder.c_make_encoder(
@@ -107,20 +108,20 @@ class NanEncoder(djangojson.DjangoJSONEncoder):
 
 
 class CustomSerializer(Serializer):
-    formats = ['json', 'csv','urlencode']
+    formats = ['json', 'csv', 'urlencode']
     content_types = {
         'json': 'application/json',
         'csv': 'text/csv',
         'urlencode': 'application/x-www-form-urlencoded',
     }
 
-    def from_urlencode(self, data,options=None):
+    def from_urlencode(self, data, options=None):
         """ handles basic formencoded url posts """
-        qs = dict((k, v if len(v)>1 else v[0] )
-            for k, v in urlparse.parse_qs(data).iteritems())
+        qs = dict((k, v if len(v) > 1 else v[0])
+                  for k, v in urlparse.parse_qs(data).iteritems())
         return qs
 
-    def to_urlencode(self,content):
+    def to_urlencode(self, content):
         pass
 
     def to_csv(self, data, options=None):
@@ -140,8 +141,8 @@ class CustomSerializer(Serializer):
         try:
             meta_lookup = self.build_meta_lookup(data_objects)
         except KeyError:
-            ## a little bit of a hack, but this is the condition that for now
-            ## alerts the system that this is a raw csv for a document_id.
+            # a little bit of a hack, but this is the condition that for now
+            # alerts the system that this is a raw csv for a document_id.
             submission_data = [row['submission_json'] for row in data_objects]
             return self.clean_and_prep_csv(submission_data)
 
@@ -156,7 +157,7 @@ class CustomSerializer(Serializer):
 
             for ind_dict in obj['indicators']:
 
-                indicator_string = meta_lookup['indicator'][\
+                indicator_string = meta_lookup['indicator'][
                     int(ind_dict['indicator'])]
 
                 indicator_value = ind_dict['value']
@@ -182,7 +183,7 @@ class CustomSerializer(Serializer):
 
         return csv
 
-    def build_meta_lookup(self,object_list):
+    def build_meta_lookup(self, object_list):
         '''
         Instead of hitting the datbase every time you need to find the
         string for a particular meta data item.. build a dictionary
@@ -190,15 +191,14 @@ class CustomSerializer(Serializer):
 
         '''
         # set up the lookup object
-        meta_lookup = {'location':{},'campaign':{},'indicator':{}}
+        meta_lookup = {'location': {}, 'campaign': {}, 'indicator': {}}
 
-        ## find the location and campaign ids from the object list
+        # find the location and campaign ids from the object list
         location_ids = [obj['location'] for obj in object_list]
         campaign_ids = [obj['campaign'] for obj in object_list]
 
-
-        ## every object has all indicators, so find the first one, and the IDs
-        ## for each indicator in that object
+        # every object has all indicators, so find the first one, and the IDs
+        # for each indicator in that object
 
         indicator_nodes = [obj['indicators'] for obj in object_list]
 
@@ -215,6 +215,5 @@ class CustomSerializer(Serializer):
 
         for ind in Indicator.objects.filter(id__in=indicator_ids):
             meta_lookup['indicator'][ind.id] = ind.__unicode__()
-
 
         return meta_lookup

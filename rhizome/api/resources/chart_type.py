@@ -1,9 +1,11 @@
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 
+
 class ChartTypeResult(object):
     id = int()
     name = unicode()
+
 
 class ChartTypeResource(BaseNonModelResource):
     '''
@@ -27,11 +29,11 @@ class ChartTypeResource(BaseNonModelResource):
 
     def get_object_list(self, request):
 
-        chart_types =["PieChart","LineChart","BarChart","ColumnChart",\
-            "ChoroplethMap","ScatterChart","TableChart"]
+        chart_types = ["PieChart", "LineChart", "BarChart", "ColumnChart",
+                       "ChoroplethMap", "ScatterChart", "TableChart"]
         qs = []
 
-        for i,(ct) in enumerate(chart_types):
+        for i, (ct) in enumerate(chart_types):
 
             ct_obj = ChartTypeResult()
             ct_obj.id = i
@@ -39,4 +41,3 @@ class ChartTypeResource(BaseNonModelResource):
             qs.append(ct_obj)
 
         return qs
-

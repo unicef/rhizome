@@ -1,9 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
-from rhizome.models import Indicator,IndicatorToTag, IndicatorTag, LocationPermission, Location,\
+from rhizome.models import Indicator, IndicatorToTag, IndicatorTag, LocationPermission, Location,\
     LocationType, Office
 
-class IndicatorTagResourceTest(ResourceTestCase):
+
+class IndicatorTagResourceTest(RhizomeAPITestCase):
+
     def setUp(self):
         super(IndicatorTagResourceTest, self).setUp()
 
@@ -12,18 +14,18 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.password = 'pass'
         self.user = User.objects.create_user(self.username,
                                              'john@john.com', self.password)
-        self.lt = LocationType.objects.create(name='test',admin_level = 0)
-        self.o = Office.objects.create(name = 'Earth')
+        self.lt = LocationType.objects.create(name='test', admin_level=0)
+        self.o = Office.objects.create(name='Earth')
 
         self.top_lvl_location = Location.objects.create(
-                name = 'Nigeria',
-                location_code = 'Nigeria',
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
-            )
+            name='Nigeria',
+            location_code='Nigeria',
+            location_type_id=self.lt.id,
+            office_id=self.o.id,
+        )
 
-        LocationPermission.objects.create(user_id = self.user.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+        LocationPermission.objects.create(user_id=self.user.id,
+                                          top_lvl_location_id=self.top_lvl_location.id)
 
         self.get_credentials()
 
@@ -40,7 +42,7 @@ class IndicatorTagResourceTest(ResourceTestCase):
         IndicatorTag.objects.all().delete()
         self.assertEqual(IndicatorTag.objects.count(), 0)
 
-        resp = self.api_client.post('/api/v1/indicator_tag/', format='json', \
+        resp = self.api_client.post('/api/v1/indicator_tag/', format='json',
                                     data=post_data, authentication=self.get_credentials())
         response_data = self.deserialize(resp)
 
@@ -53,13 +55,13 @@ class IndicatorTagResourceTest(ResourceTestCase):
 
         IndicatorTag.objects.all().delete()
 
-        tag = IndicatorTag.objects.create(id=None, \
-                                    tag_name='Test Tag Name', )
+        tag = IndicatorTag.objects.create(id=None,
+                                          tag_name='Test Tag Name', )
 
         self.assertEqual(IndicatorTag.objects.count(), 1)
         new_tag_name = "New Tag Name"
-        post_data = {"id": tag.id, "tag_name": new_tag_name }
-        resp = self.api_client.post('/api/v1/indicator_tag/', format='json', \
+        post_data = {"id": tag.id, "tag_name": new_tag_name}
+        resp = self.api_client.post('/api/v1/indicator_tag/', format='json',
                                     data=post_data, authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
@@ -69,23 +71,24 @@ class IndicatorTagResourceTest(ResourceTestCase):
         self.assertEqual(IndicatorTag.objects.count(), 1)
         self.assertEqual(new_tag_name, response_data['tag_name'])
 
-
     def test_remove_tag(self):
-        indicatior = Indicator.objects.create(short_name='Test Indicator', \
-                                              name='Test Indicator for the Tag', \
-                                              data_format='int', \
+        indicatior = Indicator.objects.create(short_name='Test Indicator',
+                                              name='Test Indicator for the Tag',
+                                              data_format='int',
                                               description='Test Indicator for the Tag Description', )
 
         tag = IndicatorTag.objects.create(tag_name='Test tag')
 
         IndicatorToTag.objects.all().delete()
 
-        indicatior_tag = IndicatorToTag.objects.create(indicator_id=indicatior.id, indicator_tag_id=tag.id)
+        indicatior_tag = IndicatorToTag.objects.create(
+            indicator_id=indicatior.id, indicator_tag_id=tag.id)
 
         self.assertEqual(IndicatorToTag.objects.count(), 1)
 
         delete_url = '/api/v1/indicator_to_tag/?id=' + str(indicatior_tag.id)
 
-        self.api_client.delete(delete_url, format='json', data={}, authentication=self.get_credentials())
+        self.api_client.delete(delete_url, format='json',
+                               data={}, authentication=self.get_credentials())
 
         self.assertEqual(IndicatorToTag.objects.count(), 0)

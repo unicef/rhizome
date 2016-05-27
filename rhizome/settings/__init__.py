@@ -19,7 +19,7 @@ if env == 'production':
 #     from rhizome.settings.test import *
 
 ## import ODK_SETTING, and anything specifc to personal development ##
-## for instance if you need an API key from rapid pro, you would store it
+# for instance if you need an API key from rapid pro, you would store it
 ## in development settings ##
 
 try:

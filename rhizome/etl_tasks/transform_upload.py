@@ -13,13 +13,15 @@ from sets import Set
 
 from datetime import datetime
 
+
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
     defaultCode = -2
 
+
 class DocTransform(object):
 
-    def __init__(self, user_id, document_id, raw_csv_df = None):
+    def __init__(self, user_id, document_id, raw_csv_df=None):
         self.user_id = user_id
 
         self.location_column, self.campaign_column, self.uq_id_column = \
@@ -37,55 +39,54 @@ class DocTransform(object):
         if not self.uq_id_column in raw_csv_df.columns:
 
             try:
-                csv_df[self.uq_id_column] = csv_df[self.location_column].map(str)+ csv_df[self.campaign_column]
+                csv_df[self.uq_id_column] = csv_df[self.location_column].map(
+                    str) + csv_df[self.campaign_column]
             except Exception as err:
                 if not self.date_column in csv_df.columns:
-                    dp_error_message = '%s is a required column.' %err.message
+                    dp_error_message = '%s is a required column.' % err.message
                     raise DatapointsException(message=dp_error_message)
 
         self.csv_df = csv_df
         self.file_header = csv_df.columns
 
         self.meta_lookup = {
-            'location':{},
-            'indicator':{},
-            'campaign':{}
+            'location': {},
+            'indicator': {},
+            'campaign': {}
         }
         self.indicator_ids_to_exclude = Set([-1])
         self.existing_submission_keys = SourceSubmission.objects.filter(
-            document_id = self.document.id).values_list('instance_guid',flat=True)
+            document_id=self.document.id).values_list('instance_guid', flat=True)
 
         self.file_path = str(self.document.docfile)
+
     def source_submission_meta_upsert(self, content_type, source_object_code):
         '''
         Create new metadata if not exists
         Add a record tying this document to the newly inserted metadata
         '''
 
-        config_columns = [self.location_column, self.uq_id_column, \
-            self.campaign_column,'District', 'DCODE', 'District.Name', \
-            'DCODE', 'level', 'PCODE', 'Province']
+        config_columns = [self.location_column, self.uq_id_column,
+                          self.campaign_column, 'District', 'DCODE', 'District.Name',
+                          'DCODE', 'level', 'PCODE', 'Province']
 
         if content_type == 'indicator' and source_object_code in config_columns:
-            return ## so we dont think that "campaign" is an indicator
+            return  # so we dont think that "campaign" is an indicator
 
-        ## this is sketchy, but since there is no user when we do the initial
-        ## data migration, we have to set mapped_by_id = None
+        # this is sketchy, but since there is no user when we do the initial
+        # data migration, we have to set mapped_by_id = None
         upload_user_id = None
         if self.user_id > 0:
             upload_user_id = self.user_id
 
-
-        sm_obj, created = SourceObjectMap.objects.get_or_create(\
-            content_type = content_type\
-           ,source_object_code = str(source_object_code)\
-           ,defaults = {
-            'master_object_id':-1,
-            'mapped_by_id':upload_user_id
+        sm_obj, created = SourceObjectMap.objects.get_or_create(
+            content_type=content_type, source_object_code=str(source_object_code), defaults={
+                'master_object_id': -1,
+                'mapped_by_id': upload_user_id
             })
 
         sm_obj, created = DocumentSourceObjectMap.objects.get_or_create\
-            (document_id = self.document.id,source_object_map_id = sm_obj.id)
+            (document_id=self.document.id, source_object_map_id=sm_obj.id)
 
         return sm_obj.id
 
@@ -96,19 +97,18 @@ class DocTransform(object):
         endpoint: api/v2/doc_mapping/?document=66
         '''
 
-
-        if DocumentSourceObjectMap.objects.filter(document_id = \
-            self.document.id):
+        if DocumentSourceObjectMap.objects.filter(document_id=self.document.id):
             return
 
         source_dp_json = SourceSubmission.objects.filter(
-            document_id = self.document.id).values_list('submission_json')
+            document_id=self.document.id).values_list('submission_json')
 
         if len(source_dp_json) == 0:
             return
 
-        all_codes = [('indicator',k) for k,v in json.loads(source_dp_json[0][0]).iteritems()]
-        rg_codes, cp_codes = [],[]
+        all_codes = [('indicator', k)
+                     for k, v in json.loads(source_dp_json[0][0]).iteritems()]
+        rg_codes, cp_codes = [], []
 
         for row in source_dp_json:
             row_dict = json.loads(row[0])
@@ -117,50 +117,52 @@ class DocTransform(object):
                 cp_codes.append(row_dict[self.campaign_column])
 
         for r in list(set(rg_codes)):
-            all_codes.append(('location',r))
+            all_codes.append(('location', r))
 
         for c in list(set(cp_codes)):
-            all_codes.append(('campaign',c))
+            all_codes.append(('campaign', c))
 
-        doc_som_df = DataFrame(all_codes, columns = \
-            ['content_type','source_object_code'])
+        doc_som_df = DataFrame(all_codes, columns=[
+                               'content_type', 'source_object_code'])
 
-        som_columns = ['id','source_object_code','master_object_id',\
-            'content_type']
+        som_columns = ['id', 'source_object_code', 'master_object_id',
+                       'content_type']
 
-        existing_som_df = DataFrame(list(SourceObjectMap.objects.all()\
-            .values_list(*som_columns)),columns=som_columns)
+        existing_som_df = DataFrame(list(SourceObjectMap.objects.all()
+                                         .values_list(*som_columns)), columns=som_columns)
 
-        merged_df = doc_som_df.merge(existing_som_df, on=['content_type',\
-            'source_object_code'], how='left')
+        merged_df = doc_som_df.merge(existing_som_df, on=['content_type',
+                                                          'source_object_code'], how='left')
 
         to_insert_df = merged_df[merged_df.isnull().any(axis=1)]
 
         to_insert_dict = to_insert_df.transpose().to_dict()
 
         to_insert_batch = [SourceObjectMap(** {
-            'source_object_code' : data['source_object_code'],
+            'source_object_code': data['source_object_code'],
             'master_object_id': -1,
             'content_type': data['content_type']
         }) for ix, data in to_insert_dict.iteritems()]
 
         batch_result = SourceObjectMap.objects.bulk_create(to_insert_batch)
 
-        all_som_df = DataFrame(list(SourceObjectMap.objects.all()\
-            .values_list(*som_columns)),columns=som_columns)
+        all_som_df = DataFrame(list(SourceObjectMap.objects.all()
+                                    .values_list(*som_columns)), columns=som_columns)
 
-        # TODO some exception if number of rows not equal to rows in submission #
-        post_insert_som_df = doc_som_df.merge(all_som_df, on=['content_type',\
-            'source_object_code'], how='inner')
+        # TODO some exception if number of rows not equal to rows in submission
+        # #
+        post_insert_som_df = doc_som_df.merge(all_som_df, on=['content_type',
+                                                              'source_object_code'], how='inner')
 
         som_ids_for_doc = list(post_insert_som_df['id'].unique())
 
         dsom_to_insert = [DocumentSourceObjectMap(** {
-            'document_id' : self.document.id,
+            'document_id': self.document.id,
             'source_object_map_id': som_id,
         }) for som_id in som_ids_for_doc]
 
-        dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(dsom_to_insert)
+        dsom_batch_result = DocumentSourceObjectMap.objects.bulk_create(
+            dsom_to_insert)
 
 
 class ComplexDocTransform(DocTransform):
@@ -171,14 +173,15 @@ class ComplexDocTransform(DocTransform):
         indicators - indicators are columns.
     '''
 
-    def __init__(self,user_id,document_id,raw_csv_df=None):
+    def __init__(self, user_id, document_id, raw_csv_df=None):
 
-        super(ComplexDocTransform, self).__init__(user_id, document_id, raw_csv_df)
+        super(ComplexDocTransform, self).__init__(
+            user_id, document_id, raw_csv_df)
 
-        ## if we allow for user input to choose column definitinos
-        ## we can pull the data frmo the below calls.  Since we are hard
-        ## coding configurations and expecting a upload template then
-        ## we dont need the belwo code.
+        # if we allow for user input to choose column definitinos
+        # we can pull the data frmo the below calls.  Since we are hard
+        # coding configurations and expecting a upload template then
+        # we dont need the belwo code.
         # self.uq_id_column = DocumentDetail.objects.get(
         #     document_id = self.document.id,
         #     doc_detail_type_id = DocDetailType\
@@ -205,7 +208,7 @@ class ComplexDocTransform(DocTransform):
 
         submission_ix, submission_data = submission[0], submission[1:]
 
-        submission_data = dict(zip(self.file_header,submission_data))
+        submission_data = dict(zip(self.file_header, submission_data))
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
@@ -242,9 +245,9 @@ class ComplexDocTransform(DocTransform):
 
         try:
             location_code_column_length = int(DocumentDetail.objects.get(
-                document_id = self.document.id,
-                doc_detail_type_id = DocDetailType.objects.get(name=\
-                    'Location Code Column Length')
+                document_id=self.document.id,
+                doc_detail_type_id=DocDetailType.objects.get(
+                    name='Location Code Column Length')
             ).doc_detail_value)
 
             ## truncate the location_codes in accordance to the value above ##
@@ -255,7 +258,6 @@ class ComplexDocTransform(DocTransform):
             pass
 
         return csv_df
-
 
     def process_file(self):
         '''
@@ -271,7 +273,7 @@ class ComplexDocTransform(DocTransform):
         doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
         # doc_df = self.process_date_column(doc_df)
 
-        doc_obj = Document.objects.get(id = self.document.id)
+        doc_obj = Document.objects.get(id=self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)
         doc_obj.save()
 
@@ -287,15 +289,17 @@ class ComplexDocTransform(DocTransform):
                 ss['instance_guid'] = instance_guid
                 batch[instance_guid] = ss
 
-        object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
+        object_list = [SourceSubmission(**v) for k, v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
         return [x.id for x in ss]
 
+
 class DateDocTransform(DocTransform):
 
-    def __init__(self,user_id, document_id,raw_csv_df=None):
+    def __init__(self, user_id, document_id, raw_csv_df=None):
 
-        super(DateDocTransform, self).__init__(user_id, document_id, raw_csv_df)
+        super(DateDocTransform, self).__init__(
+            user_id, document_id, raw_csv_df)
 
     def clean_date(self, date_string):
 
@@ -314,7 +318,7 @@ class DateDocTransform(DocTransform):
 
         submission_ix, submission_data = submission[0], submission[1:]
 
-        submission_data = dict(zip(self.file_header,submission_data))
+        submission_data = dict(zip(self.file_header, submission_data))
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
@@ -346,7 +350,7 @@ class DateDocTransform(DocTransform):
         doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
         # doc_df = self.process_date_column(doc_df)
 
-        doc_obj = Document.objects.get(id = self.document.id)
+        doc_obj = Document.objects.get(id=self.document.id)
         doc_obj.file_header = list(doc_df.columns.values)
         doc_obj.save()
 
@@ -362,7 +366,7 @@ class DateDocTransform(DocTransform):
                 ss['instance_guid'] = instance_guid
                 batch[instance_guid] = ss
 
-        object_list = [SourceSubmission(**v) for k,v in batch.iteritems()]
+        object_list = [SourceSubmission(**v) for k, v in batch.iteritems()]
         ss = SourceSubmission.objects.bulk_create(object_list)
         return [x.id for x in ss]
 
@@ -378,9 +382,9 @@ class DateDocTransform(DocTransform):
 
         try:
             location_code_column_length = int(DocumentDetail.objects.get(
-                document_id = self.document.id,
-                doc_detail_type_id = DocDetailType.objects.get(name=\
-                    'Location Code Column Length')
+                document_id=self.document.id,
+                doc_detail_type_id=DocDetailType.objects.get(
+                    name='Location Code Column Length')
             ).doc_detail_value)
 
             ## truncate the location_codes in accordance to the value above ##

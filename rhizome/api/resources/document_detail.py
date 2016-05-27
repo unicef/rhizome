@@ -3,6 +3,7 @@ from tastypie.resources import ALL
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DocumentDetail
 
+
 class DocumentDetailResource(BaseModelResource):
     '''
     **POST Request** 
@@ -50,8 +51,8 @@ class DocumentDetailResource(BaseModelResource):
             doc_detail_type = request.GET['doc_detail_type']
             return  DocumentDetail.objects\
                 .filter(doc_detail_type__name=doc_detail_type)\
-                .values('id','doc_detail_type_id','doc_detail_type__name',\
-                    'document_id', 'doc_detail_value')
+                .values('id', 'doc_detail_type_id', 'doc_detail_type__name',
+                        'document_id', 'doc_detail_value')
         except KeyError:
             pass
 
@@ -59,10 +60,9 @@ class DocumentDetailResource(BaseModelResource):
             doc_id = request.GET['document_id']
             return  DocumentDetail.objects\
                 .filter(document_id=doc_id)\
-                .values('id','doc_detail_type_id','doc_detail_type__name',\
-                    'document_id', 'doc_detail_value')
+                .values('id', 'doc_detail_type_id', 'doc_detail_type__name',
+                        'document_id', 'doc_detail_value')
         except KeyError:
             return DocumentDetail.objects.all()\
-                .values('id','doc_detail_type_id','doc_detail_type__name',\
-                'document_id', 'doc_detail_value')
-
+                .values('id', 'doc_detail_type_id', 'doc_detail_type__name',
+                        'document_id', 'doc_detail_value')

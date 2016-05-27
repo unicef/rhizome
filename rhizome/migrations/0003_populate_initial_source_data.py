@@ -16,6 +16,7 @@ from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+
 def populate_source_data(apps, schema_editor):
     '''
     Here, we take an excel file that has the same schema as the database
@@ -34,6 +35,7 @@ def populate_source_data(apps, schema_editor):
     #     source_sheet_df = xl.parse(s)
     #     process_source_sheet(source_sheet_df, s)
 
+
 def process_source_sheet(source_sheet_df, sheet_name):
 
     user_id = -1
@@ -44,8 +46,8 @@ def process_source_sheet(source_sheet_df, sheet_name):
     doc_file_text = sheet_name + '.csv'
 
     new_doc = Document.objects.create(
-        doc_title = doc_file_text,
-        guid = 'test',
+        doc_title=doc_file_text,
+        guid='test',
         docfile=doc_file_text
     )
 
@@ -62,17 +64,19 @@ def process_source_sheet(source_sheet_df, sheet_name):
     ## datapoints -> computed datapoints ##
     ar = AggRefresh()
 
+
 def create_doc_details(doc_id):
 
     doc_detail_types = ['uq_id_column', 'date_column', 'location_column']
 
     for dd_type in doc_detail_types:
         DocumentDetail.objects.create(
-            document_id = doc_id,
-            doc_detail_type_id = DocDetailType.objects.get(name = dd_type).id,
-            doc_detail_value = dd_type ## this implies that the source columns
-                                        ## are named with the above convention
+            document_id=doc_id,
+            doc_detail_type_id=DocDetailType.objects.get(name=dd_type).id,
+            doc_detail_value=dd_type  # this implies that the source columns
+            # are named with the above convention
         )
+
 
 class Migration(migrations.Migration):
 

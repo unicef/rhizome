@@ -9,6 +9,7 @@ from rhizome.agg_tasks import AggRefresh
 from django.db import transaction
 from django.db.transaction import TransactionManagementError
 
+
 class DocTransFormResource(BaseModelResource):
     '''
     **GET Request** Runs document transform, refresh master, and agg refresh for a given document
@@ -36,7 +37,8 @@ class DocTransFormResource(BaseModelResource):
         try:
             doc_id = request.GET['document_id']
         except KeyError:
-            raise DatapointsException(message='Document_id is a required API param')
+            raise DatapointsException(
+                message='Document_id is a required API param')
         # dt = DocTransform(request.user.id, doc_id)
 
         ran_complex_doc_transform = False
@@ -52,14 +54,14 @@ class DocTransFormResource(BaseModelResource):
 
             except Exception as err:
                 raise DatapointsException(message=err.message)
-        
+
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 
         if ran_complex_doc_transform:
-            doc_campaign_ids = set(list(DataPoint.objects\
-                .filter(source_submission__document_id = doc_id)\
-                .values_list('campaign_id',flat=True)))
+            doc_campaign_ids = set(list(DataPoint.objects
+                                        .filter(source_submission__document_id=doc_id)
+                                        .values_list('campaign_id', flat=True)))
 
             for c_id in doc_campaign_ids:
                 ar = AggRefresh(c_id)

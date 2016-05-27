@@ -3,6 +3,7 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import DatapointsException
 from rhizome.models import Campaign
 
+
 class CampaignResource(BaseModelResource):
     '''
     **GET Request** Returns campaigns from the database
@@ -36,12 +37,12 @@ class CampaignResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        qs = Campaign.objects.filter(\
-            top_lvl_location_id = self.top_lvl_location_id)
+        qs = Campaign.objects.filter(
+            top_lvl_location_id=self.top_lvl_location_id)
 
         if 'id__in' in request.GET:
             requested_ids = request.GET['id__in'].split(",")
-            return qs.filter(id__in = requested_ids).values().order_by('-start_date')
+            return qs.filter(id__in=requested_ids).values().order_by('-start_date')
         else:
             return qs.values().order_by('-start_date')
 
@@ -49,7 +50,7 @@ class CampaignResource(BaseModelResource):
 
         post_data = bundle.data
 
-        if 'id' in post_data and post_data['id'] !=-1:
+        if 'id' in post_data and post_data['id'] != -1:
             campaign_id = int(post_data['id'])
         else:
             campaign_id = None
@@ -66,8 +67,8 @@ class CampaignResource(BaseModelResource):
                 'pct_complete': post_data['pct_complete']
             }
         except Exception as error:
-            print 'Please provide "{0}" for the campaign.'.format(error)
-            raise DatapointsException('Please provide "{0}" for the campaign.'.format(error))
+            err_msg = 'Please provide "{0}" for the campaign'
+
 
         try:
             campaign, created = Campaign.objects.update_or_create(

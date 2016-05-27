@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DocDataPoint
 
+
 class DocDataPointResource(BaseModelResource):
     '''
     - **GET Requests:**
@@ -23,4 +24,3 @@ class DocDataPointResource(BaseModelResource):
         )[:50].values('location__name', 'indicator__short_name', 'campaign__name', 'value')
 
         return queryset
-

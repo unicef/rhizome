@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 
+
 class UserCheckMixin(object):
     '''
     Used to check if the user has functional permissions to perform what they
@@ -12,12 +13,13 @@ class UserCheckMixin(object):
         return True
 
     def user_check_failed(self, request, *args, **kwargs):
-        return HttpResponseRedirect(self.user_check_failure_path,'sorry you dont have permissions')
+        return HttpResponseRedirect(self.user_check_failure_path, 'sorry you dont have permissions')
 
     def dispatch(self, request, *args, **kwargs):
         if not self.check_user(request.user):
             return self.user_check_failed(request, *args, **kwargs)
         return super(UserCheckMixin, self).dispatch(request, *args, **kwargs)
+
 
 class PermissionRequiredMixin(UserCheckMixin):
     '''

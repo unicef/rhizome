@@ -7,18 +7,18 @@ from rhizome.models import *
 from rhizome.models import SourceObjectMap
 
 
-
 class IndicatorCache(object):
     '''
     from rhizome.cache_meta import IndicatorCache as ic
     ic_obj = ic(indicator_id_list=[164])
     ic_obj.main()
     '''
-    def __init__(self, indicator_id_list = None):
+
+    def __init__(self, indicator_id_list=None):
 
         if not indicator_id_list:
-            self.indicator_id_list = Indicator.objects.all().values_list('id',\
-                flat =True)
+            self.indicator_id_list = Indicator.objects.all().values_list('id',
+                                                                         flat=True)
         else:
             self.indicator_id_list = indicator_id_list
 
@@ -41,7 +41,8 @@ class IndicatorCache(object):
             filtered_tag_df = tag_df[tag_df['indicator_id'] == ind.id]
             filtered_bound_df = bound_df[bound_df['indicator_id'] == ind.id]
 
-            ind.bound_json = [row.to_dict() for ix, row in filtered_bound_df.iterrows()]
+            ind.bound_json = [row.to_dict()
+                              for ix, row in filtered_bound_df.iterrows()]
             ind.tag_json = list(filtered_tag_df['indicator_tag_id'].unique())
 
             ind.save()
@@ -55,7 +56,8 @@ class IndicatorCache(object):
             indicator_id__in=self.indicator_id_list).values_list(*tag_cols)), columns=tag_cols)
 
         bound_df = DataFrame(list(
-            IndicatorBound.objects.filter(indicator_id__in=self.indicator_id_list).values_list(*bound_cols)
+            IndicatorBound.objects.filter(
+                indicator_id__in=self.indicator_id_list).values_list(*bound_cols)
         ), columns=bound_cols)
 
         qs = Indicator.objects.filter(id__in=self.indicator_id_list)
@@ -71,7 +73,7 @@ class LocationTreeCache(object):
 
     def __init__(self):
 
-        self.location_tree_columns = ['location_id','parent_location_id']
+        self.location_tree_columns = ['location_id', 'parent_location_id']
         self.location_tree_df = DataFrame(columns=self.location_tree_columns)
 
     def main(self):
@@ -82,7 +84,7 @@ class LocationTreeCache(object):
 
         ## now iterate from bottom to bottom to top ##
         location_type_loop_order = LocationType.objects.all()\
-            .values_list('id',flat=True).order_by('-admin_level')
+            .values_list('id', flat=True).order_by('-admin_level')
 
         for lt_id in location_type_loop_order:
             self.process_location_tree_lvl(lt_id)
@@ -93,18 +95,18 @@ class LocationTreeCache(object):
 
         lt_batch = []
 
-        location_df = DataFrame(list(Location.objects\
-            .filter(location_type_id = location_type_id)\
-            .values_list('id','parent_location_id')),columns=self.location_tree_columns)
+        location_df = DataFrame(list(Location.objects
+                                     .filter(location_type_id=location_type_id)
+                                     .values_list('id', 'parent_location_id')), columns=self.location_tree_columns)
 
-        merged_df = location_df.merge(self.location_tree_df
-            ,left_on='location_id',right_on='parent_location_id')
+        merged_df = location_df.merge(
+            self.location_tree_df, left_on='location_id', right_on='parent_location_id')
 
-        cleaned_merge_df = merged_df[['location_id_y','parent_location_id_x']]
+        cleaned_merge_df = merged_df[['location_id_y', 'parent_location_id_x']]
         cleaned_merge_df.columns = self.location_tree_columns
 
-        self.location_tree_df = concat([self.location_tree_df,location_df,\
-            cleaned_merge_df])
+        self.location_tree_df = concat([self.location_tree_df, location_df,
+                                        cleaned_merge_df])
 
         self.location_tree_df.drop_duplicates()
 
@@ -117,17 +119,17 @@ class LocationTreeCache(object):
         self.location_tree_df.dropna(inplace=True)
         for loc in Location.objects.filter(parent_location_id__isnull=True):
             lt_batch.append(LocationTree(**{
-                'location_id':loc.id,
-                'parent_location_id':loc.id,
-                'lvl':0,
+                'location_id': loc.id,
+                'parent_location_id': loc.id,
+                'lvl': 0,
             }))
 
         ## iterate through the location tree df created above ##
-        for ix,loc in self.location_tree_df.iterrows():
+        for ix, loc in self.location_tree_df.iterrows():
             lt_batch.append(LocationTree(**{
-                'location_id':loc.location_id,
-                'parent_location_id':loc.parent_location_id,
-                'lvl':0,
+                'location_id': loc.location_id,
+                'parent_location_id': loc.parent_location_id,
+                'lvl': 0,
             }))
 
         LocationTree.objects.all().delete()
@@ -137,7 +139,7 @@ class LocationTreeCache(object):
 def update_source_object_names():
 
     som_raw = SourceObjectMap.objects.raw(
-    '''
+        '''
         DROP TABLE IF EXISTS _tmp_object_names;
         CREATE TEMP TABLE _tmp_object_names
         AS
@@ -169,6 +171,7 @@ def update_source_object_names():
     for row in som_raw:
         print row.id
 
+
 def minify_geo_json():
     '''
     Make a square a triangle.. an octagon a hexagon.  Shrink the Number of
@@ -196,7 +199,7 @@ def minify_geo_json():
         geo_json = json.loads(shp.geo_json)
         polygon = geo_json['geometry']['coordinates']
 
-        if geo_json['geometry']['type'] == 'Polygon': # MultiPolygons trip me up ##
+        if geo_json['geometry']['type'] == 'Polygon':  # MultiPolygons trip me up ##
 
             min_polygon = minify_polygon(polygon)
             new_polygon_list.append(min_polygon)
@@ -204,11 +207,12 @@ def minify_geo_json():
             geo_json['geometry']['coordinates'] = new_polygon_list
 
         shp_obj = \
-            MinGeo(**{'location_id':shp.location_id,'geo_json':geo_json})
+            MinGeo(**{'location_id': shp.location_id, 'geo_json': geo_json})
         min_geo_batch.append(shp_obj)
 
     MinGeo.objects.all().delete()
     MinGeo.objects.bulk_create(min_geo_batch)
+
 
 def minify_polygon(polygon):
     '''
@@ -218,11 +222,11 @@ def minify_polygon(polygon):
     overlap for adjacent shapes ) is theoretically 1/5th the size.
     '''
 
-    shape_df = DataFrame(polygon[0], columns=['lat','lon'])
+    shape_df = DataFrame(polygon[0], columns=['lat', 'lon'])
 
     shape_df['index_col'] = shape_df.index
-    shape_df['to_take'] = 0 ## shape_df['index_col'].map(lambda x: x % 5)
-    filtered_df = shape_df[shape_df['to_take'] == 0][['lat','lon']]
+    shape_df['to_take'] = 0  # shape_df['index_col'].map(lambda x: x % 5)
+    filtered_df = shape_df[shape_df['to_take'] == 0][['lat', 'lon']]
 
     return filtered_df.values.tolist()
 

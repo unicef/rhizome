@@ -25,6 +25,7 @@ class CacheJob(models.Model):
         db_table = 'cache_job'
         ordering = ('-date_attempted',)
 
+
 class UserGroup(models.Model):
     '''
     auth_user_groups is how django handels user group membership by default.
@@ -41,6 +42,7 @@ class UserGroup(models.Model):
     class Meta:
         db_table = 'auth_user_groups'
         managed = False
+
 
 class Office(models.Model):
     '''
@@ -92,6 +94,7 @@ class LocationType(models.Model):
     class Meta:
         db_table = 'location_type'
 
+
 class Location(models.Model):
     '''
     A point in space with a name, location_code, office_id, lat/lon, and parent
@@ -115,6 +118,7 @@ class Location(models.Model):
     class Meta:
         db_table = 'location'
 
+
 class LocationTree(models.Model):
     '''
     location tree that is refreshed with "refresh_metadata"
@@ -123,13 +127,15 @@ class LocationTree(models.Model):
     stored with the cooresponding level to indicate its depth in the tree.
     '''
 
-    parent_location = models.ForeignKey(Location, related_name='ultimate_parent')
+    parent_location = models.ForeignKey(
+        Location, related_name='ultimate_parent')
     location = models.ForeignKey(Location)
     lvl = models.IntegerField()
 
     class Meta:
         db_table = 'location_tree'
         unique_together = ('parent_location', 'location')
+
 
 class LocationPolygon(models.Model):
     '''
@@ -142,6 +148,7 @@ class LocationPolygon(models.Model):
     class Meta:
         db_table = 'location_polygon'
 
+
 class LocationPermission(models.Model):
     '''
     This controls what the user sees.  If you have Nigeria as the top lvl
@@ -153,6 +160,7 @@ class LocationPermission(models.Model):
 
     class Meta:
         db_table = 'location_permission'
+
 
 class MinGeo(models.Model):
     '''
@@ -193,12 +201,12 @@ class Indicator(models.Model):
     is_reported = models.BooleanField(default=True)
     data_format = models.CharField(max_length=10)
     created_at = models.DateTimeField(auto_now=True)
-    bound_json = JSONField(default = [])
-    tag_json = JSONField(default = [])
-    office_id = JSONField(default = [])
+    bound_json = JSONField(default=[])
+    tag_json = JSONField(default=[])
+    office_id = JSONField(default=[])
     good_bound = models.FloatField(null=True)
     bad_bound = models.FloatField(null=True)
-    source_name = models.CharField(max_length=55) ## to do: make this a FK
+    source_name = models.CharField(max_length=55)  # to do: make this a FK
 
     def __unicode__(self):
         return unicode(self.name)
@@ -206,6 +214,7 @@ class Indicator(models.Model):
     class Meta:
         db_table = 'indicator'
         ordering = ('name',)
+
 
 class CalculatedIndicatorComponent(models.Model):
     '''
@@ -224,7 +233,8 @@ class CalculatedIndicatorComponent(models.Model):
     '''
 
     indicator = models.ForeignKey(Indicator, related_name='indicator_master')
-    indicator_component = models.ForeignKey(Indicator, related_name='indicator_component')
+    indicator_component = models.ForeignKey(
+        Indicator, related_name='indicator_component')
     calculation = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now=True)
 
@@ -233,6 +243,7 @@ class CalculatedIndicatorComponent(models.Model):
 
     class Meta:
         db_table = 'calculated_indicator_component'
+
 
 class IndicatorBound(models.Model):
     '''
@@ -252,6 +263,7 @@ class IndicatorBound(models.Model):
 
     class Meta:
         db_table = 'indicator_bound'
+
 
 class IndicatorTag(models.Model):
     '''
@@ -276,15 +288,16 @@ class IndicatorTag(models.Model):
 
     def get_indicator_ids_for_tag(self):
 
-        df_cols = ['id','parent_tag_id']
+        df_cols = ['id', 'parent_tag_id']
 
-        tag_list = list(IndicatorTag.objects.filter(parent_tag_id = self.id)\
-            .values_list(*df_cols))
+        tag_list = list(IndicatorTag.objects.filter(parent_tag_id=self.id)
+                        .values_list(*df_cols))
 
         tag_list.append((self.id, None))
 
-        ind_df = DataFrame(tag_list,columns=df_cols)
-        return Indicator.objects.all().values_list('id',flat=True)
+        ind_df = DataFrame(tag_list, columns=df_cols)
+        return Indicator.objects.all().values_list('id', flat=True)
+
 
 class IndicatorToTag(models.Model):
     '''
@@ -299,6 +312,7 @@ class IndicatorToTag(models.Model):
         unique_together = ('indicator', 'indicator_tag')
         ordering = ('-id',)
 
+
 class IndicatorToOffice(models.Model):
     '''
     Way to filter indicators in the API without querying the entire DB.  used
@@ -311,6 +325,7 @@ class IndicatorToOffice(models.Model):
 
     class Meta:
         db_table = 'indicator_to_office'
+
 
 class IndicatorClassMap(models.Model):
     '''
@@ -329,6 +344,8 @@ class IndicatorClassMap(models.Model):
 #===========================================================================#
 #                                CAMPAIGN MODELS                            #
 #===========================================================================#
+
+
 class CampaignType(models.Model):
     '''
     Each campaign must have a campaign_type_id.
@@ -344,6 +361,7 @@ class CampaignType(models.Model):
 
     class Meta:
         db_table = 'campaign_type'
+
 
 class Campaign(models.Model):
     '''
@@ -393,22 +411,22 @@ class Campaign(models.Model):
 
     def get_datapoints(self):
 
-        return DataPointComputed.objects.filter(campaign_id = self.id).values()
+        return DataPointComputed.objects.filter(campaign_id=self.id).values()
 
     def get_raw_datapoint_ids(self):
 
-        flat_location_id_list = LocationTree.objects.filter(parent_location_id=\
-            self.top_lvl_location_id).values_list('location_id',flat=True)
+        flat_location_id_list = LocationTree.objects.filter(
+            parent_location_id=self.top_lvl_location_id).values_list('location_id', flat=True)
 
         # indicator_id_list = CampaignToIndicator.objects.filter(campaign_id = \
         #     self.id).values_list('indicator_id',flat=True)
 
         qs = DataPoint.objects.filter(
-            location_id__in = flat_location_id_list,
+            location_id__in=flat_location_id_list,
             # indicator_id__in = indicator_id_list,
-            data_date__lt = self.end_date,
-            data_date__gte = self.start_date,
-        ).values_list('id',flat=True)
+            data_date__lt=self.end_date,
+            data_date__gte=self.start_date,
+        ).values_list('id', flat=True)
 
         return qs
 
@@ -417,11 +435,11 @@ class Campaign(models.Model):
         super(Campaign, self).save(**kwargs)
 
         top_lvl_tag_obj = IndicatorTag.objects\
-            .get(id = self.top_lvl_indicator_tag_id)
+            .get(id=self.top_lvl_indicator_tag_id)
         indicator_id_list = top_lvl_tag_obj.get_indicator_ids_for_tag()
 
-        cti_batch = [CampaignToIndicator(**{'campaign_id':self.id,\
-            'indicator_id':ind_id}) for ind_id in indicator_id_list ]
+        cti_batch = [CampaignToIndicator(**{'campaign_id': self.id,
+                                            'indicator_id': ind_id}) for ind_id in indicator_id_list]
 
         CampaignToIndicator.objects.filter(campaign_id=self.id).delete()
         CampaignToIndicator.objects.bulk_create(cti_batch)
@@ -431,14 +449,14 @@ class Campaign(models.Model):
     def mark_datapoints_as_to_process(self):
 
         dp_ids = self.get_raw_datapoint_ids()
-        DataPoint.objects.filter(id__in=dp_ids,cache_job_id = -2
-            ).update(cache_job_id = -1)
-
+        DataPoint.objects.filter(id__in=dp_ids, cache_job_id=-2
+                                 ).update(cache_job_id=-1)
 
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
         unique_together = ('office', 'start_date')
+
 
 class CampaignToIndicator(models.Model):
 
@@ -448,7 +466,6 @@ class CampaignToIndicator(models.Model):
     class Meta:
         db_table = 'campaign_to_indicator'
         unique_together = ('indicator', 'campaign')
-
 
 
 #===========================================================================#
@@ -464,6 +481,7 @@ class CustomChart(models.Model):
 
     class Meta:
         db_table = 'custom_chart'
+
 
 class CustomDashboard(models.Model):
     '''
@@ -481,6 +499,7 @@ class CustomDashboard(models.Model):
     class Meta:
         db_table = 'custom_dashboard'
 
+
 class ChartToDashboard(models.Model):
 
     chart = models.ForeignKey(CustomChart)
@@ -494,6 +513,8 @@ class ChartToDashboard(models.Model):
 #===========================================================================#
 #                              SOURCE DATA MODELS                           #
 #===========================================================================#
+
+
 class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d', null=True)
@@ -513,6 +534,7 @@ class Document(models.Model):
 
         super(Document, self).save(*args, **kwargs)
 
+
 class SourceObjectMap(models.Model):
     # FIXME -> need to check what would be foreign keys
     # so region_maps / campaign_maps are valid
@@ -529,6 +551,7 @@ class SourceObjectMap(models.Model):
         db_table = 'source_object_map'
         unique_together = (('content_type', 'source_object_code'))
 
+
 class DocumentSourceObjectMap(models.Model):
 
     document = models.ForeignKey(Document)
@@ -539,6 +562,7 @@ class DocumentSourceObjectMap(models.Model):
         unique_together = (('document', 'source_object_map'))
         db_table = 'doc_object_map'
 
+
 class DocDetailType(models.Model):
     '''
     '''
@@ -546,6 +570,7 @@ class DocDetailType(models.Model):
 
     class Meta:
         db_table = 'doc_detail_type'
+
 
 class DocumentDetail(models.Model):
     '''
@@ -558,6 +583,7 @@ class DocumentDetail(models.Model):
     class Meta:
         db_table = 'doc_detail'
         unique_together = (('document', 'doc_detail_type'))
+
 
 class SourceSubmission(models.Model):
 
@@ -579,8 +605,8 @@ class SourceSubmission(models.Model):
     def get_location_id(self):
 
         try:
-            l_id = SourceObjectMap.objects.get(content_type = 'location',\
-                source_object_code = self.location_code).master_object_id
+            l_id = SourceObjectMap.objects.get(content_type='location',
+                                               source_object_code=self.location_code).master_object_id
         except ObjectDoesNotExist:
             l_id = None
 
@@ -589,8 +615,8 @@ class SourceSubmission(models.Model):
     def get_campaign_id(self):
 
         try:
-            c_id = SourceObjectMap.objects.get(content_type = 'campaign',\
-                source_object_code = self.campaign_code).master_object_id
+            c_id = SourceObjectMap.objects.get(content_type='campaign',
+                                               source_object_code=self.campaign_code).master_object_id
         except ObjectDoesNotExist:
             c_id = None
 
@@ -599,6 +625,8 @@ class SourceSubmission(models.Model):
 #===========================================================================#
 #                               DATAPOINT MODELS                            #
 #===========================================================================#
+
+
 class DataPoint(models.Model):
     '''
     The core table of the application.  This is where the raw data is stored
@@ -633,7 +661,6 @@ class DataPoint(models.Model):
         db_table = 'datapoint'
 
 
-
 class DocDataPoint(models.Model):
     '''
     For Validation of upload rhizome.
@@ -651,6 +678,7 @@ class DocDataPoint(models.Model):
     class Meta:
         db_table = 'doc_datapoint'
 
+
 class DataPointEntry(DataPoint):
     """Proxy subclass of DataPoint, for use only in API
     methods used by the manual data entry form. This model
@@ -661,6 +689,7 @@ class DataPointEntry(DataPoint):
 
     class Meta:
         proxy = True
+
 
 class DataPointComputed(models.Model):
 
@@ -674,6 +703,7 @@ class DataPointComputed(models.Model):
     class Meta:
         db_table = 'datapoint_with_computed'
         unique_together = ('location', 'campaign', 'indicator')
+
 
 class AggDataPoint(models.Model):
 

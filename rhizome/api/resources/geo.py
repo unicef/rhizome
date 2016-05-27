@@ -4,6 +4,7 @@ from rhizome.api.resources.base_non_model import BaseNonModelResource
 from tastypie import fields
 from tastypie.resources import ALL
 
+
 class GeoJsonResult(object):
     location_id = int()
     type = unicode()
@@ -43,8 +44,8 @@ class GeoResource(BaseNonModelResource):
         features = []
 
         location_ids_to_return = self.get_locations_to_return_from_url(request)
-        polygon_values_list = MinGeo.objects.filter(location_id__in=\
-            location_ids_to_return)
+        polygon_values_list = MinGeo.objects.filter(
+            location_id__in=location_ids_to_return)
         for p in polygon_values_list:
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
@@ -77,13 +78,12 @@ class GeoResource(BaseNonModelResource):
         # get rid of the meta_dict. i will add my own meta data.
         data['type'] = "FeatureCollection"
         data['features'] = data['objects']
-        data['error'] = None ## fix this.
+        data['error'] = None  # fix this.
 
         data.pop("objects", None)
         data.pop("meta", None)
 
         if 'location_id__in' in request.GET:
             data['location_id__in'] = request.GET['location_id__in']
-
 
         return data

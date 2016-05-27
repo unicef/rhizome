@@ -1,11 +1,12 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from rhizome.cache_meta import LocationTreeCache
 from setup_helpers import TestSetupHelpers
 
 
-class CampaignResourceTest(ResourceTestCase):
+class CampaignResourceTest(RhizomeAPITestCase):
+
     def setUp(self):
 
         ## instantiate the test client and all other methods ##
@@ -21,46 +22,45 @@ class CampaignResourceTest(ResourceTestCase):
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
             self.o.id,
-            location_code ='Nigeria',
+            location_code='Nigeria',
             location_name='Nigeria')
 
         self.sub_location = self.ts.create_arbitrary_location(
             self.lt.id,
             self.o.id,
-            location_name = 'Kano',
-            location_code = 'Kano',
-            parent_location_id = self.top_lvl_location.id)
+            location_name='Kano',
+            location_code='Kano',
+            parent_location_id=self.top_lvl_location.id)
 
         self.it = IndicatorTag.objects.create(tag_name='Polio')
 
         self.ct = CampaignType.objects.create(name='NID')
         self.can_see_campaign = self.ts.create_arbitrary_campaign(
-            office_id = self.ts.create_arbitrary_office(name='test1').id,
-            campaign_type_id = self.ct.id,
-            location_id = self.top_lvl_location.id,
-            indicator_tag_id = self.it.id,
+            office_id=self.ts.create_arbitrary_office(name='test1').id,
+            campaign_type_id=self.ct.id,
+            location_id=self.top_lvl_location.id,
+            indicator_tag_id=self.it.id,
             name="can_see"
         )
 
         self.can_see_campaign_2 = self.ts.create_arbitrary_campaign(
-            office_id = self.ts.create_arbitrary_office(name='test2').id,
-            campaign_type_id = self.ct.id,
-            location_id = self.top_lvl_location.id,
-            indicator_tag_id = self.it.id,
+            office_id=self.ts.create_arbitrary_office(name='test2').id,
+            campaign_type_id=self.ct.id,
+            location_id=self.top_lvl_location.id,
+            indicator_tag_id=self.it.id,
             name="can_see2"
         )
 
-
         self.can_not_see_campaign = self.ts.create_arbitrary_campaign(
-            office_id = self.o.id,
-            campaign_type_id = self.ct.id,
-            location_id = self.not_allowed_to_see_location.id,
-            indicator_tag_id = self.it.id,
+            office_id=self.o.id,
+            campaign_type_id=self.ct.id,
+            location_id=self.not_allowed_to_see_location.id,
+            indicator_tag_id=self.it.id,
         )
 
         ### set the user permission ###
-        LocationPermission.objects.create(user_id = self.ts.user.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+        LocationPermission.objects.create(user_id=self.ts.user.id,
+                                          top_lvl_location_id=self.top_lvl_location.id)
 
         self.ts.get_credentials(self)
 
@@ -75,15 +75,16 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertEqual(len(response_data['objects']), 2)
 
     def test_campaign_get_id_list(self):
-        campaign_id_list = [self.can_see_campaign.id, self.can_see_campaign_2.id]
-        data = {'id__in':str(campaign_id_list).strip('[]')}
+        campaign_id_list = [self.can_see_campaign.id,
+                            self.can_see_campaign_2.id]
+        data = {'id__in': str(campaign_id_list).strip('[]')}
         resp = self.ts.get(self, '/api/v1/campaign/', data=data)
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 2)
 
     def test_campaign_get_id_list_invalid(self):
-        data = {'id__in':12345}
+        data = {'id__in': 12345}
         resp = self.ts.get(self, '/api/v1/campaign/', data=data)
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
@@ -102,7 +103,7 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpApplicationError(resp)
 
     def test_post_campaign(self):
-        data={
+        data = {
             'name': 'something',
             'top_lvl_location_id': self.top_lvl_location.id,
             'top_lvl_indicator_tag_id': self.it.id,
@@ -118,8 +119,8 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertEqual(response_data['name'], 'something')
 
     def test_post_campaign_with_id(self):
-        id_val =1345
-        data={
+        id_val = 1345
+        data = {
             'name': 'something',
             'top_lvl_location_id': self.top_lvl_location.id,
             'top_lvl_indicator_tag_id': self.it.id,
@@ -136,7 +137,7 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertEqual(response_data['id'], id_val)
 
     def test_post_campaign_missing_field(self):
-        data={
+        data = {
             'top_lvl_indicator_tag_id': self.it.id,
             'office_id': self.o.id,
             'campaign_type_id': self.ct.id,
@@ -148,7 +149,7 @@ class CampaignResourceTest(ResourceTestCase):
         self.assertHttpApplicationError(resp)
 
     def test_post_campaign_invalid_ids(self):
-        data={
+        data = {
             'name': 'something',
             'top_lvl_location_id': 0,
             'top_lvl_indicator_tag_id': 33,
@@ -160,5 +161,3 @@ class CampaignResourceTest(ResourceTestCase):
         }
         resp = self.ts.post(self, '/api/v1/campaign/', data=data)
         self.assertHttpApplicationError(resp)
-
-

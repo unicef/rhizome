@@ -6,6 +6,7 @@ from rhizome.models import CustomDashboard, CustomChart
 
 import json
 
+
 class CustomDashboardResource(BaseModelResource):
     '''
     **GET Requests:** Get a dashboard. If no params are passed, returns all the dashboards
@@ -43,13 +44,13 @@ class CustomDashboardResource(BaseModelResource):
 
         if response_data['rows']:
             response_data_rows = response_data['rows']
-            chart_uuids =[]
+            chart_uuids = []
             for row in response_data_rows:
                 chart_uuids = chart_uuids + (row['charts'])
-            charts = list(CustomChart.objects.filter(uuid__in = chart_uuids))
+            charts = list(CustomChart.objects.filter(uuid__in=chart_uuids))
 
             # create a dict to get random access
-            charts_dict ={}
+            charts_dict = {}
             for chart in charts:
                 chart_dict = chart.__dict__
                 chart_dict.pop('_state')
@@ -90,7 +91,7 @@ class CustomDashboardResource(BaseModelResource):
         try:
             rows = json.loads(post_data['rows'])
         except KeyError:
-            rows =None
+            rows = None
 
         defaults = {
             'id': dash_id,
@@ -101,8 +102,10 @@ class CustomDashboardResource(BaseModelResource):
         }
 
         if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
-            raise DatapointsException('the custom dashboard "{0}" already exists'.format(title))
-        dashboard, created = CustomDashboard.objects.update_or_create(id=dash_id, defaults=defaults)
+            raise DatapointsException(
+                'the custom dashboard "{0}" already exists'.format(title))
+        dashboard, created = CustomDashboard.objects.update_or_create(
+            id=dash_id, defaults=defaults)
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
         return bundle

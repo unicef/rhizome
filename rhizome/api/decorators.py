@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.core import urlresolvers
 
+
 def html_decorator(func):
     """
     This decorator wraps the output of the django debug tooldbar in html.
@@ -17,6 +18,7 @@ def html_decorator(func):
         return HttpResponse(wrapped)
 
     return _decorated
+
 
 @html_decorator
 def api_debug(request):

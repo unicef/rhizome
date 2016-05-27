@@ -12,6 +12,7 @@ from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base import BaseResource
 from django.core.exceptions import ObjectDoesNotExist
 
+
 class BaseModelResource(ModelResource, BaseResource):
     '''
     This applies to only the V1 API.  This method inherits from Tastypie's
@@ -31,7 +32,8 @@ class BaseModelResource(ModelResource, BaseResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
+        authentication = MultiAuthentication(
+            CustomSessionAuthentication(), ApiKeyAuthentication())
         authorization = Authorization()
         always_return_data = True
         allowed_methods = ['get', 'post', 'delete', 'patch']
@@ -77,7 +79,8 @@ class BaseModelResource(ModelResource, BaseResource):
         bundle = self.alter_detail_data_to_serialize(request, bundle)
 
         # Now update the bundle in-place.
-        deserialized = self.deserialize(request, request.body, format=request.META.get('CONTENT_TYPE', 'application/json'))
+        deserialized = self.deserialize(request, request.body, format=request.META.get(
+            'CONTENT_TYPE', 'application/json'))
         self.update_in_place(request, bundle, deserialized)
 
         if not self._meta.always_return_data:
@@ -90,7 +93,6 @@ class BaseModelResource(ModelResource, BaseResource):
             bundle = self.alter_detail_data_to_serialize(request, bundle)
             return self.create_response(request, bundle, response_class=http.HttpAccepted)
 
-
     def get_detail(self, request, **kwargs):
         """
         Returns a single serialized resource.
@@ -98,7 +100,6 @@ class BaseModelResource(ModelResource, BaseResource):
         set and serializes it.
         Should return a HttpResponse (200 OK).
         """
-
 
         try:
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
@@ -118,7 +119,8 @@ class BaseModelResource(ModelResource, BaseResource):
         """
 
         base_bundle = self.build_bundle(request=request)
-        objects = self.obj_get_list(bundle=base_bundle, **self.remove_api_resource_names(kwargs))
+        objects = self.obj_get_list(
+            bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         bundles = []
 
         # this is a temporary hack to get data_entry working ##
@@ -144,7 +146,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
             bundles.append(obj)
 
-        response_meta = self.get_response_meta(len(objects))
+        response_meta = self.get_response_meta(request, bundles)
 
         response_data = {
             'objects': bundles,
@@ -153,13 +155,3 @@ class BaseModelResource(ModelResource, BaseResource):
         }
 
         return self.create_response(request, response_data)
-
-    def get_response_meta(self, object_len):
-
-        meta_dict = {
-            'top_lvl_location_id': self.top_lvl_location_id,
-            'limit': None,  # paginator.get_limit(),
-            'offset': None,  # paginator.get_offset(),
-            'total_count': object_len,
-        }
-        return meta_dict

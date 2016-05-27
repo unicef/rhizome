@@ -1,6 +1,7 @@
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models import Campaign, CustomChart, CustomDashboard, Indicator, IndicatorTag, IndicatorToTag,Location, Office, User
+from rhizome.models import Campaign, CustomChart, CustomDashboard, Indicator, IndicatorTag, IndicatorToTag, Location, Office, User
+
 
 class AllMetaResult(object):
     campaigns = list()
@@ -12,6 +13,7 @@ class AllMetaResult(object):
     locations = list()
     offices = list()
     is_superuser = bool()
+
 
 class AllMetaResource(BaseNonModelResource):
     '''
@@ -36,7 +38,6 @@ class AllMetaResource(BaseNonModelResource):
     def obj_get_list(self, bundle, **kwargs):
         return self.get_object_list(bundle.request)
 
-
     def get_object_list(self, request):
         qs = []
         am_result = AllMetaResult()
@@ -48,7 +49,8 @@ class AllMetaResource(BaseNonModelResource):
         am_result.indicators_to_tags = IndicatorToTag.objects.all().values()
         am_result.locations = Location.objects.all().values()
         am_result.offices = Office.objects.all().values()
-        am_result.is_superuser = User.objects.get(id = request.user.id).is_superuser
+        am_result.is_superuser = User.objects.get(
+            id=request.user.id).is_superuser
         qs.append(am_result)
 
         return qs

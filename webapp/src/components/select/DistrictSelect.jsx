@@ -6,7 +6,7 @@ import DropdownMenuItem from 'components/dropdown/DropdownMenuItem'
 
 const filters = [
   { id: 1, value: 0, name: 'All Districts', type: 'LPD Status' },
-  { id: -1, value: -1, name: 'All LPDs', type: 'LPD Status' },
+  { id: -1, value: [1,2,3] , name: 'All LPDs', type: 'LPD Status' },
   { id: 2, value: 1, name: 'LPD 1', type: 'LPD Status' },
   { id: 3, value: 2, name: 'LPD 2', type: 'LPD Status' },
   { id: 4, value: 3, name: 'LPD 3', type: 'LPD Status' }

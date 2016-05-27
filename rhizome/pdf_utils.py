@@ -4,6 +4,7 @@ import codecs
 
 
 class Configuration(object):
+
     def __init__(self, wkhtmltopdf='', wkhtmltoimage=''):
         self.wkhtmltopdf = wkhtmltopdf
         self.wkhtmltoimage = wkhtmltoimage
@@ -30,7 +31,6 @@ class Configuration(object):
             else:
                 self.wkhtmltoimage = subprocess.Popen(
                     ['which', 'wkhtmltoimage'], stdout=subprocess.PIPE).communicate()[0].strip()
-
 
 
 def print_pdf(type, url, output_path, options=None, cookie=None, css_file=None):
@@ -65,7 +65,8 @@ def print_pdf(type, url, output_path, options=None, cookie=None, css_file=None):
 
 
 def to_pdf(args, path=None):
-    result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    result = subprocess.Popen(args, stdin=subprocess.PIPE,
+                              stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
 
     stdout, stderr = result.communicate()
 
@@ -73,9 +74,9 @@ def to_pdf(args, path=None):
 
     if 'cannot connect to X server' in stderr.decode('utf-8'):
         return IOError('%s\n'
-                    'You will need to run whktmltopdf within a "virutal" X server.\n'
-                    'Go to the link above for more information\n'
-                    'https://github.com/JazzCore/python-pdfkit/wiki/Using-wkhtmltopdf-without-X-server' % stderr.decode('utf-8'))
+                       'You will need to run whktmltopdf within a "virutal" X server.\n'
+                       'Go to the link above for more information\n'
+                       'https://github.com/JazzCore/python-pdfkit/wiki/Using-wkhtmltopdf-without-X-server' % stderr.decode('utf-8'))
 
     if 'Error' in stderr.decode('utf-8'):
         return IOError('wkhtmltopdf reported an error:\n' + stderr.decode('utf-8'))
@@ -95,10 +96,10 @@ def to_pdf(args, path=None):
                 text = f.read(4)
                 if text == '':
                     return IOError('Command failed: %s\n'
-                                  'Check whhtmltopdf output without \'quiet\' '
-                                  'option' % ' '.join(args))
+                                   'Check whhtmltopdf output without \'quiet\' '
+                                   'option' % ' '.join(args))
                 return True
         except IOError:
             return IOError('Command failed: %s\n'
-                          'Check whhtmltopdf output without \'quiet\' option' %
-                          ' '.join(args))
+                           'Check whhtmltopdf output without \'quiet\' option' %
+                           ' '.join(args))

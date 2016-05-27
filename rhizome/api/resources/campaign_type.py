@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import CampaignType
 
+
 class CampaignTypeResource(BaseModelResource):
     '''
     **GET Request** Returns all campaign types

@@ -9,8 +9,9 @@ def run_agg_refresh(apps, schema_editor):
     campaigns = Campaign.objects.all()
     campaigns = Campaign.objects.all()
     for campaign in campaigns:
-        if DataPoint.objects.filter(campaign_id = campaign.id).exists():
+        if DataPoint.objects.filter(campaign_id=campaign.id).exists():
             agg = AggRefresh(campaign.id)
+
 
 class Migration(migrations.Migration):
 
@@ -24,9 +25,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='datapoint',
             name='unique_index',
-            field=models.CharField(default=-1, max_length=255,unique=True),
+            field=models.CharField(default=-1, max_length=255, unique=True),
         ),
         # run agg_refresh
         migrations.RunPython(run_agg_refresh)
     ]
-
