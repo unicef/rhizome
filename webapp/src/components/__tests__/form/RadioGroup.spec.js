@@ -2,7 +2,6 @@ import React from 'react'
 import { expect } from 'chai'
 import { render, shallow } from 'enzyme'
 import RadioGroup from '../../form/RadioGroup'
-import sinon from 'sinon'
 
 describe ('RadioGroup', () => {
   it ('exists', () => {
