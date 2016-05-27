@@ -41,14 +41,22 @@ class AllMetaResource(BaseNonModelResource):
     def get_object_list(self, request):
         qs = []
         am_result = AllMetaResult()
-        am_result.campaigns = Campaign.objects.all().values()
-        am_result.charts = CustomChart.objects.all().values()
-        am_result.dashboards = CustomDashboard.objects.all().values()
-        am_result.indicators = Indicator.objects.all().values()
-        am_result.indicator_tags = IndicatorTag.objects.all().values()
-        am_result.indicators_to_tags = IndicatorToTag.objects.all().values()
-        am_result.locations = Location.objects.all().values()
-        am_result.offices = Office.objects.all().values()
+        am_result.campaigns = \
+            list(Campaign.objects.all().values())
+        am_result.charts = \
+            list(CustomChart.objects.all().values('id','title'))
+        am_result.dashboards = \
+            list(CustomDashboard.objects.all().values())
+        am_result.indicators = \
+            list(Indicator.objects.all().values())
+        am_result.indicator_tags = \
+            list(IndicatorTag.objects.all().values())
+        am_result.indicators_to_tags =\
+            list(IndicatorToTag.objects.all().values())
+
+        am_result.locations = list(Location.objects.all().values())
+        am_result.offices = \
+            [o for o in Office.objects.all().values()]
         am_result.is_superuser = User.objects.get(
             id=request.user.id).is_superuser
         qs.append(am_result)
