@@ -6,6 +6,7 @@ from rhizome.cache_meta import LocationTreeCache
 
 
 class LocationResourceTest(ResourceTestCase):
+    # ./manage.py test rhizome.tests.test_api_location.LocationResourceTest --settings=rhizome.settings.test
     def setUp(self):
 
         ## instantiate the test client and all other methods ##

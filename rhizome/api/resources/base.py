@@ -67,8 +67,11 @@ class BaseResource(Resource):
         else:
             location_ids =  Location.objects.all().values_list('id', flat=True)
 
-        if self.parsed_params['filter_indicator']:
+        try:
+            request.GET['filter_indicator']
             location_ids = self.get_locations_from_filter_param(location_ids)
+        except KeyError:
+            pass
 
         return location_ids
 
