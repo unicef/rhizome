@@ -1,5 +1,5 @@
 from django.test import TestCase
-from rhizome.models import *
+from rhizome.models import IndicatorTag, User, Office, LocationType, CampaignType, Indicator, IndicatorTag, Location, Document, SourceSubmission, DataPoint
 from rhizome.cache_meta import LocationTreeCache
 from datetime import date, timedelta
 

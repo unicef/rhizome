@@ -4,7 +4,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationPermission, Document
 from setup_helpers import TestSetupHelpers
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
-from rhizome.models import *
+from rhizome.models import SourceObjectMap, SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
 

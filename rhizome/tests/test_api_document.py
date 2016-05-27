@@ -8,7 +8,7 @@ from pandas import read_csv, notnull, to_datetime
 import base64
 import os
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.models import *
+from rhizome.models import DataPointComputed, IndicatorTag, Office, CacheJob, CampaignType, SourceObjectMap
 
 
 class DocumentResourceTest(ResourceTestCase):

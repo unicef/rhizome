@@ -2,7 +2,7 @@
 from tastypie.test import ResourceTestCase
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.models import *
+from rhizome.models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
 from pandas import DataFrame
 from pandas import Series
 from pandas import read_csv

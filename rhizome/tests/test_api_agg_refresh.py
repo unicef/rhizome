@@ -1,6 +1,6 @@
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.models import *
+from rhizome.models import User, Office, CacheJob, LocationType, CampaignType, Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location, Indicator
 from tastypie.test import ResourceTestCase
 
 class AggRefreshAPITestCase(ResourceTestCase):

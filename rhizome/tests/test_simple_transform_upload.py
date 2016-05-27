@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.models import *
+from rhizome.models import User, Location, DataPointComputed, SourceObjectMap, Document, DocumentSourceObjectMap, IndicatorTag, Office, CacheJob, CampaignType, Campaign, Indicator
 from django.core.exceptions import ObjectDoesNotExist
 
 class TransformUploadTestCase(TestCase):

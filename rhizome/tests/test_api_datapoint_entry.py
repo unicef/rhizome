@@ -1,7 +1,7 @@
 
 from tastypie.test import ResourceTestCase
 from setup_helpers import TestSetupHelpers
-from rhizome.models import *
+from rhizome.models import LocationPermission, CampaignType, IndicatorTag, DataPointEntry
 
 class DatapointEntryResourceTest(ResourceTestCase):
     def setUp(self):

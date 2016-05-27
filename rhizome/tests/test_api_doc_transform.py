@@ -1,9 +1,8 @@
 from tastypie.test import ResourceTestCase
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document
+    LocationPermission, Document, SourceObjectMap, IndicatorClassMap, DataPoint
 from setup_helpers import TestSetupHelpers
-from rhizome.models import *
 from datetime import datetime
 
 from rhizome.cache_meta import LocationTreeCache

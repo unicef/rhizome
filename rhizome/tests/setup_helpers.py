@@ -4,7 +4,7 @@ from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull, to_datetime
-from rhizome.models import *
+from rhizome.models import Office, Location, LocationType, SourceObjectMap, DocumentSourceObjectMap, Document, Campaign, Indicator, IndicatorTag, CacheJob, SourceSubmission
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 
 

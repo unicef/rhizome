@@ -3,7 +3,7 @@ from tastypie.test import ResourceTestCase
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from pandas import read_csv
-from rhizome.models import *
+from rhizome.models import Indicator
 from setup_helpers import TestSetupHelpers
 
 class SourceObjectMapResourceTest(ResourceTestCase):
