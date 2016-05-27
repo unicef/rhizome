@@ -13,7 +13,6 @@ class RhizomeAPITestCase(ResourceTestCase):
 
 
 	def assertHttp(self, resp, status_code):
-		isGood = resp.status_code == status_code
-		if not isGood:
+		if resp.status_code != status_code:
 			print self.deserialize(resp)
 		self.assertEqual(resp.status_code, status_code)
