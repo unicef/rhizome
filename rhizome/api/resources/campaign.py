@@ -66,7 +66,7 @@ class CampaignResource(BaseModelResource):
                 'pct_complete': post_data['pct_complete']
             }
         except Exception as error:
-            err_msg 'Please provide "{0}" for the campaign.'.format(error)
+            err_msg = 'Please provide "{0}" for the campaign'
             raise DatapointsException(err_msg.format(error))
 
         try:
