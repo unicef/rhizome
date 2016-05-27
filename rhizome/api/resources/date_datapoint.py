@@ -19,7 +19,7 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 import math
 from datetime import datetime
 
-class DatapointResource(BaseModelResource):
+class DateDatapointResource(BaseModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -57,7 +57,7 @@ class DatapointResource(BaseModelResource):
         '''
 
         # object_class = ResultObject  # use the class above to define response
-        resource_name = 'datapoint'  # cooresponds to the URL of the resource
+        resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
@@ -65,7 +65,7 @@ class DatapointResource(BaseModelResource):
         '''
         '''
 
-        super(DatapointResource, self).__init__(*args, **kwargs)
+        super(DateDatapointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
 

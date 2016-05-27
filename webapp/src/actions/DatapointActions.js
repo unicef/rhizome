@@ -12,7 +12,8 @@ const DatapointActions = Reflux.createActions({
 // ---------------------------------------------------------------------------
 DatapointActions.fetchDatapoints.listen(params => {
   const query = _prepDatapointsQuery(params)
-  const fetch = api.endPoint('/datapoint/')
+  const namespace = params['group_by_time'] === 'campaign' ? '/campaign_datapoint/' : '/date_datapoint/'
+  const fetch = api.endPoint(namespace)
   DatapointActions.fetchDatapoints.promise(
     fetch(query, null, {'cache-control': 'no-cache'})
   )

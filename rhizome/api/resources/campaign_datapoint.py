@@ -14,7 +14,7 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 
 import math
 
-class DatapointResource(BaseModelResource):
+class CampaignDatapointResource(BaseModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -32,15 +32,15 @@ class DatapointResource(BaseModelResource):
         '''
         '''
 
-        resource_name = 'datapoint'  # cooresponds to the URL of the resource
-        max_limit = None  # return all rows by default ( limit defaults to 20 )
+        resource_name = 'campaign_datapoint'
+        max_limit = None
         serializer = CustomSerializer()
 
     def __init__(self, *args, **kwargs):
         '''
         '''
 
-        super(DatapointResource, self).__init__(*args, **kwargs)
+        super(CampaignDatapointResource, self).__init__(*args, **kwargs)
 
     def get_list(self, request, **kwargs):
         """
