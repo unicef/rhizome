@@ -1,5 +1,5 @@
 
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv
 from rhizome.models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
@@ -9,7 +9,7 @@ from pandas import read_csv
 from rhizome.cache_meta import minify_geo_json
 
 
-class GeoResourceTest(ResourceTestCase):
+class GeoResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(GeoResourceTest, self).setUp()
 

@@ -1,11 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
  Location, LocationType, Office
 
 import json
 
-class ChartResourceTest(ResourceTestCase):
+class ChartResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(ChartResourceTest, self).setUp()
 

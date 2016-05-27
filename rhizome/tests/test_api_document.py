@@ -1,4 +1,4 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
@@ -11,7 +11,7 @@ from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models import DataPointComputed, IndicatorTag, Office, CacheJob, CampaignType, SourceObjectMap
 
 
-class DocumentResourceTest(ResourceTestCase):
+class DocumentResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(DocumentResourceTest, self).setUp()
         self.ts = TestSetupHelpers();

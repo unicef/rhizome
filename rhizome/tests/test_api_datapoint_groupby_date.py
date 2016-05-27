@@ -1,4 +1,4 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
@@ -9,7 +9,7 @@ from rhizome.cache_meta import LocationTreeCache
 import pandas as pd
 from datetime import datetime
 
-class DataPointResourceTest(ResourceTestCase):
+class DataPointResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(DataPointResourceTest, self).setUp()

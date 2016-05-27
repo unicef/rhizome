@@ -1,12 +1,12 @@
 
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from pandas import read_csv
 from rhizome.models import Indicator
 from setup_helpers import TestSetupHelpers
 
-class SourceObjectMapResourceTest(ResourceTestCase):
+class SourceObjectMapResourceTest(RhizomeAPITestCase):
     def setUp(self):
 
         ## instantiate the test client and all other methods ##

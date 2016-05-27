@@ -1,5 +1,5 @@
 
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
@@ -8,7 +8,7 @@ from rhizome.models import Indicator, IndicatorTag, \
 
 
 
-class IndicatorCalculationResourceTest(ResourceTestCase):
+class IndicatorCalculationResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(IndicatorCalculationResourceTest, self).setUp()
 

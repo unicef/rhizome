@@ -1,4 +1,4 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
@@ -8,7 +8,7 @@ from rhizome.models import SourceObjectMap, SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
 
-class SourceSubmissionResourceTest(ResourceTestCase):
+class SourceSubmissionResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(SourceSubmissionResourceTest, self).setUp()
         self.ts = TestSetupHelpers()

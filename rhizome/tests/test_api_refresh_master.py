@@ -1,11 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import DataPoint, IndicatorTag, User, Office, CacheJob, LocationType, Document, DocDetailType, CampaignType, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, Location, Campaign, Indicator, DataPointComputed
 from pandas import read_csv, notnull, to_datetime
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 
 
-class RefreshMasterAPIResourceTest(ResourceTestCase):
+class RefreshMasterAPIResourceTest(RhizomeAPITestCase):
 	def setUp(self):
 	    super(RefreshMasterAPIResourceTest, self).setUp()
 	    self.create_metadata()

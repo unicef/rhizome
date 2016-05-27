@@ -1,8 +1,8 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from rhizome.models import CampaignType
 from setup_helpers import TestSetupHelpers
 
-class CampaignTypeResourceTest(ResourceTestCase):
+class CampaignTypeResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
         super(CampaignTypeResourceTest, self).setUp()

@@ -1,9 +1,9 @@
 
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import LocationPermission
 
-class ChartTypeResourceTest(ResourceTestCase):
+class ChartTypeResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(ChartTypeResourceTest, self).setUp()
 

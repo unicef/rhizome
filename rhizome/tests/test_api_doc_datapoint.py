@@ -1,11 +1,11 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import CampaignType
 from rhizome.models import DocDataPoint
 from rhizome.models import Document
 from rhizome.models import IndicatorTag
 
-class DocDataPointResourceTest(ResourceTestCase):
+class DocDataPointResourceTest(RhizomeAPITestCase):
     def setUp(self):
 
         ## instantiate the test client and all other methods ##

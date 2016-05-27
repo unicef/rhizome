@@ -1,9 +1,9 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import IndicatorTag
 from rhizome.models import IndicatorToTag
 
-class IndicatorToTagResourceTest(ResourceTestCase):
+class IndicatorToTagResourceTest(RhizomeAPITestCase):
 	def setUp(self):
 	    super(IndicatorToTagResourceTest, self).setUp()
 

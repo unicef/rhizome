@@ -1,11 +1,11 @@
 
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv, notnull, to_datetime
 from rhizome.models import DataPointComputed, Indicator, Campaign, Location, Document,IndicatorTag, CampaignType, SourceObjectMap, Office, CacheJob
 
-class ComputedDatapointResourceTest(ResourceTestCase):
+class ComputedDatapointResourceTest(RhizomeAPITestCase):
     def setUp(self):
         super(ComputedDatapointResourceTest, self).setUp()
 

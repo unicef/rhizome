@@ -1,4 +1,4 @@
-from tastypie.test import ResourceTestCase
+from base_test_case import RhizomeAPITestCase
 from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
@@ -8,7 +8,7 @@ from rhizome.models import Office, Location, LocationType, SourceObjectMap, Docu
 from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 
 
-class TestSetupHelpers(ResourceTestCase):
+class TestSetupHelpers(RhizomeAPITestCase):
 
 	def __init__(self):
 		self.username = "test_user"
