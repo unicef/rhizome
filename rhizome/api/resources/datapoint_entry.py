@@ -14,6 +14,7 @@ from rhizome.api.exceptions import InputException
 from rhizome.api.serialize import CustomJSONSerializer
 from rhizome.models import Campaign, Location, Indicator, DataPointEntry, DataPoint
 
+
 class DatapointEntryResource(BaseModelResource):
     '''
     **GET Request:**
@@ -58,7 +59,6 @@ class DatapointEntryResource(BaseModelResource):
         }
         serializer = CustomJSONSerializer()
 
-
     def apply_filters(self, request, applicable_filters):
         """
         An ORM-specific implementation of ``apply_filters``.
@@ -67,7 +67,7 @@ class DatapointEntryResource(BaseModelResource):
         but should make it possible to do more advanced things.
         """
 
-        return self.get_object_list(request)#.filter(**applicable_filters)
+        return self.get_object_list(request)  # .filter(**applicable_filters)
 
     def get_object_list(self, request):
         '''
@@ -81,12 +81,11 @@ class DatapointEntryResource(BaseModelResource):
         campaign_obj = Campaign.objects.get(id=campaign_param)
 
         return DataPoint.objects.filter(
-                data_date__gte = campaign_obj.start_date,
-                data_date__lte = campaign_obj.end_date,
-                location_id = campaign_obj.top_lvl_location_id,
-                indicator__in = indicator__in
-            )
-
+            data_date__gte=campaign_obj.start_date,
+            data_date__lte=campaign_obj.end_date,
+            location_id=campaign_obj.top_lvl_location_id,
+            indicator__in=indicator__in
+        )
 
     def save(self, bundle, skip_errors=False):
         '''
@@ -98,8 +97,8 @@ class DatapointEntryResource(BaseModelResource):
         self.is_valid(bundle)
 
         if bundle.errors and not skip_errors:
-            raise ImmediateHttpResponse(response=self\
-                .error_response(bundle.request, bundle.errors))
+            raise ImmediateHttpResponse(response=self
+                                        .error_response(bundle.request, bundle.errors))
 
         # Check if they're authorized.
         # if bundle.obj.pk:
@@ -139,18 +138,18 @@ class DatapointEntryResource(BaseModelResource):
             existing_datapoint = self.get_existing_datapoint(bundle.data)
             if existing_datapoint is not None:
 
-                bundle.response = self.success_response() ##?
+                bundle.response = self.success_response()  # ?
                 return self.obj_update(bundle, **{'id': existing_datapoint.id})
 
-            else: # CREATE
+            else:  # CREATE
                 data_to_insert = bundle.data
                 # find the campaign object from the parameter
-                campaign_obj = Campaign.objects.get(id=int(\
+                campaign_obj = Campaign.objects.get(id=int(
                     data_to_insert['campaign_id']))
                 ## create the dictionary used to insert into datapoint ##
                 data_to_insert['data_date'] = campaign_obj.start_date
-                data_to_insert['source_submission_id'] = -1 # data_entry
-                data_to_insert['cache_job_id'] = -1 # to process
+                data_to_insert['source_submission_id'] = -1  # data_entry
+                data_to_insert['cache_job_id'] = -1  # to process
                 ## insert into datpaoint table ##
                 bundle.obj = DataPoint.objects.create(**data_to_insert)
                 bundle.data['id'] = bundle.obj.id
@@ -199,7 +198,8 @@ class DatapointEntryResource(BaseModelResource):
         if 'sessionid' in request.COOKIES:
             session = Session.objects.get(pk=request.COOKIES['sessionid'])
             if '_auth_user_id' in session.get_decoded():
-                user = User.objects.get(id=session.get_decoded()['_auth_user_id'])
+                user = User.objects.get(
+                    id=session.get_decoded()['_auth_user_id'])
                 return user.id
 
     # def is_delete_request(self, bundle):
@@ -259,7 +259,8 @@ class DatapointEntryResource(BaseModelResource):
         return bundle
 
     def dehydrate(self, bundle):
-        # hack: bundle will only have a response attr if this is a POST or PUT request
+        # hack: bundle will only have a response attr if this is a POST or PUT
+        # request
         if hasattr(bundle, 'response'):
             bundle.data = bundle.response
         else:  # otherwise, this is a GET request
@@ -280,18 +281,21 @@ class DatapointEntryResource(BaseModelResource):
         """
         for key in self.required_keys:
             if key not in obj:
-                raise InputException(2, 'Required metadata missing: {0}'.format(key))
+                raise InputException(
+                    2, 'Required metadata missing: {0}'.format(key))
 
         # ensure that metadata values are valid
         for key, model in self.keys_models.iteritems():
             try:
                 key_id = int(obj[key])
             except ValueError:
-                raise InputException(4, 'Invalid metadata value: {0}'.format(key))
+                raise InputException(
+                    4, 'Invalid metadata value: {0}'.format(key))
             try:
                 model.objects.get(id=key_id)
             except (ValueError, ObjectDoesNotExist):
-                raise InputException(3, 'Could not find record for metadata value: {0}'.format(key))
+                raise InputException(
+                    3, 'Could not find record for metadata value: {0}'.format(key))
 
    # MEP: I commented this out because it doesn't appear to be used anywhere
 

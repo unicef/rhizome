@@ -4,19 +4,21 @@ from django.utils.http import same_origin
 
 from tastypie.authentication import SessionAuthentication
 
+
 class CustomSessionAuthentication(SessionAuthentication):
 
     def is_authenticated(self, request, **kwargs):
 
         # this is the line i have to override in order to get
         # POST request to successfully authenticate ##
-        if request.method in ['GET','POST','PATCH','DELETE']:
+        if request.method in ['GET', 'POST', 'PATCH', 'DELETE']:
             return request.user.is_authenticated()
 
         if getattr(request, '_dont_enforce_csrf_checks', False):
             return request.user.is_authenticated()
 
-        csrf_token = _sanitize_token(request.COOKIES.get(settings.CSRF_COOKIE_NAME, ''))
+        csrf_token = _sanitize_token(
+            request.COOKIES.get(settings.CSRF_COOKIE_NAME, ''))
 
         if request.is_secure():
             referer = request.META.get('HTTP_REFERER')

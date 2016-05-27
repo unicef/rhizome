@@ -6,6 +6,7 @@ from rhizome.agg_tasks import AggRefresh
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
+
 class RefreshMasterResource(BaseModelResource):
     '''
     **GET Request** Runs refresh master, and agg refresh for a given document
@@ -21,15 +22,16 @@ class RefreshMasterResource(BaseModelResource):
         try:
             doc_id = request.GET['document_id']
         except KeyError:
-            raise DatapointsException(message='Document_id is a required API param')
+            raise DatapointsException(
+                message='Document_id is a required API param')
         # dt = DocTransform(request.user.id, doc_id)
 
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 
-        doc_campaign_ids = set(list(DataPoint.objects\
-            .filter(source_submission__document_id = doc_id)\
-            .values_list('campaign_id',flat=True)))
+        doc_campaign_ids = set(list(DataPoint.objects
+                                    .filter(source_submission__document_id=doc_id)
+                                    .values_list('campaign_id', flat=True)))
         for c_id in doc_campaign_ids:
             AggRefresh(c_id)
 

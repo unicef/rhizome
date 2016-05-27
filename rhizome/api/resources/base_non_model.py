@@ -6,6 +6,7 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base import BaseResource
 
+
 class BaseNonModelResource(BaseResource):
     '''
     NOTE: This applies to only the V1 API.  This is only used for the
@@ -19,7 +20,8 @@ class BaseNonModelResource(BaseResource):
     '''
 
     class Meta:
-        authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
+        authentication = MultiAuthentication(
+            CustomSessionAuthentication(), ApiKeyAuthentication())
         allowed_methods = ['get', 'post', 'patch']
         authorization = Authorization()
         always_return_data = True
@@ -53,5 +55,6 @@ class BaseNonModelResource(BaseResource):
         }
 
         to_be_serialized[self._meta.collection_name] = bundles
-        to_be_serialized = self.alter_list_data_to_serialize(request, to_be_serialized)
+        to_be_serialized = self.alter_list_data_to_serialize(
+            request, to_be_serialized)
         return self.create_response(request, to_be_serialized)

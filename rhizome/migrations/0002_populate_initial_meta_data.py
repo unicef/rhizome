@@ -11,6 +11,7 @@ from rhizome.models import Location, LocationPolygon
 from django.db.models import get_app, get_models
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
+
 def populate_initial_data(apps, schema_editor):
     '''
     Here, we take an excel file that has the same schema as the database
@@ -22,6 +23,7 @@ def populate_initial_data(apps, schema_editor):
 
     process_meta_data()
     process_geo_json()
+
 
 def process_meta_data():
 
@@ -36,21 +38,21 @@ def process_meta_data():
     all_models = get_models(rhizome_app) + get_models(auth_app)
 
     for model in all_models:
-        ## iterate through the models in the rhizome app and create a lookup
-        ## for {'sheet_name': Model} .. for instance -> {'indicator': Indicator}
+        # iterate through the models in the rhizome app and create a lookup
+        # for {'sheet_name': Model} .. for instance -> {'indicator': Indicator}
 
         if model._meta.db_table in all_sheets:
             models_to_process[model._meta.db_table] = model
 
     for sheet in all_sheets:
-        ## if the sheet has a cooresponding model, create a data frame out of
-        ## the sheet anf bulk insert the data using the model_df_to_data fn
+        # if the sheet has a cooresponding model, create a data frame out of
+        # the sheet anf bulk insert the data using the model_df_to_data fn
 
         try:
             model = models_to_process[sheet]
             print 'processing sheet ' + sheet
             model_df = xl.parse(sheet)
-            model_ids = model_df_to_data(model_df,model)
+            model_ids = model_df_to_data(model_df, model)
         except KeyError:
             pass
 
@@ -59,22 +61,24 @@ def process_meta_data():
     ltc = LocationTreeCache()
     ltc.main()
 
+
 def process_geo_json():
 
     try:
-        geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
+        geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
     except IOError:
         return
 
-    geo_json_df = pd.read_csv('geo_json.txt',delimiter = "|")
-    location_df = pd.DataFrame(list(Location.objects.all()\
-        .values_list('id','location_code')),columns=['location_id','location_code'])
-    merged_df = location_df.merge(geo_json_df)[['location_id','geo_json']]
+    geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
+    location_df = pd.DataFrame(list(Location.objects.all()
+                                    .values_list('id', 'location_code')), columns=['location_id', 'location_code'])
+    merged_df = location_df.merge(geo_json_df)[['location_id', 'geo_json']]
     model_df_to_data(merged_df, LocationPolygon)
 
     minify_geo_json()
 
-def model_df_to_data(model_df,model):
+
+def model_df_to_data(model_df, model):
 
     meta_ids = []
 

@@ -5,6 +5,7 @@ from tastypie.resources import ALL
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import CustomChart
 
+
 class CustomChartResource(BaseModelResource):
     '''
     **GET Requests:** returns charts from the API. If no parameters are given, returns all the charts
@@ -25,7 +26,7 @@ class CustomChartResource(BaseModelResource):
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
-        queryset =  CustomChart.objects.all()
+        queryset = CustomChart.objects.all()
         filtering = {
             "id": ALL,
         }
@@ -65,7 +66,6 @@ class CustomChartResource(BaseModelResource):
 
     def obj_delete(self, bundle, **kwargs):
         CustomChart.objects.get(id=kwargs['pk']).delete()
-
 
     def obj_delete_list(self, bundle, **kwargs):
         """

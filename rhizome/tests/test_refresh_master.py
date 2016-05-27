@@ -8,6 +8,7 @@ from rhizome.etl_tasks.transform_upload import ComplexDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.models import Document, Location, IndicatorTag, Office, CacheJob, DocDetailType, CampaignType, Campaign, Indicator, CalculatedIndicatorComponent, DocumentDetail, SourceSubmission, SourceObjectMap, DocDataPoint, DataPoint
 
+
 class RefreshMasterTestCase(TestCase):
 
     def __init__(self, *args, **kwargs):
@@ -31,11 +32,11 @@ class RefreshMasterTestCase(TestCase):
         we initialize data in the system via the .csv below.
         '''
         self.test_file_location = 'ebola_data.csv'
-        self.location_list = Location.objects.all().values_list('name',flat=True)
+        self.location_list = Location.objects.all().values_list('name', flat=True)
         self.create_metadata()
-        self.user = User.objects.get(username = 'test')
+        self.user = User.objects.get(username='test')
 
-        self.document = Document.objects.get(doc_title = 'test')
+        self.document = Document.objects.get(doc_title='test')
         self.document.docfile = self.test_file_location
         self.document.save()
 
@@ -45,25 +46,24 @@ class RefreshMasterTestCase(TestCase):
     def test_refresh_master_init(self):
 
         self.set_up()
-        mr = MasterRefresh(self.user.id ,self.document.id)
+        mr = MasterRefresh(self.user.id, self.document.id)
 
-        self.assertTrue(isinstance,(mr,MasterRefresh))
+        self.assertTrue(isinstance, (mr, MasterRefresh))
 
     def test_submission_detail_refresh(self,):
 
         self.set_up()
-        mr = MasterRefresh(self.user.id ,self.document.id)
+        mr = MasterRefresh(self.user.id, self.document.id)
 
         source_submissions_data = SourceSubmission.objects\
-            .filter(document_id = self.document.id)\
-            .values_list('id',flat=True)
+            .filter(document_id=self.document.id)\
+            .values_list('id', flat=True)
 
         mr.refresh_submission_details()
         submission_details = SourceSubmission.objects\
-            .filter(document_id = self.document.id)
+            .filter(document_id=self.document.id)
 
-        self.assertEqual(len(source_submissions_data)\
-            ,len(submission_details))
+        self.assertEqual(len(source_submissions_data), len(submission_details))
 
     # def test_data_that_needs_campaign(self):
     #     '''
@@ -148,7 +148,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.set_up()
 
-
         test_ind_id = Indicator.objects.all()[0].id
         test_loc_id = Location.objects.all()[0].id
         test_campaign_id = Campaign.objects.all()[0].id
@@ -156,48 +155,47 @@ class RefreshMasterTestCase(TestCase):
         bad_val, good_val = 10, 20
         data_date = '2015-12-31'
         ss_old = SourceSubmission.objects\
-            .filter(document_id = self.document.id)[0]
-
+            .filter(document_id=self.document.id)[0]
 
         doc_to_override = Document.objects.create(
-                doc_title = 'override',
-                created_by_id = self.user.id,
-                guid = 'override'
+            doc_title='override',
+            created_by_id=self.user.id,
+            guid='override'
         )
 
         ss_new = SourceSubmission.objects.create(
-            document_id = doc_to_override.id,
-            instance_guid = 'override',
-            row_number = 1,
-            data_date = '2016-01-01',
-            location_code = 'OVERRIDE',
-            location_display = 'OVERRIDE',
-            submission_json = '',
-            process_status = 1
+            document_id=doc_to_override.id,
+            instance_guid='override',
+            row_number=1,
+            data_date='2016-01-01',
+            location_code='OVERRIDE',
+            location_display='OVERRIDE',
+            submission_json='',
+            process_status=1
         )
 
         base_doc_dp_dict = {
-            'document_id' : self.document.id,
-            'indicator_id' : test_ind_id,
-            'location_id' : test_loc_id,
+            'document_id': self.document.id,
+            'indicator_id': test_ind_id,
+            'location_id': test_loc_id,
             'campaign_id': test_campaign_id,
-            'data_date' : data_date,
+            'data_date': data_date,
             'agg_on_location': True,
         }
 
         bad_doc_dp_dict = {
-            'value' : bad_val,
-            'data_date' : data_date,
+            'value': bad_val,
+            'data_date': data_date,
             'campaign_id': test_campaign_id,
-            'source_submission_id' : ss_old.id,
+            'source_submission_id': ss_old.id,
         }
         bad_doc_dp_dict.update(base_doc_dp_dict)
 
         good_doc_dp_dict = {
-            'value' : good_val,
-            'data_date' : data_date,
+            'value': good_val,
+            'data_date': data_date,
             'campaign_id': test_campaign_id,
-            'source_submission_id' : ss_new.id,
+            'source_submission_id': ss_new.id,
         }
         good_doc_dp_dict.update(base_doc_dp_dict)
 
@@ -209,12 +207,12 @@ class RefreshMasterTestCase(TestCase):
         mr.sync_datapoint([ss_old.id, ss_new.id])
 
         dp_result = DataPoint.objects.filter(
-            location_id = test_loc_id,
-            indicator_id = test_ind_id,
-            data_date = data_date
+            location_id=test_loc_id,
+            indicator_id=test_ind_id,
+            data_date=data_date
         )
 
-        self.assertEqual(1,len(dp_result))
+        self.assertEqual(1, len(dp_result))
         self.assertEqual(good_val, dp_result[0].value)
 
     def test_submission_to_datapoint(self):
@@ -247,20 +245,21 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
 
         submission_qs = SourceSubmission.objects\
-            .filter(document_id = self.document.id)\
-            .values_list('id','submission_json')[0]
+            .filter(document_id=self.document.id)\
+            .values_list('id', 'submission_json')[0]
 
-        ss_id, first_submission = submission_qs[0],json.loads(submission_qs[1])
+        ss_id, first_submission = submission_qs[
+            0], json.loads(submission_qs[1])
 
         location_code = first_submission[self.location_code_input_column]
         campaign_code = first_submission[self.campaign_code_input_column]
         first_submission[self.data_date_input_column]
-        raw_indicator_list = [k for k,v in first_submission.iteritems()]
+        raw_indicator_list = [k for k, v in first_submission.iteritems()]
 
         indicator_code = raw_indicator_list[-1]
 
         ## SIMULATED USER MAPPING ##
-        ## see: source-data/Nigeria/2015/06/mapping/2
+        # see: source-data/Nigeria/2015/06/mapping/2
 
         ## choose meta data values for the source_map update ##
         map_location_id = Location.objects.all()[0].id
@@ -269,76 +268,75 @@ class RefreshMasterTestCase(TestCase):
 
         ## map location ##
         som_id_l = SourceObjectMap.objects.get(
-            content_type = 'location',
-            source_object_code = location_code,
+            content_type='location',
+            source_object_code=location_code,
         )
         som_id_l.master_object_id = map_location_id
         som_id_l.save()
 
         ## map indicator ##
         som_id_i = SourceObjectMap.objects.get(
-            content_type = 'indicator',
-            source_object_code = indicator_code,
+            content_type='indicator',
+            source_object_code=indicator_code,
         )
         som_id_i.master_object_id = first_indicator_id
         som_id_i.save()
 
         ## map campaign ##
         som_id_c = SourceObjectMap.objects.get(
-            content_type = 'campaign',
-            source_object_code = campaign_code,
+            content_type='campaign',
+            source_object_code=campaign_code,
         )
         som_id_c.master_object_id = first_campaign
         som_id_c.save()
 
-        mr_with_new_meta = MasterRefresh(self.user.id ,self.document.id)
+        mr_with_new_meta = MasterRefresh(self.user.id, self.document.id)
         mr_with_new_meta.refresh_submission_details()
 
         first_submission_detail = SourceSubmission.objects\
-            .get(id = ss_id)
+            .get(id=ss_id)
 
         ## Test Case 2 ##
-        self.assertEqual(first_submission_detail.get_location_id(), map_location_id)
+        self.assertEqual(
+            first_submission_detail.get_location_id(), map_location_id)
 
         ## now that we have created the mappign, "refresh_master" ##
         ##         should create the relevant datapoints          ##
 
         mr_with_new_meta.submissions_to_doc_datapoints()
-        doc_dp_ids = DocDataPoint.objects.filter(document_id =
-            self.document.id,indicator_id=first_indicator_id).values()
+        doc_dp_ids = DocDataPoint.objects.filter(
+            document_id=self.document.id, indicator_id=first_indicator_id).values()
 
-        ## Test Case #3
-        self.assertEqual(1,len(doc_dp_ids))
+        # Test Case #3
+        self.assertEqual(1, len(doc_dp_ids))
 
         mr_with_new_meta.sync_datapoint()
         dps = DataPoint.objects.all()
 
-        ## Test Case #4
-        self.assertEqual(1,len(dps))
+        # Test Case #4
+        self.assertEqual(1, len(dps))
 
-        ## Test Case #5
+        # Test Case #5
 
         ## update the mapping with a new indicator value ##
         new_indicator_id = Indicator.objects.all()[1].id
         som_id_i.master_object_id = new_indicator_id
         som_id_i.save()
 
-        mr_after_new_mapping = MasterRefresh(self.user.id ,self.document.id)
+        mr_after_new_mapping = MasterRefresh(self.user.id, self.document.id)
         mr_after_new_mapping.main()
 
-        dp_with_new_indicator = DataPoint.objects.filter(indicator_id = \
-            new_indicator_id)
+        dp_with_new_indicator = DataPoint.objects.filter(
+            indicator_id=new_indicator_id)
 
-        dp_with_old_indicator = DataPoint.objects.filter(indicator_id = \
-            first_indicator_id)
+        dp_with_old_indicator = DataPoint.objects.filter(
+            indicator_id=first_indicator_id)
 
         ## did new indicator flow through the system ?##
-        self.assertEqual(1,len(dp_with_new_indicator))
+        self.assertEqual(1, len(dp_with_new_indicator))
 
-        ## did the old indicator data get deleted?
-        self.assertEqual(0,len(dp_with_old_indicator))
-
-
+        # did the old indicator data get deleted?
+        self.assertEqual(0, len(dp_with_old_indicator))
 
     def create_metadata(self):
         '''
@@ -346,67 +344,66 @@ class RefreshMasterTestCase(TestCase):
         system to aggregate / caclulate.
         '''
 
-        top_lvl_tag = IndicatorTag.objects.create(id = 1, tag_name='Polio')
+        top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
-        location_df= read_csv('rhizome/tests/_data/locations.csv')
+        location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         calc_indicator_df = read_csv\
             ('rhizome/tests/_data/calculated_indicator_component.csv')
 
-        user_id = User.objects.create_user('test','john@john.com', 'test').id
-        office_id = Office.objects.create(id=1,name='test').id
+        user_id = User.objects.create_user('test', 'john@john.com', 'test').id
+        office_id = Office.objects.create(id=1, name='test').id
 
-        cache_job_id = CacheJob.objects.create(id = -2,date_attempted = '2015-01-01',\
-            is_error = False)
+        cache_job_id = CacheJob.objects.create(id=-2, date_attempted='2015-01-01',
+                                               is_error=False)
 
         document_id = Document.objects.create(
-            doc_title = 'test',
-            created_by_id = user_id,
-            guid = 'test').id
+            doc_title='test',
+            created_by_id=user_id,
+            guid='test').id
 
-        for ddt in ['uq_id_column','username_column','image_col',
-            'date_column','location_column','location_display_name']:
+        for ddt in ['uq_id_column', 'username_column', 'image_col',
+                    'date_column', 'location_column', 'location_display_name']:
 
             DocDetailType.objects.create(name=ddt)
 
-        for rt in ["country","settlement","province","district","sub-district"]:
+        for rt in ["country", "settlement", "province", "district", "sub-district"]:
             DocDetailType.objects.create(name=rt)
 
+        campaign_type = CampaignType.objects.create(id=1, name="test")
 
-        campaign_type = CampaignType.objects.create(id=1,name="test")
-
-        self.model_df_to_data(location_df,Location)
+        self.model_df_to_data(location_df, Location)
 
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
-        self.model_df_to_data(campaign_df,Campaign)
+        self.model_df_to_data(campaign_df, Campaign)
 
-        self.model_df_to_data(indicator_df,Indicator)
-        calc_indicator_ids = self.model_df_to_data(calc_indicator_df,\
-            CalculatedIndicatorComponent)
+        self.model_df_to_data(indicator_df, Indicator)
+        calc_indicator_ids = self.model_df_to_data(calc_indicator_df,
+                                                   CalculatedIndicatorComponent)
 
         rg_conif = DocumentDetail.objects.create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='location_column').id,
-            doc_detail_value = self.location_code_input_column
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType
+            .objects.get(name='location_column').id,
+            doc_detail_value=self.location_code_input_column
 
         )
 
         cp_conif = DocumentDetail.objects.create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='date_column').id,
-            doc_detail_value = self.data_date_input_column
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType
+            .objects.get(name='date_column').id,
+            doc_detail_value=self.data_date_input_column
         )
 
         uq_id_config = DocumentDetail.objects.create(
-            document_id = document_id,
-            doc_detail_type_id = DocDetailType\
-                .objects.get(name='uq_id_column').id,
-            doc_detail_value = self.uq_code_input_column
+            document_id=document_id,
+            doc_detail_type_id=DocDetailType
+            .objects.get(name='uq_id_column').id,
+            doc_detail_value=self.uq_code_input_column
         )
 
     def test_campaign_data_ingest(self):
@@ -416,7 +413,7 @@ class RefreshMasterTestCase(TestCase):
         test_file_location = 'allAccessData.csv'
         test_df = read_csv('rhizome/tests/_data/' + test_file_location)
 
-        document = Document.objects.create(doc_title = 'allAccessData')
+        document = Document.objects.create(doc_title='allAccessData')
         document.docfile = test_file_location
         document.save()
 
@@ -424,44 +421,44 @@ class RefreshMasterTestCase(TestCase):
         distinct_location_codes = test_df['geocode'].unique()
         for l in distinct_location_codes:
             l_id = Location.objects.create(
-                name = l,
-                location_code = l,
-                location_type_id = 1,
-                office_id = 1
+                name=l,
+                location_code=l,
+                location_type_id=1,
+                office_id=1
             ).id
             l_som = SourceObjectMap.objects.create(
-                    master_object_id = l_id,
-                    content_type = 'location',
-                    source_object_code = str(l)
-                )
+                master_object_id=l_id,
+                content_type='location',
+                source_object_code=str(l)
+            )
 
         ## create campaign meta ##
         distinct_campaign_codes = test_df['campaign'].unique()
         for i, (c) in enumerate(distinct_campaign_codes):
             c_id = Campaign.objects.create(
-                name = c,
-                top_lvl_location_id = 1,
-                top_lvl_indicator_tag_id = 1,
-                office_id = 1,
-                campaign_type_id =1,
-                start_date = '2010-01-0' + str(i + 1),
-                end_date  = '2010-01-0' + str(i + 1)
+                name=c,
+                top_lvl_location_id=1,
+                top_lvl_indicator_tag_id=1,
+                office_id=1,
+                campaign_type_id=1,
+                start_date='2010-01-0' + str(i + 1),
+                end_date='2010-01-0' + str(i + 1)
             ).id
             c_som = SourceObjectMap.objects.create(
-                    master_object_id = c_id,
-                    content_type = 'campaign',
-                    source_object_code = str(c)
-                )
+                master_object_id=c_id,
+                content_type='campaign',
+                source_object_code=str(c)
+            )
 
         ## create indicator_meta ##
         access_indicator_id = Indicator.objects.create(
-            name = 'access', short_name = 'access'
+            name='access', short_name='access'
         ).id
 
         som_obj = SourceObjectMap.objects.create(
-            master_object_id = access_indicator_id,
-            content_type = 'indicator',
-            source_object_code = '# Missed children due to inaccessibility (NEPI)'
+            master_object_id=access_indicator_id,
+            content_type='indicator',
+            source_object_code='# Missed children due to inaccessibility (NEPI)'
         )
 
         dt = ComplexDocTransform(self.user.id, document.id)
@@ -471,21 +468,21 @@ class RefreshMasterTestCase(TestCase):
         mr.main()
 
         ss_id_list = SourceSubmission.objects\
-            .filter(document_id = document.id)\
+            .filter(document_id=document.id)\
             .values_list('id', flat=True)
 
         doc_dp_id_list = DocDataPoint.objects\
-            .filter(source_submission_id__in = ss_id_list)\
+            .filter(source_submission_id__in=ss_id_list)\
             .values_list('id', flat=True)
 
         dp_id_list = DataPoint.objects\
-            .filter(source_submission_id__in = ss_id_list)\
+            .filter(source_submission_id__in=ss_id_list)\
             .values_list('id', flat=True)
 
         self.assertEqual(len(ss_id_list), len(test_df))
         self.assertEqual(len(doc_dp_id_list), len(dp_id_list))
 
-    def model_df_to_data(self,model_df,model):
+    def model_df_to_data(self, model_df, model):
 
         meta_ids = []
 

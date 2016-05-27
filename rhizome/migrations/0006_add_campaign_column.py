@@ -27,7 +27,8 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='historicaldatapointentry',
             name='campaign',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='rhizome.Campaign', null=True),
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING,
+                                    db_constraint=False, blank=True, to='rhizome.Campaign', null=True),
         ),
         migrations.AlterField(
             model_name='datapoint',

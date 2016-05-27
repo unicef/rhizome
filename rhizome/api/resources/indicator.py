@@ -9,6 +9,7 @@ from tastypie.exceptions import ImmediateHttpResponse
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Indicator
 
+
 class IndicatorResource(BaseModelResource):
     '''
     **GET Request** Returns all indicators
@@ -16,7 +17,7 @@ class IndicatorResource(BaseModelResource):
             'id': return only the id(s) specified
         - *Errors:*
             If an error occurs, the API returns 200 code and an empty list of indicators
-    
+
     **POST Request** Creates an indicator
         - *Required Parameters:* 
             'name, 'short_name', 'description','good_bound', 'bad_bound', 'source_name'
@@ -43,7 +44,8 @@ class IndicatorResource(BaseModelResource):
             pass
 
         try:
-            indicator_id_list = [int(x) for x in request.GET['id__in'].split(',')]
+            indicator_id_list = [int(x)
+                                 for x in request.GET['id__in'].split(',')]
         except KeyError:
             pass
 
@@ -52,7 +54,6 @@ class IndicatorResource(BaseModelResource):
 
         else:
             return Indicator.objects.filter(id__in=indicator_id_list).values()
-
 
     def detail_uri_kwargs(self, bundle_or_obj):
         kwargs = {}
@@ -96,8 +97,8 @@ class IndicatorResource(BaseModelResource):
                 'code': -1
             }
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
-                                        status=500,
-                                        content_type='application/json'))
+                                                              status=500,
+                                                              content_type='application/json'))
 
         try:
             ind, created = Indicator.objects.update_or_create(
@@ -110,8 +111,8 @@ class IndicatorResource(BaseModelResource):
                 'code': -1
             }
             raise ImmediateHttpResponse(response=HttpResponse(json.dumps(data),
-                                        status=422,
-                                        content_type='application/json'))
+                                                              status=422,
+                                                              content_type='application/json'))
 
         bundle.obj = ind
         bundle.data['id'] = ind.id

@@ -1,5 +1,6 @@
 from tastypie.cache import SimpleCache
 
+
 class CustomCache(SimpleCache):
     '''
     Set up to override the simple cache method in order to customize the
@@ -30,7 +31,8 @@ class CustomCache(SimpleCache):
 
         if cache_control is None:
             control = super(CustomCache, self).cache_control()
-            control.update({'max_age': self.cache.default_timeout, 's-maxage': self.cache.default_timeout})
+            control.update({'max_age': self.cache.default_timeout,
+                            's-maxage': self.cache.default_timeout})
             return control
         else:
             self.response['Cache-Control'] = cache_control

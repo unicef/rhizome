@@ -18,13 +18,14 @@ from datetime import datetime
 
 from rhizome.models import CacheJob
 
+
 def reset_seq(apps, schema_editor):
 
     cj_1 = CacheJob.objects.create(
-        id = 1,
-        date_attempted = datetime.now(),
-        date_completed = datetime.now(),
-        is_error = False
+        id=1,
+        date_attempted=datetime.now(),
+        date_completed=datetime.now(),
+        is_error=False
     )
 
     os.environ['DJANGO_COLORS'] = 'nocolor'
@@ -36,13 +37,14 @@ def reset_seq(apps, schema_editor):
         try:
             label = app.split('.')[-1]
             if get_app(label):
-                    call_command('sqlsequencereset', label, stdout=commands)
+                call_command('sqlsequencereset', label, stdout=commands)
         except Exception as err:
             pass
     try:
         cursor.execute(commands.getvalue())
     except Exception:
         pass
+
 
 class Migration(migrations.Migration):
 

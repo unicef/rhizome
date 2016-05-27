@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Location
 
+
 class LocationResource(BaseModelResource):
     '''
     **GET Request** Returns locations objects. All location objects will be returned if an optional parameter is not set.

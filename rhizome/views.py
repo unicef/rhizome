@@ -15,6 +15,7 @@ from rhizome.pdf_utils import print_pdf
 from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
 
+
 def about(request):
     html = settings.ABOUT_HTML
     return render_to_response('about.html', {'html': html},
@@ -34,13 +35,16 @@ def export_file(request):
     javascript_delay = '10000'
 
     if 'pdf' in file_type:
-        options = {'orientation': 'Landscape', 'javascript-delay': javascript_delay, 'quiet': ' '}
+        options = {'orientation': 'Landscape',
+                   'javascript-delay': javascript_delay, 'quiet': ' '}
         content_type = 'application/pdf'
     else:
-        options = {'javascript-delay': javascript_delay, 'width': '1425', 'quality': '100', 'quiet': ' '}
+        options = {'javascript-delay': javascript_delay,
+                   'width': '1425', 'quality': '100', 'quiet': ' '}
         content_type = 'image/JPEG'
 
-    pdf_content = print_pdf(type=file_type, url=url, output_path=None, options=options, cookie=cookie, css_file=css_file)
+    pdf_content = print_pdf(type=file_type, url=url, output_path=None,
+                            options=options, cookie=cookie, css_file=css_file)
 
     if isinstance(pdf_content, IOError):
         response = HttpResponse(status=500)
@@ -62,9 +66,13 @@ def export_file(request):
 def dashboards(request):
     return render_to_response('dashboards/index.html',
                               context_instance=RequestContext(request))
+
+
 def dashboard_create(request, dashboard_id=None):
     return render_to_response('dashboards/create.html',
                               context_instance=RequestContext(request))
+
+
 def dashboard(request, dashboard_id=None):
 
     try:
@@ -74,21 +82,30 @@ def dashboard(request, dashboard_id=None):
 
     return render_to_response('dashboards/show.html', {'dashboard_id': dashboard_id},
                               context_instance=RequestContext(request))
+
+
 def charts(request):
     return render_to_response('charts/index.html',
                               context_instance=RequestContext(request))
+
+
 def chart_create(request):
     return render_to_response('charts/create.html',
                               context_instance=RequestContext(request))
+
+
 def chart(request, chart_id=None):
     return render_to_response('charts/show.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
 # OTHER
 #----------------------------------------------------------------------------
+
+
 def source_data(request):
     return render_to_response('source-data/index.html',
                               context_instance=RequestContext(request))
+
 
 def update_campaign(request):
     return render_to_response('manage_system.html',
@@ -105,7 +122,7 @@ def update_campaign(request):
 # RESOURCES
 #---------------------------------------------------------------------------
 @user_passes_test(lambda u: u.groups.filter(name='chart_edit') or u.is_superuser,
-    login_url='/permissions_needed/', redirect_field_name=None)
+                  login_url='/permissions_needed/', redirect_field_name=None)
 def chart_edit(request, chart_id=None):
     return render_to_response('charts/show.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
@@ -116,22 +133,25 @@ class DashBoardView(generic.ListView):
     template_name = 'dashboards/index.html'
     context_object_name = 'user_dashboard'
 
-    def get_queryset(self): ## not sure why this works. ##
+    def get_queryset(self):  # not sure why this works. ##
         return DataPoint.objects.all()[:1]
 
 # OTHER
 #----------------------------------------------------------------------------
+
+
 @user_passes_test(lambda u: u.groups.filter(name='data_entry') or u.is_superuser,
-    login_url='/permissions_needed/', redirect_field_name=None)
+                  login_url='/permissions_needed/', redirect_field_name=None)
 def data_entry(request):
     return render_to_response('data-entry/index.html',
                               context_instance=RequestContext(request))
 
+
 @user_passes_test(lambda u: u.groups.filter(name='manage_system') or u.is_superuser,
-    login_url='/permissions_needed/', redirect_field_name=None)
+                  login_url='/permissions_needed/', redirect_field_name=None)
 def manage_system(request):
-    return render_to_response('manage_system.html',\
-        context_instance=RequestContext(request))
+    return render_to_response('manage_system.html',
+                              context_instance=RequestContext(request))
 
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
@@ -142,8 +162,9 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     def get_success_url(self):
         new_user_id = self.object.id
 
-        return reverse_lazy('datapoints:user_update',\
-            kwargs={'pk':new_user_id})
+        return reverse_lazy('datapoints:user_update',
+                            kwargs={'pk': new_user_id})
+
 
 class UserEditView(PermissionRequiredMixin, generic.UpdateView):
     model = User
@@ -155,8 +176,8 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def get_success_url(self):
         requested_user_id = self.get_object().id
-        return reverse_lazy('datapoints:user_update',\
-            kwargs={'pk':requested_user_id})
+        return reverse_lazy('datapoints:user_update',
+                            kwargs={'pk': requested_user_id})
 
     def get_context_data(self, **kwargs):
         context = super(UserEditView, self).get_context_data(**kwargs)
@@ -174,6 +195,7 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
         # permission_obj.location_type = location.location_type
         # permission_obj.save()
         return HttpResponseRedirect(self.get_success_url())
+
 
 def html_decorator(func):
     """

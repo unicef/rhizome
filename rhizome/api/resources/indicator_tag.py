@@ -3,6 +3,7 @@ from tastypie.resources import ALL
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import IndicatorTag
 
+
 class IndicatorTagResource(BaseModelResource):
     '''
     **GET Request** Returns all indicator tags
@@ -10,7 +11,7 @@ class IndicatorTagResource(BaseModelResource):
             'show_leaf'only return leaf level nodes of the indicator_tag tree
             'id' return the indicator_tag associated with the given id
         - *Errors:*
-    
+
     **POST Request** Creates an indicator tag
         - *Required Parameters:*
             'tag_name'
@@ -21,7 +22,8 @@ class IndicatorTagResource(BaseModelResource):
     '''
 
     class Meta(BaseModelResource.Meta):
-        queryset = IndicatorTag.objects.all().values('id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
+        queryset = IndicatorTag.objects.all().values(
+            'id', 'parent_tag_id', 'tag_name', 'parent_tag__tag_name')
         resource_name = 'indicator_tag'
         filtering = {
             "id": ALL,
@@ -38,12 +40,11 @@ class IndicatorTagResource(BaseModelResource):
 
         '''
 
-
         try:
             request.GET['show_leaf']
-            all_parents = list(set(IndicatorTag.objects\
-                .filter(parent_tag_id__gt=0)\
-                .values_list('parent_tag_id', flat=True)))
+            all_parents = list(set(IndicatorTag.objects
+                                   .filter(parent_tag_id__gt=0)
+                                   .values_list('parent_tag_id', flat=True)))
             return IndicatorTag.objects.exclude(id__in=all_parents).values()
         except KeyError:
             pass

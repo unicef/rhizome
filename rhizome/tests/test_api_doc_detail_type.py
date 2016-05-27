@@ -2,7 +2,9 @@ from base_test_case import RhizomeAPITestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import DocDetailType
 
+
 class DocDetailTypeResourceTest(RhizomeAPITestCase):
+
     def setUp(self):
 
         ## instantiate the test client and all other methods ##
@@ -14,7 +16,7 @@ class DocDetailTypeResourceTest(RhizomeAPITestCase):
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
             self.o.id,
-            location_code ='Nigeria',
+            location_code='Nigeria',
             location_name='Nigeria')
 
     def test_doc_detail_type(self):

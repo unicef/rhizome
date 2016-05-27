@@ -6,6 +6,7 @@ class DatapointsException(Exception):
         self.message = message
         self.code = code
 
+
 class InputException(Exception):
 
     def __init__(self, code, message, data=None):

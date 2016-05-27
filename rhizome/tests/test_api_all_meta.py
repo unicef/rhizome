@@ -1,10 +1,11 @@
 from base_test_case import RhizomeAPITestCase
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
- Location, LocationType, Office
+    Location, LocationType, Office
 from setup_helpers import TestSetupHelpers
 
+
 class AllMetaResourceTest(RhizomeAPITestCase):
-    
+
     def setUp(self):
         super(AllMetaResourceTest, self).setUp()
 

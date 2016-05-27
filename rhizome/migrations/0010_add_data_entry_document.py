@@ -2,11 +2,12 @@ from django.db import models, migrations
 
 from rhizome.models import Document
 
+
 def add_data_entry_document(apps, schema_editor):
 
-	new_doc = Document.objects.create(
-		doc_title = 'Data Entry'
-	)
+    new_doc = Document.objects.create(
+        doc_title='Data Entry'
+    )
 
 
 class Migration(migrations.Migration):

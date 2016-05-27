@@ -17,8 +17,10 @@ from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+
 def pass_fn(apps, schema_editor):
     pass
+
 
 def populate_fake_dwc_data(apps, schema_editor):
     '''
@@ -35,30 +37,31 @@ def populate_fake_dwc_data(apps, schema_editor):
     Maybe somethign like.. if SETTINGS.debug = True, then ingest fake data.
     '''
 
-    document = Document.objects.create(doc_title = 'Initial FAKE Data Load')
+    document = Document.objects.create(doc_title='Initial FAKE Data Load')
 
-    ind_df = DataFrame(list(Indicator.objects.all()\
-        .values_list('id','short_name','data_format')),columns = ['indicator_id','short_name','data_format'])
+    ind_df = DataFrame(list(Indicator.objects.all()
+                            .values_list('id', 'short_name', 'data_format')), columns=['indicator_id', 'short_name', 'data_format'])
 
-    campaign_df = DataFrame(list(Campaign.objects.all()\
-        .values_list('id','name')),columns = ['campaign_id','campaign_name'])
+    campaign_df = DataFrame(list(Campaign.objects.all()
+                                 .values_list('id', 'name')), columns=['campaign_id', 'campaign_name'])
 
-    country_id_list = list(Location.objects\
-        .filter(location_type_id = 1)\
-        .values_list('id',flat=True))
+    country_id_list = list(Location.objects
+                           .filter(location_type_id=1)
+                           .values_list('id', flat=True))
 
-    location_df = DataFrame(list(Location.objects\
-        .filter(location_type_id__lte = 3)\
-        .values_list('id','name')),columns = ['location_id','name'])
+    location_df = DataFrame(list(Location.objects
+                                 .filter(location_type_id__lte=3)
+                                 .values_list('id', 'name')), columns=['location_id', 'name'])
 
     ind_df['join_col'] = 1
     campaign_df['join_col'] = 1
     location_df['join_col'] = 1
 
-    first_merged_df = ind_df.merge(campaign_df,on='join_col')
+    first_merged_df = ind_df.merge(campaign_df, on='join_col')
     final_merged_df = first_merged_df.merge(location_df, on='join_col')
 
     upsert_df_data(final_merged_df, document.id)
+
 
 def upsert_df_data(df, document_id):
 
@@ -69,24 +72,25 @@ def upsert_df_data(df, document_id):
             rand_val = random()
 
         if row.data_format == 'bool':
-            rand_val = randint(0,1)
+            rand_val = randint(0, 1)
 
         if row.data_format == 'int':
-            rand_val = randint(0,1000)
+            rand_val = randint(0, 1000)
 
         dwc_obj = DataPointComputed(**{
-            'indicator_id':row.indicator_id,
-            'campaign_id':row.campaign_id,
-            'location_id':row.location_id,
-            'cache_job_id':-1,
+            'indicator_id': row.indicator_id,
+            'campaign_id': row.campaign_id,
+            'location_id': row.location_id,
+            'cache_job_id': -1,
             'document_id': document_id,
-            'value':rand_val
+            'value': rand_val
         })
 
         dwc_batch.append(dwc_obj)
 
     DataPointComputed.objects.all().delete()
     DataPointComputed.objects.bulk_create(dwc_batch)
+
 
 class Migration(migrations.Migration):
 

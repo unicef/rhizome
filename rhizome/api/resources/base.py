@@ -16,17 +16,18 @@ from rhizome.models import LocationPermission, Location, LocationTree, \
     LocationType, Campaign, DataPointComputed, Indicator
 from django.http import HttpResponse
 
+
 class BaseResource(Resource):
     '''
     '''
     class Meta:
-        authentication = MultiAuthentication(CustomSessionAuthentication(), ApiKeyAuthentication())
+        authentication = MultiAuthentication(
+            CustomSessionAuthentication(), ApiKeyAuthentication())
         allowed_methods = ['get', 'post', 'patch']
         authorization = Authorization()
         always_return_data = True
         cache = CustomCache()
         serializer = CustomSerializer()
-
 
     def get_locations_to_return_from_url(self, request):
         '''
@@ -40,26 +41,29 @@ class BaseResource(Resource):
 
         if 'location_id__in' in request.GET:
             location_ids = map(int, request.GET['location_id__in'].split(','))
-            
+
             if 'location_type' in request.GET:
                 loc_type_id = int(request.GET['location_type'])
                 return LocationTree.objects.filter(
-                    location__location_type_id = loc_type_id,
-                    parent_location_id__in = location_ids
+                    location__location_type_id=loc_type_id,
+                    parent_location_id__in=location_ids
                 ).values_list('location_id', flat=True)
 
             elif 'location_depth' in request.GET:
-                return_locations =[]
+                return_locations = []
                 for location_id in location_ids:
                     # this can probably be condensed into fewer queries...
-                    parent_location_type = Location.objects.get(id = location_id).location_type_id
-                    parent_admin_level = LocationType.objects.get(id = parent_location_type).admin_level
+                    parent_location_type = Location.objects.get(
+                        id=location_id).location_type_id
+                    parent_admin_level = LocationType.objects.get(
+                        id=parent_location_type).admin_level
                     location_depth = int(request.GET['location_depth'])
-                    descendant_location_type = LocationType.objects.get(admin_level= parent_admin_level + location_depth)
+                    descendant_location_type = LocationType.objects.get(
+                        admin_level=parent_admin_level + location_depth)
                     descendant_ids = LocationTree.objects.filter(
-                        location__location_type_id = descendant_location_type.id,
-                        parent_location_id = location_id
-                        ).values_list('location_id', flat=True)
+                        location__location_type_id=descendant_location_type.id,
+                        parent_location_id=location_id
+                    ).values_list('location_id', flat=True)
                     return_locations.extend(descendant_ids)
                 return return_locations
 
@@ -75,12 +79,13 @@ class BaseResource(Resource):
 
         try:
             self.top_lvl_location_id = LocationPermission.objects.get(
-                user_id = request.user.id).top_lvl_location_id
+                user_id=request.user.id).top_lvl_location_id
         except LocationPermission.DoesNotExist:
             self.top_lvl_location_id = Location.objects\
-                .filter(parent_location_id = None)[0].id
+                .filter(parent_location_id=None)[0].id
 
-        allowed_methods = getattr(self._meta, "%s_allowed_methods" % request_type, None)
+        allowed_methods = getattr(
+            self._meta, "%s_allowed_methods" % request_type, None)
         #
         if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
             request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']

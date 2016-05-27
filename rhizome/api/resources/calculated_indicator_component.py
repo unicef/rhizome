@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import CalculatedIndicatorComponent
 
+
 class CalculatedIndicatorComponentResource(BaseModelResource):
     '''
     **GET Request:** Returns a calculated indicator component
@@ -52,4 +53,3 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
 
         obj_id = int(bundle.request.GET[u'id'])
         CalculatedIndicatorComponent.objects.filter(id=obj_id).delete()
-

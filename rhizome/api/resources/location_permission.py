@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import LocationPermission
 
+
 class LocationPermissionResource(BaseModelResource):
     '''
     **GET Request** This endpoint tells which locations a user is responsible for. 
@@ -30,8 +31,8 @@ class LocationPermissionResource(BaseModelResource):
         '''
 
         lp_obj, created = LocationPermission.objects.get_or_create(
-            user_id = bundle.data['user_id'], defaults = {
-                'top_lvl_location_id' : bundle.data['location_id']
+            user_id=bundle.data['user_id'], defaults={
+                'top_lvl_location_id': bundle.data['location_id']
             })
 
         if not created:
