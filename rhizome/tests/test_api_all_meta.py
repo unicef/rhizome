@@ -5,8 +5,10 @@ from setup_helpers import TestSetupHelpers
 import json
 from django.test import TestCase
 
+from pprint import pprint
 
 class AllMetaResourceTest(RhizomeAPITestCase):
+        # ./manage.py test rhizome.tests.test_api_all_meta.AllMetaResourceTest --settings=rhizome.settings.test
 
     def setUp(self):
         super(AllMetaResourceTest, self).setUp()
@@ -24,16 +26,10 @@ class AllMetaResourceTest(RhizomeAPITestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 1)
 
-    def test_all_meta_json(self):
+    def test_all_meta_location_json(self):
+
         resp = self.ts.get(self, '/api/v1/all_meta/')
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-        for obj_key, obj_list in response_data['objects'][0].iteritems():
-            if obj_key != 'is_superuser':
-                try:
-                    json_obj = json.loads(obj_list)
-                except:
-                    print "expected json object, got a %s for obj:" %str(type(obj_list))
-                    print obj_list
-                    self.assertTrue(False)
-        self.assertTrue(True)
+        location_data = response_data['objects'][0]['locations']
+        self.assertEqual(type(location_data), list)

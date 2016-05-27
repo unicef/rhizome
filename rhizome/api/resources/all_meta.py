@@ -42,19 +42,19 @@ class AllMetaResource(BaseNonModelResource):
         qs = []
         am_result = AllMetaResult()
         am_result.campaigns = \
-            [c for c in Campaign.objects.all().values()]
+            list(Campaign.objects.all().values())
         am_result.charts = \
-            [c for c in CustomChart.objects.all().values()]
+            list(CustomChart.objects.all().values('id','title'))
         am_result.dashboards = \
-            [d for d in CustomDashboard.objects.all().values()]
+            list(CustomDashboard.objects.all().values())
         am_result.indicators = \
-            [ind for ind in Indicator.objects.all().values()]
+            list(Indicator.objects.all().values())
         am_result.indicator_tags = \
-            [t for t in IndicatorTag.objects.all().values()]
-        am_result.indicators_to_tags = \
-            [itt for itt in IndicatorToTag.objects.all().values()]
-        am_result.locations = \
-            [l for l in Location.objects.all().values()]
+            list(IndicatorTag.objects.all().values())
+        am_result.indicators_to_tags =\
+            list(IndicatorToTag.objects.all().values())
+
+        am_result.locations = list(Location.objects.all().values())
         am_result.offices = \
             [o for o in Office.objects.all().values()]
         am_result.is_superuser = User.objects.get(
