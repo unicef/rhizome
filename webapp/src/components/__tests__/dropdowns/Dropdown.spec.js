@@ -15,7 +15,7 @@ describe ('Dropdown', () => {
   it ('extends Component class of React', () => {
     expect (mockDropdown instanceof React.Component).to.be.true
   })
-  describe ('#constructor()', () => {
+  describe ('.constructor()', () => {
     it ('has a constructor which has 1 parameter', () => {
       expect (Dropdown.constructor).to.exist.and.have.lengthOf(1)
     })

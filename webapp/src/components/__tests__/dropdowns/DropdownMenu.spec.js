@@ -44,7 +44,7 @@ describe ('DropdownMenu', () => {
       expect (actualProps.y).to.eq(expectedProps.y)
     })
   })
-  describe ('#constructor()', () => {
+  describe ('.constructor()', () => {
     it ('has a constructor which has 1 parameter', () => {
       expect (DropdownMenu.constructor).to.exist.and.have.lengthOf(1)
     })

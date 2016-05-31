@@ -41,7 +41,7 @@ describe ('CheckBoxGroup', () => {
   it ('exists', () => {
     expect (CheckBoxGroup).to.exist
   })
-  describe ('#constructor()', () => {
+  describe ('.constructor()', () => {
     it ('has a constructor which has 1 parameter', () => {
       expect (CheckBoxGroup.constructor).to.exist.and.have.lengthOf(1)
     })

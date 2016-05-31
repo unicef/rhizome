@@ -54,7 +54,7 @@ describe ('HighChart', () => {
   it ('exists', () => {
     expect (HighChart).to.exist
   })
-  describe ('#constructor()', () => {
+  describe ('.constructor()', () => {
     it ('has a constructor which has 1 parameter', () => {
       expect (HighChart.constructor).to.exist.and.have.lengthOf(1)
     })
