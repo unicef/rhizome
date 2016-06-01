@@ -11,7 +11,6 @@ class SourceObjectMapResource(BaseModelResource):
             'document_id': returns only Source Object Maps associated with the given document id(s)
         - *Errors:*
             If an error occurs, the API returns 200 code and an empty list of Source Object Maps
-
     **POST Request** Changes the master object for an existing source object map
         - *Required Parameters:*
            'master_object_id' 'mapped_by_id' 'id'
