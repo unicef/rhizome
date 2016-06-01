@@ -68,5 +68,9 @@ export default {
   },
   CampaignsPage: function (id_start_date, id_end_date) {
     CampaignsPage.render(id_start_date, id_end_date)
+  },
+  SourceData: function (el) {
+    var SourceDataContainer = require('containers/SourceDataContainer')
+    React.render(React.createElement(SourceDataContainer), el)
   }
 }

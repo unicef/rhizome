@@ -30,8 +30,7 @@ import GeoActions from 'actions/GeoActions'
 const LAYOUT = {
   'Management Dashboard': require('dashboard/ManagementDashboard.jsx'),
   'NGA Campaign Monitoring': require('dashboard/NCODashboard.jsx'),
-  'District Dashboard': require('dashboard/District.jsx'),
-  'Source Data': require('dashboard/SourceDataDashboard.jsx')
+  'District Dashboard': require('dashboard/District.jsx')
 }
 
 var Dashboard = React.createClass({
@@ -62,7 +61,6 @@ var Dashboard = React.createClass({
 
   componentWillMount () {
     this.getallDashboards()
-    page('/datapoints/:dashboard/:location/:year/:month/:doc_tab/:doc_id', this._showSourceData)
     page('/datapoints/:dashboard/:location/:year/:month', this._show)
     page('/datapoints/:dashboard', this._showDefault)
   },
@@ -211,23 +209,6 @@ var Dashboard = React.createClass({
 
   _show (ctx) {
     NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      DashboardActions.setDashboard({
-        dashboard,
-        location: ctx.params.location,
-        date: [ctx.params.year, ctx.params.month].join('-')
-      })
-    })
-  },
-
-  _showSourceData (ctx) {
-    NavigationStore.getDashboard(ctx.params.dashboard).then(dashboard => {
-      let doc_tab = ctx.params.doc_tab
-
-      this.setState({
-        doc_id: ctx.params.doc_id,
-        doc_tab: doc_tab
-      })
-
       DashboardActions.setDashboard({
         dashboard,
         location: ctx.params.location,

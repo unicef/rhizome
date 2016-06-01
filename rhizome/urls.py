@@ -17,7 +17,8 @@ from datapoints.api.meta_data import CampaignResource, LocationResource, Indicat
     CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
-from datapoints.views import manage_system
+from datapoints.views import manage_system, source_data
+
 
 from tastypie.api import Api
 
@@ -77,8 +78,7 @@ urlpatterns = patterns(
         decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$',
         decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-    url(r'^datapoints/source-data/[-a-zA-Z]+/[0-9]{4}/[0-9]{2}/[-a-zA-Z]+/[0-9]+/',
-        decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
+    url(r'^source-data/', views.source_data, name='source_data'),
 
     # ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),

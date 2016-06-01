@@ -27,6 +27,10 @@ def dashboard_list(request):
 
 ### PERMISSION RESTRICTED VIEWS ###
 
+def source_data(request):
+    return render_to_response(datapoints/source-data.html',
+                              context_instance=RequestContext(request))
+
 @user_passes_test(lambda u: u.groups.filter(name='data_entry')\
     ,login_url='/datapoints/permissions_needed/',redirect_field_name=None)
 def data_entry(request):
