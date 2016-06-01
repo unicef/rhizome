@@ -170,6 +170,20 @@ class IndicatorToOffice(models.Model):
     class Meta:
         db_table = 'indicator_to_office'
 
+class IndicatorClassMap(models.Model):
+    '''
+    Maps "class" type indicator enum values to equivalent string values. For example
+    "High Pass" and "HP" both map to value 1.
+    '''
+    indicator = models.ForeignKey(Indicator)
+    string_value = models.CharField(max_length=100)
+    enum_value = models.IntegerField()
+    is_display = models.BooleanField()
+
+    class Meta:
+        db_table = 'indicator_class_map'
+        unique_together = ('indicator', 'string_value', 'enum_value')
+
 
 class LocationType(models.Model):
     '''
@@ -243,6 +257,18 @@ class LocationPolygon(models.Model):
 
     class Meta:
         db_table = 'location_polygon'
+
+class LocationPermission(models.Model):
+    '''
+    This controls what the user sees.  If you have Nigeria as the top lvl
+    Location for a user
+    '''
+
+    user = models.OneToOneField('auth.User')
+    top_lvl_location = models.ForeignKey(Location)
+
+    class Meta:
+        db_table = 'location_permission'
 
 class MinGeo(models.Model):
     '''

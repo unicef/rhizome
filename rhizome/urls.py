@@ -8,13 +8,14 @@ from django.views.generic import TemplateView
 from decorator_include import decorator_include
 
 from datapoints.api.geo import GeoResource
-from datapoints.api.meta_data import CampaignResource, LocationResource, IndicatorResource, OfficeResource, \
-    CampaignTypeResource, LocationTypeResource, IndicatorTagResource, IndicatorToTagResource, CustomDashboardResource, \
-    CustomChartResource, DocumentResource, GroupResource, UserGroupResource, LocationResponsibilityResource, \
-    GroupPermissionResource, DocumentReviewResource, SourceObjectMapResource, UserResource, SourceSubmissionResource, \
-    DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
-    QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
-    CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
+from rhizome.api.resources import *
+# from datapoints.api.meta_data import CampaignResource, LocationResource, IndicatorResource, OfficeResource, \
+#     CampaignTypeResource, LocationTypeResource, IndicatorTagResource, IndicatorToTagResource, CustomDashboardResource, \
+#     CustomChartResource, DocumentResource, GroupResource, UserGroupResource, LocationResponsibilityResource, \
+#     GroupPermissionResource, DocumentReviewResource, SourceObjectMapResource, UserResource, SourceSubmissionResource, \
+#     DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
+#     QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
+#     CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
 from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system, source_data
@@ -26,40 +27,40 @@ admin.autodiscover()
 
 # tastypie endpoints
 v1_api = Api(api_name='v1')
-v1_api.register(DataPointResource())
-v1_api.register(DataPointEntryResource())
-v1_api.register(GeoResource())
-v1_api.register(CampaignResource())
-v1_api.register(LocationResource())
-v1_api.register(IndicatorResource())
-v1_api.register(OfficeResource())
-v1_api.register(CampaignTypeResource())
-v1_api.register(LocationTypeResource())
-v1_api.register(IndicatorTagResource())
-v1_api.register(IndicatorToTagResource())
-v1_api.register(CustomDashboardResource())
-v1_api.register(CustomChartResource())
-v1_api.register(DocumentResource())
-v1_api.register(GroupResource())
-v1_api.register(UserGroupResource())
-v1_api.register(LocationResponsibilityResource())
-v1_api.register(GroupPermissionResource())
-v1_api.register(DocumentReviewResource())
-v1_api.register(SourceObjectMapResource())
-v1_api.register(UserResource())
-v1_api.register(SourceSubmissionResource())
-v1_api.register(DocumentDetailResource())
-v1_api.register(DocDataPointResource())
-v1_api.register(ComputedDataPointResource())
-v1_api.register(RefreshMasterResource())
-v1_api.register(QueueProcessResource())
-v1_api.register(CacheMetaResource())
-v1_api.register(SyncOdkResource())
-v1_api.register(DocDetailTypeResource())
-v1_api.register(ChartTypeTypeResource())
-v1_api.register(DocTransFormResource())
-v1_api.register(CalculatedIndicatorComponentResource())
-v1_api.register(AggRefreshResource())
+
+v1_api.register(agg_refresh.AggRefreshResource())
+v1_api.register(cache_meta.CacheMetaResource())
+v1_api.register(calculated_indicator_component.CalculatedIndicatorComponentResource())
+v1_api.register(campaign.CampaignResource())
+v1_api.register(campaign_type.CampaignTypeResource())
+v1_api.register(chart_type.ChartTypeResource())
+v1_api.register(computed_datapoint.ComputedDataPointResource())
+v1_api.register(custom_chart.CustomChartResource())
+v1_api.register(custom_dashboard.CustomDashboardResource())
+v1_api.register(datapoint.DatapointResource())
+v1_api.register(datapoint_entry.DatapointEntryResource())
+v1_api.register(doc_datapoint.DocDataPointResource())
+v1_api.register(doc_detail_type.DocDetailTypeResource())
+v1_api.register(doc_trans_form.DocTransFormResource())
+v1_api.register(document.DocumentResource())
+v1_api.register(document_detail.DocumentDetailResource())
+v1_api.register(geo.GeoResource())
+v1_api.register(group.GroupResource())
+v1_api.register(indicator.IndicatorResource())
+v1_api.register(indicator_tag.IndicatorTagResource())
+v1_api.register(indicator_to_tag.IndicatorToTagResource())
+# v1_api.register(location_permission.LocationPermissionResource())
+v1_api.register(location.LocationResource())
+v1_api.register(location_type.LocationTypeResource())
+v1_api.register(office.OfficeResource())
+v1_api.register(queue_process.QueueProcessResource())
+v1_api.register(refresh_master.RefreshMasterResource())
+v1_api.register(source_object_map.SourceObjectMapResource())
+v1_api.register(source_submission.SubmissionResource())
+v1_api.register(sync_odk.SyncOdkResource())
+v1_api.register(user_group.UserGroupResource())
+v1_api.register(user.UserResource())
+v1_api.register(all_meta.AllMetaResource())
 
 urlpatterns = patterns(
     '',

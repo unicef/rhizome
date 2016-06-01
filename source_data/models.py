@@ -136,11 +136,10 @@ class SourceSubmission(models.Model):
     document = models.ForeignKey(Document)
     instance_guid = models.CharField(max_length=255)
     row_number = models.IntegerField()
-    campaign_code = models.CharField(max_length=1000)
+    data_date = models.DateTimeField(null=True)
     location_code = models.CharField(max_length=1000)
+    campaign_code = models.CharField(max_length=1000)
     location_display = models.CharField(max_length=1000)
-    location = models.ForeignKey('datapoints.Location', null=True)
-    campaign = models.ForeignKey('datapoints.Campaign', null=True)
     submission_json = JSONField()
     created_at = models.DateTimeField(auto_now=True)
     process_status = models.CharField(max_length=25)  # should be a FK
@@ -148,3 +147,23 @@ class SourceSubmission(models.Model):
     class Meta:
         db_table = 'source_submission'
         unique_together = (('document', 'instance_guid'))
+
+    def get_location_id(self):
+
+        try:
+            l_id = SourceObjectMap.objects.get(content_type = 'location',\
+                source_object_code = self.location_code).master_object_id
+        except ObjectDoesNotExist:
+            l_id = None
+
+        return l_id
+
+    def get_campaign_id(self):
+
+        try:
+            c_id = SourceObjectMap.objects.get(content_type = 'campaign',\
+                source_object_code = self.campaign_code).master_object_id
+        except ObjectDoesNotExist:
+            c_id = None
+
+        return c_id
