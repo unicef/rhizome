@@ -21,16 +21,16 @@ var SourceDataContainer = React.createClass({
   ],
 
   _setDocId: function (doc_id) {
-    page('/source-data/' + this.state.doc_tab + '/' + doc_id)
+    page('/manage-source-data/' + this.state.doc_tab + '/' + doc_id)
   },
   _setDocTab: function (doc_tab) {
-    page('/source-data/' + doc_tab + '/' + this.state.doc_id)
+    page('/manage-source-data/' + doc_tab + '/' + this.state.doc_id)
   },
 
   componentWillMount () {
-    // http://localhost:8000/source-data/viewraw/76 //
+    // http://localhost:8000/manage-source-data/viewraw/76 //
     let currentPath = window.location.pathname
-    let cleanPath = currentPath.replace('/source-data/', '')
+    let cleanPath = currentPath.replace('/manage-source-data/', '')
     let urlParams = cleanPath.split('/')
 
     let newState = {

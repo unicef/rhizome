@@ -106,7 +106,7 @@ var DocForm = React.createClass({
 
     let uploadButton = ''
     if (this.state.created_doc_id) {
-      let nextLink = '/source-data/viewraw/' + this.state.created_doc_id
+      let nextLink = '/manage-source-data/viewraw/' + this.state.created_doc_id
       uploadButton = this.state.doc_is_refreshed
           ? <a href={nextLink} className='cd-button refresh__button--margin'>Review</a>
           : syncUploadButton
