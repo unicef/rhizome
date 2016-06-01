@@ -5,12 +5,17 @@ export default Reflux.createActions([
   'initialize',
   'baseFormSave',
   'addTagToIndicator',
+  'addIndicatorToTag',
+  'removeIndicatorFromTag',
   'removeTagFromIndicator',
   'addCalculationToIndicator',
   'removeCalculationFromIndicator',
   'getTagTree',
   'initIndicatorToTag',
+  'initTagToIndicator',
   'initIndicatorToCalc',
   'refreshTags',
-  'refreshCalculation'
+  'refreshCalculation',
+  'refreshIndicators',
+  'getIndicators'
 ])

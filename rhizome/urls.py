@@ -78,7 +78,7 @@ urlpatterns = patterns(
         decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
     url(r'^datapoints/[-a-zA-Z]+/[^/]+/[0-9]{4}/[0-9]{2}/$',
         decorator_include(login_required, 'datapoints.urls', namespace='datapoints')),
-    url(r'^source-data/', views.source_data, name='source_data'),
+    url(r'^manage-source-data/', source_data, name='manage-source-data'),
 
     # ADMIN, LOG IN AND LOGOUT
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
