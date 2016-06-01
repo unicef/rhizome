@@ -407,6 +407,7 @@ export default {
   submission: endPoint('/source_submission/', 'get', 1, false),
   docDetail: endPoint('/doc_detail/', 'get', 1, false),
   docMapped: endPoint('/source_object_map/', 'get', 1, false),
+  docToMap: endPoint('/source_object_to_map/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
   docDetailType: endPoint('/doc_detail_type/', 'get', 1, false),
