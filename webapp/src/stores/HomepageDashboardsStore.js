@@ -22,8 +22,6 @@ var HomepageDashboardsStore = Reflux.createStore({
   getDashboardByName: function (dashboardDef, officesIndex) {
     var obj = _.find(builtins, d => _.kebabCase(d.title) === dashboardDef.name)
 
-    console.log('dashboardDef.id:', dashboardDef)
-    console.log('officesIndex: ', officesIndex)
     obj.location = dashboardDef.location
     obj.latest_campaign_id = officesIndex[dashboardDef.id].latest_campaign_id
     obj.indicators = _(_.get(obj, 'charts', []))
@@ -48,6 +46,7 @@ var HomepageDashboardsStore = Reflux.createStore({
   },
 
   fetchData: function (dashboard) {
+    console.log('dashboard: ', dashboard)
     var campaign = dashboard.campaign
     var location = dashboard.location
     var charts = dashboard.charts
@@ -122,13 +121,16 @@ var HomepageDashboardsStore = Reflux.createStore({
       location = topLevelLocations.first()
     }
 
+    console.log(' ======= campaigns: ', campaigns)
+
     var campaign = _(campaigns)
       .filter(function (c) {
-        return c.office_id === location.office_id &&
-          (dashboard.latest_campaign_id === c.id)
-      })
-      .sortBy('start_date')
-      .last()
+        // console.log('dashboard.latest_campaign_id')
+        return dashboard.latest_campaign_id === c.id
+      }).value()
+
+    console.log(' ===== dashboard.latest_campaign_id: ', dashboard.latest_campaign_id)
+    console.log(' ====== campaign: ', campaign)
 
     var hasMap = _(dashboard.charts)
     .pluck('type')
@@ -188,13 +190,11 @@ var HomepageDashboardsStore = Reflux.createStore({
         .map(item => this.getDashboardByName(item, officesIndex))
         .map(partialPrepare)
 
-      console.log('enhanced: ', enhanced)
-
       var partialDashboardInit = _.partial((country, data) => {
-        console.log('country: ', country)
         var dashboardDef = _.find(enhanced, (item) => {
           return country.split('-')[0] === item.location.name.toLowerCase()
         })
+        console.log('dashboardDef: ', dashboardDef)
 
         return _.extend({
           campaign: dashboardDef.campaign,

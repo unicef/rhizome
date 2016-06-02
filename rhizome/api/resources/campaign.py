@@ -36,9 +36,8 @@ class CampaignResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        qs = Campaign.objects.filter(\
-            top_lvl_location_id = self.top_lvl_location_id)
-
+        qs = Campaign.objects.all()
+        
         if 'id__in' in request.GET:
             requested_ids = request.GET['id__in'].split(",")
             return qs.filter(id__in = requested_ids).values().order_by('-start_date')
