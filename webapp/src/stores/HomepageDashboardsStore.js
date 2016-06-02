@@ -121,16 +121,11 @@ var HomepageDashboardsStore = Reflux.createStore({
       location = topLevelLocations.first()
     }
 
-    console.log(' ======= campaigns: ', campaigns)
-
     var campaign = _(campaigns)
       .filter(function (c) {
         // console.log('dashboard.latest_campaign_id')
         return dashboard.latest_campaign_id === c.id
-      }).value()
-
-    console.log(' ===== dashboard.latest_campaign_id: ', dashboard.latest_campaign_id)
-    console.log(' ====== campaign: ', campaign)
+      }).value()[0]
 
     var hasMap = _(dashboard.charts)
     .pluck('type')
@@ -194,7 +189,6 @@ var HomepageDashboardsStore = Reflux.createStore({
         var dashboardDef = _.find(enhanced, (item) => {
           return country.split('-')[0] === item.location.name.toLowerCase()
         })
-        console.log('dashboardDef: ', dashboardDef)
 
         return _.extend({
           campaign: dashboardDef.campaign,
@@ -234,6 +228,7 @@ var HomepageDashboardsStore = Reflux.createStore({
           })
 
         let dashboards = dataPoints.map(function (item) {
+          console.log('item.data[0] == :', item.data[0])
           let country = item.data[0].campaign.name.split(' ')[0]
           item.mapLoading = true
           return partialDashboardInit(country, item)

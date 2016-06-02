@@ -6,9 +6,9 @@ import _ from 'lodash'
 import request from 'superagent'
 import superagentPrefix from 'superagent-prefix'
 var prefix = superagentPrefix(BASE_URL)
+import moment from 'moment'
 
 import treeify from '../data/transform/treeify'
-import campaign from '../data/model/campaign'
 
 function urlencode (query) {
   return '?' + _.map(query, function (v, k) {
@@ -150,35 +150,42 @@ function endPoint (path, mode, defaultVersion, useDefaults) {
 function datapoint (q) {
   var fetch = endPoint('/datapoint/')
 
-  // Return a promise so we can chain the requests for datapoints with the
-  // campaign lookups.
   return new Promise(function (fulfill, reject) {
-    // Fetch datapoints first, then look up the campaigns. Once campaign data
-    // has been filled in, fulfill the promise.
-
+    // needs to be cleaned up -- previously this method called the campaign api
     fetch(q, null, {'cache-control': 'no-cache'}).then(function (data) {
-      var campaigns = data.objects.map(function (d) {
-        return d.campaign
-      })
-
-      endPoint('/campaign/', 'get', 1)({
-        id__in: _.uniq(campaigns)
-      }, null, {'cache-control': 'max-age=3600, public'}).then(function (campaignData) {
-        var campaigns = _.indexBy(campaignData.objects, 'id')
-
-        // Replace the campaign IDs with campaign objects
-        for (var i = data.objects.length - 1; i >= 0; --i) {
-          data.objects[i].campaign = campaign(campaigns[data.objects[i].campaign])
-        }
-
-        fulfill(data)
-      })
+      var campaignData = data.meta.campaign_list
+      var campaignIx = _.indexBy(campaignData, 'id')
+      for (var i = data.objects.length - 1; i >= 0; --i) {
+        data.objects[i].campaign = setCampaign(campaignIx[data.objects[i].campaign])
+      }
+      fulfill(data)
     }, reject)
   })
 }
 
 datapoint.toString = function (query, version) {
   return endPoint('/datapoint/').toString(query, version)
+}
+
+function setCampaign (obj) {
+  return obj
+    ? update({}, obj)
+    : {
+      id: null,
+      created_at: null,
+      start_date: null,
+      end_date: null,
+      name: null,
+      slug: null,
+      resource_uri: null
+    }
+}
+function update (campaign, obj) {
+  _.assign(campaign, _.omit(obj, 'created_at', 'start_date', 'end_date'))
+  campaign.created_at = moment(obj.created_at).toDate()
+  campaign.start_date = moment(obj.start_date, 'YYYY-MM-DD').toDate()
+  campaign.end_date = moment(obj.end_date, 'YYYY-MM-DD').toDate()
+  return campaign
 }
 
 function makeTagId (tId) {

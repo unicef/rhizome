@@ -1,21 +1,22 @@
+import traceback
 import numpy as np
-import sys
-import itertools
-from pandas import DataFrame, pivot_table, notnull, concat
-from django.http import HttpResponse
 
+from pandas import DataFrame, pivot_table, notnull
 from tastypie import fields
+from tastypie import http
+from tastypie.resources import ALL
+from tastypie.exceptions import ImmediateHttpResponse, NotFound
 from tastypie.utils.mime import build_content_type
-from tastypie.exceptions import NotFound
 
-from rhizome.api.serialize import CustomSerializer
-from rhizome.api.resources.base_non_model import BaseNonModelResource
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.contrib.sessions.models import Session
 
-from datapoints.models import DataPointComputed, Campaign, Location,\
-    LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
-    CalculatedIndicatorComponent
-import math
-from datetime import datetime
+from datapoints.api.base import BaseModelResource, BaseNonModelResource
+from datapoints.models import DataPointComputed, Campaign, Location, Indicator, DataPointEntry
+from datapoints.api.serialize import CustomSerializer, CustomJSONSerializer
+
 
 class ResultObject(object):
     '''
@@ -23,33 +24,21 @@ class ResultObject(object):
     location / campaign combination, and the remaing columns represent the
     indicators requested.  Indicators are a list of IndicatorObjects.
     '''
-    # location = None
-    # campaign = None
-    # indicators = list()
+    location = None
+    campaign = None
+    indicators = list()
 
 
-class DatapointResource(BaseNonModelResource):
+class DataPointResource(BaseNonModelResource):
     '''
-    - **GET Requests:**
-        - *Required Parameters:*
-            'indicator__in' A comma-separated list of indicator IDs to fetch. By default, all indicators
-            'chart_type'
-        - *Optional Parameters:*
-            'location__in' A comma-separated list of location IDs
-            'campaign_start' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that began on or after the supplied date
-            'campaign_end' format: ``YYYY-MM-DD``  Include only datapoints from campaigns that ended on or before the supplied date
-            'campaign__in'   A comma-separated list of campaign IDs. Only datapoints attached to one of the listed campaigns will be returned
-            'cumulative'
+    This is the class that coincides with the /api/v1/datapoint endpoint.
     '''
 
     error = None
     parsed_params = {}
-    indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
-    campaign_id = fields.IntegerField(attribute='campaign_id', null=True)
-    data_date = fields.DateField(attribute='data_date', null=True)
-    computed_id = fields.IntegerField(attribute='computed_id', null=True)
-    location_id = fields.IntegerField(attribute='location_id')
-    value = fields.CharField(attribute='value', null=True)
+    location = fields.IntegerField(attribute='location')
+    campaign = fields.IntegerField(attribute='campaign')
+    indicators = fields.ListField(attribute='indicators')
 
     class Meta(BaseNonModelResource.Meta):
         '''
@@ -57,15 +46,15 @@ class DatapointResource(BaseNonModelResource):
         that will represent the data returned to the applicaton.  In this case
         as specified by the ResultObject the fields in our response will be
         location_id, campaign_id, indcator_json.
-        The resource name is datapoint, which means this resource is accessed
-        by /api/v1/datapoint/.
+        The resource name is datapoint, which means this resource is accessed by
+        /api/v1/datapoint/.
         The data is serialized by the CustomSerializer which uses the default
         handler for JSON responses and transforms the data to csv when the
         user clicks the "download data" button on the data explorer.
         note - authentication inherited from parent class
         '''
 
-        object_class = ResultObject  # use the class above to define response
+        object_class = ResultObject  # use the class above to devine the response
         resource_name = 'datapoint'  # cooresponds to the URL of the resource
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
@@ -74,12 +63,11 @@ class DatapointResource(BaseNonModelResource):
         '''
         '''
 
-        super(DatapointResource, self).__init__(*args, **kwargs)
+        super(DataPointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
 
-    def create_response(self, request, data, response_class=HttpResponse,
-                        **response_kwargs):
+    def create_response(self, request, data, response_class=HttpResponse, **response_kwargs):
         """
         THis is overridden from tastypie.  The point here is to be able to
         Set the content-disposition header for csv downloads.  That is the only
@@ -91,12 +79,11 @@ class DatapointResource(BaseNonModelResource):
         desired_format = self.determine_format(request)
         serialized = self.serialize(request, data, desired_format)
 
-        response = response_class(content=serialized,
-            content_type=build_content_type(desired_format),**response_kwargs)
+        response = response_class(
+            content=serialized, content_type=build_content_type(desired_format), **response_kwargs)
 
         if desired_format == 'text/csv':
             response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
-            response.set_cookie('dataBrowserCsvDownload', 'true')
 
         return response
 
@@ -112,200 +99,57 @@ class DatapointResource(BaseNonModelResource):
         in the url parameters, and creating a ResultObject for each row in the
         response.
         '''
-
         self.error = None
-        self.class_indicator_map = self.build_class_indicator_map();
 
         results = []
+
         err = self.parse_url_params(request.GET)
+
         if err:
             self.error = err
             return []
 
-        self.location_ids = self.get_locations_to_return_from_url(request)
-        time_gb = self.parsed_params['group_by_time']
-        if time_gb == 'campaign' or time_gb is None:
-            self.base_data_df = self.base_transform()
-        else:
-            self.base_data_df = self.group_by_time_transform()
-
-        return self.transform_df_to_results(self.base_data_df)
-
-    def get_time_group_series(self, dp_df):
-        time_grouping = self.parsed_params['group_by_time']
-        if time_grouping == 'year':
-            dp_df['time_grouping'] = dp_df['data_date'].map(lambda x: int(x.year))
-        elif time_grouping == 'quarter':
-            dp_df['time_grouping'] = dp_df['data_date']\
-                .map(lambda x: str(x.year) + str((x.month-1) // 3 + 1))
-        elif time_grouping == 'all_time':
-            dp_df['time_grouping'] = 1
-        else:
-            dp_df = DataFrame()
-        self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
-        return dp_df
-
-
-    def transform_df_to_results(self, df):
-        # the following line is a hack. TODO: figure out where empty list is being returned from
-        if type(df) == list:
+        err, location_ids = self.get_locations_to_return_from_url(request)
+        if err:
+            self.error = err
             return []
-        if self.parsed_params['show_missing_data'] == u'1':
-            df = self.add_missing_data(df)
-        if 'campaign_id' in df.columns:
-            df = df.sort('campaign_id')
-        else:
-            df = df.sort('time_grouping')
-        results =[]
-        df.apply(self.df_to_result_obj, args=(results,), axis=1)
+
+        # Pivot the data on request instead of caching ##
+        # in the datapoint_abstracted table ##
+        df_columns = ['indicator_id', 'campaign_id', 'location_id', 'value']
+        dwc_df = DataFrame(
+            list(DataPointComputed.objects.filter(
+                campaign__in=self.parsed_params['campaign__in'],
+                location__in=location_ids,
+                indicator__in=self.parsed_params['indicator__in'])
+                .values_list(*df_columns)), columns=df_columns)
+
+        try:
+            p_table = pivot_table(
+                dwc_df, values='value', index=['indicator_id'], columns=['location_id', 'campaign_id'], aggfunc=np.sum)
+        except KeyError:
+            return results
+
+        no_nan_pivoted_df = p_table.where((notnull(p_table)), None)
+
+        pivoted_data = no_nan_pivoted_df.to_dict()
+
+        for row, indicator_dict in pivoted_data.iteritems():
+
+            indicator_objects = [{'indicator': unicode(k), 'value': v} for k, v in indicator_dict.iteritems()]
+
+            missing_indicators = list(set(self.parsed_params['indicator__in']) - set(indicator_dict.keys()))
+
+            for ind in missing_indicators:
+                indicator_objects.append({'indicator': ind, 'value': None})
+
+            r = ResultObject()
+            r.location = row[0]
+            r.campaign = row[1]
+            r.indicators = indicator_objects
+            results.append(r)
+
         return results
-
-    def group_by_time_transform(self):
-        dp_df_columns = ['data_date','indicator_id','location_id','value']
-        time_grouping =  self.parsed_params['group_by_time']
-
-        # HACKK for situational dashboard
-        if self.parsed_params['chart_uuid'] ==\
-            '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
-
-            self.parsed_params['show_missing_data'] = 1
-            return self.handle_polio_case_table(dp_df_columns)
-
-        cols = ['data_date','indicator_id','location_id','value']
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-            location_id__in = self.location_ids,
-            indicator_id__in = self.parsed_params['indicator__in']
-        ).values(*cols)),columns=cols)
-
-        if not dp_df.empty:
-            dp_df = self.get_time_group_series(dp_df)
-            gb_df = DataFrame(dp_df\
-                .groupby(['indicator_id','time_grouping','location_id'])['value']\
-                .sum())\
-                .reset_index()
-            return gb_df
-
-        # need to recurse down to a subloaction with data
-         # if the data isn't available at the current level
-        else:
-            depth_level, max_depth, sub_location_ids = 0, 3, self.location_ids
-            while dp_df.empty and depth_level < max_depth:
-                sub_location_ids = Location.objects\
-                    .filter(parent_location_id__in=sub_location_ids)\
-                    .values_list('id', flat=True)
-
-                dp_df = DataFrame(list(DataPoint.objects.filter(
-                    location_id__in = sub_location_ids,
-                    indicator_id__in = self.parsed_params['indicator__in']
-                ).values(*cols)),columns=cols)
-                depth_level += 1
-
-            dp_df = self.get_time_group_series(dp_df)
-            if dp_df.empty:
-                return []
-            location_tree_df = DataFrame(list(LocationTree.objects\
-                .filter(location_id__in = sub_location_ids)\
-                .values_list('location_id','parent_location_id')),\
-                    columns=['location_id','parent_location_id'])
-
-            merged_df = dp_df.merge(location_tree_df)
-
-            filtered_df = merged_df[merged_df['parent_location_id']\
-                .isin(self.location_ids)]
-
-            # sum all values for locations with the same parent location
-            gb_df = DataFrame(filtered_df\
-                .groupby(['indicator_id','time_grouping','parent_location_id'])['value']\
-                .sum())\
-                .reset_index()
-
-            gb_df = gb_df.rename(columns={'parent_location_id' : 'location_id'})
-            return gb_df
-
-    def df_to_result_obj(self, row, results_list):
-        dp = ResultObject()
-        if not math.isnan(row['indicator_id']):
-            dp.indicator_id = row['indicator_id']
-        if 'campaign_id' in row:
-            dp.campaign_id = row['campaign_id']
-        else:
-            dp.campaign_id = row['time_grouping']
-        dp.location_id = row['location_id']
-        if not (isinstance(row['value'], float) and math.isnan(row['value'])):
-            dp.value = row['value']
-        results_list.append(dp)
-
-    def handle_polio_case_table(self, dp_df_columns):
-        '''
-        This is a very specific peice of code that allows us to generate a table
-        with
-            - date of latest case
-            - infected district count
-            - infected province count
-
-        THis relies on certain calcluations to be made in
-        caluclated_indicator_component.
-        '''
-        # http://localhost:8000/api/v1/datapoint/?indicator__in=37,39,82,40&location_id__in=1&campaign_start=2015-04-26&campaign_end=2016-04-26&chart_type=RawData&chart_uuid=1775de44-a727-490d-adfa-b2bc1ed19dad&group_by_time=year&format=json
-        calc_indicator_data_for_polio_cases = CalculatedIndicatorComponent.\
-            objects.filter(indicator__name = 'Polio Cases').values()
-
-        if len(calc_indicator_data_for_polio_cases) > 0:
-            self.ind_meta = {'base_indicator': \
-                calc_indicator_data_for_polio_cases[0]['indicator_id']
-            }
-        else:
-            self.ind_meta = {}
-
-        for row in calc_indicator_data_for_polio_cases:
-            calc = row['calculation']
-            ind_id = row['indicator_component_id']
-            self.ind_meta[calc] = ind_id
-
-
-        parent_location_id = self.parsed_params['location_id__in']
-
-        all_sub_locations = LocationTree.objects.filter(
-            parent_location_id = parent_location_id
-        ).values_list('location_id', flat=True)
-
-        flat_df = DataFrame(list(DataPoint.objects.filter(
-                        location_id__in = all_sub_locations,
-                        indicator_id__in = self.parsed_params['indicator__in']
-                    ).values(*dp_df_columns)),columns=dp_df_columns)
-
-        flat_df = self.get_time_group_series(flat_df)
-        flat_df['parent_location_id'] = parent_location_id
-
-        gb_df = DataFrame(flat_df\
-            .groupby(['indicator_id','time_grouping','parent_location_id'])\
-            ['value']\
-            .sum())\
-            .reset_index()
-
-        latest_date_df = DataFrame(flat_df\
-            .groupby(['indicator_id','time_grouping'])['data_date']\
-            .max())\
-            .reset_index()
-        latest_date_df['value'] = latest_date_df['data_date']\
-            .map(lambda x: x.strftime('%Y-%m-%d'))
-        latest_date_df['indicator_id'] = self\
-            .ind_meta['latest_date']
-
-        district_count_df = DataFrame(flat_df\
-            .groupby(['time_grouping']).location_id
-            .nunique())\
-            .reset_index()
-        district_count_df['value'] = district_count_df['location_id']
-        district_count_df['indicator_id'] = self\
-            .ind_meta['district_count']
-
-        concat_df = concat([gb_df, latest_date_df,  district_count_df])
-        concat_df[['indicator_id','value','time_grouping','data_date']]
-        concat_df['parent_location_id'] = parent_location_id
-        concat_df = concat_df.drop('location_id', 1)
-        concat_df = concat_df.rename(columns={'parent_location_id' : 'location_id'})
-        return concat_df
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -313,21 +157,15 @@ class DatapointResource(BaseNonModelResource):
         could be a point at which additional build_agg_rc_dfing may be applied
         '''
 
-        objects = self.get_object_list(bundle.request)
-        if not objects:
-            objects = []
-        return objects
+        return self.get_object_list(bundle.request)
 
-    # IS THIS EVER USED????
-    # |
-    # v
-    # def obj_get(self, bundle, **kwargs):
-    #     # get one object from data source
-    #     pk = int(kwargs['pk'])
-    #     try:
-    #         return bundle.data[pk]
-    #     except KeyError:
-    #         raise NotFound("Object not found")
+    def obj_get(self, bundle, **kwargs):
+        # get one object from data source
+        pk = int(kwargs['pk'])
+        try:
+            return bundle.data[pk]
+        except KeyError:
+            raise NotFound("Object not found")
 
     def alter_list_data_to_serialize(self, request, data):
         '''
@@ -336,25 +174,17 @@ class DatapointResource(BaseNonModelResource):
         add the total_count to the meta object as well
         '''
 
-        try:
-            location_ids = request.GET['location_id__in']
-            data['meta']['location_ids'] = location_ids
-        except KeyError:
-            location_ids = None
+        # get rid of the meta_dict. i will add my own meta data.
+        # data['meta'].pop("limit",None)
 
-        try:
-            indicator_ids = request.GET['indicator__in']
-            data['meta']['indicator_ids'] = indicator_ids
-        except KeyError:
-            indicator_ids = None
+        # iterate over parsed_params
+        meta_dict = {}
+        for k, v in self.parsed_params.iteritems():
+            meta_dict[k] = v
 
-        try:
-            chart_uuid = request.GET['chart_uuid']
-            data['meta']['chart_uuid'] = chart_uuid
-        except KeyError:
-            indicator_ids = None
+        # add metadata to response
+        data['requested_params'] = meta_dict
 
-        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
         # add errors if it exists
         if self.error:
             data['error'] = self.error
@@ -385,24 +215,22 @@ class DatapointResource(BaseNonModelResource):
         '''
         parsed_params = {}
 
-        required_params = {'indicator__in': None}
-
         # try to find optional parameters in the dictionary. If they are not
         # there return the default values ( given in the dict below)
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
             'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None,'location_id__in':None,\
-            'filter_indicator':None, 'filter_value': None,\
-            'show_missing_data':None, 'cumulative':0, \
-             'group_by_time': None, 'chart_uuid': None
-        }
+            'campaign__in': None, 'location__in': None}
 
         for k, v in optional_params.iteritems():
             try:
                 parsed_params[k] = query_dict[k]
             except KeyError:
                 parsed_params[k] = v
+
+        # find the Required Parameters and if they
+        # dont exists return an error to the response
+        required_params = {'indicator__in': None}
 
         for k, v in required_params.iteritems():
 
@@ -415,14 +243,13 @@ class DatapointResource(BaseNonModelResource):
         campaign_in_param = parsed_params['campaign__in']
 
         if campaign_in_param:
-            campaign_ids = [int(c_id) for c_id in campaign_in_param.split(',')]
-
+            campaign_ids = campaign_in_param.split(',')
 
         else:
             campaign_ids = self.get_campaign_list(
                 parsed_params['campaign_start'], parsed_params['campaign_end']
             )
-        self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
+
         parsed_params['campaign__in'] = campaign_ids
 
         self.parsed_params = parsed_params
@@ -435,97 +262,288 @@ class DatapointResource(BaseNonModelResource):
         return to the parsed params dictionary a list of campaigns to query
         '''
 
-        campaign_qs = Campaign.objects.filter(
+        cs = Campaign.objects.filter(
             start_date__gte=campaign_start,
             start_date__lte=campaign_end,
-            top_lvl_location_id=self.top_lvl_location_id
         )
 
-        return [c.id for c in campaign_qs]
+        campaign__in = [c.id for c in cs]
 
-    def build_class_indicator_map(self):
-        query_results = IndicatorClassMap.objects.filter(is_display=True) \
-            .values_list('indicator','enum_value','string_value')
-        class_indicator_map ={}
-        for query in query_results:
-            if query[0] not in class_indicator_map:
-                class_indicator_map[query[0]] ={}
-            class_indicator_map[query[0]][query[1]] = query[2]
+        return campaign__in
 
-        return class_indicator_map
 
-    def add_class_indicator_val(self, x):
-        ind_id = x['indicator_id']
-        ind_val = x['value']
-        if ind_id in self.class_indicator_map and ind_val in self.class_indicator_map[ind_id]:
-            new_val = self.class_indicator_map[ind_id][ind_val]
-            x['value'] = new_val
-        return x
+class DataPointEntryResource(BaseModelResource):
 
-    def base_transform(self):
-        results = []
+    required_keys = [
+        # 'datapoint_id',
+        'indicator_id', 'location_id',
+        'campaign_id', 'value',  # 'changed_by_id',
+    ]
+    # for validating foreign keys
+    keys_models = {
+        'location_id': Location,
+        'campaign_id': Campaign,
+        'indicator_id': Indicator
+    }
+    location = fields.IntegerField(attribute='location_id')
+    campaign = fields.IntegerField(attribute='campaign_id')
+    indicator = fields.IntegerField(attribute='indicator_id')
 
-        df_columns = ['id', 'indicator_id', 'campaign_id', 'location_id',\
-            'value']
-        computed_datapoints = DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator__in=self.parsed_params['indicator__in'])
+    class Meta():
+        # note - auth inherited from parent class #
+        queryset = DataPointEntry.objects.all()
+        allowed_methods = ['get', 'post']
+        resource_name = 'datapointentry'
+        always_return_data = True
+        max_limit = None  # no pagination
+        filtering = {
+            'indicator': ALL,
+            'campaign': ALL,
+            'location': ALL,
+        }
+        serializer = CustomJSONSerializer()
 
-        dwc_df = DataFrame(list(computed_datapoints.values_list(*df_columns)),\
-            columns=df_columns)
-
-        # do an inner join on the filter indicator
-        if self.parsed_params['filter_indicator'] and self.parsed_params['filter_value']:
-            merge_columns = ['campaign_id', 'location_id']
-            indicator_id = Indicator.objects.get(short_name = self.parsed_params['filter_indicator'])
-            filter_value_list = [self.parsed_params['filter_value']]
-
-            if filter_value_list == ['-1']: ## this means "show all classes"
-                filter_value_list = [1,2,3]
-                ## this only works for LPDS... this should be --
-                ## IndicatorClassMap.objects.filter(indicator = indicator)\
-                ##    .values_list(enum_value, flat = True)
-
-            filter_datapoints = DataPointComputed.objects.filter(
-                campaign__in=self.parsed_params['campaign__in'],
-                location__in=self.location_ids,
-                indicator_id=indicator_id,
-                value__in = filter_value_list
-                )
-            filter_df =DataFrame(list(filter_datapoints.values_list(*merge_columns)),\
-            columns=merge_columns)
-            dwc_df = dwc_df.merge(filter_df, how='inner', on=merge_columns)
-
-            ## now only show the locations that match that filter..
-            location_ids_in_filter = set(filter_df['location_id'])
-            self.location_ids = set(self.location_ids)\
-                .intersection(location_ids_in_filter)
-
-        dwc_df = dwc_df.apply(self.add_class_indicator_val, axis=1)
-        return dwc_df
-
-    def add_missing_data(self, df):
+    def save(self, bundle, skip_errors=False):
         '''
-        If the campaign / locaiton cobination has no related datapoitns, we
-        add the keys here so that we can see the row of data in data entry
-        or data browser.
-
-        This in the future can be controlled with a parameter so that for
-        instance with a table chart for a large number of districts, we only
-        show those with data.
-
-        This is largely for Data entry so that we can see a row in the form
-        even when there is no existing data.
+        Overriding Tastypie save method here because the
+        authorized_update_detail of this resource is failing.  Will need more
+        research here, but commenting this out for now as authorization is
+        handled separately.
         '''
-        list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
-        cart_product = list(itertools.product(*list_of_lists))
-        cart_prod_df = DataFrame(cart_product)
-        if 'campaign_id' in df.columns:
-            columns_list = ['indicator_id','location_id', 'campaign_id']
+        self.is_valid(bundle)
+
+        if bundle.errors and not skip_errors:
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+
+        # Check if they're authorized.
+        # if bundle.obj.pk:
+        #     self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
+        # else:
+        #     self.authorized_create_detail(self.get_object_list(bundle.request), bundle)
+
+        # Save FKs just in case.
+        self.save_related(bundle)
+
+        # Save the main object.
+        bundle.obj.save()
+        bundle.objects_saved.add(self.create_identifier(bundle.obj))
+
+        # Now pick up the M2M bits.
+        m2m_bundle = self.hydrate_m2m(bundle)
+        self.save_m2m(m2m_bundle)
+        return bundle
+
+    def obj_create(self, bundle, **kwargs):
+        """
+        Make sure the data is valid, then save it.
+        All POST requests come through here, whether they're truly
+        'obj_create' or actually 'obj_update'.
+        Also, if a request comes in with value=NULL, that means set the value
+        of that obect = 0.
+        """
+
+        try:
+            self.validate_object(bundle.data)
+
+            # Determine what kind of request this is: create, update, or delete
+
+            # throw error if can't get a real user id
+            user_id = self.get_user_id(bundle)
+            if user_id is not None:
+                bundle.data['changed_by_id'] = user_id
+            else:
+                raise InputError(0, 'Could not get User ID from cookie')
+
+            existing_datapoint = self.get_existing_datapoint(bundle.data)
+            if existing_datapoint is not None:
+
+                update_kwargs = {
+                    'location_id': existing_datapoint.location_id,
+                    'campaign_id': existing_datapoint.campaign_id,
+                    'indicator_id': existing_datapoint.indicator_id
+                }
+                bundle.response = self.success_response()
+
+                return self.obj_update(bundle, **update_kwargs)
+
+            else:
+                # create
+                bundle.response = self.success_response()
+                return super(DataPointEntryResource, self).obj_create(bundle, **kwargs)
+        # catch all other exceptions & format them the way the client is expecting
+        except Exception, e:
+            e.code = 0
+            e.data = traceback.format_exc()
+            response = self.create_response(
+                bundle.request,
+                self.make_error_response(e),
+                response_class=http.HttpApplicationError
+            )
+            raise ImmediateHttpResponse(response=response)
+
+    def obj_update(self, bundle, **kwargs):
+        '''
+        Overriding this tastypie method so we can explicitly set the value to
+        NULL when the value comes in as NaN.  This method is how the system
+        handles "deletes" that is we do not remove the row all together, just
+        set the value to null so the history can be maintained, and we are
+        more easily able to queue up changes for caching.
+        '''
+
+        value_to_update = bundle.data['value']
+
+        if value_to_update == 'NaN':
+            bundle.data['value'] = None
+
+        return super(DataPointEntryResource, self).obj_update(bundle, **kwargs)
+
+    def get_user_id(self, bundle):
+        request = bundle.request
+
+        if 'sessionid' in request.COOKIES:
+            session = Session.objects.get(pk=request.COOKIES['sessionid'])
+            if '_auth_user_id' in session.get_decoded():
+                user = User.objects.get(id=session.get_decoded()['_auth_user_id'])
+                return user.id
+
+    def is_delete_request(self, bundle):
+        if 'value' in bundle.data and bundle.data['value'] is None:
+            return True
         else:
-            columns_list = ['indicator_id','location_id', 'time_grouping']
+            return False
 
-        cart_prod_df.columns = columns_list
-        df = df.merge(cart_prod_df, how='outer', on=columns_list)
-        return df
+    def obj_delete(self, bundle, **kwargs):
+        """This is here to prevent an objects from ever being deleted."""
+        pass
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """This is here to prevent a list of objects from
+        ever being deleted."""
+        pass
+
+    def get_existing_datapoint(self, data):
+        """
+        Assumes data is valid
+        (i.e. data should have passed validate_object first)
+        """
+        try:
+            obj = DataPointEntry.objects.get(
+                location_id=int(data['location_id']),
+                campaign_id=int(data['campaign_id']),
+                indicator_id=int(data['indicator_id']),
+            )
+            return obj
+        except ObjectDoesNotExist:
+            return
+
+    def hydrate(self, bundle):
+
+        if hasattr(bundle, 'obj') \
+            and isinstance(bundle.obj, DataPointEntry) \
+            and hasattr(bundle.obj, 'location_id') \
+            and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'campaign_id') \
+            and bundle.obj.location_id is not None \
+            and hasattr(bundle.obj, 'indicator_id') \
+                and bundle.obj.location_id is not None:
+            # we get here if there's an existing datapoint being modified
+            pass
+        else:
+            # we get here if we're inserting a brand new datapoint
+            bundle.obj = DataPointEntry()
+            bundle.obj.location_id = int(bundle.data['location_id'])
+            bundle.obj.campaign_id = int(bundle.data['campaign_id'])
+            bundle.obj.indicator_id = int(bundle.data['indicator_id'])
+            bundle.obj.value = bundle.data['value']
+
+        bundle.obj.cache_job_id = -1
+        bundle.obj.source_submission_id = -1
+        bundle.obj.changed_by_id = bundle.data['changed_by_id']
+
+        return bundle
+
+    def dehydrate(self, bundle):
+        # hack: bundle will only have a response attr if this is a POST or PUT request
+        if hasattr(bundle, 'response'):
+            bundle.data = bundle.response
+        else:  # otherwise, this is a GET request
+            bundle.data['datapoint_id'] = bundle.data['id']
+            del bundle.data['id']
+            for key in ['campaign', 'indicator', 'location']:
+                bundle.data['{0}_id'.format(key)] = bundle.data[key]
+                del bundle.data[key]
+            for key in ['created_at', 'resource_uri']:
+                del bundle.data[key]
+        return bundle
+
+    def validate_object(self, obj):
+        """
+        Check that object has all the right fields, yadda yadda yadda.
+        """
+        for key in self.required_keys:
+            if key not in obj:
+                raise InputError(2, 'Required metadata missing: {0}'.format(key))
+
+        # ensure that metadata values are valid
+        for key, model in self.keys_models.iteritems():
+            try:
+                key_id = int(obj[key])
+            except ValueError:
+                raise InputError(4, 'Invalid metadata value: {0}'.format(key))
+            try:
+                model.objects.get(id=key_id)
+            except (ValueError, ObjectDoesNotExist):
+                raise InputError(3, 'Could not find record for metadata value: {0}'.format(key))
+
+    def validate_object_update(self, obj):
+        """
+        When updating an object, validate the new data.
+        """
+        # what should we do about id, url, created_at ?
+        # those all get filled in automatically, right?
+
+        # TODO uncomment once authorization is in place
+        # should this be a required key? yeah
+        # assert obj.has_key('changed_by_id')
+        # user_id = int(obj['changed_by_id'])
+        # User.objects.get(id=user_id)
+
+        # ensure that location, campaign, and indicator, if present, are valid values
+        if 'location_id' in obj:
+            location_id = int(obj['location_id'])
+            Location.objects.get(id=location_id)
+
+        if 'campaign_id' in obj:
+            campaign_id = int(obj['campaign_id'])
+            Campaign.objects.get(id=campaign_id)
+
+        if 'indicator_id' in obj:
+            indicator_id = int(obj['indicator_id'])
+            Indicator.objects.get(id=indicator_id)
+
+    def success_response(self):
+        response = {
+            'success': 1
+        }
+        return response
+
+    def make_error_response(self, error):
+        response = {
+            'success': 0,
+            'error': {
+                'code': getattr(error, 'code', 0),
+                'message': error.message
+            }
+        }
+        if hasattr(error, 'data'):
+            response['error']['data'] = error.data
+        return response
+
+
+class InputError(Exception):
+
+    def __init__(self, code, message, data=None):
+        self.code = code
+        self.message = message
+        if data is not None:
+            self.data = data

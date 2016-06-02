@@ -16,7 +16,6 @@ from rhizome.api.resources import *
 #     DocumentDetailResource, DocDataPointResource, ComputedDataPointResource, RefreshMasterResource, \
 #     QueueProcessResource, DocDetailTypeResource, ChartTypeTypeResource, DocTransFormResource, \
 #     CalculatedIndicatorComponentResource, AggRefreshResource, CacheMetaResource, SyncOdkResource
-from datapoints.api.datapoint import DataPointResource, DataPointEntryResource
 from datapoints.api.base import api_debug
 from datapoints.views import manage_system, source_data
 
@@ -37,7 +36,7 @@ v1_api.register(chart_type.ChartTypeResource())
 v1_api.register(computed_datapoint.ComputedDataPointResource())
 v1_api.register(custom_chart.CustomChartResource())
 v1_api.register(custom_dashboard.CustomDashboardResource())
-v1_api.register(datapoint.DatapointResource())
+v1_api.register(datapoint.DataPointResource())
 v1_api.register(datapoint_entry.DatapointEntryResource())
 v1_api.register(doc_datapoint.DocDataPointResource())
 v1_api.register(doc_detail_type.DocDetailTypeResource())
