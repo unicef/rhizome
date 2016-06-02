@@ -12,6 +12,9 @@ include
 .coverage
 /htmlcov
 /media
+doctrees/
+.buildinfo
+.editorconfig
 .buildinfo
 _modules/
 _sources/
