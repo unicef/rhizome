@@ -191,7 +191,18 @@ class DataPointResource(BaseNonModelResource):
         else:
             data['error'] = None
 
+        data['meta']['campaign_list'] = self.get_campaign_qs()
+
         return data
+
+    def get_campaign_qs(self):
+
+        try:
+            campaign_data = [c for c in self.campaign_qs.values()]
+        except AttributeError:
+            campaign_data = self.campaign_qs
+
+        return campaign_data
 
     def dehydrate(self, bundle):
         '''
@@ -213,6 +224,7 @@ class DataPointResource(BaseNonModelResource):
         to the expected ( both required and optional ) parameters in the request
         URL.
         '''
+
         parsed_params = {}
 
         # try to find optional parameters in the dictionary. If they are not
@@ -251,6 +263,7 @@ class DataPointResource(BaseNonModelResource):
             )
 
         parsed_params['campaign__in'] = campaign_ids
+        self.campaign_qs = Campaign.objects.filter(id__in=campaign_ids)
 
         self.parsed_params = parsed_params
 
