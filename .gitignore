@@ -12,6 +12,10 @@ include
 .coverage
 /htmlcov
 /media
+.buildinfo
+_modules/
+_sources/
+objects.inv
 /docs/_build
 /docs/_static
 /docs/_templates
