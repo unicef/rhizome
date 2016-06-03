@@ -16,6 +16,14 @@ from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
 
 
+def react_app(request):
+
+    print '==request=='
+    print request.path
+
+    return render_to_response('react_app.html',\
+        context_instance=RequestContext(request))
+
 def about(request):
     html = settings.ABOUT_HTML
     return render_to_response('about.html', {'html': html},
