@@ -64,43 +64,38 @@ protected_patterns = [
     url(r'^permissions_needed$', TemplateView.as_view(
         template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system', views.manage_system, name='manage_system'),
-    # NEEDS TO BE MIGRATED OUT OF DJANGO INTO .js ##
     url(r'^campaign', views.update_campaign, name='update_campaign'),
     url(r'^export_file?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_create, name='chart_create'),
     url(r'^entry$', views.data_entry, name='datapoint_entry'),
 
     url(r'^users/create/$', views.UserCreateView.as_view(), name='create_user'),
-    url(r'^users/update/(?P<pk>[0-9]+)$',
-        views.UserEditView.as_view(), name='user_update'),
+    url(r'^users/update/(?P<pk>[0-9]+)$', views.UserEditView.as_view(), name='user_update'),
 
-    url(r'^source-data', views.source_data, name='source_data'),
+    url(r'^source-data$', views.source_data, name='source_data'),
 
-    url(r'^charts/$', views.charts, name='charts'),
+    url(r'^charts$', views.charts, name='charts'),
     url(r'^charts/create$', views.chart_create, name='chart_create'),
-    url(r'^charts/(?P<chart_id>[0-9]+)$', views.chart, name='chart'),
+    url(r'^charts/(?P<chart_id>[0-9]+)', views.chart, name='chart'),
 
     url(r'^dashboards/$', views.dashboards, name='dashboards'),
     url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),
-    url(r'^dashboards/(?P<dashboard_id>[0-9]+)$',
-        views.dashboard, name='dashboard'),
+    url(r'^dashboards/(?P<dashboard_id>[0-9]+)$', views.dashboard, name='dashboard'),
 
     ## react app -- some day this will be the only ( non api ) url ##
-    url(r'^', TemplateView.as_view(
-        template_name='react_app.html'), name='react_app'),
+    url(r'^', TemplateView.as_view(template_name='react_app.html'), name='react_app'),
+
 ]
 
 urlpatterns = patterns(
     '',
-
-    (r'^api/', include(v1_api.urls)),
+    url(r'^api/', include(v1_api.urls)),
 
     url(r'^about$', views.about, name='about'),
     url(r'^admin/', decorator_include(login_required, admin.site.urls)),
     url(r'^accounts/login/$', login, name='login'),
     url(r'^accounts/logout/$', logout, name='logout'),
-    url(r'^', decorator_include(login_required,
-                                protected_patterns, namespace='datapoints')),
+    url(r'^', decorator_include(login_required, protected_patterns)),
 
     # Waffle PATH
     url(r'^', include('waffle.urls')),
