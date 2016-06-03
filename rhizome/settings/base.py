@@ -57,12 +57,16 @@ INSTALLED_APPS = (
     'simple_history',
     'rhizome',
     'tastypie',
+    'corsheaders',
     'debug_toolbar',
     'django_cron',
     'waffle'
 )
 
+CORS_ORIGIN_ALLOW_ALL = True # should be upated to only allow our websites
+
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
