@@ -44,7 +44,7 @@ class AllMetaResource(BaseNonModelResource):
         am_result.campaigns = \
             list(Campaign.objects.all().values())
         am_result.charts = \
-            list(CustomChart.objects.all().values('id','title'))
+            list(CustomChart.objects.all().values())
         am_result.dashboards = \
             list(CustomDashboard.objects.all().values())
         am_result.indicators = \
