@@ -84,6 +84,12 @@ protected_patterns = [
     url(r'^dashboards/create$', views.dashboard_create, name='dashboard_create'),
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)/$',
         views.dashboard, name='dashboard'),
+
+    ## react app -- some day this will be the only ( non api ) url ##
+url(r'^react_app/$', TemplateView.as_view(
+    template_name='react_app.html'), name='permissions_needed'),
+
+
 ]
 
 urlpatterns = patterns(
