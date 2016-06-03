@@ -4,7 +4,10 @@ var config = require('./webpack.config')
 
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
-  historyApiFallback: true
+  historyApiFallback: true,
+  proxy: {
+    '*': 'http://localhost:8000'
+  }
 }).listen(3000, 'localhost', function (err, result) {
   if (err) {
     console.log(err)
