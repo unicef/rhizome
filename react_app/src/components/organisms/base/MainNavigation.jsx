@@ -8,11 +8,11 @@ export default class MainNavigation extends Component {
         <div className='top-bar-left'>
           <ul className='menu'>
             <li className='menu-text'><Link to={'/'}>Rhizome</Link></li>
-            <li><Link to={'/users'}>Users</Link></li>
-            <li><Link to={'/indicators'}>Indicators</Link></li>
-            <li><Link to={'/locations'}>Locations</Link></li>
-            <li><Link to={'/campaigns'}>Campaigns</Link></li>
-            <li><Link to={'/charts'}>Charts</Link></li>
+            <li><Link to={'/react_app/users'}>Users</Link></li>
+            <li><Link to={'/react_app/indicators'}>Indicators</Link></li>
+            <li><Link to={'/react_app/locations'}>Locations</Link></li>
+            <li><Link to={'/react_app/campaigns'}>Campaigns</Link></li>
+            <li><Link to={'/react_app/charts'}>Charts</Link></li>
           </ul>
         </div>
       </nav>

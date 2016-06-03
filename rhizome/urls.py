@@ -83,7 +83,7 @@ protected_patterns = [
     url(r'^dashboards/(?P<dashboard_id>[0-9]+)$', views.dashboard, name='dashboard'),
 
     ## react app -- some day this will be the only ( non api ) url ##
-    url(r'^/', views.react_app, name='react_app'),
+    url(r'^react_app', views.react_app, name='react_app'),
 
 ]
 
