@@ -1025,8 +1025,15 @@ class OfficeResource(BaseNonModelResource):
 
     def get_object_list(self, request):
 
+        # SELECT DISTINCT ON (office_id)
+        # 				office_id as id
+        # 				, office_id as top_level_location_id
+        # 				, id as latest_campaign_id
+        # 			FROM campaign
+        # 			ORDER BY office_id, start_date DESC;
+
         # temporary -- this should be based on start_date / data completeness
-        latest_campaign_lookup = {1: 43, 2: 299, 3: 45}
+        latest_campaign_lookup = {1: 301, 2: 307, 3: 303}
         location_lookup = {1: 1, 2: 2, 3: 3}
 
         qs = []
