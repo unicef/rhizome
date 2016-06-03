@@ -86,11 +86,9 @@ protected_patterns = [
         views.dashboard, name='dashboard'),
 
     ## react app -- some day this will be the only ( non api ) url ##
-url(r'^react_app/$', TemplateView.as_view(
-    template_name='react_app.html'), name='permissions_needed'),
-
-
-]
+    url(r'^react_app/$', TemplateView.as_view(
+        template_name='react_app.html'), name='react_app'),
+]       
 
 urlpatterns = patterns(
     '',
