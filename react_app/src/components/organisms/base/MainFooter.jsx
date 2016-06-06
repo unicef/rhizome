@@ -9,20 +9,14 @@ const styles = {
 }
 
 const MainFooter = () => (
-  <footer style={styles}>
-  	<nav>
-  		<ul className='inline-list'>
-  			<li><Link to='/manage_system'>Manage System</Link></li>
-  			<li><Link to='/enter_data'>Enter Data</Link></li>
-  			<li><Link to='/source_data'>View Source Data</Link></li>
-  		</ul>
-  		<ul className='inline-list'>
-  			<li><Link to='/about'>About</Link></li>
-  			<li><Link to='/sitemap'>Sitemap</Link></li>
-  			<li><Link to='/bug_report'>Report a Bug</Link></li>
-  			<li><Link to='/contact'>Contact Us</Link></li>
-  		</ul>
-  	</nav>
+  <footer className="row main-footer">
+    <nav>
+      <ul className="actions inline-list">
+        <li><a href="/manage_system/users"><i className="fa fa-cog"></i>Manage System</a></li>
+        <li><a href="/source-data" ><i className="fa fa-file"></i>Source Data</a></li>
+        <li><a href="/react_app" ><i className="fa fa-plus"></i>Enter Data</a></li>
+      </ul>
+    </nav>
   </footer>
 )
 
