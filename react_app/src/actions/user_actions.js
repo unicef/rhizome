@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions'
-import RhizomeAPI from 'util/api'
+import RhizomeAPI from 'utilities/api'
 
 export const fetchUsers = createAction(
 	'FETCH_USERS_REQUEST', () => RhizomeAPI.get('user/')

@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions'
-import RhizomeAPI from 'util/api'
+import RhizomeAPI from 'utilities/api'
 
 export const fetchAllMeta = createAction(
 	'FETCH_ALL_META_REQUEST', () => RhizomeAPI.get('all_meta/')

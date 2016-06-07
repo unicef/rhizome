@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions'
-import RhizomeAPI from 'util/api'
+import RhizomeAPI from 'utilities/api'
 
 export const fetchLocations = createAction(
 	'FETCH_LOCATIONS_REQUEST', () => RhizomeAPI.get('location/')

@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions'
-import RhizomeAPI from 'util/api'
+import RhizomeAPI from 'utilities/api'
 
 export const fetchIndicators = createAction(
 	'FETCH_INDICATORS_REQUEST', () => RhizomeAPI.get('indicator/')

@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions'
-import RhizomeAPI from 'util/api'
+import RhizomeAPI from 'utilities/api'
 
 export const fetchDashboards = createAction(
 	'FETCH_DASHBOARDS_REQUEST', () => RhizomeAPI.get('custom_dashboard/')
