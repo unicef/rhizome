@@ -8,9 +8,9 @@ import DropdownMenuItem from 'components/dropdown/DropdownMenuItem'
 class CampaignSelect extends Component {
 
   static propTypes = {
-    campaigns: React.PropTypes.array.isRequired,
-    selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired
+    campaigns: PropTypes.array.isRequired,
+    selected: PropTypes.object.isRequired,
+    sendValue: PropTypes.func.isRequired
   }
 
   static defaultProps = {
