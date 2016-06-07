@@ -301,6 +301,10 @@ class DateDocTransform(DocTransform):
         super(DateDocTransform, self).__init__(
             user_id, document_id, raw_csv_df)
 
+    def main(self):
+        self.process_file()
+        self.upsert_source_object_map()
+
     def clean_date(self, date_string):
         #FIXME
 

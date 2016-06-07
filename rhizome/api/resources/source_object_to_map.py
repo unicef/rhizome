@@ -12,7 +12,6 @@ class SourceObjectToMapResource(BaseModelResource):
 
     def get_object_list(self, request):
 
-        print '=-obj-=\n' * 5
         qs =''
         if 'document_id' in request.GET:
 

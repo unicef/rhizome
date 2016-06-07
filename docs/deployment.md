@@ -46,3 +46,8 @@ When you first create an instance of this application there are two ways to init
   - soruce_data.xlsx - AN excel sheet that has the same schema as the database.  The app will iterate through each sheet ,match the sheet to a database table of the same name, and insert those recorts
       -> For instance if you have 5 indicators, and 10 locations that you care about, you can put that data directly in the soruce_data.xlsx and the metadata will sync.
   - initial_source_data.csv - This is a basic sheet that the system can use to generate metadata and datapoints associated.
+
+
+# After the instance is created #
+  - GO to the source-data/ and select the document included in the initial ingest
+  - map all metadta, then select "sync data"

@@ -28,6 +28,23 @@ def populate_initial_data(apps, schema_editor):
     process_geo_json()
     process_meta_data()
 
+    ## there is a bug in the front end such that some charts will not load
+    ## if there is not a campaign created in the DB.. so ....
+    add_place_holder_campaign()
+
+def add_place_holder_campaign():
+
+    ct = CampaignType.objects.create(name = 'placeholder')
+    c = Campaign.objects.create(
+        name = 'Placeholder',
+        office_id = Office.objects.all()[0].id,
+        campaign_type_id = ct.id,
+        top_lvl_location_id = Location.objects.filter(parent_location_id= None)[0].id,
+        top_lvl_indicator_tag_id = IndicatorTag.objects.all()[0].id,
+        start_date = '2016-01-01',
+        end_date = '2016-01-01'
+    )
+
 def process_meta_data():
 
     xl = pd.ExcelFile('migration_data/initial_data.xlsx')

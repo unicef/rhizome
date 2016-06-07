@@ -41,7 +41,7 @@ def process_source_sheet(source_sheet_df, sheet_name):
 
     ## document -> source_submissions ##
     dt = DateDocTransform(user_id, new_doc.id)
-    dt.process_file()
+    dt.main()
 
     ## source_submissions -> datapoints ##
     mr = MasterRefresh(user_id, new_doc.id)
