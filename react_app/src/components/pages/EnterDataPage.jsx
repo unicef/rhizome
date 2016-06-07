@@ -35,7 +35,7 @@ class EnterDataPage extends Component {
               { campaign_select }
               <DropdownButton
                 items={props.locations.list}
-                sendValue={selectLocation}
+                sendValue={id => props.selectGlobalLocation(props.locations.index[id])}
                 item_plural_name='Locations'
                 text='Add Locations'
                 style='button'

@@ -18,7 +18,21 @@ const selected_campaign = handleActions({
   SELECT_GLOBAL_CAMPAIGN: (state, action) => action.payload
 }, null)
 
-const reducers = {superuser, selected_campaign, charts, dashboards, campaigns, indicators, locations, users}
+const selected_location = handleActions({
+  SELECT_GLOBAL_LOCATION: (state, action) => action.payload
+}, null)
+
+const reducers = {
+  superuser,
+  selected_campaign,
+  selected_location,
+  charts,
+  dashboards,
+  campaigns,
+  indicators,
+  locations,
+  users
+}
 
 const rootReducer = combineReducers({
   ...reducers,
