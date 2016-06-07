@@ -17,7 +17,7 @@ export default class BasePage extends Component {
   render () {
   	return (
 			<div role='main'>
-				<MainHeader charts={this.props.charts} />
+				<MainHeader charts={this.props.charts} dashboards={this.props.dashboards} />
 			  <div className="row">{this.props.children}</div>
 				<MainFooter />
 			</div>

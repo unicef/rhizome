@@ -4,7 +4,11 @@ import BasePage from 'components/pages/BasePage'
 
 import { fetchAllMeta } from 'actions/meta_actions'
 
-const mapStateToProps = (state) => ({ charts: state.charts })
+const mapStateToProps = (state) => ({
+	superuser: state.superuser,
+	dashboards: state.dashboards,
+	charts: state.charts
+})
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({fetchAllMeta}, dispatch)
 

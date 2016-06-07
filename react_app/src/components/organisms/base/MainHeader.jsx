@@ -11,7 +11,7 @@ export default class MainHeader extends Component {
 		      </a>
 		      <nav className="dashboard-control">
 		        <div id="dashboards-nav">
-		        	<MainNavigation charts={this.props.charts} />
+		        	<MainNavigation charts={this.props.charts} dashboards={this.props.dashboards} />
 		        </div>
 		      </nav>
 		    </div>
