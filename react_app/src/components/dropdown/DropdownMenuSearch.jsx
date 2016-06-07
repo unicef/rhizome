@@ -1,3 +1,4 @@
+import ReactDOM from 'react-dom'
 import React from 'react'
 
 import dom from 'utilities/dom'
@@ -62,14 +63,14 @@ var DropdownMenuSearch = React.createClass({
   },
 
   _focus: function () {
-    React.findDOMNode(this.refs.input).focus()
+    ReactDOM.findDOMNode(this.refs.input).focus()
   },
 
   _onBlur: function () {
     var self = this
 
     window.setTimeout(function () {
-      if (dom.parentOf(React.findDOMNode(self), document.activeElement)) {
+      if (dom.parentOf(ReactDOM.findDOMNode(self), document.activeElement)) {
         self._focus()
       } else {
         self.props.onBlur()

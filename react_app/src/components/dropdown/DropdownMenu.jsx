@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import ReactDOM from 'react-dom'
 import React, {Component, PropTypes} from 'react'
 
 import DropdownMenuSearch from 'components/dropdown/DropdownMenuSearch'
@@ -43,9 +44,9 @@ class DropdownMenu extends Component {
 
     this._onResize()
     if (this.props.search) {
-      React.findDOMNode(this.refs.search).focus()
+      ReactDOM.findDOMNode(this.refs.search).focus()
     } else {
-      React.findDOMNode(this).focus()
+      ReactDOM.findDOMNode(this).focus()
     }
   }
 
@@ -62,8 +63,8 @@ class DropdownMenu extends Component {
   }
 
   _onResize = () => {
-    var menu = dom.dimensions(React.findDOMNode(this.refs.menu))
-    var items = (this.refs.itemlist ? dom.dimensions(React.findDOMNode(this.refs.itemlist)) : {height: 0})
+    var menu = dom.dimensions(ReactDOM.findDOMNode(this.refs.menu))
+    var items = (this.refs.itemlist ? dom.dimensions(ReactDOM.findDOMNode(this.refs.itemlist)) : {height: 0})
 
     // Compute offset relative to the viewport
     var x = this.props.x - window.pageXOffset
@@ -126,7 +127,7 @@ class DropdownMenu extends Component {
     var self = this
 
     window.setTimeout(function () {
-      var menu = React.findDOMNode(self)
+      var menu = ReactDOM.findDOMNode(self)
 
       if (!dom.parentOf(menu, document.activeElement)) {
         self.props.onBlur()

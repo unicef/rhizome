@@ -7,7 +7,7 @@ import Dropdown from 'components/dropdown/Dropdown'
 class DropdownButton extends Dropdown {
 
   static propTypes = {
-    items: React.PropTypes.array.isRequired,
+    items: React.PropTypes.array,
     sendValue: React.PropTypes.func.isRequired,
     item_plural_name: React.PropTypes.string,
     text: React.PropTypes.string,
@@ -21,6 +21,7 @@ class DropdownButton extends Dropdown {
   }
 
   static defaultProps = {
+    items: [],
     uniqueOnly: false,
     multi: false,
     grouped: false,
@@ -36,12 +37,10 @@ class DropdownButton extends Dropdown {
 
   componentWillUpdate = (nextProps, nextState) => {
     if (this.props.grouped) {
-      nextProps.children = this._getGroupedMenuItemComponents(this.props.items, this.state.pattern)
+      this.items = this._getGroupedMenuItemComponents(this.props.items, this.state.pattern)
     } else {
-      nextProps.children = this._getMenuItemComponents(this.props.items, this.state.pattern)
+      this.items = this._getMenuItemComponents(this.props.items, this.state.pattern)
     }
-
-    nextProps.onSearch = this._setPattern
   }
 
   _getGroupedMenuItemComponents = (items, pattern) => {

@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import ReactDOM from 'react-dom'
 import React, {Component, PropTypes} from 'react'
 import Layer from 'react-layer'
 
@@ -10,6 +11,7 @@ class Dropdown extends Component {
   constructor (props) {
     super(props)
     this.state = {
+      items: [],
       open: false,
       pattern: ''
     }
@@ -17,21 +19,20 @@ class Dropdown extends Component {
 
   static defaultProps = {
     style: '',
-    searchable: true,
-    onSearch: () => null
+    searchable: true
   }
 
   componentDidUpdate = () => {
     if (this.state.open) {
-      var offset = dom.documentOffset(React.findDOMNode(this))
+      var offset = dom.documentOffset(ReactDOM.findDOMNode(this))
       var x = (offset.right + offset.left) / 2
-
+      console.log('this', this)
       var menu = (
         <DropdownMenu x={x} y={offset.bottom}
           onBlur={this.close}
-          onSearch={this.props.onSearch}
+          onSearch={this._setPattern}
           searchable={this.props.searchable}
-          children={this.props.children}/>
+          children={this.items}/>
       )
 
       if (!this.layer) {
@@ -51,7 +52,7 @@ class Dropdown extends Component {
 
       // Clear out the search patterns that the parent component is necessarily
       // using to provide filtered menu items.
-      this.props.onSearch('')
+      this._setPattern('')
       window.removeEventListener('keyup', this)
     }
   }
@@ -81,10 +82,16 @@ class Dropdown extends Component {
     this.setState({ open: !this.state.open })
   }
 
+  _setPattern = (value) => {
+    this.setState({ pattern: value })
+  }
+
   close = () => {
     this.setState({ open: false })
   }
 }
+
+
 
 function findMatches (item, re) {
   var matches = []
