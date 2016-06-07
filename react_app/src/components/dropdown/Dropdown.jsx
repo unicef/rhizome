@@ -32,7 +32,7 @@ class Dropdown extends Component {
           onBlur={this.close}
           onSearch={this._setPattern}
           searchable={this.props.searchable}
-          children={this.items}/>
+          children={this.items || this.props.items}/>
       )
 
       if (!this.layer) {
