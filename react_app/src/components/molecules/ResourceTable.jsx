@@ -2,7 +2,7 @@ import _ from 'lodash'
 import React, { PropTypes, Component } from 'react'
 import {AgGridReact, reactCellRendererFactory} from 'ag-grid-react'
 import { Link } from 'react-router'
-import TableControls from 'components/atoms/TableControls'
+import TableControls from 'components/table/TableControls'
 
 export default class ResourceTable extends Component {
 
