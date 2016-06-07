@@ -4,14 +4,23 @@ Rhizome is meant to handle a number of different use cases, not just polio.
 
 In this section we will go over spinning up a new instance.  How to initialize the data set, find geographic shapes that you can use to create maps, and maneuver your way arond the applicatino.
 
-Creating an AMI ( Image of an existing deployment )
-  NEEDS DOCUMENTATION
-  -- http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html --
-
 
 # Spinning up a new instance.
 
 There are two ways to spin up a new instance
+    - From an AMI ( or replica of a current version )
+    - From scratch ( necessary to set up postgres, apache, wsgi etc. )
+
+## Creating a new version from Scratch
+    - Get ssh access to a remove linux server.
+    - install postgres
+    - install apache
+    - ...
+
+## Creating an AMI ( Image of an existing deployment )
+  NEEDS DOCUMENTATION
+  -- http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html --
+
 ## Spinning up a new version from existing AMI on aws
 
    If you already have a deployment of rhizome up in your AWS environment,following the following steps:

@@ -106,6 +106,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
+                ('uuid', models.CharField(default=1, unique=True, max_length=255)),
                 ('title', models.CharField(unique=True, max_length=255)),
                 ('chart_json', jsonfield.fields.JSONField()),
             ],
@@ -256,6 +257,18 @@ class Migration(migrations.Migration):
                 'verbose_name': 'historical data point entry',
             },
         ),
+
+        migrations.AlterField(
+            model_name='historicaldatapointentry',
+            name='campaign',
+            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING, db_constraint=False, blank=True, to='rhizome.Campaign', null=True),
+        ),
+        migrations.AlterField(
+            model_name='historicaldatapointentry',
+            name='unique_index',
+            field=models.CharField(default=-1, max_length=255, db_index=True),
+        ),
+
         migrations.CreateModel(
             name='Indicator',
             fields=[
@@ -568,11 +581,6 @@ class Migration(migrations.Migration):
             model_name='datapoint',
             name='source_submission',
             field=models.ForeignKey(to='rhizome.SourceSubmission'),
-        ),
-        migrations.AddField(
-            model_name='customdashboard',
-            name='default_office',
-            field=models.ForeignKey(to='rhizome.Office', null=True),
         ),
         migrations.AddField(
             model_name='campaigntoindicator',

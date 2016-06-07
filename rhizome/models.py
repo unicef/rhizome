@@ -499,17 +499,6 @@ class CustomDashboard(models.Model):
     class Meta:
         db_table = 'custom_dashboard'
 
-
-class ChartToDashboard(models.Model):
-
-    chart = models.ForeignKey(CustomChart)
-    dashboard = models.ForeignKey(CustomDashboard)
-    sort_order = models.IntegerField(default=0)
-
-    class Meta:
-        db_table = 'chart_to_dashboard'
-        unique_together = (('chart', 'dashboard'))
-
 #===========================================================================#
 #                              SOURCE DATA MODELS                           #
 #===========================================================================#

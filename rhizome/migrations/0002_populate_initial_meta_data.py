@@ -13,7 +13,7 @@ import django.db.models.deletion
 import jsonfield.fields
 import pandas as pd
 
-from rhizome.models import Location, LocationPolygon
+from rhizome.models import Location, LocationPolygon, LocationType, Office
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
 
@@ -66,33 +66,78 @@ def process_meta_data():
     ltc = LocationTreeCache()
     ltc.main()
 
-
 def process_geo_json():
+    '''
+    Depending on the values put in the COUNTRY_LIST, we pull shapes from
+    The highcharts map repository.  This will give us shapes for admin level 1
+    for the countries we specify.
+    '''
 
     HOST = 'http://rhizome.work/api/v1/'
     for c in settings.COUNTRY_LIST:
+        create_country_meta_data(c)
 
-        json_file_name = 'migration_data/geo/{0}.json'.format(c)
+    # minify_geo_json()
 
-        if not os.path.isfile(json_file_name): # only hit API 1x and save the file #
-            url = 'http://code.highcharts.com/mapdata/countries/{0}/{0}-all.geo.json'.format(c)
-            response = urllib2.urlopen(url)
-            data = json.loads(response.read())
-            with open(json_file_name, 'w+') as outfile:
-                json.dump(data, outfile)
+def create_country_meta_data(c):
 
-    # try:
-    #     geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
-    # except IOError:
-    #     return
-    #
-    # geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
-    # location_df = pd.DataFrame(list(Location.objects.all()
-    #                                 .values_list('id', 'location_code')), columns=['location_id', 'location_code'])
-    # merged_df = location_df.merge(geo_json_df)[['location_id', 'geo_json']]
-    # model_df_to_data(merged_df, LocationPolygon)
+    json_file_name = 'migration_data/geo/{0}.json'.format(c)
 
-    minify_geo_json()
+     # if this file has not already been saved, fetch it from the below url
+    if not os.path.isfile(json_file_name):
+        url = 'http://code.highcharts.com/mapdata/countries/{0}/{0}-all.geo.json'.format(c)
+        response = urllib2.urlopen(url)
+        data = json.loads(response.read())
+        with open(json_file_name, 'w+') as outfile:
+            json.dump(data, outfile)
+
+    # create a dataframe where one rwo represents one shape #
+    try:
+        with open(json_file_name) as data_file:
+            data = json.load(data_file)
+            features = data['features']
+            geo_json_df = pd.DataFrame(features)
+    except IOError:
+        return
+
+    # create the country and province location types #
+    country_lt, created = LocationType.objects.get_or_create(
+        name = 'Country', admin_level = 0
+    )
+    province_lt, created = LocationType.objects.get_or_create(
+        name = 'Province', admin_level = 1
+    )
+
+    # create an 'office' -- this model is legacy and should be removed #
+    office_obj = Office.objects.create(
+        name = c
+    )
+
+    # create the top level country #
+    country_loc_object = Location.objects.create(
+        name = c,
+        location_code = c,
+        office_id = office_obj.id,
+        location_type_id = country_lt.id
+    )
+
+    for ix, row in geo_json_df.iterrows():
+
+        # create the proivince location #
+        row_properties, row_geo = row.properties, row.geometry
+        province_loc_object = Location.objects.create(
+            name = row_properties['name'],
+            parent_location_id = country_loc_object.id,
+            location_code = row.id,
+            office_id = office_obj.id,
+            location_type_id = province_lt.id
+        )
+
+        # create the proivince shapes #
+        LocationPolygon.objects.create(
+            geo_json = row_geo, location_id = province_loc_object.id
+        )
+
 
 
 def model_df_to_data(model_df, model):
