@@ -22,7 +22,7 @@ def deploy(venv_path=None):
 
     # on local machine
     _build_dependencies()
-    run_tests()
+    # run_tests()
 
     # on target machine
     stop_apache()
@@ -104,7 +104,7 @@ def _push_to_remote():
         run("source ../environment_seed.env")
 
         # echo "== COLLECT STATIC =="
-        run("python manage.py collectstatic --noinput --settings=settings")
+        # run("python manage.py collectstatic --noinput --settings=settings")
 
         # add waffle_switch pdf for exporting pdf
         # run("./manage.py waffle_switch pdf on --create --settings=settings")
