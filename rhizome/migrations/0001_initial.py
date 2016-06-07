@@ -126,12 +126,21 @@ class Migration(migrations.Migration):
                 'db_table': 'custom_dashboard',
             },
         ),
+        operations = [
+            migrations.AddField(
+                model_name='customdashboard',
+                name='rows',
+                field=jsonfield.fields.JSONField(null=True, blank=True),
+            ),
+        ]
         migrations.CreateModel(
             name='DataPoint',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
-                ('data_date', models.DateTimeField()),
+                ('data_date', models.DateTimeField(null=True)),
+                ('campaign', models.ForeignKey(to='rhizome.Campaign', null=True)),
+                ('unique_index', models.CharField(default=-1, max_length=255,unique=True)),,
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('cache_job', models.ForeignKey(default=-1, to='rhizome.CacheJob')),
@@ -140,6 +149,9 @@ class Migration(migrations.Migration):
                 'db_table': 'datapoint',
             },
         ),
+
+
+
         migrations.CreateModel(
             name='DataPointComputed',
             fields=[
@@ -158,7 +170,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
-                ('data_date', models.DateTimeField()),
+                ('data_date', models.DateTimeField(null=True)),
+                ('campaign', models.ForeignKey(to='rhizome.Campaign', null=True)),
                 ('value', models.FloatField(null=True)),
                 ('agg_on_location', models.BooleanField()),
             ],
@@ -225,7 +238,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.IntegerField(verbose_name='ID',
                                            db_index=True, auto_created=True, blank=True)),
-                ('data_date', models.DateTimeField()),
+                ('data_date', models.DateTimeField(null=True)),
+                 ('campaign', models.ForeignKey(to='rhizome.Campaign', null=True)),
+                ('unique_index', models.CharField(default=-1, max_length=255, db_index=True,unique=True)),
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(editable=False, blank=True)),
                 ('history_id', models.AutoField(serialize=False, primary_key=True)),
@@ -424,6 +439,24 @@ class Migration(migrations.Migration):
             options={
                 'db_table': 'source_object_map',
             },
+        ),
+        migrations.CreateModel(
+            name='IndicatorClassMap',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID',
+                                        serialize=False, auto_created=True, primary_key=True)),
+                ('string_value', models.CharField(max_length=100)),
+                ('enum_value', models.IntegerField()),
+                ('is_display', models.BooleanField()),
+                ('indicator', models.ForeignKey(to='rhizome.Indicator')),
+            ],
+            options={
+                'db_table': 'indicator_class_map',
+            },
+        ),
+        migrations.AlterUniqueTogether(
+            name='indicatorclassmap',
+            unique_together=set([('indicator', 'string_value', 'enum_value')]),
         ),
         migrations.CreateModel(
             name='SourceSubmission',

@@ -20,6 +20,14 @@ from rhizome.models import CacheJob
 
 
 def reset_seq(apps, schema_editor):
+    '''
+    This has to do with Autoincrement... Since we insert PKs directly in
+    "populate inital metadata", the DB engine still thinks that it needs
+    to assign "1" to the first indicator fr instance that is created.
+
+    By resetting the sequence, we ensure that the ORM will add add sequential
+    IDs relative to what we created in the inital migrations
+    '''
 
     cj_1 = CacheJob.objects.create(
         id=1,
