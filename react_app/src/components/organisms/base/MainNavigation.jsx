@@ -5,17 +5,29 @@ export default class MainNavigation extends Component {
   render () {
   	return (
       <nav className='top-bar'>
-        <div className='top-bar-left'>
-          <ul className='menu'>
-            <li className='menu-text'><Link to={'/'}>Rhizome</Link></li>
-            <li><Link to={'/react_app/users'}>Users</Link></li>
-            <li><Link to={'/react_app/indicators'}>Indicators</Link></li>
-            <li><Link to={'/react_app/locations'}>Locations</Link></li>
-            <li><Link to={'/react_app/campaigns'}>Campaigns</Link></li>
-            <li><Link to={'/react_app/charts'}>Charts</Link></li>
-          </ul>
-        </div>
+        <ul className='dashboards-nav'>
+          <li>
+            <a href='/charts'>Charts</a>
+            <ul className='dashboard-menu'>
+              <li className='separator'><hr />
+                <a href='/charts'>See All Charts</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href='/dashboards'>Dashboards</a>
+            <ul className='dashboard-menu'>
+            </ul>
+          </li>
+          <li className='log-out'>
+            <a href='/accounts/logout?next=/' title='logout'>
+              Log Out &nbsp;
+              <i className='fa fa-lg fa-sign-out'/>
+            </a>
+          </li>
+        </ul>
       </nav>
   	)
   }
 }
+

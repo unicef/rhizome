@@ -1,11 +1,21 @@
 import React, { Component } from 'react'
+import MainNavigation from 'components/organisms/base/MainNavigation'
 
 export default class MainHeader extends Component {
   render () {
   	return (
-      <header>
-    		<h3>Header</h3>
-      </header>
+		  <header className="no-print">
+		    <div className="row navigation-bar">
+		      <a href="/" className="logo">
+		        <img className="image-style" src="/static/img/RhizomeAfghanEOC.jpg" />
+		      </a>
+		      <nav className="dashboard-control">
+		        <div id="dashboards-nav">
+		        	<MainNavigation />
+		        </div>
+		      </nav>
+		    </div>
+		  </header>
   	)
   }
 }
