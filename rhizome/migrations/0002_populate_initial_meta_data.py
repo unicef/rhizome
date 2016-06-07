@@ -16,8 +16,6 @@ import pandas as pd
 from rhizome.models import Location, LocationPolygon, LocationType, Office
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
-
-
 def populate_initial_data(apps, schema_editor):
     '''
     Here, we take an excel file that has the same schema as the database
@@ -77,7 +75,7 @@ def process_geo_json():
     for c in settings.COUNTRY_LIST:
         create_country_meta_data(c)
 
-    # minify_geo_json()
+    minify_geo_json()
 
 def create_country_meta_data(c):
 

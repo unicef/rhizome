@@ -16,9 +16,9 @@ class GeoJsonResult(object):
 class GeoResource(BaseNonModelResource):
     '''
     **GET Request** A non model resource that allows us to query for shapefiles based on a colletion of parameters.
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'location_id__in' the location of the shape file that we wish to retrieve
-        - *Optional Parameters:* 
+        - *Optional Parameters:*
             'location_depth' the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all "grandchildren"
             'location_type' return the descendants of the location_id param that have the given location_type id.
     '''
@@ -50,7 +50,7 @@ class GeoResource(BaseNonModelResource):
             geo_obj = GeoJsonResult()
             geo_obj.location_id = p.location.id
             geo_obj.geometry = p.geo_json['geometry']
-            geo_obj.type = p.geo_json['type']
+            # geo_obj.type = p.geo_json['type']
             geo_obj.properties = {'location_id': p.location.id}
             geo_obj.parent_location_id =\
                 p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
