@@ -26,7 +26,7 @@ class Dropdown extends Component {
     if (this.state.open) {
       var offset = dom.documentOffset(ReactDOM.findDOMNode(this))
       var x = (offset.right + offset.left) / 2
-      console.log('this', this)
+
       var menu = (
         <DropdownMenu x={x} y={offset.bottom}
           onBlur={this.close}
