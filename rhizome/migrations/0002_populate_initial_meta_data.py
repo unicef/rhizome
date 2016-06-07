@@ -25,8 +25,8 @@ def populate_initial_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    # process_meta_data()
     process_geo_json()
+    process_meta_data()
 
 def process_meta_data():
 

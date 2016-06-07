@@ -196,6 +196,6 @@ FLAG_DATA = True
 
 ## for a new instance -- put the 2 letter codes cooresponding to the countries
 ## you want to ingest maps for.  See here for more info http://code.highcharts.com/mapdata/
-COUNTRY_LIST = ['lb', 'sy']
+COUNTRY_LIST = ['lb'] ##, 'sy']
 ## . 'http://code.highcharts.com/mapdata/countries/lb/lb-all.geo.json'
 ## . 'http://code.highcharts.com/mapdata/countries/sy/sy-all.geo.json'

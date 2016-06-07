@@ -302,12 +302,9 @@ class DateDocTransform(DocTransform):
             user_id, document_id, raw_csv_df)
 
     def clean_date(self, date_string):
+        #FIXME
 
         try:
-            date = datetime.strptime(date_string, '%d-%m-%y')
-        except ValueError:
-            date = datetime.strptime(date_string, '%d-%m-%Y')
-        except ValueError:
             date = datetime.strptime(date_string, '%d/%m/%y')
         except ValueError:
             date = None
@@ -317,8 +314,8 @@ class DateDocTransform(DocTransform):
     def process_raw_source_submission(self, submission):
 
         submission_ix, submission_data = submission[0], submission[1:]
-
         submission_data = dict(zip(self.file_header, submission_data))
+
         instance_guid = submission_data[self.uq_id_column]
 
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
@@ -357,6 +354,10 @@ class DateDocTransform(DocTransform):
         self.file_header = doc_obj.file_header
 
         batch = {}
+
+        doc_df[self.uq_id_column] = doc_df[self.location_column].map(
+            str) + doc_df[self.date_column]
+        self.file_header = doc_df.columns
 
         for submission in doc_df.itertuples():
 

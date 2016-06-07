@@ -39,7 +39,10 @@ class AggRefresh(object):
 
         if not campaign_id:
             campaign_id_list = self.get_campaign_ids_to_process()
-            campaign_id = campaign_id_list[0]
+            if len(campaign_id_list) > 0:
+                campaign_id = campaign_id_list[0]
+            else:
+                return
 
         self.cache_job = None
 
@@ -99,7 +102,7 @@ class AggRefresh(object):
             one_dp_that_needs_agg = DataPoint.objects\
                 .filter(cache_job_id=-1, value__gte=0)[0]
         except IndexError:
-            return
+            return []
 
         location_id = one_dp_that_needs_agg.location_id
         data_date = one_dp_that_needs_agg.data_date
@@ -110,7 +113,10 @@ class AggRefresh(object):
             .filter(location_id=location_id)\
             .values_list('parent_location_id', flat=True)
 
-        return [c.id for c in campaigns_in_date_range]
+        if len(campaigns_in_date_range) > 0:
+            return [c.id for c in campaigns_in_date_range]
+        else:
+            return []
 
     def agg_datapoints(self):
         '''

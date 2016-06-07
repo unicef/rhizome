@@ -12,29 +12,15 @@ import pandas as pd
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models import Location, LocationPolygon
 from rhizome.models import Document, DocumentDetail, DocDetailType
-from rhizome.etl_tasks.transform_upload import DocTransform
+from rhizome.etl_tasks.transform_upload import DateDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
+def populate_source_data(app_label, schema_editor):
 
-def populate_source_data(apps, schema_editor):
-    '''
-    Here, we take an excel file that has the same schema as the database
-    we lookup the approriate model and bulk insert.
-
-    We need to ingest the data itself in the same order as the excel
-    sheet otherwise we will have foreign key constraint issues.
-    '''
-    pass
-
-    # xl = pd.ExcelFile('initial_data.xlsx')
-    # all_sheets = xl.sheet_names
-    # source_data_sheets = [s for s in all_sheets if s.startswith('source-data_')]
-    #
-    # for s in source_data_sheets:
-    #     source_sheet_df = xl.parse(s)
-    #     process_source_sheet(source_sheet_df, s)
-
+    sheet_name = 'fake_refugee_data'
+    source_sheet_df = pd.read_csv('migration_data/%s.csv' % sheet_name)
+    process_source_sheet(source_sheet_df, sheet_name)
 
 def process_source_sheet(source_sheet_df, sheet_name):
 
@@ -54,8 +40,8 @@ def process_source_sheet(source_sheet_df, sheet_name):
     create_doc_details(new_doc.id)
 
     ## document -> source_submissions ##
-    dt = DocTransform(user_id, new_doc.id)
-    dt.main()
+    dt = DateDocTransform(user_id, new_doc.id)
+    dt.process_file()
 
     ## source_submissions -> datapoints ##
     mr = MasterRefresh(user_id, new_doc.id)
@@ -77,6 +63,8 @@ def create_doc_details(doc_id):
             # are named with the above convention
         )
 
+    ## note -- in a proper implemtation, these columns are matched in the
+    ## user interface so the user tells the system, which is the date columns
 
 class Migration(migrations.Migration):
 
