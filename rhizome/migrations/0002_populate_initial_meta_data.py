@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import jsonfield.fields
-import django.db.models.deletion
-from django.conf import settings
+import os
+import urllib2
+import json
 
-import pandas as pd
-from rhizome.models import Location, LocationPolygon
+from django.db import models, migrations
+from django.conf import settings
 from django.db.models import get_app, get_models
+import django.db.models.deletion
+
+import jsonfield.fields
+import pandas as pd
+
+from rhizome.models import Location, LocationPolygon
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
+
 
 
 def populate_initial_data(apps, schema_editor):
@@ -21,9 +27,8 @@ def populate_initial_data(apps, schema_editor):
     sheet otherwise we will have foreign key constraint issues.
     '''
 
-    process_meta_data()
+    # process_meta_data()
     process_geo_json()
-
 
 def process_meta_data():
 
@@ -64,16 +69,28 @@ def process_meta_data():
 
 def process_geo_json():
 
-    try:
-        geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
-    except IOError:
-        return
+    HOST = 'http://rhizome.work/api/v1/'
+    for c in settings.COUNTRY_LIST:
 
-    geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
-    location_df = pd.DataFrame(list(Location.objects.all()
-                                    .values_list('id', 'location_code')), columns=['location_id', 'location_code'])
-    merged_df = location_df.merge(geo_json_df)[['location_id', 'geo_json']]
-    model_df_to_data(merged_df, LocationPolygon)
+        json_file_name = 'migration_data/geo/{0}.json'.format(c)
+
+        if not os.path.isfile(json_file_name): # only hit API 1x and save the file #
+            url = 'http://code.highcharts.com/mapdata/countries/{0}/{0}-all.geo.json'.format(c)
+            response = urllib2.urlopen(url)
+            data = json.loads(response.read())
+            with open(json_file_name, 'w+') as outfile:
+                json.dump(data, outfile)
+
+    # try:
+    #     geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
+    # except IOError:
+    #     return
+    #
+    # geo_json_df = pd.read_csv('geo_json.txt', delimiter="|")
+    # location_df = pd.DataFrame(list(Location.objects.all()
+    #                                 .values_list('id', 'location_code')), columns=['location_id', 'location_code'])
+    # merged_df = location_df.merge(geo_json_df)[['location_id', 'geo_json']]
+    # model_df_to_data(merged_df, LocationPolygon)
 
     minify_geo_json()
 

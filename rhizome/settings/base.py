@@ -193,3 +193,7 @@ LOGO_ALT = os.getenv('LOGO_ALT', 'Rhizome')
 FLAG_SOP = True
 FLAG_C4D = False
 FLAG_DATA = True
+
+## when spinning up a new versionm what list of countries do you
+## want meta data for ?
+COUNTRY_LIST = ['lb', 'sy']

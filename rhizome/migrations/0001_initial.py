@@ -126,13 +126,11 @@ class Migration(migrations.Migration):
                 'db_table': 'custom_dashboard',
             },
         ),
-        operations = [
-            migrations.AddField(
-                model_name='customdashboard',
-                name='rows',
-                field=jsonfield.fields.JSONField(null=True, blank=True),
-            ),
-        ]
+        migrations.AddField(
+            model_name='customdashboard',
+            name='rows',
+            field=jsonfield.fields.JSONField(null=True, blank=True),
+        ),
         migrations.CreateModel(
             name='DataPoint',
             fields=[
@@ -140,7 +138,7 @@ class Migration(migrations.Migration):
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('data_date', models.DateTimeField(null=True)),
                 ('campaign', models.ForeignKey(to='rhizome.Campaign', null=True)),
-                ('unique_index', models.CharField(default=-1, max_length=255,unique=True)),,
+                ('unique_index', models.CharField(default=-1, max_length=255,unique=True)),
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('cache_job', models.ForeignKey(default=-1, to='rhizome.CacheJob')),

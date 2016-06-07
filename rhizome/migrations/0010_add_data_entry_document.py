@@ -17,5 +17,5 @@ class Migration(migrations.Migration):
     ]
 
     dependencies = [
-        ('rhizome', '0009_add_regions'),
+        ('rhizome', '0005_reset_sql_sequence'),
     ]

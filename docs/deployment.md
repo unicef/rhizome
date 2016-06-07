@@ -1,4 +1,4 @@
-Deployment
+# Deployment
 
 Rhizome is meant to handle a number of different use cases, not just polio.
 
@@ -9,11 +9,10 @@ Creating an AMI ( Image of an existing deployment )
   -- http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/creating-an-ami-ebs.html --
 
 
-Spinning up a new instance.
-
+# Spinning up a new instance.
 
 There are two ways to spin up a new instance
-  1. From existing AMI on aws
+## Spinning up a new version from existing AMI on aws
 
    If you already have a deployment of rhizome up in your AWS environment,following the following steps:
 
@@ -38,4 +37,3 @@ When you first create an instance of this application there are two ways to init
   - soruce_data.xlsx - AN excel sheet that has the same schema as the database.  The app will iterate through each sheet ,match the sheet to a database table of the same name, and insert those recorts
       -> For instance if you have 5 indicators, and 10 locations that you care about, you can put that data directly in the soruce_data.xlsx and the metadata will sync.
   - initial_source_data.csv - This is a basic sheet that the system can use to generate metadata and datapoints associated.
-  

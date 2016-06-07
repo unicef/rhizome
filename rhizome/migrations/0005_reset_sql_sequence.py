@@ -57,7 +57,7 @@ def reset_seq(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('rhizome', '0004_populate_fake_computed_data'),
+        ('rhizome', '0003_populate_initial_source_data'),
     ]
 
     operations = [
