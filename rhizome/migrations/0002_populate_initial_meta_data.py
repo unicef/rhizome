@@ -13,7 +13,8 @@ import django.db.models.deletion
 import jsonfield.fields
 import pandas as pd
 
-from rhizome.models import Location, LocationPolygon, LocationType, Office
+from rhizome.models import Location, LocationPolygon, LocationType, Office,\
+    CampaignType, Campaign, IndicatorTag
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
 def populate_initial_data(apps, schema_editor):
