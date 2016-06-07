@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import ReactDOM from 'react-dom'
 import React from 'react'
 
 import dom from 'utilities/dom'
@@ -57,7 +58,7 @@ var Tooltip = React.createClass({
       return
     }
 
-    var el = dom.dimensions(React.findDOMNode(this))
+    var el = dom.dimensions(ReactDOM.findDOMNode(this))
     var state = { align: 'left', orient: 'top' }
 
     if (this.props.left - window.pageXOffset > window.innerWidth / 2) {
