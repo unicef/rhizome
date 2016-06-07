@@ -15,7 +15,7 @@ const superuser = handleActions({
 
 const selected_campaign = handleActions({
   FETCH_ALL_META_REQUEST: (state, action) => action.payload.data.objects[0].campaigns[0],
-  SELECT_GLOBAL_CAMPAIGN: (state, action) => state.campaigns.index[action.payload] || state.campaigns.raw[0]
+  SELECT_GLOBAL_CAMPAIGN: (state, action) => action.payload
 }, null)
 
 const reducers = {superuser, selected_campaign, charts, dashboards, campaigns, indicators, locations, users}

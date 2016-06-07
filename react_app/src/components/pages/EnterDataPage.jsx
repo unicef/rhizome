@@ -11,13 +11,14 @@ const selectLocation = () => {
 class EnterDataPage extends Component {
 
   render () {
+    const props = this.props
     const datapoints = [] // temporary
     const selected_locations = [] // temporary
     const campaign_select = (
       <CampaignSelect
-        campaigns={this.props.campaigns.raw || []}
-        selected={this.props.selected_campaign}
-        sendValue={id => DataEntryActions.setCampaign(this.props.campaigns.index[id])}
+        campaigns={props.campaigns.raw || []}
+        selected_campaign={props.selected_campaign}
+        selectCampaign={id => props.selectGlobalCampaign(props.campaigns.index[id])}
       />
     )
     const placeholder = selected_locations.length < 1
@@ -33,7 +34,7 @@ class EnterDataPage extends Component {
             <div className='page-header-filters'>
               { campaign_select }
               <DropdownButton
-                items={this.props.locations.list}
+                items={props.locations.list}
                 sendValue={selectLocation}
                 item_plural_name='Locations'
                 text='Add Locations'

@@ -1,6 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import EnterDataPage from 'components/pages/EnterDataPage'
+import { selectGlobalCampaign } from 'actions/global_actions'
 
 const mapStateToProps = (state) => ({
 	campaigns: state.campaigns,
@@ -9,6 +10,8 @@ const mapStateToProps = (state) => ({
 	selected_campaign: state.selected_campaign
 })
 
-const EnterDataPageContainer = connect(mapStateToProps)(EnterDataPage)
+const mapDispatchToProps = (dispatch) => bindActionCreators({selectGlobalCampaign}, dispatch)
+
+const EnterDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(EnterDataPage)
 
 export default EnterDataPageContainer
