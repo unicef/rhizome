@@ -4,8 +4,10 @@ import BasePage from 'components/pages/BasePage'
 
 import { fetchAllMeta } from 'actions/meta_actions'
 
+const mapStateToProps = (state) => ({ charts: state.charts })
+
 const mapDispatchToProps = (dispatch) => bindActionCreators({fetchAllMeta}, dispatch)
 
-const BasePageContainer = connect(null, mapDispatchToProps)(BasePage)
+const BasePageContainer = connect(mapStateToProps, mapDispatchToProps)(BasePage)
 
 export default BasePageContainer
