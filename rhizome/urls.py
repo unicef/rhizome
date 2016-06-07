@@ -72,7 +72,7 @@ protected_patterns = [
     url(r'^users/create/$', views.UserCreateView.as_view(), name='create_user'),
     url(r'^users/update/(?P<pk>[0-9]+)$', views.UserEditView.as_view(), name='user_update'),
 
-    url(r'^source-data$', views.source_data, name='source_data'),
+    url(r'^source-data/', views.source_data, name='source_data'),
 
     url(r'^charts$', views.charts, name='charts'),
     url(r'^charts/create$', views.chart_create, name='chart_create'),
