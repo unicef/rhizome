@@ -6,4 +6,5 @@ export const fetchAllMeta = createAction(
 )
 export const fetchAllMetaFailure = createAction('FETCH_ALL_META_FAILURE')
 export const fetchAllMetaSuccess = createAction('FETCH_ALL_META_SUCCESS')
+export const selectGlobalCampaign = createAction('SELECT_GLOBAL_CAMPAIGN')
 
