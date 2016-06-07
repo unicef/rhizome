@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import React, { Component, PropTypes } from 'react'
-import Placeholder from 'components/molecules/Placeholder'
+import Placeholder from 'components/global/Placeholder'
 
 class MultiChart extends Component {
   render = function () {

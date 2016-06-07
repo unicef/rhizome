@@ -1,6 +1,7 @@
 import React from 'react'
 import {Multiselect} from 'react-widgets'
 import DropdownButton from 'components/button/DropdownButton'
+import Placeholder from 'components/global/Placeholder'
 
 const selectLocation = () => {
   console.log('hello')
