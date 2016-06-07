@@ -32,7 +32,7 @@ import BugReportPage from 'components/pages/info/BugReportPage'
 import ContactPage from 'components/pages/info/ContactPage'
 import SitemapPage from 'components/pages/info/SitemapPage'
 
-import EnterDataPage from 'components/pages/EnterDataPage'
+import EnterDataPageContainer from 'containers/EnterDataPageContainer'
 import ManageSystemPage from 'components/pages/ManageSystemPage'
 
 const Routes = (
@@ -73,7 +73,7 @@ const Routes = (
 
 		// OTHER ROUTES
 		//---------------------------------------------------------
-	  <Route path="/react_app/enter_data" component={EnterDataPage}/>
+	  <Route path="/react_app/enter_data" component={EnterDataPageContainer}/>
 	  <Route path="/react_app/manage_system" component={ManageSystemPage}/>
 	</Route>
 )
