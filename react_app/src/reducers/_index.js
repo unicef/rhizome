@@ -11,9 +11,14 @@ import users from 'reducers/users_reducer'
 
 const superuser = handleActions({
   FETCH_ALL_META_REQUEST: (state, action) => action.payload.data.objects[0].is_superuser
-}, {})
+}, false)
 
-const reducers = {superuser, charts, dashboards, campaigns, indicators, locations, users}
+const selected_campaign = handleActions({
+  FETCH_ALL_META_REQUEST: (state, action) => action.payload.data.objects[0].campaigns[0],
+  SELECT_GLOBAL_CAMPAIGN: (state, action) => state.campaigns.index[action.payload] || state.campaigns.raw[0]
+}, null)
+
+const reducers = {superuser, selected_campaign, charts, dashboards, campaigns, indicators, locations, users}
 
 const rootReducer = combineReducers({
   ...reducers,
