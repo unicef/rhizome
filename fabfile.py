@@ -57,6 +57,11 @@ def _build_dependencies():
 
     # update/install dependencies
     local("cd webapp && npm install")
+    local("cd react_app && npm install")
+
+    # build the package for the 'new' react app and dump it into #
+    # webapp/src/assets/js so that it will be picked up in npm run package
+    local("cd react_app && webpack")
 
     # build fe and package the project
     # with NODE_ENV=production, uglify have be done.
