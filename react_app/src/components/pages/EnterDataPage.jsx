@@ -10,16 +10,48 @@ const selectLocation = () => {
   console.log('hello')
 }
 
+
 class EnterDataPage extends Component {
 
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.selected_campaign && nextProps.selected_locations.length > 0 && nextProps.selected_indicators.length > 0) {
+  //     const query = {
+  //       campaign__in: nextProps.selected_campaign.id,
+  //       indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
+  //       location_ids: nextProps.selected_locations.map(location => location.id),
+  //       show_missing_data: 1,
+  //       source_name: ''
+  //     }
+  //     nextProps.fetchDatapoints(query)
+  //   }
+  // }
+
+
+  // componentWillReceiveProps(nextProps) {
+  //   if (nextProps.selected_campaign && nextProps.selected_locations.length > 0 && nextProps.selected_indicators.length > 0) {
+  //     const query = {
+  //       campaign__in: nextProps.selected_campaign.id,
+  //       indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
+  //       location_ids: nextProps.selected_locations.map(location => location.id),
+  //       show_missing_data: 1,
+  //       source_name: ''
+  //     }
+  //     nextProps.fetchDatapoints(query)
+  //   }
+  // }
+
   render () {
+    console.log('this.props.datapoints', this.props.datapoints)
     const props = this.props
     const datapoints = [] // temporary
+
     const campaign_select = (
       <CampaignSelect
         campaigns={props.campaigns.raw || []}
         selected_campaign={props.selected_campaign}
-        selectCampaign={props.selectGlobalCampaign}
+        selectCampaign={() => {
+          props.selectGlobalCampaign()
+        }}
       />
     )
 
@@ -31,6 +63,20 @@ class EnterDataPage extends Component {
           const indicators = indicator_tag.indicator_ids.map(id => props.indicators.index[id])
           props.setGlobalIndicatorTag(indicator_tag)
           props.setGlobalIndicators(indicators)
+        }}
+      />
+    )
+
+    const location_select  = (
+      <DropdownButton
+        items={props.locations.list}
+        item_plural_name='Locations'
+        text='Add Locations'
+        style='button'
+        searchable
+        uniqueOnly
+        sendValue={id => {
+          props.selectGlobalLocation(props.locations.index[id])
         }}
       />
     )
@@ -47,17 +93,9 @@ class EnterDataPage extends Component {
           </div>
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
-              { campaign_select }
               { indicator_tag_select }
-              <DropdownButton
-                items={props.locations.list}
-                sendValue={id => props.selectGlobalLocation(props.locations.index[id])}
-                item_plural_name='Locations'
-                text='Add Locations'
-                style='button'
-                searchable
-                uniqueOnly
-              />
+              { campaign_select }
+              { location_select }
             </div>
           </div>
         </header>
