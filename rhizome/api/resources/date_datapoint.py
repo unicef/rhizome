@@ -395,7 +395,7 @@ class DateDatapointResource(BaseModelResource):
             'campaign__in': None, 'location__in': None, 'location_id__in': None,
             'filter_indicator': None, 'filter_value': None,
             'show_missing_data': None, 'cumulative': 0,
-            'group_by_time': None, 'chart_uuid': None, 'location_depth': None
+            'group_by_time': None, 'chart_uuid': None, 'location_depth': 0
         }
 
         for k, v in optional_params.iteritems():
