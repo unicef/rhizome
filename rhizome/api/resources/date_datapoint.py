@@ -1,3 +1,4 @@
+
 import itertools
 from pandas import DataFrame
 from pandas import concat
@@ -138,6 +139,61 @@ class DateDatapointResource(BaseModelResource):
         self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
         return dp_df
 
+    def build_location_tree(self):
+        '''
+        Find out the data you are trying to return for ... in use case #1,
+        this would be all of the provinces in afghanistan.. for #2 it would be
+        all of the districts.  This is important because we will use
+        these to group by in addition to the time_grouping and indicator
+        later on.  Furthermore, since the location tree table has all of
+        the possible combinations of ancestry, we want to make sure that
+        when we perform operations on it, that it is small as possible.
+
+        The output of this function is a Data Frame that looks like:
+
+            location_id, parent_location_id
+            | NY State      | USA       |
+            | California    | USA       |
+            | NY City       | NY State  |
+            | The Bronx     | NY City   |
+
+
+        If the depth_level = 0, it means that we want to query for only the
+        location that is in the location_id parameter, so we return somethign
+        like:
+
+            location_id, parent_location_id
+            | The Bronx | The Bronx |
+
+        '''
+
+        requested_location_id = int(self.parsed_params['location_id__in'])
+        depth_level = int(self.parsed_params['location_depth'])
+
+        if depth_level == 0:
+            return DataFrame([[requested_location_id,requested_location_id]], \
+                columns = ['location_id', 'parent_location_id'])
+
+        # what is the admin level of the requested location #
+        parent_location_admin_level =  Location.objects\
+            .filter(id = requested_location_id)\
+            .values_list('location_type__admin_level',flat=True)[0]
+
+        # what is the location_type of the keys we need to return
+        # calculated by the admin_level of the requested ( see above )
+        # and the depth level in the request
+
+        location_type_id_of_parent_keys = LocationType.objects\
+            .get(admin_level = parent_location_admin_level + depth_level).id
+
+        loc_tree_df = DataFrame(list(LocationTree.objects
+                          .filter(parent_location__location_type_id =\
+                            location_type_id_of_parent_keys)
+                          .values_list('location_id', 'parent_location_id')),
+                     columns=['location_id', 'parent_location_id'])
+
+        return loc_tree_df
+
     def group_by_time_transform(self):
         '''
             Imagine the following location tree heirarchy
@@ -161,31 +217,8 @@ class DateDatapointResource(BaseModelResource):
 
         cols = ['data_date', 'indicator_id', 'location_id', 'value']
 
-        requested_location_id = self.parsed_params['location_id__in']
-        depth_level = int(self.parsed_params['location_depth'])
-
-        # Find out the data you are trying to return for ... in use case #1,
-        # this would be all of the provinces in afghanistan.. for #2 it would be
-        # all of the districts.  This is important because we will use
-        # these to group by in addition to the time_grouping and indicator
-        # later on.  Furthermore, since the location tree table has all of
-        # the possible combinations of ancestry, we want to make sure that
-        # when we perform operations on it, that it is small as possible.
-
-        location_type_id_of_parent_keys = LocationType.objects\
-            .get(admin_level = (Location.objects\
-                .filter(id = requested_location_id)\
-                .values_list('location_type__admin_level',flat=True)[0]\
-                    + depth_level)).id
-
-        loc_tree_df = DataFrame(list(LocationTree.objects
-                          .filter(parent_location__location_type_id =\
-                            location_type_id_of_parent_keys)
-                          .values_list('location_id', 'parent_location_id')),
-                     columns=['location_id', 'parent_location_id'])
-
-        loc_objects = Location.objects.\
-            filter(id__in =  list(loc_tree_df['location_id'].unique())).values()
+        ## build the location heirarchy for the requested locations #
+        loc_tree_df = self.build_location_tree()
 
         ## now find the data for the children of those parents
         dp_df = DataFrame(list(DataPoint.objects.filter(
@@ -197,7 +230,7 @@ class DateDatapointResource(BaseModelResource):
 
         merged_df = dp_df.merge(loc_tree_df)
 
-        # sum all values for locations with the same parent location
+        ## sum all values for locations with the same parent location
         gb_df = DataFrame(merged_df
                           .groupby(['indicator_id', 'time_grouping', 'parent_location_id'])['value']
                           .sum())\

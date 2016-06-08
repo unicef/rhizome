@@ -117,6 +117,7 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
     # basic test to just get a datapoint at a location for which we have data
     def test_get_list_no_recursion(self):
+    # python manage.py test rhizome.tests.test_api_datapoint_groupby_date.DateDataPointResourceTest.test_get_list_no_recursion --settings=rhizome.settings.test
 
         location_id = 4321
         get = {
@@ -125,7 +126,7 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
             'start_date': '2013-01-01',
             'end_date': '2016-01-01',
             'location_id__in': location_id,
-            'location_depth' : 1
+            'location_depth' : 0
         }
 
         resp = self.api_client\
@@ -134,7 +135,10 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
                 format = 'json',
                 authentication = self.get_credentials())
 
+        self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
+        print response_data
+
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
 
         total_all_time = 0
