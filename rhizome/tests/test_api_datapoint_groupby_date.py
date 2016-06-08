@@ -9,10 +9,10 @@ from rhizome.cache_meta import LocationTreeCache
 import pandas as pd
 from datetime import datetime
 
-class DataPointResourceTest(RhizomeAPITestCase):
+class DateDataPointResourceTest(RhizomeAPITestCase):
 
     def setUp(self):
-        super(DataPointResourceTest, self).setUp()
+        super(DateDataPointResourceTest, self).setUp()
 
         # Create a user.
         self.username = 'john'
@@ -90,15 +90,14 @@ class DataPointResourceTest(RhizomeAPITestCase):
 
 
     def test_get_list(self):
-        # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
+        # python manage.py test rhizome.tests.test_api_datapoint_groupby_date.DateDataPointResourceTest.test_get_list --settings=rhizome.settings.test
 
-        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
         get = {'group_by_time':'year',
             'indicator__in' : self.ind.id,
             'start_date' : '2013-01-01',
             'end_date' : '2016-01-01',
-            'location_id__in' : self.top_lvl_location.id
+            'location_id__in' : self.top_lvl_location.id,
+            'location_depth' : 1
         }
         resp = self.api_client.get('/api/v1/date_datapoint/', \
             format='json', data=get, authentication=self.get_credentials())

@@ -47,4 +47,5 @@ rhizome.conf
 geo_json.txt
 rhizome/templates/base.html
 rhizome/tests/_data/documents
-rhizome/docs/_build/
+rhizome/docs/_build
+migration_data/geo/*
