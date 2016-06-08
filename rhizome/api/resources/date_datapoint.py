@@ -96,6 +96,23 @@ class DateDatapointResource(BaseModelResource):
 
         return response
 
+    def get_list(self, request, **kwargs):
+        """
+        Overriden from Tastypie..
+        """
+
+        base_bundle = self.build_bundle(request=request)
+        objects = self.obj_get_list(bundle=base_bundle)
+
+        response_meta = self.get_datapoint_response_meta(request, objects)
+        response_data = {
+            'objects': objects,
+            'meta': response_meta,
+            'error': None,
+        }
+
+        return self.create_response(request, response_data)
+
     def get_object_list(self, request):
         '''
         This is where the action happens in this resource.  AFter passing the
@@ -341,39 +358,35 @@ class DateDatapointResource(BaseModelResource):
             objects = []
         return objects
 
-    def alter_list_data_to_serialize(self, request, data):
+    def get_datapoint_response_meta(self, request, data):
         '''
         If there is an error for this resource, add that to the response.  If
         there is no error, than add this key, but set the value to null.  Also
         add the total_count to the meta object as well
         '''
 
+        meta = {}
         try:
             location_ids = request.GET['location_id__in']
-            data['meta']['location_ids'] = location_ids
+            meta['location_ids'] = location_ids
         except KeyError:
             location_ids = None
 
         try:
             indicator_ids = request.GET['indicator__in']
-            data['meta']['indicator_ids'] = indicator_ids
+            meta['indicator_ids'] = indicator_ids
         except KeyError:
             indicator_ids = None
 
         try:
             chart_uuid = request.GET['chart_uuid']
-            data['meta']['chart_uuid'] = chart_uuid
+            meta['chart_uuid'] = chart_uuid
         except KeyError:
             indicator_ids = None
 
-        data['meta']['campaign_ids'] = self.parsed_params['campaign__in']
-        # add errors if it exists
-        if self.error:
-            data['error'] = self.error
-        else:
-            data['error'] = None
+        meta['campaign_ids'] = self.parsed_params['campaign__in']
 
-        return data
+        return meta
 
     def dehydrate(self, bundle):
         '''

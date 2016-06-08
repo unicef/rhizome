@@ -103,9 +103,17 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         }
         resp = self.api_client.get('/api/v1/date_datapoint/', \
             format='json', data=get, authentication=self.get_credentials())
+
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
+
         objects = response_data['objects']
+        meta = response_data['meta']
+
+        ## does the 'meta' object have what the FE needs
+        self.assertEqual(self.ind.id, int(meta['indicator_ids']))
+        self.assertEqual(self.top_lvl_location.id,int(meta['location_ids'   ]))
+        self.assertEqual(set(meta['campaign_ids']),set([2014,2015,2016]))
 
         self.assertEqual(3, len(objects)) # one for each year #
 
