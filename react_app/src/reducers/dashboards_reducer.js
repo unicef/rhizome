@@ -2,10 +2,10 @@ import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const dashboards = handleActions({
-  FETCH_DASHBOARDS_REQUEST: (state, action) => {
+  FETCH_DASHBOARDS: (state, action) => {
     return getDashboardIndex(action.payload.data.objects)
   },
-  FETCH_ALL_META_REQUEST: (state, action) => {
+  FETCH_ALL_META: (state, action) => {
     return getDashboardIndex(action.payload.data.objects[0].dashboards)
   }
 }, {})

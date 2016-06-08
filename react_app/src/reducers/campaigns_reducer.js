@@ -4,9 +4,9 @@ import { handleActions } from 'redux-actions'
 const data = {raw: null, index: null}
 
 const campaigns = handleActions({
-  FETCH_CAMPAIGNS_REQUEST: (state, action) => processCampaigns(action.payload.data.objects),
-  FETCH_ALL_META_REQUEST: (state, action) => processCampaigns(action.payload.data.objects[0].campaigns)
-}, {})
+  FETCH_CAMPAIGNS: (state, action) => processCampaigns(action.payload.data.objects),
+  FETCH_ALL_META: (state, action) => processCampaigns(action.payload.data.objects[0].campaigns)
+}, data)
 
 const processCampaigns = (campaigns) => {
   data.raw = campaigns
