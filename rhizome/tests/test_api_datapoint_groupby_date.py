@@ -10,6 +10,8 @@ import pandas as pd
 from datetime import datetime
 
 class DateDataPointResourceTest(RhizomeAPITestCase):
+    # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
+
 
     def setUp(self):
         super(DateDataPointResourceTest, self).setUp()
@@ -137,7 +139,6 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-        print response_data
 
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
 
@@ -264,11 +265,14 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 0)
 
-        # what happens when we throw an unsupported grouping up in here?
     def test_get_list_wrong_grouping(self):
+        '''
+        What happens when we request an unsupported time grouping
+        '''
+        # python manage.py test rhizome.tests.test_api_datapoint_groupby_date.DateDataPointResourceTest.test_get_list_wrong_grouping --settings=rhizome.settings.test
 
         get = {
-                'group_by_time' :'quarter',
+                'group_by_time' :'xxx',
                 'indicator__in': self.ind.id,
                 'start_date': '2013-01-01',
                 'end_date': '2016-01-01',
@@ -282,8 +286,17 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
+    def _show_missing_data(self):
+        '''
+        This test is not in the suite because for date_datapoint results, the back end should not
+        be in charge of creating every possible datapoint
+        wiht a null value in order to handle discontinuity.
 
-    def test_show_missing_data(self):
+        show_all_data should not be a parameter and we should remove this and handle the fallout in the front end charting library.
+        '''
+        #  python manage.py test rhizome.tests.test_api_datapoint_groupby_date.DateDataPointResourceTest.test_show_missing_data --settings=rhizome.settings.test
+
+
         rando_ind = Indicator.objects.create(
             name = 'some other damn indicator',
             short_name = 'we don\'t care!',
@@ -296,7 +309,8 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
                 'start_date': '2013-01-01',
                 'end_date': '2016-01-01',
                 'location_id__in': self.top_lvl_location.id,
-                'location_depth' : 1
+                'location_depth' : 1,
+                'show_missing_data': 1
             }
 
         resp = self.api_client.get('/api/v1/date_datapoint/', \
@@ -304,4 +318,6 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
             authentication=self.get_credentials())
 
         response_data = self.deserialize(resp)
+
+        self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 6)

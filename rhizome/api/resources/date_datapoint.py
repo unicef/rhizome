@@ -182,15 +182,17 @@ class DateDatapointResource(BaseModelResource):
         # what is the location_type of the keys we need to return
         # calculated by the admin_level of the requested ( see above )
         # and the depth level in the request
-
         location_type_id_of_parent_keys = LocationType.objects\
             .get(admin_level = parent_location_admin_level + depth_level).id
 
+        # get the relevant parent / child heirarchy
         loc_tree_df = DataFrame(list(LocationTree.objects
                           .filter(parent_location__location_type_id =\
                             location_type_id_of_parent_keys)
                           .values_list('location_id', 'parent_location_id')),
                      columns=['location_id', 'parent_location_id'])
+
+        self.location_ids = list(loc_tree_df['location_id'].unique())
 
         return loc_tree_df
 
@@ -227,7 +229,6 @@ class DateDatapointResource(BaseModelResource):
             ).values(*cols)), columns=cols)
 
         dp_df = self.get_time_group_series(dp_df)
-
         merged_df = dp_df.merge(loc_tree_df)
 
         ## sum all values for locations with the same parent location
@@ -335,7 +336,6 @@ class DateDatapointResource(BaseModelResource):
         add the total_count to the meta object as well
         '''
 
-        print 'this never is called\n' * 100
         try:
             location_ids = request.GET['location_id__in']
             data['meta']['location_ids'] = location_ids
