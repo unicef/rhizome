@@ -2,6 +2,7 @@ import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 import { handleActions } from 'redux-actions'
 
+import data_entry from 'reducers/data_entry_reducer'
 import campaigns from 'reducers/campaigns_reducer'
 import dashboards from 'reducers/dashboards_reducer'
 import charts from 'reducers/charts_reducer'
@@ -10,10 +11,19 @@ import locations from 'reducers/locations_reducer'
 import users from 'reducers/users_reducer'
 
 const superuser = handleActions({
-  FETCH_ALL_META_REQUEST: (state, action) => action.payload.data.objects[0].is_superuser
-}, {})
+  FETCH_ALL_META: (state, action) => action.payload.data.objects[0].is_superuser
+}, false)
 
-const reducers = {superuser, charts, dashboards, campaigns, indicators, locations, users}
+const reducers = {
+  superuser,
+  charts,
+  dashboards,
+  data_entry,
+  campaigns,
+  indicators,
+  locations,
+  users
+}
 
 const rootReducer = combineReducers({
   ...reducers,

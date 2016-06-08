@@ -1,8 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import BasePage from 'components/pages/BasePage'
-
-import { fetchAllMeta } from 'actions/meta_actions'
+import { fetchAllMeta } from 'actions/global_actions'
 
 const mapStateToProps = (state) => ({
 	superuser: state.superuser,

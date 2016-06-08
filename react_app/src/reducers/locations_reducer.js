@@ -6,8 +6,8 @@ import treeify from 'utilities/transform/treeify'
 const data = {raw: null, index: null, list: null}
 
 const locations = handleActions({
-  FETCH_LOCATIONS_REQUEST: (state, action) => processLocations(action.payload.data.objects),
-  FETCH_ALL_META_REQUEST: (state, action) => processLocations(action.payload.data.objects[0].locations)
+  FETCH_LOCATIONS: (state, action) => processLocations(action.payload.data.objects),
+  FETCH_ALL_META: (state, action) => processLocations(action.payload.data.objects[0].locations)
 }, data)
 
 const processLocations = (locations) => {

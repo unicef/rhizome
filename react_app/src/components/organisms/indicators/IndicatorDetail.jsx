@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react'
 import {AgGridReact} from 'ag-grid-react';
-import Placeholder from 'components/molecules/Placeholder'
+import Placeholder from 'components/global/Placeholder'
 
 const IndicatorDetail = ({ indicator }) => {
   return indicator ? (

@@ -2,10 +2,10 @@ import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const charts = handleActions({
-  FETCH_CHARTS_REQUEST: (state, action) => {
+  FETCH_CHARTS: (state, action) => {
     return getChartIndex(action.payload.data.objects)
   },
-  FETCH_ALL_META_REQUEST: (state, action) => {
+  FETCH_ALL_META: (state, action) => {
     return getChartIndex(action.payload.data.objects[0].charts)
   }
 }, {})

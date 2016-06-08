@@ -179,8 +179,11 @@ class BaseResource(Resource):
         even when there is no existing data.
         '''
 
-
-        list_of_lists = [self.parsed_params['indicator__in'], self.location_ids, self.parsed_params['campaign__in']]
+        list_of_lists = [\
+            self.parsed_params['indicator__in'],\
+            self.location_ids,\
+            self.parsed_params['campaign__in']\
+        ]
         cart_product = list(itertools.product(*list_of_lists))
         cart_prod_df = DataFrame(cart_product)
         if 'campaign_id' in df.columns:
@@ -189,6 +192,10 @@ class BaseResource(Resource):
             columns_list = ['indicator_id','location_id', 'time_grouping']
 
         cart_prod_df.columns = columns_list
+
+        if len(df) == 0: ## if no datapoints, just return cart product DF ##
+            return cart_prod_df
+
         df = df.merge(cart_prod_df, how='outer', on=columns_list)
 
         return df

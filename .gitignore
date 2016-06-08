@@ -35,6 +35,7 @@ environment_seed.env
 /geo
 *~
 **/#*#
+webapp/src/assets/js
 webapp/npm-debug.log
 bower_components
 rhizome/settings/private.py

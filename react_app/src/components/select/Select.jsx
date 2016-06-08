@@ -6,11 +6,12 @@ import Dropdown from 'components/dropdown/Dropdown'
 class Select extends Dropdown {
 
   static propTypes = {
-    className: React.PropTypes.string,
-    text: React.PropTypes.string.isRequired,
-    icon: React.PropTypes.string,
-    searchable: React.PropTypes.bool,
-    onSearch: React.PropTypes.func
+    items: PropTypes.array,
+    className: PropTypes.string,
+    text: PropTypes.string.isRequired,
+    icon: PropTypes.string,
+    searchable: PropTypes.bool,
+    onSearch: PropTypes.func
   }
 
   static defaultProps = {
