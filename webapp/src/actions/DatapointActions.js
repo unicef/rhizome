@@ -25,8 +25,8 @@ const _prepDatapointsQuery = (params) => {
   const chartNeedsNullData = _.indexOf(builderDefinitions.need_missing_data_charts, params.type) !== -1
   let query = {
     campaign__in: params.campaign__in || params.campaign_ids,
-    indicator__in: params.indicator_ids,
-    location_id__in: params.location_ids,
+    indicator__in: params.indicator_ids.join(),
+    location_id__in: params.location_ids.join(),
     location_depth: params.location_depth <= 0 ? null : params.location_depth,
     campaign_start: params.start_date,
     campaign_end: params.end_date,
