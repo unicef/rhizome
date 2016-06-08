@@ -1,8 +1,10 @@
+import _ from 'lodash'
 import React, {Component} from 'react'
 import {Multiselect} from 'react-widgets'
 import DropdownButton from 'components/button/DropdownButton'
 import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
+import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
 
 const selectLocation = () => {
   console.log('hello')
@@ -13,17 +15,30 @@ class EnterDataPage extends Component {
   render () {
     const props = this.props
     const datapoints = [] // temporary
-    const selected_locations = [] // temporary
     const campaign_select = (
       <CampaignSelect
         campaigns={props.campaigns.raw || []}
         selected_campaign={props.selected_campaign}
-        selectCampaign={id => props.selectGlobalCampaign(props.campaigns.index[id])}
+        selectCampaign={props.selectGlobalCampaign}
       />
     )
-    const placeholder = selected_locations.length < 1
+
+    const indicator_tag_select = (
+      <IndicatorTagSelect
+        indicator_tags={_.toArray(props.indicators.tag_index) || []}
+        selected_indicator_tag={props.selected_indicator_tag}
+        selectIndicatorTag={indicator_tag => {
+          const indicators = indicator_tag.indicator_ids.map(id => props.indicators.index[id])
+          props.setGlobalIndicatorTag(indicator_tag)
+          props.setGlobalIndicators(indicators)
+        }}
+      />
+    )
+
+    const placeholder = !props.selected_locations
       ? <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/>
       : <Placeholder height={300}/>
+
     return (
       <div>
         <header className='row page-header'>
@@ -33,6 +48,7 @@ class EnterDataPage extends Component {
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
               { campaign_select }
+              { indicator_tag_select }
               <DropdownButton
                 items={props.locations.list}
                 sendValue={id => props.selectGlobalLocation(props.locations.index[id])}

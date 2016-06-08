@@ -1,5 +1,3 @@
-import _ from 'lodash'
-import moment from 'moment'
 import React, {Component, PropTypes} from 'react'
 
 import Select from 'components/select/Select'
@@ -10,7 +8,7 @@ const CampaignSelect = ({campaigns, selected_campaign, selectCampaign}) => {
     <DropdownMenuItem
       key={'campaign-' + campaign.id}
       text={campaign.name}
-      onClick={() => selectCampaign(campaign.id)}
+      onClick={() => selectCampaign(campaign)}
       classes='campaign'
     />
   )
