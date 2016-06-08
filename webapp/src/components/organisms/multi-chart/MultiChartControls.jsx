@@ -12,7 +12,6 @@ import CampaignMultiSelect from 'components/multi_select/CampaignMultiSelect'
 import IndicatorMultiSelect from 'components/multi_select/IndicatorMultiSelect'
 import LocationMultiSelect from 'components/multi_select/LocationMultiSelect'
 import DateMultiSelect from 'components/select/DateRangeSelect'
-import DistrictSelect from 'components/select/DistrictSelect'
 
 import LocationStore from 'stores/LocationStore'
 import IndicatorStore from 'stores/IndicatorStore'
@@ -53,14 +52,17 @@ const MultiChartControls = React.createClass({
     const type = chart.type
     const start_date = chart ? moment(chart.start_date, 'YYYY-MM-DD').toDate() : moment()
     const end_date = chart ? moment(chart.end_date, 'YYYY-MM-DD').toDate() : moment()
-    const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, type) !== -1
     const groupedChart = _.indexOf(builderDefinitions.grouped_charts, type) !== -1
     const multiIndicator = type === 'TableChart' || type === 'RawData' || type === 'MapChart'
     const multiLocation = chart.location_depth < 0
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = (groupedChart && chart.groupBy === 'indicator') || type === 'MapChart'
 
-    const date_range_picker = !chartShowsOneCampaign && chart.groupByTime !== 'year' ? (
+    const chartShowsOneCampaign = chart.groupByTime === 'campaign'
+    // the date range picker handles date range and campaign selection //
+    // if the user selects "campaign" in time groupings, they see a campaign
+    // selector, otherwise they see a date range filter
+    const date_range_picker = !chartShowsOneCampaign ? (
       <div className='medium-12 columns'>
         <h3>Date Range</h3>
         <DateMultiSelect
@@ -72,11 +74,22 @@ const MultiChartControls = React.createClass({
         <br/>
         <br/>
       </div>
-    ) : null
+    ) : (
+      <CampaignMultiSelect
+        campaigns={this.state.campaigns}
+        selected_campaigns={chart.selected_campaigns}
+        selectCampaign={props.selectCampaign}
+        deselectCampaign={props.deselectCampaign}
+        setCampaigns={props.setCampaigns}
+        linkCampaigns={props.linkCampaigns}
+        classes='medium-12 columns'
+        linked={chart.linkedCampaigns}
+      />
+    )
 
-    const group_by_time_selector = !chartShowsOneCampaign ? (
+    const group_by_time_selector = (
       <div className='medium-12 columns radio-group'>
-        <h3>Group By</h3>
+        <h3>Time Grouping</h3>
         <RadioGroup
           name={'groupByTime' + chart.uuid}
           value={chart.groupByTime}
@@ -88,7 +101,7 @@ const MultiChartControls = React.createClass({
             {value: 'year', title: 'Year'}
           ]}/>
       </div>
-    ) : null
+    )
 
     const group_by_selector = groupedChart ? (
       <div className='medium-12 columns radio-group'>
@@ -110,7 +123,7 @@ const MultiChartControls = React.createClass({
       const location_type_id = chart.selected_locations[0].location_type_id
       if (location_type_id <= 1) {
         depth_titles = ['Country', 'Region', 'Province', 'District']
-      } else  if (location_type_id === 6 ) {
+      } else if (location_type_id === 6) {
         depth_titles = ['Region', 'Province', 'District']
       } else if (location_type_id === 2) {
         depth_titles = ['Province', 'District']
@@ -147,19 +160,6 @@ const MultiChartControls = React.createClass({
         </div>
       ) : null
     }
-
-    const campaign_selector = chartShowsOneCampaign ? (
-      <CampaignMultiSelect
-        campaigns={this.state.campaigns}
-        selected_campaigns={chart.selected_campaigns}
-        selectCampaign={props.selectCampaign}
-        deselectCampaign={props.deselectCampaign}
-        setCampaigns={props.setCampaigns}
-        linkCampaigns={props.linkCampaigns}
-        classes='medium-12 columns'
-        linked={chart.linkedCampaigns}
-      />
-    ) : ''
 
     const location_selector = (
       <LocationMultiSelect
@@ -198,7 +198,6 @@ const MultiChartControls = React.createClass({
         <IconButton onClick={props.toggleEditMode} icon='fa-angle-double-right' className='chart-options-button' />
         { group_by_time_selector }
         { date_range_picker }
-        { campaign_selector }
         { group_by_selector }
         { location_depth_selector }
         { location_selector }
