@@ -294,7 +294,7 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
-    def test_show_missing_data(self):
+    def _show_missing_data(self):
         '''
         This test is not in the suite because for date_datapoint results, the back end should not
         be in charge of creating every possible datapoint

@@ -136,10 +136,11 @@ class DateDatapointResource(BaseModelResource):
         # self.location_ids = self.get_locations_to_return_from_url(request)
         self.time_gb = self.parsed_params['group_by_time']
         self.base_data_df = self.group_by_time_transform()
-        ## fill in missing data if requested ##
-        if self.parsed_params['show_missing_data'] == u'1':
-            df = self.add_missing_data(self.base_data_df)
-            self.base_data_df = df.where((notnull(df)),None)
+
+        # ## fill in missing data if requested ##
+        # if self.parsed_params['show_missing_data'] == u'1':
+        #     df = self.add_missing_data(self.base_data_df)
+        #     self.base_data_df = df.where((notnull(df)),None)
 
         return self.base_data_df.to_dict('records')
 
@@ -157,6 +158,7 @@ class DateDatapointResource(BaseModelResource):
             dp_df = DataFrame()
 
         ## find the unique possible groupings for this time range and gb param
+        ## sketchy -- this wont work for quarter groupingings, only years.
         distinct_time_groupings = list(dp_df.time_grouping.unique())
         if not distinct_time_groupings:
             start_yr, end_yr = self.parsed_params['start_date'][0:4],\
