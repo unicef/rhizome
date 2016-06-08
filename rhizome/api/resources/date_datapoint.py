@@ -1,7 +1,6 @@
 
 import itertools
-from pandas import DataFrame
-from pandas import concat
+from pandas import DataFrame, concat, notnull
 from django.http import HttpResponse
 
 from tastypie import fields
@@ -120,6 +119,10 @@ class DateDatapointResource(BaseModelResource):
         # self.location_ids = self.get_locations_to_return_from_url(request)
         self.time_gb = self.parsed_params['group_by_time']
         self.base_data_df = self.group_by_time_transform()
+        ## fill in missing data if requested ##
+        if self.parsed_params['show_missing_data'] == u'1':
+            df = self.add_missing_data(self.base_data_df)
+            self.base_data_df = df.where((notnull(df)),None)
 
         return self.base_data_df.to_dict('records')
 
@@ -136,7 +139,15 @@ class DateDatapointResource(BaseModelResource):
         else:
             dp_df = DataFrame()
 
-        self.parsed_params['campaign__in'] = list(dp_df.time_grouping.unique())
+        ## find the unique possible groupings for this time range and gb param
+        distinct_time_groupings = list(dp_df.time_grouping.unique())
+        if not distinct_time_groupings:
+            start_yr, end_yr = self.parsed_params['start_date'][0:4],\
+                self.parsed_params['end_date'][0:4]
+            distinct_time_groupings = range(int(start_yr), int(end_yr))
+
+        self.parsed_params['campaign__in'] = distinct_time_groupings
+
         return dp_df
 
     def build_location_tree(self):
@@ -171,6 +182,7 @@ class DateDatapointResource(BaseModelResource):
         depth_level = int(self.parsed_params['location_depth'])
 
         if depth_level == 0:
+            self.location_ids = [ requested_location_id ]
             return DataFrame([[requested_location_id,requested_location_id]], \
                 columns = ['location_id', 'parent_location_id'])
 
@@ -383,6 +395,7 @@ class DateDatapointResource(BaseModelResource):
         to the expected ( both required and optional ) parameters in the request
         URL.
         '''
+
         parsed_params = {}
 
         required_params = {'indicator__in': None}
@@ -391,7 +404,7 @@ class DateDatapointResource(BaseModelResource):
         # there return the default values ( given in the dict below)
         optional_params = {
             'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
-            'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
+            'start_date': '2012-01-01', 'end_date': '2016-12-31',
             'campaign__in': None, 'location__in': None, 'location_id__in': None,
             'filter_indicator': None, 'filter_value': None,
             'show_missing_data': None, 'cumulative': 0,

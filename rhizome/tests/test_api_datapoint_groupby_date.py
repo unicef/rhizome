@@ -286,7 +286,7 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
-    def _show_missing_data(self):
+    def test_show_missing_data(self):
         '''
         This test is not in the suite because for date_datapoint results, the back end should not
         be in charge of creating every possible datapoint
@@ -302,14 +302,21 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
             short_name = 'we don\'t care!',
             data_format = 'int'
         )
+        rando_ind_2 = Indicator.objects.create(
+            name = 'some other indicator',
+            short_name = 'we don care!',
+            data_format = 'int'
+        )
+        # ind_list = [rando_ind.id, rando_ind_2.id]
+        ind_list = '{0},{1}'.format(rando_ind.id, rando_ind_2.id)
 
         get = {
                 'group_by_time' :'year',
-                'indicator__in': rando_ind.id,
+                'indicator__in': ind_list,
                 'start_date': '2013-01-01',
                 'end_date': '2016-01-01',
                 'location_id__in': self.top_lvl_location.id,
-                'location_depth' : 1,
+                'location_depth' : 0,
                 'show_missing_data': 1
             }
 
@@ -321,3 +328,9 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
         self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 6)
+        ## should be one object for the location, for each Indicator
+        ## for each location and each time grouping.
+        ## 3 yrs * 2 indicators * one location = 6
+
+        ## if location_depth = 1, the number would have to take into
+        ## account the number of sub locations one step under the parent
