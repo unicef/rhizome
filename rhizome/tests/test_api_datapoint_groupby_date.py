@@ -119,10 +119,21 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
     def test_get_list_no_recursion(self):
 
         location_id = 4321
-        get_parameter = 'group_by_time=all_time&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', location_id)
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        get = {
+            'group_by_time' :'all_time',
+            'indicator__in': self.ind.id,
+            'start_date': '2013-01-01',
+            'end_date': '2016-01-01',
+            'location_id__in': location_id,
+            'location_depth' : 1
+        }
+
+        resp = self.api_client\
+            .get('/api/v1/date_datapoint/',
+                data = get,
+                format = 'json',
+                authentication = self.get_credentials())
+
         response_data = self.deserialize(resp)
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
 
@@ -135,21 +146,35 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
     # not sure if this is a bug or what, but start and end date seem to be irrelevant when using group_by_time
     def test_get_list_diff_start_end_dates(self):
-        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        get = {
+            'group_by_time' :'year',
+            'indicator__in': self.ind.id,
+            'start_date': '2013-01-01',
+            'end_date': '2016-01-01',
+            'location_id__in': self.top_lvl_location.id,
+            'location_depth' : 1
+        }
+
+        resp = self.api_client.get('/api/v1/date_datapoint/',
+            data = get, format='json', authentication=self.get_credentials())
 
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
         objects_1 = response_data['objects']
 
-        get_parameter_2 = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2016-01-01' ,'2016-01-01', self.top_lvl_location.id)
+        get_2 = {
+            'group_by_time' :'year',
+            'indicator__in': self.ind.id,
+            'start_date': '2016-01-01',
+            'end_date': '2016-01-01',
+            'location_id__in': self.top_lvl_location.id,
+            'location_depth' : 1
+        }
 
-        resp_2 = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter_2, \
-            format='json', authentication=self.get_credentials())
+        resp_2 = self.api_client.get('/api/v1/date_datapoint/',\
+            data = get_2, format='json',\
+            authentication=self.get_credentials())
 
         self.assertHttpOK(resp_2)
         response_data_2 = self.deserialize(resp_2)
@@ -158,12 +183,20 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
         self.assertEqual(len(objects_1), len(objects_2))
 
     def test_get_list_quarter_and_all_time(self):
-        get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        get = {
+            'group_by_time' :'quarter',
+            'indicator__in': self.ind.id,
+            'start_date': '2016-01-01',
+            'end_date': '2016-01-01',
+            'location_id__in': self.top_lvl_location.id,
+            'location_depth' : 1
+        }
+
+        resp = self.api_client.get('/api/v1/date_datapoint/', \
+            data = get , format='json', authentication=self.get_credentials())
         response_data = self.deserialize(resp)
+
         self.assertHttpOK(resp)
         dps_q1_2014 = DataPoint.objects.filter(
             data_date__range=('2014-01-01', '2014-03-31'),\
@@ -185,10 +218,19 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
         self.assertTrue(q1_found)
 
-        get_parameter = 'group_by_time=all_time&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        get_2 = {
+                'group_by_time' :'all_time',
+                'indicator__in': self.ind.id,
+                'start_date': '2013-01-01',
+                'end_date': '2016-01-01',
+                'location_id__in': self.top_lvl_location.id,
+                'location_depth' : 1
+            }
+
+        resp = self.api_client.get('/api/v1/date_datapoint/', \
+            data = get_2, format='json',\
+            authentication=self.get_credentials())
+
         response_data = self.deserialize(resp)
         dps_all_time = DataPoint.objects.filter(indicator_id=self.ind.id)
 
@@ -201,11 +243,18 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
     # provide a non-existent id
     def test_get_list_bogus_id(self):
-        get_parameter = 'group_by_time=quarter&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(3223, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        get = {
+                'group_by_time' :'quarter',
+                'indicator__in': 3223,
+                'start_date': '2013-01-01',
+                'end_date': '2016-01-01',
+                'location_id__in': self.top_lvl_location.id,
+                'location_depth' : 1
+            }
+
+        resp = self.api_client.get('/api/v1/date_datapoint/', \
+            data = get, format='json',  authentication=self.get_credentials())
 
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
@@ -213,11 +262,19 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
 
         # what happens when we throw an unsupported grouping up in here?
     def test_get_list_wrong_grouping(self):
-        get_parameter = 'group_by_time=week&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}'\
-            .format(self.ind.id, '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
 
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
+        get = {
+                'group_by_time' :'quarter',
+                'indicator__in': self.ind.id,
+                'start_date': '2013-01-01',
+                'end_date': '2016-01-01',
+                'location_id__in': self.top_lvl_location.id,
+                'location_depth' : 1
+            }
+
+        resp = self.api_client.get('/api/v1/date_datapoint/',data = get,\
             format='json', authentication=self.get_credentials())
+
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
@@ -229,10 +286,18 @@ class DateDataPointResourceTest(RhizomeAPITestCase):
             data_format = 'int'
         )
 
-        get_parameter = 'group_by_time=year&indicator__in={0}&start_date={1}&end_date={2}&location_id__in={3}&show_missing_data=1'\
-            .format(str(self.ind.id)+','+str(rando_ind.id), '2013-01-01' ,'2016-01-01', self.top_lvl_location.id)
+        get = {
+                'group_by_time' :'year',
+                'indicator__in': rando_ind.id,
+                'start_date': '2013-01-01',
+                'end_date': '2016-01-01',
+                'location_id__in': self.top_lvl_location.id,
+                'location_depth' : 1
+            }
 
-        resp = self.api_client.get('/api/v1/date_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
+        resp = self.api_client.get('/api/v1/date_datapoint/', \
+            data = get , format='json',\
+            authentication=self.get_credentials())
+
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), 6)
