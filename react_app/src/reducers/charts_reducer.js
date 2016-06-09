@@ -5,7 +5,7 @@ const charts = handleActions({
   FETCH_CHARTS: (state, action) => {
     return getChartIndex(action.payload.data.objects)
   },
-  FETCH_ALL_META: (state, action) => {
+  GET_INITIAL_DATA_SUCCESS: (state, action) => {
     return getChartIndex(action.payload.data.objects[0].charts)
   }
 }, {})

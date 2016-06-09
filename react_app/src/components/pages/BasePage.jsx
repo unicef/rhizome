@@ -7,7 +7,7 @@ import MainHeader from 'components/organisms/base/MainHeader'
 export default class BasePage extends Component {
 
 	componentWillMount() {
-		this.props.fetchAllMeta()
+		this.props.getInitialData()
 	}
 
   componentWillUpdate (nextProps, nextState) {

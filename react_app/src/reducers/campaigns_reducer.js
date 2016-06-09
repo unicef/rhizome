@@ -5,7 +5,7 @@ const data = {raw: null, index: null}
 
 const campaigns = handleActions({
   FETCH_CAMPAIGNS: (state, action) => processCampaigns(action.payload.data.objects),
-  FETCH_ALL_META: (state, action) => processCampaigns(action.payload.data.objects[0].campaigns)
+  GET_INITIAL_DATA_SUCCESS: (state, action) => processCampaigns(action.payload.data.objects[0].campaigns)
 }, data)
 
 const processCampaigns = (campaigns) => {

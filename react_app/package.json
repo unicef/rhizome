@@ -52,13 +52,14 @@
     "redbox-react": "^1.2.6",
     "redux": "^3.5.2",
     "redux-actions": "*",
-    "redux-promise": "^0.5.3"
+    "redux-saga": "^0.10.5"
   },
   "devDependencies": {
     "babel-core": "*",
     "babel-eslint": "*",
     "babel-loader": "*",
     "babel-plugin-react-transform": "*",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "*",
     "babel-preset-react": "*",
     "babel-preset-react-hmre": "*",

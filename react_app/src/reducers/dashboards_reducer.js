@@ -5,7 +5,7 @@ const dashboards = handleActions({
   FETCH_DASHBOARDS: (state, action) => {
     return getDashboardIndex(action.payload.data.objects)
   },
-  FETCH_ALL_META: (state, action) => {
+  GET_INITIAL_DATA_SUCCESS: (state, action) => {
     return getDashboardIndex(action.payload.data.objects[0].dashboards)
   }
 }, {})

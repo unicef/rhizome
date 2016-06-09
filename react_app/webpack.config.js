@@ -3,12 +3,12 @@ var webpack = require('webpack')
 
 module.exports = {
   devtool: 'eval',
-  // entry: [
-  //   'webpack-dev-server/client?http://localhost:3000',
-  //   './src/index.jsx'
-  // ],
   entry: {
-    app: './src/index.jsx',
+    app: [
+      'webpack-dev-server/client?http://localhost:3000',
+      'babel-polyfill',
+      './src/index.jsx'
+    ],
     vendor: [
       'ag-grid',
       'ag-grid-react',
@@ -32,13 +32,13 @@ module.exports = {
       'redbox-react',
       'redux',
       'redux-actions',
-      'redux-promise'
+      'redux-saga'
     ]
   },
   output: {
-    path: path.join(__dirname, '../webapp/src/assets/js/'),
+    path: path.join(__dirname, '../webapp/public/static/js/'),
     filename: 'reactApp.js',
-    publicPath: '../webapp/src/assets/js/'
+    publicPath: '../webapp/public/static/js/'
   },
   plugins: [
     new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.reactApp.js'),

@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import BasePage from 'components/pages/BasePage'
-import { fetchAllMeta } from 'actions/global_actions'
+import { getInitialData } from 'actions/global_actions'
 
 const mapStateToProps = (state) => ({
 	superuser: state.superuser,
@@ -9,7 +9,7 @@ const mapStateToProps = (state) => ({
 	charts: state.charts
 })
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({fetchAllMeta}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({getInitialData}, dispatch)
 
 const BasePageContainer = connect(mapStateToProps, mapDispatchToProps)(BasePage)
 

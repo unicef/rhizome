@@ -11,7 +11,7 @@ import locations from 'reducers/locations_reducer'
 import users from 'reducers/users_reducer'
 
 const superuser = handleActions({
-  FETCH_ALL_META: (state, action) => action.payload.data.objects[0].is_superuser
+  GET_INITIAL_DATA_SUCCESS: (state, action) => action.payload.data.objects[0].is_superuser
 }, false)
 
 const reducers = {

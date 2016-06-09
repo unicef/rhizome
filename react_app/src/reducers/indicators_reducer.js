@@ -7,7 +7,7 @@ const indicators = handleActions({
   FETCH_INDICATORS: (state, action) => processIndicators(action.payload.data.objects),
   FETCH_INDICATOR_TAGS: (state, action) => processIndicatorTags(action.payload.data.objects),
   FETCH_INDICATORS_TO_TAGS: (state, action) => processIndicatorsToTags(action.payload.data.objects),
-  FETCH_ALL_META: (state, action) => {
+  GET_INITIAL_DATA_SUCCESS: (state, action) => {
     processIndicators(action.payload.data.objects[0].indicators)
     processIndicatorTags(action.payload.data.objects[0].indicator_tags)
     processIndicatorsToTags(action.payload.data.objects[0].indicators_to_tags)
