@@ -22,7 +22,7 @@ class EnterDataPage extends Component {
   //       show_missing_data: 1,
   //       source_name: ''
   //     }
-  //     nextProps.fetchDatapoints(query)
+  //     nextProps.getDatapoints(query)
   //   }
   // }
 
@@ -36,7 +36,7 @@ class EnterDataPage extends Component {
   //       show_missing_data: 1,
   //       source_name: ''
   //     }
-  //     nextProps.fetchDatapoints(query)
+  //     nextProps.getDatapoints(query)
   //   }
   // }
 

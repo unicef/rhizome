@@ -12,9 +12,15 @@ const MainFooter = () => (
   <footer className="row main-footer">
     <nav>
       <ul className="actions inline-list">
-        <li><a href="/manage_system/users"><i className="fa fa-cog"></i>Manage System</a></li>
-        <li><a href="/source-data" ><i className="fa fa-file"></i>Source Data</a></li>
-        <li><a href="/react_app/enter_data" ><i className="fa fa-plus"></i>Enter Data</a></li>
+        <li><Link to="/manage_system/users"><i className="fa fa-cog"></i>Manage System</Link></li>
+        <li><Link to="/source-data" ><i className="fa fa-file"></i>Source Data</Link></li>
+        <li><Link to="/react_app/enter_data" ><i className="fa fa-plus"></i>Enter Data</Link></li>
+        <li><Link to="/react_app/charts">Charts</Link></li>
+        <li><Link to="/react_app/dashboards">Dashboards</Link></li>
+        <li><Link to="/react_app/campaigns">Campaigns</Link></li>
+        <li><Link to="/react_app/indicators">Indicators</Link></li>
+        <li><Link to="/react_app/locations">Locations</Link></li>
+        <li><Link to="/react_app/users">Users</Link></li>
       </ul>
     </nav>
   </footer>

@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ResourceTable from 'components/molecules/ResourceTable'
+import Placeholder from 'components/global/Placeholder'
 
 const columnDefs = [
   {headerName: "ID", field: "id"},
@@ -24,19 +25,14 @@ const columnDefs = [
   {headerName: 'Z', field: 'z', hide: true},
 ]
 
-const ChartTable = ({ charts, fetchCharts }) => (
-  <ResourceTable
-    rowData={_.toArray(charts)}
-    onRefreshData={fetchCharts}
-    columnDefs={columnDefs}
-    resourcePath='charts' />
-)
-
-ChartTable.propTypes = {
-  charts: PropTypes.objectOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired
-  }).isRequired)
+const ChartTable = ({ charts, getAllCharts }) => {
+  return charts.raw ? (
+    <ResourceTable
+      rowData={charts.raw}
+      onRefreshData={() => getAllCharts()}
+      columnDefs={columnDefs}
+      resourcePath='charts' />
+  ) : <Placeholder />
 }
 
 export default ChartTable

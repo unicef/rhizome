@@ -22,8 +22,19 @@ export const watchGetInitialData = function * () {
 export const fetchAllMeta = function * (action) {
   try {
     const response = yield call(() => RhizomeAPI.get('all_meta/'))
-    yield put({type: 'GET_INITIAL_DATA_SUCCESS', payload: response})
-    yield put({type: 'GET_ALL_CAMPAIGNS_SUCCESS', payload: response.data.objects[0].campaigns})
+    const indicators_response = {
+      indicators: response.data.objects[0].indicators,
+      indicator_tags: response.data.objects[0].indicator_tags,
+      indicators_to_tags: response.data.objects[0].indicators_to_tags
+    }
+    yield [
+      put({type: 'GET_INITIAL_DATA_SUCCESS', payload: response}),
+      put({type: 'GET_ALL_CAMPAIGNS_SUCCESS', payload: response.data.objects[0].campaigns}),
+      put({type: 'GET_ALL_LOCATIONS_SUCCESS', payload: response.data.objects[0].locations}),
+      put({type: 'GET_ALL_CHARTS_SUCCESS', payload: response.data.objects[0].charts}),
+      put({type: 'GET_ALL_DASHBOARDS_SUCCESS', payload: response.data.objects[0].dashboards}),
+      put({type: 'GET_ALL_INDICATORS_SUCCESS', payload: indicators_response})
+    ]
   } catch (error) {
     yield put({type: 'GET_INITIAL_DATA_FAILURE', error})
   }

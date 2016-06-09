@@ -3,19 +3,15 @@ import { handleActions } from 'redux-actions'
 import ancestryString from 'utilities/transform/ancestryString'
 import treeify from 'utilities/transform/treeify'
 
-const data = {raw: null, index: null, list: null}
+const initial_state = {raw: null, index: null, list: null}
 
 const locations = handleActions({
-  FETCH_LOCATIONS: (state, action) => processLocations(action.payload.data.objects),
-  GET_INITIAL_DATA_SUCCESS: (state, action) => processLocations(action.payload.data.objects[0].locations)
-}, data)
-
-const processLocations = (locations) => {
-  data.raw = locations
-  data.index = _.keyBy(locations, 'id')
-  data.list = createLocationTree(locations)
-  return data
-}
+  GET_ALL_LOCATIONS_SUCCESS: (state, action) => ({
+    raw: action.payload,
+    index: _.keyBy(action.payload, 'id'),
+    list: createLocationTree(action.payload)
+  })
+}, initial_state)
 
 const createLocationTree = (raw_locations) => {
   return _(raw_locations).map(location => ({

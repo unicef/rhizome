@@ -59,7 +59,7 @@ export default class ResourceTable extends Component {
   }
 
   render = () => {
-    this.columnDefs.push({headerName: 'Edit', cellRenderer: reactCellRendererFactory(this.renderControlCell)})
+    // this.columnDefs.push({headerName: 'Edit', cellRenderer: reactCellRendererFactory(this.renderControlCell)})
     return (
       <div style={{width: '100vw'}}>
         <div style={{padding: '4px'}}>

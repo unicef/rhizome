@@ -11,6 +11,10 @@ import ChartsPage from 'components/pages/charts/ChartsPage'
 import ChartPage from 'components/pages/charts/ChartPage'
 import ChartEditPage from 'components/pages/charts/ChartEditPage'
 
+import DashboardsPage from 'components/pages/dashboards/DashboardsPage'
+import DashboardPage from 'components/pages/dashboards/DashboardPage'
+import DashboardEditPage from 'components/pages/dashboards/DashboardEditPage'
+
 import IndicatorsPage from 'components/pages/indicators/IndicatorsPage'
 import IndicatorPage from 'components/pages/indicators/IndicatorPage'
 import IndicatorEditPage from 'components/pages/indicators/IndicatorEditPage'
@@ -44,9 +48,13 @@ const Routes = (
 	  <Route path="/react_app/campaigns/:campaign_id" component={CampaignPage}/>
 	  <Route path="/react_app/campaigns/:campaign_id/edit" component={CampaignEditPage}/>
 
-	  <Route path="/react_app/new_charts" component={ChartsPage}/>
-	  <Route path="/react_app/new_charts/:chart_id" component={ChartPage}/>
-	  <Route path="/react_app/new_charts/:chart_id/edit" component={ChartEditPage}/>
+	  <Route path="/react_app/charts" component={ChartsPage}/>
+	  <Route path="/react_app/charts/:chart_id" component={ChartPage}/>
+	  <Route path="/react_app/charts/:chart_id/edit" component={ChartEditPage}/>
+
+	  <Route path="/react_app/dashboards" component={DashboardsPage}/>
+	  <Route path="/react_app/dashboards/:dashboard_id" component={DashboardPage}/>
+	  <Route path="/react_app/dashboards/:dashboard_id/edit" component={DashboardEditPage}/>
 
 	  <Route path="/react_app/indicators" component={IndicatorsPage}/>
 	  <Route path="/react_app/indicators/:indicator_id" component={IndicatorPage}/>

@@ -4,25 +4,25 @@ import { Link } from 'react-router'
 
 class MainNavigation extends Component {
   render () {
-    let dashboards = _.toArray(this.props.dashboards)
-    if (!_.isUndefined(dashboards) && dashboards.length > 14) {
+    let dashboards = this.props.dashboards.raw
+    if (dashboards && dashboards.length > 14) {
       dashboards = _.slice(dashboards, 0, 14)
     }
-    const custom_dashboards = dashboards.map(dashboard =>
+    const custom_dashboards = dashboards ? dashboards.map(dashboard =>
       <li key={dashboard.id}>
         <a role='menuitem' href={'/dashboards/' + dashboard.id}>{dashboard.title}</a>
       </li>
-    )
+    ) : <li>Loading ...</li>
 
-    let charts = _.sortBy(this.props.charts, 'title')
-    if (!_.isUndefined(charts) && charts.length > 10) {
+    let charts = _.sortBy(this.props.charts.raw, 'title')
+    if (charts && charts.length > 10) {
       charts = _.slice(charts, 0, 10)
     }
-    const custom_charts = charts.map(chart =>
+    const custom_charts = charts ? charts.map(chart =>
       <li key={chart.id}>
         <a role='menuitem' href={'/charts/' + chart.id}>{chart.title}</a>
       </li>
-    )
+    ) : <li>Loading ...</li>
 
     const create_chart_button = this.props.superuser ? (
       <li className='cta-menu-item'><a href='/charts/create'>Create a Chart</a></li>

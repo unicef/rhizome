@@ -1,12 +1,29 @@
 import { createAction } from 'redux-actions'
+import { takeEvery } from 'redux-saga'
+import { call, put } from 'redux-saga/effects'
 import RhizomeAPI from 'utilities/api'
 
-export const fetchDatapoints = createAction(
-  'FETCH_DATAPOINTS', params => {
-    const path = params['group_by_time'] === 'campaign' ? '/campaign_datapoint/' : '/date_datapoint/'
-    return RhizomeAPI.get(path, {params: _prepDatapointsQuery(params)})
+export const getDatapoints = createAction('GET_DATAPOINTS')
+export const getDatapointsFailure = createAction('GET_DATAPOINTS_FAILURE')
+export const getDatapointsSuccess = createAction('GET_DATAPOINTS_SUCCESS')
+
+// // ===========================================================================//
+// //                                   SAGAS                                    //
+// // ===========================================================================//
+export const watchGetDatapoints = function * () {
+  yield * takeEvery('GET_ALL_DATAPOINTS', fetchDatapoints)
+}
+
+export const fetchDatapoints = function * (action) {
+  try {
+    console.log('action', action)
+    // const path = params['group_by_time'] === 'campaign' ? '/campaign_datapoint/' : '/date_datapoint/'
+    // const response = yield call(() => RhizomeAPI.get(path, {params: _prepDatapointsQuery(params)}))
+    // yield put({type: 'GET_ALL_DATAPOINTS_SUCCESS', payload: response.data.objects})
+  } catch (error) {
+    // yield put({type: 'GET_ALL_DATAPOINTS_FAILURE', error})
   }
-)
+}
 
 const _prepDatapointsQuery = (params) => {
   // const chartNeedsNullData = _.indexOf(builderDefinitions.need_missing_data_charts, params.type) !== -1
@@ -30,7 +47,4 @@ const _prepDatapointsQuery = (params) => {
   console.log('query', query)
   return query
 }
-
-export const fetchDatapointsFailure = createAction('FETCH_DATAPOINTS_FAILURE')
-export const fetchDatapointsSuccess = createAction('FETCH_DATAPOINTS_SUCCESS')
 

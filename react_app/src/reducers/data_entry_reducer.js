@@ -14,7 +14,7 @@ const data_entry = handleActions({
       selected_campaign: action.payload.data.objects[0].campaigns[0]
     })
   },
-  FETCH_DATAPOINTS: (state, action) => {
+  GET_DATAPOINTS: (state, action) => {
     return Object.assign({}, state, {
       datapoints: action.payload.data.objects
     })

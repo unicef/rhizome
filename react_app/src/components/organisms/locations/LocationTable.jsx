@@ -1,27 +1,21 @@
 import _ from 'lodash'
 import React, { PropTypes } from 'react'
 import ResourceTable from 'components/molecules/ResourceTable'
+import Placeholder from 'components/global/Placeholder'
 
 const columnDefs = [
   {headerName: "ID", field: "id"},
   {headerName: "Name", field: "name"}
 ]
 
-const LocationTable = ({ locations, fetchLocations }) => {
-  return (
+const LocationTable = ({ locations, getAllLocations }) => {
+  return locations.raw ? (
   <ResourceTable
-    rowData={_.toArray(locations)}
-    onRefreshData={fetchLocations}
+    rowData={locations.raw}
+    onRefreshData={() => getAllLocations()}
     columnDefs={columnDefs}
     resourcePath='locations' />
-  )
-}
-
-LocationTable.propTypes = {
-  locations: PropTypes.objectOf(PropTypes.shape({
-    id: PropTypes.number.isRequired,
-    name: PropTypes.string.isRequired
-  }).isRequired)
+  ) : <Placeholder />
 }
 
 export default LocationTable

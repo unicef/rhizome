@@ -8,7 +8,7 @@ export const getAllCampaignsFailure = createAction('GET_ALL_CAMPAIGNS_FAILURE')
 export const getAllCampaignsSuccess = createAction('GET_ALL_CAMPAIGNS_SUCCESS')
 
 // ===========================================================================//
-// 																	 SAGAS																	 //
+// 																	 SAGAS																	  //
 // ===========================================================================//
 export const watchGetAllCampaigns = function * () {
   yield * takeEvery('GET_ALL_CAMPAIGNS', fetchAllCampaigns)

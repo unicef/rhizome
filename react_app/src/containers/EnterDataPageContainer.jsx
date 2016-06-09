@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import EnterDataPage from 'components/pages/EnterDataPage'
 import { selectGlobalCampaign, selectGlobalLocation, setGlobalIndicators, setGlobalIndicatorTag } from 'actions/global_actions'
-import { fetchDatapoints } from 'actions/datapoint_actions'
+import { getDatapoints } from 'actions/datapoint_actions'
 
 const mapStateToProps = (state) => ({
 	campaigns: state.campaigns,
@@ -20,7 +20,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 	selectGlobalLocation,
 	setGlobalIndicators,
 	setGlobalIndicatorTag,
-	fetchDatapoints
+	getDatapoints
 }, dispatch)
 
 const EnterDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(EnterDataPage)

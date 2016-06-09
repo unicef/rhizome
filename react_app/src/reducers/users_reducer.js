@@ -1,9 +1,13 @@
 import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
+const initial_state = {raw: null, index: null}
+
 const users = handleActions({
-  FETCH_USERS: (state, action) => _.keyBy(action.payload.data.objects, 'id'),
-  GET_INITIAL_DATA_SUCCESS: (state, action) => _.keyBy(action.payload.data.objects[0].users, 'id')
-}, {})
+  GET_ALL_USERS_SUCCESS: (state, action) => ({
+    raw: action.payload,
+    index: _.keyBy(action.payload, 'id')
+  })
+}, initial_state)
 
 export default users
