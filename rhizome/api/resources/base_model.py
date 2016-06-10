@@ -146,7 +146,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
             bundles.append(obj)
 
-        response_meta = self.get_response_meta(request, bundles)
+        response_meta = self.get_response_meta(bundles)
 
         response_data = {
             'objects': bundles,

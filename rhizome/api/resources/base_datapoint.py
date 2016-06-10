@@ -52,9 +52,6 @@ class BaseDataPointResource(BaseResource):
         even when there is no existing data.
         '''
 
-        print 'add missing data'
-        print df[:5]
-
         list_of_lists = [\
             self.parsed_params['indicator__in'],\
             self.location_ids,\
@@ -74,10 +71,6 @@ class BaseDataPointResource(BaseResource):
             return cart_prod_df
 
         df = df.merge(cart_prod_df, how='outer', on=columns_list)
-
-        print '--===--\n' * 5
-        print df[:2]
-        print '--===--\n' * 5
 
         return df
 

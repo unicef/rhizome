@@ -5,7 +5,6 @@ from setup_helpers import TestSetupHelpers
 import json
 from django.test import TestCase
 
-from pprint import pprint
 
 class AllMetaResourceTest(RhizomeAPITestCase):
         # ./manage.py test rhizome.tests.test_api_all_meta.AllMetaResourceTest --settings=rhizome.settings.test

@@ -18,9 +18,6 @@ from rhizome.settings.base import STATICFILES_DIRS
 
 def react_app(request):
 
-    print '==request=='
-    print request.path
-
     return render_to_response('react_app.html',\
         context_instance=RequestContext(request))
 
