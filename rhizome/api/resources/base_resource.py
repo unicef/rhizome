@@ -1,5 +1,4 @@
 import traceback
-import itertools
 
 from django.http import HttpResponse
 
@@ -7,10 +6,6 @@ from tastypie import http
 from tastypie.resources import Resource
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
-from tastypie.resources import Resource
-from tastypie.utils.mime import build_content_type
-
-from pandas import DataFrame
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
@@ -18,8 +13,7 @@ from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import DatapointsException
 
 from rhizome.models import LocationPermission, Location, LocationTree, \
-    LocationType, Campaign, DataPointComputed, Indicator
-
+    LocationType, DataPointComputed
 
 class BaseResource(Resource):
     '''
@@ -32,6 +26,9 @@ class BaseResource(Resource):
         always_return_data = True
         cache = CustomCache()
         serializer = CustomSerializer()
+
+    ### Tastypie Methods ###
+
 
     def get_locations_to_return_from_url(self, request):
         '''
@@ -159,7 +156,8 @@ class BaseResource(Resource):
             return http.HttpNoContent()
 
         return response
-    def get_response_meta(self, request, objects):
+
+    def get_response_meta(self, objects):
 
         meta_dict = {
             'top_lvl_location_id': self.top_lvl_location_id,
