@@ -15,7 +15,7 @@ class IndicatorSelect extends Component {
   static propTypes = {
     indicators: React.PropTypes.array.isRequired,
     selected: React.PropTypes.object.isRequired,
-    sendValue: React.PropTypes.func.isRequired,
+    selectIndicator: React.PropTypes.func.isRequired,
     idsToRender: React.PropTypes.array
   }
 
@@ -39,7 +39,7 @@ class IndicatorSelect extends Component {
       <DropdownMenuItem
         key={'indicator-' + indicator.id}
         text={indicator.name}
-        onClick={this.props.sendValue.bind(this, indicator.id)}
+        onClick={() => this.props.selectIndicator(indicator)}
         classes='indicator'
       />
     )

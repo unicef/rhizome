@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const data = {
@@ -37,7 +38,7 @@ const data_entry = handleActions({
   },
   SET_GLOBAL_INDICATORS: (state, action) => {
     return Object.assign({}, state, {
-      selected_indicators: action.payload,
+      selected_indicators: _.isArray(action.payload) ? action.payload : [action.payload],
       dataParamsChanged: true
     })
   },

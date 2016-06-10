@@ -6,7 +6,6 @@ import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
 
-
 class EnterDataPage extends Component {
 
   componentWillReceiveProps(nextProps) {
@@ -25,7 +24,6 @@ class EnterDataPage extends Component {
 
   render () {
     const props = this.props
-    const datapoints = [] // temporary
 
     const campaign_select = (
       <CampaignSelect
@@ -34,6 +32,19 @@ class EnterDataPage extends Component {
         selectCampaign={props.selectGlobalCampaign}
       />
     )
+
+    const selected_indicator = _.isEmpty(props.selected_indicators) ? {name: 'Select Indicator'} : this.props.selected_indicators[0]
+    const indicator_select = (
+      <DropdownButton
+        items={props.indicators.tree}
+        item_plural_name='Indicators'
+        style='dropdown-list'
+        searchable
+        text={selected_indicator.short_name || selected_indicator.name}
+        sendValue={id => props.setGlobalIndicators(props.indicators.index[id])}
+      />
+    )
+
     const indicator_tag_select = (
       <IndicatorTagSelect
         indicator_tags={_.toArray(props.indicators.tag_index) || []}
@@ -69,6 +80,7 @@ class EnterDataPage extends Component {
           </div>
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
+              { indicator_select }
               { indicator_tag_select }
               { campaign_select }
               { location_select }
@@ -77,7 +89,7 @@ class EnterDataPage extends Component {
         </header>
         <div className='row'>
           <div className='medium-12 columns'>
-            { datapoints.flattened ? data_table : placeholder }
+            { props.datapoints.flattened ? data_table : placeholder }
           </div>
         </div>
       </div>
