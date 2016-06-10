@@ -9,7 +9,7 @@ class IndicatorMultiSelect extends Component {
   static propTypes = {
     indicators: PropTypes.shape({
       raw: PropTypes.array,
-      list: PropTypes.array
+      tree: PropTypes.array
     }).isRequired,
     selected_indicators: PropTypes.array,
     setIndicators: PropTypes.func,
@@ -36,7 +36,7 @@ class IndicatorMultiSelect extends Component {
     const selected_ids = this.props.selected_indicators.map(indicator => indicator.id)
     const first_indicator = this.props.selected_indicators[0]
     let indicators = []
-    this.props.indicators.list.forEach(indicator_group => {
+    this.props.indicators.tree.forEach(indicator_group => {
       let group = Object.assign({}, indicator_group)
       if (this.props.multi && this.props.filterByFormat && first_indicator) {
         // Filter out indicators of a different data_format from the dropdown menu
