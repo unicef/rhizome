@@ -59,10 +59,9 @@ class BaseDataPointResource(BaseResource):
         ]
         cart_product = list(itertools.product(*list_of_lists))
         cart_prod_df = DataFrame(cart_product)
-        if 'campaign_id' in df.columns:
-            columns_list = ['indicator_id','location_id', 'campaign_id']
-        else:
-            columns_list = ['indicator_id','location_id', 'time_grouping']
+
+        ## for date_datapoint, we convert the "time grouping" to campaign ##
+        columns_list = ['indicator_id','location_id', 'campaign_id']
 
         cart_prod_df.columns = columns_list
         cart_prod_df['value'] = None
@@ -71,6 +70,10 @@ class BaseDataPointResource(BaseResource):
             return cart_prod_df
 
         df = df.merge(cart_prod_df, how='outer', on=columns_list)
+
+        df["value"] = df["value_x"]
+        df.drop("value_x", axis=1, inplace=True)
+        df.drop("value_y", axis=1, inplace=True)
 
         return df
 
