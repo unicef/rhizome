@@ -17,7 +17,9 @@ from rhizome.models import LocationPermission, Location, LocationTree, \
 
 class BaseResource(Resource):
     '''
+    https://github.com/django-tastypie/django-tastypie/blob/master/tastypie/resources.py
     '''
+
     class Meta:
         authentication = MultiAuthentication(
             CustomSessionAuthentication(), ApiKeyAuthentication())
@@ -28,7 +30,96 @@ class BaseResource(Resource):
         serializer = CustomSerializer()
 
     ### Tastypie Methods ###
+    def __init__(self, api_name=None):
+        return super(BaseResource, self).__init__(api_name=None)
 
+    def apply_filters(self, request, applicable_filters):
+        """
+        An ORM-specific implementation of ``apply_filters``.
+        The default simply applies the ``applicable_filters`` as ``**kwargs``,
+        but should make it possible to do more advanced things.
+        """
+        return self.get_object_list(request).filter(**applicable_filters)
+
+    def get_object_list(self, request):
+        """
+        An ORM-specific implementation of ``get_object_list``.
+        Returns a queryset that may have been limited by other overrides.
+        """
+        return super(BaseResource, self).get_object_list(self, request)
+
+    def obj_get_list(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_get_list``.
+        ``GET`` dictionary of bundle.request can be used to narrow the query.
+        """
+        return super(BaseResource, self).obj_get_list(bundle, **kwargs)
+
+    def obj_get(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_get``.
+        Takes optional ``kwargs``, which are used to narrow the query to find
+        the instance.
+        """
+        return super(BaseResource, self).obj_get(bundle, **kwargs)
+
+    def obj_create(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_create``.
+        """
+        return super(BaseResource, self).obj_create(bundle, **kwargs)
+
+    def lookup_kwargs_with_identifiers(self, bundle, kwargs):
+        """
+        Kwargs here represent uri identifiers Ex: /repos/<user_id>/<repo_name>/
+        We need to turn those identifiers into Python objects for generating
+        lookup parameters that can find them in the DB
+        """
+        return super(BaseResource, self)\
+            .lookup_kwargs_with_identifiers(bundle, kwargs)
+
+    def obj_update(self, bundle, skip_errors=False, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_update``.
+        """
+        return super(BaseResource, self)\
+            .obj_update(bundle, skip_errors=False, **kwargs)
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete_list``.
+        """
+        return super(BaseResource, self)\
+            .obj_delete_list(bundle, **kwargs)
+
+    def obj_delete_list_for_update(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete_list_for_update``.
+        """
+        return super(BaseResource, self)\
+            .obj_delete_list_for_update(self, bundle, **kwargs)
+
+    def obj_delete(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete``.
+
+        Takes optional ``kwargs``, which are used to narrow the query to find
+        the instance.
+        """
+        return super(BaseResource, self).obj_delete(bundle, **kwargs)
+
+    def detail_uri_kwargs(self, bundle_or_obj):
+        """
+        Given a ``Bundle`` or an object (typically a ``Model`` instance),
+        it returns the extra kwargs needed to generate a detail URI.
+        By default, it uses this resource's ``detail_uri_name`` in order to
+        create the URI.
+        """
+        return super(BaseResource, self).detail_uri_kwargs(bundle_or_obj)
+
+    ############################
+    ## Custom Rhizome Methods ##
+    ############################
 
     def get_locations_to_return_from_url(self, request):
         '''
