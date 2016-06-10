@@ -116,7 +116,7 @@ class DataPointResourceTest(RhizomeAPITestCase):
         self.assertEqual(response_data['meta']['campaign_ids'], [campaign.id])
         self.assertEqual(int(response_data['meta']['location_ids']), location.id)
 
-    def test_get_class_datapoint(self):
+    def _get_class_datapoint(self):
         # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_class_datapoint --settings=rhizome.settings.test
 
         cache_job = CacheJob.objects.create(

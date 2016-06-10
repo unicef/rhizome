@@ -94,13 +94,13 @@ class CampaignDatapointResource(BaseModelResource):
             results = df.to_dict('records')
 
         ## add enumeration for 'class' indicators
-        if 'class' in Indicator.objects\
-            .filter(id__in = self.parsed_params['indicator__in'])\
-            .values_list('data_format', flat=True):
-
-            self.class_indicator_map = self.build_class_indicator_map()
-            df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
-            results = df.to_dict('records')
+        # if 'class' in Indicator.objects\
+        #     .filter(id__in = self.parsed_params['indicator__in'])\
+        #     .values_list('data_format', flat=True):
+        #
+        #     self.class_indicator_map = self.build_class_indicator_map()
+        #     df = DataFrame(results).apply(self.add_class_indicator_val, axis=1)
+        #     results = df.to_dict('records')
 
         return results
 
