@@ -16,13 +16,13 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import DatapointsException
+from rhizome.api.resources.base_resource import BaseResource
 
 from rhizome.models import LocationPermission, Location, LocationTree, \
     LocationType, Campaign, DataPointComputed, Indicator
 
 
-
-class BaseResource(Resource):
+class BaseDataPointResource(BaseResource):
     '''
     '''
     class Meta:
@@ -34,135 +34,8 @@ class BaseResource(Resource):
         cache = CustomCache()
         serializer = CustomSerializer()
 
-    def get_locations_to_return_from_url(self, request):
-        '''
-        This method is used in both the /geo and /datapoint endpoints.  Based
-        on the values parsed from the URL parameters find the locations needed
-        to fulfill the request based on the four rules below.
-
-        TO DO -- Check Location Permission so that the user can only see
-        What they are permissioned to.
-        '''
-
-        if 'location_id__in' in request.GET:
-            location_ids = map(int, request.GET['location_id__in'].split(','))
-
-            if 'location_type' in request.GET:
-                loc_type_id = int(request.GET['location_type'])
-                return LocationTree.objects.filter(
-                    location__location_type_id=loc_type_id,
-                    parent_location_id__in=location_ids
-                ).values_list('location_id', flat=True)
-
-            elif 'location_depth' in request.GET:
-                return_locations = []
-                for location_id in location_ids:
-                    # this can probably be condensed into fewer queries...
-                    parent_location_type = Location.objects.get(
-                        id=location_id).location_type_id
-                    parent_admin_level = LocationType.objects.get(
-                        id=parent_location_type).admin_level
-                    location_depth = int(request.GET['location_depth'])
-                    descendant_location_type = LocationType.objects.get(
-                        admin_level=parent_admin_level + location_depth)
-                    descendant_ids = LocationTree.objects.filter(
-                        location__location_type_id=descendant_location_type.id,
-                        parent_location_id=location_id
-                    ).values_list('location_id', flat=True)
-                    return_locations.extend(descendant_ids)
-
-                location_ids = return_locations
-
-        else:
-            location_ids =  Location.objects.all().values_list('id', flat=True)
-
-        try:
-            request.GET['filter_indicator']
-            location_ids = self.get_locations_from_filter_param(location_ids)
-        except KeyError:
-            pass
-
-        return location_ids
-
-    def get_locations_from_filter_param(self, location_ids):
-        '''
-        '''
-
-        value_filter = self.parsed_params['filter_value'].split(',')
-
-        location_ids = DataPointComputed.objects.filter(
-            campaign__in = self.parsed_params['campaign__in'],
-            location__in = location_ids,
-            indicator__short_name =  self.parsed_params['filter_indicator'],
-            value__in = value_filter)\
-                .values_list('location_id', flat=True)
-
-        return location_ids
-
-    def dispatch(self, request_type, request, **kwargs):
-        """
-        Overrides Tastypie and calls get_list.
-        """
-
-        try:
-            self.top_lvl_location_id = LocationPermission.objects.get(
-                user_id=request.user.id).top_lvl_location_id
-        except LocationPermission.DoesNotExist:
-            self.top_lvl_location_id = Location.objects\
-                .filter(parent_location_id=None)[0].id
-
-        allowed_methods = getattr(
-            self._meta, "%s_allowed_methods" % request_type, None)
-        #
-        if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
-            request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
-
-        request_method = self.method_check(request, allowed=allowed_methods)
-        method = getattr(self, "%s_%s" % (request_method, request_type), None)
-
-        # if method is None:
-        #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
-
-        self.is_authenticated(request)
-        self.throttle_check(request)
-        # All clear. Process the request.
-
-        # If what comes back isn't a ``HttpResponse``, assume that the
-        # request was accepted and that some action occurred. This also
-        # prevents Django from freaking out.
-
-        # request = convert_post_to_put(request)
-
-        try:
-            response = method(request, **kwargs)
-        except Exception as error:
-
-            error_code = DatapointsException.defaultCode
-            error_message = DatapointsException.defaultMessage
-
-            if isinstance(error, DatapointsException):
-                error_code = error.code
-                error_message = error.message
-
-            data = {
-                'traceback': traceback.format_exc(),
-                'error': error_message,
-                'code': error_code
-            }
-
-            return self.error_response(
-                request,
-                data,
-                response_class=http.HttpApplicationError
-            )
-
-        if not isinstance(response, HttpResponse):
-            return http.HttpNoContent()
-
-        return response
-
     #################################################
-    ### raw_datapoint / datapoint helpter methods ###
+    ### date_datapoint / campaign_datapoint helpter methods ###
     #################################################
 
     def add_missing_data(self, df):
@@ -224,16 +97,6 @@ class BaseResource(Resource):
 
         return response
 
-
-    def get_response_meta(self, request, objects):
-
-        meta_dict = {
-            'top_lvl_location_id': self.top_lvl_location_id,
-            'limit': None,  # paginator.get_limit(),
-            'offset': None,  # paginator.get_offset(),
-            'total_count': len(objects),
-        }
-        return meta_dict
 
     def get_datapoint_response_meta(self, request, objects):
         '''

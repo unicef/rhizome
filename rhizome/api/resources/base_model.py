@@ -9,7 +9,7 @@ from tastypie import http
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
-from rhizome.api.resources.base import BaseResource
+from rhizome.api.resources.base_resource import BaseResource
 from django.core.exceptions import ObjectDoesNotExist
 
 

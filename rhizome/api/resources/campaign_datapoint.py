@@ -5,7 +5,7 @@ from tastypie import fields
 from tastypie.utils.mime import build_content_type
 
 from rhizome.api.serialize import CustomSerializer
-from rhizome.api.resources.base_model import BaseModelResource
+from rhizome.api.resources.base_datapoint import BaseDataPointResource
 from rhizome.api.custom_logic import handle_polio_case_table
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
@@ -14,7 +14,7 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
 
 import math
 
-class CampaignDatapointResource(BaseModelResource):
+class CampaignDatapointResource(BaseDataPointResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -28,7 +28,7 @@ class CampaignDatapointResource(BaseModelResource):
             'cumulative'
     '''
 
-    class Meta(BaseModelResource.Meta):
+    class Meta(BaseDataPointResource.Meta):
         '''
         '''
 
@@ -103,31 +103,3 @@ class CampaignDatapointResource(BaseModelResource):
         #     results = df.to_dict('records')
 
         return results
-
-    def build_class_indicator_map(self):
-        '''
-        '''
-        class_indicator_map ={}
-
-        indicator_enum_list = IndicatorClassMap.objects.filter(is_display=True) \
-            .values_list('indicator','enum_value','string_value')
-
-        for row in indicator_enum_list:
-            if row[0] not in class_indicator_map:
-                class_indicator_map[row[0]] ={}
-            class_indicator_map[row[0]][row[1]] = row[2]
-
-        return class_indicator_map
-
-    def add_class_indicator_val(self, x):
-        '''
-        '''
-
-        ind_id = x['indicator_id']
-        ind_val = x['value']
-
-        if ind_id in self.class_indicator_map and ind_val in self.class_indicator_map[ind_id]:
-            new_val = self.class_indicator_map[ind_id][ind_val]
-            x['value'] = new_val
-
-        return x
