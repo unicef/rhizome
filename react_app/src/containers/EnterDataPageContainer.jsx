@@ -9,6 +9,7 @@ const mapStateToProps = (state) => ({
 	indicators: state.indicators,
 	locations: state.locations,
 	datapoints: state.data_entry.datapoints,
+	dataParamsChanged: state.data_entry.dataParamsChanged,
 	selected_campaign: state.data_entry.selected_campaign,
 	selected_locations: state.data_entry.selected_locations,
 	selected_indicators: state.data_entry.selected_indicators,

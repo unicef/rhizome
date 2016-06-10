@@ -14,7 +14,6 @@ export const setGlobalIndicatorTag = createAction('SET_GLOBAL_INDICATOR_TAG')
 // ===========================================================================//
 // 																	 SAGAS																	 //
 // ===========================================================================//
-
 export const watchGetInitialData = function * () {
   yield* takeEvery('GET_INITIAL_DATA', fetchAllMeta)
 }

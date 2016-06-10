@@ -11,17 +11,19 @@ export const getDatapointsSuccess = createAction('GET_DATAPOINTS_SUCCESS')
 // //                                   SAGAS                                    //
 // // ===========================================================================//
 export const watchGetDatapoints = function * () {
-  yield * takeEvery('GET_ALL_DATAPOINTS', fetchDatapoints)
+  yield * takeEvery('GET_DATAPOINTS', fetchDatapoints)
 }
 
 export const fetchDatapoints = function * (action) {
+  const query = _prepDatapointsQuery(action.payload)
+  if (!query) return
   try {
-    console.log('action', action)
-    // const path = params['group_by_time'] === 'campaign' ? '/campaign_datapoint/' : '/date_datapoint/'
-    // const response = yield call(() => RhizomeAPI.get(path, {params: _prepDatapointsQuery(params)}))
-    // yield put({type: 'GET_ALL_DATAPOINTS_SUCCESS', payload: response.data.objects})
+    const groupByCampaign = action.payload['time_grouping'] === 'campaign'
+    const path = groupByCampaign ? '/campaign_datapoint/' : '/date_datapoint/'
+    const response = yield call(() => RhizomeAPI.get(path, {params: query}))
+    yield put({type: 'GET_DATAPOINTS_SUCCESS', payload: response})
   } catch (error) {
-    // yield put({type: 'GET_ALL_DATAPOINTS_FAILURE', error})
+    yield put({type: 'GET_DATAPOINTS_FAILURE', error})
   }
 }
 
@@ -38,13 +40,16 @@ const _prepDatapointsQuery = (params) => {
     chart_type: params.type,
     chart_uuid: params.uuid,
     show_missing_data: chartNeedsNullData ? 1 : params.show_missing_data,
-    group_by_time: params.group_by_time,
+    time_grouping: params.group_by_time || 'campaign',
     source_name: params.source_name,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
     location_level: params.type === 'TableChart' ? 'District' : null
   }
-  console.log('query', query)
+  const queryReady = query.campaign__in && query.location_id__in !== '' && query.indicator__in !== ''
+  if (!queryReady) {
+    return false
+  }
   return query
 }
 

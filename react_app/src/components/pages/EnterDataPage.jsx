@@ -6,42 +6,24 @@ import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
 
-const selectLocation = () => {
-  console.log('hello')
-}
-
 
 class EnterDataPage extends Component {
 
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.selected_campaign && nextProps.selected_locations.length > 0 && nextProps.selected_indicators.length > 0) {
-  //     const query = {
-  //       campaign__in: nextProps.selected_campaign.id,
-  //       indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
-  //       location_ids: nextProps.selected_locations.map(location => location.id),
-  //       show_missing_data: 1,
-  //       source_name: ''
-  //     }
-  //     nextProps.getDatapoints(query)
-  //   }
-  // }
-
-
-  // componentWillReceiveProps(nextProps) {
-  //   if (nextProps.selected_campaign && nextProps.selected_locations.length > 0 && nextProps.selected_indicators.length > 0) {
-  //     const query = {
-  //       campaign__in: nextProps.selected_campaign.id,
-  //       indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
-  //       location_ids: nextProps.selected_locations.map(location => location.id),
-  //       show_missing_data: 1,
-  //       source_name: ''
-  //     }
-  //     nextProps.getDatapoints(query)
-  //   }
-  // }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.dataParamsChanged) {
+      const query = {
+        campaign__in: nextProps.selected_campaign.id,
+        indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
+        location_ids: nextProps.selected_locations.map(location => location.id),
+        time_grouping: 'campaign',
+        show_missing_data: 1,
+        source_name: ''
+      }
+      nextProps.getDatapoints(query)
+    }
+  }
 
   render () {
-    console.log('this.props.datapoints', this.props.datapoints)
     const props = this.props
     const datapoints = [] // temporary
 
@@ -49,12 +31,9 @@ class EnterDataPage extends Component {
       <CampaignSelect
         campaigns={props.campaigns.raw || []}
         selected_campaign={props.selected_campaign}
-        selectCampaign={() => {
-          props.selectGlobalCampaign()
-        }}
+        selectCampaign={props.selectGlobalCampaign}
       />
     )
-
     const indicator_tag_select = (
       <IndicatorTagSelect
         indicator_tags={_.toArray(props.indicators.tag_index) || []}
@@ -66,7 +45,6 @@ class EnterDataPage extends Component {
         }}
       />
     )
-
     const location_select  = (
       <DropdownButton
         items={props.locations.list}
@@ -75,9 +53,7 @@ class EnterDataPage extends Component {
         style='button'
         searchable
         uniqueOnly
-        sendValue={id => {
-          props.selectGlobalLocation(props.locations.index[id])
-        }}
+        sendValue={id => props.selectGlobalLocation(props.locations.index[id])}
       />
     )
 
