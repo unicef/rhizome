@@ -100,7 +100,7 @@ class DashboardResourceTest(RhizomeAPITestCase):
             ','), [c1.uuid, c2.uuid])
 
     def test_dashboard_name_exist(self):
-        dashboard_name = "test the already exists"
+        dashboard_name = "this exists"
 
         CustomDashboard.objects.all().delete()
         self.assertEqual(CustomDashboard.objects.count(), 0)

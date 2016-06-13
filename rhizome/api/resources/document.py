@@ -10,7 +10,7 @@ from pandas import read_excel
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Document
 from django.conf import settings
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 
 import os
 
@@ -18,10 +18,10 @@ import os
 class DocumentResource(BaseModelResource):
     '''
     **POST Request** uploads a document to the rhizome server.
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'docfile' the base64 encoded file: csv, xls, xlsx file format
             'doc_title' the title of the document
-        - *Optional Parameters:* 
+        - *Optional Parameters:*
             'doc_id' an id for the document
         - *Errors:*
             returns 500 error of the document is empty
@@ -71,14 +71,16 @@ class DocumentResource(BaseModelResource):
         # TODO: better exception handling. This is kind of lame but handles the fact that test posts are different from
         # application posts. Need to investigate.
         if post_data == 'data:' or len(post_data) == 0:
-            raise DatapointsException(
+            raise RhizomeApiException(
                 message='file is empty please check the upload and try again')
         try:
             file_meta, base64data = post_data.split(',')
         except ValueError:
             base64data = post_data
+
         file_header = None
         file_content = None
+
         if '.csv' in doc_title:
             file_content = ContentFile(base64.b64decode(base64data))
             file_header = file_content.readline()
@@ -86,7 +88,7 @@ class DocumentResource(BaseModelResource):
             # workaround-- need to create the excel file in order to read from
             # it
             new_file_path = settings.MEDIA_ROOT + doc_title
-            new_file = open(new_file_path, 'wr')
+            new_file = open(new_file_path, 'w')
             new_file.write(base64.b64decode(base64data))
             new_file.close()
             the_file = open(new_file_path)

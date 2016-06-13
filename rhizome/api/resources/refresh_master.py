@@ -1,7 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DataPoint
 from rhizome.models import Document
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.agg_tasks import AggRefresh
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
@@ -10,10 +10,10 @@ from rhizome.etl_tasks.refresh_master import MasterRefresh
 class RefreshMasterResource(BaseModelResource):
     '''
     **GET Request** Runs refresh master, and agg refresh for a given document
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'document_id'
         - *Errors:*
-            returns 500 error if no document id is provided          
+            returns 500 error if no document id is provided
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'refresh_master'
@@ -22,10 +22,9 @@ class RefreshMasterResource(BaseModelResource):
         try:
             doc_id = request.GET['document_id']
         except KeyError:
-            raise DatapointsException(
+            raise RhizomeApiException(
                 message='Document_id is a required API param')
-        # dt = DocTransform(request.user.id, doc_id)
-
+    
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 

@@ -115,7 +115,7 @@ class IndicatorResourceTest(RhizomeAPITestCase):
 
         resp = self.ts.post(self, '/api/v1/indicator/', data=post_data)
 
-        self.assertHttpApplicationError(resp)
+        self.assertHttpUnprocessableEntity(resp)
 
     def test_bound_and_tag_json(self):
         Indicator.objects.all().delete()

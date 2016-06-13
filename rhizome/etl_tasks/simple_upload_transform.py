@@ -6,7 +6,7 @@ from pandas import notnull
 from django.conf import settings
 
 from rhizome.models import SourceObjectMap, DocumentSourceObjectMap, SourceSubmission, DataPointComputed
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.etl_tasks.transform_upload import DocTransform
 from django.db import IntegrityError
 
@@ -201,6 +201,6 @@ class SimpleDocTransform(DocTransform):
         try:
             ss = SourceSubmission.objects.bulk_create(object_list)
         except IntegrityError as e:
-            raise DatapointsException(e.message)
+            raise RhizomeApiException(e.message)
 
         return

@@ -10,7 +10,7 @@ from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 
 from rhizome.models import LocationPermission, Location, LocationTree, \
     LocationType, DataPointComputed
@@ -31,6 +31,21 @@ class BaseResource(Resource):
 
     ### Tastypie Methods ###
     def __init__(self, api_name=None):
+        '''
+        In Rhizome, all user permissinos are bound by the top level location
+        that they can see.  For instance, if i am the head of Zika data analysis
+        in the Bahia Province of Brazil, that woul be my top level location.
+
+        The top_lvl_location_id is used in the `get_locations_to_return_from_url`
+        function, so that for shapes, locatinos and datapoints the user only
+        can see what they are permissioned to.
+
+        This is an additional parameter needed by the rhizome API to behave
+        properly.  This variable is set in the dispatch method.
+        '''
+
+        self.top_lvl_location_id = None
+
         return super(BaseResource, self).__init__(api_name=None)
 
     def apply_filters(self, request, applicable_filters):
@@ -67,7 +82,45 @@ class BaseResource(Resource):
         """
         A ORM-specific implementation of ``obj_create``.
         """
-        return super(BaseResource, self).obj_create(bundle, **kwargs)
+
+        print '===\n' * 10
+        print bundle
+        print '===\n' * 10
+
+        return self.save(bundle)
+
+
+    def save(self, bundle, skip_errors=False):
+        print '==saving=='
+
+        if bundle.via_uri:
+            return bundle
+
+        self.is_valid(bundle)
+
+        if bundle.errors and not skip_errors:
+            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
+
+        # Check if they're authorized.
+        if bundle.obj.pk:
+            self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
+        else:
+            self.authorized_create_detail(self.get_object_list(bundle.request), bundle)
+
+        # Save FKs just in case.
+        self.save_related(bundle)
+
+        # Save the main object.
+        obj_id = self.create_identifier(bundle.obj)
+
+        if obj_id not in bundle.objects_saved or bundle.obj._state.adding:
+            bundle.obj.save()
+            bundle.objects_saved.add(obj_id)
+
+        # Now pick up the M2M bits.
+        m2m_bundle = self.hydrate_m2m(bundle)
+        self.save_m2m(m2m_bundle)
+        return bundle
 
     def lookup_kwargs_with_identifiers(self, bundle, kwargs):
         """
@@ -77,6 +130,14 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self)\
             .lookup_kwargs_with_identifiers(bundle, kwargs)
+
+    def rollback(self, bundles):
+        """
+        A ORM-specific implementation of ``rollback``.
+        Given the list of bundles, delete all models pertaining to those
+        bundles.
+        """
+        return super(BaseResource, self).rolback(bundles)
 
     def obj_update(self, bundle, skip_errors=False, **kwargs):
         """
@@ -222,19 +283,12 @@ class BaseResource(Resource):
 
         try:
             response = method(request, **kwargs)
-        except Exception as error:
-
-            error_code = DatapointsException.defaultCode
-            error_message = DatapointsException.defaultMessage
-
-            if isinstance(error, DatapointsException):
-                error_code = error.code
-                error_message = error.message
+        except RhizomeApiException as error: ## use more specific exception.
 
             data = {
                 'traceback': traceback.format_exc(),
-                'error': error_message,
-                'code': error_code
+                'error': error.message,
+                'code': error.code
             }
 
             return self.error_response(

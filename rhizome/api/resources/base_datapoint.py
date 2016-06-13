@@ -15,7 +15,6 @@ from pandas import DataFrame
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
-from rhizome.api.exceptions import DatapointsException
 from rhizome.api.resources.base_resource import BaseResource
 
 from rhizome.models import LocationPermission, Location, LocationTree, \

@@ -1,10 +1,9 @@
 from pandas import read_csv
 from pandas import notnull
-from pandas import to_datetime
 from pandas import DataFrame
 
 import json
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -44,7 +43,7 @@ class DocTransform(object):
             except Exception as err:
                 if not self.date_column in csv_df.columns:
                     dp_error_message = '%s is a required column.' % err.message
-                    raise DatapointsException(message=dp_error_message)
+                    raise RhizomeApiException(message=dp_error_message)
 
         self.csv_df = csv_df
         self.file_header = csv_df.columns

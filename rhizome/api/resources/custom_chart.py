@@ -3,6 +3,7 @@ import json
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import CustomChart
 
 
@@ -39,9 +40,15 @@ class CustomChartResource(BaseModelResource):
     def obj_create(self, bundle, **kwargs):
 
         post_data = bundle.data
-        chart_json = json.loads(post_data['chart_json'])
-        title = post_data['title']
-        uuid = post_data['uuid']
+        try:
+            chart_json = json.loads(post_data['chart_json'])
+            title = post_data['title']
+            uuid = post_data['uuid']
+        except KeyError as error:
+            raise RhizomeApiException(
+            code = 498,
+            message = 'missing required fields... chart_json, title\\\
+             and uuid are required all requirer')
         # chart_id = None
 
         # try:

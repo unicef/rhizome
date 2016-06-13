@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import DataPoint
 from rhizome.models import Document
 # from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
@@ -13,10 +13,10 @@ from django.db.transaction import TransactionManagementError
 class DocTransFormResource(BaseModelResource):
     '''
     **GET Request** Runs document transform, refresh master, and agg refresh for a given document
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'document_id'
         - *Errors:*
-            returns 500 error if no document id is provided          
+            returns 500 error if no document id is provided
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'transform_upload'
@@ -37,9 +37,8 @@ class DocTransFormResource(BaseModelResource):
         try:
             doc_id = request.GET['document_id']
         except KeyError:
-            raise DatapointsException(
+            raise RhizomeApiException(
                 message='Document_id is a required API param')
-        # dt = DocTransform(request.user.id, doc_id)
 
         ran_complex_doc_transform = False
 
@@ -47,7 +46,8 @@ class DocTransFormResource(BaseModelResource):
             dt = ComplexDocTransform(request.user.id, doc_id)
             dt.main()
             ran_complex_doc_transform = True
-        except Exception as err:
+        ## FIXME 
+        except Exception as err: ## first try complex transform.. then run date if that fails.
             try:
                 dt = DateDocTransform(request.user.id, doc_id)
                 dt.process_file()

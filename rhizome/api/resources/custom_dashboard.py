@@ -1,7 +1,7 @@
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import CustomDashboard, CustomChart
 
 import json
@@ -102,12 +102,14 @@ class CustomDashboardResource(BaseModelResource):
         }
 
         if(CustomDashboard.objects.filter(title=title).count() > 0 and (dash_id is None)):
-            raise DatapointsException(
-                'the custom dashboard "{0}" already exists'.format(title))
+            raise RhizomeApiException(message='the custom dashboard "{0}" already exists'.format(title),code=499)
+
         dashboard, created = CustomDashboard.objects.update_or_create(
             id=dash_id, defaults=defaults)
+
         bundle.obj = dashboard
         bundle.data['id'] = dashboard.id
+
         return bundle
 
     def obj_delete_list(self, bundle, **kwargs):

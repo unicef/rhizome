@@ -1,6 +1,6 @@
 from datetime import datetime
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import Campaign
 
 
@@ -76,7 +76,7 @@ class CampaignResource(BaseModelResource):
                 defaults=defaults
             )
         except Exception as error:
-            raise DatapointsException(error)
+            raise RhizomeApiException(error)
 
         bundle.obj = campaign
         bundle.data['id'] = campaign.id

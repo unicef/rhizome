@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.exceptions import DatapointsException
+from rhizome.api.exceptions import RhizomeApiException
 
 from rhizome.models import DocumentDetail, Document
 from rhizome.etl_tasks.sync_odk import OdkSync
@@ -27,7 +27,7 @@ class SyncOdkResource(BaseModelResource):
             pass
 
         if not odk_form_id:
-            raise DatapointsException(
+            raise RhizomeApiException(
                 '"{0}" is a required parameter for this request'.format(required_param))
 
         try:
@@ -36,7 +36,7 @@ class SyncOdkResource(BaseModelResource):
             document_id_list, sync_result_data = odk_sync_object.main()
 
         except OdkJarFileException as e:
-            raise DatapointsException(e.errorMessage)
+            raise RhizomeApiException(e.errorMessage)
 
         return Document.objects.filter(id__in=document_id_list).values()
 
