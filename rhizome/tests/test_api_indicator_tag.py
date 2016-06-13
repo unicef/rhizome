@@ -80,3 +80,46 @@ class IndicatorTagResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
         self.assertEqual(len(response_data['objects']), 2)
+
+    def test_update_tag(self):
+
+        IndicatorTag.objects.all().delete()
+
+        tag = IndicatorTag.objects.create(id=None,
+                                          tag_name='Test Tag Name', )
+
+        self.assertEqual(IndicatorTag.objects.count(), 1)
+        new_tag_name = "New Tag Name"
+        post_data = {"id": tag.id, "tag_name": new_tag_name}
+        resp = self.api_client.post('/api/v1/indicator_tag/', format='json',
+                data=post_data, authentication=self.ts.get_credentials(self))
+
+        response_data = self.deserialize(resp)
+
+        self.assertHttpCreated(resp)
+        self.assertEqual(tag.id, response_data['id'])
+        self.assertEqual(IndicatorTag.objects.count(), 1)
+        self.assertEqual(new_tag_name, response_data['tag_name'])
+
+    def test_remove_tag(self):
+        indicatior = Indicator.objects.create(\
+            short_name='Test Indicator',
+            name='Test Indicator for the Tag',
+            data_format='int',
+            description='Test Indicator for the Tag Description')
+
+        tag = IndicatorTag.objects.create(tag_name='Test tag')
+
+        IndicatorToTag.objects.all().delete()
+
+        indicatior_tag = IndicatorToTag.objects.create(
+            indicator_id=indicatior.id, indicator_tag_id=tag.id)
+
+        self.assertEqual(IndicatorToTag.objects.count(), 1)
+
+        delete_url = '/api/v1/indicator_to_tag/%s/' % str(indicatior_tag.id)
+
+        self.api_client.delete(delete_url, format='json',
+            data={}, authentication=self.ts.get_credentials(self))
+
+        self.assertEqual(IndicatorToTag.objects.count(), 0)
