@@ -1,16 +1,18 @@
 import json
 
-
 from tastypie.authorization import Authorization
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
-from tastypie.resources import ModelResource
+from tastypie.resources import (ModelResource, ALL)
 from tastypie import http
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import (
+    ObjectDoesNotExist, MultipleObjectsReturned ##, ValidationError,
+)
+
 
 
 class BaseModelResource(ModelResource, BaseResource):
@@ -39,6 +41,9 @@ class BaseModelResource(ModelResource, BaseResource):
         allowed_methods = ['get', 'post', 'delete', 'patch']
         cache = CustomCache()
         serializer = CustomSerializer()
+        filtering = {
+            "id": ALL,
+        }
 
     def dispatch(self, request_type, request, **kwargs):
         '''
@@ -104,13 +109,16 @@ class BaseModelResource(ModelResource, BaseResource):
         try:
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
         except ObjectDoesNotExist:
-            return http.HttpNotFound()
+            error_message = 'that %s does dot exist' % self._meta.object_class
+            return RhizomeApiException(message = error_message, code = 500)
         except MultipleObjectsReturned:
             return http.HttpMultipleChoices("More than one resource is found at this URI.")
 
         bundle = self.build_bundle(obj=obj, request=request)
-        bundle = self.full_dehydrate(bundle)
-        bundle = self.alter_detail_data_to_serialize(request, bundle)
+        bundle.data = obj.__dict__
+        bundle.data.pop('_state')
+        # bundle = self.full_dehydrate(bundle)
+        # bundle = self.alter_detail_data_to_serialize(request, bundle)
         return self.create_response(request, bundle)
 
     def get_list(self, request, **kwargs):

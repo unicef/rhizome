@@ -29,11 +29,7 @@ class CampaignResource(BaseModelResource):
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'campaign'
-
-    def get_detail(self, request, **kwargs):
-        bundle = self.build_bundle(request=request)
-        bundle.data = Campaign.objects.get(id=kwargs['pk']).__dict__
-        return self.create_response(request, bundle)
+        object_class = Campaign
 
     def get_object_list(self, request):
 
@@ -68,7 +64,6 @@ class CampaignResource(BaseModelResource):
             }
         except Exception as error:
             err_msg = 'Please provide "{0}" for the campaign'
-
 
         try:
             campaign, created = Campaign.objects.update_or_create(

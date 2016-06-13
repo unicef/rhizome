@@ -28,9 +28,6 @@ class CustomChartResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
         queryset = CustomChart.objects.all()
-        filtering = {
-            "id": ALL,
-        }
 
     def get_detail(self, request, **kwargs):
         bundle = self.build_bundle(request=request)

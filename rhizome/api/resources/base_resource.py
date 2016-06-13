@@ -15,6 +15,7 @@ from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import LocationPermission, Location, LocationTree, \
     LocationType, DataPointComputed
 
+
 class BaseResource(Resource):
     '''
     https://github.com/django-tastypie/django-tastypie/blob/master/tastypie/resources.py
@@ -83,44 +84,14 @@ class BaseResource(Resource):
         A ORM-specific implementation of ``obj_create``.
         """
 
-        print '===\n' * 10
-        print bundle
-        print '===\n' * 10
-
-        return self.save(bundle)
-
+        try:
+            return super(BaseResource, self).obj_create(bundle, **kwargs)
+        except Exception as err:
+            raise RhizomeApiException(message=err.message, code=500)
 
     def save(self, bundle, skip_errors=False):
-        print '==saving=='
 
-        if bundle.via_uri:
-            return bundle
-
-        self.is_valid(bundle)
-
-        if bundle.errors and not skip_errors:
-            raise ImmediateHttpResponse(response=self.error_response(bundle.request, bundle.errors))
-
-        # Check if they're authorized.
-        if bundle.obj.pk:
-            self.authorized_update_detail(self.get_object_list(bundle.request), bundle)
-        else:
-            self.authorized_create_detail(self.get_object_list(bundle.request), bundle)
-
-        # Save FKs just in case.
-        self.save_related(bundle)
-
-        # Save the main object.
-        obj_id = self.create_identifier(bundle.obj)
-
-        if obj_id not in bundle.objects_saved or bundle.obj._state.adding:
-            bundle.obj.save()
-            bundle.objects_saved.add(obj_id)
-
-        # Now pick up the M2M bits.
-        m2m_bundle = self.hydrate_m2m(bundle)
-        self.save_m2m(m2m_bundle)
-        return bundle
+        return super(BaseResoruce, self).save(bundle, skip_errors)
 
     def lookup_kwargs_with_identifiers(self, bundle, kwargs):
         """
@@ -222,7 +193,7 @@ class BaseResource(Resource):
                 location_ids = return_locations
 
         else:
-            location_ids =  Location.objects.all().values_list('id', flat=True)
+            location_ids = Location.objects.all().values_list('id', flat=True)
 
         try:
             request.GET['filter_indicator']
@@ -239,11 +210,11 @@ class BaseResource(Resource):
         value_filter = self.parsed_params['filter_value'].split(',')
 
         location_ids = DataPointComputed.objects.filter(
-            campaign__in = self.parsed_params['campaign__in'],
-            location__in = location_ids,
-            indicator__short_name =  self.parsed_params['filter_indicator'],
-            value__in = value_filter)\
-                .values_list('location_id', flat=True)
+            campaign__in=self.parsed_params['campaign__in'],
+            location__in=location_ids,
+            indicator__short_name=self.parsed_params['filter_indicator'],
+            value__in=value_filter)\
+            .values_list('location_id', flat=True)
 
         return location_ids
 
@@ -273,29 +244,24 @@ class BaseResource(Resource):
 
         self.is_authenticated(request)
         self.throttle_check(request)
-        # All clear. Process the request.
 
-        # If what comes back isn't a ``HttpResponse``, assume that the
-        # request was accepted and that some action occurred. This also
-        # prevents Django from freaking out.
-
-        # request = convert_post_to_put(request)
 
         try:
             response = method(request, **kwargs)
-        except RhizomeApiException as error: ## use more specific exception.
+        # except RhizomeApiException as error: ## use more specific exception.
+        except Exception as error: ## use more specific exception.
 
             data = {
                 'traceback': traceback.format_exc(),
                 'error': error.message,
-                'code': error.code
+                # 'code': error.code
             }
 
             return self.error_response(
                 request,
                 data,
                 response_class=http.HttpApplicationError
-            )
+           )
 
         if not isinstance(response, HttpResponse):
             return http.HttpNoContent()

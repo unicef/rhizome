@@ -21,7 +21,6 @@ class RhizomeApiTestCase(ResourceTestCase):
     def printResponseIfError(self, resp, status_code):
 
         if resp.status_code != status_code:
-            print '==\n' * 10
             print '==-error-==\n %s ' % self.deserialize(resp)
 
     def assertHttpOK(self, resp, status_code=200):
