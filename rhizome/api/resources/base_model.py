@@ -220,6 +220,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
         ## create the object with the data from the request #
         bundle.obj = self._meta.object_class.objects.create(**bundle.data)
+        bundle.data['id'] = bundle.obj.id
 
         return bundle
 

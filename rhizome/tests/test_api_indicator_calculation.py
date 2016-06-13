@@ -45,21 +45,24 @@ class IndicatorCalculationResourceTest(RhizomeApiTestCase):
                                                     indicator_component_id=indicator_2.id).delete()
 
         post_data = {'indicator_id': indicator_1.id,
-                     'component_id': indicator_2.id, 'typeInfo': 'DENOMINATOR'}
+                     'indicator_component_id': indicator_2.id,
+                     'calculation': 'DENOMINATOR'}
 
         resp = self.ts.post(
             self, '/api/v1/indicator_calculation/', data=post_data)
+        self.assertHttpCreated(resp)
 
         response_data = self.deserialize(resp)
+
         indicator_calculation = CalculatedIndicatorComponent.objects.all(
         ).order_by('-id')[0]
 
-        self.assertHttpCreated(resp)
         self.assertEqual(indicator_calculation.id, response_data['id'])
         self.assertEqual(indicator_1.id, response_data['indicator_id'])
-        self.assertEqual(indicator_2.id, response_data['component_id'])
+        self.assertEqual(indicator_2.id, \
+            response_data['indicator_component_id'])
         self.assertEqual(indicator_calculation.calculation,
-                         response_data['typeInfo'])
+                         response_data['calculation'])
 
     def test_remove_calculation(self):
         Indicator.objects.create(short_name='Test Indicator 1',
@@ -76,13 +79,14 @@ class IndicatorCalculationResourceTest(RhizomeApiTestCase):
 
         CalculatedIndicatorComponent.objects.all().delete()
 
-        component = CalculatedIndicatorComponent.objects.create(indicator_id=indicator_1.id,
-                                                                indicator_component_id=indicator_2.id,
-                                                                calculation='test calculation')
+        component = CalculatedIndicatorComponent.objects\
+            .create(indicator_id=indicator_1.id,
+                indicator_component_id=indicator_2.id,
+                calculation='test calculation')
 
         self.assertEqual(CalculatedIndicatorComponent.objects.count(), 1)
 
-        delete_url = '/api/v1/indicator_calculation/?id=' + str(component.id)
+        delete_url = '/api/v1/indicator_calculation/%s/' % str(component.id)
 
         self.api_client.delete(delete_url, format='json', data={
         }, authentication=self.ts.get_credentials(self))
@@ -91,11 +95,13 @@ class IndicatorCalculationResourceTest(RhizomeApiTestCase):
 
     def test_remove_calculation_wrong_id(self):
 
-        delete_url = '/api/v1/indicator_calculation/?id=' + str(123456)
+        some_id = 123456
+        delete_url = '/api/v1/indicator_calculation/%s/' % str(some_id)
 
         resp = self.api_client.delete(delete_url, format='json', data={
         }, authentication=self.ts.get_credentials(self))
-        self.assertEqual(resp.status_code, 204)
+
+        self.assertHttpApplicationError(resp)
 
     def test_remove_calculation_no_id(self):
         delete_url = '/api/v1/indicator_calculation/'

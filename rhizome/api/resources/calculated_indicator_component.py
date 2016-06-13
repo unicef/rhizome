@@ -20,26 +20,11 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
     '''
 
     class Meta(BaseModelResource.Meta):
-        queryset = CalculatedIndicatorComponent.objects.all().values()
+        object_class = CalculatedIndicatorComponent
         resource_name = 'indicator_calculation'
+        required_fields_for_post = ['indicator_id', 'indicator_component_id']
         filtering = {
             "id": ALL,
             "indicator_id": ALL,
             "indicator_component_id": ALL,
         }
-
-    # def obj_create(self, bundle, **kwargs):
-    #     indicator_id = bundle.data['indicator_id']
-    #     component_id = bundle.data['component_id']
-    #     type_info = bundle.data['typeInfo']
-    #
-    #     it = CalculatedIndicatorComponent.objects.create(
-    #         indicator_id=indicator_id,
-    #         indicator_component_id=component_id,
-    #         calculation=type_info,
-    #     )
-    #
-    #     bundle.obj = it
-    #     bundle.data['id'] = it.id
-    #
-    #     return bundle
