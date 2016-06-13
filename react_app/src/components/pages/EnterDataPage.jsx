@@ -98,10 +98,7 @@ class EnterDataPage extends Component {
       {headerName: "Location ID", field: "location_id"},
       {headerName: "Value", field: "value"}
     ]
-    const env = process.env
-    const mode = process.env.mode
-    console.log('env', env)
-    console.log('mode', mode)
+
     const data_table = (
       <ResourceTable
         rowData={props.datapoints.raw || []}
