@@ -22,8 +22,8 @@ def deploy(venv_path=None):
     local_venv_path = venv_path;
 
     # on local machine
-    # _build_dependencies()
-    # run_tests()
+    _build_dependencies()
+    run_tests()
 
     # on target machine
     stop_apache()
