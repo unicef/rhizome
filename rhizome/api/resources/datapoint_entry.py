@@ -159,8 +159,6 @@ class DatapointEntryResource(BaseModelResource):
                 return bundle
 
         except Exception, e:
-            print 'exceptino ===\n' * 10
-            print e
             e.code = 0
             e.data = traceback.format_exc()
             response = self.create_response(

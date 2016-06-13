@@ -71,14 +71,6 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self).obj_get_list(bundle, **kwargs)
 
-    # def obj_get(self, bundle, **kwargs):
-    #     """
-    #     A ORM-specific implementation of ``obj_get``.
-    #     Takes optional ``kwargs``, which are used to narrow the query to find
-    #     the instance.
-    #     """
-    #     return super(BaseResource, self).obj_get(bundle, **kwargs)
-
     def save(self, bundle, skip_errors=False):
 
         return super(BaseResoruce, self).save(bundle, skip_errors)

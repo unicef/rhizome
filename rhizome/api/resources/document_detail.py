@@ -6,21 +6,22 @@ from rhizome.models import DocumentDetail
 
 class DocumentDetailResource(BaseModelResource):
     '''
-    **POST Request** 
-        - *Required Parameters:* 
+    **POST Request**
+        - *Required Parameters:*
             'document_id'
             'doc_detail_type_id'
             'doc_detail_value'
         - *Errors:*
             returns 500 error if a required parameter is not supplied
     **GET Request** returns all doc details unless one of the optional parameters is supplied
-        - *Optional Parameters:* 
+        - *Optional Parameters:*
             'doc_detail_type' returns all doc details with the given doc detail type supplied
             'document_id' returns all doc details for the given document id
     '''
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_detail'
+        object_class = DocumentDetail
         filtering = {
             "id": ALL,
             "document": ALL,

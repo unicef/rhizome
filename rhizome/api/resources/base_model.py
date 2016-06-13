@@ -1,9 +1,15 @@
 import json
 
+from django.db.models.constants import LOOKUP_SEP
+from django.db.models.sql.constants import QUERY_TERMS
+
 from tastypie.authorization import Authorization
+from tastypie.utils import dict_strip_unicode_keys
+from tastypie.exceptions import InvalidFilterError
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
-from tastypie.resources import (ModelResource, ALL)
+from tastypie.resources import ModelResource, ALL
 from tastypie import http
+
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import\
@@ -12,7 +18,7 @@ from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
 from django.core.exceptions import (
-    ObjectDoesNotExist, MultipleObjectsReturned  # , ValidationError,
+    ObjectDoesNotExist, MultipleObjectsReturned # , ValidationError,
 )
 
 
@@ -50,39 +56,6 @@ class BaseModelResource(ModelResource, BaseResource):
         '''
         '''
         return super(BaseModelResource, self).convert_post_to_patch(request)
-
-    # def patch_detail(self, request, **kwargs):
-    #     """
-    #     Updates a resource in-place.
-    #     Calls ``obj_update``.
-    #     If the resource is updated, return ``HttpAccepted`` (202 Accepted).
-    #     If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
-    #     """
-    #
-    #     # request = self.convert_post_to_patch(request)
-    #     basic_bundle = self.build_bundle(request=request)
-    #     obj = self.obj_get(basic_bundle, kwargs)
-    #
-    #     bundle = self.build_bundle(obj=obj, request=request)
-    #     bundle = self.full_dehydrate(bundle)
-    #     bundle = self.alter_detail_data_to_serialize(request, bundle)
-    #
-    #     # Now update the bundle in-place.
-    #     deserialized = self.deserialize(request, request.body,\
-    #         format=request.META.get(
-    #         'CONTENT_TYPE', 'application/json'))
-    #     self.update_in_place(request, bundle, deserialized)
-    #
-    #     if not self._meta.always_return_data:
-    #         return http.HttpAccepted()
-    #     else:
-    #         # Invalidate prefetched_objects_cache for bundled object
-    #         # because we might have changed a prefetched field
-    #         bundle.obj._prefetched_objects_cache = {}
-    #         bundle = self.full_dehydrate(bundle)
-    #         bundle = self.alter_detail_data_to_serialize(request, bundle)
-    #         return self.create_response(request, bundle,\
-    #             response_class=http.HttpAccepted)
 
     def obj_get(self, bundle, **kwargs):
         """
@@ -125,6 +98,46 @@ class BaseModelResource(ModelResource, BaseResource):
         bundle.data.pop('_state')
 
         return self.create_response(request, bundle)
+
+    def get_object_list(self, request):
+        """
+        An ORM-specific implementation of ``get_object_list``.
+        Returns a queryset that may have been limited by other overrides.
+        """
+
+        try:
+            query_felds = self._meta.GET_fields
+            qs = self._meta.object_class.objects.all().values(*query_felds)
+        except AttributeError:
+            qs =  self._meta.object_class.objects.all().values()
+
+        return qs
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        An ORM-specific implementation of ``apply_filters``.
+        The default simply applies the ``applicable_filters`` as ``**kwargs``,
+        but should make it possible to do more advanced things.
+        """
+        return self.get_object_list(request).filter(**applicable_filters)
+
+    def obj_get_list(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_get_list``.
+        ``GET`` dictionary of bundle.request can be used to narrow the query.
+        """
+        filters = {}
+
+        # Grab a mutable copy #
+        if hasattr(bundle.request, 'GET'):
+            filters = bundle.request.GET.copy()
+
+        # Update with the provided kwargs #
+        filters.update(kwargs)
+        applicable_filters = self.build_filters(filters=filters)
+        objects = self.apply_filters(bundle.request, applicable_filters)
+
+        return objects
 
     def get_list(self, request, **kwargs):
         """

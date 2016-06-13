@@ -31,7 +31,7 @@ class DocumentResource(BaseModelResource):
     docfile = fields.FileField(attribute="csv", null=True, blank=True)
 
     class Meta(BaseModelResource.Meta):
-        queryset = Document.objects.all().order_by('-created_at').values()
+        object_class = Document
         max_limit = 10
         resource_name = 'source_doc'
         filtering = {

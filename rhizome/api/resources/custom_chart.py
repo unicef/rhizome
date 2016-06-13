@@ -29,10 +29,7 @@ class CustomChartResource(BaseModelResource):
         resource_name = 'custom_chart'
         object_class = CustomChart
         required_fields_for_post = ['chart_json','title','uuid']
-        queryset = CustomChart.objects.all().values()
-
-
-
+    
     # def obj_create(self, bundle, **kwargs):
     #
     #     post_data = bundle.data

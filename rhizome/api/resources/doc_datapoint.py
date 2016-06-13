@@ -14,6 +14,7 @@ class DocDataPointResource(BaseModelResource):
 
     class Meta(BaseModelResource.Meta):
         resource_name = 'doc_datapoint'
+        object_class = DocDataPoint
 
     def get_object_list(self, request):
 
