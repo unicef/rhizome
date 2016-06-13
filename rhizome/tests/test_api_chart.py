@@ -101,13 +101,13 @@ class ChartResourceTest(RhizomeApiTestCase):
         c1 = CustomChart.objects.create(title=title,
                                         chart_json={'yep': 'something'},
                                         uuid='104fdca8-f697-11e5-9ce9-5e5517507c66')
-        get_data = {'id': 12345}
-        resp = self.api_client.get('/api/v1/custom_chart/', format='json',
-                                   data=get_data,
-                                   authentication=self.get_credentials())
+
+        invalid_id = 12345
+        resp = self.api_client.get('/api/v1/custom_chart/%s/' % invalid_id,\
+                            format='json',authentication=self.get_credentials())
         resp_data = self.deserialize(resp)
-        self.assertHttpOK(resp)
-        self.assertEqual(len(resp_data['objects']), 0)
+
+        self.assertHttpApplicationError(resp)
 
     def test_chart_delete(self):
         c1 = CustomChart.objects.create(title='L.O.X',

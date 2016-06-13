@@ -18,41 +18,10 @@ class SourceObjectMapResource(BaseModelResource):
             if any of the required fields are missing or incorrect, the API returns a 500 error code.
     '''
     class Meta(BaseModelResource.Meta):
+        object_class = SourceObjectMap
         resource_name = 'source_object_map'
-
-    def obj_create(self, bundle, **kwargs):
-
-        post_data = bundle.data
-        som_id = int(post_data['id'])
-
-        som_obj = SourceObjectMap.objects.get(id=som_id)
-
-        master_object_id = post_data['master_object_id']
-        som_obj.master_object_id = master_object_id
-        som_obj.master_object_name = self.get_master_object_name(som_obj)
-        som_obj.mapped_by_id = post_data['mapped_by_id']
-        som_obj.save()
-
-        bundle.obj = som_obj
-        bundle.data['id'] = som_obj.id
-        bundle.data['master_object_name'] = som_obj.master_object_name
-
-        return bundle
-
-    def get_master_object_name(self, som_obj):
-
-        qs_map = {
-            'indicator': ['short_name', Indicator.objects.get],
-            'location': ['name', Location.objects.get],
-            'campaign': ['name', Campaign.objects.get],
-        }
-
-        obj_display_field = qs_map[som_obj.content_type][0]
-        qs = qs_map[som_obj.content_type][1]
-        master_obj = qs(id=som_obj.master_object_id).__dict__
-        master_object_name = master_obj[obj_display_field]
-
-        return master_object_name
+        required_fields_for_post = ['content_type','source_object_code',\
+            'mapped_by_id']
 
     def get_object_list(self, request):
 

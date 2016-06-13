@@ -210,16 +210,36 @@ class BaseModelResource(ModelResource, BaseResource):
         return self.create_response(request, updated_bundle,
                                     response_class=http.HttpCreated, location=location)
 
+    def update_object(self, obj, **kwargs):
+        """
+        """
+
+        for k, v in kwargs.items():
+            setattr(obj, k, v)
+        obj.save()
+
     def obj_create(self, bundle, **kwargs):
         """
         A ORM-specific implementation of ``obj_create``.
+
+        This also handles updates ( PUT ) requests by looking if the
+        request has the ID in there, and if so, updating the resorce with the
+        relevant data items.
         """
 
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
-        ## create the object with the data from the request #
-        bundle.obj = self._meta.object_class.objects.create(**bundle.data)
+        try:
+            ## see if there is an ID param and if so update the resouce ##
+            id_from_post = bundle.data['id']
+            obj = self._meta.object_class.objects.get(id = id_from_post)
+            self.update_object(obj, **bundle.data)
+        except KeyError:
+            ## create the object with the data from the request #
+            obj = self._meta.object_class.objects.create(**bundle.data)
+
+        bundle.obj = obj
         bundle.data['id'] = bundle.obj.id
 
         return bundle

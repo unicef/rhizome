@@ -39,6 +39,8 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
             self.document.id, self.indicator_map.id, 23)
 
     def test_som_post(self):
+        # this is really a PUT that is i am updating values here in place
+
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
             'master_object_id': self.indicators[0].id,
@@ -46,6 +48,7 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
+
         post_resp = self.test_setup.post(
             self, '/api/v1/source_object_map/', post_data)
 
@@ -55,39 +58,28 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.assertEqual(
             response_data['master_object_id'], self.indicators[0].id)
 
-    def test_som_post_invalid(self):
+    def test_som_post_invalid_id(self):
+        # this is really a PUT that is i am updating values here in place
+
         post_data = {
-            'source_object_code': 'Percent missed children_PCA',
-            'id': self.indicator_map.id,
+            'master_object_id': self.indicators[0].id,
+            'id': 9090909090,
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
-        post_resp = self.test_setup.post(
-            self, '/api/v1/source_object_map/', post_data)
 
-        self.assertHttpApplicationError(post_resp)
-
-    def test_som_post_invalid_master_obj_id(self):
-        post_data = {
-            'source_object_code': 'Percent missed children_PCA',
-            'master_object_id': 12345,
-            'id': self.indicator_map.id,
-            'content_type': 'indicator',
-            'mapped_by_id': self.user.id
-        }
         post_resp = self.test_setup.post(
             self, '/api/v1/source_object_map/', post_data)
 
         self.assertHttpApplicationError(post_resp)
 
     def test_som_get_id(self):
-        get_data = {'id': self.indicator_map.id}
         get_resp = self.test_setup.get(
-            self, '/api/v1/source_object_map/', get_data)
+            self, '/api/v1/source_object_map/%s/' % self.indicator_map.id)
         self.assertHttpOK(get_resp)
-        get_data = self.deserialize(get_resp)
-        self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
-        self.assertEqual(len(get_data['objects']), 1)
+        response_data = self.deserialize(get_resp)
+        self.assertEqual(response_data['id'], self.indicator_map.id)
+
 
     def test_som_get_doc_id(self):
         get_data = {'document_id': self.document.id}
@@ -110,13 +102,11 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
 
         self.assertHttpOK(get_resp)
         get_data = self.deserialize(get_resp)
-        self.assertEqual(len(get_data['objects']), 0)
 
     def test_som_get_id_invalid(self):
-        get_data = {'id': 123456}
+        get_data_id = 123456
         get_resp = self.test_setup.get(
-            self, '/api/v1/source_object_map/', get_data)
+            self, '/api/v1/source_object_map/%s/' % get_data_id)
 
-        self.assertHttpOK(get_resp)
+        self.assertHttpApplicationError(get_resp)
         get_data = self.deserialize(get_resp)
-        self.assertEqual(len(get_data['objects']), 0)

@@ -5,9 +5,9 @@ from rhizome.models import Office
 class OfficeResource(BaseModelResource):
     '''
     **GET Request** Returns all office objects
-        - *Required Parameters:* 
-                    None	
+        - *Required Parameters:*
+                    None
     '''
     class Meta(BaseModelResource.Meta):
-        queryset = Office.objects.all().values()
+        object_class = Office
         resource_name = 'office'
