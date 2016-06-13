@@ -9,11 +9,10 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
+from rhizome.api.exceptions import RhizomeApiException
 from django.core.exceptions import (
     ObjectDoesNotExist, MultipleObjectsReturned ##, ValidationError,
 )
-
-
 
 class BaseModelResource(ModelResource, BaseResource):
     '''
@@ -163,3 +162,78 @@ class BaseModelResource(ModelResource, BaseResource):
         }
 
         return self.create_response(request, response_data)
+
+    def post_list(self, request, **kwargs):
+        """
+        Creates a new resource/object with the provided data.
+        Calls ``obj_create`` with the provided data and returns a response
+        with the new resource's location.
+        If a new resource is created, return ``HttpCreated`` (201 Created).
+        If ``Meta.always_return_data = True``, there will be a populated body
+        of serialized data.
+        """
+
+        deserialized = self.deserialize(\
+            request, \
+            request.body, \
+            format=request.META.get('CONTENT_TYPE', 'application/json')\
+        )
+        deserialized = self\
+            .alter_deserialized_detail_data(request, deserialized)
+
+        bundle = self.build_bundle(data=deserialized, request=request)
+
+        updated_bundle = self.obj_create(bundle, \
+            **self.remove_api_resource_names(kwargs))
+
+        location = self.get_resource_uri(updated_bundle)
+
+        return self.create_response(request, updated_bundle, \
+            response_class=http.HttpCreated, location=location)
+
+    def obj_create(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_create``.
+        """
+
+        ## Try to validate / clean the POST before submitting the INSERT ##
+        bundle = self.validate_obj_create(bundle, **kwargs)
+
+        # bundle.obj = self._meta.object_class()
+        ## create the object with the data from the request #
+        bundle.obj = self._meta.object_class.objects.create(**bundle.data)
+
+        return bundle
+
+    def validate_obj_create(self, bundle, **kwargs):
+        '''
+        Custom module that is meant to clean and check the POST request, making
+        sure that we catch any errors we can befoer submitting to the database.
+
+        For instance, here, we check that the necessary Keys are there, so that
+        we can save a trip to the DB by using the `required_fields_for_post`
+        attribute on the Meta class of the base_model resoruce.
+        '''
+
+        keys_passed = [unicode(x) for x in bundle.data.keys()]
+        keys_req = [unicode(x) for x in self._meta.required_fields_for_post]
+        missing_keys = set(keys_req).difference(set(keys_passed))
+
+        # print 'keys passed =  %s ' % keys_passed
+        # print 'required_keys = %s ' % required_keys
+        # print 'missing_keys %s ' % missing_keys
+
+        if len(missing_keys) > 0:
+            raise RhizomeApiException(message = 'missing params%s' %\
+                missing_keys)
+
+        return bundle
+
+    def obj_delete(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete``.
+
+        Takes optional ``kwargs``, which are used to narrow the query to find
+        the instance.
+        """
+        return super(BaseResource, self).obj_delete(bundle, **kwargs)

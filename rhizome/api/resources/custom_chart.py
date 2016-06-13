@@ -27,60 +27,35 @@ class CustomChartResource(BaseModelResource):
     '''
     class Meta(BaseModelResource.Meta):
         resource_name = 'custom_chart'
-        queryset = CustomChart.objects.all()
+        object_class = CustomChart
+        required_fields_for_post = ['chart_json','title','uuid']
+        queryset = CustomChart.objects.all().values()
 
-    def get_detail(self, request, **kwargs):
-        bundle = self.build_bundle(request=request)
-        bundle.data = CustomChart.objects.get(id=kwargs['pk']).__dict__
-        return self.create_response(request, bundle)
 
-    def obj_create(self, bundle, **kwargs):
 
-        post_data = bundle.data
-        try:
-            chart_json = json.loads(post_data['chart_json'])
-            title = post_data['title']
-            uuid = post_data['uuid']
-        except KeyError as error:
-            raise RhizomeApiException(
-            code = 498,
-            message = 'missing required fields... chart_json, title\\\
-             and uuid are required all requirer')
-        # chart_id = None
-
-        # try:
-        #     chart_id = int(post_data['id'])
-        # except KeyError:
-        #     pass
-
-        defaults = {
-            'chart_json': chart_json,
-            'title': title
-        }
-
-        chart, created = CustomChart.objects.update_or_create(
-            uuid=uuid,
-            defaults=defaults
-        )
-
-        bundle.obj = chart
-        bundle.data['id'] = chart.id
-
-        return bundle
-
-    def obj_delete(self, bundle, **kwargs):
-        CustomChart.objects.get(id=kwargs['pk']).delete()
-
-    def obj_delete_list(self, bundle, **kwargs):
-        """
-        """
-
-        obj_id = int(bundle.request.GET[u'id'])
-        CustomChart.objects.filter(id=obj_id).delete()
-
-    def get_object_list(self, request):
-        if 'id' in request.GET:
-            return CustomChart.objects.filter(id=request.GET['id']) \
-                .values()
-        else:
-            return CustomChart.objects.all().values()
+    # def obj_create(self, bundle, **kwargs):
+    #
+    #     post_data = bundle.data
+    #     try:
+    #         chart_json = json.loads(post_data['chart_json'])
+    #         title = post_data['title']
+    #         uuid = post_data['uuid']
+    #     except KeyError as error:
+    #         raise RhizomeApiException(
+    #         message = 'missing required fields... chart_json, title\\\
+    #             and uuid are required all required')
+    #
+    #     defaults = {
+    #         'chart_json': chart_json,
+    #         'title': title
+    #     }
+    #
+    #     chart, created = CustomChart.objects.update_or_create(
+    #         uuid=uuid,
+    #         defaults=defaults
+    #     )
+    #
+    #     bundle.obj = chart
+    #     bundle.data['id'] = chart.id
+    #
+    #     return bundle

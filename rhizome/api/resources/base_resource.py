@@ -79,16 +79,6 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self).obj_get(bundle, **kwargs)
 
-    def obj_create(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_create``.
-        """
-
-        try:
-            return super(BaseResource, self).obj_create(bundle, **kwargs)
-        except Exception as err:
-            raise RhizomeApiException(message=err.message, code=500)
-
     def save(self, bundle, skip_errors=False):
 
         return super(BaseResoruce, self).save(bundle, skip_errors)
@@ -130,15 +120,6 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self)\
             .obj_delete_list_for_update(self, bundle, **kwargs)
-
-    def obj_delete(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_delete``.
-
-        Takes optional ``kwargs``, which are used to narrow the query to find
-        the instance.
-        """
-        return super(BaseResource, self).obj_delete(bundle, **kwargs)
 
     def detail_uri_kwargs(self, bundle_or_obj):
         """

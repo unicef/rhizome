@@ -130,7 +130,7 @@ class ChartResourceTest(RhizomeApiTestCase):
                                         chart_json={'goodnight': 'moon'},
                                         uuid='2049be4e-f697-11e5-9ce9-5e5517507c66')
         self.assertEqual(CustomChart.objects.count(), 2)
-        delete_url = '/api/v1/custom_chart/?id=' + str(c1.id)
+        delete_url = '/api/v1/custom_chart/%s/' % str(c1.id)
 
         self.api_client.delete(delete_url, format='json', data={},
                                authentication=self.get_credentials())
