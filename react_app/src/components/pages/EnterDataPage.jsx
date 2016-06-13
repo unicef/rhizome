@@ -81,10 +81,6 @@ class EnterDataPage extends Component {
       />
     )
 
-    const placeholder_string = 'Please select a location'
-    if (formEntry) {
-      'Please select a location and an indicator'
-    }
     const no_location = props.selected_locations.length <= 0
     const no_indicator = props.selected_indicators.length <= 0
     const placeholder_text = formEntry ? 'an indicator' : 'a form'
@@ -94,13 +90,6 @@ class EnterDataPage extends Component {
         { no_indicator ? <Placeholder height={150} text={`Select ${placeholder_text} to begin`} loading={false}/> : null }
       </div>
     )
-    // const placeholder = props.selected_locations.length <= 0
-    //   ? (
-    //       <div>
-    //         { <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/> }
-    //       </div>
-    //     )
-    //   : <Placeholder height={300}/>
 
     const columnDefs = [
       {headerName: "ID", field: "id", suppressMenu: true},
