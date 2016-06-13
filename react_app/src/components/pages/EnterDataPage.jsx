@@ -7,6 +7,10 @@ import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
 import ResourceTable from 'components/molecules/ResourceTable'
 import SwitchButton from 'components/form/SwitchButton'
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
+import Moment from 'moment'
+import momentLocalizer from 'react-widgets/lib/localizers/moment'
+momentLocalizer(Moment)
 
 class EnterDataPage extends Component {
 
@@ -71,6 +75,10 @@ class EnterDataPage extends Component {
       />
     )
 
+    const date_select = (
+      <DateTimePicker />
+    )
+
     const switch_button = (
       <SwitchButton
         name='entry_type'
@@ -83,7 +91,7 @@ class EnterDataPage extends Component {
 
     const no_location = props.selected_locations.length <= 0
     const no_indicator = props.selected_indicators.length <= 0
-    const placeholder_text = formEntry ? 'an indicator' : 'a form'
+    const placeholder_text = !formEntry ? 'an indicator' : 'a form'
     const placeholder = (
       <div>
         { no_location ? <Placeholder height={150} text={'Add location(s) to begin'} loading={false}/> : null }
@@ -124,9 +132,8 @@ class EnterDataPage extends Component {
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
               { switch_button }
-              { !formEntry ? indicator_select : null }
-              { formEntry ? indicator_tag_select : null }
-              { campaign_select }
+              { formEntry ? indicator_tag_select : indicator_select }
+              { formEntry ? campaign_select : date_select }
               { location_select }
             </div>
           </div>

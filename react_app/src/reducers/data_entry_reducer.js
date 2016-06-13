@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const data = {
+  date: null,
   entry_type: 'campaign',
   selected_campaign: null,
   selected_locations: [],
@@ -12,6 +13,11 @@ const data = {
 }
 
 const data_entry = handleActions({
+  SET_DATA_ENTRY_DATE: (state, action) => {
+    return Object.assign({}, state, {
+      date: action.payload
+    })
+  },
   TOGGLE_DATA_ENTRY_TYPE: (state, action) => {
     return Object.assign({}, state, {
       entry_type: state.entry_type === 'campaign' ? 'date' : 'campaign'
