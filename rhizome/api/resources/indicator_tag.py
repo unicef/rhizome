@@ -26,10 +26,11 @@ class IndicatorTagResource(BaseModelResource):
         object_class = IndicatorTag
         resource_name = 'indicator_tag'
         filtering = {
-            "id": ALL,
-            "name": ALL,
-            "parent_tag_id":ALL
+            'id': ALL,
+            'tag_name': ALL,
+            'parent_tag_id':ALL
         }
+        required_fields_for_post = ['tag_name']
 
     def get_object_list(self, request):
         '''
@@ -56,38 +57,3 @@ class IndicatorTagResource(BaseModelResource):
             return IndicatorTag.objects.filter(id=tag_id).values()
         except KeyError:
             return super(IndicatorTagResource, self).get_object_list(request)
-
-    def obj_create(self, bundle, **kwargs):
-        post_data = bundle.data
-
-        try:
-            id = int(post_data['id'])
-            if id == -1:
-                id = None
-        except KeyError:
-            id = None
-
-        tag_name = post_data['tag_name']
-
-        defaults = {
-            'tag_name': tag_name
-        }
-
-        try:
-            parent_tag_id = int(post_data['parent_tag_id'])
-            defaults = {
-                'tag_name': tag_name,
-                'parent_tag_id': parent_tag_id
-            }
-        except KeyError:
-            pass
-
-        tag, created = IndicatorTag.objects.update_or_create(
-            id=id,
-            defaults=defaults
-        )
-
-        bundle.obj = tag
-        bundle.data['id'] = tag.id
-
-        return bundle

@@ -29,30 +29,3 @@ class CustomChartResource(BaseModelResource):
         resource_name = 'custom_chart'
         object_class = CustomChart
         required_fields_for_post = ['chart_json','title','uuid']
-    
-    # def obj_create(self, bundle, **kwargs):
-    #
-    #     post_data = bundle.data
-    #     try:
-    #         chart_json = json.loads(post_data['chart_json'])
-    #         title = post_data['title']
-    #         uuid = post_data['uuid']
-    #     except KeyError as error:
-    #         raise RhizomeApiException(
-    #         message = 'missing required fields... chart_json, title\\\
-    #             and uuid are required all required')
-    #
-    #     defaults = {
-    #         'chart_json': chart_json,
-    #         'title': title
-    #     }
-    #
-    #     chart, created = CustomChart.objects.update_or_create(
-    #         uuid=uuid,
-    #         defaults=defaults
-    #     )
-    #
-    #     bundle.obj = chart
-    #     bundle.data['id'] = chart.id
-    #
-    #     return bundle

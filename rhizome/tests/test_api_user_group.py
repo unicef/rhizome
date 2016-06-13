@@ -65,7 +65,6 @@ class UserGroupResourceTest(RhizomeApiTestCase):
         group = Group.objects.create(name="Sam's Group")
         user_group = UserGroup.objects.create(user=user, group=group)
         self.assertEqual(UserGroup.objects.count(), 1)
-        delete_url = '/api/v1/user_group/?user_id=' + \
-            str(user.id) + '&group_id=' + str(group.id)
+        delete_url = '/api/v1/user_group/%s/' % user_group.id
         self.ts.delete(self, delete_url)
         self.assertEqual(UserGroup.objects.count(), 0)
