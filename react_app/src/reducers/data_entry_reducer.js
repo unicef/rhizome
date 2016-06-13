@@ -6,7 +6,7 @@ const data = {
   selected_locations: [],
   selected_indicators: [],
   selected_indicator_tag: null,
-  datapoints: null,
+  datapoints: {meta: null, raw: null, flattened: null},
   dataParamsChanged: false
 }
 
@@ -17,10 +17,12 @@ const data_entry = handleActions({
     })
   },
   GET_DATAPOINTS_SUCCESS: (state, action) => {
-    console.log('state', state)
-    console.log('GET_DATAPOINTS_SUCCESS action', action.payload)
     return Object.assign({}, state, {
-      datapoints: action.payload,
+      datapoints: {
+        meta: action.payload.data.meta,
+        raw: action.payload.data.objects,
+        flattened: action.payload.data.objects
+      },
       dataParamsChanged: false
     })
   },

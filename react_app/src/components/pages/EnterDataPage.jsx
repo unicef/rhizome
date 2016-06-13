@@ -5,6 +5,7 @@ import DropdownButton from 'components/button/DropdownButton'
 import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
+import ResourceTable from 'components/molecules/ResourceTable'
 
 class EnterDataPage extends Component {
 
@@ -72,6 +73,22 @@ class EnterDataPage extends Component {
       ? <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/>
       : <Placeholder height={300}/>
 
+    const columnDefs = [
+      {headerName: "ID", field: "id", suppressMenu: true},
+      {headerName: "Campaign ID", field: "campaign_id", editable: true},
+      {headerName: "Indicator ID", field: "indicator_id"},
+      {headerName: "Location ID", field: "location_id"},
+      {headerName: "Value", field: "value"}
+    ]
+
+    const data_table = (
+      <ResourceTable
+        rowData={props.datapoints.raw || []}
+        columnDefs={columnDefs}
+        resourcePath='datapoints'
+      />
+    )
+
     return (
       <div>
         <header className='row page-header'>
@@ -89,7 +106,7 @@ class EnterDataPage extends Component {
         </header>
         <div className='row'>
           <div className='medium-12 columns'>
-            { props.datapoints.flattened ? data_table : placeholder }
+            { props.datapoints.raw ? data_table : placeholder }
           </div>
         </div>
       </div>
