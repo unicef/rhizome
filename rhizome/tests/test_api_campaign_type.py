@@ -1,9 +1,9 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import CampaignType
 from setup_helpers import TestSetupHelpers
 
 
-class CampaignTypeResourceTest(RhizomeAPITestCase):
+class CampaignTypeResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(CampaignTypeResourceTest, self).setUp()

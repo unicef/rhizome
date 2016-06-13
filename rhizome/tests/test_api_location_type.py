@@ -1,9 +1,9 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import LocationType
 
 
-class LocationTypeResourceTest(RhizomeAPITestCase):
+class LocationTypeResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
 

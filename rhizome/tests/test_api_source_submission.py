@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
@@ -9,7 +9,7 @@ from rhizome.models import SourceObjectMap, SourceSubmission
 from rhizome.cache_meta import LocationTreeCache
 
 
-class SourceSubmissionResourceTest(RhizomeAPITestCase):
+class SourceSubmissionResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(SourceSubmissionResourceTest, self).setUp()

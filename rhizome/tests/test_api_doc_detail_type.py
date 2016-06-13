@@ -1,9 +1,9 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import DocDetailType
 
 
-class DocDetailTypeResourceTest(RhizomeAPITestCase):
+class DocDetailTypeResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
 

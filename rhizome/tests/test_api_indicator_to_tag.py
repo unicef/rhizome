@@ -1,10 +1,10 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import IndicatorTag
 from rhizome.models import IndicatorToTag
 
 
-class IndicatorToTagResourceTest(RhizomeAPITestCase):
+class IndicatorToTagResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(IndicatorToTagResourceTest, self).setUp()

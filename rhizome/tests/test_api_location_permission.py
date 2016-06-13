@@ -1,9 +1,9 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import LocationPermission
 from setup_helpers import TestSetupHelpers
 
 
-class LocationPermissionResourceTest(RhizomeAPITestCase):
+class LocationPermissionResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(LocationPermissionResourceTest, self).setUp()

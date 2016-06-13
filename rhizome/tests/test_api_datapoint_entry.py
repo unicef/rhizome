@@ -1,10 +1,10 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import LocationPermission, CampaignType, IndicatorTag, DataPointEntry
 
 
-class DatapointEntryResourceTest(RhizomeAPITestCase):
+class DatapointEntryResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(DatapointEntryResourceTest, self).setUp()

@@ -1,11 +1,11 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import DocDetailType
 from rhizome.models import Document
 from rhizome.models import DocumentDetail
 from setup_helpers import TestSetupHelpers
 
 
-class QueueProcessResourceTest(RhizomeAPITestCase):
+class QueueProcessResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(QueueProcessResourceTest, self).setUp()

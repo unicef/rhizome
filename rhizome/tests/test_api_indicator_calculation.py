@@ -1,5 +1,5 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
@@ -7,7 +7,7 @@ from rhizome.models import Indicator, IndicatorTag, \
     LocationPermission, Location, LocationType, Office
 
 
-class IndicatorCalculationResourceTest(RhizomeAPITestCase):
+class IndicatorCalculationResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(IndicatorCalculationResourceTest, self).setUp()

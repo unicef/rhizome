@@ -1,10 +1,10 @@
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv
 from rhizome.models import User, Office, CacheJob, LocationType, CampaignType, Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location, Indicator
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 
 
-class AggRefreshAPITestCase(RhizomeAPITestCase):
+class AggRefreshAPITestCase(RhizomeApiTestCase):
 
     def setUp(self):
         super(AggRefreshAPITestCase, self).setUp()

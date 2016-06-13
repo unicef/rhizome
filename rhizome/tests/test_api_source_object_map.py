@@ -1,5 +1,5 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from pandas import read_csv
@@ -7,7 +7,7 @@ from rhizome.models import Indicator
 from setup_helpers import TestSetupHelpers
 
 
-class SourceObjectMapResourceTest(RhizomeAPITestCase):
+class SourceObjectMapResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
 

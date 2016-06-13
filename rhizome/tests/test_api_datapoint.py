@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
@@ -7,7 +7,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
 
-class DataPointResourceTest(RhizomeAPITestCase):
+class DataPointResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(DataPointResourceTest, self).setUp()

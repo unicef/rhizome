@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, SourceObjectMap, IndicatorClassMap, DataPoint
@@ -8,7 +8,7 @@ from datetime import datetime
 from rhizome.cache_meta import LocationTreeCache
 
 
-class DocTransformResourceTest(RhizomeAPITestCase):
+class DocTransformResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(DocTransformResourceTest, self).setUp()

@@ -1,5 +1,5 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 
 from rhizome.models import Indicator, IndicatorTag, \
@@ -9,7 +9,7 @@ from rhizome.models import Indicator, IndicatorTag, \
 from rhizome.cache_meta import IndicatorCache
 
 
-class IndicatorResourceTest(RhizomeAPITestCase):
+class IndicatorResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(IndicatorResourceTest, self).setUp()

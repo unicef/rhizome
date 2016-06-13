@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import CampaignType
 from rhizome.models import DocDataPoint
@@ -6,7 +6,7 @@ from rhizome.models import Document
 from rhizome.models import IndicatorTag
 
 
-class DocDataPointResourceTest(RhizomeAPITestCase):
+class DocDataPointResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
 

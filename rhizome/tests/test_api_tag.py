@@ -1,10 +1,10 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import Indicator, IndicatorToTag, IndicatorTag, LocationPermission, Location,\
     LocationType, Office
 
 
-class IndicatorTagResourceTest(RhizomeAPITestCase):
+class IndicatorTagResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(IndicatorTagResourceTest, self).setUp()

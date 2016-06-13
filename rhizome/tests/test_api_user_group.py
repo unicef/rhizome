@@ -1,10 +1,10 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import UserGroup
 from setup_helpers import TestSetupHelpers
 from django.contrib.auth.models import User, Group
 
 
-class UserGroupResourceTest(RhizomeAPITestCase):
+class UserGroupResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(UserGroupResourceTest, self).setUp()

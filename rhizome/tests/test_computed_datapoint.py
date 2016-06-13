@@ -1,12 +1,12 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv, notnull, to_datetime
 from rhizome.models import DataPointComputed, Indicator, Campaign, Location, Document, IndicatorTag, CampaignType, SourceObjectMap, Office, CacheJob
 
 
-class ComputedDatapointResourceTest(RhizomeAPITestCase):
+class ComputedDatapointResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(ComputedDatapointResourceTest, self).setUp()

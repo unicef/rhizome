@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
     Location, LocationType, Office
@@ -6,7 +6,7 @@ from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
 import json
 
 
-class DashboardResourceTest(RhizomeAPITestCase):
+class DashboardResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(DashboardResourceTest, self).setUp()

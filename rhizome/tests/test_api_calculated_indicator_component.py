@@ -1,8 +1,8 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 
 
-class CalculatedIndicatorResourceTest(RhizomeAPITestCase):
+class CalculatedIndicatorResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(CalculatedIndicatorResourceTest, self).setUp()

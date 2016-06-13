@@ -1,4 +1,4 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
     Location, LocationType, Office
 from setup_helpers import TestSetupHelpers
@@ -6,7 +6,7 @@ import json
 from django.test import TestCase
 
 
-class AllMetaResourceTest(RhizomeAPITestCase):
+class AllMetaResourceTest(RhizomeApiTestCase):
         # ./manage.py test rhizome.tests.test_api_all_meta.AllMetaResourceTest --settings=rhizome.settings.test
 
     def setUp(self):

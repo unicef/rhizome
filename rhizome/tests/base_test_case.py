@@ -1,7 +1,7 @@
 from tastypie.test import ResourceTestCase
 
 
-class RhizomeAPITestCase(ResourceTestCase):
+class RhizomeApiTestCase(ResourceTestCase):
     '''
     Subclassing all of the methods here
 

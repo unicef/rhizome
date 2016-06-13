@@ -1,10 +1,10 @@
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import Office, LocationType, Location, LocationPermission
 
 from rhizome.cache_meta import LocationTreeCache
 
-class LocationResourceTest(RhizomeAPITestCase):
+class LocationResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
 

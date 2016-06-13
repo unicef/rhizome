@@ -1,10 +1,10 @@
 
-from base_test_case import RhizomeAPITestCase
+from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import LocationPermission
 
 
-class ChartTypeResourceTest(RhizomeAPITestCase):
+class ChartTypeResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
         super(ChartTypeResourceTest, self).setUp()
