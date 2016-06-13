@@ -13,32 +13,33 @@ from rhizome.models import Indicator
 class IndicatorResource(BaseModelResource):
     '''
     **GET Request** Returns all indicators
-        - *Optional Parameters:* 
+        - *Optional Parameters:*
             'id': return only the id(s) specified
         - *Errors:*
             If an error occurs, the API returns 200 code and an empty list of indicators
 
     **POST Request** Creates an indicator
-        - *Required Parameters:* 
+        - *Required Parameters:*
             'name, 'short_name', 'description','good_bound', 'bad_bound', 'source_name'
-        - *Optional Parameters:* 
+        - *Optional Parameters:*
             'id', 'data_format' (defaults to int)
-        - *Errors:* 
+        - *Errors:*
             if any of the required fields are missing or incorrect, the API returns a 500 error code.
     '''
 
     class Meta(BaseModelResource.Meta):
+        object_class = Indicator
         resource_name = 'indicator'
         filtering = {
             "id": ALL,
         }
 
-    def get_object_list(self, request):
+    def get_object_list(self, request, **kwargs):
 
         indicator_id_list = []
 
         try:
-            indicator_id = int(request.GET['id'])
+            indicator_id = kwargs['pk']
             indicator_id_list.append(indicator_id)
         except KeyError:
             pass
@@ -54,16 +55,6 @@ class IndicatorResource(BaseModelResource):
 
         else:
             return Indicator.objects.filter(id__in=indicator_id_list).values()
-
-    def detail_uri_kwargs(self, bundle_or_obj):
-        kwargs = {}
-
-        if isinstance(bundle_or_obj, Bundle):
-            kwargs['pk'] = bundle_or_obj.obj.id
-        else:
-            kwargs['pk'] = bundle_or_obj.id
-
-        return kwargs
 
     def obj_create(self, bundle, **kwargs):
 

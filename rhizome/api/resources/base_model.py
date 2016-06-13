@@ -6,13 +6,15 @@ from tastypie.resources import (ModelResource, ALL)
 from tastypie import http
 
 from rhizome.api.serialize import CustomSerializer
-from rhizome.api.custom_session_authentication import CustomSessionAuthentication
+from rhizome.api.custom_session_authentication import\
+    CustomSessionAuthentication
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
 from django.core.exceptions import (
-    ObjectDoesNotExist, MultipleObjectsReturned ##, ValidationError,
+    ObjectDoesNotExist, MultipleObjectsReturned  # , ValidationError,
 )
+
 
 class BaseModelResource(ModelResource, BaseResource):
     '''
@@ -49,48 +51,38 @@ class BaseModelResource(ModelResource, BaseResource):
         '''
         return super(BaseModelResource, self).convert_post_to_patch(request)
 
-    def patch_detail(self, request, **kwargs):
-        """
-        Updates a resource in-place.
-        Calls ``obj_update``.
-        If the resource is updated, return ``HttpAccepted`` (202 Accepted).
-        If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
-        """
-        # request = self.convert_post_to_patch(request)
-        basic_bundle = self.build_bundle(request=request)
-
-        # We want to be able to validate the update, but we can't just pass
-        # the partial data into the validator since all data needs to be
-        # present. Instead, we basically simulate a PUT by pulling out the
-        # original data and updating it in-place.
-        # So first pull out the original object. This is essentially
-        # ``get_detail``.
-
-        try:
-            obj = self._meta.object_class.objects.get(id=kwargs['pk'])
-        except ObjectDoesNotExist:
-            return http.HttpNotFound()
-        except MultipleObjectsReturned:
-            return http.HttpMultipleChoices("More than one resource is found at this URI.")
-
-        bundle = self.build_bundle(obj=obj, request=request)
-        bundle = self.full_dehydrate(bundle)
-        bundle = self.alter_detail_data_to_serialize(request, bundle)
-
-        # Now update the bundle in-place.
-        deserialized = self.deserialize(request, request.body, format=request.META.get(
-            'CONTENT_TYPE', 'application/json'))
-        self.update_in_place(request, bundle, deserialized)
-
-        if not self._meta.always_return_data:
-            return http.HttpAccepted()
-        else:
-            # Invalidate prefetched_objects_cache for bundled object
-            # because we might have changed a prefetched field
-            bundle.obj._prefetched_objects_cache = {}
-            bundle = self.full_dehydrate(bundle)
-            bundle = self.alter_detail_data_to_serialize(request, bundle)
-            return self.create_response(request, bundle, response_class=http.HttpAccepted)
+    # def patch_detail(self, request, **kwargs):
+    #     """
+    #     Updates a resource in-place.
+    #     Calls ``obj_update``.
+    #     If the resource is updated, return ``HttpAccepted`` (202 Accepted).
+    #     If the resource did not exist, return ``HttpNotFound`` (404 Not Found).
+    #     """
+    #
+    #     # request = self.convert_post_to_patch(request)
+    #     basic_bundle = self.build_bundle(request=request)
+    #     obj = self.obj_get(basic_bundle, kwargs)
+    #
+    #     bundle = self.build_bundle(obj=obj, request=request)
+    #     bundle = self.full_dehydrate(bundle)
+    #     bundle = self.alter_detail_data_to_serialize(request, bundle)
+    #
+    #     # Now update the bundle in-place.
+    #     deserialized = self.deserialize(request, request.body,\
+    #         format=request.META.get(
+    #         'CONTENT_TYPE', 'application/json'))
+    #     self.update_in_place(request, bundle, deserialized)
+    #
+    #     if not self._meta.always_return_data:
+    #         return http.HttpAccepted()
+    #     else:
+    #         # Invalidate prefetched_objects_cache for bundled object
+    #         # because we might have changed a prefetched field
+    #         bundle.obj._prefetched_objects_cache = {}
+    #         bundle = self.full_dehydrate(bundle)
+    #         bundle = self.alter_detail_data_to_serialize(request, bundle)
+    #         return self.create_response(request, bundle,\
+    #             response_class=http.HttpAccepted)
 
     def obj_get(self, bundle, **kwargs):
         """
@@ -98,15 +90,19 @@ class BaseModelResource(ModelResource, BaseResource):
         the instance.
 
         Currently used to find one object from the url api/v1/resource/<pk>/
+
+        Try to find an object using the pk, and
         """
 
         try:
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
         except ObjectDoesNotExist:
-            error_message = 'that %s does dot exist' % self._meta.object_class
-            return RhizomeApiException(message = error_message, code = 500)
+            msg = 'No {0} object found for id :  {1}  '\
+                .format(self._meta.resource_name, kwargs['pk'])
+            raise RhizomeApiException(message=msg, code=500)
         except MultipleObjectsReturned:
-            return http.HttpMultipleChoices("More than one resource is found at this URI.")
+            raise http.HttpMultipleChoices("More than one resource found\
+                at this URI.")
 
         return obj
 
@@ -116,11 +112,16 @@ class BaseModelResource(ModelResource, BaseResource):
         Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
         set and serializes it.
         Should return a HttpResponse (200 OK).
+
+        IN this case, if the bundle gives us a message ( and a code ) we raise
+        an exception.  This is to handle the case that the object does not
+        exist.
         """
 
         obj = self.obj_get(None, **kwargs)
         bundle = self.build_bundle(obj=obj, request=request)
         bundle.data = obj.__dict__
+
         bundle.data.pop('_state')
 
         return self.create_response(request, bundle)
@@ -178,23 +179,23 @@ class BaseModelResource(ModelResource, BaseResource):
         of serialized data.
         """
 
-        deserialized = self.deserialize(\
-            request, \
-            request.body, \
-            format=request.META.get('CONTENT_TYPE', 'application/json')\
+        deserialized = self.deserialize(
+            request,
+            request.body,
+            format=request.META.get('CONTENT_TYPE', 'application/json')
         )
         deserialized = self\
             .alter_deserialized_detail_data(request, deserialized)
 
         bundle = self.build_bundle(data=deserialized, request=request)
 
-        updated_bundle = self.obj_create(bundle, \
-            **self.remove_api_resource_names(kwargs))
+        updated_bundle = self.obj_create(bundle,
+                                         **self.remove_api_resource_names(kwargs))
 
         location = self.get_resource_uri(updated_bundle)
 
-        return self.create_response(request, updated_bundle, \
-            response_class=http.HttpCreated, location=location)
+        return self.create_response(request, updated_bundle,
+                                    response_class=http.HttpCreated, location=location)
 
     def obj_create(self, bundle, **kwargs):
         """
@@ -224,8 +225,8 @@ class BaseModelResource(ModelResource, BaseResource):
         missing_keys = set(keys_req).difference(set(keys_passed))
 
         if len(missing_keys) > 0:
-            raise RhizomeApiException(message = 'missing params %s' %\
-                missing_keys)
+            raise RhizomeApiException(message='missing params %s' %
+                                      missing_keys)
 
         return bundle
 
@@ -239,7 +240,7 @@ class BaseModelResource(ModelResource, BaseResource):
         """
 
         obj = self.obj_get(bundle=bundle, **kwargs)
-        obj = self._meta.object_class.objects.get(id = obj.id).delete()
+        obj = self._meta.object_class.objects.get(id=obj.id).delete()
 
     def obj_delete_list(self, bundle, **kwargs):
         """
