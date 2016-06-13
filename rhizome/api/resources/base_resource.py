@@ -71,13 +71,13 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self).obj_get_list(bundle, **kwargs)
 
-    def obj_get(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_get``.
-        Takes optional ``kwargs``, which are used to narrow the query to find
-        the instance.
-        """
-        return super(BaseResource, self).obj_get(bundle, **kwargs)
+    # def obj_get(self, bundle, **kwargs):
+    #     """
+    #     A ORM-specific implementation of ``obj_get``.
+    #     Takes optional ``kwargs``, which are used to narrow the query to find
+    #     the instance.
+    #     """
+    #     return super(BaseResource, self).obj_get(bundle, **kwargs)
 
     def save(self, bundle, skip_errors=False):
 
@@ -106,13 +106,6 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self)\
             .obj_update(bundle, skip_errors=False, **kwargs)
-
-    def obj_delete_list(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_delete_list``.
-        """
-        return super(BaseResource, self)\
-            .obj_delete_list(bundle, **kwargs)
 
     def obj_delete_list_for_update(self, bundle, **kwargs):
         """

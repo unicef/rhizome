@@ -97,12 +97,12 @@ class BaseModelResource(ModelResource, BaseResource):
             bundle = self.alter_detail_data_to_serialize(request, bundle)
             return self.create_response(request, bundle, response_class=http.HttpAccepted)
 
-    def get_detail(self, request, **kwargs):
+    def obj_get(self, bundle, **kwargs):
         """
-        Returns a single serialized resource.
-        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
-        set and serializes it.
-        Should return a HttpResponse (200 OK).
+        Takes optional ``kwargs``, which are used to narrow the query to find
+        the instance.
+
+        Currently used to find one object from the url api/v1/resource/<pk>/
         """
 
         try:
@@ -113,11 +113,21 @@ class BaseModelResource(ModelResource, BaseResource):
         except MultipleObjectsReturned:
             return http.HttpMultipleChoices("More than one resource is found at this URI.")
 
+        return obj
+
+    def get_detail(self, request, **kwargs):
+        """
+        Returns a single serialized resource.
+        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
+        set and serializes it.
+        Should return a HttpResponse (200 OK).
+        """
+
+        obj = self.obj_get(None, **kwargs)
         bundle = self.build_bundle(obj=obj, request=request)
         bundle.data = obj.__dict__
         bundle.data.pop('_state')
-        # bundle = self.full_dehydrate(bundle)
-        # bundle = self.alter_detail_data_to_serialize(request, bundle)
+
         return self.create_response(request, bundle)
 
     def get_list(self, request, **kwargs):
@@ -137,8 +147,8 @@ class BaseModelResource(ModelResource, BaseResource):
             return super(ModelResource, self).get_list(request, **kwargs)
 
         if len(objects) > 0:
-            # find json_fields ( should be explicit here and check data type)
-            # of the field, but for this works..
+            # find json_fields ( should be explicit here and check data type )
+            # i.e. find the field datatypes from the model definition
             json_obj_keys = [k for k, v in objects[0].items() if 'json' in k]
 
         for obj in objects:
@@ -147,7 +157,7 @@ class BaseModelResource(ModelResource, BaseResource):
             for json_key in json_obj_keys:
                 obj[json_key] = json.loads(obj[json_key])
 
-            # hack lvl attribute
+            # hack lvl attribute FIXME
             if 'location_type_id' in obj:
                 obj['lvl'] = obj['location_type_id'] - 1
 
@@ -232,8 +242,19 @@ class BaseModelResource(ModelResource, BaseResource):
     def obj_delete(self, bundle, **kwargs):
         """
         A ORM-specific implementation of ``obj_delete``.
-
         Takes optional ``kwargs``, which are used to narrow the query to find
         the instance.
+
+        To Do -- Check 'is_superuser' flag
         """
-        return super(BaseResource, self).obj_delete(bundle, **kwargs)
+
+        obj = self.obj_get(bundle=bundle, **kwargs)
+        obj = self._meta.object_class.objects.get(id = obj.id).delete()
+
+
+    def obj_delete_list(self, bundle, **kwargs):
+        """
+        A ORM-specific implementation of ``obj_delete_list``.
+        """
+        return super(BaseResource, self)\
+            .obj_delete_list(bundle, **kwargs)

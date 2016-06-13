@@ -107,6 +107,7 @@ class ChartResourceTest(RhizomeApiTestCase):
                                    data={},
                                    authentication=self.get_credentials())
         resp_data = self.deserialize(resp)
+        self.assertHttpOK(resp)
         self.assertEqual(resp_data['title'], title)
 
     def test_chart_get_invalid_id(self):
