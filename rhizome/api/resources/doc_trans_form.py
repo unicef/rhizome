@@ -46,14 +46,14 @@ class DocTransFormResource(BaseModelResource):
             dt = ComplexDocTransform(request.user.id, doc_id)
             dt.main()
             ran_complex_doc_transform = True
-        ## FIXME 
+        ## FIXME
         except Exception as err: ## first try complex transform.. then run date if that fails.
             try:
                 dt = DateDocTransform(request.user.id, doc_id)
                 dt.process_file()
 
             except Exception as err:
-                raise DatapointsException(message=err.message)
+                raise RhizomeApiException(message=err.message)
 
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()

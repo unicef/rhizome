@@ -13,6 +13,7 @@ remote_work_path = '~/deploy/rhizome-work/' + current_timestamp
 remote_backend_path = '/var/www/apps/rhizome/'
 remote_frontend_path = '/var/www/apps/rhizome/webapp/public/static/'
 remote_manage_path = remote_backend_path + "manage.py"
+react_app_webapp_build_dir = 'webapp/public/static/js/'
 
 # deploy build
 # build-machine dependencies - node, gulp, bower, sass, compass, ruby, virtualenv, fabric-virtualenv
@@ -90,8 +91,15 @@ def _push_to_remote():
         #  so the 'find' command above may not be deleting enough compiled pycs]
         # when the unzip fe files will be included
 
-        ## dont think this is avtually overwriting
+        ## dont think this is actually overwriting
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
+
+    ## now push the react app to the remote
+    put(react_app_webapp_build_dir + 'reactApp.js', remote_frontend_path + \
+        'reactApp.js')
+
+    put(react_app_webapp_build_dir + 'vendor.reactApp.js', remote_frontend_path + \
+        'reactVendor.js')
 
     # in server path -
     with cd(remote_backend_path):
