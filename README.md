@@ -8,3 +8,6 @@ See our instructions [here](http://unicef.github.io/rhizome/development/initiali
 
 # Documentation
 Start here by checking out our [documentation](http://unicef.github.io/rhizome/).
+
+# Style
+For python style guide and instructions on how to configure your editor in alignment with our linter config see the [plylintrc file](https://github.com/unicef/rhizome/blob/dev/rhizome/pylintrc)
