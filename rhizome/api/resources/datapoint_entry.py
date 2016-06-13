@@ -12,8 +12,8 @@ from django.contrib.sessions.models import Session
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import InputException
 from rhizome.api.serialize import CustomJSONSerializer
-from rhizome.models import Campaign, Location, Indicator, DataPointEntry, DataPoint
-
+from rhizome.models import Campaign, Location, Indicator, DataPointEntry, \
+    DataPoint, DataPointComputed
 
 class DatapointEntryResource(BaseModelResource):
     '''
@@ -23,7 +23,7 @@ class DatapointEntryResource(BaseModelResource):
             'indicator__in' A list of indicator ids
         - *Errors:*
             if a campaign or indicator id is invalid, the API will return a 500 status code
-    **POST Request:** Create a new datapoint or update an existing one. 
+    **POST Request:** Create a new datapoint or update an existing one.
         - *Required Parameters:*
             'campaign_id'
             'location_id'
@@ -48,6 +48,7 @@ class DatapointEntryResource(BaseModelResource):
     class Meta():
         # note - auth inherited from parent class #
         queryset = DataPointEntry.objects.all()
+        object_class = DataPointComputed
         allowed_methods = ['get', 'post']
         resource_name = 'datapointentry'
         always_return_data = True
@@ -154,9 +155,12 @@ class DatapointEntryResource(BaseModelResource):
                 bundle.obj = DataPoint.objects.create(**data_to_insert)
                 bundle.data['id'] = bundle.obj.id
                 bundle.obj.campaign_id = campaign_obj.id
+                bundle.data['success'] = 1
                 return bundle
 
         except Exception, e:
+            print 'exceptino ===\n' * 10
+            print e
             e.code = 0
             e.data = traceback.format_exc()
             response = self.create_response(

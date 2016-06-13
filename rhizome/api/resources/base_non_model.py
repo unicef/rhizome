@@ -32,12 +32,6 @@ class BaseNonModelResource(BaseResource):
 
         return bundle
 
-    def dispatch(self, request_type, request, **kwargs):
-        '''
-        '''
-
-        return super(BaseNonModelResource, self).dispatch(request_type, request, **kwargs)
-
     def get_list(self, request, **kwargs):
         """
         Overriden from Tastypie..

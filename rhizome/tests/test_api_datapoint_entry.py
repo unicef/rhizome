@@ -1,8 +1,8 @@
 
 from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
-from rhizome.models import LocationPermission, CampaignType, IndicatorTag, DataPointEntry
-
+from rhizome.models import LocationPermission, CampaignType, IndicatorTag,\
+    DataPointEntry
 
 class DatapointEntryResourceTest(RhizomeApiTestCase):
 
@@ -77,8 +77,7 @@ class DatapointEntryResourceTest(RhizomeApiTestCase):
         self.ts.delete(self, delete_url)
         self.assertEqual(DataPointEntry.objects.count(), 1)
 
-
-# what happens when we create a duplicate datapoint
+    # what happens when we create a duplicate datapoint
     def test_post_update_dp(self):
         dp_value = 4567
         data = {
@@ -91,17 +90,18 @@ class DatapointEntryResourceTest(RhizomeApiTestCase):
         self.assertHttpCreated(resp)
         resp_data = self.deserialize(resp)
         self.assertEqual(resp_data['value'], dp_value)
+
         # do it again
         new_val = 323
         data['value'] = new_val
         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
         self.assertHttpCreated(resp)
         resp_data = self.deserialize(resp)
-        self.assertEqual(resp_data['success'], 1)
+
         # make sure the api returns the new dp
         data = {'campaign__in': self.c.id, 'indicator__in': self.ind.id}
-        resp = self.ts.get(self, '/api/v1/datapointentry/', data)
-        resp_data = self.deserialize(resp)
+        get_resp = self.ts.get(self, '/api/v1/datapointentry/', data)
+        resp_data = self.deserialize(get_resp)
         self.assertEqual(resp_data['objects'][0]['value'], new_val)
 
     def test_post_invalid_campaign(self):

@@ -213,9 +213,6 @@ class BaseResource(Resource):
         request_method = self.method_check(request, allowed=allowed_methods)
         method = getattr(self, "%s_%s" % (request_method, request_type), None)
 
-        # if method is None:
-        #     raise ImmediateHttpResponse(response=http.HttpNotImplemented())
-
         self.is_authenticated(request)
         self.throttle_check(request)
 

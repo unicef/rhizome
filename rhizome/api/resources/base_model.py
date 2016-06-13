@@ -44,11 +44,6 @@ class BaseModelResource(ModelResource, BaseResource):
             "id": ALL,
         }
 
-    def dispatch(self, request_type, request, **kwargs):
-        '''
-        '''
-        return super(BaseModelResource, self).dispatch(request_type, request, **kwargs)
-
     def convert_post_to_patch(request):
         '''
         '''
@@ -209,7 +204,6 @@ class BaseModelResource(ModelResource, BaseResource):
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
-        # bundle.obj = self._meta.object_class()
         ## create the object with the data from the request #
         bundle.obj = self._meta.object_class.objects.create(**bundle.data)
 
@@ -229,12 +223,8 @@ class BaseModelResource(ModelResource, BaseResource):
         keys_req = [unicode(x) for x in self._meta.required_fields_for_post]
         missing_keys = set(keys_req).difference(set(keys_passed))
 
-        # print 'keys passed =  %s ' % keys_passed
-        # print 'required_keys = %s ' % required_keys
-        # print 'missing_keys %s ' % missing_keys
-
         if len(missing_keys) > 0:
-            raise RhizomeApiException(message = 'missing params%s' %\
+            raise RhizomeApiException(message = 'missing params %s' %\
                 missing_keys)
 
         return bundle
@@ -250,7 +240,6 @@ class BaseModelResource(ModelResource, BaseResource):
 
         obj = self.obj_get(bundle=bundle, **kwargs)
         obj = self._meta.object_class.objects.get(id = obj.id).delete()
-
 
     def obj_delete_list(self, bundle, **kwargs):
         """
