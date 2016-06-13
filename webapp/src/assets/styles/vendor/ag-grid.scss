@@ -7,12 +7,7 @@ ag-grid-ng2 {
 /* set to relative, so absolute popups appear relative to this */
   position: relative;
 /* disable user mouse selection */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 /* was getting some 'should be there' scrolls, this sorts it out */
   overflow: hidden;
@@ -36,16 +31,12 @@ ag-grid-ng2 {
   top: 0px;
   left: 0px;
   white-space: nowrap;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   width: 100%;
 }
 .ag-pinned-left-header {
   float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
@@ -53,23 +44,22 @@ ag-grid-ng2 {
 }
 .ag-pinned-right-header {
   float: right;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
   height: 100%;
 }
+.ag-header-icon {
+  display: none;
+  // display: inline-block;
+  // width: 0.6rem;
+}
 .ag-header-viewport {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   height: 100%;
 }
 .ag-scrolls .ag-header-container {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: relative;
   white-space: nowrap;
@@ -83,8 +73,6 @@ ag-grid-ng2 {
   position: absolute;
 }
 .ag-header-cell {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   vertical-align: bottom;
   text-align: center;
@@ -94,20 +82,15 @@ ag-grid-ng2 {
 .ag-header-group-cell {
   height: 100%;
   display: inline-block;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 .ag-header-group-cell-label {
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
 .ag-header-cell-label {
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -136,8 +119,6 @@ ag-grid-ng2 {
 }
 .ag-body {
   height: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 .ag-floating-top {
@@ -145,15 +126,11 @@ ag-grid-ng2 {
   left: 0px;
   width: 100%;
   white-space: nowrap;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
 }
 .ag-pinned-left-floating-top {
   float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
@@ -161,23 +138,17 @@ ag-grid-ng2 {
 }
 .ag-pinned-right-floating-top {
   float: right;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
   height: 100%;
 }
 .ag-floating-top-viewport {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   height: 100%;
 }
 .ag-floating-top-container {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: relative;
   white-space: nowrap;
@@ -187,15 +158,11 @@ ag-grid-ng2 {
   left: 0px;
   width: 100%;
   white-space: nowrap;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
 }
 .ag-pinned-left-floating-bottom {
   float: left;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
@@ -203,23 +170,17 @@ ag-grid-ng2 {
 }
 .ag-pinned-right-floating-bottom {
   float: right;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   display: inline-block;
   overflow: hidden;
   height: 100%;
 }
 .ag-floating-bottom-viewport {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   overflow: hidden;
   height: 100%;
 }
 .ag-floating-bottom-container {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
   position: relative;
   white-space: nowrap;
@@ -268,10 +229,7 @@ ag-grid-ng2 {
   display: inline-block;
   white-space: nowrap;
   height: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
   position: absolute;
@@ -281,10 +239,7 @@ ag-grid-ng2 {
   display: inline-block;
   white-space: nowrap;
   height: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -293,10 +248,7 @@ ag-grid-ng2 {
   display: inline-block;
   white-space: nowrap;
   height: 100%;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
 }
@@ -317,7 +269,6 @@ ag-grid-ng2 {
   overflow: hidden;
 }
 .ag-filter-item {
-  -o-text-overflow: ellipsis;
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
@@ -344,16 +295,10 @@ ag-grid-ng2 {
   height: unset;
 }
 .ag-list-selection {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   cursor: default;
 }
 .ag-tool-panel-container {
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   cursor: default;
   width: 200px;
