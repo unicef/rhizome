@@ -6,6 +6,7 @@ import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
 import ResourceTable from 'components/molecules/ResourceTable'
+import SwitchButton from 'components/form/SwitchButton'
 
 class EnterDataPage extends Component {
 
@@ -25,6 +26,7 @@ class EnterDataPage extends Component {
 
   render () {
     const props = this.props
+    const formEntry = props.entry_type === 'campaign'
 
     const campaign_select = (
       <CampaignSelect
@@ -69,9 +71,36 @@ class EnterDataPage extends Component {
       />
     )
 
-    const placeholder = !props.selected_locations
-      ? <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/>
-      : <Placeholder height={300}/>
+    const switch_button = (
+      <SwitchButton
+        name='entry_type'
+        title='entry_type'
+        id='entry_type'
+        checked={!formEntry}
+        onChange={props.toggleEntryType}
+      />
+    )
+
+    const placeholder_string = 'Please select a location'
+    if (formEntry) {
+      'Please select a location and an indicator'
+    }
+    const no_location = props.selected_locations.length <= 0
+    const no_indicator = props.selected_indicators.length <= 0
+    const placeholder_text = formEntry ? 'an indicator' : 'a form'
+    const placeholder = (
+      <div>
+        { no_location ? <Placeholder height={150} text={'Add location(s) to begin'} loading={false}/> : null }
+        { no_indicator ? <Placeholder height={150} text={`Select ${placeholder_text} to begin`} loading={false}/> : null }
+      </div>
+    )
+    // const placeholder = props.selected_locations.length <= 0
+    //   ? (
+    //       <div>
+    //         { <Placeholder height={300} text={'Add location(s) to begin'} loading={false}/> }
+    //       </div>
+    //     )
+    //   : <Placeholder height={300}/>
 
     const columnDefs = [
       {headerName: "ID", field: "id", suppressMenu: true},
@@ -80,10 +109,21 @@ class EnterDataPage extends Component {
       {headerName: "Location ID", field: "location_id"},
       {headerName: "Value", field: "value"}
     ]
-
+    const env = process.env
+    const mode = process.env.mode
+    console.log('env', env)
+    console.log('mode', mode)
     const data_table = (
       <ResourceTable
         rowData={props.datapoints.raw || []}
+        columnDefs={columnDefs}
+        resourcePath='datapoints'
+      />
+    )
+
+    const raw_data_table = (
+      <ResourceTable
+        rowData={props.datapoints.flattened || []}
         columnDefs={columnDefs}
         resourcePath='datapoints'
       />
@@ -97,8 +137,9 @@ class EnterDataPage extends Component {
           </div>
           <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
             <div className='page-header-filters'>
-              { indicator_select }
-              { indicator_tag_select }
+              { switch_button }
+              { !formEntry ? indicator_select : null }
+              { formEntry ? indicator_tag_select : null }
               { campaign_select }
               { location_select }
             </div>
