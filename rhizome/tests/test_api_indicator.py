@@ -54,32 +54,15 @@ class IndicatorResourceTest(RhizomeApiTestCase):
                      'description': 'test',
                      'bad_bound': 1,
                      'good_bound': 10,
+                     'data_format': 'int',
                      'source_name': 'RHIZOME'
                      }
 
         resp = self.ts.post(self, '/api/v1/indicator/', data=post_data)
+        self.assertHttpCreated(resp)
         resp_data = self.deserialize(resp)
         self.assertEqual(Indicator.objects.count(), 1)
         self.assertEqual(resp_data['name'], 'New test indicator name')
-
-    def test_create_indicator_with_id(self):
-        Indicator.objects.all().delete()
-
-        self.assertEqual(Indicator.objects.count(), 0)
-
-        post_data = {'name': 'New test indicator name',
-                     'short_name': 'New test short name',
-                     'description': 'test',
-                     'id': 123,
-                     'bad_bound': 1,
-                     'good_bound': 10,
-                     'source_name': 'RHIZOME'
-                     }
-
-        resp = self.ts.post(self, '/api/v1/indicator/', data=post_data)
-
-        resp_data = self.deserialize(resp)
-        self.assertEqual(resp_data['id'], 123)
 
     def test_create_indicator_missing_fields(self):
         Indicator.objects.all().delete()
@@ -88,8 +71,6 @@ class IndicatorResourceTest(RhizomeApiTestCase):
 
         post_data = {'name': 'New test indicator name',
                      'short_name': 'New test short name',
-                     'data_format': 'int',
-                     'id': -1,
                      'description': 'test',
                      'source_name': 'RHIZOME'
                      }

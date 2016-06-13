@@ -81,6 +81,6 @@ class IndicatorToTagResourceTest(RhizomeApiTestCase):
         ind_to_tag = IndicatorToTag.objects.create(indicator_id=self.ind.id,
                                                    indicator_tag_id=self.ind_tag.id)
         self.assertEqual(IndicatorToTag.objects.count(), 1)
-        delete_url = '/api/v1/indicator_to_tag/?id=' + str(ind_to_tag.id)
+        delete_url = '/api/v1/indicator_to_tag/%s/' % str(ind_to_tag.id)
         self.ts.delete(self, delete_url)
         self.assertEqual(IndicatorToTag.objects.count(), 0)

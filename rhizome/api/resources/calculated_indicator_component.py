@@ -1,8 +1,8 @@
 from tastypie.resources import ALL
+from tastypie import fields
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import CalculatedIndicatorComponent
-
 
 class CalculatedIndicatorComponentResource(BaseModelResource):
     '''
@@ -16,8 +16,11 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
             'id'
         - *Errors:*
             If and invalid id is supplied, the request returns with 204. If no id parameter is supplied, the status code returned is 500.
-
     '''
+
+    indicator_id = fields.IntegerField(attribute='indicator_id')
+    indicator_component_id = fields\
+        .IntegerField(attribute='indicator_component_id')
 
     class Meta(BaseModelResource.Meta):
         object_class = CalculatedIndicatorComponent

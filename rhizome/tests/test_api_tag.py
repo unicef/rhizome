@@ -86,7 +86,7 @@ class IndicatorTagResourceTest(RhizomeApiTestCase):
 
         self.assertEqual(IndicatorToTag.objects.count(), 1)
 
-        delete_url = '/api/v1/indicator_to_tag/?id=' + str(indicatior_tag.id)
+        delete_url = '/api/v1/indicator_to_tag/%s/' % str(indicatior_tag.id)
 
         self.api_client.delete(delete_url, format='json',
                                data={}, authentication=self.get_credentials())
