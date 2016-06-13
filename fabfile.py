@@ -22,8 +22,8 @@ def deploy(venv_path=None):
     local_venv_path = venv_path;
 
     # on local machine
-    _build_dependencies()
-    run_tests()
+    # _build_dependencies()
+    # run_tests()
 
     # on target machine
     stop_apache()
@@ -96,10 +96,10 @@ def _push_to_remote():
 
     ## now push the react app to the remote
     put(react_app_webapp_build_dir + 'reactApp.js', remote_frontend_path + \
-        'reactApp.js')
+        '/js/reactApp.js')
 
     put(react_app_webapp_build_dir + 'vendor.reactApp.js', remote_frontend_path + \
-        'reactVendor.js')
+        '/js/reactVendor.js')
 
     # in server path -
     with cd(remote_backend_path):
