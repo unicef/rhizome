@@ -9,8 +9,7 @@ export default class ResourceTable extends Component {
   constructor() {
     super()
     this.state = {
-      quickFilterText: null,
-      showToolPanel: false
+      quickFilterText: null
     }
   }
 
@@ -34,10 +33,6 @@ export default class ResourceTable extends Component {
   onGridReady = (params) => {
     this.api = params.api
     this.columnApi = params.columnApi
-  }
-
-  onToggleToolPanel = (event) => {
-    this.setState({showToolPanel: event.target.checked})
   }
 
   onQuickFilterText = (event) => {
@@ -65,13 +60,11 @@ export default class ResourceTable extends Component {
         <div style={{padding: '4px'}}>
           <TableControls
             onQuickFilterText={this.onQuickFilterText}
-            onToggleToolPanel={this.onToggleToolPanel}
             onRefreshData={this.props.onRefreshData} />
           <div style={{height: 400}} className="ag-fresh">
             <AgGridReact
               gridOptions={this.gridOptions}
               onGridReady={this.onReady}
-              showToolPanel={this.state.showToolPanel}
               quickFilterText={this.state.quickFilterText}
               icons={this.icons}
               columnDefs={this.props.columnDefs}

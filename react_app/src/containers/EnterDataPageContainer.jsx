@@ -1,3 +1,4 @@
+import moment from 'moment'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import EnterDataPage from 'components/pages/EnterDataPage'
@@ -5,22 +6,26 @@ import { selectGlobalCampaign, selectGlobalLocation, setGlobalIndicators, setGlo
 import { toggleEntryType, setDataEntryDate } from 'actions/data_entry_actions'
 import { getDatapoints } from 'actions/datapoint_actions'
 
-const mapStateToProps = state => ({
-	campaigns: state.campaigns,
-	indicators: state.indicators,
-	locations: state.locations,
-  date: state.data_entry.date,
-  entry_type: state.data_entry.entry_type,
-	dataParamsChanged: state.data_entry.dataParamsChanged,
-	selected_campaign: state.data_entry.selected_campaign,
-	selected_locations: state.data_entry.selected_locations,
-	selected_indicators: state.data_entry.selected_indicators,
-	selected_indicator_tag: state.data_entry.selected_indicator_tag,
-	datapoints: {
-		raw: state.data_entry.datapoints.raw,
-		flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns)
-	}
-})
+const mapStateToProps = state => {
+  const datapoints = {
+    raw: state.data_entry.datapoints.raw,
+    flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns)
+  }
+  return {
+    datapoints: datapoints,
+    table_data: _getTableData(datapoints.flattened),
+    campaigns: state.campaigns,
+    indicators: state.indicators,
+    locations: state.locations,
+    date: state.data_entry.date,
+    entry_type: state.data_entry.entry_type,
+    dataParamsChanged: state.data_entry.dataParamsChanged,
+    selected_campaign: state.data_entry.selected_campaign,
+    selected_locations: state.data_entry.selected_locations,
+    selected_indicators: state.data_entry.selected_indicators,
+    selected_indicator_tag: state.data_entry.selected_indicator_tag
+  }
+}
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
   setDataEntryDate,
@@ -37,6 +42,36 @@ const EnterDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(Ente
 // =========================================================================== //
 //                             DATAPOINT UTILITIES                             //
 // =========================================================================== //
+const _getTableData = datapoints => {
+  if (!datapoints)
+    return {rows: [], columns: []}
+
+  const rows = []
+  const grouped_by_location = _.groupBy(datapoints, 'location.id')
+  _.map(grouped_by_location, datapoint_group => {
+    const first_datapoint = datapoint_group[0]
+    const row = {
+      campaign: moment(first_datapoint.campaign.start_date).format('MMM YYYY'),
+      campaign_id: first_datapoint.campaign.id,
+      location: first_datapoint.location.name,
+      location_id: first_datapoint.location.id
+    }
+    datapoint_group.forEach(datapoint => row[datapoint.indicator.id] = {
+      value: _format(datapoint.value, datapoint.indicator.data_format),
+      id: datapoint.id
+    })
+    rows.push(row)
+  })
+
+  const columns = datapoints.map(datapoint => ({
+      headerName: datapoint.indicator.name,
+      editable: true,
+      field: datapoint.indicator.id + '.value'
+    })
+  )
+  columns.unshift({headerName: '', field: 'location'})
+  return { rows, columns }
+}
 
 const _flatten = (datapoints, indicators, locations, campaigns) => {
 	if (!datapoints)
@@ -44,7 +79,7 @@ const _flatten = (datapoints, indicators, locations, campaigns) => {
   const flattened = datapoints.map(d => {
     const indicator = indicators.index[d.indicator_id]
     const datapoint = {
-      id: d.computed_id,
+      id: d.id,
       value: d.value ? _formatValue(d.value, indicator.data_format) : null,
       location: locations.index[d.location_id],
       indicator: indicator
@@ -56,6 +91,17 @@ const _flatten = (datapoints, indicators, locations, campaigns) => {
     return datapoint
   })
   return flattened
+}
+
+const _format = value => {
+  if (_.isFinite(value)) {
+    var format = d3.format('n')
+    if (Math.abs(value) < 1 && value !== 0) {
+      format = d3.format('.4f')
+    }
+    return format(value)
+  }
+  return ''
 }
 
 const _formatValue = (value, data_format) => {
