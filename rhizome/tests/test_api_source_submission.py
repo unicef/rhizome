@@ -59,8 +59,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
         dt = ComplexDocTransform(self.ts.user.id, doc.id)
         dt.main()
         ss_id = SourceSubmission.objects.all()[0].id
-        get_data = {'id': ss_id}
-        resp = self.ts.get(self, '/api/v1/source_submission/', get_data)
+        resp = self.ts.get(self, '/api/v1/source_submission/%s/' % ss_id)
         self.assertHttpOK(resp)
         resp_data = self.deserialize(resp)
-        self.assertEqual(resp_data['objects'][0]['id'], ss_id)
+        self.assertEqual(resp_data['id'], ss_id)

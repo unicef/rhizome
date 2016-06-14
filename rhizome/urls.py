@@ -25,7 +25,6 @@ v1_api.register(
     calculated_indicator_component.CalculatedIndicatorComponentResource())
 v1_api.register(campaign.CampaignResource())
 v1_api.register(campaign_type.CampaignTypeResource())
-v1_api.register(chart_type.ChartTypeResource())
 v1_api.register(computed_datapoint.ComputedDataPointResource())
 v1_api.register(custom_chart.CustomChartResource())
 v1_api.register(custom_dashboard.CustomDashboardResource())

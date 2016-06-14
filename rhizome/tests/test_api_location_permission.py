@@ -19,7 +19,7 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
 
     def test_get_location_permission(self):
         lp = LocationPermission.objects.create(user_id=self.ts.user.id,
-                                               top_lvl_location_id=self.top_lvl_location.id)
+                           top_lvl_location_id=self.top_lvl_location.id)
 
         data = {
             'user_id': self.ts.user.id
@@ -46,36 +46,37 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
-        self.assertEqual(response_data['user_id'], self.top_lvl_location.id)
+        self.assertEqual(response_data['top_lvl_location_id'],
+            , self.top_lvl_location.id)
 
     def test_create_location_permission_missing_id(self):
-        data = {
+        data={
             'user_id': self.ts.user.id
         }
 
         resp = self.ts.post(
-            self, '/api/v1/location_responsibility/', data=data)
+            self, '/api/v1/location_responsibility/', data = data)
         self.assertHttpApplicationError(resp)
 
     def test_update_location_permission(self):
-        lp = LocationPermission.objects.create(user_id=self.ts.user.id,
-                               top_lvl_location_id=self.top_lvl_location.id)
+        lp=LocationPermission.objects.create(user_id = self.ts.user.id,
+                               top_lvl_location_id = self.top_lvl_location.id)
 
         # update the location
-        new_location = self.ts.create_arbitrary_location(
+        new_location=self.ts.create_arbitrary_location(
             self.lt.id,
             self.o.id,
-            location_code='Kenya',
-            location_name='Kenya'
+            location_code = 'Kenya',
+            location_name = 'Kenya'
         )
-        data = {
-            'id':lp.id,
+        data={
+            'id': lp.id,
             'top_lvl_location_id': new_location.id,
             'user_id': self.ts.user.id
         }
         resp = self.ts.post(
-            self, '/api/v1/location_responsibility/', data=data)
-        response_data = self.deserialize(resp)
+            self, '/api/v1/location_responsibility/', data = data)
+        response_data=self.deserialize(resp)
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
         self.assertEqual(response_data['top_lvl_location_id'], new_location.id)

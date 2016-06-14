@@ -34,13 +34,9 @@ class IndicatorTagResource(BaseModelResource):
 
     def get_object_list(self, request):
         '''
-        The 'show_leaf' parameter only shows the leaf level nodes of the tree
-
-        Also, the ID param will filter the results to the tag id requested
-
-        Note -- getting the tag by ID should be changed to use a REST style
-        endpoint like so : api/v1/indicator_tag/<id>/
-
+        The 'show_leaf' parameter only shows the leaf level nodes of the tree.
+        If that param is not requested, then we just return the base queryset
+        from the parent_class.
         '''
 
         try:
@@ -49,11 +45,5 @@ class IndicatorTagResource(BaseModelResource):
                                    .filter(parent_tag_id__gt=0)
                                    .values_list('parent_tag_id', flat=True)))
             return IndicatorTag.objects.exclude(id__in=all_parents).values()
-        except KeyError:
-            pass
-
-        try:
-            tag_id = request.GET['id']
-            return IndicatorTag.objects.filter(id=tag_id).values()
         except KeyError:
             return super(IndicatorTagResource, self).get_object_list(request)
