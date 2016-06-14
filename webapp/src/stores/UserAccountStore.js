@@ -44,7 +44,7 @@ var UserAccountStore = Reflux.createStore({
 
   onSetLocationAccess: function (userId, locationId) {
     var self = this
-    api.set_location_responsibility({ user_id: userId, location_id: locationId }).then(function () {
+    api.set_location_responsibility({ user_id: userId, top_lvl_location_id: locationId }).then(function () {
       self._getLocationAccess(userId)
     })
   },

@@ -36,7 +36,7 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
 
     def test_create_location_permission(self):
         data = {
-            'location_id': self.top_lvl_location.id,
+            'top_lvl_location_id': self.top_lvl_location.id,
             'user_id': self.ts.user.id
         }
 
@@ -46,8 +46,7 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
-        self.assertEqual(
-            response_data['location_id'], self.top_lvl_location.id)
+        self.assertEqual(response_data['user_id'], self.top_lvl_location.id)
 
     def test_create_location_permission_missing_id(self):
         data = {
@@ -60,7 +59,7 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
 
     def test_update_location_permission(self):
         lp = LocationPermission.objects.create(user_id=self.ts.user.id,
-                                               top_lvl_location_id=self.top_lvl_location.id)
+                               top_lvl_location_id=self.top_lvl_location.id)
 
         # update the location
         new_location = self.ts.create_arbitrary_location(
@@ -70,7 +69,8 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
             location_name='Kenya'
         )
         data = {
-            'location_id': new_location.id,
+            'id':lp.id,
+            'top_lvl_location_id': new_location.id,
             'user_id': self.ts.user.id
         }
         resp = self.ts.post(
@@ -78,4 +78,4 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
-        self.assertEqual(response_data['location_id'], new_location.id)
+        self.assertEqual(response_data['top_lvl_location_id'], new_location.id)
