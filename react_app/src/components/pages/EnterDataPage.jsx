@@ -76,7 +76,9 @@ class EnterDataPage extends Component {
     )
 
     const date_select = (
-      <DateTimePicker />
+      <DateTimePicker
+        defaultValue={new Date()}
+      />
     )
 
     const switch_button = (
