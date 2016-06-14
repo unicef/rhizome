@@ -23,7 +23,6 @@ class CustomDashboardResource(BaseModelResource):
             If a title is not supplied. The API will return a 500 error.
     **DELETE Requests:** There are two ways to submit a delete request to API
         - to delete a resource, HTTP delete request to /api/v1/custom_dashboard/<dashboard_id>/
-        - or delete request to /api/v1/custom_dashboard/ with param 'id'
     '''
     class Meta(BaseModelResource.Meta):
         object_class = CustomDashboard
@@ -39,14 +38,21 @@ class CustomDashboardResource(BaseModelResource):
         This method gives the chart data for each dashboard so that we can
         see all of the information needed to render a dashboard by accessing
         that uri.
+
+        The custom dashboard model stores on it "rows" each of wiht have a
+        "layout" and a number of chart_uuids.
+
+        In this method, we iterate through the chart_uuids and add the chart
+        objects to the response.
+
+        Since this is not a simple matter of just hitting the database for
+        an ID, and returning that object, we override the "get_detail" method
+        here to return the related information for the resource.
         '''
 
         requested_id = kwargs['pk']
-
         bundle = self.build_bundle(request=request)
-
         response_data = CustomDashboard.objects.get(id=requested_id).__dict__
-
         response_data.pop('_state')
 
         if response_data['rows']:
@@ -62,6 +68,7 @@ class CustomDashboardResource(BaseModelResource):
                 chart_dict = chart.__dict__
                 chart_dict.pop('_state')
                 charts_dict[chart.uuid] = chart_dict
+
             # add the charts to the row in the response
             for idx, row in enumerate(response_data_rows):
                 charts_list = row['charts']
@@ -69,6 +76,8 @@ class CustomDashboardResource(BaseModelResource):
                     if chart_uuid in charts_dict.keys():
                         chart = charts_dict[chart_uuid]
                         response_data_rows[idx]['charts'][idx2] = chart
+
             response_data['rows'] = response_data_rows
+
         bundle.data = response_data
         return self.create_response(request, bundle)

@@ -9,26 +9,29 @@ class RhizomeApiException(Exception):
         return to the API whatever error we have caught
         '''
 
+        self.message = message
         self.code = code
 
         try:
-            self.message = self.parse_error_msg(message, code)
+            self.message = self.parse_error_msg()
         except:
-            self.message = message
+            pass
 
-    def parse_error_msg(self, message, code):
+    def parse_error_msg(self):
         '''
         A way for us to parse common django / tastypie error messages
         so that we can return useful information to the API.
         '''
 
-        if code == 497:
-            detail_msg = message.split('DETAIL:  ')[1]
+        if self.code == 497:
+            detail_msg = self.message.split('DETAIL:  ')[1]
             tmp_column_string, tmp_input_value = detail_msg.split(')=(')
             column_string = tmp_column_string[tmp_column_string.find("(") + 1 :]
             input_value = tmp_input_value[:tmp_input_value.find(")")]
             return 'key: "{0}" with value: "{1}" already exists'\
                 .format(column_string, input_value)
+
+        return self.message
 
     #########################
     ## rhizome error codes ##

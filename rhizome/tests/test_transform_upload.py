@@ -57,10 +57,11 @@ class TransformUploadTestCase(TestCase):
         self.assertEqual(len(source_submissions), file_line_count)
 
     def test_missing_required_column(self):
+
         doc_id = self.ingest_file('missing_campaign.csv')
         try:
             ComplexDocTransform(self.user.id, doc_id)
-            fail('should raise an exception')
+            fail('This should should raise an exception')
         except Exception as err:
             self.assertEqual('campaign is a required column.', err.message)
 
