@@ -51,6 +51,7 @@ class BaseModelResource(ModelResource, BaseResource):
         filtering = {
             "id": ALL,
         }
+        GET_params_required = []
 
     def convert_post_to_patch(request):
         '''
@@ -70,7 +71,7 @@ class BaseModelResource(ModelResource, BaseResource):
         try:
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
         except ObjectDoesNotExist:
-            msg = 'No {0} object found for id :  {1}  '\
+            msg = 'No {0} object found for id : {1}'\
                 .format(self._meta.resource_name, kwargs['pk'])
             raise RhizomeApiException(message=msg, code=500)
         except MultipleObjectsReturned:
@@ -131,6 +132,14 @@ class BaseModelResource(ModelResource, BaseResource):
         # Grab a mutable copy #
         if hasattr(bundle.request, 'GET'):
             filters = bundle.request.GET.copy()
+
+        # check required parameters and raise exception if one is missing #
+        if hasattr(self._meta, 'GET_params_required'):
+            keys_req = self._meta.GET_params_required
+            missing_keys = list(set(keys_req).difference(set(filters.keys())))
+            if len(missing_keys) > 0:
+                msg = 'Missing required parameter %s ' % missing_keys[0]
+                raise RhizomeApiException(msg)
 
         # Update with the provided kwargs #
         filters.update(kwargs)

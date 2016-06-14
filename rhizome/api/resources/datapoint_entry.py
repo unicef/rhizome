@@ -45,7 +45,7 @@ class DatapointEntryResource(BaseModelResource):
     # campaign = fields.IntegerField(attribute='campaign_id')
     indicator = fields.IntegerField(attribute='indicator_id')
 
-    class Meta():
+    class Meta(BaseModelResource.Meta):
         # note - auth inherited from parent class #
         queryset = DataPointEntry.objects.all()
         object_class = DataPointComputed

@@ -26,6 +26,7 @@ class BaseNonModelResource(BaseResource):
         always_return_data = True
         cache = CustomCache()
         serializer = CustomSerializer()
+        GET_params_required = ['indicator_id']
 
     def dehydrate(self, bundle):
         bundle.data.pop("resource_uri", None)

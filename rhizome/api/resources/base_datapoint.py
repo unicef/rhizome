@@ -24,7 +24,7 @@ from rhizome.models import LocationPermission, Location, LocationTree, \
 class BaseDataPointResource(BaseResource):
     '''
     '''
-    class Meta:
+    class Meta(BaseResource.Meta):
         authentication = MultiAuthentication(
             CustomSessionAuthentication(), ApiKeyAuthentication())
         allowed_methods = ['get', 'post', 'patch']

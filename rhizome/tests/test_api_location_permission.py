@@ -46,8 +46,8 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpCreated(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
-        self.assertEqual(response_data['top_lvl_location_id'],
-            , self.top_lvl_location.id)
+        self.assertEqual(response_data['top_lvl_location_id'],\
+            self.top_lvl_location.id)
 
     def test_create_location_permission_missing_id(self):
         data={

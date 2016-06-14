@@ -64,7 +64,11 @@ class DocDataPointResourceTest(RhizomeApiTestCase):
         self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
-    def test_doc_dp_get_invalid_id(self):
+    def test_doc_dp_get_invalid_document_id(self):
+        '''
+        Here we pass a bogus document_id to the API and ensure we do not
+        receive any objects back from this query.
+        '''
         doc = Document.objects.create(doc_title="test")
         camp_type = CampaignType.objects.create(name="test")
         ind_tag = IndicatorTag.objects.create(tag_name="tag")
