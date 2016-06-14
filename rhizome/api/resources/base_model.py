@@ -2,6 +2,7 @@ import json
 
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.sql.constants import QUERY_TERMS
+from django.db import IntegrityError
 
 from tastypie.authorization import Authorization
 from tastypie.utils import dict_strip_unicode_keys
@@ -9,7 +10,6 @@ from tastypie.exceptions import InvalidFilterError
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
 from tastypie.resources import ModelResource, ALL
 from tastypie import http
-
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.custom_session_authentication import\
@@ -230,14 +230,15 @@ class BaseModelResource(ModelResource, BaseResource):
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
-        try:
-            ## see if there is an ID param and if so update the resouce ##
-            id_from_post = bundle.data['id']
+        id_from_post = bundle.data.get('id', None)
+        if id_from_post: ## this is a PUT or update of an existing resource #
             obj = self._meta.object_class.objects.get(id = id_from_post)
             self.update_object(obj, **bundle.data)
-        except KeyError:
-            ## create the object with the data from the request #
-            obj = self._meta.object_class.objects.create(**bundle.data)
+        else: ## create the object with the data from the request #
+            try:
+                obj = self._meta.object_class.objects.create(**bundle.data)
+            except IntegrityError as err:
+                raise RhizomeApiException(message = err.message, code = 497)
 
         bundle.obj = obj
         bundle.data['id'] = bundle.obj.id
