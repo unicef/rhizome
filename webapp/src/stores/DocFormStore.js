@@ -31,7 +31,7 @@ var DocFormStore = Reflux.createStore({
       docfile: upload.target.result,
       doc_title: file.name
     }).then(response => {
-      this.data.config_options = response.objects.file_header.replace('"', '').split(',')
+      // this.data.config_options = response.file_header.replace('"', '').split(',')
       this.data.created_doc_id = response.objects.id
       this.data.new_doc_title = response.objects.doc_title
       this.trigger(this.data)
@@ -66,10 +66,10 @@ var DocFormStore = Reflux.createStore({
   onSetOdkFormName (data) {
     api.sync_odk(data, null, {'cache-control': 'no-cache'}).then(res => {
       if (res.objects) {
-        this.data.doc_obj = res.objects[0]
-        this.data.created_doc_id = res.objects[0].id
-        this.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
-        this.data.new_doc_title = res.objects[0].doc_title
+        this.data.doc_obj = res.objects
+        this.data.created_doc_id = res.objects.id
+        // this.data.config_options = res.objects[0].file_header.replace('"', '').split(',')
+        this.data.new_doc_title = res.objects.doc_title
 
         this.trigger(this.data)
       }

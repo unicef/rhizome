@@ -64,7 +64,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
         Currently used to find one object from the url api/v1/resource/<pk>/
 
-        Try to find an object using the pk, and
+        Try to find an object using the pk
         """
 
         try:
@@ -208,7 +208,7 @@ class BaseModelResource(ModelResource, BaseResource):
         location = self.get_resource_uri(updated_bundle)
 
         return self.create_response(request, updated_bundle,
-                                    response_class=http.HttpCreated, location=location)
+                            response_class=http.HttpCreated, location=location)
 
     def update_object(self, obj, **kwargs):
         """

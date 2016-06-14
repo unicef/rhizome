@@ -104,6 +104,7 @@ var DocForm = React.createClass({
        onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? ' ' : 'Sync Data'}
     </a>
 
+    console.log('this.state.created_doc_id : ', this.state.created_doc_id)
     let uploadButton = ''
     if (this.state.created_doc_id) {
       let nextLink = '/source-data/viewraw/' + this.state.created_doc_id

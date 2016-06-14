@@ -43,36 +43,29 @@ class DocumentResource(BaseModelResource):
         If post, create file and return the JSON of that object.
         If get, just query the source_doc table with request parameters
         '''
-        doc_data = bundle.data['docfile']
-        try:
-            doc_id = bundle.data['id']
-        except KeyError:
-            doc_id = None
 
-        try:
-            doc_title = bundle.data['doc_title'] + '-' + str(int(time.time()))
-        except KeyError:
-            doc_title = doc_data[:10]
-
-        new_doc = self.post_doc_data(
-            doc_data, bundle.request.user.id, doc_title, doc_id)
-
+        new_doc = self.post_doc_data(bundle)
         bundle.obj = new_doc
         bundle.data['id'] = new_doc.id
 
         return bundle
 
-    def post_doc_data(self, post_data, user_id, doc_title, doc_id):
+    def post_doc_data(self, bundle):
 
-        # when posting from ODK, i dont add the file_meta.. from the webapp
-        # i do.  I should change so the post requests are consistent but
-        # tryign to get this working for now.
+        # get the basic information needed from the request
+        # and add the epoch time to the title of the document
+        user_id, GET_data = bundle.request.user.id, bundle.data
+        post_data, doc_title = GET_data['docfile'], GET_data['doc_title'] \
+            + '-' + str(int(time.time()))
 
-        # TODO: better exception handling. This is kind of lame but handles the fact that test posts are different from
+        # this handles the fact that test posts are different from
         # application posts. Need to investigate.
         if post_data == 'data:' or len(post_data) == 0:
             raise RhizomeApiException(
                 message='file is empty please check the upload and try again')
+
+        # when posting from ODK cronjob, we dont add the file_meta. but we do
+        # from the webapp.  Look into changing so the requests are consistent
         try:
             file_meta, base64data = post_data.split(',')
         except ValueError:
@@ -82,11 +75,11 @@ class DocumentResource(BaseModelResource):
         file_content = None
 
         if '.csv' in doc_title:
+            new_file_path = None
             file_content = ContentFile(base64.b64decode(base64data))
             file_header = file_content.readline()
         elif '.xlsx' in doc_title or '.xls' in doc_title:
-            # workaround-- need to create the excel file in order to read from
-            # it
+            # workaround - need to create the xls file in order to read from it
             new_file_path = settings.MEDIA_ROOT + doc_title
             new_file = open(new_file_path, 'w')
             new_file.write(base64.b64decode(base64data))
@@ -97,15 +90,19 @@ class DocumentResource(BaseModelResource):
             except Exception:
                 os.remove(new_file_path)
                 raise RhizomeApiException(
-                    message='There was an error with your file. Please check the upload and try again')
+                    message='There was an error with your file. Please check \\\
+                        the upload and try again')
             file_content = ContentFile(file_df.to_csv())
             file_header = file_content.readline()
-            # delete the excel file
-            os.remove(new_file_path)
-        sd, created = Document.objects.update_or_create(
-            id=doc_id,
-            defaults={'doc_title': doc_title, 'created_by_id': user_id,
-                      'file_header': file_header}
-        )
+        else:
+            RhizomeApiException(
+                message='Please upload either xls, xlsx or csv file formats')
+
+        sd = Document.objects.create(**{
+             'doc_title': doc_title,
+             'created_by_id': user_id,
+             'file_header': file_header
+             })
         sd.docfile.save(sd.guid, file_content)
+
         return sd
