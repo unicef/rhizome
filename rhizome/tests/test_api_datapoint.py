@@ -6,7 +6,6 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
-from pprint import pprint
 
 class DataPointResourceTest(RhizomeApiTestCase):
 
@@ -533,11 +532,6 @@ class DataPointResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
         # produce the cartesian product of location and campaign
-
-        print '===\n' * 3
-        print get_parameter
-        pprint(response_data['objects'])
-        print '===\n' * 3
 
         ## 2 campaigns, one loc, one indicator gives you four ##
         self.assertEqual(len(response_data['objects']), 4)

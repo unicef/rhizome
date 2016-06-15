@@ -1,11 +1,14 @@
 from django.contrib.auth.models import User
-from pandas import read_csv, notnull
+from pandas import read_csv, notnull, DataFrame
 from numpy import isnan
 from django.test import TestCase
 
-from rhizome.models import Office, CacheJob, LocationType, Campaign, Location, CampaignType, Document, SourceSubmission, Indicator, IndicatorTag, IndicatorToTag, CampaignToIndicator, CalculatedIndicatorComponent, DataPoint, DataPointComputed, AggDataPoint
+from rhizome.models import Office, CacheJob, LocationType, Campaign, Location,\
+    CampaignType, Document, SourceSubmission, Indicator, IndicatorTag,\
+    IndicatorToTag, CampaignToIndicator, CalculatedIndicatorComponent, \
+    DataPoint, DataPointComputed, AggDataPoint, LocationTree
 from rhizome.agg_tasks import AggRefresh
-from rhizome.cache_meta import LocationTreeCache
+from rhizome.cache_meta import LocationTreeCache, OldLocationTreeCache
 from setup_helpers import TestSetupHelpers
 
 
@@ -31,6 +34,7 @@ class AggRefreshTestCase(TestCase):
         self.target_df = data_df[data_df['is_raw'] == 0]
         self.campaign_id = Campaign.objects.all()[0].id
         self.top_lvl_location = Location.objects.filter(name='Nigeria')[0]
+        # ltr = OldLocationTreeCache() ## LocationTreeCache()
         ltr = LocationTreeCache()
         ltr.main()
 
@@ -203,6 +207,17 @@ class AggRefreshTestCase(TestCase):
         #############################################
         ## ensure that the aggregated data gets in ##
         #############################################
+
+        loc_tree_df = DataFrame(list(LocationTree.objects.all().values()))
+        agg_df = DataFrame(list(AggDataPoint.objects.filter(\
+            indicator_id=indicator_id,\
+            campaign_id=self.campaign_id
+        ).values()))
+
+        # print loc_tree_df[loc_tree_df['parent_location_id'] ==\
+        #     agg_location_id]
+        # print '=== agg_dp df === %s ' % agg_location_id
+        # print agg_df
 
         agg_value = AggDataPoint.objects.get(
             indicator_id=indicator_id,

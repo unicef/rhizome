@@ -4,7 +4,9 @@ from pandas import concat
 from pandas import DataFrame
 from pandas import notnull
 
-from rhizome.models import DataPoint, Campaign, CacheJob, DataPointComputed, LocationTree, Indicator, SourceSubmission, CalculatedIndicatorComponent, AggDataPoint
+from rhizome.models import DataPoint, Campaign, CacheJob, DataPointComputed, \
+    LocationTree, Indicator, SourceSubmission, CalculatedIndicatorComponent,\
+    AggDataPoint
 from rhizome.cache_meta import IndicatorCache
 from rhizome.models import SourceSubmission
 import numpy as np
@@ -82,7 +84,6 @@ class AggRefresh(object):
         try:
             self.agg_datapoints()
             self.calc_datapoints()
-
         except Exception as err:
             self.cache_job.is_error = True
             self.cache_job.response_msg = err
@@ -107,7 +108,7 @@ class AggRefresh(object):
         campaigns_in_date_range = Campaign.objects.filter(
             start_date__lte=date_no_datetime, end_date__gte=data_date)
         parent_location_list = LocationTree.objects\
-            .filter(location_id=location_id)\
+            .filter(location_id=location_id,lvl__gt = 0)\
             .values_list('parent_location_id', flat=True)
 
         return [c.id for c in campaigns_in_date_range]
@@ -135,15 +136,17 @@ class AggRefresh(object):
         location_tree_columns = ['location_id', 'parent_location_id', 'lvl']
 
         dp_df = DataFrame(list(DataPoint.objects
-                               .filter(campaign_id=self.campaign.id)
-                               .values_list(*self.dp_columns)), columns=self.dp_columns)
+                   .filter(campaign_id=self.campaign.id)
+                   .values_list(*self.dp_columns)), columns=self.dp_columns)
 
         # NaN to None
         no_nan_dp_df = dp_df.where((notnull(dp_df)), None)
+
         # represents the location heirarchy as a cache from the location table
         location_tree_df = DataFrame(list(LocationTree.objects
-                                          .filter(location_id__in=list(dp_df['location_id'].unique()))
-                                          .values_list(*location_tree_columns)), columns=location_tree_columns)
+          .filter(location_id__in=list(dp_df['location_id'].unique()))
+          .values_list(*location_tree_columns)), columns=location_tree_columns)
+
         # join the location tree to the datapoints
         joined_location_df = no_nan_dp_df.merge(location_tree_df)
 
@@ -152,8 +155,13 @@ class AggRefresh(object):
         # if we ingest both, district and province level data, the national
         # will be double the value that it should be.
 
-        max_location_lvl_for_indicator_df = DataFrame(joined_location_df
-                                                      .groupby(['indicator_id'])['lvl'].min())  # highest lvl per indicator
+        # Make sure that the level is not zero, that is that we don't
+        # include a row here for the location itself.  Without this filter in
+        # the below operation, we wouldn't aggregate anything all.
+
+        loc_tree_df = joined_location_df[joined_location_df['lvl'] != 0]
+        max_location_lvl_for_indicator_df = DataFrame(loc_tree_df\
+          .groupby(['indicator_id'])['lvl'].min())  # highest lvl per indicator
         max_location_lvl_for_indicator_df.reset_index(level=0, inplace=True)
 
         integer_indicators = list(Indicator.objects.filter(
@@ -168,17 +176,16 @@ class AggRefresh(object):
 
         ## filter df to keep the data for the highest level per indicator ##
         prepped_df = joined_location_df\
-            .merge(max_location_lvl_for_indicator_df, on=['indicator_id', 'lvl'])
+            .merge(max_location_lvl_for_indicator_df\
+            , on=['indicator_id', 'lvl'])
 
         prepped_df['value'] = prepped_df['value'].astype(float)
+
         ## group by parent_location_id and take the sum ##
         grouped_df_sum = DataFrame(prepped_df
-                                   .groupby(['parent_location_id', 'indicator_id'])
-                                   ['value'].sum())
-
+           .groupby(['parent_location_id', 'indicator_id'])['value'].sum())
         grouped_df_mean = DataFrame(prepped_df
-                                    .groupby(['parent_location_id', 'indicator_id'])
-                                    ['value'].mean())
+            .groupby(['parent_location_id', 'indicator_id'])['value'].mean())
 
         for ix, dp in grouped_df_sum.iterrows():
             # only aggregate integers ( not boolean or pct )
