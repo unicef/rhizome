@@ -1,9 +1,8 @@
 import json
 
 from pandas import read_csv, notnull, DataFrame, concat
-from numpy import sqrt, log
 
-from rhizome.models import *
+from rhizome.models import Location, Indicator, LocationTree, LocationType
 from rhizome.models import SourceObjectMap
 
 
@@ -72,58 +71,82 @@ class IndicatorCache(object):
 class LocationTreeCache(object):
     """
     """
+
     def __init__(self):
 
-        self.location_tree_columns = ['location_id', 'parent_location_id']
+        self.location_tree_columns = ['location_id','parent_location_id','lvl']
         self.location_tree_df = DataFrame(columns=self.location_tree_columns)
 
     def main(self):
         '''
-        Any and all parents attributed any and all children.  See the test
-        case for an abstracted example.
+        The loop is initiated by taking the lowest level ( village for
+        instance ) and moving up throughout the tree. district > province >
+        region > country etc.
+
+        The process creates a dataframe caled location_tree_df that we continue
+        to append to finally bulk inserting that information into the db.
         '''
 
-        ## now iterate from bottom to bottom to top ##
-        location_type_loop_order = LocationType.objects.all()\
-            .values_list('id', flat=True).order_by('-admin_level')
+        ## iterate from bottom to bottom to top ##
+        for lt_id, name, admin_level in LocationType.objects.all()\
+            .values_list('id', 'name', 'admin_level')\
+            .order_by('-admin_level'):
 
-        for lt_id in location_type_loop_order:
             self.process_location_tree_lvl(lt_id)
 
+        self.add_lvl_zero_to_df()
         self.upsert_location_tree()
 
     def process_location_tree_lvl(self, location_type_id):
+        '''
+        Get and process data for a particular location type ( admin level ).
+        '''
 
         lt_batch = []
-
+        df_columns = ['location_id', 'parent_location_id']
         location_df = DataFrame(list(Location.objects
-                                     .filter(location_type_id=location_type_id)
-                                     .values_list('id', 'parent_location_id')), columns=self.location_tree_columns)
+                             .filter(location_type_id=location_type_id)
+                             .values_list('id', 'parent_location_id')),\
+                              columns= df_columns)
+        location_df['lvl'] = 1 # since this is a direct parent child relation
 
-        merged_df = location_df.merge(
-            self.location_tree_df, left_on='location_id', right_on='parent_location_id')
+        merged_df = location_df.merge(self.location_tree_df\
+                        ,left_on='location_id'\
+                        ,right_on='parent_location_id')
 
-        cleaned_merge_df = merged_df[['location_id_y', 'parent_location_id_x']]
+        cleaned_merge_df = merged_df[['location_id_y', 'parent_location_id_x'\
+            ,'lvl_y']]
+
+        cleaned_merge_df['lvl_y'] = cleaned_merge_df['lvl_y'] + 1
         cleaned_merge_df.columns = self.location_tree_columns
 
         self.location_tree_df = concat([self.location_tree_df, location_df,
                                         cleaned_merge_df])
-
         self.location_tree_df.drop_duplicates()
 
+    def add_lvl_zero_to_df(self):
+        '''
+        Every location should have a row for itself in this table such that
+        my any location is equal to it's parent when lvl = 0.
+        '''
+
+        unique_location_id_list = \
+            list(self.location_tree_df['location_id'].unique())
+
+        zero_level_df = DataFrame([[l, l, 0] for l in unique_location_id_list],\
+            columns = self.location_tree_columns)
+
+        self.location_tree_df = self.location_tree_df.append(zero_level_df)
+
+
     def upsert_location_tree(self):
+        """
+        """
 
         lt_batch = []
 
-        ## only the ultimate parent should have itself as a parent ##
-        ## drop all NA values, then create the ultimate parents ##
+        ## NaN --> None
         self.location_tree_df.dropna(inplace=True)
-        for loc in Location.objects.filter(parent_location_id__isnull=True):
-            lt_batch.append(LocationTree(**{
-                'location_id': loc.id,
-                'parent_location_id': loc.id,
-                'lvl': 0,
-            }))
 
         ## iterate through the location tree df created above ##
         for ix, loc in self.location_tree_df.iterrows():
@@ -136,41 +159,6 @@ class LocationTreeCache(object):
         LocationTree.objects.all().delete()
         LocationTree.objects.bulk_create(lt_batch)
 
-
-def update_source_object_names():
-
-    som_raw = SourceObjectMap.objects.raw(
-        '''
-        DROP TABLE IF EXISTS _tmp_object_names;
-        CREATE TEMP TABLE _tmp_object_names
-        AS
-
-        SELECT som.master_object_id, i.short_name as master_object_name, som.content_type
-        FROM source_object_map som
-        INNER JOIN indicator i
-            ON som.master_object_id = i.id
-            AND som.content_type = 'indicator'
-
-        UNION ALL
-
-        SELECT som.master_object_id, r.name, som.content_type
-        FROM source_object_map som
-        INNER JOIN location r
-            ON som.master_object_id = r.id
-            AND som.content_type = 'location';
-
-        UPDATE source_object_map som
-        set master_object_name = t.master_object_name
-        FROM _tmp_object_names t
-        WHERE t.master_object_id = som.master_object_id
-        AND t.content_type = som.content_type;
-
-        SELECT * FROM source_object_map limit 1;
-
-    ''')
-
-    for row in som_raw:
-        print row.id
 
 
 def minify_geo_json():
@@ -239,7 +227,5 @@ def cache_all_meta():
 
     indicator_cache_data = IndicatorCache()
     indicator_cache_data.main()
-
-    source_object_cache = update_source_object_names()
 
     # minify_geo_json()
