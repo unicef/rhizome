@@ -55,7 +55,7 @@ DashboardChartsActions.fetchChart.listenAndPromise(chart_id => {
 DashboardChartsActions.fetchMapFeatures.listen((location_ids, location_depth) => {
   DashboardChartsActions.fetchMapFeatures.promise(
     api.geo({
-      location_id__in: location_ids,
+      location_id: location_ids[0],
       location_depth: location_depth <= 0 ? null : location_depth
     }, null, {'cache-control': 'max-age=604800, public'})
   )

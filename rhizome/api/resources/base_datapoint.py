@@ -68,9 +68,9 @@ class BaseDataPointResource(BaseResource):
         if len(df) == 0: ## if no datapoints, just return cart product DF ##
             return cart_prod_df
 
-        df = df.merge(cart_prod_df, how='outer', on=columns_list)
+        df = cart_prod_df.merge(df, how='left', on=columns_list)
 
-        df["value"] = df["value_x"]
+        df["value"] = df["value_y"]
         df.drop("value_x", axis=1, inplace=True)
         df.drop("value_y", axis=1, inplace=True)
 

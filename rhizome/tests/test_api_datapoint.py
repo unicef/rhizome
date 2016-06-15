@@ -6,6 +6,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
+from pprint import pprint
 
 class DataPointResourceTest(RhizomeApiTestCase):
 
@@ -64,10 +65,11 @@ class DataPointResourceTest(RhizomeApiTestCase):
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
 
         # 2. Create The Indicator value
-        indicator = Indicator.objects.create(short_name='Number of vaccine doses used in HRD', \
-                                             name='Number of vaccine doses used in HRD', \
-                                             is_reported=0, \
-                                             description='Number of vaccine doses used in HRD', )
+        indicator = Indicator.objects\
+            .create(short_name='Number of vaccine doses used in HRD', \
+                     name='Number of vaccine doses used in HRD', \
+                     is_reported=0, \
+                     description='Number of vaccine doses used in HRD', )
 
         # 3. Create The Location
         office = Office.objects.create(name='Nigeria')
@@ -531,6 +533,14 @@ class DataPointResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
         # produce the cartesian product of location and campaign
+
+        print '===\n' * 3
+        print get_parameter
+        pprint(response_data['objects'])
+        print '===\n' * 3
+
+        ## 2 campaigns, one loc, one indicator gives you four ##
         self.assertEqual(len(response_data['objects']), 4)
 
+        ## even though there is only one datapoint with information ##
         self.assertEqual(DataPointComputed.objects.count(), 1)

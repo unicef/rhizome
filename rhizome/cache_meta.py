@@ -70,7 +70,8 @@ class IndicatorCache(object):
 
 
 class LocationTreeCache(object):
-
+    """
+    """
     def __init__(self):
 
         self.location_tree_columns = ['location_id', 'parent_location_id']

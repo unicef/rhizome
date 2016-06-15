@@ -129,38 +129,52 @@ class BaseResource(Resource):
         What they are permissioned to.
         '''
 
-        self.location_id = None
+        ## if location_id__in requested.. we return exactly those ids
+        ## for instance if you were doing data entry for 5 specific districts
+        ## you would use the location_id__in param to fetch just those ids
 
-        if 'location_id' in request.GET:
+        self.location_id = request.GET.get('location_id', None)
+        self.location_id_list = request.GET.get('location_id__in', None)
+        self.location_depth = int(request.GET.get('location_depth', 0))
 
-            self.location_id = int(request.GET['location_id'])
+        if self.location_id_list:
+            return self.location_id_list.split(',')
 
-            if 'location_type' in request.GET:
-                loc_type_id = int(request.GET['location_type'])
-                return LocationTree.objects.filter(
-                    location__location_type_id = loc_type_id,
-                    parent_location_id = location_id
-                ).values_list('location_id', flat=True)
+        if self.location_id:
 
-            elif 'location_depth' in request.GET:
-                return_locations = []
-                # this can probably be condensed into fewer queries...
-                parent_location_type = Location.objects.get(
-                    id=self.location_id).location_type_id
-                parent_admin_level = LocationType.objects.get(
-                    id=parent_location_type).admin_level
-                location_depth = int(request.GET['location_depth'])
-                descendant_location_type = LocationType.objects.get(
-                    admin_level=parent_admin_level + location_depth)
-                descendant_ids = LocationTree.objects.filter(
-                    location__location_type_id=descendant_location_type.id,
-                    parent_location_id=self.location_id
-                ).values_list('location_id', flat=True)
-                location_ids = descendant_ids
+            ## there is a depth column in the location_tree table, we just
+            ## need to fix the LocationTreeCache process so that we put the
+            ## proper depth_level in there.
+            ## see here https://trello.com/c/YPEF4pCg/885
+
+            descendant_ids = LocationTree.objects.filter(
+                parent_location_id=self.location_id,
+                lvl = self.location_depth
+            ).values_list('location_id', flat=True)
+            location_ids = descendant_ids
+
         else:
+            ## this really shouldn't happen -- when this condition hits
+            ## the app slows down.  Need to enforce on the FE that we
+            ## pass a `location_id` and also when possible a `depth_level`
             location_ids = Location.objects.all().values_list('id', flat=True)
+            # raise RhizomeApiException\
+            #     ('Please pass either `location_id__in` to get specific\
+            #     locations, or both `location_id and `location_depth` for a\
+            #     recursive result')
+
 
         try:
+            ## this allows us to filter locations based on the result of a
+            ## particular indicator / value.  So for instance.. think of the query
+            ## `show me the population of all areas controlled by insurgents in
+            ## location x.  We sould first get the locations based on the logic.
+            ## above, say all of the districts in Iraq, but then this code below
+            ## would further result that data to locations that meet a particular
+            ## filter i.e. {filterer_indicator = "is controlled" : value = 1 }
+            ## currently in our implementation with the Afghanistan EOC, this
+            ## filter is cotolred via a drop down for "LPD Status", values are
+            ## 1,2,3 based on their priority in the eradication initiative.
             request.GET['filter_indicator']
             location_ids = self.get_locations_from_filter_param(location_ids)
         except KeyError:
@@ -197,7 +211,7 @@ class BaseResource(Resource):
 
         allowed_methods = getattr(
             self._meta, "%s_allowed_methods" % request_type, None)
-        #
+
         if 'HTTP_X_HTTP_METHOD_OVERRIDE' in request.META:
             request.method = request.META['HTTP_X_HTTP_METHOD_OVERRIDE']
 
@@ -212,13 +226,11 @@ class BaseResource(Resource):
             response = method(request, **kwargs)
         # except RhizomeApiException as error: ## use more specific exception.
         except Exception as error: ## use more specific exception.
-
             data = {
                 'traceback': traceback.format_exc(),
                 'error': error.message,
                 # 'code': error.code
             }
-
             return self.error_response(
                 request,
                 data,
