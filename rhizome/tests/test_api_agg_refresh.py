@@ -1,24 +1,21 @@
 from setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.models import User, Office, CacheJob, LocationType, CampaignType, Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location, Indicator
+from rhizome.models import User, Office, CacheJob, LocationType, CampaignType,\
+    Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location,\
+    Indicator, DataPointComputed
 from base_test_case import RhizomeApiTestCase
 
-
 class AggRefreshAPITestCase(RhizomeApiTestCase):
-
+    # ./manage.py test rhizome.tests.test_api_agg_refresh.AggRefreshAPITestCase --settings=rhizome.settings.test
     def setUp(self):
         super(AggRefreshAPITestCase, self).setUp()
         self.ts = TestSetupHelpers()
 
         # create some metadata
-
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
-
         self.office_id = Office.objects.create(id=1, name='test').id
-
         cache_job_id = CacheJob.objects.create(
             id=-1, date_completed='2015-01-01', date_attempted='2015-01-01', is_error=False)
-
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
         self.location_type2 = LocationType.objects.create(admin_level=1,
@@ -81,23 +78,35 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         )
 
     def test_agg_refresh(self):
+        '''
+        When i pass a campaign the agg refresh should happen for that campaign,
+        and i should get a queryset that has the top 10 datapoints with the
+        given campaign
+        '''
         url = '/api/v1/agg_refresh/'
         data = {'campaign_id': self.campaign_id}
         resp = self.ts.get(self, url, data=data)
-        response_data = self.deserialize(resp)
+
         self.assertHttpOK(resp)
-        self.assertEqual(len(response_data['objects']), 1)
-        self.assertEqual(response_data['objects'][0]['id'], self.campaign_id)
+
+        response_data = self.deserialize(resp)
+        response_objects = response_data['objects']
+        db_objects = DataPointComputed.objects.all()
+
+        self.assertEqual(len(response_objects), len(db_objects))
 
     def test_agg_refresh_no_campaign(self):
         url = '/api/v1/agg_refresh/'
         resp = self.ts.get(self, url)
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
-        all_offices = Office.objects.all().values()
-        self.assertEqual(len(response_data['objects']), len(all_offices))
-        self.assertEqual(all_offices[0]['id'],
-                         response_data['objects'][0]['id'])
+
+        response_data = self.deserialize(resp)
+        response_objects = response_data['objects']
+        db_objects = DataPointComputed.objects.all()
+
+        all_campaigns = Campaign.objects.all().values()
+        self.assertEqual(len(response_objects), len(db_objects))
 
     def test_invalid_campaign_id(self):
         url = '/api/v1/agg_refresh/'
