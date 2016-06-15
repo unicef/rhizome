@@ -1,16 +1,9 @@
-
 from rhizome.models import MinGeo
 from rhizome.api.resources.base_model import BaseModelResource
 from tastypie import fields
 from tastypie.resources import ALL
 
-# class GeoJsonResult(object):
-#     location_id = int()
-#     type = unicode()
-#     properties = dict()
-#     geometry = dict()
-#     parent_location_id = int()
-
+import json
 
 class GeoResource(BaseModelResource):
     '''
@@ -28,9 +21,6 @@ class GeoResource(BaseModelResource):
     '''
 
     location_id = fields.IntegerField(attribute='location_id')
-    # type = fields.CharField(attribute='type')
-    # properties = fields.DictField(attribute='properties')
-    # geometry = fields.DictField(attribute='geometry')
     parent_location_id = fields.IntegerField(attribute='parent_location_id')
 
     class Meta(BaseModelResource.Meta):
@@ -46,28 +36,20 @@ class GeoResource(BaseModelResource):
         parse the url, query the polygons table and do some
         ugly data munging to convert the results from the DB into geojson
         '''
-        # features = []
-
+        objects = []
         loc_id_list = self.get_locations_to_return_from_url(request)
-
-        # print '======loc_id_list======\n' * 5
-        # print loc_id_list
-        # print '======loc_id_list======\n' * 5
-
-        return MinGeo.objects.filter(location_id__in=loc_id_list).values()
-
-        # polygon_values_list = MinGeo.objects.filter(
-        #     location_id__in=location_ids_to_return)
-        # for p in polygon_values_list:
-        #     geo_obj = GeoJsonResult()
-        #     geo_obj.location_id = p.location.id
-        #     geo_obj.geometry = p.geo_json['geometry']
-        #     geo_obj.type = p.geo_json['type']
-        #     # geo_obj.properties = {'location_id': p.location.id}
-        #     geo_obj.parent_location_id =\
-        #         p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
-        #     features.append(geo_obj)
-        # return features
+        for p in MinGeo.objects.filter(
+            location_id__in=loc_id_list):
+            geo_obj = {
+            'location_id' : p.location.id,
+            'geometry' : p.geo_json['geometry'],
+            'type': p.geo_json['type'],
+            'properties': {'location_id': p.location.id},
+            'parent_location_id' :\
+                p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
+            }
+            objects.append(geo_obj)
+        return objects
 
     def obj_get_list(self, bundle, **kwargs):
         '''

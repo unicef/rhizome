@@ -173,7 +173,9 @@ class MinGeo(models.Model):
     '''
 
     location = models.OneToOneField(Location)
+    # parent_location = models.ForeignKey(Location, related_name='parent')
     geo_json = JSONField()
+    # properties = JSONField()
 
     class Meta:
         db_table = 'min_polygon'

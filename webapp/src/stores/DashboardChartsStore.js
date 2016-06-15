@@ -370,7 +370,8 @@ var DashboardChartsStore = Reflux.createStore({
   onFetchMapFeaturesCompleted: function (response) {
     const currently_fetching_charts = _.toArray(this.charts).filter(chart => chart.fetching_map)
     const uuid = currently_fetching_charts[0].uuid
-    this.charts[uuid].features = response.objects.features
+    console.log('response: ', response)
+    this.charts[uuid].features = response.objects
     this.charts[uuid].loading = true
     this.charts[uuid].fetching_map = false
     this.fetchDatapoints(uuid)
