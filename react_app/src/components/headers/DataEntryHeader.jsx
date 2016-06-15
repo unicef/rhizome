@@ -1,19 +1,17 @@
 import _ from 'lodash'
+import moment from 'moment'
 import React from 'react'
 import {Multiselect} from 'react-widgets'
 import DropdownButton from 'components/button/DropdownButton'
-import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
-import ResourceTable from 'components/molecules/ResourceTable'
 import SwitchButton from 'components/form/SwitchButton'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
-import Moment from 'moment'
+import DateRangeSelect from 'components/select/DateRangeSelect'
 import momentLocalizer from 'react-widgets/lib/localizers/moment'
-momentLocalizer(Moment)
+momentLocalizer(moment)
 
 const DataEntryHeader = props => {
-  console.log('props', props)
   const formEntry = props.entry_type === 'campaign'
 
   const selected_indicator = _.isEmpty(props.selected_indicators) ? {name: 'Select Indicator'} : props.selected_indicators[0]
@@ -60,9 +58,14 @@ const DataEntryHeader = props => {
     />
   )
 
+  const start_date = moment(props.start_date, 'YYYY-MM-DD').toDate()
+  const end_date = moment(props.end_date, 'YYYY-MM-DD').toDate()
   const date_select = (
-    <DateTimePicker
-      defaultValue={new Date()}
+    <DateRangeSelect
+      sendValue={props.setDataEntryDateRange}
+      start={start_date}
+      end={end_date}
+      fromComponent='MultiChartControls'
     />
   )
 

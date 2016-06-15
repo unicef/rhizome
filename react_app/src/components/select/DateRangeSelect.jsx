@@ -1,7 +1,8 @@
+import moment from 'moment'
 import React from 'react'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
-var DateMultiSelect = React.createClass({
+var DateRangeSelect = React.createClass({
   propTypes: {
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
@@ -11,8 +12,8 @@ var DateMultiSelect = React.createClass({
 
   getInitialState: function () {
     return {
-      start: this.props.start,
-      end: this.props.end
+      start: moment(this.props.start).format('YYYY-MM-DD'),
+      end: moment(this.props.end).format('YYYY-MM-DD')
     }
   },
 
@@ -26,31 +27,38 @@ var DateMultiSelect = React.createClass({
   },
 
   handleDateChange: function (type, date, dateStr) {
+    console.log('date', date)
     if (type === 'start') {
-      this.setState({start: date})
+      this.setState({start: moment(date).format('YYYY-MM-DD')})
     } else {
-      this.setState({end: date})
+      this.setState({end: moment(date).format('YYYY-MM-DD')})
     }
-    this.props.sendValue(type, dateStr)
+    this.props.sendValue(this.state)
   },
 
   render () {
+    const moment_date = moment(this.state.start)
+    console.log('moment_date', moment_date)
+    const moment_date_format = moment(this.state.start).format('YYYY-MM-DD')
+    console.log('moment_date_format', moment_date_format)
+    const js_date = moment(this.state.start).toDate()
+    console.log('js_date', js_date)
     return (
       <div className='date-range-picker'>
         <DateTimePicker
-          value={this.state.start}
+          value={moment(this.state.start).toDate()}
           time={false}
-          format={'yyyy-MM-dd'}
-          onChange={this.handleDateChange.bind(this, 'start')} />
+          format={'YYYY-MM-DD'}
+          onChange={date => this.handleDateChange('start', date)} />
         <span>to</span>
         <DateTimePicker
-          value={this.state.end}
+          value={moment(this.state.end).toDate()}
           time={false}
-          format={'yyyy-MM-dd'}
-          onChange={this.handleDateChange.bind(this, 'end')} />
+          format={'YYYY-MM-DD'}
+          onChange={date => this.handleDateChange('end', date)} />
       </div>
     )
   }
 })
 
-export default DateMultiSelect
+export default DateRangeSelect

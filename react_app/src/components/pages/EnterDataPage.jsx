@@ -58,8 +58,6 @@ class EnterDataPage extends Component {
       />
     )
 
-
-
     return (
       <div className='data-entry-page'>
         <DataEntryHeader {...props} />

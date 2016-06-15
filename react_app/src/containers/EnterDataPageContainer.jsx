@@ -3,7 +3,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import EnterDataPage from 'components/pages/EnterDataPage'
 import { selectGlobalCampaign, selectGlobalLocation, setGlobalIndicators, setGlobalIndicatorTag } from 'actions/global_actions'
-import { toggleEntryType, setDataEntryDate } from 'actions/data_entry_actions'
+import { toggleEntryType, setDataEntryDateRange } from 'actions/data_entry_actions'
 import { getDatapoints } from 'actions/datapoint_actions'
 
 const mapStateToProps = state => {
@@ -17,7 +17,8 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     indicators: state.indicators,
     locations: state.locations,
-    date: state.data_entry.date,
+    start_date: state.data_entry.start_date,
+    end_date: state.data_entry.end_date,
     entry_type: state.data_entry.entry_type,
     dataParamsChanged: state.data_entry.dataParamsChanged,
     selected_campaign: state.data_entry.selected_campaign,
@@ -28,7 +29,7 @@ const mapStateToProps = state => {
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-  setDataEntryDate,
+  setDataEntryDateRange,
   toggleEntryType,
 	selectGlobalCampaign,
 	selectGlobalLocation,

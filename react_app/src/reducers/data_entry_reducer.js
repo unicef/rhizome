@@ -1,9 +1,11 @@
+import moment from 'moment'
 import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const data = {
-  date: null,
-  entry_type: 'campaign',
+  start_date: moment().format('YYYY-MM-DD'),
+  end_date: moment().format('YYYY-MM-DD'),
+  entry_type: 'date',
   selected_campaign: null,
   selected_locations: [],
   selected_indicators: [],
@@ -13,9 +15,10 @@ const data = {
 }
 
 const data_entry = handleActions({
-  SET_DATA_ENTRY_DATE: (state, action) => {
+  SET_DATA_ENTRY_DATE_RANGE: (state, action) => {
     return Object.assign({}, state, {
-      date: action.payload
+      start_date: action.payload.start,
+      end_date: action.payload.end
     })
   },
   TOGGLE_DATA_ENTRY_TYPE: (state, action) => {
