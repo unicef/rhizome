@@ -129,35 +129,34 @@ class BaseResource(Resource):
         What they are permissioned to.
         '''
 
-        if 'location_id__in' in request.GET:
-            location_ids = map(int, request.GET['location_id__in'].split(','))
+        self.location_id = None
+
+        if 'location_id' in request.GET:
+
+            self.location_id = int(request.GET['location_id'])
 
             if 'location_type' in request.GET:
                 loc_type_id = int(request.GET['location_type'])
                 return LocationTree.objects.filter(
-                    location__location_type_id=loc_type_id,
-                    parent_location_id__in=location_ids
+                    location__location_type_id = loc_type_id,
+                    parent_location_id = location_id
                 ).values_list('location_id', flat=True)
 
             elif 'location_depth' in request.GET:
                 return_locations = []
-                for location_id in location_ids:
-                    # this can probably be condensed into fewer queries...
-                    parent_location_type = Location.objects.get(
-                        id=location_id).location_type_id
-                    parent_admin_level = LocationType.objects.get(
-                        id=parent_location_type).admin_level
-                    location_depth = int(request.GET['location_depth'])
-                    descendant_location_type = LocationType.objects.get(
-                        admin_level=parent_admin_level + location_depth)
-                    descendant_ids = LocationTree.objects.filter(
-                        location__location_type_id=descendant_location_type.id,
-                        parent_location_id=location_id
-                    ).values_list('location_id', flat=True)
-                    return_locations.extend(descendant_ids)
-
-                location_ids = return_locations
-
+                # this can probably be condensed into fewer queries...
+                parent_location_type = Location.objects.get(
+                    id=self.location_id).location_type_id
+                parent_admin_level = LocationType.objects.get(
+                    id=parent_location_type).admin_level
+                location_depth = int(request.GET['location_depth'])
+                descendant_location_type = LocationType.objects.get(
+                    admin_level=parent_admin_level + location_depth)
+                descendant_ids = LocationTree.objects.filter(
+                    location__location_type_id=descendant_location_type.id,
+                    parent_location_id=self.location_id
+                ).values_list('location_id', flat=True)
+                location_ids = descendant_ids
         else:
             location_ids = Location.objects.all().values_list('id', flat=True)
 

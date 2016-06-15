@@ -37,7 +37,7 @@ class GeoResource(BaseModelResource):
         ugly data munging to convert the results from the DB into geojson
         '''
         objects = []
-        loc_id_list = self.get_locations_to_return_from_url(request)
+        loc_id_list = list(self.get_locations_to_return_from_url(request))
         for p in MinGeo.objects.filter(
             location_id__in=loc_id_list):
             geo_obj = {
