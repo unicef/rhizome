@@ -65,8 +65,9 @@ class GeoResourceTest(RhizomeApiTestCase):
 
 
     def test_get_geo(self):
-        get_data ={'location_id__in':6, 'location_depth':1}
+        get_data ={'location_id':6, 'location_depth':1}
         resp = self.ts.get(self, '/api/v1/geo/', get_data)
         self.assertHttpOK(resp)
-        self.deserialize(resp)
-        self.assertEqual(len(self.deserialize(resp)['features']), 5)
+        response_data = self.deserialize(resp)
+        response_objects = response_data['objects']
+        self.assertEqual(len(response_objects), 5)

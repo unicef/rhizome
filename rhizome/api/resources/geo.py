@@ -1,61 +1,73 @@
 
 from rhizome.models import MinGeo
-from rhizome.api.resources.base_non_model import BaseNonModelResource
+from rhizome.api.resources.base_model import BaseModelResource
 from tastypie import fields
 from tastypie.resources import ALL
 
+# class GeoJsonResult(object):
+#     location_id = int()
+#     type = unicode()
+#     properties = dict()
+#     geometry = dict()
+#     parent_location_id = int()
 
-class GeoJsonResult(object):
-    location_id = int()
-    type = unicode()
-    properties = dict()
-    geometry = dict()
-    parent_location_id = int()
 
-
-class GeoResource(BaseNonModelResource):
+class GeoResource(BaseModelResource):
     '''
-    **GET Request** A non model resource that allows us to query for shapefiles based on a colletion of parameters.
-        - *Required Parameters:* 
-            'location_id__in' the location of the shape file that we wish to retrieve
-        - *Optional Parameters:* 
-            'location_depth' the recursive depth in relation to the location_id parameter. For instance, a depth of 1 would get all children of that location. 2 would return all "grandchildren"
-            'location_type' return the descendants of the location_id param that have the given location_type id.
+    **GET Request** A non model resource that allows us to query for shapefiles
+        based on a colletion of parameters.
+        - *Required Parameters:*
+            'location_id__in' the location of the shape file that we wish
+            to retrieve
+        - *Optional Parameters:*
+            'location_depth' the recursive depth in relation to the location_id
+            parameter. For instance, a depth of 1 would get all children of that
+             location. 2 would return all "grandchildren"
+            'location_type' return the descendants of the location_id param that
+             have the given location_type id.
     '''
 
     location_id = fields.IntegerField(attribute='location_id')
-    type = fields.CharField(attribute='type')
-    properties = fields.DictField(attribute='properties')
-    geometry = fields.DictField(attribute='geometry')
+    # type = fields.CharField(attribute='type')
+    # properties = fields.DictField(attribute='properties')
+    # geometry = fields.DictField(attribute='geometry')
     parent_location_id = fields.IntegerField(attribute='parent_location_id')
 
-    class Meta(BaseNonModelResource.Meta):
-        object_class = GeoJsonResult
+    class Meta(BaseModelResource.Meta):
+        object_class = MinGeo
         resource_name = 'geo'
         filtering = {
             "location_id": ALL,
         }
+        default_limit = 10000
 
     def get_object_list(self, request):
         '''
         parse the url, query the polygons table and do some
         ugly data munging to convert the results from the DB into geojson
         '''
-        features = []
+        # features = []
 
-        location_ids_to_return = self.get_locations_to_return_from_url(request)
-        polygon_values_list = MinGeo.objects.filter(
-            location_id__in=location_ids_to_return)
-        for p in polygon_values_list:
-            geo_obj = GeoJsonResult()
-            geo_obj.location_id = p.location.id
-            geo_obj.geometry = p.geo_json['geometry']
-            geo_obj.type = p.geo_json['type']
-            geo_obj.properties = {'location_id': p.location.id}
-            geo_obj.parent_location_id =\
-                p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
-            features.append(geo_obj)
-        return features
+        loc_id_list = self.get_locations_to_return_from_url(request)
+
+        # print '======loc_id_list======\n' * 5
+        # print loc_id_list
+        # print '======loc_id_list======\n' * 5
+
+        return MinGeo.objects.filter(location_id__in=loc_id_list).values()
+
+        # polygon_values_list = MinGeo.objects.filter(
+        #     location_id__in=location_ids_to_return)
+        # for p in polygon_values_list:
+        #     geo_obj = GeoJsonResult()
+        #     geo_obj.location_id = p.location.id
+        #     geo_obj.geometry = p.geo_json['geometry']
+        #     geo_obj.type = p.geo_json['type']
+        #     # geo_obj.properties = {'location_id': p.location.id}
+        #     geo_obj.parent_location_id =\
+        #         p.location.id if p.location.parent_location_id is None else p.location.parent_location_id
+        #     features.append(geo_obj)
+        # return features
 
     def obj_get_list(self, bundle, **kwargs):
         '''
@@ -64,26 +76,26 @@ class GeoResource(BaseNonModelResource):
         '''
         return self.get_object_list(bundle.request)
 
-    def dehydrate(self, bundle):
-
-        bundle.data.pop("resource_uri", None)
-        return bundle
-
-    def alter_list_data_to_serialize(self, request, data):
-        '''
-        If there is an error for this resource, add that to the response.  If
-        there is no error, than add this key, but set the value to null.  Also
-        add the total_count to the meta object as well
-        '''
-        # get rid of the meta_dict. i will add my own meta data.
-        data['type'] = "FeatureCollection"
-        data['features'] = data['objects']
-        data['error'] = None  # fix this.
-
-        data.pop("objects", None)
-        data.pop("meta", None)
-
-        if 'location_id__in' in request.GET:
-            data['location_id__in'] = request.GET['location_id__in']
-
-        return data
+    # def dehydrate(self, bundle):
+    #
+    #     bundle.data.pop("resource_uri", None)
+    #     return bundle
+    #
+    # def alter_list_data_to_serialize(self, request, data):
+    #     '''
+    #     If there is an error for this resource, add that to the response.  If
+    #     there is no error, than add this key, but set the value to null.  Also
+    #     add the total_count to the meta object as well
+    #     '''
+    #     # get rid of the meta_dict. i will add my own meta data.
+    #     data['type'] = "FeatureCollection"
+    #     data['features'] = data['objects']
+    #     data['error'] = None  # fix this.
+    #
+    #     data.pop("objects", None)
+    #     data.pop("meta", None)
+    #
+    #     if 'location_id__in' in request.GET:
+    #         data['location_id__in'] = request.GET['location_id__in']
+    #
+    #     return data
