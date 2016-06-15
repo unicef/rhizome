@@ -153,7 +153,7 @@ class LocationTreeCache(object):
             lt_batch.append(LocationTree(**{
                 'location_id': loc.location_id,
                 'parent_location_id': loc.parent_location_id,
-                'lvl': 0,
+                'lvl': loc.lvl,
             }))
 
         LocationTree.objects.all().delete()
