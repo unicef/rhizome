@@ -28,8 +28,31 @@ class BaseNonModelResource(BaseResource):
 
         return bundle
 
-    def pre_process_resoruce_data(self, request):
+    def get_object_list(self, request):
+        '''
+        Basic GET behavior for the non model resource.
+
+        This line of code applies the queryset
+
+        This is useful becuase for instance, if you want to queue up your data
+        in a persistent data structure, you can us `pre_process_data`, and
+        then set the `queryset` to be the output of that operation.  In this
+        case while you loose some speed of request by writing that data before
+        reading it again, as opposed to just feeding it up directly, but if for
+        instance that data needs to be persistent for later use ( take for
+        example the DocTransform logic, which saves .csv data to a number of
+        tables that then the user can interact with.
+        '''
+        return list(self._meta.queryset[:self._meta.default_limit])
+
+    def get_list(self, request, **kwargs):
         """
+        Overriden from Tastypie.. Very simply, run any necessary preprocssing,
+        and then return the queryset that is assigned in the Meta class of
+        the resource.
+
+        ===
+
         One of the uses of the base_non_model_resources is that when we have
         an API call that really is meant to process data more than it is to
         GET or POST it.
@@ -42,19 +65,10 @@ class BaseNonModelResource(BaseResource):
         a GET request is handled in the `QuerySet` attribute of the Meta class.
         """
 
-        pre_process_resource_data = hasattr(self, "pre_process_data", None)
-        if pre_process_data_operation:
+        if hasattr(self, "pre_process_data"):
             self.pre_process_data(request)
 
-    def get_list(self, request, **kwargs):
-        """
-        Overriden from Tastypie.. Very simply, run any necessary preprocssing,
-        and then return the queryset that is assigned in the Meta class of
-        the resource.
-        """
-
-        self.pre_process_resource_data(request)
-        objects = list(self._meta.queryset[:self._meta.default_limit])
+        objects = self.get_object_list(request)
 
         response_data = {
             'objects': objects,

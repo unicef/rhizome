@@ -35,9 +35,6 @@ class AllMetaResource(BaseNonModelResource):
         object_class = AllMetaResult
         resource_name = 'all_meta'
 
-    def obj_get_list(self, bundle, **kwargs):
-        return self.get_object_list(bundle.request)
-
     def get_object_list(self, request):
         qs = []
         am_result = AllMetaResult()
@@ -61,4 +58,4 @@ class AllMetaResource(BaseNonModelResource):
             id=request.user.id).is_superuser
         qs.append(am_result)
 
-        return qs
+        return [x.__dict__ for x in qs]
