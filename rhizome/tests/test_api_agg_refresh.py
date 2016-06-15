@@ -5,8 +5,10 @@ from rhizome.models import User, Office, CacheJob, LocationType, CampaignType,\
     Indicator, DataPointComputed
 from base_test_case import RhizomeApiTestCase
 
+
 class AggRefreshAPITestCase(RhizomeApiTestCase):
     # ./manage.py test rhizome.tests.test_api_agg_refresh.AggRefreshAPITestCase --settings=rhizome.settings.test
+
     def setUp(self):
         super(AggRefreshAPITestCase, self).setUp()
         self.ts = TestSetupHelpers()
