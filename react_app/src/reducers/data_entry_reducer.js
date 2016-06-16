@@ -5,7 +5,7 @@ import { handleActions } from 'redux-actions'
 const data = {
   start_date: moment().format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
-  entry_type: 'date',
+  data_type: 'campaign',
   selected_campaign: null,
   selected_locations: [],
   selected_indicators: [],
@@ -15,15 +15,19 @@ const data = {
 }
 
 const data_entry = handleActions({
-  SET_DATA_ENTRY_DATE_RANGE: (state, action) => {
+  SET_DATA_ENTRY_START_DATE: (state, action) => {
     return Object.assign({}, state, {
-      start_date: action.payload.start,
-      end_date: action.payload.end
+      start_date: action.payload
+    })
+  },
+  SET_DATA_ENTRY_END_DATE: (state, action) => {
+    return Object.assign({}, state, {
+      end_date: action.payload
     })
   },
   TOGGLE_DATA_ENTRY_TYPE: (state, action) => {
     return Object.assign({}, state, {
-      entry_type: state.entry_type === 'campaign' ? 'date' : 'campaign'
+      data_type: state.data_type === 'campaign' ? 'date' : 'campaign'
     })
   },
   GET_INITIAL_DATA_SUCCESS: (state, action) => {

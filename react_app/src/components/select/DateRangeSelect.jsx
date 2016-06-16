@@ -6,6 +6,8 @@ var DateRangeSelect = React.createClass({
   propTypes: {
     start: React.PropTypes.object.isRequired,
     end: React.PropTypes.object.isRequired,
+    start_date: React.PropTypes.object.isRequired,
+    end_date: React.PropTypes.object.isRequired,
     sendValue: React.PropTypes.func.isRequired,
     fromComponent: React.PropTypes.string.isRequired
   },
@@ -19,10 +21,7 @@ var DateRangeSelect = React.createClass({
 
   componentWillReceiveProps: function (nextProps) {
     if (nextProps.fromComponent === 'ChartContainer') {
-      this.setState({
-        start: nextProps.start,
-        end: nextProps.end
-      })
+      this.setState({ start: nextProps.start, end: nextProps.end })
     }
   },
 
@@ -33,26 +32,20 @@ var DateRangeSelect = React.createClass({
     } else {
       this.setState({end: moment(date).format('YYYY-MM-DD')})
     }
-    this.props.sendValue(this.state)
+    this.props.sendValue(Object.assign({}, ))
   },
 
   render () {
-    const moment_date = moment(this.state.start)
-    console.log('moment_date', moment_date)
-    const moment_date_format = moment(this.state.start).format('YYYY-MM-DD')
-    console.log('moment_date_format', moment_date_format)
-    const js_date = moment(this.state.start).toDate()
-    console.log('js_date', js_date)
     return (
       <div className='date-range-picker'>
         <DateTimePicker
-          value={moment(this.state.start).toDate()}
+          value={this.props.start_date}
           time={false}
           format={'YYYY-MM-DD'}
           onChange={date => this.handleDateChange('start', date)} />
         <span>to</span>
         <DateTimePicker
-          value={moment(this.state.end).toDate()}
+          value={this.props.end_date}
           time={false}
           format={'YYYY-MM-DD'}
           onChange={date => this.handleDateChange('end', date)} />
