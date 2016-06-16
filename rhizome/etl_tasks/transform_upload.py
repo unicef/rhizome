@@ -335,6 +335,10 @@ class DateDocTransform(DocTransform):
         }
         return submission_dict, instance_guid
 
+
+    def main(self):
+        self.process_file()
+
     def process_file(self):
         '''
         Takes a file and dumps the data into the source submission table.

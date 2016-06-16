@@ -1,6 +1,4 @@
 from rhizome.agg_tasks import AggRefresh
-from django.db import transaction
-from django.db.transaction import TransactionManagementError
 from django.db import models, migrations
 from rhizome.models import DataPoint, Campaign
 

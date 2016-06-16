@@ -134,8 +134,10 @@ class AggRefresh(object):
         no_nan_dp_df = dp_df.where((notnull(dp_df)), None)
 
         # represents the location heirarchy as a cache from the location table
+        # list(dp_df['location_id'].unique())
+
         location_tree_df = DataFrame(list(LocationTree.objects
-          .filter(location_id__in=list(dp_df['location_id'].unique()))
+          .filter(location_id__in=[12907])
           .values_list(*location_tree_columns)), columns=location_tree_columns)
 
         # join the location tree to the datapoints

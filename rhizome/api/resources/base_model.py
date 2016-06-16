@@ -128,6 +128,9 @@ class BaseModelResource(ModelResource, BaseResource):
         ``GET`` dictionary of bundle.request can be used to narrow the query.
         """
 
+        ## validate the filters ##
+        filters = self.validate_filters(bundle.request)
+
         ## Update with the provided kwargs ##
         filters.update(kwargs)
 
@@ -144,9 +147,6 @@ class BaseModelResource(ModelResource, BaseResource):
         Overriden from Tastypie..
         """
 
-        ## validate the filters ##
-        filters = self.validate_filters(bundle.request)
-        
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(
             bundle=base_bundle, **self.remove_api_resource_names(kwargs))

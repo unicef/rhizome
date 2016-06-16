@@ -20,7 +20,7 @@ class BaseNonModelResource(BaseResource):
         always_return_data = True
         cache = CustomCache()
         serializer = CustomSerializer()
-        GET_params_required = ['indicator_id']
+        GET_params_required = []
         default_limit = 1
 
     def dehydrate(self, bundle):

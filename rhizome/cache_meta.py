@@ -220,19 +220,18 @@ class LocationTreeCache(object):
                 'lvl': loc.lvl,
             }))
 
+        LocationTree.objects.all().delete()
+        LocationTree.objects.bulk_create(lt_batch)
+
         ## add the ultimate parent as it will not have a record in the df yet
         ultimate_parent_id = Location.objects\
             .filter(parent_location_id__isnull = True)[0].id
+
         ult_parent, created = LocationTree.objects.get_or_create(
             location_id = ultimate_parent_id,
             parent_location_id = ultimate_parent_id,
             defaults = {'lvl': 0},
         )
-
-
-        LocationTree.objects.all().delete()
-        LocationTree.objects.bulk_create(lt_batch)
-
 
 def minify_geo_json():
     '''
