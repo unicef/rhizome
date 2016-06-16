@@ -14,6 +14,10 @@ export default class BasePage extends Component {
 		NProgress.start()
   }
 
+  componentDidUpdate (nextProps, nextState) {
+		NProgress.done()
+  }
+
   render () {
   	return (
 			<div role='main'>
