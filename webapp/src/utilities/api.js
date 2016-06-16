@@ -369,7 +369,7 @@ export default {
   campaign: endPoint('/campaign/', 'get', 1),
   campaign_type: endPoint('/campaign_type/', 'get', 1),
   locations: endPoint('/location/', 'get', 1),
-  datapointsRaw: endPoint('/datapointentry/', 'get', 1),
+
   indicators: endPoint('/indicator/', 'get', 1),
   office: endPoint('/office/', 'get', 1),
   homepage: endPoint('/homepage/', 'get', 1),
@@ -416,7 +416,6 @@ export default {
   // POST //
   docDetailPost: endPoint('/doc_detail/', 'post'),
   uploadPost: endPoint('/source_doc/', 'post'),
-  datapointUpsert: endPoint('/datapointentry/', 'post'),
   save_dashboard: endPoint('/custom_dashboard/', 'post', 1),
   post_campaign: endPoint('/campaign/', 'post', 1),
   remove_dashboard: emptyResponsePoint('/custom_dashboard', 'delete', 1, false),

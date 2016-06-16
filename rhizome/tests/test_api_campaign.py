@@ -15,9 +15,9 @@ class CampaignResourceTest(RhizomeApiTestCase):
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
         self.o = self.ts.create_arbitrary_office()
-        self.not_allowed_to_see_location = self.ts.create_arbitrary_location(
-            self.lt.id,
-            self.o.id)
+        # self.not_allowed_to_see_location = self.ts.create_arbitrary_location(
+        #     self.lt.id,
+        #     self.o.id)
 
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
@@ -51,16 +51,16 @@ class CampaignResourceTest(RhizomeApiTestCase):
             name="can_see2"
         )
 
-        self.can_not_see_campaign = self.ts.create_arbitrary_campaign(
-            office_id=self.o.id,
-            campaign_type_id=self.ct.id,
-            location_id=self.not_allowed_to_see_location.id,
-            indicator_tag_id=self.it.id,
-        )
-
-        ### set the user permission ###
-        LocationPermission.objects.create(user_id=self.ts.user.id,
-                                          top_lvl_location_id=self.top_lvl_location.id)
+        # self.can_not_see_campaign = self.ts.create_arbitrary_campaign(
+        #     office_id=self.o.id,
+        #     campaign_type_id=self.ct.id,
+        #     location_id=self.not_allowed_to_see_location.id,
+        #     indicator_tag_id=self.it.id,
+        # )
+        #
+        # ### set the user permission ###
+        # LocationPermission.objects.create(user_id=self.ts.user.id,
+        #                                   top_lvl_location_id=self.top_lvl_location.id)
 
         self.ts.get_credentials(self)
 

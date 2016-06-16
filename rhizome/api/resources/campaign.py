@@ -31,14 +31,3 @@ class CampaignResource(BaseModelResource):
         resource_name = 'campaign'
         object_class = Campaign
         required_fields_for_post = ['office_id', 'start_date', 'end_date']
-
-    def get_object_list(self, request):
-
-        qs = Campaign.objects.filter(
-            top_lvl_location_id=self.top_lvl_location_id)
-
-        if 'id__in' in request.GET:
-            requested_ids = request.GET['id__in'].split(",")
-            return qs.filter(id__in=requested_ids).values().order_by('-start_date')
-        else:
-            return qs.values().order_by('-start_date')

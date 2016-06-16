@@ -135,7 +135,7 @@ class BaseResource(Resource):
             keys_req = self._meta.GET_params_required
             missing_keys = list(set(keys_req).difference(set(filters.keys())))
             if len(missing_keys) > 0:
-                msg = 'Missing required parameter %s ' % missing_keys[0]
+                msg = 'Missing required parameter %s' % missing_keys[0]
                 raise RhizomeApiException(msg)
 
         return filters

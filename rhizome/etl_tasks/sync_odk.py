@@ -34,8 +34,11 @@ class OdkJarFileException(Exception):
 
         if "form ID doesn't exist on server" in java_message:
 
-            self.errorMessage = 'form id "{0}" does not exists on this server.\n\n Please check: \n\n {1}/Aggregate.html#management/forms/ \n\n and ensure that the FORM_ID you entered is correct. '.format(kwargs[
-                                                                                                                                                                                                             'odk_form_name'], kwargs['odk_aggregate_url'])
+            self.errorMessage = 'form id: \\\
+                "{0}" does not exists on this server.\n\n Please check: \n\n \\\
+                 {1}/Aggregate.html#management/forms/ \n\n and ensure that\\\
+                 the FORM_ID you entered is correct. '\
+            .format(kwargs['odk_form_name'], kwargs['odk_aggregate_url'])
 
         else:
             self.errorMessage = message
