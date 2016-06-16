@@ -13,13 +13,14 @@ const BoolCell = ({cellParams}) => {
 	return (
 		<DropdownButton
       items={boolean_options}
+      text={displayValue}
+      style='boolean-dropdown hollow'
+      searchable={false}
       sendValue={value => cellParams.updateDatapoint({
       	value: value,
       	id: datapoint.id
       })}
-      text={displayValue}
-      style='boolean-dropdown'
-      searchable={false} />
+    />
 	)
 }
 

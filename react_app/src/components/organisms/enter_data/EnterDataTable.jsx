@@ -13,11 +13,18 @@ const EnterDataTable = (props) => {
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint)
+  const grid_options = {
+    rowHeight: 30,
+    headerHeight: 48,
+    colWidth: 150
+  }
   return (
     <ResourceTable
       rowData={rows}
       columnDefs={columns}
+      gridOptions={grid_options}
       resourcePath='datapoints'
+      className='datapoint-table'
     />
   )
 }
@@ -43,7 +50,9 @@ const _getColumnData = (grouped_datapoints, updateDatapoint) => {
   const columns = first_row.length > 0 ? first_row.map(datapoint => {
     const column = {
       field: datapoint.indicator.id + '.value',
-      headerName: datapoint.indicator.name
+      headerName: datapoint.indicator.name,
+      enableCellChangeFlash: true,
+      cellStyle: {textAlign: 'center'}
     }
     column.cellRenderer = reactCellRendererFactory(params => {
       const cellParams = Object.assign({}, params, {datapoint, updateDatapoint})
@@ -57,7 +66,12 @@ const _getColumnData = (grouped_datapoints, updateDatapoint) => {
     })
     return column
   }) : []
-  columns.unshift({headerName: '', field: 'location'})
+  columns.unshift({
+    colWidth: 100,
+    headerName: '',
+    field: 'location',
+    // pinned: 'left' // This causes a bug in ag-grid where the table keeps expanding.
+  })
   return columns
 }
 

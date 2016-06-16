@@ -15,6 +15,7 @@ export default class ResourceTable extends Component {
 
   static propTypes = {
     resourcePath: PropTypes.string.isRequired,
+    gridOptions: PropTypes.object,
     rowData: PropTypes.array.isRequired,
     columnDefs: PropTypes.array.isRequired
   }
@@ -56,14 +57,14 @@ export default class ResourceTable extends Component {
   render = () => {
     // this.columnDefs.push({headerName: 'Edit', cellRenderer: reactCellRendererFactory(this.renderControlCell)})
     return (
-      <div style={{width: '100vw'}}>
+      <div style={{width: '100vw'}} className={this.props.className}>
         <div style={{padding: '4px'}}>
           <TableControls
             onQuickFilterText={this.onQuickFilterText}
             onRefreshData={this.props.onRefreshData} />
-          <div style={{height: 400}} className="ag-fresh">
+          <div style={{height: '100%'}} className={'ag-fresh'}>
             <AgGridReact
-              gridOptions={this.gridOptions}
+              gridOptions={this.props.gridOptions}
               onGridReady={this.onReady}
               quickFilterText={this.state.quickFilterText}
               icons={this.icons}
@@ -75,7 +76,6 @@ export default class ResourceTable extends Component {
               enableFilter="true"
               groupHeaders="true"
               suppressCellSelection="true"
-              rowHeight="50"
               debug="false"/>
           </div>
         </div>
