@@ -90,27 +90,39 @@ class TestSetupHelpers(RhizomeApiTestCase):
 
     def post(self, test_class, uri, data=None):
         if data:
-            return test_class.api_client.post(uri,
-                                              format='json', data=data, authentication=self.get_credentials(test_class))
+            return test_class.api_client\
+                .post(uri,format='json', data=data, \
+                authentication=self.get_credentials(test_class))
         else:
-            return test_class.api_client.post(uri,
-                                              format='json', authentication=self.get_credentials(test_class))
+            return test_class.api_client\
+                .post(uri,format='json',\
+                authentication=self.get_credentials(test_class))
 
     def get(self, test_class, uri, data=None):
         if data:
-            return test_class.api_client.get(uri,
-                                             format='json', data=data, authentication=self.get_credentials(test_class))
+            return test_class.api_client.get(uri, format='json', data=data,\
+                authentication=self.get_credentials(test_class))
         else:
-            return test_class.api_client.get(uri,
-                                             format='json', authentication=self.get_credentials(test_class))
+            return test_class.api_client.get(uri,format='json',\
+                authentication=self.get_credentials(test_class))
 
     def delete(self, test_class, uri, data=None):
         if data:
-            return stest_class.api_client.delete(uri, format='json', data=data,
-                                                 authentication=self.get_credentials(test_class))
+            return stest_class.api_client.delete(uri, format='json', data=data,\
+                 authentication=self.get_credentials(test_class))
         else:
-            return test_class.api_client.delete(uri, format='json',
-                                                authentication=self.get_credentials(test_class))
+            return test_class.api_client.delete(uri, format='json',\
+                authentication=self.get_credentials(test_class))
+
+    def patch(self, test_class, uri, data=None):
+        if data:
+            return test_class.api_client\
+                .patch(uri,format='json', data=data, \
+                authentication=self.get_credentials(test_class))
+        else:
+            return test_class.api_client\
+                .patch(uri,format='json',\
+                authentication=self.get_credentials(test_class))
 
     def model_df_to_data(self, model_df, model):
         meta_ids = []
@@ -121,7 +133,8 @@ class TestSetupHelpers(RhizomeApiTestCase):
             meta_ids.append(row_id)
         return meta_ids
 
-    def create_arbitrary_campaign(self, office_id, campaign_type_id, location_id, indicator_tag_id, name="test"):
+    def create_arbitrary_campaign(self, office_id, campaign_type_id, \
+        location_id, indicator_tag_id, name="test"):
         return Campaign.objects.create(
             start_date='2016-01-01',
             end_date='2016-01-01',
@@ -133,9 +146,10 @@ class TestSetupHelpers(RhizomeApiTestCase):
         )
 
     def create_arbitrary_indicator(self, name='test', short_name="test2"):
-        return Indicator.objects.create(short_name=short_name,
-                                        name=name,
-                                        description='Test Indicator for the Tag 2 Description')
+        return Indicator.objects\
+            .create(short_name=short_name,
+                    name=name,
+                    description='Test Indicator for the Tag 2 Description')
 
     def ingest_file(self, file_name):
         document = Document.objects.create(
@@ -168,8 +182,8 @@ class TestSetupHelpers(RhizomeApiTestCase):
 
         office_id = Office.objects.create(id=1, name='test').id
 
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
+        cache_job_id = CacheJob.objects\
+            .create(id=-2, date_attempted='2015-01-01', is_error=False)
 
         self.locations = self.model_df_to_data(location_df, Location)
         self.campaigns = self.model_df_to_data(campaign_df, Campaign)

@@ -63,6 +63,7 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
+        object_class = DataPoint
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
