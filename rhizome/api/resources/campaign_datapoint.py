@@ -5,16 +5,16 @@ from tastypie import fields
 from tastypie.utils.mime import build_content_type
 
 from rhizome.api.serialize import CustomSerializer
-from rhizome.api.resources.base_datapoint import BaseDataPointResource
+from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.custom_logic import handle_polio_case_table
 
 from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
-    CalculatedIndicatorComponent
+    CalculatedIndicatorComponent, DataPoint
 
 import math
 
-class CampaignDatapointResource(BaseDataPointResource):
+class CampaignDatapointResource(BaseModelResource):
     '''
     - **GET Requests:**
         - *Required Parameters:*
@@ -28,10 +28,13 @@ class CampaignDatapointResource(BaseDataPointResource):
             'cumulative'
     '''
 
-    class Meta(BaseDataPointResource.Meta):
+    class Meta(BaseModelResource.Meta):
         '''
         '''
 
+        object_class = DataPointComputed
+        required_fields_for_post = ['campaign_id','indicator_id','value',\
+            'location_id']
         resource_name = 'campaign_datapoint'
         max_limit = None
         serializer = CustomSerializer()
@@ -39,7 +42,7 @@ class CampaignDatapointResource(BaseDataPointResource):
     def __init__(self, *args, **kwargs):
         '''
         '''
-        
+
         super(CampaignDatapointResource, self).__init__(*args, **kwargs)
 
     def get_list(self, request, **kwargs):

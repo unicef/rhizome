@@ -52,11 +52,6 @@ class BaseModelResource(ModelResource, BaseResource):
         }
         GET_params_required = []
 
-    def convert_post_to_patch(request):
-        '''
-        '''
-        return super(BaseModelResource, self).convert_post_to_patch(request)
-
     def obj_get(self, bundle, **kwargs):
         """
         Takes optional ``kwargs``, which are used to narrow the query to find
@@ -68,6 +63,8 @@ class BaseModelResource(ModelResource, BaseResource):
         """
 
         try:
+            # df = DataFrame(list(DataPoint.objects.all().values()))
+            # print df
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
         except ObjectDoesNotExist:
             msg = 'No {0} object found for id : {1}'\
@@ -82,11 +79,11 @@ class BaseModelResource(ModelResource, BaseResource):
     def get_detail(self, request, **kwargs):
         """
         Returns a single serialized resource.
-        Calls ``cached_obj_get/obj_get`` to provide the data, then handles that result
-        set and serializes it.
+        Calls ``cached_obj_get/obj_get`` to provide the data, then handles
+        that result set and serializes it.
         Should return a HttpResponse (200 OK).
 
-        IN this case, if the bundle gives us a message ( and a code ) we raise
+        In this case, if the bundle gives us a message ( and a code ) we raise
         an exception.  This is to handle the case that the object does not
         exist.
         """
@@ -204,8 +201,8 @@ class BaseModelResource(ModelResource, BaseResource):
 
         bundle = self.build_bundle(data=deserialized, request=request)
 
-        updated_bundle = self.obj_create(bundle,
-                                         **self.remove_api_resource_names(kwargs))
+        updated_bundle = self\
+            .obj_create(bundle, **self.remove_api_resource_names(kwargs))
 
         location = self.get_resource_uri(updated_bundle)
 
@@ -232,10 +229,13 @@ class BaseModelResource(ModelResource, BaseResource):
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
+        #### REMOVE BELOW CODE AND USE PROPER PATCH FORMAT ####
         id_from_post = bundle.data.get('id', None)
         if id_from_post: ## this is a PUT or update of an existing resource #
             obj = self._meta.object_class.objects.get(id = id_from_post)
             self.update_object(obj, **bundle.data)
+        #### REMOVE ABOVE CODE ####
+
         else: ## create the object with the data from the request #
             try:
                 obj = self._meta.object_class.objects.create(**bundle.data)
@@ -266,6 +266,16 @@ class BaseModelResource(ModelResource, BaseResource):
                                       missing_keys)
 
         return bundle
+
+    def obj_update(self, bundle, skip_errors=False, **kwargs):
+        """
+        """
+
+        obj = self.obj_get(bundle=bundle, **kwargs)
+        db_obj = self._meta.object_class.objects.get(id=obj.id)
+        self.update_object(db_obj, **bundle.data)
+
+    ### DELETE ###
 
     def obj_delete(self, bundle, **kwargs):
         """
