@@ -18,6 +18,7 @@ export const watchGetDatapoints = function * () {
 }
 
 export const fetchDatapoints = function * (action) {
+  yield put({type: 'CLEAR_DATAPOINTS'})
   const query = _prepDatapointsQuery(action.payload)
   if (!query) return
   try {

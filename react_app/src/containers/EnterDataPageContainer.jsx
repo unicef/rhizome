@@ -47,8 +47,8 @@ const EnterDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(Ente
 // =========================================================================== //
 
 const _flatten = (datapoints, indicators, locations, campaigns) => {
-	if (!datapoints)
-		return null
+  if (!datapoints)
+    return null
   const flattened = datapoints.map(d => {
     const indicator = indicators.index[d.indicator_id]
     const datapoint = {

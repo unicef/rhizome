@@ -26,13 +26,19 @@ const data_entry = handleActions({
     })
   },
   TOGGLE_DATA_ENTRY_TYPE: (state, action) => {
-    return Object.assign({}, state, {
+    return Object.assign({}, data, {
       data_type: state.data_type === 'campaign' ? 'date' : 'campaign'
     })
   },
   GET_INITIAL_DATA_SUCCESS: (state, action) => {
     return Object.assign({}, state, {
       selected_campaign: action.payload.data.objects[0].campaigns[0]
+    })
+  },
+  CLEAR_DATAPOINTS: (state, action) => {
+    return Object.assign({}, state, {
+      datapoints: {meta: null, raw: null, flattened: null},
+      dataParamsChanged: false
     })
   },
   GET_DATAPOINTS_SUCCESS: (state, action) => {
