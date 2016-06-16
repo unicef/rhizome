@@ -1,6 +1,6 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.models import LocationPermission
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 
 class LocationPermissionResourceTest(RhizomeApiTestCase):

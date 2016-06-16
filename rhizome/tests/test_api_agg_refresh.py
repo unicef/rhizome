@@ -1,4 +1,4 @@
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv
 from rhizome.models import User, Office, CacheJob, LocationType, CampaignType,\
     Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location,\

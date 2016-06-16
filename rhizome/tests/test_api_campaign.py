@@ -2,7 +2,7 @@ from base_test_case import RhizomeApiTestCase
 from rhizome.models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag
 from rhizome.cache_meta import LocationTreeCache
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 
 class CampaignResourceTest(RhizomeApiTestCase):

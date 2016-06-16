@@ -2,7 +2,7 @@ from base_test_case import RhizomeApiTestCase
 from rhizome.models import DocDetailType
 from rhizome.models import Document
 from rhizome.models import DocumentDetail
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 
 class QueueProcessResourceTest(RhizomeApiTestCase):

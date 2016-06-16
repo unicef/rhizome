@@ -1,6 +1,6 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.models import UserGroup
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from django.contrib.auth.models import User, Group
 
 

@@ -2,7 +2,7 @@ from base_test_case import RhizomeApiTestCase
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, SourceObjectMap, IndicatorClassMap, DataPoint
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from datetime import datetime
 
 from rhizome.cache_meta import LocationTreeCache

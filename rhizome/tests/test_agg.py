@@ -9,7 +9,7 @@ from rhizome.models import Office, CacheJob, LocationType, Campaign, Location,\
     DataPoint, DataPointComputed, AggDataPoint, LocationTree
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from pprint import pprint
 
 class AggRefreshTestCase(TestCase):

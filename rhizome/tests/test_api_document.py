@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv, notnull, to_datetime
 import base64
 import os

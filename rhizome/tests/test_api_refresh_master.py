@@ -1,5 +1,5 @@
 from base_test_case import RhizomeApiTestCase
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.models import DataPoint, IndicatorTag, User, Office, CacheJob, LocationType, Document, DocDetailType, CampaignType, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, Location, Campaign, Indicator, DataPointComputed
 from pandas import read_csv, notnull, to_datetime
 from rhizome.etl_tasks.transform_upload import CampaignDocTransform

@@ -1,5 +1,5 @@
 from base_test_case import RhizomeApiTestCase
-from setup_helpers import TestSetupHelpers
+from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.models import LocationType
 
 
