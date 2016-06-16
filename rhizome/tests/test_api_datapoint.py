@@ -6,6 +6,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
 
 from rhizome.cache_meta import LocationTreeCache
 from random import randint
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class DataPointResourceTest(RhizomeApiTestCase):
 
@@ -43,7 +44,7 @@ class DataPointResourceTest(RhizomeApiTestCase):
 
         self.get_credentials()
 
-        # create their api_key
+        self.ts = TestSetupHelpers()
 
     def get_credentials(self):
         result = self.api_client.client.login(username=self.username,
@@ -521,3 +522,32 @@ class DataPointResourceTest(RhizomeApiTestCase):
 
         ## even though there is only one datapoint with information ##
         self.assertEqual(DataPointComputed.objects.count(), 1)
+
+    def test_campaign_datapoint_patch(self):
+        '''
+        create a datapoint with the ORM, submit a PATCH request and see
+        if the value changed.
+
+        If the user tries to change anything exept the value, there should be
+        an error.
+
+        '''
+
+        dp_to_patch = DataPointComputed.objects.create(
+            campaign_id = 1,
+            location_id = 1,
+            indicator_id = 1,
+            document_id = 1,
+            value = 0,
+            cache_job_id = -1
+        )
+        patch_data = {'value': 101.01}
+        dp_url = '/api/v1/campaign_datapoint/%s/' % dp_to_patch.id
+
+        ## submit the patch and make sure it has the proper response code
+        resp = self.ts.patch(self, dp_url, data=patch_data)
+        self.assertHttpAccepted(resp)
+
+        ## now get the dp and see if the value has been is updated ##
+        dp_to_patch = DataPointComputed.objects.get(id=dp_to_patch.id)
+        self.assertEqual(dp_to_patch.value, patch_data['value'])

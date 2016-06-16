@@ -32,6 +32,7 @@ class BaseDataPointResource(BaseResource):
         always_return_data = True
         cache = CustomCache()
         serializer = CustomSerializer()
+        required_fields_for_post = ['indicator_id', 'location_id', 'value']
 
     #################################################
     ### date_datapoint / campaign_datapoint helpter methods ###

@@ -39,7 +39,7 @@ class CampaignDatapointResource(BaseDataPointResource):
     def __init__(self, *args, **kwargs):
         '''
         '''
-
+        
         super(CampaignDatapointResource, self).__init__(*args, **kwargs)
 
     def get_list(self, request, **kwargs):
