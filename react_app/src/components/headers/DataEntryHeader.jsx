@@ -1,20 +1,18 @@
 import _ from 'lodash'
+import moment from 'moment'
 import React from 'react'
 import {Multiselect} from 'react-widgets'
 import DropdownButton from 'components/button/DropdownButton'
-import Placeholder from 'components/global/Placeholder'
 import CampaignSelect from 'components/select/CampaignSelect'
 import IndicatorTagSelect from 'components/select/IndicatorTagSelect'
-import ResourceTable from 'components/molecules/ResourceTable'
 import SwitchButton from 'components/form/SwitchButton'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
-import Moment from 'moment'
+import DateRangeSelect from 'components/select/DateRangeSelect'
 import momentLocalizer from 'react-widgets/lib/localizers/moment'
-momentLocalizer(Moment)
+momentLocalizer(moment)
 
 const DataEntryHeader = props => {
-  console.log('props', props)
-  const formEntry = props.entry_type === 'campaign'
+  const formEntry = props.data_type === 'campaign'
 
   const selected_indicator = _.isEmpty(props.selected_indicators) ? {name: 'Select Indicator'} : props.selected_indicators[0]
   const indicator_select = (
@@ -60,17 +58,29 @@ const DataEntryHeader = props => {
     />
   )
 
+  const start_date = moment(props.start_date).toDate()
+  const end_date = moment(props.end_date).toDate()
   const date_select = (
-    <DateTimePicker
-      defaultValue={new Date()}
-    />
+    <div className='date-range-picker'>
+      <DateTimePicker
+        value={start_date}
+        time={false}
+        format={'YYYY-MM-DD'}
+        onChange={date => props.setDataEntryStartDate(moment(date).format('YYYY-MM-DD'))} />
+      <span>to</span>
+      <DateTimePicker
+        value={end_date}
+        time={false}
+        format={'YYYY-MM-DD'}
+        onChange={date => props.setDataEntryEndDate(moment(date).format('YYYY-MM-DD'))} />
+    </div>
   )
 
   const switch_button = (
     <SwitchButton
-      name='entry_type'
-      title='entry_type'
-      id='entry_type'
+      name='data_type'
+      title='data_type'
+      id='data_type'
       checked={!formEntry}
       onChange={props.toggleEntryType}
     />

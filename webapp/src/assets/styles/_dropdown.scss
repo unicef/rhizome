@@ -101,6 +101,26 @@
 	}
 }
 
+
+.boolean-dropdown {
+  font-family: proxima, Helvetica, sans-serif;
+  font-size: .9rem;
+  background: transparent;
+  min-height: 0.9rem;
+  width: 100%;
+  padding: 0 .5rem;
+  // text-align: left;
+  color: $rhz-body-color;
+  margin: 0;
+  &.hollow {
+		border: none;
+  }
+  &:hover {
+    color: $rhz-body-color;
+    background: transparent;
+  }
+}
+
 .container ul li.color-dot {
 	display: inline-block;
 	button {

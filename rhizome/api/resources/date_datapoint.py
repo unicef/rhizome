@@ -63,6 +63,7 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
+        object_class = DataPoint
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
@@ -136,6 +137,10 @@ class DateDatapointResource(BaseModelResource):
         # self.location_ids = self.get_locations_to_return_from_url(request)
         self.time_gb = self.parsed_params['group_by_time']
         self.base_data_df = self.group_by_time_transform()
+
+        ## if no datapoints, we return an empty list#
+        if len(self.base_data_df) == 0:
+            return []
 
         # ## fill in missing data if requested ##
         # if self.parsed_params['show_missing_data'] == u'1':
@@ -258,6 +263,9 @@ class DateDatapointResource(BaseModelResource):
                 location_id__in = list(loc_tree_df['location_id'].unique()),
                 indicator_id__in = self.parsed_params['indicator__in']
             ).values(*cols)), columns=cols)
+
+        if len(dp_df) == 0:
+            return []
 
         dp_df = self.get_time_group_series(dp_df)
         merged_df = dp_df.merge(loc_tree_df)

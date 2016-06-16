@@ -1,17 +1,18 @@
+
 from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document, IndicatorClassMap, DataPointComputed
-
+    LocationPermission, Document, IndicatorClassMap, DataPointComputed,\
+    SourceSubmission
 from rhizome.cache_meta import LocationTreeCache
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 import pandas as pd
 from datetime import datetime
 
 class DateDataPointResourceTest(RhizomeApiTestCase):
     # python manage.py test rhizome.tests.test_api_datapoint_groupby_date --settings=rhizome.settings.test
-
 
     def setUp(self):
         super(DateDataPointResourceTest, self).setUp()
@@ -69,6 +70,30 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         self.get_credentials()
         self.create_polio_cases()
 
+        self.ts = TestSetupHelpers()
+
+    def test_date_datapoint_patch(self):
+        '''
+        create a datapoint with the ORM, submit a PATCH request and see
+        if the value changed.
+
+        If the user tries to change anything exept the value, there should be
+        an error.
+
+        '''
+
+        dp_to_patch = DataPoint.objects.all()[0]
+        patch_data = {'value': 101.01}
+        dp_url = '/api/v1/date_datapoint/%s/' % dp_to_patch.id
+
+        ## submit the patch and make sure it has the proper response code
+        resp = self.ts.patch(self, dp_url, data=patch_data)
+        self.assertHttpAccepted(resp)
+
+        ## now get the dp and see if the value has been is updated ##
+        dp_to_patch = DataPoint.objects.get(id=dp_to_patch.id)
+        self.assertEqual(dp_to_patch.value, patch_data['value'])
+
     def create_polio_cases(self):
 
         df = pd.read_csv('rhizome/tests/_data/AfgPolioCases.csv')
@@ -81,7 +106,8 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 data_date = datetime.strptime(row.data_date, '%d-%m-%y'),
                 value = 1,
                 source_submission_id = 1,
-                unique_index = str(self.some_district.id) + str(self.ind.id) + str(row.data_date)
+                unique_index = str(self.some_district.id) + str(self.ind.id) +\
+                    str(row.data_date)
             )
 
 

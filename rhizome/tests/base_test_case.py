@@ -23,19 +23,24 @@ class RhizomeApiTestCase(ResourceTestCase):
         if resp.status_code != status_code:
             print 'TEST FAILED: \n %s \n ==== \n\n' % self.deserialize(resp)
 
-    def assertHttpOK(self, resp, status_code=200):
-        self.printResponseIfError(resp, status_code)
-        self.assertHttp(resp, status_code)
-
-    def assertHttpCreated(self, resp, status_code=201):
-        self.printResponseIfError(resp, status_code)
-        self.assertHttp(resp, status_code)
-
-    def assertHttpApplicationError(self, resp, status_code=500):
-        self.printResponseIfError(resp, status_code)
-        self.assertHttp(resp, status_code)
-
-    def assertHttp(self, resp, status_code):
-
+    def assertHttp(self, resp, status_code): # GET
         self.printResponseIfError(resp, status_code)
         self.assertEqual(resp.status_code, status_code)
+
+
+    def assertHttpOK(self, resp, status_code=200): # GET
+        self.printResponseIfError(resp, status_code)
+        self.assertHttp(resp, status_code)
+
+    def assertHttpCreated(self, resp, status_code=201): # POST
+        self.printResponseIfError(resp, status_code)
+        self.assertHttp(resp, status_code)
+
+    def assertHttpAccepted(self, resp, status_code=202): # PATCH
+        self.printResponseIfError(resp, status_code)
+        self.assertHttp(resp, status_code)
+        ## note the base class in tastype checks both 202 and 204
+
+    def assertHttpApplicationError(self, resp, status_code=500): # ERROR
+        self.printResponseIfError(resp, status_code)
+        self.assertHttp(resp, status_code)

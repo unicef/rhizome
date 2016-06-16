@@ -5,8 +5,17 @@ var config = require('./webpack.config')
 new WebpackDevServer(webpack(config), {
   publicPath: config.output.publicPath,
   historyApiFallback: true,
+  hot: true,
   proxy: {
-    '*': 'http://localhost:8000'
+    '*': {
+      target: 'http://localhost:8000',
+      bypass: (req, res, proxyOptions) => {
+        if (req.headers.accept.indexOf('html') !== -1) {
+          console.log('Skipping proxy for browser request.')
+          return '/index.html'
+        }
+      }
+    }
   }
 }).listen(3000, 'localhost', function (err, result) {
   if (err) {

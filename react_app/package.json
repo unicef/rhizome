@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Boilerplate for ReactJS project with hot code reloading",
   "scripts": {
+    "build-production": "webpack -p --define process.env.NODE_ENV='\"production\"' --progress --colors",
     "start": "node server.js",
     "lint": "eslint src",
     "test": "mocha 'src/test/**/*.js' --compilers js:babel-register --recursive --watch",
@@ -68,17 +69,12 @@
     "babel-register": "*",
     "deep-freeze": "*",
     "eslint-plugin-react": "*",
-    "expect": "*",
-    "expect-jsx": "*",
-    "karma": "*",
-    "karma-chrome-launcher": "*",
-    "karma-cli": "*",
-    "karma-mocha": "*",
-    "karma-webpack": "*",
     "mocha": "*",
     "mocha-loader": "*",
     "react-addons-test-utils": "*",
+    "react-hot-loader": "^1.3.0",
     "redbox-react": "*",
+    "style-loader": "^0.13.1",
     "webpack": "*",
     "webpack-dev-server": "*"
   }
