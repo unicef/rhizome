@@ -9,5 +9,5 @@ class CacheMetaResource(BaseNonModelResource):
         resource_name = 'cache_meta'
         queryset = Office.objects.all().values()
 
-    def pre_pocess_data(self, request):
+    def pre_process_data(self, request):
         cache_all_meta()
