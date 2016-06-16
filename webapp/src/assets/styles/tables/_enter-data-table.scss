@@ -1,0 +1,15 @@
+.datapoint-table {
+	.ag-header-cell-label {
+    text-overflow: clip;
+    overflow: visible;
+    white-space: normal;
+	}
+	.ag-fresh .ag-cell {
+		display: table-cell;
+    position: static;
+		vertical-align: middle;
+	}
+	.ag-fresh .ag-row {
+		display: table;
+	}
+}

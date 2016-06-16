@@ -84,21 +84,6 @@ table {
         top: 0;
         padding: 0;
       }
-      .boolean-dropdown {
-        font-family: proxima, Helvetica, sans-serif;
-        font-size: .9rem;
-        background: transparent;
-        min-height: 0.9rem;
-        width: 100%;
-        padding: 0 .5rem;
-        text-align: left;
-        color: $rhz-body-color;
-        margin: 0;
-        &:hover {
-          color: $rhz-body-color;
-          background: transparent;
-        }
-      }
     }
   }
 
