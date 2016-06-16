@@ -10,7 +10,7 @@ from rhizome.models import Office, CacheJob, LocationType, Campaign, Location,\
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
 from setup_helpers import TestSetupHelpers
-
+from pprint import pprint
 
 class AggRefreshTestCase(TestCase):
 
@@ -148,7 +148,8 @@ class AggRefreshTestCase(TestCase):
         In addition to the datapoints in the test file, i insert a null valu
         to ensure that any null won't corrpupt the calculation.
 
-        python manage.py test rhizome.tests.test_agg.AggRefreshTestCase.test_location_aggregation --settings=rhizome.settings.test
+        python manage.py test rhizome.tests.test_agg.AggRefreshTestCase.
+            test_location_aggregation --settings=rhizome.settings.test
 
         '''
         self.create_raw_datapoints()
