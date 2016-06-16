@@ -3,7 +3,7 @@ from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 from setup_helpers import TestSetupHelpers
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 from rhizome.models import SourceObjectMap, SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
@@ -44,7 +44,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
     def test_get_source_submission_by_doc(self):
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv')
-        dt = ComplexDocTransform(self.ts.user.id, doc.id)
+        dt = CampaignDocTransform(self.ts.user.id, doc.id)
         dt.main()
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/source_submission/', get_data)
@@ -56,7 +56,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
     def test_get_source_submission_by_id(self):
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv')
-        dt = ComplexDocTransform(self.ts.user.id, doc.id)
+        dt = CampaignDocTransform(self.ts.user.id, doc.id)
         dt.main()
         ss_id = SourceSubmission.objects.all()[0].id
         resp = self.ts.get(self, '/api/v1/source_submission/%s/' % ss_id)

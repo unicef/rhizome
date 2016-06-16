@@ -205,10 +205,10 @@ class DataPointResourceTest(RhizomeApiTestCase):
         #  ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_indicator_filter --settings=rhizome.settings.test
 
         campaign_id = 2
-
         document = Document.objects.create(doc_title='some doc')
 
-        #make a couple different types of indicators, and indicators with different values
+        # make a couple different types of indicators, and indicators with
+        # different values
         indicator_names_to_values = {"LPD Status":[1,2],
             'LQAS':[0, 1, 2]
         }
@@ -222,14 +222,14 @@ class DataPointResourceTest(RhizomeApiTestCase):
                                      data_format ='class' )
             indicator_ids_to_values[indicator.id] = values
 
-
-
-        some_provinces = ['Kandahar', 'Kunar', 'Hilmand', 'Nimroz', 'Sari-Pul', 'Kabul', 'Paktika', 'Ghazni']
+        some_provinces = ['Kandahar', 'Kunar', 'Hilmand', 'Nimroz', \
+            'Sari-Pul', 'Kabul', 'Paktika', 'Ghazni']
 
         ind_id_keys = indicator_ids_to_values.keys()
         indicator_to_query = ind_id_keys[1]
 
-       # choose which indicator/value pair to filter by, and keep track of dps that match this as they're created
+        # choose which indicator/value pair to filter by, and keep track of
+        # dps that match this as they're created
         indicator_to_filter = ind_id_keys[0]
         indicator_val_to_filter = indicator_ids_to_values[indicator_to_filter][0]
         dps_to_track =[]
@@ -262,11 +262,13 @@ class DataPointResourceTest(RhizomeApiTestCase):
         ltc.main()
 
         indicator_name_to_filter = Indicator.objects.get(id=indicator_to_filter);
-        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_depth=2&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
+        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id={2}&location_depth=1&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
             .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
         resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
+
+        self.assertHttpOK(resp)
 
         response_data = self.deserialize(resp)
         self.assertEqual(len(response_data['objects']), len(dps_to_track))
@@ -352,7 +354,13 @@ class DataPointResourceTest(RhizomeApiTestCase):
         self.assertEqual(len(returned_indicators), 1)
         self.assertEqual(returned_indicators[0]['indicators'][0]['value'], value_1 + value_2)
 
-    def test_location_type_and_depth(self):
+    def test_location_id_and_location_depth(self):
+        '''
+        When i pass location_id and depth_level, I should get data for
+        datapoints underneath the location_id requested at the specified
+        depth level
+        '''
+
         # create Afghanistan, region, and provinces
         afghanistan = Location.objects.create(
             name='Afghanistan',
@@ -425,32 +433,7 @@ class DataPointResourceTest(RhizomeApiTestCase):
             document_id = document.id
         )
 
-        # TRY FOR LOCATION TYPE
-        # ++++++++++++++++++++++
-
-        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_type={3}'\
-            .format(indicator.id, campaign.id, afghanistan.id, self.prov.id)
-
-        resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
-            format='json', authentication=self.get_credentials())
-
-        response_data = self.deserialize(resp)
-        self.assertHttpOK(resp)
-        self.assertEqual(len(response_data['objects']), 2)
-
-        # makes sure we're getting the right dp values, thus confirming that the provinces are returned
-        sum_of_values = 0
-        for return_indicator in response_data['objects']:
-            sum_of_values += float(return_indicator['value'])
-
-        self.assertEqual(sum_of_values, kandahar_value+hilmand_value)
-
-
-
-        # TRY FOR LOCATION DEPTH
-        # ++++++++++++++++++++++
-
-        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&location_depth=2'\
+        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id={2}&location_depth=2'\
             .format(indicator.id, campaign.id, afghanistan.id)
 
         resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \

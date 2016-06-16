@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 from rhizome.models import Document, Location, IndicatorTag, Office, CacheJob, DocDetailType, CampaignType, Campaign, Indicator, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, DataPoint, IndicatorClassMap
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
@@ -47,7 +47,7 @@ class TransformUploadTestCase(TestCase):
               those created in other documents)
             4. Inserting one record into submission_detail        '''
 
-        dt = ComplexDocTransform(self.user.id, self.document.id)
+        dt = CampaignDocTransform(self.user.id, self.document.id)
 
         source_submissions = dt.process_file()
 
@@ -60,14 +60,14 @@ class TransformUploadTestCase(TestCase):
 
         doc_id = self.ingest_file('missing_campaign.csv')
         try:
-            ComplexDocTransform(self.user.id, doc_id)
+            CampaignDocTransform(self.user.id, doc_id)
             fail('This should should raise an exception')
         except Exception as err:
             self.assertEqual('campaign is a required column.', err.message)
 
     def test_duplicate_rows(self):
         doc_id = self.ingest_file('dupe_datapoints.csv')
-        dt = ComplexDocTransform(self.user.id, doc_id)
+        dt = CampaignDocTransform(self.user.id, doc_id)
         dt.main()
         mr = MasterRefresh(self.user.id, doc_id)
         mr.main()
@@ -80,7 +80,7 @@ class TransformUploadTestCase(TestCase):
     # and make sure that the value has been correctly converted
     def test_percent_vals(self):
         doc_id = self.ingest_file('percent_vals.csv')
-        ComplexDocTransform(self.user.id, doc_id).main()
+        CampaignDocTransform(self.user.id, doc_id).main()
         MasterRefresh(self.user.id, doc_id).main()
         dps = DataPoint.objects.all()
         self.assertEqual(len(dps), 2)
@@ -117,7 +117,7 @@ class TransformUploadTestCase(TestCase):
         )
 
         doc_id = self.ingest_file('class_indicator.csv')
-        ComplexDocTransform(self.user.id, doc_id).main()
+        CampaignDocTransform(self.user.id, doc_id).main()
         MasterRefresh(self.user.id, doc_id).main()
         dps = DataPoint.objects.all()
         self.assertEqual(len(dps), 1)

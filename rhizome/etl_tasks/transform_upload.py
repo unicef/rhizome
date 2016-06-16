@@ -164,7 +164,7 @@ class DocTransform(object):
             dsom_to_insert)
 
 
-class ComplexDocTransform(DocTransform):
+class CampaignDocTransform(DocTransform):
     '''
     This type of transformation handles abstract data for which :
         date_column - refers to the date of the collected data
@@ -174,7 +174,7 @@ class ComplexDocTransform(DocTransform):
 
     def __init__(self, user_id, document_id, raw_csv_df=None):
 
-        super(ComplexDocTransform, self).__init__(
+        super(CampaignDocTransform, self).__init__(
             user_id, document_id, raw_csv_df)
 
         # if we allow for user input to choose column definitinos

@@ -44,15 +44,9 @@ class AggRefresh(object):
             campaign_id = campaign_id_list[0]
 
         self.cache_job = None
-
         self.dp_columns = ['location_id', 'indicator_id',
                            'value', 'cache_job_id']
-
         self.dwc_batch, self.dwc_tuple_dict = [], {}
-
-        # if CacheJob.objects.filter(response_msg = 'PENDING'):
-        #     return
-
         self.campaign = Campaign.objects.get(id=campaign_id)
 
         self.cache_job = CacheJob.objects.create(
@@ -107,9 +101,6 @@ class AggRefresh(object):
         date_no_datetime = data_date.date()
         campaigns_in_date_range = Campaign.objects.filter(
             start_date__lte=date_no_datetime, end_date__gte=data_date)
-        parent_location_list = LocationTree.objects\
-            .filter(location_id=location_id,lvl__gt = 0)\
-            .values_list('parent_location_id', flat=True)
 
         return [c.id for c in campaigns_in_date_range]
 
@@ -159,8 +150,8 @@ class AggRefresh(object):
         # include a row here for the location itself.  Without this filter in
         # the below operation, we wouldn't aggregate anything all.
 
-        loc_tree_df = joined_location_df[joined_location_df['lvl'] != 0]
-        max_location_lvl_for_indicator_df = DataFrame(loc_tree_df\
+        max_location_lvl_for_indicator_df = DataFrame(\
+            joined_location_df[joined_location_df['lvl'] != 0]\
           .groupby(['indicator_id'])['lvl'].min())  # highest lvl per indicator
         max_location_lvl_for_indicator_df.reset_index(level=0, inplace=True)
 

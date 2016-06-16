@@ -8,7 +8,7 @@ from rhizome.models import Office, CacheJob, LocationType, Campaign, Location,\
     IndicatorToTag, CampaignToIndicator, CalculatedIndicatorComponent, \
     DataPoint, DataPointComputed, AggDataPoint, LocationTree
 from rhizome.agg_tasks import AggRefresh
-from rhizome.cache_meta import LocationTreeCache, OldLocationTreeCache
+from rhizome.cache_meta import LocationTreeCache
 from setup_helpers import TestSetupHelpers
 
 
@@ -34,7 +34,6 @@ class AggRefreshTestCase(TestCase):
         self.target_df = data_df[data_df['is_raw'] == 0]
         self.campaign_id = Campaign.objects.all()[0].id
         self.top_lvl_location = Location.objects.filter(name='Nigeria')[0]
-        # ltr = OldLocationTreeCache() ## LocationTreeCache()
         ltr = LocationTreeCache()
         ltr.main()
 
@@ -213,11 +212,6 @@ class AggRefreshTestCase(TestCase):
             indicator_id=indicator_id,\
             campaign_id=self.campaign_id
         ).values()))
-
-        # print loc_tree_df[loc_tree_df['parent_location_id'] ==\
-        #     agg_location_id]
-        # print '=== agg_dp df === %s ' % agg_location_id
-        # print agg_df
 
         agg_value = AggDataPoint.objects.get(
             indicator_id=indicator_id,

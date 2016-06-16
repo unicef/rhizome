@@ -127,23 +127,14 @@ class BaseModelResource(ModelResource, BaseResource):
         A ORM-specific implementation of ``obj_get_list``.
         ``GET`` dictionary of bundle.request can be used to narrow the query.
         """
-        filters = {}
 
-        # Grab a mutable copy #
-        if hasattr(bundle.request, 'GET'):
-            filters = bundle.request.GET.copy()
-
-        # check required parameters and raise exception if one is missing #
-        if hasattr(self._meta, 'GET_params_required'):
-            keys_req = self._meta.GET_params_required
-            missing_keys = list(set(keys_req).difference(set(filters.keys())))
-            if len(missing_keys) > 0:
-                msg = 'Missing required parameter %s ' % missing_keys[0]
-                raise RhizomeApiException(msg)
-
-        # Update with the provided kwargs #
+        ## Update with the provided kwargs ##
         filters.update(kwargs)
+
+        ## clean and prepare the filters and their relavant query terms ##
         applicable_filters = self.build_filters(filters=filters)
+
+        ## get the objects ##
         objects = self.apply_filters(bundle.request, applicable_filters)
 
         return objects
@@ -153,6 +144,9 @@ class BaseModelResource(ModelResource, BaseResource):
         Overriden from Tastypie..
         """
 
+        ## validate the filters ##
+        filters = self.validate_filters(bundle.request)
+        
         base_bundle = self.build_bundle(request=request)
         objects = self.obj_get_list(
             bundle=base_bundle, **self.remove_api_resource_names(kwargs))

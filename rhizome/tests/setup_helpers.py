@@ -5,7 +5,7 @@ from rhizome.models import Office, LocationType, Location, \
 from rhizome.models import SourceObjectMap
 from pandas import read_csv, notnull, to_datetime
 from rhizome.models import Office, Location, LocationType, SourceObjectMap, DocumentSourceObjectMap, Document, Campaign, Indicator, IndicatorTag, CacheJob, SourceSubmission
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
 
 class TestSetupHelpers(RhizomeApiTestCase):
@@ -144,7 +144,7 @@ class TestSetupHelpers(RhizomeApiTestCase):
             guid='test')
         document.docfile = file_name
         document.save()
-        sdt = ComplexDocTransform(self.user.id, document.id)
+        sdt = CampaignDocTransform(self.user.id, document.id)
         sdt.main()
         return document.id
 

@@ -7,8 +7,6 @@ from pandas import Series
 from pandas import read_csv
 from rhizome.cache_meta import minify_geo_json
 
-from pprint import pprint
-
 class GeoResourceTest(RhizomeApiTestCase):
     def setUp(self):
         super(GeoResourceTest, self).setUp()

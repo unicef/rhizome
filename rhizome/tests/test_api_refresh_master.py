@@ -2,7 +2,7 @@ from base_test_case import RhizomeApiTestCase
 from setup_helpers import TestSetupHelpers
 from rhizome.models import DataPoint, IndicatorTag, User, Office, CacheJob, LocationType, Document, DocDetailType, CampaignType, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, Location, Campaign, Indicator, DataPointComputed
 from pandas import read_csv, notnull, to_datetime
-from rhizome.etl_tasks.transform_upload import ComplexDocTransform
+from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
 
 class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
@@ -14,7 +14,7 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
 
     def test_refresh(self):
         doc_id = self.ingest_file('eoc_post_campaign.csv')
-        dt = ComplexDocTransform(self.user_id, doc_id)
+        dt = CampaignDocTransform(self.user_id, doc_id)
         dt.main()
         self.assertEqual(DataPoint.objects.count(), 0)
         self.assertEqual(DataPointComputed.objects.count(), 0)
@@ -29,7 +29,7 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
 
     def test_refresh_no_params(self):
         doc_id = self.ingest_file('eoc_post_campaign.csv')
-        dt = ComplexDocTransform(self.user_id, doc_id)
+        dt = CampaignDocTransform(self.user_id, doc_id)
         dt.main()
         self.assertEqual(DataPoint.objects.count(), 0)
         self.assertEqual(DataPointComputed.objects.count(), 0)

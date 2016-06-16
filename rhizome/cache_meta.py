@@ -67,71 +67,70 @@ class IndicatorCache(object):
 
         return qs, bound_df, tag_df
 
-
-class OldLocationTreeCache(object):
-    def __init__(self):
-
-        self.location_tree_columns = ['location_id','parent_location_id']
-        self.location_tree_df = DataFrame(columns=self.location_tree_columns)
-
-    def main(self):
-        '''
-        Any and all parents attributed any and all children.  See the test
-        case for an abstracted example.
-        '''
-
-        ## now iterate from bottom to bottom to top ##
-        location_type_loop_order = LocationType.objects.all()\
-            .values_list('id',flat=True).order_by('-admin_level')
-
-        for lt_id in location_type_loop_order:
-            self.process_location_tree_lvl(lt_id)
-
-        self.upsert_location_tree()
-
-    def process_location_tree_lvl(self, location_type_id):
-
-        lt_batch = []
-
-        location_df = DataFrame(list(Location.objects\
-            .filter(location_type_id = location_type_id)\
-            .values_list('id','parent_location_id')),columns=self.location_tree_columns)
-
-        merged_df = location_df.merge(self.location_tree_df
-            ,left_on='location_id',right_on='parent_location_id')
-
-        cleaned_merge_df = merged_df[['location_id_y','parent_location_id_x']]
-        cleaned_merge_df.columns = self.location_tree_columns
-
-        self.location_tree_df = concat([self.location_tree_df,location_df,\
-            cleaned_merge_df])
-
-        self.location_tree_df.drop_duplicates()
-
-    def upsert_location_tree(self):
-
-        lt_batch = []
-
-        ## only the ultimate parent should have itself as a parent ##
-        ## drop all NA values, then create the ultimate parents ##
-        self.location_tree_df.dropna(inplace=True)
-        for loc in Location.objects.filter(parent_location_id__isnull=True):
-            lt_batch.append(LocationTree(**{
-                'location_id':loc.id,
-                'parent_location_id':loc.id,
-                'lvl':0,
-            }))
-
-        ## iterate through the location tree df created above ##
-        for ix,loc in self.location_tree_df.iterrows():
-            lt_batch.append(LocationTree(**{
-                'location_id':loc.location_id,
-                'parent_location_id':loc.parent_location_id,
-                'lvl':0,
-            }))
-
-        LocationTree.objects.all().delete()
-        LocationTree.objects.bulk_create(lt_batch)
+# class OldLocationTreeCache(object):
+#     def __init__(self):
+#
+#         self.location_tree_columns = ['location_id','parent_location_id']
+#         self.location_tree_df = DataFrame(columns=self.location_tree_columns)
+#
+#     def main(self):
+#         '''
+#         Any and all parents attributed any and all children.  See the test
+#         case for an abstracted example.
+#         '''
+#
+#         ## now iterate from bottom to bottom to top ##
+#         location_type_loop_order = LocationType.objects.all()\
+#             .values_list('id',flat=True).order_by('-admin_level')
+#
+#         for lt_id in location_type_loop_order:
+#             self.process_location_tree_lvl(lt_id)
+#
+#         self.upsert_location_tree()
+#
+#     def process_location_tree_lvl(self, location_type_id):
+#
+#         lt_batch = []
+#
+#         location_df = DataFrame(list(Location.objects\
+#             .filter(location_type_id = location_type_id)\
+#             .values_list('id','parent_location_id')),columns=self.location_tree_columns)
+#
+#         merged_df = location_df.merge(self.location_tree_df
+#             ,left_on='location_id',right_on='parent_location_id')
+#
+#         cleaned_merge_df = merged_df[['location_id_y','parent_location_id_x']]
+#         cleaned_merge_df.columns = self.location_tree_columns
+#
+#         self.location_tree_df = concat([self.location_tree_df,location_df,\
+#             cleaned_merge_df])
+#
+#         self.location_tree_df.drop_duplicates()
+#
+#     def upsert_location_tree(self):
+#
+#         lt_batch = []
+#
+#         ## only the ultimate parent should have itself as a parent ##
+#         ## drop all NA values, then create the ultimate parents ##
+#         self.location_tree_df.dropna(inplace=True)
+#         for loc in Location.objects.filter(parent_location_id__isnull=True):
+#             lt_batch.append(LocationTree(**{
+#                 'location_id':loc.id,
+#                 'parent_location_id':loc.id,
+#                 'lvl':0,
+#             }))
+#
+#         ## iterate through the location tree df created above ##
+#         for ix,loc in self.location_tree_df.iterrows():
+#             lt_batch.append(LocationTree(**{
+#                 'location_id':loc.location_id,
+#                 'parent_location_id':loc.parent_location_id,
+#                 'lvl':0,
+#             }))
+#
+#         LocationTree.objects.all().delete()
+#         LocationTree.objects.bulk_create(lt_batch)
 
 class LocationTreeCache(object):
     """
@@ -210,7 +209,7 @@ class LocationTreeCache(object):
 
         lt_batch = []
 
-        ## NaN --> None
+        ## Drop Duplicates; NaN --> None
         self.location_tree_df.dropna(inplace=True)
 
         ## iterate through the location tree df created above ##
@@ -221,9 +220,18 @@ class LocationTreeCache(object):
                 'lvl': loc.lvl,
             }))
 
+        ## add the ultimate parent as it will not have a record in the df yet
+        ultimate_parent_id = Location.objects\
+            .filter(parent_location_id__isnull = True)[0].id
+        ult_parent, created = LocationTree.objects.get_or_create(
+            location_id = ultimate_parent_id,
+            parent_location_id = ultimate_parent_id,
+            defaults = {'lvl': 0},
+        )
+
+
         LocationTree.objects.all().delete()
         LocationTree.objects.bulk_create(lt_batch)
-
 
 
 def minify_geo_json():

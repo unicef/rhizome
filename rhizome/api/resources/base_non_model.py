@@ -65,11 +65,15 @@ class BaseNonModelResource(BaseResource):
         a GET request is handled in the `QuerySet` attribute of the Meta class.
         """
 
+        ## first make sure that we have all of the required parameters for teh
+        ## request as defined by the Meta class of the resource
+        filters = self.validate_filters(request)
+
         if hasattr(self, "pre_process_data"):
             self.pre_process_data(request)
 
+        # potentially pass filters here
         objects = self.get_object_list(request)
-
         response_data = {
             'objects': objects,
             'meta': {'total_count': len(objects)},  # add paginator info here..

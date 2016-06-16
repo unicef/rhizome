@@ -119,6 +119,27 @@ class BaseResource(Resource):
     ## Custom Rhizome Methods ##
     ############################
 
+    def validate_filters(self, request):
+        '''
+        Make sure that all required filters have been passed in
+        '''
+
+        filters = {}
+
+        # Grab a mutable copy of the request#
+        if hasattr(request, 'GET'):
+            filters = request.GET.copy()
+
+        # check required parameters and raise exception if one is missing #
+        if hasattr(self._meta, 'GET_params_required'):
+            keys_req = self._meta.GET_params_required
+            missing_keys = list(set(keys_req).difference(set(filters.keys())))
+            if len(missing_keys) > 0:
+                msg = 'Missing required parameter %s ' % missing_keys[0]
+                raise RhizomeApiException(msg)
+
+        return filters
+
     def get_locations_to_return_from_url(self, request):
         '''
         This method is used in both the /geo and /datapoint endpoints.  Based
@@ -147,11 +168,10 @@ class BaseResource(Resource):
             ## proper depth_level in there.
             ## see here https://trello.com/c/YPEF4pCg/885
 
-            descendant_ids = LocationTree.objects.filter(
+            location_ids = LocationTree.objects.filter(
                 parent_location_id=self.location_id,
                 lvl = self.location_depth
             ).values_list('location_id', flat=True)
-            location_ids = descendant_ids
 
         else:
             ## this really shouldn't happen -- when this condition hits
@@ -187,7 +207,6 @@ class BaseResource(Resource):
         '''
 
         value_filter = self.parsed_params['filter_value'].split(',')
-
         location_ids = DataPointComputed.objects.filter(
             campaign__in=self.parsed_params['campaign__in'],
             location__in=location_ids,
@@ -199,7 +218,9 @@ class BaseResource(Resource):
 
     def dispatch(self, request_type, request, **kwargs):
         """
-        Overrides Tastypie and calls get_list.
+        Overrides Tastypie and calls get_list for GET, obj_create for POST,
+        get_detail and obj_delete when fetching or delete an object with
+        primary key requested
         """
 
         try:
@@ -220,7 +241,6 @@ class BaseResource(Resource):
 
         self.is_authenticated(request)
         self.throttle_check(request)
-
 
         try:
             response = method(request, **kwargs)
