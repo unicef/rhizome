@@ -8,10 +8,11 @@ import IntegerCell from 'components/table/IntegerCell'
 import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
 
-const AgDataTable = (props) => {
+const EnterDataTable = (props) => {
   const datapoints = props.datapoints.flattened
-  const rows = _getRowData(datapoints)
-  const columns = _getColumnData(datapoints, props.updateDatapoint)
+  const grouped_datapoints = _.groupBy(datapoints, 'location.id')
+  const rows = _getRowData(grouped_datapoints)
+  const columns = _getColumnData(grouped_datapoints, props.updateDatapoint)
   return (
     <ResourceTable
       rowData={rows}
@@ -21,9 +22,8 @@ const AgDataTable = (props) => {
   )
 }
 
-const _getRowData = datapoints => {
-  const grouped_by_location = _.groupBy(datapoints, 'location.id')
-  const rows = datapoints ? _.map(grouped_by_location, datapoint_group => {
+const _getRowData = grouped_datapoints => {
+  const rows = grouped_datapoints ? _.map(grouped_datapoints, datapoint_group => {
     const first_datapoint = datapoint_group[0]
     const row = {
       campaign: moment(first_datapoint.campaign.start_date).format('MMM YYYY'),
@@ -38,8 +38,9 @@ const _getRowData = datapoints => {
   return rows
 }
 
-const _getColumnData = (datapoints, updateDatapoint) => {
-  const columns = datapoints ? datapoints.map(datapoint => {
+const _getColumnData = (grouped_datapoints, updateDatapoint) => {
+  const first_row = _.toArray(grouped_datapoints)[0]
+  const columns = first_row.length > 0 ? first_row.map(datapoint => {
     const column = {
       field: datapoint.indicator.id + '.value',
       headerName: datapoint.indicator.name
@@ -60,4 +61,4 @@ const _getColumnData = (datapoints, updateDatapoint) => {
   return columns
 }
 
-export default AgDataTable
+export default EnterDataTable
