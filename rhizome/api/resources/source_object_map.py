@@ -2,7 +2,6 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import Indicator, Location, Campaign
 from rhizome.models import SourceObjectMap, DocumentSourceObjectMap
 
-
 class SourceObjectMapResource(BaseModelResource):
     '''
     **GET Request** Returns all Source Object Maps
@@ -17,27 +16,38 @@ class SourceObjectMapResource(BaseModelResource):
         - *Errors:*
             if any of the required fields are missing or incorrect, the API returns a 500 error code.
     '''
+
     class Meta(BaseModelResource.Meta):
-        object_class = SourceObjectMap
+        '''
+        '''
         resource_name = 'source_object_map'
-        required_fields_for_post = ['content_type','source_object_code',\
-            'mapped_by_id']
+        object_class = SourceObjectMap
+        GET_params_required = ['document_id']
+        required_fields_for_post = ['source_object_code', 'content_type']
 
-    def get_object_list(self, request):
+    def apply_filters(self, request, applicable_filters):
+        """
+        We use this to handle attional filters for the source object map model.
 
-        qs = ''
-        if 'document_id' in request.GET:
+        This is overridden from the parent BaseModelResource
+        """
 
-            som_ids = DocumentSourceObjectMap.objects \
-                .filter(document_id=request.GET['document_id']). \
+        filters = request.GET
+
+        ## first filter by the meta data relevant to this document ##
+        som_ids_for_document = DocumentSourceObjectMap.objects \
+                .filter(document_id=filters['document_id']). \
                 values_list('source_object_map_id', flat=True)
+        applicable_filters['id__in'] = som_ids_for_document
 
-            qs = SourceObjectMap.objects.filter(id__in=som_ids,
-                                                master_object_id__gt=0).values()
-
-        elif 'id' in request.GET:
-            qs = SourceObjectMap.objects.filter(id=request.GET['id']).values()
-
+        ## get the is_mapped filter, if not passed we name this var show_all
+        ## because that is the behavior that we execute when there is no param
+        is_mapped = filters.get('is_mapped', 'show_all')
+        if is_mapped == '0':
+            applicable_filters['master_object_id'] = -1
+        elif is_mapped == '1':
+            applicable_filters['master_object_id__gt'] = 0
         else:
-            qs = SourceObjectMap.objects.all().values()
-        return qs
+            pass
+
+        return self.get_object_list(request).filter(**applicable_filters)

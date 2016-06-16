@@ -19,6 +19,17 @@ admin.autodiscover()
 # TASTYPIE Endpoints
 #---------------------------------------------------------------------------
 v1_api = Api(api_name='v1')
+
+# import pkgutil
+#
+# # this is the package we are inspecting -- for example 'email' from stdlib
+# import email
+#
+# package = email
+# for importer, modname, ispkg in pkgutil.iter_modules(package.__path__):
+#     print "Found submodule %s (is a package: %s)" % (modname, ispkg)
+
+
 v1_api.register(agg_refresh.AggRefreshResource())
 v1_api.register(cache_meta.CacheMetaResource())
 v1_api.register(
@@ -47,7 +58,6 @@ v1_api.register(office.OfficeResource())
 v1_api.register(queue_process.QueueProcessResource())
 v1_api.register(refresh_master.RefreshMasterResource())
 v1_api.register(source_object_map.SourceObjectMapResource())
-v1_api.register(source_object_to_map.SourceObjectToMapResource())
 v1_api.register(source_submission.SourceSubmissionResource())
 v1_api.register(sync_odk.SyncOdkResource())
 v1_api.register(user_group.UserGroupResource())

@@ -22,34 +22,30 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
             self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
 
         self.document = self.test_setup.create_arbitrary_document(id=22)
-        som_0 = SourceObjectMap.objects.create(
+        self.som_0 = SourceObjectMap.objects.create(
             source_object_code='This is not mapped',
             master_object_id = -1,
             content_type = 'location'
         )
         DocumentSourceObjectMap.objects.create(
             document_id = self.document.id,
-            source_object_map_id = som_0.id
+            source_object_map_id = self.som_0.id
         )
 
 
-        som_1 = SourceObjectMap.objects.create(
+        self.som_1 = SourceObjectMap.objects.create(
             source_object_code='This is mapped',
             master_object_id = self.location.id,
             content_type = 'location'
         )
         DocumentSourceObjectMap.objects.create(
             document_id = self.document.id,
-            source_object_map_id = som_1.id
+            source_object_map_id = self.som_1.id
         )
 
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         self.indicators = self.test_setup.model_df_to_data(
             indicator_df, Indicator)
-
-
-
-
 
     def test_som_post(self):
         # this is really a PUT that is i am updating values here in place
@@ -57,7 +53,7 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
             'master_object_id': self.indicators[0].id,
-            'id': self.indicator_map.id,
+            'id': self.som_0.id,
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
@@ -87,29 +83,50 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.assertHttpApplicationError(post_resp)
 
     def test_som_get_id(self):
+        '''
+        get the som_obj by id for both the mapped and un mapped.
+        '''
+        ## mapped ##
         get_resp = self.test_setup.get(
-            self, '/api/v1/source_object_map/%s/' % self.indicator_map.id)
+            self, '/api/v1/source_object_map/%s/' % self.som_1.id)
         self.assertHttpOK(get_resp)
         response_data = self.deserialize(get_resp)
-        self.assertEqual(response_data['id'], self.indicator_map.id)
+        self.assertEqual(response_data['master_object_id'], self.location.id)
+
+        ## un mapped ##
+        get_resp_1 = self.test_setup.get(
+            self, '/api/v1/source_object_map/%s/' % self.som_0.id)
+        self.assertHttpOK(get_resp_1)
+        response_data_1 = self.deserialize(get_resp_1)
+        self.assertEqual(response_data_1['master_object_id'], -1)
 
     def test_som_get_doc_id(self):
-        get_data = {'document_id': self.document.id}
+        get_data = {'document_id': self.document.id, 'is_mapped': 1}
         resp = self.test_setup.get(
             self, '/api/v1/source_object_map/', get_data)
+
         self.assertHttpOK(resp)
         data = self.deserialize(resp)
-        self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
+        self.assertEqual(data['objects'][0]['master_object_id']\
+            , self.location.id)
 
-    def test_som_get(self):
-        get_resp = self.test_setup.get(self, '/api/v1/source_object_map/')
-        get_data = self.deserialize(get_resp)
-        self.assertHttpOK(get_resp)
-        self.assertEqual(len(get_data['objects']), 2)
+    def test_som_get_no_doc_param(self):
+        '''
+        the document_id is a required parameter so we need to make sure
+        that when we pass a request without a document_id, that we get the
+        expected error message.
+        '''
+
+        resp = self.test_setup.get(self, '/api/v1/source_object_map/')
+        data = self.deserialize(resp)
+        self.assertHttpApplicationError(resp)
+
+        expected_error_msg = 'Missing required parameter document_id'
+        self.assertEqual(data['error'], str(expected_error_msg))
 
     def test_som_get_unmapped(self):
-        filter_params = {'document_id': self.document.id}
-        resp = self.test_setup.get(self, '/api/v1/source_object_to_map/',\
+        filter_params = {'document_id': self.document.id, 'is_mapped': 0}
+        resp = self.test_setup.get(self, '/api/v1/source_object_map/',\
             data = filter_params)
         self.assertHttpOK(resp)
 
