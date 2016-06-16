@@ -18,9 +18,8 @@ from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
 from django.core.exceptions import (
-    ObjectDoesNotExist, MultipleObjectsReturned # , ValidationError,
+    ObjectDoesNotExist, MultipleObjectsReturned
 )
-
 
 class BaseModelResource(ModelResource, BaseResource):
     '''

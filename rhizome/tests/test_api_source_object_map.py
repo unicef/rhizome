@@ -1,7 +1,7 @@
-
 from base_test_case import RhizomeApiTestCase
 from rhizome.models import Office, LocationType, Location, \
-    LocationPermission, Campaign, CampaignType, IndicatorTag
+    LocationPermission, Campaign, CampaignType, IndicatorTag, SourceObjectMap,\
+    DocumentSourceObjectMap
 from pandas import read_csv
 from rhizome.models import Indicator
 from rhizome.tests.setup_helpers import TestSetupHelpers
@@ -18,25 +18,38 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.user = self.test_setup.user
         self.lt = self.test_setup.create_arbitrary_location_type()
         self.o = self.test_setup.create_arbitrary_office()
-        self.not_allowed_to_see_location = self.test_setup.create_arbitrary_location(
-            self.lt.id, self.o.id)
+        self.location = \
+            self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
 
-        self.indicator_map = self.test_setup.create_arbitrary_som(
-            source_object_code='Percent missed children_PCA',
-            id=21)
+        self.document = self.test_setup.create_arbitrary_document(id=22)
+        som_0 = SourceObjectMap.objects.create(
+            source_object_code='This is not mapped',
+            master_object_id = -1,
+            content_type = 'location'
+        )
+        DocumentSourceObjectMap.objects.create(
+            document_id = self.document.id,
+            source_object_map_id = som_0.id
+        )
 
-        self.test_setup.create_arbitrary_som(
-            source_object_code='Percent missed due to other reasons',
-            id=24)
+
+        som_1 = SourceObjectMap.objects.create(
+            source_object_code='This is mapped',
+            master_object_id = self.location.id,
+            content_type = 'location'
+        )
+        DocumentSourceObjectMap.objects.create(
+            document_id = self.document.id,
+            source_object_map_id = som_1.id
+        )
 
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
         self.indicators = self.test_setup.model_df_to_data(
             indicator_df, Indicator)
 
-        self.document = self.test_setup.create_arbitrary_document(id=22)
 
-        self.dsom = self.test_setup.create_arbitrary_dsom(
-            self.document.id, self.indicator_map.id, 23)
+
+
 
     def test_som_post(self):
         # this is really a PUT that is i am updating values here in place
@@ -80,13 +93,12 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(get_resp)
         self.assertEqual(response_data['id'], self.indicator_map.id)
 
-
     def test_som_get_doc_id(self):
         get_data = {'document_id': self.document.id}
-        get_resp = self.test_setup.get(
+        resp = self.test_setup.get(
             self, '/api/v1/source_object_map/', get_data)
-        self.assertHttpOK(get_resp)
-        get_data = self.deserialize(get_resp)
+        self.assertHttpOK(resp)
+        data = self.deserialize(resp)
         self.assertEqual(get_data['objects'][0]['id'], self.indicator_map.id)
 
     def test_som_get(self):
@@ -94,6 +106,20 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         get_data = self.deserialize(get_resp)
         self.assertHttpOK(get_resp)
         self.assertEqual(len(get_data['objects']), 2)
+
+    def test_som_get_unmapped(self):
+        filter_params = {'document_id': self.document.id}
+        resp = self.test_setup.get(self, '/api/v1/source_object_to_map/',\
+            data = filter_params)
+        self.assertHttpOK(resp)
+
+        data = self.deserialize(resp)
+        data_objects = data['objects']
+
+        self.assertEqual(len(data_objects), 1) # since we created one unmapped
+        self.assertEqual(data_objects[0]['master_object_id'], -1)
+        self.assertEqual(str(data_objects[0]['source_object_code']),\
+            'This is not mapped')
 
     def test_som_get_doc_id_invalid(self):
         get_data = {'document_id': 123456}
