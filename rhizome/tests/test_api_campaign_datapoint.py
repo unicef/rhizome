@@ -24,19 +24,15 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         self.get_credentials()
         self.ts = TestSetupHelpers()
 
-        ## create a bunch of metadata and data for us to use to test
+        ## create a metadata and data for us to use to test ##
         self.create_metadata()
 
         self.country_lt = LocationType.objects\
             .create(name='Country',admin_level = 0)
+        self.region_lt = LocationType.objects\
+            .create(name='Region',admin_level = 1)
         self.province_lt = LocationType.objects\
             .create(name='Province',admin_level = 2)
-
-        # self.distr, created = \
-        #     LocationType.objects.get_or_create(name='District',admin_level = 3)
-        # self.region, created = \
-        #     LocationType.objects.get_or_create(name='Region', admin_level = 1)
-        # self.o = Office.objects.create(name = 'Earth')
 
         self.top_lvl_location = Location.objects.get(name = 'Nigeria')
 
@@ -433,7 +429,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         south = Location.objects.create(
             name='South',
             location_code = 'South',
-            location_type_id=self.province_lt.id,
+            location_type_id=self.region_lt.id,
             office_id = self.o.id,
             parent_location_id = afghanistan.id
             )
