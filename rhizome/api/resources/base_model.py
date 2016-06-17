@@ -106,8 +106,6 @@ class BaseModelResource(ModelResource, BaseResource):
         Returns a queryset that may have been limited by other overrides.
         """
 
-        print 'is this getting called ----===\n' * 5
-
         try:
             query_felds = self._meta.GET_fields
             qs = self._meta.object_class.objects.all().values(*query_felds)
@@ -365,22 +363,35 @@ class BaseModelResource(ModelResource, BaseResource):
             ## currently in our implementation with the Afghanistan EOC, this
             ## filter is cotolred via a drop down for "LPD Status", values are
             ## 1,2,3 based on their priority in the eradication initiative.
-            request.GET['filter_indicator']
-            # location_ids = self.get_locations_from_filter_param(location_ids)
+            indicator_to_filter = request.GET['filter_indicator']
+            value_to_filter = request.GET['filter_value']
+            location_ids = self.get_locations_from_filter_param(location_ids,\
+                 indicator_to_filter, value_to_filter)
         except KeyError:
             pass
 
         return location_ids
 
-    # def get_locations_from_filter_param(self, location_ids):
-    #     '''
-    #     '''
-    #     value_filter = self.parsed_params['filter_value'].split(',')
-    #     location_ids = DataPointComputed.objects.filter(
-    #         campaign__in=self.parsed_params['campaign__in'],
-    #         location__in=location_ids,
-    #         indicator__short_name=self.parsed_params['filter_indicator'],
-    #         value__in=value_filter)\
-    #         .values_list('location_id', flat=True)
-    #
-    #     return location_ids
+    def get_locations_from_filter_param(self, location_ids,\
+            indicator_to_filter, value_to_filter):
+        '''
+        futher filter locations that have the indicator / value filter
+        in the computed datapoint table.
+
+        This is where for instance, we would take care of the filter that says
+        "we only want to see polio cases in `access challenged` areas."
+
+        so the query would come in as
+        {filter_indicator: <is_access_challenged>, filter_value<True>}
+
+        and return only locations that meet that condition.
+        '''
+
+        location_ids = DataPointComputed.objects.filter(
+            campaign__in = self.campaign_id_list,
+            location__in=location_ids,
+            indicator__short_name = indicator_to_filter,
+            value__in=value_to_filter)\
+            .values_list('location_id', flat=True)
+
+        return location_ids

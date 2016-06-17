@@ -34,23 +34,31 @@ class CampaignDataPointResource(BaseModelResource):
 
         filters = request.GET
 
-        ## handle location logic ##
-        location_id_list = self.get_locations_to_return_from_url(request)
-
         ## handle indicator filter ( it's required so assume the param exists )
-        indicator_id_list = filters.get('indicator__in', 0).split(',')
+        self.indicator_id_list = filters.get('indicator__in', 0).split(',')
 
         ## handle campeign logic ##
-        c_start = filters.get('campaign_start', '2000-01-01')
-        c_end = filters.get('campaign_start', '2070-01-01')
-        self.campaign_id_list = Campaign.objects.filter(
-                            start_date__gte=c_start,
-                            start_date__lte=c_end
-                        ).values_list('id', flat=True)
+        ## if campaign__in param passed, use those ids, else get from  start/end
+
+        self.campaign_id_list = filters.get('campaign__in', None)
+
+        if not self.campaign_id_list:
+            c_start = filters.get('campaign_start', '2000-01-01')
+            c_end = filters.get('campaign_start', '2070-01-01')
+            self.campaign_id_list = Campaign.objects.filter(
+                                start_date__gte=c_start,
+                                start_date__lte=c_end
+                            ).values_list('id', flat=True)
+        else:
+            self.campaign_id_list = self.campaign_id_list.split(',')
+
+        ## handle location logic ##
+        self.location_id_list = self.get_locations_to_return_from_url(request)
+
 
         filters = {
-            'location_id__in': location_id_list,
-            'indicator_id__in': indicator_id_list,
+            'location_id__in': self.location_id_list,
+            'indicator_id__in': self.indicator_id_list,
             'campaign_id__in': self.campaign_id_list
         }
 
@@ -61,27 +69,12 @@ class CampaignDataPointResource(BaseModelResource):
         meta = super(BaseModelResource, self)\
             .get_response_meta(request, objects)
 
-        try:
-            meta['campaign_ids'] = self.campaign_id_list
-        except KeyError:
-            pass
-
-        try:
-            location_ids = request.GET['location_id__in']
-            meta['location_ids'] = location_ids
-        except KeyError:
-            location_ids = None
-
-        try:
-            indicator_ids = request.GET['indicator__in']
-            meta['indicator_ids'] = indicator_ids
-        except KeyError:
-            indicator_ids = None
-
-        try:
-            chart_uuid = request.GET['chart_uuid']
+        chart_uuid = request.GET.get('chart_uuid', None)
+        if chart_uuid:
             meta['chart_uuid'] = chart_uuid
-        except KeyError:
-            indicator_ids = None
+
+        meta['location_ids'] = self.location_id_list
+        meta['indicator_ids'] = self.indicator_id_list
+        meta['campaign_ids'] = self.campaign_id_list
 
         return meta
