@@ -50,11 +50,11 @@ const DataEntryHeader = props => {
     <DropdownButton
       items={props.locations.list}
       item_plural_name='Locations'
-      text='Add Locations'
+      text='Select Location'
       style='button'
       searchable
       uniqueOnly
-      sendValue={id => props.selectGlobalLocation(props.locations.index[id])}
+      sendValue={id => props.setGlobalLocations(props.locations.index[id])}
     />
   )
 
@@ -86,6 +86,26 @@ const DataEntryHeader = props => {
     />
   )
 
+  const getChildrenLocations = (parent_location) => {
+    let children_locations = props.locations.raw.filter(location => location.parent_location_id === parent_location.id)
+    children_locations.unshift(parent_location)
+    return children_locations
+  }
+
+  const location_depth_toggle = (
+    <input
+      type='checkbox'
+      checked={props.location_depth}
+      onChange={() => {
+        const new_location_depth = props.location_depth === 1 ? 0 : 1
+        props.setGlobalLocationDepth(new_location_depth)
+        const selected_location = props.selected_locations[0]
+        const new_locations = new_location_depth === 0 ? selected_location : getChildrenLocations(selected_location)
+        props.setGlobalLocations(new_locations)
+      }}
+    />
+  )
+
   return (
     <header className='row page-header'>
       <div className='medium-5 columns medium-text-left small-text-center'>
@@ -97,6 +117,7 @@ const DataEntryHeader = props => {
           { formEntry ? indicator_tag_select : indicator_select }
           { formEntry ? campaign_select : date_select }
           { location_select }
+          { location_depth_toggle }
         </div>
       </div>
     </header>

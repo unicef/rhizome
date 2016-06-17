@@ -3,7 +3,7 @@ import format from 'utilities/format'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import EnterDataPage from 'components/pages/EnterDataPage'
-import { selectGlobalCampaign, selectGlobalLocation, setGlobalIndicators, setGlobalIndicatorTag } from 'actions/global_actions'
+import { selectGlobalCampaign, selectGlobalLocation, setGlobalLocations, setGlobalIndicators, setGlobalIndicatorTag, setGlobalLocationDepth } from 'actions/global_actions'
 import { toggleEntryType, setDataEntryStartDate, setDataEntryEndDate } from 'actions/data_entry_actions'
 import { getDatapoints, updateDatapoint } from 'actions/datapoint_actions'
 
@@ -17,6 +17,7 @@ const mapStateToProps = state => {
     campaigns: state.campaigns,
     indicators: state.indicators,
     locations: state.locations,
+    location_depth: state.data_entry.location_depth,
     start_date: state.data_entry.start_date,
     end_date: state.data_entry.end_date,
     data_type: state.data_entry.data_type,
@@ -34,6 +35,8 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   toggleEntryType,
   selectGlobalCampaign,
   selectGlobalLocation,
+  setGlobalLocations,
+  setGlobalLocationDepth,
   setGlobalIndicators,
   setGlobalIndicatorTag,
   updateDatapoint,

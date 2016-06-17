@@ -6,6 +6,7 @@ const data = {
   start_date: moment().format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
   data_type: 'campaign',
+  location_depth: 0,
   selected_campaign: null,
   selected_locations: [],
   selected_indicators: [],
@@ -60,6 +61,17 @@ const data_entry = handleActions({
   SELECT_GLOBAL_LOCATION: (state, action) => {
     return Object.assign({}, state, {
       selected_locations: [...state.selected_locations, action.payload],
+      dataParamsChanged: true
+    })
+  },
+  SELECT_GLOBAL_LOCATION_DEPTH: (state, action) => {
+    return Object.assign({}, state, {
+      location_depth: action.payload
+    })
+  },
+  SET_GLOBAL_LOCATIONS: (state, action) => {
+    return Object.assign({}, state, {
+      selected_locations: _.isArray(action.payload) ? action.payload : [action.payload],
       dataParamsChanged: true
     })
   },
