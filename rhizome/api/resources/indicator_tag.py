@@ -32,18 +32,15 @@ class IndicatorTagResource(BaseModelResource):
         }
         required_fields_for_post = ['tag_name']
 
-    def get_object_list(self, request):
-        '''
-        The 'show_leaf' parameter only shows the leaf level nodes of the tree.
-        If that param is not requested, then we just return the base queryset
-        from the parent_class.
-        '''
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        """
 
         try:
             request.GET['show_leaf']
-            all_parents = list(set(IndicatorTag.objects
-                                   .filter(parent_tag_id__gt=0)
-                                   .values_list('parent_tag_id', flat=True)))
-            return IndicatorTag.objects.exclude(id__in=all_parents).values()
+            applicable_filters['parent_tag_id__gt'] = 0
         except KeyError:
-            return super(IndicatorTagResource, self).get_object_list(request)
+            pass
+
+        return self.get_object_list(request).filter(**applicable_filters)
