@@ -616,7 +616,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['value'], 10.0)
 
-    def test_post_campaign_datapointtapoint_missing_data(self):
+    def test_post_campaign_datapoint_missing_data(self):
         '''
         if we do not have all hte keys we need, throw an error
         '''
@@ -637,15 +637,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                 'value': 10
                 }
         resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        self.assertHttpApplicationError(resp)
         response_data = self.deserialize(resp)
-        self.assertEqual(response_data['value'], 10.0)
 
     def test_delete_campaign_datapoint(self):
         '''
         create a datapoint, then delete it, make sure that it is no longer
         there.
         '''
-        # create a random cdp
 
         dpc = self.create_a_single_dp()
         delete_url = '/api/v1/campaign_datapoint/%d/' % dpc.id

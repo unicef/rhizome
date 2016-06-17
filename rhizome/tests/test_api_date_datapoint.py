@@ -72,27 +72,23 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
 
         self.ts = TestSetupHelpers()
 
-    def test_date_datapoint_patch(self):
-        '''
-        create a datapoint with the ORM, submit a PATCH request and see
-        if the value changed.
+        self.doc_id = Document.objects.create(doc_title='Data Entry').id
 
-        If the user tries to change anything exept the value, there should be
-        an error.
 
-        '''
 
-        dp_to_patch = DataPoint.objects.all()[0]
-        patch_data = {'value': 101.01}
-        dp_url = '/api/v1/date_datapoint/%s/' % dp_to_patch.id
+    def create_a_single_dp(self):
 
-        ## submit the patch and make sure it has the proper response code
-        resp = self.ts.patch(self, dp_url, data=patch_data)
-        self.assertHttpAccepted(resp)
+        obj = DataPointComputed.objects.create(
+            campaign_id = 1,
+            location_id = 1,
+            indicator_id = 1,
+            document_id = 1,
+            value = 0,
+            cache_job_id = -1
+        )
 
-        ## now get the dp and see if the value has been is updated ##
-        dp_to_patch = DataPoint.objects.get(id=dp_to_patch.id)
-        self.assertEqual(dp_to_patch.value, patch_data['value'])
+        return obj
+
 
     def create_polio_cases(self):
 
@@ -371,121 +367,100 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         ## if location_depth = 1, the number would have to take into
         ## account the number of sub locations one step under the parent
 
+    def test_patch_date_datapoint(self):
+        '''
+        create a datapoint with the ORM, submit a PATCH request and see
+        if the value changed.
 
-## DUPE TESTS -- to do -- make sure all the below is covered above $$
+        If the user tries to change anything exept the value, there should be
+        an error.
+        '''
 
-# from base_test_case import RhizomeApiTestCase
-# from rhizome.tests.setup_helpers import TestSetupHelpers
-# from rhizome.models import LocationPermission, CampaignType, IndicatorTag,\
-#     DataPointEntry
-#
-# class DatapointEntryResourceTest(RhizomeApiTestCase):
-#
-#     def setUp(self):
-#         super(DatapointEntryResourceTest, self).setUp()
-#
-#         self.ts = TestSetupHelpers()
-#         self.lt = self.ts.create_arbitrary_location_type()
-#         self.o = self.ts.create_arbitrary_office()
-#
-#         self.top_lvl_location = self.ts.create_arbitrary_location(
-#             self.lt.id, self.o.id)
-#
-#         LocationPermission.objects.create(user_id=self.ts.user.id,
-#                                           top_lvl_location_id=self.top_lvl_location.id)
-#         self.ct = CampaignType.objects.create(name='NID')
-#         self.it = IndicatorTag.objects.create(tag_name='Polio')
-#
-#         self.c = self.ts.create_arbitrary_campaign(
-#             self.o.id, self.ct.id, self.top_lvl_location.id, self.it.id)
-#         self.ind = self.ts.create_arbitrary_indicator()
-#         self.doc = self.ts.create_arbitrary_document()
-#         self.ss = self.ts.create_arbitrary_ss(self.doc.id)
-#
-#     def test_get(self):
-#         dp = DataPointEntry.objects.create(
-#             location_id=self.top_lvl_location.id,
-#             data_date='2016-01-01',
-#             indicator_id=self.ind.id,
-#             value=1234,
-#             cache_job_id=-1,
-#             source_submission_id=self.ss.id,
-#             campaign_id=self.c.id
-#         )
-#         data = {'campaign__in': self.c.id, 'indicator__in': self.ind.id}
-#         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
-#         resp_data = self.deserialize(resp)
-#         self.assertHttpOK(resp)
-#         self.assertEqual(len(resp_data['objects']), 1)
-#
-#     def test_get_invalid_request(self):
-#         data = {'campaign__in': 123, 'indicator__in': 456}
-#         resp = self.ts.get(self, '/api/v1/datapointentry/', data)
-#         self.assertHttpApplicationError(resp)
-#
-#     def test_post_new_dp(self):
-#         dp_value = 4567
-#         data = {
-#             'campaign_id': self.c.id,
-#             'location_id': self.top_lvl_location.id,
-#             'indicator_id': self.ind.id,
-#             'value': dp_value
-#         }
-#         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
-#         self.assertHttpCreated(resp)
-#         resp_data = self.deserialize(resp)
-#         self.assertEqual(resp_data['value'], dp_value)
-#
-#     # delete methods should fail
-#     def test_delete(self):
-#         dp = DataPointEntry.objects.create(
-#             location_id=self.top_lvl_location.id,
-#             data_date='2016-01-01',
-#             indicator_id=self.ind.id,
-#             value=1234,
-#             cache_job_id=-1,
-#             source_submission_id=self.ss.id,
-#             campaign_id=self.c.id
-#         )
-#         self.assertEqual(DataPointEntry.objects.count(), 1)
-#         delete_url = '/api/v1/datapointentry/?id=' + str(dp.id)
-#         self.ts.delete(self, delete_url)
-#         self.assertEqual(DataPointEntry.objects.count(), 1)
-#
-#     # what happens when we create a duplicate datapoint
-#     def test_post_update_dp(self):
-#         dp_value = 4567
-#         data = {
-#             'campaign_id': self.c.id,
-#             'location_id': self.top_lvl_location.id,
-#             'indicator_id': self.ind.id,
-#             'value': dp_value
-#         }
-#         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
-#         self.assertHttpCreated(resp)
-#         resp_data = self.deserialize(resp)
-#         self.assertEqual(resp_data['value'], dp_value)
-#
-#         # do it again
-#         new_val = 323
-#         data['value'] = new_val
-#         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
-#         self.assertHttpCreated(resp)
-#         resp_data = self.deserialize(resp)
-#
-#         # make sure the api returns the new dp
-#         data = {'campaign__in': self.c.id, 'indicator__in': self.ind.id}
-#         get_resp = self.ts.get(self, '/api/v1/datapointentry/', data)
-#         resp_data = self.deserialize(get_resp)
-#         self.assertEqual(resp_data['objects'][0]['value'], new_val)
-#
-#     def test_post_invalid_campaign(self):
-#         dp_value = 4567
-#         data = {
-#             'campaign_id': 1234,
-#             'location_id': self.top_lvl_location.id,
-#             'indicator_id': self.ind.id,
-#             'value': dp_value
-#         }
-#         resp = self.ts.post(self, '/api/v1/datapointentry/', data)
-#         self.assertHttpApplicationError(resp)
+        dp_to_patch = DataPoint.objects.all()[0]
+        patch_data = {'value': 101.01}
+        dp_url = '/api/v1/date_datapoint/%s/' % dp_to_patch.id
+
+        ## submit the patch and make sure it has the proper response code
+        resp = self.ts.patch(self, dp_url, data=patch_data)
+        self.assertHttpAccepted(resp)
+
+        ## now get the dp and see if the value has been is updated ##
+        dp_to_patch = DataPoint.objects.get(id=dp_to_patch.id)
+        self.assertEqual(dp_to_patch.value, patch_data['value'])
+
+    def test_post_campaign_datapoint(self):
+        '''
+        post a record to the campaign datapoint table
+        '''
+
+        indicator_id = Indicator.objects.all()[0].id
+        location_id = Location.objects.all()[0].id
+        val = 10.0
+
+        data = {
+                'indicator_id': indicator_id,
+                'data_date': '2016-01-01',
+                'location_id': location_id,
+                'value': val
+                }
+
+        resp = self.ts.post(self, '/api/v1/date_datapoint/', data)
+
+        self.assertHttpCreated(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], val)
+
+    def test_post_campaign_datapoint_missing_data(self):
+        '''
+        if we do not have all hte keys we need, throw an error
+        '''
+        data = {'value': 10}
+        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        self.assertHttpApplicationError(resp)
+
+    def test_post_campaign_datapoint_invalid_data(self):
+        '''
+        The indicator, and campaign dont exists, the api should tell us
+        '''
+
+        data = {
+                # 'document_id': doc_id,
+                'indicator_id': 4324,
+                'campaign_id': 32132123,
+                'location_id': 4321,
+                'value': 10
+                }
+        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        self.assertHttpApplicationError(resp)
+        response_data = self.deserialize(resp)
+
+    def test_delete_campaign_datapoint(self):
+        '''
+        create a datapoint, then delete it, make sure that it is no longer
+        there.
+        '''
+
+        dpc = self.create_a_single_dp()
+        delete_url = '/api/v1/campaign_datapoint/%d/' % dpc.id
+        resp = self.ts.delete(self, delete_url)
+
+        ## now make sure that it is not there #
+        dpc_query = DataPointComputed.objects.filter(id=dpc.id)
+        self.assertEqual(len(dpc_query), 0)
+
+    def test_get_campaign_datapoint_by_id(self):
+        '''
+        Here we get one object from the API and ensure it has the proper
+        data from when we inserted it.
+        '''
+
+        dp_obj = self.create_a_single_dp()
+
+        resp = self.ts.get(self, '/api/v1/campaign_datapoint/%s/' % dwc_obj.id)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], dwc_obj.value)
+
+    # def test_post_then_patch_dp(self):
+    #     '''
+    #     submit a post, then patch that resource and set a new value

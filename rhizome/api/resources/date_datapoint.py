@@ -10,9 +10,9 @@ from tastypie.utils.mime import build_content_type
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
 
-from rhizome.models import DataPointComputed, Campaign, Location,\
+from rhizome.models import DataPointComputed, Campaign, Location, Document,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
-    CalculatedIndicatorComponent, LocationType
+    CalculatedIndicatorComponent, LocationType, SourceSubmission
 import math
 
 
@@ -54,6 +54,8 @@ class DateDatapointResource(BaseModelResource):
 
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
         object_class = DataPoint
+        required_fields_for_post = ['indicator_id','location_id', 'data_date', \
+            'value']
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
 
@@ -64,6 +66,28 @@ class DateDatapointResource(BaseModelResource):
         super(DateDatapointResource, self).__init__(*args, **kwargs)
         self.error = None
         self.parsed_params = None
+
+    def add_default_post_params(self, bundle):
+        '''
+        This needs work.. perhaps we can create one submission
+        per session, so that wer can trace back to what a user entered at
+        a particular time.
+
+        Right now all data entry every where will be associated with one id
+
+        '''
+        data_entry_doc_id = Document.objects.get(doc_title = 'Data Entry').id
+
+        try:
+            source_submission = SourceSubmission.objects.filter(document_id = \
+                data_entry_doc_id)[0]
+        except IndexError:
+            source_submission = SourceSubmission.objects.create(document_id = \
+                data_entry_doc_id, row_number = 0)
+
+
+        bundle.data['source_submission_id'] = source_submission.id
+        return bundle
 
     def get_response_meta(self, request, objects):
 
