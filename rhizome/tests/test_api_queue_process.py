@@ -42,7 +42,7 @@ class QueueProcessResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
 
-        new_ss_obj = SourceSubmission.objects.get(id = self.doc.id)
+        new_ss_obj = SourceSubmission.objects.get(id = self.ss_obj.id)
         self.assertEqual(new_ss_obj.process_status, 'TO_PROCESS')
 
 
