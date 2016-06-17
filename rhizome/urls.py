@@ -29,17 +29,15 @@ v1_api = Api(api_name='v1')
 # for importer, modname, ispkg in pkgutil.iter_modules(package.__path__):
 #     print "Found submodule %s (is a package: %s)" % (modname, ispkg)
 
-
 v1_api.register(agg_refresh.AggRefreshResource())
 v1_api.register(cache_meta.CacheMetaResource())
 v1_api.register(
     calculated_indicator_component.CalculatedIndicatorComponentResource())
 v1_api.register(campaign.CampaignResource())
 v1_api.register(campaign_type.CampaignTypeResource())
-v1_api.register(computed_datapoint.ComputedDataPointResource())
 v1_api.register(custom_chart.CustomChartResource())
 v1_api.register(custom_dashboard.CustomDashboardResource())
-v1_api.register(campaign_datapoint.CampaignDatapointResource())
+v1_api.register(campaign_datapoint.CampaignDataPointResource())
 v1_api.register(date_datapoint.DateDatapointResource())
 v1_api.register(doc_datapoint.DocDataPointResource())
 v1_api.register(doc_detail_type.DocDetailTypeResource())

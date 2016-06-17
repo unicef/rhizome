@@ -57,27 +57,3 @@ class GeoResource(BaseModelResource):
         could be a point at which additional build_agg_rc_dfing may be applied
         '''
         return self.get_object_list(bundle.request)
-
-    # def dehydrate(self, bundle):
-    #
-    #     bundle.data.pop("resource_uri", None)
-    #     return bundle
-    #
-    # def alter_list_data_to_serialize(self, request, data):
-    #     '''
-    #     If there is an error for this resource, add that to the response.  If
-    #     there is no error, than add this key, but set the value to null.  Also
-    #     add the total_count to the meta object as well
-    #     '''
-    #     # get rid of the meta_dict. i will add my own meta data.
-    #     data['type'] = "FeatureCollection"
-    #     data['features'] = data['objects']
-    #     data['error'] = None  # fix this.
-    #
-    #     data.pop("objects", None)
-    #     data.pop("meta", None)
-    #
-    #     if 'location_id__in' in request.GET:
-    #         data['location_id__in'] = request.GET['location_id__in']
-    #
-    #     return data

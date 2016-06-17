@@ -8,10 +8,12 @@ from rhizome.cache_meta import LocationTreeCache
 from random import randint
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-class DataPointResourceTest(RhizomeApiTestCase):
+import json
+
+class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
     def setUp(self):
-        super(DataPointResourceTest, self).setUp()
+        super(CampaignDataPointResourceTest, self).setUp()
 
         # Create a user.
         self.username = 'john'
@@ -53,9 +55,8 @@ class DataPointResourceTest(RhizomeApiTestCase):
 
 
     def test_get_list(self):
-        # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_list --settings=rhizome.settings.test
-
         # Create the data, need input value to the DataPointComputed model.
+
         # 1. The CacheJob value
         cache_job = CacheJob.objects.create(
             is_error=False,
@@ -87,7 +88,8 @@ class DataPointResourceTest(RhizomeApiTestCase):
 
         # 5. Create Test DataPointComputed
         value = 1.57
-        document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
+        document = Document.objects\
+            .create(doc_title='Test Document')
         datapoint = DataPointComputed.objects.create(value=value,\
             cache_job=cache_job,indicator=indicator, location=location,\
             campaign=campaign, document=document)
@@ -115,7 +117,8 @@ class DataPointResourceTest(RhizomeApiTestCase):
         # check the meta data
         self.assertEqual(int(response_data['meta']['indicator_ids']), indicator.id)
         self.assertEqual(response_data['meta']['chart_uuid'], chart_uuid)
-        self.assertEqual(response_data['meta']['campaign_ids'], [campaign.id])
+        self.assertEqual(\
+            json.loads(response_data['meta']['campaign_ids']), [campaign.id])
         self.assertEqual(int(response_data['meta']['location_ids']), location.id)
 
     def _get_class_datapoint(self):
@@ -551,3 +554,155 @@ class DataPointResourceTest(RhizomeApiTestCase):
         ## now get the dp and see if the value has been is updated ##
         dp_to_patch = DataPointComputed.objects.get(id=dp_to_patch.id)
         self.assertEqual(dp_to_patch.value, patch_data['value'])
+
+
+### had dupe tests.. to do -- make sure all the below is covered above ###
+
+# class ComputedDatapointResourceTest(RhizomeApiTestCase):
+#
+#     def setUp(self):
+#         super(ComputedDatapointResourceTest, self).setUp()
+#
+#         self.ts = TestSetupHelpers()
+#         self.create_metadata()
+#         self.doc_id = self.ts.ingest_file('eoc_post_campaign.csv')
+#
+#     def test_get_computed_datapoint(self):
+#         get_data = {'document_id': self.doc_id}
+#         resp = self.ts.get(self, '/api/v1/computed_datapoint/', get_data)
+#         self.assertHttpOK(resp)
+#         resp_data = self.deserialize(resp)
+#         db_data = DataPointComputed.objects.filter(
+#             document_id=self.doc_id).values()
+#         self.assertEqual(len(resp_data['objects']), len(db_data))
+#
+#     def test_get_computed_datapoint_no_data(self):
+#         resp = self.ts.get(self, '/api/v1/computed_datapoint/')
+#         self.assertHttpOK(resp)
+#         response_data = self.deserialize(resp)
+#         self.assertEqual(len(response_data['objects']), 0)
+#
+#     def test_post_computed_datapoint(self):
+#         doc_id = Document.objects.create(doc_title='Data Entry').id
+#         indicator_id = Indicator.objects.all()[0].id
+#         campaign_id = Campaign.objects.all()[0].id
+#         location_id = Location.objects.all()[0].id
+#         # value indicator campaign location document_i
+#         data = {'document_id': doc_id,
+#                 'indicator_id': indicator_id,
+#                 'campaign_id': campaign_id,
+#                 'location_id': location_id,
+#                 'value': 10
+#                 }
+#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
+#         response_data = self.deserialize(resp)
+#         self.assertEqual(response_data['value'], 10.0)
+#
+#     def test_post_computed_datapoint_missing_data(self):
+#         data = {'value': 10}
+#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
+#         self.assertHttpApplicationError(resp)
+#
+#     def test_post_computed_datapoint_invalid_data(self):
+#         doc_id = Document.objects.create(doc_title='Data Entry').id
+#         data = {'document_id': doc_id,
+#                 'indicator_id': 4324,
+#                 'campaign_id': 32132123,
+#                 'location_id': 4321,
+#                 'value': 10
+#                 }
+#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
+#         response_data = self.deserialize(resp)
+#         self.assertEqual(response_data['value'], 10.0)
+#
+#     def test_delete_computed_datapoint(self):
+#         # create a random cdp
+#         indicator_id = Indicator.objects.all()[0].id
+#         campaign_id = Campaign.objects.all()[0].id
+#         location_id = Location.objects.all()[0].id
+#         document_id = Document.objects.all()[0].id
+#
+#         dpc = DataPointComputed.objects.create(
+#             indicator_id=indicator_id,
+#             campaign_id=campaign_id,
+#             location_id=location_id,
+#             document_id=document_id,
+#             value=21)
+#
+#         dpc_query = DataPointComputed.objects.filter(id=dpc.id)
+#         self.assertEqual(len(dpc_query), 1)
+#
+#         delete_url = '/api/v1/computed_datapoint/%d/' % dpc.id
+#
+#         self.ts.delete(self, delete_url)
+#
+#         dpc_query = DataPointComputed.objects.filter(id=dpc.id)
+#         self.assertEqual(len(dpc_query), 0)
+#
+#     def create_metadata(self):
+#         '''
+#         Creating the Indicator, location, Campaign, meta data needed for the
+#         system to aggregate / caclulate.
+#         '''
+#
+#         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
+#
+#         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
+#         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
+#
+#         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+#         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
+#
+#         location_df = read_csv('rhizome/tests/_data/locations.csv')
+#         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
+#
+#         office_id = Office.objects.create(id=1, name='test').id
+#
+#         cache_job_id = CacheJob.objects.create(id=-2,
+#                                                date_attempted='2015-01-01', is_error=False)
+#
+#         campaign_type = CampaignType.objects.create(id=1, name="test")
+#
+#         locations = self.model_df_to_data(location_df, Location)
+#         campaigns = self.model_df_to_data(campaign_df, Campaign)
+#         self.model_df_to_data(indicator_df, Indicator)
+#         self.user_id = User.objects.create_user(
+#             'test', 'test@test.com', 'test').id
+#         self.mapped_location_id = locations[0].id
+#         loc_map = SourceObjectMap.objects.create(
+#             source_object_code='AF001039003000000000',
+#             content_type='location',
+#             mapped_by_id=self.user_id,
+#             master_object_id=self.mapped_location_id
+#         )
+#
+#         source_campaign_string = '2016 March NID OPV'
+#         self.mapped_campaign_id = campaigns[0].id
+#         campaign_map = SourceObjectMap.objects.create(
+#             source_object_code=source_campaign_string,
+#             content_type='campaign',
+#             mapped_by_id=self.user_id,
+#             master_object_id=self.mapped_campaign_id
+#         )
+#
+#         self.mapped_indicator_with_data = locations[2].id
+#         indicator_map = SourceObjectMap.objects.create(
+#             source_object_code='Percent missed due to other reasons',
+#             content_type='indicator',
+#             mapped_by_id=self.user_id,
+#             master_object_id=self.mapped_indicator_with_data
+#         )
+#
+#     def model_df_to_data(self, model_df, model):
+#
+#         meta_ids = []
+#
+#         non_null_df = model_df.where((notnull(model_df)), None)
+#         list_of_dicts = non_null_df.transpose().to_dict()
+#
+#         for row_ix, row_dict in list_of_dicts.iteritems():
+#
+#             row_id = model.objects.create(**row_dict)
+#             meta_ids.append(row_id)
+#
+#         return meta_ids

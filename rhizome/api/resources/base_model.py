@@ -3,6 +3,9 @@ import json
 from django.db.models.constants import LOOKUP_SEP
 from django.db.models.sql.constants import QUERY_TERMS
 from django.db import IntegrityError
+from django.core.exceptions import (
+    ObjectDoesNotExist, MultipleObjectsReturned
+)
 
 from tastypie.authorization import Authorization
 from tastypie.utils import dict_strip_unicode_keys
@@ -17,9 +20,10 @@ from rhizome.api.custom_session_authentication import\
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
-from django.core.exceptions import (
-    ObjectDoesNotExist, MultipleObjectsReturned
-)
+
+## import models related to regional level permissioning and aggregation ##
+from rhizome.models import LocationPermission, Location, LocationTree, \
+    LocationType, DataPointComputed
 
 class BaseModelResource(ModelResource, BaseResource):
     '''
@@ -102,6 +106,8 @@ class BaseModelResource(ModelResource, BaseResource):
         Returns a queryset that may have been limited by other overrides.
         """
 
+        print 'is this getting called ----===\n' * 5
+
         try:
             query_felds = self._meta.GET_fields
             qs = self._meta.object_class.objects.all().values(*query_felds)
@@ -133,7 +139,7 @@ class BaseModelResource(ModelResource, BaseResource):
         ## clean and prepare the filters and their relavant query terms ##
         applicable_filters = self.build_filters(filters=filters)
 
-        ## get the objects ##
+        ## get the objects and apply the filters ##
         objects = self.apply_filters(bundle.request, applicable_filters)
 
         return objects
@@ -171,7 +177,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
             bundles.append(obj)
 
-        response_meta = self.get_response_meta(bundles)
+        response_meta = self.get_response_meta(request, bundles)
 
         response_data = {
             'objects': bundles,
@@ -189,6 +195,13 @@ class BaseModelResource(ModelResource, BaseResource):
         If a new resource is created, return ``HttpCreated`` (201 Created).
         If ``Meta.always_return_data = True``, there will be a populated body
         of serialized data.
+
+        I think this code can all be removed except for --
+
+            bundle = self.build_bundle(data=deserialized, request=request)
+
+            updated_bundle = self\
+                .obj_create(bundle, **self.remove_api_resource_names(kwargs))
         """
 
         deserialized = self.deserialize(
@@ -295,3 +308,79 @@ class BaseModelResource(ModelResource, BaseResource):
         """
         return super(BaseResource, self)\
             .obj_delete_list(bundle, **kwargs)
+
+
+    def get_locations_to_return_from_url(self, request):
+        '''
+        This method is used in both the /geo and /datapoint endpoints.  Based
+        on the values parsed from the URL parameters find the locations needed
+        to fulfill the request based on the four rules below.
+
+        TO DO -- Check Location Permission so that the user can only see
+        What they are permissioned to.
+        '''
+
+        ## if location_id__in requested.. we return exactly those ids
+        ## for instance if you were doing data entry for 5 specific districts
+        ## you would use the location_id__in param to fetch just those ids
+
+        self.location_id = request.GET.get('location_id', None)
+        self.location_id_list = request.GET.get('location_id__in', None)
+        self.location_depth = int(request.GET.get('location_depth', 0))
+
+        if self.location_id_list:
+            return self.location_id_list.split(',')
+
+        if self.location_id:
+
+            ## there is a depth column in the location_tree table, we just
+            ## need to fix the LocationTreeCache process so that we put the
+            ## proper depth_level in there.
+            ## see here https://trello.com/c/YPEF4pCg/885
+
+            location_ids = LocationTree.objects.filter(
+                parent_location_id=self.location_id,
+                lvl = self.location_depth
+            ).values_list('location_id', flat=True)
+
+        else:
+            ## this really shouldn't happen -- when this condition hits
+            ## the app slows down.  Need to enforce on the FE that we
+            ## pass a `location_id` and also when possible a `depth_level`
+            location_ids = Location.objects.all().values_list('id', flat=True)
+            # raise RhizomeApiException\
+            #     ('Please pass either `location_id__in` to get specific\
+            #     locations, or both `location_id and `location_depth` for a\
+            #     recursive result')
+
+
+        try:
+            ## this allows us to filter locations based on the result of a
+            ## particular indicator / value.  So for instance.. think of the query
+            ## `show me the population of all areas controlled by insurgents in
+            ## location x.  We sould first get the locations based on the logic.
+            ## above, say all of the districts in Iraq, but then this code below
+            ## would further result that data to locations that meet a particular
+            ## filter i.e. {filterer_indicator = "is controlled" : value = 1 }
+            ## currently in our implementation with the Afghanistan EOC, this
+            ## filter is cotolred via a drop down for "LPD Status", values are
+            ## 1,2,3 based on their priority in the eradication initiative.
+            request.GET['filter_indicator']
+            # location_ids = self.get_locations_from_filter_param(location_ids)
+        except KeyError:
+            pass
+
+        return location_ids
+
+    # def get_locations_from_filter_param(self, location_ids):
+    #     '''
+    #     '''
+    #     value_filter = self.parsed_params['filter_value'].split(',')
+    #     location_ids = DataPointComputed.objects.filter(
+    #         campaign__in=self.parsed_params['campaign__in'],
+    #         location__in=location_ids,
+    #         indicator__short_name=self.parsed_params['filter_indicator'],
+    #         value__in=value_filter)\
+    #         .values_list('location_id', flat=True)
+    #
+    #     return location_ids
