@@ -36,16 +36,20 @@ export const watchUpdateDatapoint = function * () {
 }
 
 export const saveDatapoint = function * (action) {
-  const campaignDatapoint = action.payload['data_type'] === 'campaign'
-  const value = action.payload.value
+  const datapoint = {
+    value: action.payload.value,
+    indicator_id: action.payload.indicator.id,
+    location_id: action.payload.location.id,
+    campaign_id: action.payload.campaign.id
+  }
   try {
-    let path = campaignDatapoint ? '/campaign_datapoint/' : '/date_datapoint/'
+    let path = datapoint.campaign_id ? '/campaign_datapoint/' : '/date_datapoint/'
     let response
     if (!action.payload.id) {
-      response = yield call(() => RhizomeAPI.post(path, {value}))
+      response = yield call(() => RhizomeAPI.post(path, datapoint))
     } else {
       path += action.payload.id
-      response = yield call(() => RhizomeAPI.patch(path, {value}))
+      response = yield call(() => RhizomeAPI.patch(path, {value: datapoint.value}))
     }
     yield put({type: 'UPDATE_DATAPOINT_SUCCESS', payload: response})
   } catch (error) {
