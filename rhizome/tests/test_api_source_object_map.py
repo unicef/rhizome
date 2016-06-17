@@ -47,38 +47,38 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.indicators = self.test_setup.model_df_to_data(
             indicator_df, Indicator)
 
-    def test_som_post(self):
+    def test_som_patch(self):
         # this is really a PUT that is i am updating values here in place
 
         post_data = {
             'source_object_code': 'Percent missed children_PCA',
             'master_object_id': self.indicators[0].id,
-            'id': self.som_0.id,
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
 
-        post_resp = self.test_setup.post(
-            self, '/api/v1/source_object_map/', post_data)
+        patch_url = '/api/v1/source_object_map/%s/' % self.som_0.id
+        patch_resp = self.test_setup.patch(self, patch_url, post_data)
 
-        self.assertHttpCreated(post_resp)
-        response_data = self.deserialize(post_resp)
+        self.assertHttpAccepted(patch_resp)
+        response_data = self.deserialize(patch_resp)
 
         self.assertEqual(
             response_data['master_object_id'], self.indicators[0].id)
 
     def test_som_post_invalid_id(self):
-        # this is really a PUT that is i am updating values here in place
+        '''
+        try to PATCH with an invalid id.
+        '''
 
         post_data = {
             'master_object_id': self.indicators[0].id,
-            'id': 9090909090,
             'content_type': 'indicator',
             'mapped_by_id': self.user.id
         }
 
-        post_resp = self.test_setup.post(
-            self, '/api/v1/source_object_map/', post_data)
+        post_resp = self.test_setup.patch(
+            self, '/api/v1/source_object_map/9090909090/' , post_data)
 
         self.assertHttpApplicationError(post_resp)
 

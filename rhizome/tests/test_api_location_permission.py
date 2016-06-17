@@ -70,13 +70,12 @@ class LocationPermissionResourceTest(RhizomeApiTestCase):
             location_name = 'Kenya'
         )
         data={
-            'id': lp.id,
             'top_lvl_location_id': new_location.id,
             'user_id': self.ts.user.id
         }
-        resp = self.ts.post(
-            self, '/api/v1/location_responsibility/', data = data)
+        resp = self.ts.patch(
+            self, '/api/v1/location_responsibility/%s/' % lp.id, data = data)
         response_data=self.deserialize(resp)
-        self.assertHttpCreated(resp)
+        self.assertHttpAccepted(resp)
         self.assertEqual(response_data['user_id'], self.ts.user.id)
         self.assertEqual(response_data['top_lvl_location_id'], new_location.id)

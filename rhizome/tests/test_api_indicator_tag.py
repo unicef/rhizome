@@ -90,13 +90,14 @@ class IndicatorTagResourceTest(RhizomeApiTestCase):
 
         self.assertEqual(IndicatorTag.objects.count(), 1)
         new_tag_name = "New Tag Name"
-        post_data = {"id": tag.id, "tag_name": new_tag_name}
-        resp = self.api_client.post('/api/v1/indicator_tag/', format='json',
-                data=post_data, authentication=self.ts.get_credentials(self))
+        patch_data = {"tag_name": new_tag_name}
+        resp = self.api_client.patch('/api/v1/indicator_tag/%s/' % tag.id\
+            , format='json', data=patch_data\
+            , authentication=self.ts.get_credentials(self))
 
         response_data = self.deserialize(resp)
 
-        self.assertHttpCreated(resp)
+        self.assertHttpAccepted(resp)
         self.assertEqual(tag.id, response_data['id'])
         self.assertEqual(IndicatorTag.objects.count(), 1)
         self.assertEqual(new_tag_name, response_data['tag_name'])
