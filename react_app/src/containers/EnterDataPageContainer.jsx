@@ -53,7 +53,8 @@ const _flatten = (datapoints, indicators, locations, campaigns) => {
     const indicator = indicators.index[d.indicator_id]
     const datapoint = {
       id: d.id,
-      value: format.autoFormat(d.value, indicator.data_format),
+      value: d.value,
+      display_value: format.autoFormat(d.value, indicator.data_format),
       location: locations.index[d.location_id],
       indicator: indicator
     }

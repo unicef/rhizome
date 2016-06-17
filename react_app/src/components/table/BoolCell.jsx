@@ -4,22 +4,23 @@ import DropdownButton from 'components/button/DropdownButton'
 const BoolCell = ({cellParams}) => {
 	const params = cellParams.params
 	const datapoint = cellParams.datapoint
-	const displayValue = datapoint.value ? datapoint.value : 'No Data'
+	const display_value = datapoint.display_value ? datapoint.display_value : 'No Data'
 	const boolean_options = [
       { 'value': '0', 'title': 'No' },
       { 'value': '1', 'title': 'Yes' },
       { 'value': '', 'title': 'No Data' }
    ]
+
 	return (
 		<DropdownButton
       items={boolean_options}
-      text={displayValue}
+      text={display_value}
       style='boolean-dropdown hollow'
       searchable={false}
-      sendValue={value => cellParams.updateDatapoint({
-      	value: value,
-      	id: datapoint.id
-      })}
+      sendValue={value => {
+        datapoint.value = value
+        cellParams.updateDatapoint(datapoint)
+      }}
     />
 	)
 }
