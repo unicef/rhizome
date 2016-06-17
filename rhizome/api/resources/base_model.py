@@ -67,8 +67,6 @@ class BaseModelResource(ModelResource, BaseResource):
         """
 
         try:
-            # df = DataFrame(list(DataPoint.objects.all().values()))
-            # print df
             obj = self._meta.object_class.objects.get(id=kwargs['pk'])
         except ObjectDoesNotExist:
             msg = 'No {0} object found for id : {1}'\

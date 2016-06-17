@@ -3,8 +3,7 @@ from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document, IndicatorClassMap, DataPointComputed,\
-    SourceSubmission
+    LocationPermission, Document, IndicatorClassMap, SourceSubmission
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
@@ -74,22 +73,6 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
 
         self.doc_id = Document.objects.create(doc_title='Data Entry').id
 
-
-
-    def create_a_single_dp(self):
-
-        obj = DataPointComputed.objects.create(
-            campaign_id = 1,
-            location_id = 1,
-            indicator_id = 1,
-            document_id = 1,
-            value = 0,
-            cache_job_id = -1
-        )
-
-        return obj
-
-
     def create_polio_cases(self):
 
         df = pd.read_csv('rhizome/tests/_data/AfgPolioCases.csv')
@@ -105,7 +88,6 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 unique_index = str(self.some_district.id) + str(self.ind.id) +\
                     str(row.data_date)
             )
-
 
     def get_credentials(self):
         result = self.api_client.client.login(username=self.username,
@@ -388,7 +370,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         dp_to_patch = DataPoint.objects.get(id=dp_to_patch.id)
         self.assertEqual(dp_to_patch.value, patch_data['value'])
 
-    def test_post_campaign_datapoint(self):
+    def test_post_date_datapointatapoint(self):
         '''
         post a record to the campaign datapoint table
         '''
@@ -410,15 +392,15 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['value'], val)
 
-    def test_post_campaign_datapoint_missing_data(self):
+    def test_post_date_datapoint_missing_data(self):
         '''
         if we do not have all hte keys we need, throw an error
         '''
         data = {'value': 10}
-        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        resp = self.ts.post(self, '/api/v1/date_datapoint/', data)
         self.assertHttpApplicationError(resp)
 
-    def test_post_campaign_datapoint_invalid_data(self):
+    def test_post_date_datapoint_invalid_data(self):
         '''
         The indicator, and campaign dont exists, the api should tell us
         '''
@@ -430,37 +412,34 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 'location_id': 4321,
                 'value': 10
                 }
-        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        resp = self.ts.post(self, '/api/v1/date_datapoint/', data)
         self.assertHttpApplicationError(resp)
         response_data = self.deserialize(resp)
 
-    def test_delete_campaign_datapoint(self):
+    def test_delete_date_datapoint(self):
         '''
         create a datapoint, then delete it, make sure that it is no longer
         there.
         '''
 
-        dpc = self.create_a_single_dp()
-        delete_url = '/api/v1/campaign_datapoint/%d/' % dpc.id
+        dp = DataPoint.objects.all()[0]
+        delete_url = '/api/v1/date_datapoint/%d/' % dp.id
         resp = self.ts.delete(self, delete_url)
 
         ## now make sure that it is not there #
-        dpc_query = DataPointComputed.objects.filter(id=dpc.id)
+        dpc_query = DataPoint.objects.filter(id=dp.id)
         self.assertEqual(len(dpc_query), 0)
 
-    def test_get_campaign_datapoint_by_id(self):
+    def test_get_date_datapoint_by_id(self):
         '''
         Here we get one object from the API and ensure it has the proper
         data from when we inserted it.
         '''
 
-        dp_obj = self.create_a_single_dp()
 
-        resp = self.ts.get(self, '/api/v1/campaign_datapoint/%s/' % dwc_obj.id)
+        dp_obj = DataPoint.objects.all()[0]
+        resp = self.ts.get(self, '/api/v1/date_datapoint/%s/' % dp_obj.id)
+
         self.assertHttpOK(resp)
         response_data = self.deserialize(resp)
-        self.assertEqual(response_data['value'], dwc_obj.value)
-
-    # def test_post_then_patch_dp(self):
-    #     '''
-    #     submit a post, then patch that resource and set a new value
+        self.assertEqual(response_data['value'], dp_obj.value)

@@ -1,11 +1,10 @@
-
-
 import itertools
-from pandas import DataFrame, concat, notnull
-from django.http import HttpResponse
 
 from tastypie import fields
 from tastypie.utils.mime import build_content_type
+from tastypie.resources import ALL
+from pandas import DataFrame, concat, notnull
+from django.http import HttpResponse
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
@@ -13,7 +12,6 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DataPointComputed, Campaign, Location, Document,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent, LocationType, SourceSubmission
-import math
 
 
 class DateDatapointResource(BaseModelResource):
@@ -58,6 +56,12 @@ class DateDatapointResource(BaseModelResource):
             'value']
         max_limit = None  # return all rows by default ( limit defaults to 20 )
         serializer = CustomSerializer()
+        filtering = {
+            'indicator_id' : ALL ,
+            'location_id' : ALL ,
+            'data_date' : ALL,
+            'value'  : ALL
+        }
 
     def __init__(self, *args, **kwargs):
         '''
@@ -85,7 +89,6 @@ class DateDatapointResource(BaseModelResource):
             source_submission = SourceSubmission.objects.create(document_id = \
                 data_entry_doc_id, row_number = 0)
 
-
         bundle.data['source_submission_id'] = source_submission.id
         return bundle
 
@@ -104,6 +107,14 @@ class DateDatapointResource(BaseModelResource):
         meta['campaign_ids'] = self.campaign_id_list
 
         return meta
+
+
+    def apply_filters(self, request, applicable_filters):
+        """
+        override this.
+        """
+
+        return self.get_object_list(request)
 
     def get_object_list(self, request):
         '''
@@ -347,18 +358,6 @@ class DateDatapointResource(BaseModelResource):
         concat_df = concat_df.rename(
             columns={'parent_location_id': 'location_id'})
         return concat_df
-
-    def obj_get_list(self, bundle, **kwargs):
-        '''
-        Outer method for get_object_list... this calls get_object_list and
-        could be a point at which additional build_agg_rc_dfing may be applied
-        '''
-
-        objects = self.get_object_list(bundle.request)
-        if not objects:
-            objects = []
-        return objects
-
 
     def parse_url_params(self, query_dict):
         '''
