@@ -10,13 +10,16 @@ class LocationResource(BaseModelResource):
             'location_type' return the descendants of the location_id param that have the given location_type id.
     '''
     class Meta(BaseModelResource.Meta):
-        queryset = Location.objects.all().values()
+        object_class = Location
         resource_name = 'location'
 
-    def get_object_list(self, request):
+    def apply_filters(self, request, applicable_filters):
+        """
+        This is how we query the datapoint table
+        """
 
         location_ids = list(self.get_locations_to_return_from_url(request))
         location_ids.append(self.top_lvl_location_id)
-        qs = Location.objects.filter(id__in=location_ids).values()
+        filters = {'id__in': location_ids}
 
-        return qs
+        return self.get_object_list(request).filter(**filters)
