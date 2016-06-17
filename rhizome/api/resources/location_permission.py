@@ -23,10 +23,12 @@ class LocationPermissionResource(BaseModelResource):
         resource_name = 'location_responsibility'
         required_fields_for_post = ['user_id', 'top_lvl_location_id']
 
-    def get_object_list(self, request):
-        '''
-        In this resoruce we only override the get_object_list method so that
-        we return only the top level location data that the user can see.
-        '''
-        return LocationPermission.objects\
-            .filter(user_id=request.GET['user_id']).values()
+    def apply_filters(self, request, applicable_filters):
+        """
+        This is not the locations that the logged in user can see,
+        these are the locations that appear when you look at a particular
+        users page... otherwise we would say u_id  = request.user.id
+        """
+
+        applicable_filters['user_id'] = request.GET['user_id']
+        return self.get_object_list(request).filter(**applicable_filters)
