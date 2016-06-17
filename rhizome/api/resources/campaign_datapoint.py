@@ -1,5 +1,6 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import DataPointComputed, Campaign
+from rhizome.models import DataPointComputed, Campaign, Document
+from rhizome.api.serialize import CustomSerializer
 
 class CampaignDataPointResource(BaseModelResource):
     '''
@@ -26,6 +27,7 @@ class CampaignDataPointResource(BaseModelResource):
         GET_params_required = ['indicator__in']
         GET_fields = ['id', 'indicator_id', 'campaign_id', 'location_id',\
             'value']
+        serializer = CustomSerializer()
 
     def apply_filters(self, request, applicable_filters):
         """
@@ -78,3 +80,11 @@ class CampaignDataPointResource(BaseModelResource):
         meta['campaign_ids'] = self.campaign_id_list
 
         return meta
+
+    def add_default_post_params(self, bundle):
+        '''
+        Add document_id of data entry to the bundle
+        '''
+        data_entry_doc_id = Document.objects.get(doc_title = 'Data Entry').id
+        bundle.data['document_id'] = data_entry_doc_id
+        return bundle

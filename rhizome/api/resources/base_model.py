@@ -228,6 +228,14 @@ class BaseModelResource(ModelResource, BaseResource):
             setattr(obj, k, v)
         obj.save()
 
+    def add_default_post_params(self, bundle):
+        '''
+        by default do nothing, but this method allows for us to add any
+        information ( say for instance user id ) to the data that we
+        POST.
+        '''
+        return bundle
+
     def obj_create(self, bundle, **kwargs):
         """
         A ORM-specific implementation of ``obj_create``.
@@ -236,6 +244,10 @@ class BaseModelResource(ModelResource, BaseResource):
         request has the ID in there, and if so, updating the resorce with the
         relevant data items.
         """
+
+        ## add any additional data needed for post, for instance datapoitns
+        ## that are inserted via a POST request should have a document
+        bundle = self.add_default_post_params(bundle, **kwargs)
 
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
@@ -365,8 +377,10 @@ class BaseModelResource(ModelResource, BaseResource):
             ## 1,2,3 based on their priority in the eradication initiative.
             indicator_to_filter = request.GET['filter_indicator']
             value_to_filter = request.GET['filter_value']
+
             location_ids = self.get_locations_from_filter_param(location_ids,\
                  indicator_to_filter, value_to_filter)
+
         except KeyError:
             pass
 

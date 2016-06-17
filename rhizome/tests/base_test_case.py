@@ -27,7 +27,6 @@ class RhizomeApiTestCase(ResourceTestCase):
         self.printResponseIfError(resp, status_code)
         self.assertEqual(resp.status_code, status_code)
 
-
     def assertHttpOK(self, resp, status_code=200): # GET
         self.printResponseIfError(resp, status_code)
         self.assertHttp(resp, status_code)
@@ -36,7 +35,7 @@ class RhizomeApiTestCase(ResourceTestCase):
         self.printResponseIfError(resp, status_code)
         self.assertHttp(resp, status_code)
 
-    def assertHttpAccepted(self, resp, status_code=202): # PATCH
+    def assertHttpAccepted(self, resp, status_code=202): # PATCH / DELETE
         self.printResponseIfError(resp, status_code)
         self.assertHttp(resp, status_code)
         ## note the base class in tastype checks both 202 and 204

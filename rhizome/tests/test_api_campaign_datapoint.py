@@ -1,14 +1,14 @@
-from base_test_case import RhizomeApiTestCase
-from django.contrib.auth.models import User
-from rhizome.models import CacheJob, Office, Indicator, Location,\
-    LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document, IndicatorClassMap
-
-from rhizome.cache_meta import LocationTreeCache
 from random import randint
+import json
+
+from django.contrib.auth.models import User
+from pandas import read_csv, to_datetime
+
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.models import *
+from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-import json
 
 class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
@@ -21,22 +21,24 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         self.user = User.objects.create_user(self.username,\
                                         'eradicate@polio.com', self.password)
 
-        self.lt = LocationType.objects.create(name='Country',admin_level = 0)
-        self.distr, created = \
-            LocationType.objects.get_or_create(name='District',admin_level = 3)
-        self.prov, created = \
-            LocationType.objects.get_or_create(name='Province',admin_level = 2)
-        self.region, created = \
-            LocationType.objects.get_or_create(name='Region', admin_level = 1)
-        self.o = Office.objects.create(name = 'Earth')
+        self.get_credentials()
+        self.ts = TestSetupHelpers()
 
-        self.top_lvl_location = Location.objects.create(
-                name = 'Nigeria',
-                location_code = 'Nigeria',
-                id=1234,
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
-            )
+        ## create a bunch of metadata and data for us to use to test
+        self.create_metadata()
+
+        self.country_lt = LocationType.objects\
+            .create(name='Country',admin_level = 0)
+        self.province_lt = LocationType.objects\
+            .create(name='Province',admin_level = 2)
+
+        # self.distr, created = \
+        #     LocationType.objects.get_or_create(name='District',admin_level = 3)
+        # self.region, created = \
+        #     LocationType.objects.get_or_create(name='Region', admin_level = 1)
+        # self.o = Office.objects.create(name = 'Earth')
+
+        self.top_lvl_location = Location.objects.get(name = 'Nigeria')
 
         ltc = LocationTreeCache()
         ltc.main()
@@ -44,9 +46,76 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         LocationPermission.objects.create(user_id = self.user.id,\
             top_lvl_location_id = self.top_lvl_location.id)
 
-        self.get_credentials()
+    def create_metadata(self):
+        '''
+        Creating the Indicator, location, Campaign, meta data needed for the
+        system to aggregate / caclulate.
+        '''
 
-        self.ts = TestSetupHelpers()
+        doc_id = Document.objects.create(doc_title='Data Entry').id
+
+        self.top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
+
+        campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
+        campaign_df['top_lvl_indicator_tag_id'] = self.top_lvl_tag.id
+
+        campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
+        campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
+
+        location_df = read_csv('rhizome/tests/_data/locations.csv')
+        indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
+
+        office = Office.objects.create(id=1, name='test')
+        office_id = office.id
+        self.o = office
+
+        cache_job_id = CacheJob.objects.create(id=-2,
+                           date_attempted='2015-01-01', is_error=False)
+
+        self.campaign_type = CampaignType.objects.create(id=1, name="test")
+
+        locations = self.ts.model_df_to_data(location_df, Location)
+        campaigns = self.ts.model_df_to_data(campaign_df, Campaign)
+        self.ts.model_df_to_data(indicator_df, Indicator)
+        self.user_id = User.objects.create_user(
+            'test', 'test@test.com', 'test').id
+        self.mapped_location_id = locations[0].id
+        loc_map = SourceObjectMap.objects.create(
+            source_object_code='AF001039003000000000',
+            content_type='location',
+            mapped_by_id=self.user_id,
+            master_object_id=self.mapped_location_id
+        )
+
+        source_campaign_string = '2016 March NID OPV'
+        self.mapped_campaign_id = campaigns[0].id
+        campaign_map = SourceObjectMap.objects.create(
+            source_object_code=source_campaign_string,
+            content_type='campaign',
+            mapped_by_id=self.user_id,
+            master_object_id=self.mapped_campaign_id
+        )
+
+        self.mapped_indicator_with_data = locations[2].id
+        indicator_map = SourceObjectMap.objects.create(
+            source_object_code='Percent missed due to other reasons',
+            content_type='indicator',
+            mapped_by_id=self.user_id,
+            master_object_id=self.mapped_indicator_with_data
+        )
+
+    def create_a_single_dp(self):
+
+        obj = DataPointComputed.objects.create(
+            campaign_id = 1,
+            location_id = 1,
+            indicator_id = 1,
+            document_id = 1,
+            value = 0,
+            cache_job_id = -1
+        )
+
+        return obj
 
     def get_credentials(self):
         result = self.api_client.client.login(username=self.username,
@@ -63,33 +132,12 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             response_msg='SUCCESS'
         )
 
-        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
-
-        # 2. Create The Indicator value
-        indicator = Indicator.objects\
-            .create(short_name='Number of vaccine doses used in HRD', \
-                     name='Number of vaccine doses used in HRD', \
-                     is_reported=0, \
-                     description='Number of vaccine doses used in HRD', )
-
-        # 3. Create The Location
-        office = Office.objects.create(name='Nigeria')
-        location = self.top_lvl_location
-
-        # 4. Create The Campaign
-        start_date = '2016-01-01'
-        end_date = '2016-01-01'
-        campaign_type = CampaignType.objects\
-            .create(name='National Immunization Days (NID)')
-        campaign = Campaign.objects.create(office=office,\
-            campaign_type=campaign_type,start_date=start_date,end_date=end_date,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = location.id)
-
-        # 5. Create Test DataPointComputed
+        campaign = Campaign.objects.all()[0]
+        location = Location.objects.all()[0]
+        indicator = Indicator.objects.all()[0]
+        document = Document.objects.all()[0]
         value = 1.57
-        document = Document.objects\
-            .create(doc_title='Test Document')
+
         datapoint = DataPointComputed.objects.create(value=value,\
             cache_job=cache_job,indicator=indicator, location=location,\
             campaign=campaign, document=document)
@@ -97,7 +145,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         # 6 Request To The API
         chart_uuid = 'abc123'
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}&chart_uuid={4}'\
-            .format(indicator.id, start_date,end_date, location.id, chart_uuid)
+            .format(indicator.id, campaign.start_date, campaign.end_date, location.id, chart_uuid)
 
         resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
             format='json', authentication=self.get_credentials())
@@ -145,8 +193,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             response_msg='SUCCESS'
         )
 
-        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
-
         # 2. Create The Indicator value
         indicator = Indicator.objects.create(short_name='LQAS', \
                                              name='LQAS', \
@@ -160,11 +206,9 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         # 4. Create The Campaign
         start_date = '2016-02-01'
         end_date = '2016-02-01'
-        campaign_type = CampaignType.objects\
-            .create(name='National Immunization Days (NID)')
         campaign = Campaign.objects.create(office=office,\
-            campaign_type=campaign_type,start_date=start_date,end_date=end_date,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
+            campaign_type=self.campaign_type,start_date=start_date,end_date=end_date,\
+            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
             top_lvl_location_id = location.id)
 
         # 5. Create Test DataPointComputed
@@ -259,7 +303,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             prov = Location.objects.create(
                 name = province,
                 location_code = province,
-                location_type_id = self.prov.id,
+                location_type_id = self.province_lt.id,
                 office_id = self.o.id,
                 parent_location_id = self.top_lvl_location.id
             )
@@ -309,18 +353,15 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
     def _get_cumulative(self): ## handling cumulative differntly
         # add a couple different campaigns with different time frames
-        campaign_type = CampaignType.objects\
-            .create(name='National Immunization Days (NID)')
 
-        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
         document = Document.objects.create(doc_title='uploadddd')
 
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
         campaign_1 = Campaign.objects.create(office=self.o,\
-            campaign_type=campaign_type,start_date=start_date_1,end_date=end_date_1,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
+            campaign_type=self.campaign_type,start_date=start_date_1,end_date=end_date_1,\
+            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
             top_lvl_location_id = self.top_lvl_location.id)
 
         start_date_2 = '2016-02-01'
@@ -338,8 +379,8 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         province = Location.objects.create(
                 name = 'Kandahar',
                 location_code = 'Kandahar',
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
+                location_type_id = self.province_lt,
+                office_id = 1,
                 parent_location_id = self.top_lvl_location.id
             )
         # add datapoints for these different campaigns
@@ -385,14 +426,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         afghanistan = Location.objects.create(
             name='Afghanistan',
             location_code ='Afghanistan',
-            location_type_id =self.lt.id,
-            office_id = self.o.id
+            location_type_id = self.country_lt.id,
+            office_id = 1
         )
 
         south = Location.objects.create(
             name='South',
             location_code = 'South',
-            location_type_id=self.region.id,
+            location_type_id=self.province_lt.id,
             office_id = self.o.id,
             parent_location_id = afghanistan.id
             )
@@ -400,16 +441,16 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         kandahar = Location.objects.create(
             name='Kandahar',
             location_code = 'Kandahar',
-            location_type_id = self.prov.id,
-            office_id = self.o.id,
+            location_type_id = self.province_lt.id,
+            office_id = 1,
             parent_location_id = south.id
             )
 
         hilmand = Location.objects.create(
             name='Hilmand',
             location_code = 'Hilmand',
-            location_type_id = self.prov.id,
-            office_id = self.o.id,
+            location_type_id = self.province_lt.id,
+            office_id = 1,
             parent_location_id = south.id
             )
 
@@ -425,14 +466,8 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         start_date = '2016-01-01'
         end_date = '2016-01-01'
-        campaign_type = CampaignType.objects\
-            .create(name='National Immunization Days (NID)')
 
-        ind_tag = IndicatorTag.objects.create(tag_name='Polio')
-        campaign = Campaign.objects.create(office=self.o,\
-            campaign_type=campaign_type,start_date=start_date,end_date=end_date,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = afghanistan.id)
+        campaign = Campaign.objects.get(office=self.o, start_date=start_date)
 
         kandahar_value =27
         hilmand_value =31
@@ -520,8 +555,8 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         self.location_2 = Location.objects.create(
                 name = 'Afghanistan',
                 location_code = 'Afghanistan',
-                location_type_id = self.lt.id,
-                office_id = self.o.id,
+                location_type_id = 1,
+                office_id = 1,
             )
 
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&show_missing_data=1'\
@@ -542,7 +577,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         ## even though there is only one datapoint with information ##
         self.assertEqual(DataPointComputed.objects.count(), 1)
 
-    def test_campaign_datapoint_patch(self):
+    def test_patch_campaign_datapoint(self):
         '''
         create a datapoint with the ORM, submit a PATCH request and see
         if the value changed.
@@ -552,15 +587,8 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         '''
 
-        dp_to_patch = DataPointComputed.objects.create(
-            campaign_id = 1,
-            location_id = 1,
-            indicator_id = 1,
-            document_id = 1,
-            value = 0,
-            cache_job_id = -1
-        )
-        patch_data = {'value': 101.01}
+        dp_to_patch = self.create_a_single_dp()
+        patch_data = {'value': 1071.012}
         dp_url = '/api/v1/campaign_datapoint/%s/' % dp_to_patch.id
 
         ## submit the patch and make sure it has the proper response code
@@ -571,154 +599,75 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         dp_to_patch = DataPointComputed.objects.get(id=dp_to_patch.id)
         self.assertEqual(dp_to_patch.value, patch_data['value'])
 
+    def test_post_campaign_datapoint(self):
+        '''
+        post a record to the campaign datapoint table
+        '''
 
-### had dupe tests.. to do -- make sure all the below is covered above ###
+        indicator_id = Indicator.objects.all()[0].id
+        campaign_id = Campaign.objects.all()[0].id
+        location_id = Location.objects.all()[0].id
+        # value indicator campaign location document_i
+        data = {
+                'indicator_id': indicator_id,
+                'campaign_id': campaign_id,
+                'location_id': location_id,
+                'value': 10
+                }
+        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
 
-# class ComputedDatapointResourceTest(RhizomeApiTestCase):
-#
-#     def setUp(self):
-#         super(ComputedDatapointResourceTest, self).setUp()
-#
-#         self.ts = TestSetupHelpers()
-#         self.create_metadata()
-#         self.doc_id = self.ts.ingest_file('eoc_post_campaign.csv')
-#
-#     def test_get_computed_datapoint(self):
-#         get_data = {'document_id': self.doc_id}
-#         resp = self.ts.get(self, '/api/v1/computed_datapoint/', get_data)
-#         self.assertHttpOK(resp)
-#         resp_data = self.deserialize(resp)
-#         db_data = DataPointComputed.objects.filter(
-#             document_id=self.doc_id).values()
-#         self.assertEqual(len(resp_data['objects']), len(db_data))
-#
-#     def test_get_computed_datapoint_no_data(self):
-#         resp = self.ts.get(self, '/api/v1/computed_datapoint/')
-#         self.assertHttpOK(resp)
-#         response_data = self.deserialize(resp)
-#         self.assertEqual(len(response_data['objects']), 0)
-#
-#     def test_post_computed_datapoint(self):
-#         doc_id = Document.objects.create(doc_title='Data Entry').id
-#         indicator_id = Indicator.objects.all()[0].id
-#         campaign_id = Campaign.objects.all()[0].id
-#         location_id = Location.objects.all()[0].id
-#         # value indicator campaign location document_i
-#         data = {'document_id': doc_id,
-#                 'indicator_id': indicator_id,
-#                 'campaign_id': campaign_id,
-#                 'location_id': location_id,
-#                 'value': 10
-#                 }
-#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
-#         response_data = self.deserialize(resp)
-#         self.assertEqual(response_data['value'], 10.0)
-#
-#     def test_post_computed_datapoint_missing_data(self):
-#         data = {'value': 10}
-#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
-#         self.assertHttpApplicationError(resp)
-#
-#     def test_post_computed_datapoint_invalid_data(self):
-#         doc_id = Document.objects.create(doc_title='Data Entry').id
-#         data = {'document_id': doc_id,
-#                 'indicator_id': 4324,
-#                 'campaign_id': 32132123,
-#                 'location_id': 4321,
-#                 'value': 10
-#                 }
-#         resp = self.ts.post(self, '/api/v1/computed_datapoint/', data)
-#         response_data = self.deserialize(resp)
-#         self.assertEqual(response_data['value'], 10.0)
-#
-#     def test_delete_computed_datapoint(self):
-#         # create a random cdp
-#         indicator_id = Indicator.objects.all()[0].id
-#         campaign_id = Campaign.objects.all()[0].id
-#         location_id = Location.objects.all()[0].id
-#         document_id = Document.objects.all()[0].id
-#
-#         dpc = DataPointComputed.objects.create(
-#             indicator_id=indicator_id,
-#             campaign_id=campaign_id,
-#             location_id=location_id,
-#             document_id=document_id,
-#             value=21)
-#
-#         dpc_query = DataPointComputed.objects.filter(id=dpc.id)
-#         self.assertEqual(len(dpc_query), 1)
-#
-#         delete_url = '/api/v1/computed_datapoint/%d/' % dpc.id
-#
-#         self.ts.delete(self, delete_url)
-#
-#         dpc_query = DataPointComputed.objects.filter(id=dpc.id)
-#         self.assertEqual(len(dpc_query), 0)
-#
-#     def create_metadata(self):
-#         '''
-#         Creating the Indicator, location, Campaign, meta data needed for the
-#         system to aggregate / caclulate.
-#         '''
-#
-#         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
-#
-#         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-#         campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
-#
-#         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
-#         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
-#
-#         location_df = read_csv('rhizome/tests/_data/locations.csv')
-#         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
-#
-#         office_id = Office.objects.create(id=1, name='test').id
-#
-#         cache_job_id = CacheJob.objects.create(id=-2,
-#                                                date_attempted='2015-01-01', is_error=False)
-#
-#         campaign_type = CampaignType.objects.create(id=1, name="test")
-#
-#         locations = self.model_df_to_data(location_df, Location)
-#         campaigns = self.model_df_to_data(campaign_df, Campaign)
-#         self.model_df_to_data(indicator_df, Indicator)
-#         self.user_id = User.objects.create_user(
-#             'test', 'test@test.com', 'test').id
-#         self.mapped_location_id = locations[0].id
-#         loc_map = SourceObjectMap.objects.create(
-#             source_object_code='AF001039003000000000',
-#             content_type='location',
-#             mapped_by_id=self.user_id,
-#             master_object_id=self.mapped_location_id
-#         )
-#
-#         source_campaign_string = '2016 March NID OPV'
-#         self.mapped_campaign_id = campaigns[0].id
-#         campaign_map = SourceObjectMap.objects.create(
-#             source_object_code=source_campaign_string,
-#             content_type='campaign',
-#             mapped_by_id=self.user_id,
-#             master_object_id=self.mapped_campaign_id
-#         )
-#
-#         self.mapped_indicator_with_data = locations[2].id
-#         indicator_map = SourceObjectMap.objects.create(
-#             source_object_code='Percent missed due to other reasons',
-#             content_type='indicator',
-#             mapped_by_id=self.user_id,
-#             master_object_id=self.mapped_indicator_with_data
-#         )
-#
-#     def model_df_to_data(self, model_df, model):
-#
-#         meta_ids = []
-#
-#         non_null_df = model_df.where((notnull(model_df)), None)
-#         list_of_dicts = non_null_df.transpose().to_dict()
-#
-#         for row_ix, row_dict in list_of_dicts.iteritems():
-#
-#             row_id = model.objects.create(**row_dict)
-#             meta_ids.append(row_id)
-#
-#         return meta_ids
+        self.assertHttpCreated(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], 10.0)
+
+    def test_post_campaign_datapointtapoint_missing_data(self):
+        '''
+        if we do not have all hte keys we need, throw an error
+        '''
+        data = {'value': 10}
+        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        self.assertHttpApplicationError(resp)
+
+    def test_post_campaign_datapoint_invalid_data(self):
+        '''
+        The indicator, and campaign dont exists, the api should tell us
+        '''
+
+        data = {
+                # 'document_id': doc_id,
+                'indicator_id': 4324,
+                'campaign_id': 32132123,
+                'location_id': 4321,
+                'value': 10
+                }
+        resp = self.ts.post(self, '/api/v1/campaign_datapoint/', data)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], 10.0)
+
+    def test_delete_campaign_datapoint(self):
+        '''
+        create a datapoint, then delete it, make sure that it is no longer
+        there.
+        '''
+        # create a random cdp
+
+        dpc = self.create_a_single_dp()
+        delete_url = '/api/v1/campaign_datapoint/%d/' % dpc.id
+        resp = self.ts.delete(self, delete_url)
+
+        ## now make sure that it is not there #
+        dpc_query = DataPointComputed.objects.filter(id=dpc.id)
+        self.assertEqual(len(dpc_query), 0)
+
+    def test_get_campaign_datapoint_by_id(self):
+        '''
+        Here we get one object from the API and ensure it has the proper
+        data from when we inserted it.
+        '''
+
+        dwc_obj = self.create_a_single_dp()
+
+        resp = self.ts.get(self, '/api/v1/campaign_datapoint/%s/' % dwc_obj.id)
+        self.assertHttpOK(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['value'], dwc_obj.value)
