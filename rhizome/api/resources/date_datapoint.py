@@ -1,4 +1,5 @@
 
+
 import itertools
 from pandas import DataFrame, concat, notnull
 from django.http import HttpResponse
@@ -13,16 +14,6 @@ from rhizome.models import DataPointComputed, Campaign, Location,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent, LocationType
 import math
-
-class ResultObject(object):
-    '''
-    This is the same as a row in the CSV export in which one row has a distinct
-    location / campaign combination, and the remaing columns represent the
-    indicators requested.  Indicators are a list of IndicatorObjects.
-    '''
-    # location = None
-    # campaign = None
-    # indicators = list()
 
 
 class DateDatapointResource(BaseModelResource):
@@ -39,14 +30,8 @@ class DateDatapointResource(BaseModelResource):
             'cumulative'
     '''
 
-    error = None
-    parsed_params = {}
     indicator_id = fields.IntegerField(attribute='indicator_id', null=True)
-    campaign_id = fields.IntegerField(attribute='campaign_id', null=True)
-    data_date = fields.DateField(attribute='data_date', null=True)
-    computed_id = fields.IntegerField(attribute='computed_id', null=True)
     location_id = fields.IntegerField(attribute='location_id')
-    value = fields.CharField(attribute='value', null=True)
 
     class Meta(BaseModelResource.Meta):
         '''
@@ -60,6 +45,11 @@ class DateDatapointResource(BaseModelResource):
         handler for JSON responses and transforms the data to csv when the
         user clicks the "download data" button on the data explorer.
         note - authentication inherited from parent class
+
+
+        # NOTE this needs to be cleaned up and any many of these methonds
+        # should be executed by the parent ( base model resource )
+        using the DataPoint as the object_class
         '''
 
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
@@ -75,44 +65,21 @@ class DateDatapointResource(BaseModelResource):
         self.error = None
         self.parsed_params = None
 
-    def create_response(self, request, data, response_class=HttpResponse,
-                        **response_kwargs):
-        """
-        THis is overridden from tastypie.  The point here is to be able to
-        Set the content-disposition header for csv downloads.  That is the only
-        instance in which this override should change the response is if the
-        desired format is csv.
-        The content-disposition header allows the user to save the .csv
-        to a directory of their chosing.
-        """
-        desired_format = self.determine_format(request)
-        serialized = self.serialize(request, data, desired_format)
+    def get_response_meta(self, request, objects):
 
-        response = response_class(content=serialized,
-                                  content_type=build_content_type(desired_format), **response_kwargs)
+        meta = super(BaseModelResource, self)\
+            .get_response_meta(request, objects)
 
-        if desired_format == 'text/csv':
-            response['Content-Disposition'] = 'attachment; filename=polio_data.csv'
-            response.set_cookie('dataBrowserCsvDownload', 'true')
+        chart_uuid = request.GET.get('chart_uuid', None)
+        if chart_uuid:
+            meta['chart_uuid'] = chart_uuid
 
-        return response
+        ind_id_list = request.GET.get('indicator__in', '').split(',')
+        meta['location_ids'] = self.location_ids
+        meta['indicator_ids'] = ind_id_list
+        meta['campaign_ids'] = self.campaign_id_list
 
-    def get_list(self, request, **kwargs):
-        """
-        Overriden from Tastypie..
-        """
-
-        base_bundle = self.build_bundle(request=request)
-        objects = self.obj_get_list(bundle=base_bundle)
-
-        response_meta = self.get_datapoint_response_meta(request, objects)
-        response_data = {
-            'objects': objects,
-            'meta': response_meta,
-            'error': None,
-        }
-
-        return self.create_response(request, response_data)
+        return meta
 
     def get_object_list(self, request):
         '''
@@ -129,14 +96,11 @@ class DateDatapointResource(BaseModelResource):
 
         self.error = None
 
-        err = self.parse_url_params(request.GET)
-        if err:
-            self.error = err
-            return []
 
-        # self.location_ids = self.get_locations_to_return_from_url(request)
+        self.parsed_params = self.parse_url_params(request.GET)
+
         self.time_gb = self.parsed_params['group_by_time']
-        self.base_data_df = self.group_by_time_transform()
+        self.base_data_df = self.group_by_time_transform(request)
 
         ## if no datapoints, we return an empty list#
         if len(self.base_data_df) == 0:
@@ -150,6 +114,7 @@ class DateDatapointResource(BaseModelResource):
         return self.base_data_df.to_dict('records')
 
     def get_time_group_series(self, dp_df):
+
 
         if self.time_gb == 'year':
             dp_df['time_grouping'] = dp_df[
@@ -171,10 +136,11 @@ class DateDatapointResource(BaseModelResource):
             distinct_time_groupings = range(int(start_yr), int(end_yr))
 
         self.parsed_params['campaign__in'] = distinct_time_groupings
+        self.campaign_id_list = distinct_time_groupings
 
         return dp_df
 
-    def build_location_tree(self):
+    def build_location_tree(self, request):
         '''
         Find out the data you are trying to return for ... in use case #1,
         this would be all of the provinces in afghanistan.. for #2 it would be
@@ -201,6 +167,7 @@ class DateDatapointResource(BaseModelResource):
             | The Bronx | The Bronx |
 
         '''
+
 
         requested_location_id = int(self.parsed_params['location_id__in'])
         depth_level = int(self.parsed_params['location_depth'])
@@ -232,7 +199,7 @@ class DateDatapointResource(BaseModelResource):
 
         return loc_tree_df
 
-    def group_by_time_transform(self):
+    def group_by_time_transform(self, request):
         '''
             Imagine the following location tree heirarchy
             ( Country -> Region -> Province -> District )
@@ -245,6 +212,7 @@ class DateDatapointResource(BaseModelResource):
                 2. Show Polio cases in the southern Region with a bubble
                     on each district
         '''
+
         dp_df_columns = ['data_date', 'indicator_id', 'location_id', 'value']
 
         # HACKK for situational dashboard
@@ -256,9 +224,8 @@ class DateDatapointResource(BaseModelResource):
         cols = ['data_date', 'indicator_id', 'location_id', 'value']
 
         ## build the location heirarchy for the requested locations #
-        loc_tree_df = self.build_location_tree()
-
-        ## now find the data for the children of those parents
+        loc_tree_df = self.build_location_tree(request)
+                ## now find the data for the children of those parents
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = list(loc_tree_df['location_id'].unique()),
                 indicator_id__in = self.parsed_params['indicator__in']
@@ -367,3 +334,41 @@ class DateDatapointResource(BaseModelResource):
         if not objects:
             objects = []
         return objects
+
+
+    def parse_url_params(self, query_dict):
+        '''
+        For the query dict return another dictionary ( or error ) in accordance
+        to the expected ( both required and optional ) parameters in the request
+        URL.
+        '''
+        parsed_params = {}
+
+        required_params = {'indicator__in': None}
+
+        # try to find optional parameters in the dictionary. If they are not
+        # there return the default values ( given in the dict below)
+        optional_params = {
+            'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
+            'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
+            'campaign__in': None, 'location__in': None,'location_id__in':None,\
+            'filter_indicator':None, 'filter_value': None,\
+            'show_missing_data':None, 'cumulative':0, \
+            'group_by_time': None, 'chart_uuid': None, 'location_depth': None
+        }
+
+        for k, v in optional_params.iteritems():
+            try:
+                parsed_params[k] = query_dict[k]
+            except KeyError:
+                parsed_params[k] = v
+
+        for k, v in required_params.iteritems():
+
+            try:
+                parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
+            except KeyError as err:
+                err_msg = '%s is a required parameter!' % err
+                return err_msg, None
+
+        return parsed_params
