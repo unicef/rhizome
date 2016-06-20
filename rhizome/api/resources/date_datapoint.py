@@ -68,7 +68,6 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         super(DateDatapointResource, self).__init__(*args, **kwargs)
-        self.parsed_params = None
 
     def add_default_post_params(self, bundle):
         '''
@@ -110,7 +109,6 @@ class DateDatapointResource(BaseModelResource):
 
     def apply_filters(self, request, applicable_filters):
         """
-        override this.
         """
 
         return self.get_object_list(request)
@@ -128,9 +126,14 @@ class DateDatapointResource(BaseModelResource):
         response.
         '''
 
-        self.parsed_params = self.parse_url_params(request.GET)
 
-        self.time_gb = self.parsed_params['group_by_time']
+        self.chart_uuid = request.GET.get('chart_uuid', None)
+        self.time_gb = request.GET.get('group_by_time', None)
+        self.start_date = request.GET.get('start_date', None)
+        self.end_date = request.GET.get('end_date', None)
+        self.indicator__in = request.GET.get('indicator__in', None)
+        self.location_id__in = request.GET.get('location_id__in', None)
+
         self.base_data_df = self.group_by_time_transform(request)
 
         ## if no datapoints, we return an empty list#
@@ -159,11 +162,11 @@ class DateDatapointResource(BaseModelResource):
         ## sketchy -- this wont work for quarter groupingings, only years.
         distinct_time_groupings = list(dp_df.time_grouping.unique())
         if not distinct_time_groupings:
-            start_yr, end_yr = self.parsed_params['start_date'][0:4],\
-                self.parsed_params['end_date'][0:4]
+            start_yr, end_yr = self.start_date[0:4],\
+                self.end_date[0:4]
             distinct_time_groupings = range(int(start_yr), int(end_yr))
 
-        self.parsed_params['campaign__in'] = distinct_time_groupings
+        self.campaign__in = distinct_time_groupings
         self.campaign_id_list = distinct_time_groupings
 
         return dp_df
@@ -196,9 +199,8 @@ class DateDatapointResource(BaseModelResource):
 
         '''
 
-
-        requested_location_id = int(self.parsed_params['location_id__in'])
-        depth_level = int(self.parsed_params['location_depth'])
+        requested_location_id = request.GET.get('location_id__in', None)
+        depth_level = request.GET.get('location_depth', None)
 
         if depth_level == 0:
             self.location_ids = [ requested_location_id ]
@@ -214,7 +216,7 @@ class DateDatapointResource(BaseModelResource):
         # calculated by the admin_level of the requested ( see above )
         # and the depth level in the request
         location_type_id_of_parent_keys = LocationType.objects\
-            .get(admin_level = parent_location_admin_level + depth_level).id
+            .get(admin_level = parent_location_admin_level + int(depth_level)).id
 
         # get the relevant parent / child heirarchy
         loc_tree_df = DataFrame(list(LocationTree.objects
@@ -244,9 +246,7 @@ class DateDatapointResource(BaseModelResource):
         dp_df_columns = ['data_date', 'indicator_id', 'location_id', 'value']
 
         # HACKK for situational dashboard
-        if self.parsed_params['chart_uuid'] ==\
-                '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
-
+        if self.chart_uuid == '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table(dp_df_columns)
 
         cols = ['data_date', 'indicator_id', 'location_id', 'value']
@@ -256,7 +256,7 @@ class DateDatapointResource(BaseModelResource):
                 ## now find the data for the children of those parents
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = list(loc_tree_df['location_id'].unique()),
-                indicator_id__in = self.parsed_params['indicator__in']
+                indicator_id__in = self.indicator__in
             ).values(*cols)), columns=cols)
 
         if len(dp_df) == 0:
@@ -307,7 +307,7 @@ class DateDatapointResource(BaseModelResource):
             ind_id = row['indicator_component_id']
             self.ind_meta[calc] = ind_id
 
-        parent_location_id = self.parsed_params['location_id__in']
+        parent_location_id = self.location_id__in
 
         all_sub_locations = LocationTree.objects.filter(
             parent_location_id=parent_location_id
@@ -315,7 +315,7 @@ class DateDatapointResource(BaseModelResource):
 
         flat_df = DataFrame(list(DataPoint.objects.filter(
             location_id__in=all_sub_locations,
-            indicator_id__in=self.parsed_params['indicator__in']
+            indicator_id__in=self.indicator__in
         ).values(*dp_df_columns)), columns=dp_df_columns)
 
         flat_df = self.get_time_group_series(flat_df)
@@ -352,39 +352,39 @@ class DateDatapointResource(BaseModelResource):
             columns={'parent_location_id': 'location_id'})
         return concat_df
 
-    def parse_url_params(self, query_dict):
-        '''
-        For the query dict return another dictionary ( or error ) in accordance
-        to the expected ( both required and optional ) parameters in the request
-        URL.
-        '''
-        parsed_params = {}
-
-        required_params = {'indicator__in': None}
-
-        # try to find optional parameters in the dictionary. If they are not
-        # there return the default values ( given in the dict below)
-        optional_params = {
-            'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
-            'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-            'campaign__in': None, 'location__in': None,'location_id__in':None,\
-            'filter_indicator':None, 'filter_value': None,\
-            'show_missing_data':None, 'cumulative':0, \
-            'group_by_time': None, 'chart_uuid': None, 'location_depth': None
-        }
-
-        for k, v in optional_params.iteritems():
-            try:
-                parsed_params[k] = query_dict[k]
-            except KeyError:
-                parsed_params[k] = v
-
-        for k, v in required_params.iteritems():
-
-            try:
-                parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
-            except KeyError as err:
-                err_msg = '%s is a required parameter!' % err
-                return err_msg, None
-
-        return parsed_params
+    # def parse_url_params(self, query_dict):
+    #     '''
+    #     For the query dict return another dictionary ( or error ) in accordance
+    #     to the expected ( both required and optional ) parameters in the request
+    #     URL.
+    #     '''
+    #     parsed_params = {}
+    #
+    #     required_params = {'indicator__in': None}
+    #
+    #     # try to find optional parameters in the dictionary. If they are not
+    #     # there return the default values ( given in the dict below)
+    #     optional_params = {
+    #         'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
+    #         'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
+    #         'campaign__in': None, 'location__in': None,'location_id__in':None,\
+    #         'filter_indicator':None, 'filter_value': None,\
+    #         'show_missing_data':None, 'cumulative':0, \
+    #         'group_by_time': None, 'chart_uuid': None, 'location_depth': None
+    #     }
+    #
+    #     for k, v in optional_params.iteritems():
+    #         try:
+    #             parsed_params[k] = query_dict[k]
+    #         except KeyError:
+    #             parsed_params[k] = v
+    #
+    #     for k, v in required_params.iteritems():
+    #
+    #         try:
+    #             parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
+    #         except KeyError as err:
+    #             err_msg = '%s is a required parameter!' % err
+    #             return err_msg, None
+    #
+    #     return parsed_params
