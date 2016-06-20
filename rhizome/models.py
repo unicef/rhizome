@@ -209,6 +209,7 @@ class Indicator(models.Model):
     good_bound = models.FloatField(null=True)
     bad_bound = models.FloatField(null=True)
     source_name = models.CharField(max_length=55)  # to do: make this a FK
+    resource_name = models.CharField(max_length=10)  # data_date or campaign
 
     def __unicode__(self):
         return unicode(self.name)

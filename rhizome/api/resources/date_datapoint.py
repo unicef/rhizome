@@ -262,12 +262,7 @@ class DateDatapointResource(BaseModelResource):
         if len(dp_df) == 0:
             return []
 
-        print '===here===\n' * 5
-        print 'len(dp_df) %s ' % len(dp_df)
         dp_df = self.get_time_group_series(dp_df)
-        print '===dp_df after get gr series ===\n' * 5
-        print 'len(dp_df) %s ' % len(dp_df)
-
         merged_df = dp_df.merge(loc_tree_df)
 
         ## sum all values for locations with the same parent location
