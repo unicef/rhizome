@@ -108,9 +108,9 @@ var MenuItem = React.createClass({
       <li className={props.classes}>
         { hideArrow ? null : arrow_button }
         { item_button }
-        <div>
+        <ul>
           {children}
-        </div>
+        </ul>
       </li>
     )
   }

@@ -18,6 +18,7 @@ const DataEntryHeader = props => {
   const indicator_select = (
     <DropdownButton
       items={props.indicators.tree}
+      icon='fa-chevron-down'
       item_plural_name='Indicators'
       text={selected_indicator.short_name || selected_indicator.name}
       sendValue={id => props.setGlobalIndicators(props.indicators.index[id])}
@@ -26,23 +27,36 @@ const DataEntryHeader = props => {
     />
   )
 
+  const selected_indicator_tag_name = props.selected_indicator_tag ? props.selected_indicator_tag.tag_name : 'Select Form'
   const indicator_tag_select = (
-    <IndicatorTagSelect
-      indicator_tags={_.toArray(props.indicators.tag_index) || []}
-      selected_indicator_tag={props.selected_indicator_tag}
-      selectIndicatorTag={indicator_tag => {
+    <DropdownButton
+      items={_.toArray(props.indicators.tag_index) || []}
+      item_plural_name='Forms'
+      icon='fa-chevron-down'
+      text={selected_indicator_tag_name}
+      value_field='id'
+      title_field='tag_name'
+      sendValue={id => {
+        const indicator_tag = props.indicators.tag_index[id]
         const indicators = indicator_tag.indicator_ids.map(id => props.indicators.index[id])
         props.setGlobalIndicatorTag(indicator_tag)
         props.setGlobalIndicators(indicators)
       }}
+      style='dropdown-list'
+      searchable
     />
   )
 
   const campaign_select = (
-    <CampaignSelect
-      campaigns={props.campaigns.raw || []}
-      selected_campaign={props.selected_campaign}
-      selectCampaign={props.selectGlobalCampaign}
+    <DropdownButton
+      items={props.campaigns.raw || []}
+      item_plural_name='Campaigns'
+      value_field='id'
+      title_field='name'
+      icon='fa-chevron-down'
+      text='Select Campaign'
+      style='dropdown-list'
+      sendValue={id => props.selectGlobalCampaign(props.campaigns.index[id])}
     />
   )
 
@@ -108,17 +122,16 @@ const DataEntryHeader = props => {
 
   return (
     <header className='row page-header'>
-      <div className='medium-5 columns medium-text-left small-text-center'>
-        <h1>Enter Data</h1>
-      </div>
-      <div className='medium-7 columns medium-text-right small-text-center dashboard-actions'>
-        <div className='page-header-filters'>
+      <div className='medium-12 columns medium-text-left small-text-center'>
+        <h1>Enter {props.data_type} Data
           { switch_button }
-          { formEntry ? indicator_tag_select : indicator_select }
-          { formEntry ? campaign_select : date_select }
-          { location_select }
-          { location_depth_toggle }
-        </div>
+        </h1>
+      </div>
+      <div className='medium-7 columns medium-text-left small-text-center dashboard-actions'>
+        { formEntry ? indicator_tag_select : indicator_select }
+      </div>
+      <div className='medium-5 columns medium-text-right small-text-center dashboard-actions'>
+        { formEntry ? campaign_select : date_select }
       </div>
     </header>
   )

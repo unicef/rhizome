@@ -28,18 +28,12 @@ class Select extends Dropdown {
   render = () => {
     return (
       <div className={'dropdown-list ' + this.props.className} onClick={this._toggleMenu}>
-          {
-            this.props.icon ? (
-              <div className='dropdown-list-text'>
-                {this.props.text}
-                <IconButton onClick={this._toggleMenu} icon={this.props.icon} className='right'/>
-              </div>
-            ) : (
-              <div>
-                <div className='dashboard-nav__text'>{this.props.text}</div>
-              </div>
-            )
-          }
+        <div className='dropdown-list-text'>{this.props.text}</div>
+        {
+          this.props.icon ? (
+            <IconButton onClick={this._toggleMenu} icon={this.props.icon} className='right'/>
+          ) : null
+        }
       </div>
     )
   }
