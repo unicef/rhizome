@@ -63,11 +63,24 @@ const DataEntryHeader = props => {
     <DropdownButton
       items={props.locations.list}
       item_plural_name='Locations'
-      text='Select Location'
-      style='button select-location-button'
+      text={props.selected_locations[0] ? props.selected_locations[0].name : 'Select Location'}
+      icon='fa-chevron-down'
+      style='dropdown-list select-location-button'
       searchable
       uniqueOnly
       sendValue={id => props.setGlobalLocations(props.locations.index[id])}
+    />
+  )
+
+  const location_multi_select = (
+    <DropdownButton
+      items={props.locations.list}
+      item_plural_name='Locations'
+      text={'Add Location'}
+      style='button select-location-button'
+      searchable
+      uniqueOnly
+      sendValue={id => props.selectGlobalLocations(props.locations.index[id])}
     />
   )
 
@@ -119,6 +132,23 @@ const DataEntryHeader = props => {
     />
   )
 
+  const filters = [
+    { id: 1, value: 0, title: 'All Districts', type: 'LPD Status' },
+    { id: -1, value: [1,2,3] , title: 'All LPDs', type: 'LPD Status' },
+    { id: 2, value: 1, title: 'LPD 1', type: 'LPD Status' },
+    { id: 3, value: 2, title: 'LPD 2', type: 'LPD Status' },
+    { id: 4, value: 3, title: 'LPD 3', type: 'LPD Status' }
+  ]
+  const lpd_status_filter = (
+    <DropdownButton
+      items={filters}
+      text={'LPD Status'}
+      style='dropdown-list'
+      icon='fa-chevron-down'
+      sendValue={id => props.setGlobalIndicatorFilter(id)}
+    />
+  )
+
   return (
     <header className='row page-header'>
       <div className='medium-12 columns medium-text-left small-text-center'>
@@ -126,12 +156,15 @@ const DataEntryHeader = props => {
           { switch_button }
         </h1>
       </div>
-      <div className='medium-7 columns medium-text-left small-text-center dashboard-actions'>
-        { formEntry ? indicator_tag_select : indicator_select }
-      </div>
-      <div className='medium-5 columns medium-text-right small-text-center dashboard-actions'>
-        { formEntry ? campaign_select : date_select }
-        { location_select }
+      <div className='medium-12 columns dashboard-actions'>
+        <span className='left'>
+          { formEntry ? indicator_tag_select : indicator_select }
+        </span>
+        <span className='right'>
+          { formEntry ? campaign_select : date_select }
+          { formEntry ? location_select : location_multi_select }
+          { formEntry ? lpd_status_filter : null }
+        </span>
       </div>
     </header>
   )
