@@ -90,20 +90,6 @@ class BaseResource(Resource):
         """
         return super(BaseResource, self).rolback(bundles)
 
-    def obj_update(self, bundle, skip_errors=False, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_update``.
-        """
-        return super(BaseResource, self)\
-            .obj_update(bundle, skip_errors=False, **kwargs)
-
-    def obj_delete_list_for_update(self, bundle, **kwargs):
-        """
-        A ORM-specific implementation of ``obj_delete_list_for_update``.
-        """
-        return super(BaseResource, self)\
-            .obj_delete_list_for_update(self, bundle, **kwargs)
-
     def detail_uri_kwargs(self, bundle_or_obj):
         """
         Given a ``Bundle`` or an object (typically a ``Model`` instance),
