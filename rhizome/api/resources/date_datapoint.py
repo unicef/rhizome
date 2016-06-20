@@ -8,7 +8,7 @@ from django.http import HttpResponse
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
-
+from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import DataPointComputed, Campaign, Location, Document,\
     LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
     CalculatedIndicatorComponent, LocationType, SourceSubmission
@@ -68,7 +68,6 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         super(DateDatapointResource, self).__init__(*args, **kwargs)
-        self.error = None
         self.parsed_params = None
 
     def add_default_post_params(self, bundle):
@@ -129,9 +128,6 @@ class DateDatapointResource(BaseModelResource):
         response.
         '''
 
-        self.error = None
-
-
         self.parsed_params = self.parse_url_params(request.GET)
 
         self.time_gb = self.parsed_params['group_by_time']
@@ -141,15 +137,12 @@ class DateDatapointResource(BaseModelResource):
         if len(self.base_data_df) == 0:
             return []
 
-        # ## fill in missing data if requested ##
-        # if self.parsed_params['show_missing_data'] == u'1':
-        #     df = self.add_missing_data(self.base_data_df)
-        #     self.base_data_df = df.where((notnull(df)),None)
-
         return self.base_data_df.to_dict('records')
 
     def get_time_group_series(self, dp_df):
 
+        if dp_df['data_date'][0] == None:
+            raise RhizomeApiException('This is a campaign (not date) indicator')
 
         if self.time_gb == 'year':
             dp_df['time_grouping'] = dp_df[
@@ -269,7 +262,12 @@ class DateDatapointResource(BaseModelResource):
         if len(dp_df) == 0:
             return []
 
+        print '===here===\n' * 5
+        print 'len(dp_df) %s ' % len(dp_df)
         dp_df = self.get_time_group_series(dp_df)
+        print '===dp_df after get gr series ===\n' * 5
+        print 'len(dp_df) %s ' % len(dp_df)
+
         merged_df = dp_df.merge(loc_tree_df)
 
         ## sum all values for locations with the same parent location
