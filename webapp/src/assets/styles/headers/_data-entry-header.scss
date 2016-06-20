@@ -14,9 +14,6 @@
 			margin-left: .4rem;
 		}
 	}
-	.dropdown-list-text:hover {
-		color: white;
-	}
 	.rw-datetimepicker {
 	  background-color: rgba(0, 0, 0, 0.2);
 	  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
@@ -25,7 +22,7 @@
 		border: none;
 	  border-radius: 0;
 	  padding-top: .3rem;
-	  padding-bottom: .3rem;
+	  padding-bottom: .15rem;
 	  padding-left: .8rem;
 	  .rw-select {
 	  	border: none;
@@ -49,5 +46,14 @@
 		  background: transparent;
 		  border-radius: 0;
 	  }
+	}
+	.date-range-picker {
+		display: inline-block;
+	}
+	.dropdown-list-text:hover {
+		color: white;
+	}
+	.select-location-button {
+		top: -.1rem;
 	}
 }

@@ -20,20 +20,19 @@ const DataEntryHeader = props => {
       items={props.indicators.tree}
       icon='fa-chevron-down'
       item_plural_name='Indicators'
-      text={selected_indicator.short_name || selected_indicator.name}
+      text={selected_indicator.name || selected_indicator.short_name}
       sendValue={id => props.setGlobalIndicators(props.indicators.index[id])}
       style='dropdown-list'
       searchable
     />
   )
 
-  const selected_indicator_tag_name = props.selected_indicator_tag ? props.selected_indicator_tag.tag_name : 'Select Form'
   const indicator_tag_select = (
     <DropdownButton
       items={_.toArray(props.indicators.tag_index) || []}
       item_plural_name='Forms'
       icon='fa-chevron-down'
-      text={selected_indicator_tag_name}
+      text={props.selected_indicator_tag ? props.selected_indicator_tag.tag_name : 'Select Form'}
       value_field='id'
       title_field='tag_name'
       sendValue={id => {
@@ -54,7 +53,7 @@ const DataEntryHeader = props => {
       value_field='id'
       title_field='name'
       icon='fa-chevron-down'
-      text='Select Campaign'
+      text={props.selected_campaign ? props.selected_campaign.name : 'Select Campaign'}
       style='dropdown-list'
       sendValue={id => props.selectGlobalCampaign(props.campaigns.index[id])}
     />
@@ -65,7 +64,7 @@ const DataEntryHeader = props => {
       items={props.locations.list}
       item_plural_name='Locations'
       text='Select Location'
-      style='button'
+      style='button select-location-button'
       searchable
       uniqueOnly
       sendValue={id => props.setGlobalLocations(props.locations.index[id])}
@@ -132,6 +131,7 @@ const DataEntryHeader = props => {
       </div>
       <div className='medium-5 columns medium-text-right small-text-center dashboard-actions'>
         { formEntry ? campaign_select : date_select }
+        { location_select }
       </div>
     </header>
   )

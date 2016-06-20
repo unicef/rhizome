@@ -8,14 +8,17 @@ class EnterDataPage extends Component {
   componentWillReceiveProps (nextProps) {
     if (nextProps.dataParamsChanged) {
       const query = {
-        start_date: nextProps.start_date,
-        end_date: nextProps.end_date,
-        campaign__in: nextProps.selected_campaign.id,
         indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
         location_ids: nextProps.selected_locations.map(location => location.id),
         location_depth: nextProps.location_depth || 1,
         data_type: nextProps.data_type,
         show_missing_data: 1
+      }
+      if (nextProps.data_type === 'campaign' && nextProps.selected_campaign) {
+        query.campaign__in = nextProps.selected_campaign.id
+      } else {
+        query.start_date = nextProps.start_date,
+        query.end_date = nextProps.end_date
       }
       nextProps.getDatapoints(query)
     }
@@ -40,9 +43,6 @@ class EnterDataPage extends Component {
     return (
       <div className='data-entry-page'>
         <DataEntryHeader {...props} />
-        <h2 className='subheader'>
-          { !formEntry && props.selected_indicators[0] ? props.selected_indicators[0].name : '' }
-        </h2>
         <div className='row'>
           <div className='medium-12 columns'>
             { datapoints ? data_table : placeholder }

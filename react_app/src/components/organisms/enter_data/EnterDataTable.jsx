@@ -47,7 +47,7 @@ const _getRowData = grouped_datapoints => {
 
 const _getColumnData = (grouped_datapoints, updateDatapoint) => {
   const first_row = _.toArray(grouped_datapoints)[0]
-  const columns = first_row.length > 0 ? first_row.map(datapoint => {
+  const columns = first_row && first_row.length > 0 ? first_row.map(datapoint => {
     const column = {
       field: datapoint.indicator.id + '.value',
       headerName: datapoint.indicator.name,
