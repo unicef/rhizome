@@ -18,6 +18,7 @@ const mapStateToProps = state => {
     indicators: state.indicators,
     locations: state.locations,
     location_depth: state.data_entry.location_depth,
+    indicator_filter: state.data_entry.indicator_filter,
     start_date: state.data_entry.start_date,
     end_date: state.data_entry.end_date,
     data_type: state.data_entry.data_type,

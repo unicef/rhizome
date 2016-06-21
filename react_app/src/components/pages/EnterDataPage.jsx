@@ -7,20 +7,7 @@ class EnterDataPage extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.dataParamsChanged) {
-      const query = {
-        indicator_ids: nextProps.selected_indicators.map(indicator => indicator.id),
-        location_ids: nextProps.selected_locations.map(location => location.id),
-        location_depth: nextProps.location_depth || 1,
-        data_type: nextProps.data_type,
-        show_missing_data: 1
-      }
-      if (nextProps.data_type === 'campaign' && nextProps.selected_campaign) {
-        query.campaign__in = nextProps.selected_campaign.id
-      } else {
-        query.start_date = nextProps.start_date,
-        query.end_date = nextProps.end_date
-      }
-      nextProps.getDatapoints(query)
+      nextProps.getDatapoints(nextProps)
     }
   }
 

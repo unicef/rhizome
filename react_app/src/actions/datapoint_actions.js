@@ -64,9 +64,10 @@ const _prepDatapointsQuery = (params) => {
   // const chartNeedsNullData = _.indexOf(builderDefinitions.need_missing_data_charts, params.type) !== -1
   const chartNeedsNullData = true
   let query = {
-    indicator__in: params.indicator_ids.join(),
-    location_id__in: params.location_ids.join(),
-    location_depth: params.location_depth <= 0 ? null : params.location_depth,
+    indicator__in: params.selected_indicators.map(indicator => indicator.id).join(),
+    location_id__in: params.selected_locations.map(location => location.id).join(),
+    // location_depth: params.location_depth <= 0 ? null : params.location_depth,
+    location_depth: 3,
     chart_type: params.type,
     chart_uuid: params.uuid,
     show_missing_data: chartNeedsNullData ? 1 : params.show_missing_data,
@@ -79,7 +80,7 @@ const _prepDatapointsQuery = (params) => {
   }
   let queryReady = query.location_id__in !== '' && query.indicator__in !== ''
   if (params.data_type === 'campaign') {
-    query.campaign__in = params.campaign__in || params.campaign_id
+    query.campaign__in = params.selected_campaign.id
     queryReady = queryReady && query.campaign__in
   } else {
     query.start_date = params.start_date

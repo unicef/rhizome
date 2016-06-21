@@ -5,12 +5,13 @@ import { handleActions } from 'redux-actions'
 const data = {
   start_date: moment().format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
-  data_type: 'date',
+  data_type: 'campaign', // or date
   location_depth: 0,
   selected_campaign: null,
   selected_locations: [],
   selected_indicators: [],
   selected_indicator_tag: null,
+  indicator_filter: null,
   datapoints: {meta: null, raw: null, flattened: null},
   dataParamsChanged: false
 }
@@ -86,6 +87,12 @@ const data_entry = handleActions({
   SET_GLOBAL_INDICATOR_TAG: (state, action) => {
     return Object.assign({}, state, {
       selected_indicator_tag: action.payload
+    })
+  },
+  SET_GLOBAL_INDICATOR_FILTER: (state, action) => {
+    return Object.assign({}, state, {
+      indicator_filter: action.payload,
+      dataParamsChanged: true
     })
   }
 }, data)

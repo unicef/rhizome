@@ -145,7 +145,7 @@ const DataEntryHeader = props => {
       text={'LPD Status'}
       style='dropdown-list'
       icon='fa-chevron-down'
-      sendValue={id => props.setGlobalIndicatorFilter(id)}
+      sendValue={id => props.setGlobalIndicatorFilter({type: 'LPD Status', value: id})}
     />
   )
 
