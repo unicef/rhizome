@@ -11,7 +11,7 @@ const data = {
   selected_locations: [],
   selected_indicators: [],
   selected_indicator_tag: null,
-  indicator_filter: null,
+  indicator_filter: {id: 1},
   datapoints: {meta: null, raw: null, flattened: null},
   dataParamsChanged: false
 }

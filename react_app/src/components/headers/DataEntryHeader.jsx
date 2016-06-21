@@ -142,10 +142,11 @@ const DataEntryHeader = props => {
   const lpd_status_filter = (
     <DropdownButton
       items={filters}
-      text={'LPD Status'}
+      text={props.indicator_filter.title}
+      value_field='id'
       style='dropdown-list'
       icon='fa-chevron-down'
-      sendValue={id => props.setGlobalIndicatorFilter({type: 'LPD Status', value: id})}
+      sendValue={id => props.setGlobalIndicatorFilter(_.keyBy(filters, 'id')[id])}
     />
   )
 
