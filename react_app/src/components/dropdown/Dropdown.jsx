@@ -78,7 +78,9 @@ class Dropdown extends Component {
   }
 
   _toggleMenu = (e) => {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
     this.setState({ open: !this.state.open })
   }
 
@@ -87,6 +89,7 @@ class Dropdown extends Component {
   }
 
   close = () => {
+    console.log('close!')
     this.setState({ open: false })
   }
 }
