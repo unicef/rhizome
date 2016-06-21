@@ -89,7 +89,6 @@ class Dropdown extends Component {
   }
 
   close = () => {
-    console.log('close!')
     this.setState({ open: false })
   }
 }
