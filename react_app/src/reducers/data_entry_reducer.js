@@ -55,6 +55,11 @@ const data_entry = handleActions({
       dataParamsChanged: false
     })
   },
+  UPDATE_DATAPOINT_FAILURE: (state, action) => {
+    return Object.assign({}, state, {
+      dataParamsChanged: true
+    })
+  },
   SELECT_GLOBAL_CAMPAIGN: (state, action) => {
     return Object.assign({}, state, {
       selected_campaign: action.payload,

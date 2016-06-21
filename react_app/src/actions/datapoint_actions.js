@@ -51,7 +51,11 @@ export const saveDatapoint = function * (action) {
       path += action.payload.id
       response = yield call(() => RhizomeAPI.patch(path, {value: datapoint.value}))
     }
-    yield put({type: 'UPDATE_DATAPOINT_SUCCESS', payload: response})
+    if (response.status !== 500) {
+      yield put({type: 'UPDATE_DATAPOINT_SUCCESS', payload: response})
+    } else {
+      throw response
+    }
   } catch (error) {
     yield put({type: 'UPDATE_DATAPOINT_FAILURE', error})
   }
