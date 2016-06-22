@@ -55,15 +55,16 @@ const DataEntryPageContainer = connect(mapStateToProps, mapDispatchToProps)(Data
 const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => {
   if (!datapoints.raw)
     return null
-  const selected_location_ids = JSON.parse(datapoints.meta.location_ids)
-  const selected_locations = selected_location_ids.map(id => locations.index[id])
+  const selected_locations = datapoints.meta.location_ids.map(id => locations.index[id])
   const selected_indicators = datapoints.meta.indicator_ids.map(id => indicators.index[id])
   const indexDatapoints = _.keyBy(datapoints.location_id)
   const missing_datapoints = []
+
+  // If a location is missing completely, add a row for it
   selected_locations.forEach(location => {
     if (!indexDatapoints[location.id]) {
       selected_indicators.forEach(indicator => {
-        all_datapoints.push({
+        missing_datapoints.push({
           campaign_id: parseInt(datapoints.meta.campaign_ids[0]),
           value: null,
           location_id: location.id,
@@ -72,11 +73,15 @@ const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => 
       })
     }
   })
+
+  // If a location is missing some indicators
+  // Needs to be addressed
+
   console.log('missing_datapoints', missing_datapoints)
-  const result = all_datapoints.concat(datapoints.raw)
-  // console.log('result', result)
+  const result = missing_datapoints.concat(datapoints.raw)
+  console.log('result', result)
   const flattened = _flatten(result, indicators, locations, campaigns)
-  // console.log('flattened', flattened)
+  console.log('flattened', flattened)
   return flattened
 }
 
