@@ -335,7 +335,7 @@ class BaseModelResource(ModelResource, BaseResource):
         if self.location_id_list:
             location_ids = self.location_id_list.split(',')
 
-        if self.location_id:
+        elif self.location_id:
 
             ## there is a depth column in the location_tree table, we just
             ## need to fix the LocationTreeCache process so that we put the

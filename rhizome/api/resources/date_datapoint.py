@@ -100,9 +100,9 @@ class DateDatapointResource(BaseModelResource):
             meta['chart_uuid'] = chart_uuid
 
         ind_id_list = request.GET.get('indicator__in', '').split(',')
-        meta['location_ids'] = self.location_ids
-        meta['indicator_ids'] = ind_id_list
-        meta['campaign_ids'] = self.campaign_id_list
+        meta['location_ids'] = [int(x) for x in self.location_ids]
+        meta['indicator_ids'] = [int(x) for x in ind_id_list]
+        # meta['campaign_ids'] = self.campaign_id_list
 
         return meta
 
@@ -199,33 +199,14 @@ class DateDatapointResource(BaseModelResource):
 
         '''
 
-        requested_location_id = request.GET.get('location_id__in', None)
-        depth_level = request.GET.get('location_depth', None)
-
-        if depth_level == 0:
-            self.location_ids = [ requested_location_id ]
-            return DataFrame([[requested_location_id,requested_location_id]], \
-                columns = ['location_id', 'parent_location_id'])
-
-        # what is the admin level of the requested location #
-        parent_location_admin_level =  Location.objects\
-            .filter(id = requested_location_id)\
-            .values_list('location_type__admin_level',flat=True)[0]
-
-        # what is the location_type of the keys we need to return
-        # calculated by the admin_level of the requested ( see above )
-        # and the depth level in the request
-        location_type_id_of_parent_keys = LocationType.objects\
-            .get(admin_level = parent_location_admin_level + int(depth_level)).id
+        self.location_ids = self.get_locations_to_return_from_url(request)
 
         # get the relevant parent / child heirarchy
         loc_tree_df = DataFrame(list(LocationTree.objects
-                          .filter(parent_location__location_type_id =\
-                            location_type_id_of_parent_keys)
+                          .filter(id__in = self.location_ids)
                           .values_list('location_id', 'parent_location_id')),
                      columns=['location_id', 'parent_location_id'])
 
-        self.location_ids = list(loc_tree_df['location_id'].unique())
 
         return loc_tree_df
 

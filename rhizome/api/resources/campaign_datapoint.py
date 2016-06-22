@@ -75,9 +75,9 @@ class CampaignDataPointResource(BaseModelResource):
         if chart_uuid:
             meta['chart_uuid'] = chart_uuid
 
-        meta['location_ids'] = self.location_id_list
-        meta['indicator_ids'] = self.indicator_id_list
-        meta['campaign_ids'] = self.campaign_id_list
+        meta['location_ids'] =  [int(x) for x in self.location_id_list]
+        meta['indicator_ids'] = [int(x) for x in self.indicator_id_list]
+        meta['campaign_ids'] = [int(x) for x in self.campaign_id_list]
 
         return meta
 
