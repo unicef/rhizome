@@ -9,6 +9,7 @@ import SwitchButton from 'components/form/SwitchButton'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 import DateRangeSelect from 'components/select/DateRangeSelect'
 import momentLocalizer from 'react-widgets/lib/localizers/moment'
+import LpdSelect from 'components/select/LpdSelect'
 momentLocalizer(moment)
 
 const DataEntryHeader = props => {
@@ -132,21 +133,10 @@ const DataEntryHeader = props => {
     />
   )
 
-  const filters = [
-    { id: 1, value: 0, title: 'All Districts', type: 'LPD Status' },
-    { id: -1, value: [1,2,3] , title: 'All LPDs', type: 'LPD Status' },
-    { id: 2, value: 1, title: 'LPD 1', type: 'LPD Status' },
-    { id: 3, value: 2, title: 'LPD 2', type: 'LPD Status' },
-    { id: 4, value: 3, title: 'LPD 3', type: 'LPD Status' }
-  ]
   const lpd_status_filter = (
-    <DropdownButton
-      items={filters}
-      text={props.indicator_filter.title}
-      value_field='id'
-      style='dropdown-list'
-      icon='fa-chevron-down'
-      sendValue={id => props.setGlobalIndicatorFilter(_.keyBy(filters, 'id')[id])}
+    <LpdSelect
+      selected={props.indicator_filter}
+      sendValue={props.setGlobalIndicatorFilter}
     />
   )
 
