@@ -17,12 +17,19 @@ class DataEntryPage extends Component {
     const datapoints = props.datapoints.flattened
     const no_location = props.selected_locations.length <= 0
     const no_indicator = props.selected_indicators.length <= 0
-    const placeholder_text = !formEntry ? 'an indicator' : 'a form'
+    const indicator_text = !formEntry ? 'an indicator' : 'a form'
+    const location_text = !formEntry ? 'locations' : 'a location'
+    const full_text = () => {
+      if (no_indicator && no_location) {
+        return `Select ${indicator_text} and ${location_text} to begin`
+      } else if (no_indicator && !no_location) {
+        return `Select ${indicator_text} to begin`
+      } else if (!no_indicator && no_location) {
+        return `Select ${location_text} to begin`
+      }
+    }
     const placeholder = no_location || no_indicator ? (
-      <div>
-        { no_location ? <Placeholder height={150} text={'Add location(s) to begin'} loading={false}/> : null }
-        { no_indicator ? <Placeholder height={150} text={`Select ${placeholder_text} to begin`} loading={false}/> : null }
-      </div>
+       <Placeholder height={150} text={full_text()} loading={false}/>
     ) : <Placeholder height={300} />
 
     const data_table = <DataEntryTable {...props} />
