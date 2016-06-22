@@ -29,7 +29,7 @@ class DataEntryPage extends Component {
       }
     }
     const placeholder = no_location || no_indicator ? (
-       <Placeholder height={150} text={full_text()} loading={false}/>
+       <Placeholder height={300} text={full_text()} loading={false}/>
     ) : <Placeholder height={300} />
 
     const data_table = <DataEntryTable {...props} />
