@@ -83,7 +83,7 @@ const _prepDatapointsQuery = (params) => {
     // time_grouping: params.data_type || 'campaign',
     source_name: params.source_name,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
-    filter_value: params.indicator_filter ? params.indicator_filter.value : null,
+    filter_value: params.indicator_filter && params.indicator_filter.value !== 0 ? params.indicator_filter.value : null,
     location_level: params.type === 'TableChart' ? 'District' : null
   }
 
