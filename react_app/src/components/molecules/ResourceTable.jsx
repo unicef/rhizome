@@ -62,7 +62,7 @@ export default class ResourceTable extends Component {
           <TableControls
             onQuickFilterText={this.onQuickFilterText}
             onRefreshData={this.props.onRefreshData} />
-          <div style={{height: '100%'}} className={'ag-fresh'}>
+          <div className={'ag-fresh'} style={{height:'100%'}}>
             <AgGridReact
               gridOptions={this.props.gridOptions}
               onGridReady={this.onReady}
