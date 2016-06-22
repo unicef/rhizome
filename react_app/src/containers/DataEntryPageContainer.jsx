@@ -11,7 +11,7 @@ const mapStateToProps = state => {
   const datapoints = {
     raw: state.data_entry.datapoints.raw,
     flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns),
-    all: fillMissingDatapoints(state.data_entry.datapoints, state.indicators, state.locations, state.campaigns)
+    including_missing: fillMissingDatapoints(state.data_entry.datapoints, state.indicators, state.locations, state.campaigns)
   }
   return {
     datapoints: datapoints,
@@ -60,29 +60,24 @@ const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => 
   const indexDatapoints = _.keyBy(datapoints.location_id)
   const missing_datapoints = []
 
-  // If a location is missing completely, add a row for it
   selected_locations.forEach(location => {
-    if (!indexDatapoints[location.id]) {
-      selected_indicators.forEach(indicator => {
+    selected_indicators.forEach(indicator => {
+      const datapointExists = datapoints.raw.filter(datapoint => {
+        return datapoint.location_id === location.id && datapoint.indicator_id === indicator.id
+      }).length <= 0
+      if (datapointExists) {
         missing_datapoints.push({
           campaign_id: parseInt(datapoints.meta.campaign_ids[0]),
           value: null,
           location_id: location.id,
           indicator_id: indicator.id
         })
-      })
-    }
+      }
+    })
   })
 
-  // If a location is missing some indicators
-  // Needs to be addressed
-
-  console.log('missing_datapoints', missing_datapoints)
-  const result = missing_datapoints.concat(datapoints.raw)
-  console.log('result', result)
-  const flattened = _flatten(result, indicators, locations, campaigns)
-  console.log('flattened', flattened)
-  return flattened
+  const all_datapoints = missing_datapoints.concat(datapoints.raw)
+  return _flatten(all_datapoints, indicators, locations, campaigns)
 }
 
 

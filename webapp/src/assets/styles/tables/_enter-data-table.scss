@@ -1,7 +1,7 @@
 .datapoint-table {
 	.ag-header-cell-label {
     text-overflow: clip;
-    overflow: visible;
+    overflow: hidden;
     white-space: normal;
 	}
 	.ag-fresh .ag-cell {

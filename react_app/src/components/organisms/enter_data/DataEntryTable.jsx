@@ -9,7 +9,7 @@ import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
 
 const DataEntryTable = (props) => {
-  const datapoints = props.datapoints.flattened
+  const datapoints = props.datapoints.including_missing
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint)
