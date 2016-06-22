@@ -8,7 +8,7 @@ import IntegerCell from 'components/table/IntegerCell'
 import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
 
-const EnterDataTable = (props) => {
+const DataEntryTable = (props) => {
   const datapoints = props.datapoints.flattened
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
@@ -75,4 +75,4 @@ const _getColumnData = (grouped_datapoints, updateDatapoint) => {
   return columns
 }
 
-export default EnterDataTable
+export default DataEntryTable

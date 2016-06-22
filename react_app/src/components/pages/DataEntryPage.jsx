@@ -1,9 +1,9 @@
 import React, {Component} from 'react'
 import Placeholder from 'components/global/Placeholder'
 import DataEntryHeader from 'components/headers/DataEntryHeader'
-import EnterDataTable from 'components/organisms/enter_data/EnterDataTable'
+import DataEntryTable from 'components/organisms/enter_data/DataEntryTable'
 
-class EnterDataPage extends Component {
+class DataEntryPage extends Component {
 
   componentWillReceiveProps (nextProps) {
     if (nextProps.dataParamsChanged) {
@@ -25,7 +25,7 @@ class EnterDataPage extends Component {
       </div>
     ) : <Placeholder height={300} />
 
-    const data_table = <EnterDataTable {...props} />
+    const data_table = <DataEntryTable {...props} />
 
     return (
       <div className='data-entry-page'>
@@ -40,4 +40,4 @@ class EnterDataPage extends Component {
   }
 }
 
-export default EnterDataPage
+export default DataEntryPage

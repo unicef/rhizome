@@ -2,7 +2,7 @@ import moment from 'moment'
 import format from 'utilities/format'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import EnterDataPage from 'components/pages/EnterDataPage'
+import DataEntryPage from 'components/pages/DataEntryPage'
 import { selectGlobalCampaign, selectGlobalLocation, setGlobalLocations, setGlobalIndicators, setGlobalIndicatorFilter, setGlobalIndicatorTag, setGlobalLocationDepth } from 'actions/global_actions'
 import { toggleEntryType, setDataEntryStartDate, setDataEntryEndDate } from 'actions/data_entry_actions'
 import { getDatapoints, updateDatapoint } from 'actions/datapoint_actions'
@@ -45,7 +45,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
 	getDatapoints
 }, dispatch)
 
-const EnterDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(EnterDataPage)
+const DataEntryPageContainer = connect(mapStateToProps, mapDispatchToProps)(DataEntryPage)
 
 // =========================================================================== //
 //                             DATAPOINT UTILITIES                             //
@@ -81,4 +81,4 @@ const _createYearCampaign = (year) => {
   }
 }
 
-export default EnterDataPageContainer
+export default DataEntryPageContainer

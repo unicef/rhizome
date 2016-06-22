@@ -36,7 +36,7 @@ import BugReportPage from 'components/pages/info/BugReportPage'
 import ContactPage from 'components/pages/info/ContactPage'
 import SitemapPage from 'components/pages/info/SitemapPage'
 
-import EnterDataPageContainer from 'containers/EnterDataPageContainer'
+import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 import ManageSystemPage from 'components/pages/ManageSystemPage'
 
 const Routes = (
@@ -81,7 +81,7 @@ const Routes = (
 
 		// OTHER ROUTES
 		//---------------------------------------------------------
-	  <Route path="/react_app/enter_data" component={EnterDataPageContainer}/>
+	  <Route path="/react_app/enter_data" component={DataEntryPageContainer}/>
 	  <Route path="/react_app/manage_system" component={ManageSystemPage}/>
 	</Route>
 )
