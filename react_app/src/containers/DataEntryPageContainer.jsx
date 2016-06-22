@@ -10,7 +10,8 @@ import { getDatapoints, updateDatapoint } from 'actions/datapoint_actions'
 const mapStateToProps = state => {
   const datapoints = {
     raw: state.data_entry.datapoints.raw,
-    flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns)
+    flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns),
+    all: fillMissingDatapoints(state.data_entry.datapoints, state.indicators, state.locations, state.campaigns)
   }
   return {
     datapoints: datapoints,
@@ -50,6 +51,35 @@ const DataEntryPageContainer = connect(mapStateToProps, mapDispatchToProps)(Data
 // =========================================================================== //
 //                             DATAPOINT UTILITIES                             //
 // =========================================================================== //
+
+const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => {
+  if (!datapoints.raw)
+    return null
+  const selected_location_ids = JSON.parse(datapoints.meta.location_ids)
+  const selected_locations = selected_location_ids.map(id => locations.index[id])
+  const selected_indicators = datapoints.meta.indicator_ids.map(id => indicators.index[id])
+  const indexDatapoints = _.keyBy(datapoints.location_id)
+  const missing_datapoints = []
+  selected_locations.forEach(location => {
+    if (!indexDatapoints[location.id]) {
+      selected_indicators.forEach(indicator => {
+        all_datapoints.push({
+          campaign_id: parseInt(datapoints.meta.campaign_ids[0]),
+          value: null,
+          location_id: location.id,
+          indicator_id: indicator.id
+        })
+      })
+    }
+  })
+  console.log('missing_datapoints', missing_datapoints)
+  const result = all_datapoints.concat(datapoints.raw)
+  // console.log('result', result)
+  const flattened = _flatten(result, indicators, locations, campaigns)
+  // console.log('flattened', flattened)
+  return flattened
+}
+
 
 const _flatten = (datapoints, indicators, locations, campaigns) => {
   if (!datapoints)
