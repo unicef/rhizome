@@ -333,7 +333,7 @@ class BaseModelResource(ModelResource, BaseResource):
         self.location_depth = int(request.GET.get('location_depth', 0))
 
         if self.location_id_list:
-            return self.location_id_list.split(',')
+            location_ids = self.location_id_list.split(',')
 
         if self.location_id:
 
@@ -399,7 +399,7 @@ class BaseModelResource(ModelResource, BaseResource):
             campaign__in = self.campaign_id_list,
             location__in=location_ids,
             indicator__short_name = indicator_to_filter,
-            value__in=value_to_filter)\
+            value__in=value_to_filter.split(','))\
             .values_list('location_id', flat=True)
 
         return location_ids
