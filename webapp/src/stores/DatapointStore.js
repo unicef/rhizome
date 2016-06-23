@@ -107,8 +107,7 @@ var DatapointStore = Reflux.createStore({
   },
 
   melt: function (datapoints, indicator_ids) {
-    const selected_indicator_ids = indicator_ids.split(',')
-    const baseIndicators = selected_indicator_ids.map(id => ({ indicator: parseInt(id, 0), value: 0 }))
+    const baseIndicators = indicator_ids.map(id => ({ indicator: parseInt(id, 0), value: 0 }))
     const melted_datapoints = _(datapoints).map(datapoint => {
       const base = _.omit(datapoint, 'indicators')
       const indicatorFullList = _.assign(_.cloneDeep(baseIndicators), datapoint.indicators)
