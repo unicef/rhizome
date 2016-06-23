@@ -14,7 +14,7 @@ const DataEntryTable = (props) => {
   const rows = _getRowData(grouped_datapoints)
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
   const grid_options = {
-    rowHeight: 30,
+    rowHeight: 35,
     headerHeight: 48,
     colWidth: 150
   }
