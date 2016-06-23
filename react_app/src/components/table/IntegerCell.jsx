@@ -50,9 +50,9 @@ class IntegerCell extends Component {
     	)
     }
     return (
-    	<span onClick={this._toggleEditMode}>
+    	<div style={{width: '100%', height: '1.5rem'}} onClick={this._toggleEditMode}>
     		{this.state.display_value}
-    	</span>
+    	</div>
     )
   }
 }
