@@ -168,8 +168,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         self.assertEqual(response_chart_uuid, chart_uuid)
 
         expected_campaign_list = [campaign.id]
-        response_campaign_list = [int(x) for x in \
-            json.loads(response_data['meta']['campaign_ids'])]
+        response_campaign_list = [int(x) for x in response_data['meta']['campaign_ids']]
         self.assertEqual(response_campaign_list, expected_campaign_list)
 
         expected_location_list = [location.id]
@@ -460,8 +459,8 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
 
-        start_date = '2016-01-01'
-        end_date = '2016-01-01'
+        start_date = '2014-01-01'
+        end_date = '2014-01-01'
 
         campaign = Campaign.objects.get(office=self.o, start_date=start_date)
 

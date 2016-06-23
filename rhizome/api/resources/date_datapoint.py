@@ -139,9 +139,6 @@ class DateDatapointResource(BaseModelResource):
 
         self.base_data_df = self.group_by_time_transform(request)
 
-        print '=====base_data_df=====\n' * 5
-        print self.base_data_df[:5]
-
         ## if no datapoints, we return an empty list#
         if len(self.base_data_df) == 0:
             return []
