@@ -51,6 +51,7 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         resource_name = 'date_datapoint'  # cooresponds to the URL of the resource
+        GET_params_required = ['indicator__in']
         object_class = DataPoint
         required_fields_for_post = ['indicator_id','location_id', 'data_date', \
             'value']
@@ -102,7 +103,6 @@ class DateDatapointResource(BaseModelResource):
         ind_id_list = request.GET.get('indicator__in', '').split(',')
         meta['location_ids'] = [int(x) for x in self.location_ids]
         meta['indicator_ids'] = [int(x) for x in ind_id_list]
-        # meta['campaign_ids'] = self.campaign_id_list
 
         return meta
 
@@ -131,12 +131,16 @@ class DateDatapointResource(BaseModelResource):
         self.time_gb = request.GET.get('group_by_time', None)
         self.start_date = request.GET.get('start_date', None)
         self.end_date = request.GET.get('end_date', None)
-        self.location_id__in = request.GET.get('location_id__in', None)
+        self.location_id = request.GET.get('location_id', None)
+        self.location_depth = request.GET.get('location_depth', None)
         indicator__in = request.GET.get('indicator__in', None)
         if indicator__in:
             self.indicator__in = indicator__in.split(',')
 
         self.base_data_df = self.group_by_time_transform(request)
+
+        print '=====base_data_df=====\n' * 5
+        print self.base_data_df[:5]
 
         ## if no datapoints, we return an empty list#
         if len(self.base_data_df) == 0:
@@ -173,45 +177,6 @@ class DateDatapointResource(BaseModelResource):
 
         return dp_df
 
-    def build_location_tree(self, request):
-        '''
-        Find out the data you are trying to return for ... in use case #1,
-        this would be all of the provinces in afghanistan.. for #2 it would be
-        all of the districts.  This is important because we will use
-        these to group by in addition to the time_grouping and indicator
-        later on.  Furthermore, since the location tree table has all of
-        the possible combinations of ancestry, we want to make sure that
-        when we perform operations on it, that it is small as possible.
-
-        The output of this function is a Data Frame that looks like:
-
-            location_id, parent_location_id
-            | NY State      | USA       |
-            | California    | USA       |
-            | NY City       | NY State  |
-            | The Bronx     | NY City   |
-
-
-        If the depth_level = 0, it means that we want to query for only the
-        location that is in the location_id parameter, so we return somethign
-        like:
-
-            location_id, parent_location_id
-            | The Bronx | The Bronx |
-
-        '''
-
-        self.location_ids = self.get_locations_to_return_from_url(request)
-
-        # get the relevant parent / child heirarchy
-        loc_tree_df = DataFrame(list(LocationTree.objects
-                          .filter(id__in = self.location_ids)
-                          .values_list('location_id', 'parent_location_id')),
-                     columns=['location_id', 'parent_location_id'])
-
-
-        return loc_tree_df
-
     def group_by_time_transform(self, request):
         '''
             Imagine the following location tree heirarchy
@@ -234,9 +199,16 @@ class DateDatapointResource(BaseModelResource):
 
         cols = ['data_date', 'indicator_id', 'location_id', 'value']
 
-        ## build the location heirarchy for the requested locations #
-        loc_tree_df = self.build_location_tree(request)
-                ## now find the data for the children of those parents
+        loc_tree_df_columns = ['parent_location_id','location_id']
+        self.location_ids = LocationTree.objects.filter(
+            parent_location_id = self.location_id,
+            lvl = self.location_depth
+        ).values_list('location_id', flat=True)
+
+        loc_tree_df = DataFrame(list(LocationTree.objects.filter(
+            parent_location_id = self.location_ids,
+        ).values_list(*loc_tree_df_columns)),columns = loc_tree_df_columns)
+
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = list(loc_tree_df['location_id'].unique()),
                 indicator_id__in = self.indicator__in
@@ -250,9 +222,9 @@ class DateDatapointResource(BaseModelResource):
 
         ## sum all values for locations with the same parent location
         gb_df = DataFrame(merged_df
-                          .groupby(['indicator_id', 'time_grouping', 'parent_location_id'])['value']
-                          .sum())\
-            .reset_index()
+              .groupby(['indicator_id', 'time_grouping', 'parent_location_id'])['value']
+              .sum())\
+              .reset_index()
 
         gb_df = gb_df.rename(columns={
             'parent_location_id': 'location_id',
