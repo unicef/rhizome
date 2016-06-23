@@ -46,7 +46,8 @@ class CampaignDataPointResource(BaseModelResource):
 
         if not self.campaign_id_list:
             c_start = filters.get('campaign_start', '2000-01-01')
-            c_end = filters.get('campaign_start', '2070-01-01')
+            c_end = filters.get('campaign_end', '2070-01-01')
+
             self.campaign_id_list = Campaign.objects.filter(
                                 start_date__gte=c_start,
                                 start_date__lte=c_end
