@@ -66,7 +66,7 @@ const DataEntryHeader = props => {
       item_plural_name='Locations'
       text={props.selected_locations[0] ? props.selected_locations[0].name : 'Select Location'}
       icon='fa-chevron-down'
-      style='dropdown-list select-location-button'
+      style='dropdown-list'
       searchable
       uniqueOnly
       sendValue={id => props.setGlobalLocations(props.locations.index[id])}
