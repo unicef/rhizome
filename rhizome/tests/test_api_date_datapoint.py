@@ -102,7 +102,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
             'indicator__in' : self.ind.id,
             'start_date' : '2013-01-01',
             'end_date' : '2016-01-01',
-            'location_id__in' : self.top_lvl_location.id,
+            'location_id' : self.top_lvl_location.id,
             'location_depth' : 1
         }
         resp = self.api_client.get('/api/v1/date_datapoint/', \
@@ -141,7 +141,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
             'indicator__in': self.ind.id,
             'start_date': '2013-01-01',
             'end_date': '2016-01-01',
-            'location_id__in': location_id,
+            'location_id': location_id,
             'location_depth' : 0
         }
 
@@ -208,7 +208,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
             'indicator__in': self.ind.id,
             'start_date': '2016-01-01',
             'end_date': '2016-01-01',
-            'location_id__in': self.top_lvl_location.id,
+            'location_id': self.top_lvl_location.id,
             'location_depth' : 1
         }
 
@@ -242,7 +242,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 'indicator__in': self.ind.id,
                 'start_date': '2013-01-01',
                 'end_date': '2016-01-01',
-                'location_id__in': self.top_lvl_location.id,
+                'location_id': self.top_lvl_location.id,
                 'location_depth' : 1
             }
 
@@ -290,7 +290,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 'indicator__in': self.ind.id,
                 'start_date': '2013-01-01',
                 'end_date': '2016-01-01',
-                'location_id__in': self.top_lvl_location.id,
+                'location_id': self.top_lvl_location.id,
                 'location_depth' : 1
             }
 

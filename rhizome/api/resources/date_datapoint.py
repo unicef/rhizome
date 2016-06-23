@@ -68,6 +68,7 @@ class DateDatapointResource(BaseModelResource):
         '''
         '''
 
+        self.campaign_id_list = []
         super(DateDatapointResource, self).__init__(*args, **kwargs)
 
     def add_default_post_params(self, bundle):
@@ -103,6 +104,7 @@ class DateDatapointResource(BaseModelResource):
         ind_id_list = request.GET.get('indicator__in', '').split(',')
         meta['location_ids'] = [int(x) for x in self.location_ids]
         meta['indicator_ids'] = [int(x) for x in ind_id_list]
+        meta['campaign_ids'] = [int(x) for x in self.campaign_id_list]
 
         return meta
 
@@ -169,7 +171,6 @@ class DateDatapointResource(BaseModelResource):
                 self.end_date[0:4]
             distinct_time_groupings = range(int(start_yr), int(end_yr))
 
-        self.campaign__in = distinct_time_groupings
         self.campaign_id_list = distinct_time_groupings
 
         return dp_df
@@ -303,40 +304,3 @@ class DateDatapointResource(BaseModelResource):
         concat_df = concat_df.rename(
             columns={'parent_location_id': 'location_id'})
         return concat_df
-
-    # def parse_url_params(self, query_dict):
-    #     '''
-    #     For the query dict return another dictionary ( or error ) in accordance
-    #     to the expected ( both required and optional ) parameters in the request
-    #     URL.
-    #     '''
-    #     parsed_params = {}
-    #
-    #     required_params = {'indicator__in': None}
-    #
-    #     # try to find optional parameters in the dictionary. If they are not
-    #     # there return the default values ( given in the dict below)
-    #     optional_params = {
-    #         'the_limit': 10000, 'the_offset': 0, 'agg_level': 'mixed',
-    #         'campaign_start': '2012-01-01', 'campaign_end': '2900-01-01',
-    #         'campaign__in': None, 'location__in': None,'location_id__in':None,\
-    #         'filter_indicator':None, 'filter_value': None,\
-    #         'show_missing_data':None, 'cumulative':0, \
-    #         'group_by_time': None, 'chart_uuid': None, 'location_depth': None
-    #     }
-    #
-    #     for k, v in optional_params.iteritems():
-    #         try:
-    #             parsed_params[k] = query_dict[k]
-    #         except KeyError:
-    #             parsed_params[k] = v
-    #
-    #     for k, v in required_params.iteritems():
-    #
-    #         try:
-    #             parsed_params[k] = [int(p) for p in query_dict[k].split(',')]
-    #         except KeyError as err:
-    #             err_msg = '%s is a required parameter!' % err
-    #             return err_msg, None
-    #
-    #     return parsed_params
