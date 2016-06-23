@@ -32,10 +32,10 @@ class IntegerCell extends Component {
   	const new_datapoint = Object.assign({}, this.props.cellParams.datapoint, {value})
     if (new_datapoint.id && _.isEmpty(value)) {
       this.props.cellParams.removeDatapoint(new_datapoint)
+    } else if (!new_datapoint.id && value) {
+    	this.props.cellParams.updateDatapoint(new_datapoint)
     } else if (!(new_datapoint.id && value)) {
       return this._toggleEditMode()
-    } else {
-    	this.props.cellParams.updateDatapoint(new_datapoint)
     }
     this.setState({ editMode: false, display_value: value })
   }
