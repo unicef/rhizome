@@ -131,8 +131,10 @@ class DateDatapointResource(BaseModelResource):
         self.time_gb = request.GET.get('group_by_time', None)
         self.start_date = request.GET.get('start_date', None)
         self.end_date = request.GET.get('end_date', None)
-        self.indicator__in = request.GET.get('indicator__in', None)
         self.location_id__in = request.GET.get('location_id__in', None)
+        indicator__in = request.GET.get('indicator__in', None)
+        if indicator__in:
+            self.indicator__in = indicator__in.split(',')
 
         self.base_data_df = self.group_by_time_transform(request)
 
