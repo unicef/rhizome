@@ -58,11 +58,11 @@ def _build_dependencies():
 
     # update/install dependencies
     local("cd webapp && npm install")
-    local("cd react_app && npm install")
 
-    # build the package for the 'new' react app and dump it into #
-    # webapp/src/assets/js so that it will be picked up in npm run package
-    local("cd react_app && webpack")
+    # # build the package for the 'new' react app and dump it into #
+    # # webapp/src/assets/js so that it will be picked up in npm run package
+    # local("cd react_app && npm install")
+    # local("cd react_app && webpack")
 
     # build fe and package the project
     # with NODE_ENV=production, uglify have be done.
@@ -95,11 +95,11 @@ def _push_to_remote():
         run("unzip -o rhizome.zip -d %s" % remote_backend_path)
 
     ## now push the react app to the remote
-    put(react_app_webapp_build_dir + 'reactApp.js', remote_frontend_path + \
-        '/js/reactApp.js')
-
-    put(react_app_webapp_build_dir + 'vendor.reactApp.js', remote_frontend_path + \
-        '/js/reactVendor.js')
+    # put(react_app_webapp_build_dir + 'reactApp.js', remote_frontend_path + \
+    #     '/js/reactApp.js')
+    #
+    # put(react_app_webapp_build_dir + 'vendor.reactApp.js', remote_frontend_path + \
+    #     '/js/reactVendor.js')
 
     # in server path -
     with cd(remote_backend_path):
