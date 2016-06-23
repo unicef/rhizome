@@ -12,12 +12,13 @@ const DataEntryTable = (props) => {
   const datapoints = props.datapoints.including_missing
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
-  const columns = _getColumnData(grouped_datapoints, props.updateDatapoint)
+  const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
   const grid_options = {
     rowHeight: 30,
     headerHeight: 48,
     colWidth: 150
   }
+
   return (
     <ResourceTable
       rowData={rows}
@@ -45,17 +46,18 @@ const _getRowData = grouped_datapoints => {
   return rows
 }
 
-const _getColumnData = (grouped_datapoints, updateDatapoint) => {
+const _getColumnData = (grouped_datapoints, updateDatapoint, removeDatapoint) => {
   const first_row = _.toArray(grouped_datapoints)[0]
-  const columns = first_row && first_row.length > 0 ? first_row.map(datapoint => {
+  const columns = first_row && first_row.length > 0 ? first_row.map(first_row_datapoint => {
     const column = {
-      field: datapoint.indicator.id + '.value',
-      headerName: datapoint.indicator.name,
+      field: first_row_datapoint.indicator.id + '.value',
+      headerName: first_row_datapoint.indicator.name,
       enableCellChangeFlash: true,
       cellStyle: {textAlign: 'center'}
     }
-    column.cellRenderer = reactCellRendererFactory(params => {
-      const cellParams = Object.assign({}, params, {datapoint, updateDatapoint})
+    column.cellRenderer = reactCellRendererFactory(cell => {
+      const datapoint = cell.params.data[first_row_datapoint.indicator.id]
+      const cellParams = Object.assign({}, cell.params, {datapoint, updateDatapoint, removeDatapoint})
       if (datapoint.indicator.data_format === 'bool') {
         return <BoolCell cellParams={cellParams}/>
       } else if (datapoint.indicator.data_format === 'pct') {

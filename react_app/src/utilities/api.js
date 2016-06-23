@@ -7,7 +7,8 @@ const RhizomeAPI = {
   get: (path, data) => axios.get(path, data),
   post: (path, data) => axios.post(path, data),
   put: (path, data) => axios.put(path, data),
-  patch: (path, data) => axios.patch(path, data)
+  patch: (path, data) => axios.patch(path, data),
+  delete: (path, data) => axios.delete(path, data)
 }
 
 export default RhizomeAPI

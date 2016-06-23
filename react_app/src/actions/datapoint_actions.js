@@ -10,12 +10,24 @@ export const getDatapointsSuccess = createAction('GET_DATAPOINTS_SUCCESS')
 export const updateDatapoint = createAction('UPDATE_DATAPOINT')
 export const updateDatapointFailure = createAction('UPDATE_DATAPOINT_FAILURE')
 export const updateDatapointSuccess = createAction('UPDATE_DATAPOINT_SUCCESS')
+export const removeDatapoint = createAction('REMOVE_DATAPOINT')
+export const removeDatapointFailure = createAction('REMOVE_DATAPOINT_FAILURE')
+export const removeDatapointSuccess = createAction('REMOVE_DATAPOINT_SUCCESS')
 
 // ===========================================================================//
 //                                   SAGAS                                    //
 // ===========================================================================//
+
 export const watchGetDatapoints = function * () {
   yield * takeEvery('GET_DATAPOINTS', fetchDatapoints)
+}
+
+export const watchRemoveDatapoint = function * () {
+  yield * takeEvery('REMOVE_DATAPOINT', deleteDatapoint)
+}
+
+export const watchUpdateDatapoint = function * () {
+  yield * takeEvery('UPDATE_DATAPOINT', saveDatapoint)
 }
 
 export const fetchDatapoints = function * (action) {
@@ -30,10 +42,6 @@ export const fetchDatapoints = function * (action) {
   } catch (error) {
     yield put({type: 'GET_DATAPOINTS_FAILURE', error})
   }
-}
-
-export const watchUpdateDatapoint = function * () {
-  yield * takeEvery('UPDATE_DATAPOINT', saveDatapoint)
 }
 
 export const saveDatapoint = function * (action) {
@@ -62,29 +70,37 @@ export const saveDatapoint = function * (action) {
   }
 }
 
+export const deleteDatapoint = function * (action) {
+  console.log(action)
+  try {
+    const path = action.payload.campaign.id ? '/campaign_datapoint/' : '/date_datapoint/'
+    const response = yield call(() => RhizomeAPI.delete(path + action.payload.id))
+    if (response.status !== 500) {
+      yield put({type: 'REMOVE_DATAPOINT_SUCCESS', payload: response})
+    } else {
+      throw response
+    }
+  } catch (error) {
+    yield put({type: 'REMOVE_DATAPOINT_FAILURE', error})
+  }
+}
+
 // ===========================================================================//
 //                                  UTILITIES                                 //
 // ===========================================================================//
 const _prepDatapointsQuery = (params) => {
-  // const chartNeedsNullData = _.indexOf(builderDefinitions.need_missing_data_charts, params.type) !== -1
-  const chartNeedsNullData = true
+  let query = {
+    indicator__in: params.selected_indicators.map(indicator => indicator.id).join(),
+    chart_type: params.type,
+    chart_uuid: params.uuid,
+    source_name: params.source_name,
+    location_level: params.type === 'TableChart' ? 'District' : null
+    // location_depth: params.location_depth <= 0 ? null : params.location_depth,
+  }
   let queryReady = !_.isEmpty(params.selected_locations) && !_.isEmpty(params.selected_indicators)
   if (!queryReady) {
     return false
   }
-  let query = {
-    indicator__in: params.selected_indicators.map(indicator => indicator.id).join(),
-    // location_depth: params.location_depth <= 0 ? null : params.location_depth,
-    // location_depth: 3,
-    chart_type: params.type,
-    chart_uuid: params.uuid,
-    show_missing_data: chartNeedsNullData ? 1 : params.show_missing_data,
-    // data_type: params.data_type || 'campaign',
-    // time_grouping: params.data_type || 'campaign',
-    source_name: params.source_name,
-    location_level: params.type === 'TableChart' ? 'District' : null
-  }
-
   if (params.indicator_filter && parseInt(params.indicator_filter.value) !== 0) {
     query.filter_indicator = params.indicator_filter.type
     query.filter_value = params.indicator_filter.value

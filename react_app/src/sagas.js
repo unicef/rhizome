@@ -9,11 +9,13 @@ import { watchGetAllUsers } from 'actions/user_actions'
 
 import { watchGetDatapoints } from 'actions/datapoint_actions'
 import { watchUpdateDatapoint } from 'actions/datapoint_actions'
+import { watchRemoveDatapoint } from 'actions/datapoint_actions'
 
 export const rootSaga = function * () {
   yield [
     watchGetDatapoints(),
     watchUpdateDatapoint(),
+    watchRemoveDatapoint(),
     watchGetInitialData(),
     watchGetAllCampaigns(),
     watchGetAllIndicators(),

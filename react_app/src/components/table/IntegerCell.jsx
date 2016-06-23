@@ -1,3 +1,4 @@
+import _ from 'lodash'
 import React, {Component} from 'react'
 import DropdownButton from 'components/button/DropdownButton'
 
@@ -29,7 +30,13 @@ class IntegerCell extends Component {
 
   _updateCell = value => {
   	const new_datapoint = Object.assign({}, this.props.cellParams.datapoint, {value})
-  	this.props.cellParams.updateDatapoint(new_datapoint)
+    if (new_datapoint.id && _.isEmpty(value)) {
+      this.props.cellParams.removeDatapoint(new_datapoint)
+    } else if (!(new_datapoint.id && value)) {
+      return this._toggleEditMode()
+    } else {
+    	this.props.cellParams.updateDatapoint(new_datapoint)
+    }
     this.setState({ editMode: false, display_value: value })
   }
 

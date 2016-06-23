@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import DataEntryPage from 'components/pages/DataEntryPage'
 import { selectGlobalCampaign, selectGlobalLocation, setGlobalLocations, setGlobalIndicators, setGlobalIndicatorFilter, setGlobalIndicatorTag, setGlobalLocationDepth } from 'actions/global_actions'
 import { toggleEntryType, setDataEntryStartDate, setDataEntryEndDate } from 'actions/data_entry_actions'
-import { getDatapoints, updateDatapoint } from 'actions/datapoint_actions'
+import { getDatapoints, updateDatapoint, removeDatapoint } from 'actions/datapoint_actions'
 
 const mapStateToProps = state => {
   const datapoints = {
@@ -42,6 +42,7 @@ const mapDispatchToProps = (dispatch) => bindActionCreators({
   setGlobalIndicators,
   setGlobalIndicatorTag,
   setGlobalIndicatorFilter,
+  removeDatapoint,
   updateDatapoint,
 	getDatapoints
 }, dispatch)
