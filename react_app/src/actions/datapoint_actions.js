@@ -82,11 +82,13 @@ const _prepDatapointsQuery = (params) => {
     // data_type: params.data_type || 'campaign',
     // time_grouping: params.data_type || 'campaign',
     source_name: params.source_name,
-    filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
-    filter_value: params.indicator_filter && params.indicator_filter.value !== 0 ? params.indicator_filter.value : null,
     location_level: params.type === 'TableChart' ? 'District' : null
   }
 
+  if (params.indicator_filter && parseInt(params.indicator_filter.value) !== 0) {
+    query.filter_indicator = params.indicator_filter.type
+    query.filter_value = params.indicator_filter.value
+  }
   if (params.data_type === 'campaign') {
     query.location_id = params.selected_locations[0].id
     query.campaign__in = params.selected_campaign.id
