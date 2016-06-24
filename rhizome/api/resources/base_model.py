@@ -7,6 +7,7 @@ from django.core.exceptions import (
     ObjectDoesNotExist, MultipleObjectsReturned
 )
 
+from jsonfield import JSONField
 from tastypie.authorization import Authorization
 from tastypie.utils import dict_strip_unicode_keys
 from tastypie.exceptions import InvalidFilterError
@@ -288,6 +289,20 @@ class BaseModelResource(ModelResource, BaseResource):
         if len(missing_keys) > 0:
             raise RhizomeApiException(message='missing params %s' %
                                       missing_keys)
+
+        bundle = self.clean_json_fields(bundle)
+
+        return bundle
+
+    def clean_json_fields(self, bundle):
+        '''
+        For the models in which we store JSON data namely  ( custom_chart,
+        custom_dashboard ) serialize the json and upaate the bundle in place.
+        '''
+
+        for f in self._meta.object_class._meta.fields:
+            if isinstance(f, JSONField):
+                bundle.data[f.name] = json.loads(bundle.data[f.name])
 
         return bundle
 
