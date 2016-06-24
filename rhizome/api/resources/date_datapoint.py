@@ -103,7 +103,7 @@ class DateDatapointResource(BaseModelResource):
 
         ind_id_list = request.GET.get('indicator__in', '').split(',')
         meta['location_ids'] = [int(x) for x in self.location_ids]
-        meta['indicator_ids'] = [int(x) for x in ind_id_list]
+        meta['indicator_ids'] = ind_id_list
         meta['campaign_ids'] = [int(x) for x in self.campaign_id_list]
 
         return meta
@@ -134,7 +134,7 @@ class DateDatapointResource(BaseModelResource):
         self.start_date = request.GET.get('start_date', None)
         self.end_date = request.GET.get('end_date', None)
         self.location_id = request.GET.get('location_id', None)
-        self.location_depth = request.GET.get('location_depth', None)
+        self.location_depth = request.GET.get('location_depth', 0)
         indicator__in = request.GET.get('indicator__in', None)
         if indicator__in:
             self.indicator__in = indicator__in.split(',')
@@ -260,7 +260,8 @@ class DateDatapointResource(BaseModelResource):
             ind_id = row['indicator_component_id']
             self.ind_meta[calc] = ind_id
 
-        parent_location_id = self.location_id__in
+        parent_location_id = self.location_id
+        self.location_ids = [self.location_id]
 
         all_sub_locations = LocationTree.objects.filter(
             parent_location_id=parent_location_id
@@ -303,4 +304,7 @@ class DateDatapointResource(BaseModelResource):
         concat_df = concat_df.drop('location_id', 1)
         concat_df = concat_df.rename(
             columns={'parent_location_id': 'location_id'})
-        return concat_df
+
+        non_null_df = concat_df.where((notnull(concat_df)), None)
+
+        return non_null_df
