@@ -28,9 +28,10 @@ const DataEntryHeader = props => {
     />
   )
 
+  const indicator_tags = _.toArray(props.indicators.tag_index).filter(tag => tag.indicator_ids.length > 0) || []
   const indicator_tag_select = (
     <DropdownButton
-      items={_.toArray(props.indicators.tag_index) || []}
+      items={indicator_tags}
       item_plural_name='Forms'
       icon='fa-chevron-down'
       text={props.selected_indicator_tag ? props.selected_indicator_tag.tag_name : 'Select Form'}
