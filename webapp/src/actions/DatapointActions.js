@@ -33,7 +33,8 @@ const _prepDatapointsQuery = (params) => {
     // clean this up... we need ability to select discrete locations in the chart builder.
     // currently, we will only allow for a single location and a "depth" param in the chart builder
     location_id: params.location_ids[0],
-    location_depth: params.location_depth <= 0 ? null : params.location_depth
+    location_depth: params.location_depth <= 0 ? null : params.location_depth,
+    location_type: params.type === 'TableChart' ? 'District' : null
   }
   return query
 }
