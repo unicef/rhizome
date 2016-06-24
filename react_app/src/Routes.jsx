@@ -2,6 +2,8 @@ import React from 'react'
 import { Route } from 'react-router'
 
 import BasePageContainer from 'containers/BasePageContainer'
+import SourceDataPageContainer from 'containers/SourceDataPageContainer'
+import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 
 import CampaignsPage from 'components/pages/campaigns/CampaignsPage'
 import CampaignPage from 'components/pages/campaigns/CampaignPage'
@@ -23,10 +25,6 @@ import LocationsPage from 'components/pages/locations/LocationsPage'
 import LocationPage from 'components/pages/locations/LocationPage'
 import LocationEditPage from 'components/pages/locations/LocationEditPage'
 
-import SourceDatasPage from 'components/pages/source_data/SourceDatasPage'
-import SourceDataPage from 'components/pages/source_data/SourceDataPage'
-import SourceDataEditPage from 'components/pages/source_data/SourceDataEditPage'
-
 import UsersPage from 'components/pages/users/UsersPage'
 import UserPage from 'components/pages/users/UserPage'
 import UserEditPage from 'components/pages/users/UserEditPage'
@@ -36,7 +34,6 @@ import BugReportPage from 'components/pages/info/BugReportPage'
 import ContactPage from 'components/pages/info/ContactPage'
 import SitemapPage from 'components/pages/info/SitemapPage'
 
-import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 import ManageSystemPage from 'components/pages/ManageSystemPage'
 
 const Routes = (
@@ -64,10 +61,6 @@ const Routes = (
 	  <Route path="/react_app/locations/:location_id" component={LocationPage}/>
 	  <Route path="/react_app/locations/:location_id/edit" component={LocationEditPage}/>
 
-	  <Route path="/react_app/source_data" component={SourceDatasPage}/>
-	  <Route path="/react_app/source_data/:source_data_id" component={SourceDataPage}/>
-	  <Route path="/react_app/source_data/:source_data_id/edit" component={SourceDataEditPage}/>
-
 	  <Route path="/react_app/users" component={UsersPage}/>
 	  <Route path="/react_app/users/:user_id" component={UserPage}/>
 	  <Route path="/react_app/users/:user_id/edit" component={UserEditPage}/>
@@ -81,6 +74,7 @@ const Routes = (
 
 		// OTHER ROUTES
 		//---------------------------------------------------------
+	  <Route path="/react_app/source_data" component={SourceDataPageContainer}/>
 	  <Route path="/react_app/enter_data" component={DataEntryPageContainer}/>
 	  <Route path="/react_app/manage_system" component={ManageSystemPage}/>
 	</Route>
