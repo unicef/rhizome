@@ -301,7 +301,8 @@ class BaseModelResource(ModelResource, BaseResource):
         '''
 
         for f in self._meta.object_class._meta.fields:
-            if isinstance(f, JSONField):
+            ## if the field is a json data tyep and it exists in the bundle ##
+            if isinstance(f, JSONField) and hasattr(bundle.data, f.name):
                 bundle.data[f.name] = json.loads(bundle.data[f.name])
 
         return bundle
@@ -364,7 +365,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
             ## woul be nice to put the location_type as a string for each
             ## row in the locatino tree table that we don't have to
-            ## make these three queries 
+            ## make these three queries
 
             if self.location_type: # figure out the depth level #
                 parent_location_location_type_id = Location.objects.\
