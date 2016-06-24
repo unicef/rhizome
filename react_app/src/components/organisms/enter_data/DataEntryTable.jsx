@@ -15,11 +15,10 @@ const DataEntryTable = (props) => {
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
   console.log('rows', rows)
   return (
-    <div className={'datapoint-table ag-fresh'} style={{height:'100%'}}>
+    <div className={'datapoint-table ag-fresh'} style={{height:'64vh'}}>
       <AgGridReact
         columnDefs={columns}
         rowData={rows}
-        enableColResize="true"
         enableSorting="true"
         groupHeaders="true"
         suppressCellSelection="true"
