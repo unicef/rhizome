@@ -245,7 +245,6 @@ class BaseModelResource(ModelResource, BaseResource):
         relevant data items.
         """
 
-
         ## add any additional data needed for post, for instance datapoitns
         ## that are inserted via a POST request should have a document
         bundle = self.add_default_post_params(bundle, **kwargs)
@@ -339,17 +338,31 @@ class BaseModelResource(ModelResource, BaseResource):
 
         self.location_id = request.GET.get('location_id', None)
         self.location_id_list = request.GET.get('location_id__in', None)
+        self.location_type = request.GET.get('location_type', None)
         self.location_depth = int(request.GET.get('location_depth', 0))
+
 
         if self.location_id_list:
             location_ids = self.location_id_list.split(',')
 
         elif self.location_id:
 
-            ## there is a depth column in the location_tree table, we just
-            ## need to fix the LocationTreeCache process so that we put the
-            ## proper depth_level in there.
-            ## see here https://trello.com/c/YPEF4pCg/885
+            ## woul be nice to put the location_type as a string for each
+            ## row in the locatino tree table that we don't have to
+            ## make these three queries 
+
+            if self.location_type: # figure out the depth level #
+                parent_location_location_type_id = Location.objects.\
+                    get(id = self.location_id).location_type_id
+
+                parent_location_admin_level = LocationType.objects.\
+                    get(id = parent_location_location_type_id).admin_level
+
+                location_type_location_admin_level = LocationType.objects.\
+                    get(name = self.location_type).admin_level
+
+                self.location_depth = location_type_location_admin_level - \
+                    parent_location_admin_level
 
             location_ids = LocationTree.objects.filter(
                 parent_location_id=self.location_id,
