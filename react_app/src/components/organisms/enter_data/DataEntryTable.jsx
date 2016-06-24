@@ -3,7 +3,7 @@ import React from 'react'
 import ResourceTable from 'components/molecules/ResourceTable'
 import moment from 'moment'
 import format from 'utilities/format'
-import {reactCellRendererFactory} from 'ag-grid-react'
+import {AgGridReact, reactCellRendererFactory} from 'ag-grid-react'
 import IntegerCell from 'components/table/IntegerCell'
 import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
@@ -13,20 +13,24 @@ const DataEntryTable = (props) => {
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
-  const grid_options = {
-    rowHeight: 35,
-    headerHeight: 48,
-    colWidth: 150
-  }
-
+  console.log('rows', rows)
   return (
-    <ResourceTable
-      rowData={rows}
-      columnDefs={columns}
-      gridOptions={grid_options}
-      resourcePath='datapoints'
-      className='datapoint-table'
-    />
+    <div className={'datapoint-table ag-fresh'} style={{height:'100%'}}>
+      <AgGridReact
+        columnDefs={columns}
+        rowData={rows}
+        enableColResize="true"
+        enableSorting="true"
+        groupHeaders="true"
+        suppressCellSelection="true"
+        debug="false"
+        gridOptions={{
+          rowHeight: 35,
+          headerHeight: 48,
+          colWidth: 150
+        }}
+      />
+    </div>
   )
 }
 
