@@ -1,16 +1,25 @@
-.datapoint-table {
+.datapoint-table.ag-fresh {
+	.ag-header {
+		background: white;
+	}
+	.ag-body {
+		background: white;
+	}
+	.ag-header-cell-resize {
+		display: none;
+	}
 	.ag-header-cell-label {
     text-overflow: clip;
     overflow: hidden;
     white-space: normal;
 	}
-	.ag-fresh .ag-cell {
+	.ag-row, .ag-header-row {
+		display: table;
+	}
+	.ag-cell, .ag-header-cell {
 		display: table-cell;
     position: static;
 		vertical-align: middle;
-	}
-	.ag-fresh .ag-row {
-		display: table;
 	}
 	.ag-cell input[type='text'] {
 		margin: 0;

@@ -26,7 +26,7 @@ const DataEntryTable = (props) => {
         debug="false"
         gridOptions={{
           rowHeight: 35,
-          headerHeight: 48,
+          headerHeight: 55,
           colWidth: 150
         }}
       />
