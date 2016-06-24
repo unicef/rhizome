@@ -94,8 +94,8 @@ const _prepDatapointsQuery = (params) => {
     chart_type: params.type,
     chart_uuid: params.uuid,
     source_name: params.source_name,
-    location_level: params.type === 'TableChart' ? 'District' : null
-    // location_depth: params.location_depth <= 0 ? null : params.location_depth,
+    location_type: 'District',
+    // location_depth: params.location_depth <= 0 ? null : params.location_depth
   }
   let queryReady = !_.isEmpty(params.selected_locations) && !_.isEmpty(params.selected_indicators)
   if (!queryReady) {
