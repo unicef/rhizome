@@ -253,10 +253,19 @@ class BaseModelResource(ModelResource, BaseResource):
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
-        try:
-            obj = self._meta.object_class.objects.create(**bundle.data)
-        except IntegrityError as err:
-            raise RhizomeApiException(message = err.message, code = 497)
+
+        #### FIXME REMOVE BELOW CODE AND USE PROPER PATCH FORMAT ####
+        id_from_post = bundle.data.get('id', None)
+        if id_from_post: ## this is a PUT or update of an existing resource #
+            obj = self._meta.object_class.objects.get(id = id_from_post)
+            self.update_object(obj, **bundle.data)
+        #### REMOVE ABOVE CODE ####
+
+        else: ## create the object with the data from the request #
+            try:
+                obj = self._meta.object_class.objects.create(**bundle.data)
+            except IntegrityError as err:
+                raise RhizomeApiException(message = err.message, code = 497)
 
         bundle.obj = obj
         bundle.data['id'] = bundle.obj.id
