@@ -23,7 +23,7 @@ function num (value, format = 'n') {
 // }
 
 function autoFormat (value, format, decimal_places = null) {
-  if (format === 'pct' && value !== '') {
+  if (format === 'pct' && value && value !== '') {
     return (isNaN(decimal_places) ? Math.floor(value * 100) : (value * 100).toFixed(decimal_places)) + '%'
   } else if (format === 'bool') {
     const boolValues = ['No', 'Yes']
