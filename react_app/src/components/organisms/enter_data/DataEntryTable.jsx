@@ -13,7 +13,7 @@ const DataEntryTable = (props) => {
   const grouped_datapoints = _.groupBy(datapoints, 'location.id')
   const rows = _getRowData(grouped_datapoints)
   const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
-  console.log('rows', rows)
+
   return (
     <div className={'datapoint-table ag-fresh'} style={{height:'64vh'}}>
       <AgGridReact

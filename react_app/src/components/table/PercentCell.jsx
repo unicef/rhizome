@@ -1,13 +1,15 @@
 import _ from 'lodash'
 import React, {Component} from 'react'
 import DropdownButton from 'components/button/DropdownButton'
+import format from 'utilities/format'
 
 class PercentCell extends Component {
   constructor (props) {
     super(props)
+    this.data_format = this.props.cellParams.datapoint.indicator.data_format
     this.state = {
     	editMode: false,
-      display_value: props.cellParams.datapoint.display_value
+      datapoint: Object.assign({}, props.cellParams.datapoint)
     }
   }
 
@@ -18,26 +20,41 @@ class PercentCell extends Component {
 	}
 
   _handleInput = e => {
-  	const value = e.target.value
-  	const valueChanged = parseInt(this.state.display_value) !== parseInt(value)
+    const old_value = this.data_format === 'pct' ? this.state.datapoint.value : parseInt(this.state.datapoint.value)
+    const new_value = this._parseNewValue(e.target.value)
   	if (e.keyCode && e.keyCode === 27) {
   		return this._toggleEditMode()
   	}
   	if ((e.keyCode && e.keyCode === 13) || !e.keyCode) {
-	  	return valueChanged ? this._updateCell(value) : this._toggleEditMode()
+	  	old_value !== new_value ? this._updateCell(new_value) : this._toggleEditMode()
   	}
   }
 
   _updateCell = value => {
-  	const new_datapoint = Object.assign({}, this.props.cellParams.datapoint, {value})
-    if (new_datapoint.id && _.isEmpty(value)) {
+    const display_value = format.autoFormat(value, this.data_format)
+  	const new_datapoint = Object.assign({}, this.state.datapoint, {value, display_value})
+    if (new_datapoint.id && value === null) {
       this.props.cellParams.removeDatapoint(new_datapoint)
-    } else if (!new_datapoint.id && value) {
-    	this.props.cellParams.updateDatapoint(new_datapoint)
-    } else if (!(new_datapoint.id && value)) {
-      return this._toggleEditMode()
+    } else {
+      this.props.cellParams.updateDatapoint(new_datapoint)
     }
-    this.setState({ editMode: false, display_value: value })
+    this.setState({ editMode: false, datapoint: new_datapoint})
+  }
+
+  _parseNewValue = value => {
+    if (this.data_format === 'pct') {
+      return value ? value / 100 : null
+    } else {
+      return value ? parseInt(value) : null
+    }
+  }
+
+  _getInitialInputValue = () => {
+    if (this.data_format === 'pct') {
+      return this.state.datapoint.value ? (this.state.datapoint.value * 100).toFixed(0) : null
+    } else {
+      return this.state.datapoint.display_value
+    }
   }
 
   _toggleEditMode = () => {
@@ -45,13 +62,12 @@ class PercentCell extends Component {
   }
 
   render = () => {
-  	const indicator = this.props.cellParams.datapoint.indicator
     if (this.state.editMode) {
     	return (
     		<input
     			type='text'
     			ref='cell_input'
-    			defaultValue={indicator.data_format === 'pct' ? this.props.cellParams.datapoint.value : this.state.display_value}
+    			defaultValue={this._getInitialInputValue()}
     			onBlur={this._handleInput}
     			onKeyUp={this._handleInput}
     		/>
@@ -59,7 +75,7 @@ class PercentCell extends Component {
     }
     return (
     	<div style={{width: '100%', height: '1.5rem'}} onClick={this._toggleEditMode}>
-    		{this.state.display_value}
+    		{this.state.datapoint.display_value}
     	</div>
     )
   }

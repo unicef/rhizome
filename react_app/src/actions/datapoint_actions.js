@@ -71,7 +71,6 @@ export const saveDatapoint = function * (action) {
 }
 
 export const deleteDatapoint = function * (action) {
-  console.log(action)
   try {
     const path = action.payload.campaign.id ? '/campaign_datapoint/' : '/date_datapoint/'
     const response = yield call(() => RhizomeAPI.delete(path + action.payload.id))
