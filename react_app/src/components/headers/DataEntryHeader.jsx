@@ -82,7 +82,7 @@ const DataEntryHeader = props => {
       style='button select-location-button'
       searchable
       uniqueOnly
-      sendValue={id => props.selectGlobalLocations(props.locations.index[id])}
+      sendValue={id => props.selectGlobalLocation(props.locations.index[id])}
     />
   )
 

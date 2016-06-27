@@ -101,13 +101,13 @@ const _prepDatapointsQuery = (params) => {
   if (!queryReady) {
     return false
   }
-  if (params.indicator_filter && parseInt(params.indicator_filter.value) !== 0) {
-    query.filter_indicator = params.indicator_filter.type
-    query.filter_value = params.indicator_filter.value
-  }
   if (params.data_type === 'campaign') {
     query.location_id = params.selected_locations[0].id
     query.campaign__in = params.selected_campaign.id
+    if (params.indicator_filter && parseInt(params.indicator_filter.value) !== 0) {
+      query.filter_indicator = params.indicator_filter.type
+      query.filter_value = params.indicator_filter.value
+    }
     queryReady = queryReady && query.campaign__in
   } else {
     query.location_id__in = params.selected_locations.map(location => location.id).join()

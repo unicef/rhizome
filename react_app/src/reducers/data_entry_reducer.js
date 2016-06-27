@@ -5,7 +5,7 @@ import { handleActions } from 'redux-actions'
 const data = {
   start_date: moment().format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
-  data_type: 'campaign', // or date
+  data_type: 'date', // or date
   location_depth: 0,
   selected_campaign: null,
   selected_locations: [],
