@@ -101,7 +101,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         get = {'group_by_time':'year',
             'indicator__in' : self.ind.id,
             'start_date' : '2013-01-01',
-            'end_date' : '2016-01-01',
+            'end_date' : '2016-12-01',
             'location_id' : self.top_lvl_location.id,
             'location_depth' : 1
         }
@@ -206,8 +206,8 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         get = {
             'group_by_time' :'quarter',
             'indicator__in': self.ind.id,
-            'start_date': '2016-01-01',
-            'end_date': '2016-01-01',
+            'start_date': '2013-01-01',
+            'end_date': '2016-07-01',
             'location_id': self.top_lvl_location.id,
             'location_depth' : 1
         }
@@ -241,7 +241,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 'group_by_time' :'all_time',
                 'indicator__in': self.ind.id,
                 'start_date': '2013-01-01',
-                'end_date': '2016-01-01',
+                'end_date': '2016-07-01',
                 'location_id': self.top_lvl_location.id,
                 'location_depth' : 1
             }
