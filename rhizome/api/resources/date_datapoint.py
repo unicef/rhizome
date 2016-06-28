@@ -135,9 +135,16 @@ class DateDatapointResource(BaseModelResource):
         self.end_date = request.GET.get('end_date', None)
         self.location_id = request.GET.get('location_id', None)
         self.location_depth = request.GET.get('location_depth', 0)
+        location_ids = request.GET.get('location_id__in', None)
+        if location_ids:
+            self.location_ids = location_ids.split(',')
+
         indicator__in = request.GET.get('indicator__in', None)
         if indicator__in:
             self.indicator__in = indicator__in.split(',')
+
+        self.dp_df_columns = \
+            ['data_date', 'indicator_id', 'location_id', 'value']
 
         self.base_data_df = self.group_by_time_transform(request)
 
@@ -175,6 +182,16 @@ class DateDatapointResource(BaseModelResource):
 
         return dp_df
 
+    def handle_discrete_location_request(self):
+
+        dp_df = DataFrame(list(DataPoint.objects.filter(
+                location_id__in = self.location_ids,
+                indicator_id__in = self.indicator__in
+            ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
+
+        return dp_df
+
+
     def group_by_time_transform(self, request):
         '''
             Imagine the following location tree heirarchy
@@ -189,32 +206,31 @@ class DateDatapointResource(BaseModelResource):
                     on each district
         '''
 
-        dp_df_columns = ['data_date', 'indicator_id', 'location_id', 'value']
+        if self.location_ids:
+            return self.handle_discrete_location_request()
 
-        loc_tree_df_columns = ['parent_location_id','location_id']
-        self.location_ids = LocationTree.objects.filter(
-            parent_location_id = self.location_id,
-            lvl = self.location_depth
-        ).values_list('location_id', flat=True)
+        else:
+            loc_tree_df_columns = ['parent_location_id','location_id']
+            self.location_ids = LocationTree.objects.filter(
+                parent_location_id = self.location_id,
+                lvl = self.location_depth
+            ).values_list('location_id', flat=True)
 
-        # ## this is a hack to deal with this ticket ##
-        # # https://trello.com/c/No82UpGl
-        if len(self.location_ids) == 0:
-            self.location_ids = Location.objects.filter(
-                parent_location_id=self.location_id,
-            ).values_list('id', flat=True)
+            # ## this is a hack to deal with this ticket ##
+            # # https://trello.com/c/No82UpGl
+            if len(self.location_ids) == 0:
+                self.location_ids = Location.objects.filter(
+                    parent_location_id=self.location_id,
+                ).values_list('id', flat=True)
 
-        print 'self.location_ids %s ' % self.location_ids
+            loc_tree_df = DataFrame(list(LocationTree.objects.filter(
+                parent_location_id = self.location_ids,
+            ).values_list(*loc_tree_df_columns)),columns = loc_tree_df_columns)
 
-
-        loc_tree_df = DataFrame(list(LocationTree.objects.filter(
-            parent_location_id = self.location_ids,
-        ).values_list(*loc_tree_df_columns)),columns = loc_tree_df_columns)
-
-        dp_df = DataFrame(list(DataPoint.objects.filter(
-                location_id__in = list(loc_tree_df['location_id'].unique()),
-                indicator_id__in = self.indicator__in
-            ).values(*dp_df_columns)), columns=dp_df_columns)
+            dp_df = DataFrame(list(DataPoint.objects.filter(
+                    location_id__in = list(loc_tree_df['location_id'].unique()),
+                    indicator_id__in = self.indicator__in
+                ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
 
         if len(dp_df) == 0:
             return []
