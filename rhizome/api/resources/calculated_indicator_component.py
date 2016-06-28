@@ -31,3 +31,5 @@ class CalculatedIndicatorComponentResource(BaseModelResource):
             "indicator_id": ALL,
             "indicator_component_id": ALL,
         }
+        GET_fields = ['id', 'calculation','indicator_component__short_name',\
+            'indicator_component_id','indicator_id']

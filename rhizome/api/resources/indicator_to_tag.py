@@ -38,3 +38,5 @@ class IndicatorToTagResource(BaseModelResource):
             'indicator_tag_id': ALL
         }
         required_fields_for_post = ['indicator_id','indicator_tag_id']
+        GET_fields = ['id', 'indicator_id', 'indicator_tag_id', \
+                    'indicator__short_name', 'indicator_tag__tag_name']
