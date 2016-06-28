@@ -385,6 +385,14 @@ class BaseModelResource(ModelResource, BaseResource):
                 lvl = self.location_depth
             ).values_list('location_id', flat=True)
 
+            # ## this is a hack to deal with this ticket ##
+            # # https://trello.com/c/No82UpGl
+            if len(location_ids) == 0:
+                location_ids = Location.objects.filter(
+                    parent_location_id=self.location_id
+                ).values_list('id', flat=True)
+
+
         else:
             ## this really shouldn't happen -- when this condition hits
             ## the app slows down.  Need to enforce on the FE that we

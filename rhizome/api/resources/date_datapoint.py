@@ -197,6 +197,16 @@ class DateDatapointResource(BaseModelResource):
             lvl = self.location_depth
         ).values_list('location_id', flat=True)
 
+        # ## this is a hack to deal with this ticket ##
+        # # https://trello.com/c/No82UpGl
+        if len(self.location_ids) == 0:
+            self.location_ids = Location.objects.filter(
+                parent_location_id=self.location_id,
+            ).values_list('id', flat=True)
+
+        print 'self.location_ids %s ' % self.location_ids
+
+
         loc_tree_df = DataFrame(list(LocationTree.objects.filter(
             parent_location_id = self.location_ids,
         ).values_list(*loc_tree_df_columns)),columns = loc_tree_df_columns)
