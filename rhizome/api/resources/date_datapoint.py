@@ -131,12 +131,17 @@ class DateDatapointResource(BaseModelResource):
 
         self.chart_uuid = request.GET.get('chart_uuid', None)
         self.time_gb = request.GET.get('group_by_time', None)
-        self.start_date = request.GET.get('start_date', None)
-        self.end_date = request.GET.get('end_date', None)
+        self.start_date = request.GET.get('start_date', None) or \
+            request.GET.get('campaign_start', None)
+        self.end_date = request.GET.get('end_date', None) or \
+            request.GET.get('campaign_end', None)
         self.location_id = request.GET.get('location_id', None)
         self.location_depth = request.GET.get('location_depth', 0)
+
+        self.location_ids = None
         location_ids = request.GET.get('location_id__in', None)
         if location_ids:
+            print '==if location ids==\n' * 5
             self.location_ids = location_ids.split(',')
 
         indicator__in = request.GET.get('indicator__in', None)
