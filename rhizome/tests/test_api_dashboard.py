@@ -54,11 +54,11 @@ class DashboardResourceTest(RhizomeApiTestCase):
 
     def test_dashboard_post_rows(self):
         dboard_title = 'the dashboard title'
-        dboard_rows = json.dumps([{'charts': ['fdfdf'], 'layout':1}, {
-                                 'charts': ['ddsds'], 'layout':2}])
+        dboard_rows = [{'charts': ['fdfdf'], 'layout':1}, {
+                                 'charts': ['ddsds'], 'layout':2}]
         post_data = {
             'title': dboard_title,
-            'rows': dboard_rows
+            'rows': json.dumps(dboard_rows)
         }
         resp = self.api_client.post('/api/v1/custom_dashboard/', format='json',
                                     data=post_data, authentication=self.get_credentials())
@@ -87,7 +87,7 @@ class DashboardResourceTest(RhizomeApiTestCase):
         row_list_object = [{"layout":4,"charts":[c1.uuid, c2.uuid]}]
         post_data = {
             'title': dashboard_title,
-            'rows': row_list_object
+            'rows': json.dumps(row_list_object)
         }
 
         ## post the dashboard title and the associated charts to the API ##
@@ -229,7 +229,6 @@ class DashboardResourceTest(RhizomeApiTestCase):
                     json_obj = json.loads(json_obj)
                 except:
                     print "expected json object, got a %s for obj:" %str(type(json_obj))
-                    print json_obj
                     self.assertTrue(False)
         self.assertTrue(True)
 
