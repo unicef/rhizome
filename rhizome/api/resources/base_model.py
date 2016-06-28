@@ -302,7 +302,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
         for f in self._meta.object_class._meta.fields:
             ## if the field is a json data tyep and it exists in the bundle ##
-            if isinstance(f, JSONField) and hasattr(bundle.data, f.name):
+            if isinstance(f, JSONField) and bundle.data.has_key(f.name):
                 bundle.data[f.name] = json.loads(bundle.data[f.name])
 
         return bundle
