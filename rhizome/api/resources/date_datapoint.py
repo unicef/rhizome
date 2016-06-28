@@ -186,7 +186,9 @@ class DateDatapointResource(BaseModelResource):
 
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = self.location_ids,
-                indicator_id__in = self.indicator__in
+                indicator_id__in = self.indicator__in,
+                data_date__gte = self.start_date,
+                data_date__lte = self.end_date
             ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
 
         return dp_df
@@ -229,7 +231,9 @@ class DateDatapointResource(BaseModelResource):
 
             dp_df = DataFrame(list(DataPoint.objects.filter(
                     location_id__in = list(loc_tree_df['location_id'].unique()),
-                    indicator_id__in = self.indicator__in
+                    indicator_id__in = self.indicator__in,
+                    data_date__gte = self.start_date,
+                    data_date__lte = self.end_date
                 ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
 
         if len(dp_df) == 0:
