@@ -141,7 +141,6 @@ class DateDatapointResource(BaseModelResource):
         self.location_ids = None
         location_ids = request.GET.get('location_id__in', None)
         if location_ids:
-            print '==if location ids==\n' * 5
             self.location_ids = location_ids.split(',')
 
         indicator__in = request.GET.get('indicator__in', None)
@@ -234,8 +233,12 @@ class DateDatapointResource(BaseModelResource):
                 parent_location_id = self.location_ids,
             ).values_list(*loc_tree_df_columns)),columns = loc_tree_df_columns)
 
+            dp_loc_ids = [self.location_id]
+            if self.location_depth > 0:
+                 dp_loc_ids = list(loc_tree_df['location_id'].unique())
+
             dp_df = DataFrame(list(DataPoint.objects.filter(
-                    location_id__in = list(loc_tree_df['location_id'].unique()),
+                    location_id__in = dp_loc_ids,
                     indicator_id__in = self.indicator__in,
                     data_date__gte = self.start_date,
                     data_date__lte = self.end_date
