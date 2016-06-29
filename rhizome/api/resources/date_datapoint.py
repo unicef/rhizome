@@ -105,7 +105,7 @@ class DateDatapointResource(BaseModelResource):
         ind_id_list = request.GET.get('indicator__in', '').split(',')
         meta['location_ids'] = [int(x) for x in self.location_ids]
         meta['indicator_ids'] = [int(x) for x in ind_id_list]
-        meta['campaign_ids'] = [int(x) for x in self.campaign_id_list]
+        meta['time_groupings'] = [int(x) for x in self.distinct_time_groupings]
 
         return meta
 
@@ -183,7 +183,7 @@ class DateDatapointResource(BaseModelResource):
                 self.end_date[0:4]
             distinct_time_groupings = range(int(start_yr), int(end_yr))
 
-        self.campaign_id_list = distinct_time_groupings
+        self.distinct_time_groupings = distinct_time_groupings
 
         return dp_df
 
@@ -267,7 +267,6 @@ class DateDatapointResource(BaseModelResource):
 
         gb_df = gb_df.rename(columns={
             'parent_location_id': 'location_id',
-            'time_grouping': 'campaign_id' ## should change this in the FE
             })
 
         gb_df = gb_df.rename(columns={'parent_location_id': 'location_id'})
