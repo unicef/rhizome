@@ -30,18 +30,18 @@ const _prepDatapointsQuery = (params) => {
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
     location_type: params.type === 'TableChart' ? 'District' : null
   }
-  if (params.group_by_time === 'campaign') {
+  // if (params.group_by_time === 'campaign') {
     query.campaign_start = params.start_date
     query.campaign_end = params.end_date
     // clean this up... we need ability to select discrete locations in the chart builder.
     // currently, we will only allow for a single location and a "depth" param in the chart builder
     query.location_depth = params.location_depth <= 0 ? null : params.location_depth
     query.location_id = params.location_ids[0]
-  } else {
-    query.start_date = params.start_date
-    query.end_date = params.end_date
-    query.location_id__in = params.location_ids[0]
-  }
+  // } else {
+  //   query.start_date = params.start_date
+  //   query.end_date = params.end_date
+  //   query.location_id__in = params.location_ids[0]
+  // }
 
   return query
 }
