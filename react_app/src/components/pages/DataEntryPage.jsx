@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
 import Placeholder from 'components/global/Placeholder'
 import DataEntryHeader from 'components/headers/DataEntryHeader'
-import DataEntryTable from 'components/organisms/enter_data/DataEntryTable'
+import CampaignDataEntryTable from 'components/organisms/enter_data/CampaignDataEntryTable'
+import DateDataEntryTable from 'components/organisms/enter_data/DateDataEntryTable'
 
 class DataEntryPage extends Component {
 
@@ -32,7 +33,8 @@ class DataEntryPage extends Component {
        <Placeholder height={300} text={full_text()} loading={false}/>
     ) : <Placeholder height={300} />
 
-    const data_table = <DataEntryTable {...props} />
+    const data_table = formEntry ? <CampaignDataEntryTable {...props} /> : <DateDataEntryTable {...props}/>
+
 
     return (
       <div className='data-entry-page'>

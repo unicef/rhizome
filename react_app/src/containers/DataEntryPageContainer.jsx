@@ -10,8 +10,10 @@ import { getDatapoints, updateDatapoint, removeDatapoint } from 'actions/datapoi
 const mapStateToProps = state => {
   const datapoints = {
     raw: state.data_entry.datapoints.raw,
-    flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns),
-    including_missing: fillMissingDatapoints(state.data_entry.datapoints, state.indicators, state.locations, state.campaigns)
+    flattened: _flatten(state.data_entry.datapoints.raw, state.indicators, state.locations, state.campaigns)
+  }
+  if (state.data_entry.data_type === 'campaign') {
+    datapoints.including_missing =  fillMissingDatapoints(state.data_entry.datapoints, state.indicators, state.locations, state.campaigns)
   }
   return {
     datapoints: datapoints,
@@ -67,16 +69,16 @@ const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => 
         return datapoint.location_id === location.id && datapoint.indicator_id === indicator.id
       }).length <= 0
       if (datapointExists) {
-        missing_datapoints.push({
+        const placeholder_datapoint = {
           campaign_id: parseInt(datapoints.meta.campaign_ids[0]),
           value: null,
           location_id: location.id,
           indicator_id: indicator.id
-        })
+        }
+        missing_datapoints.push(placeholder_datapoint)
       }
     })
   })
-
   const all_datapoints = missing_datapoints.concat(datapoints.raw)
   return _flatten(all_datapoints, indicators, locations, campaigns)
 }

@@ -92,8 +92,7 @@ const _prepDatapointsQuery = (params) => {
     indicator__in: params.selected_indicators.map(indicator => indicator.id).join(),
     chart_type: params.type,
     chart_uuid: params.uuid,
-    source_name: params.source_name,
-    location_type: 'District',
+    source_name: params.source_name
     // location_depth: params.location_depth <= 0 ? null : params.location_depth
   }
   let queryReady = !_.isEmpty(params.selected_locations) && !_.isEmpty(params.selected_indicators)
@@ -101,6 +100,7 @@ const _prepDatapointsQuery = (params) => {
     return false
   }
   if (params.data_type === 'campaign') {
+    query.location_type = 'District'
     query.location_id = params.selected_locations[0].id
     query.campaign__in = params.selected_campaign.id
     if (params.indicator_filter && parseInt(params.indicator_filter.value) !== 0) {
