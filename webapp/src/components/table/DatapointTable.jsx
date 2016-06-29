@@ -32,12 +32,14 @@ class DatapointTable extends Table {
   }
 
   renderRows = function () {
-    return _.map(this.rows, (row, key) => {
+    const groupByYear = this.props.groupByTime === 'year'
+    const rows = groupByYear ? _.toArray(this.rows).reverse() : this.rows
+    return _.map(rows, (row, key) => {
       const first_cell = row[0]
       const entity = this.groupByIndicator ? first_cell.indicator : first_cell.location
       const indicator = this.props.indicators_index[key]
-      const date_format = this.props.groupByTime === 'year' ? 'YYYY' : 'MMM YYYY'
-      const date = this.props.groupByTime === 'year' ? key : moment(first_cell.campaign.start_date).format(date_format)
+      const date_format = groupByYear ? 'YYYY' : 'MMM YYYY'
+      const date = groupByYear ? first_cell.time_grouping : moment(first_cell.campaign.start_date).format(date_format)
       return (
         <tr>
           <td><strong>{entity.name}</strong></td>
