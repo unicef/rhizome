@@ -188,12 +188,15 @@ class DateDatapointResource(BaseModelResource):
 
     def handle_discrete_location_request(self):
 
+        discret_loc_dp_df_cols = self.dp_df_columns
+        discret_loc_dp_df_cols.append('id')
+
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = self.location_ids,
                 indicator_id__in = self.indicator__in,
                 data_date__gte = self.start_date,
                 data_date__lte = self.end_date
-            ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
+            ).values(*discret_loc_dp_df_cols)), columns=self.dp_df_columns)
 
         return dp_df
 
