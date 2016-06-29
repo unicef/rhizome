@@ -14,15 +14,15 @@ class ColumnChart extends HighChart {
   setConfig = function () {
     const self = this
     const props = this.props
-    const multipleCampaigns = _.toArray(props.datapoints.grouped).length > 1
+    const groupedByTime = _.toArray(props.datapoints.grouped).length > 1
     const first_indicator = props.selected_indicators[0]
-    const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
+    const last_indicator = props.selected_indicators[props.selected_indicators.length-1]
     this.config = {
       chart: {
         type: 'column'
       },
       series: this.setSeries(),
-      xAxis: this.setXAxis(multipleCampaigns),
+      xAxis: this.setXAxis(groupedByTime),
       yAxis: [
         {
           title: { text: '' },
@@ -60,7 +60,7 @@ class ColumnChart extends HighChart {
         pointFormatter: function () {
           const data_format = this.series.type === 'spline' ? last_indicator.data_format : first_indicator.data_format
           const value = format.autoFormat(this.y, data_format, 1)
-          if (multipleCampaigns) {
+          if (groupedByTime) {
             const date = format.monthYear(this.category.name)
             const location = this.category.parent.name
             return `${location}: <strong>${value}</strong><br/>${date}`
@@ -73,17 +73,22 @@ class ColumnChart extends HighChart {
 
   setSeries = function () {
     const data = this.props.datapoints.flattened
+    const groupByYear = this.props.groupByTime === 'year'
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const multipleIndicators = this.props.selected_indicators.length > 1
     const first_indicator = this.props.selected_indicators[0]
     const last_indicator = this.props.selected_indicators[this.props.selected_indicators.length-1]
     const series = []
-    _.forEach(grouped_data, group_collection => {
-      const first_datapoint = group_collection[0]
+    _.forEach(grouped_data, datapoints => {
+      const first_datapoint = datapoints[0]
       const color = this.props.indicator_colors[first_datapoint.indicator.id]
-      group_collection = _.sortBy(group_collection, group => group.campaign.start_date.getTime())
-      group_collection = _.sortBy(group_collection, group => group.location.name)
+      if (!groupByYear) {
+        datapoints = _.sortBy(datapoints, datapoint => datapoint.campaign.start_date.getTime())
+      } else {
+        datapoints = _.sortBy(datapoints, datapoint => datapoint.time_grouping)
+      }
+      datapoints = _.sortBy(datapoints, datapoint => datapoint.location.name)
       if (multipleIndicators && first_datapoint.indicator.data_format !== first_indicator.data_format) {
         // If the last indicator selected is of a different data type than the rest, turn it into a line
         series.push({
@@ -91,30 +96,28 @@ class ColumnChart extends HighChart {
           name: last_indicator.name,
           color: this.props.indicator_colors[last_indicator.id],
           type: 'spline',
-          data: group_collection.map(datapoint => datapoint.value)
+          data: datapoints.map(datapoint => datapoint.value)
         })
       } else {
         series.push({
           name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
-          data: group_collection.map(datapoint => datapoint.value),
+          data: datapoints.map(datapoint => datapoint.value),
           stacking: this.state.stack_mode,
           color: color
         })
       }
     })
-
     return series
   }
 
-  setXAxis = function (multipleCampaigns) {
+  setXAxis = function (groupedByTime) {
     const locations = _.uniq(this.props.datapoints.flattened.map(d => d.location.name))
-    if (!multipleCampaigns) {
+    if (!groupedByTime) {
       return {categories: locations.sort()}
     }
     let xAxis = {categories: this._getGroupedCategories()}
     if (this.props.groupByTime === 'year') {
       xAxis.labels = {
-        format: '{value:%Y}',
         style: { fontFamily: 'proxima-bold' }
       }
     } else {
@@ -135,18 +138,26 @@ class ColumnChart extends HighChart {
     // This creates the necessary data structure for a Grouped Category chart.
     // But loading the plugin is troublesome.
     // There is no npm package for it + Importing manually doesnt seem to work
-
+    const groupByYear = this.props.groupByTime === 'year'
     const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const grouped_categories = []
     _.forEach(grouped_data, (group, key) => {
-      const subGrouped = _.groupBy(group, 'campaign.id')
-      const subGroupedAndSorted = _.sortBy(subGrouped, group => group[0].campaign.start_date.getTime())
-      grouped_categories.push({
-        name: this.props.locations_index[key].name,
-        categories: _.map(subGroupedAndSorted, group => group[0].campaign.start_date.getTime())
-      })
+      if (groupByYear) {
+        const subGrouped = _.groupBy(group, 'time_grouping')
+        grouped_categories.push({
+          name: this.props.locations_index[key].name,
+          categories: _.map(subGrouped, (group, year) => year)
+        })
+      } else {
+        const subGrouped = _.groupBy(group, 'campaign.id')
+        const subGroupedAndSorted = _.sortBy(subGrouped, group => group[0].campaign.start_date.getTime())
+        grouped_categories.push({
+          name: this.props.locations_index[key].name,
+          categories: _.map(subGroupedAndSorted, group => group[0].campaign.start_date.getTime())
+        })
+      }
     })
     return _.sortBy(grouped_categories, grouped_category => grouped_category.name)
   }
