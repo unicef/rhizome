@@ -39,7 +39,6 @@ class DatapointTableCell extends Component {
     const data_format = this.props.datapoint.indicator.data_format
     const value = this.props.datapoint.value
     const display_value = format.autoFormat(value, data_format)
-
     if (data_format === 'pct') {
       return (
         <div className='percent-bar'>

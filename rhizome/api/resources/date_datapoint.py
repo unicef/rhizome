@@ -324,7 +324,7 @@ class DateDatapointResource(BaseModelResource):
             .max())\
             .reset_index()
         latest_date_df['value'] = latest_date_df['data_date']\
-            .map(lambda x: x.strftime('%b %d %Y'))
+            .map(lambda x: x.strftime('%Y-%m-%d')) # All dates should be in this format
         latest_date_df['indicator_id'] = self.ind_meta['latest_date']
 
         district_count_df = DataFrame(flat_df\

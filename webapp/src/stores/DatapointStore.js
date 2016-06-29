@@ -52,7 +52,11 @@ var DatapointStore = Reflux.createStore({
       flattened: this.flatten(response.objects),
       melted: this.melt(response.objects, response.meta.indicator_ids)
     }
-    datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
+    if (response.meta.time_groupings) {
+      datapoints.grouped = _.groupBy(datapoints.flattened, 'time_grouping')
+    } else {
+      datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
+    }
     this.setState(datapoints)
   },
   onFetchDatapointsFailed: function (error) {
@@ -78,7 +82,8 @@ var DatapointStore = Reflux.createStore({
         location: this.locations.index[d.location_id],
         indicator: indicator
       }
-      if (d.data_date) { datapoint.data_date = d.data_date }
+      if (d.data_date) datapoint.data_date = d.data_date
+      if (d.time_grouping) datapoint.time_grouping = d.time_grouping
       if (d.campaign_id) {
         datapoint.campaign = this.campaigns.index[d.campaign_id] || this._createYearCampaign(d.campaign_id)
       }

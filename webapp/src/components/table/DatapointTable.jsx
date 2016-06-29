@@ -37,11 +37,12 @@ class DatapointTable extends Table {
       const entity = this.groupByIndicator ? first_cell.indicator : first_cell.location
       const indicator = this.props.indicators_index[key]
       const date_format = this.props.groupByTime === 'year' ? 'YYYY' : 'MMM YYYY'
+      const date = this.props.groupByTime === 'year' ? key : moment(first_cell.campaign.start_date).format(date_format)
       return (
         <tr>
           <td><strong>{entity.name}</strong></td>
-          { !this.groupByIndicator ? <td>{moment(first_cell.campaign.start_date).format(date_format)}</td> : null}
-          { _.map(row, datapoint =>  <DatapointTableCell datapoint={datapoint} onSave={this.props.editable ? this.onSave : null} />) }
+          { !this.groupByIndicator ? <td>{date}</td> : null}
+          { _.map(row, datapoint => <DatapointTableCell datapoint={datapoint} onSave={this.props.editable ? this.onSave : null} />) }
         </tr>
       )
     })
