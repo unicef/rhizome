@@ -24,7 +24,8 @@ class DocTransFormResource(BaseNonModelResource):
         '''
         resource_name = 'transform_upload'
         queryset = SourceSubmission.objects.all().values()
-        GET_params_required = ['document_id', 'file_type']
+        GET_params_required = ['document_id']
+        # GET_params_required = ['document_id', 'file_type']
 
     def pre_process_data(self, request):
         '''
@@ -43,10 +44,10 @@ class DocTransFormResource(BaseNonModelResource):
 
         ran_campaign_doc_transform = False # if so, we need to run agg_refresh
         document_id = request.GET.get('document_id', None)
-        file_type = request.GET.get('file_type', None)
+        file_type = 'single_campaign' ## request.GET.get('file_type', None)
 
         file_processor_map = {
-            # 'single_campaign': SingleCampaignDocTransform,
+            'single_campaign': CampaignDocTransform,
             'multi_campaign' : CampaignDocTransform,
             'date_file' :  DateDocTransform
         }
