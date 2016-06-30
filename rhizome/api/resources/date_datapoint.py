@@ -215,7 +215,7 @@ class DateDatapointResource(BaseModelResource):
         '''
 
         # HACKK
-        chart_uuid = request.GET['chart_uuid']
+        chart_uuid = request.GET.get('chart_uuid', None)
         if chart_uuid and chart_uuid == '5599c516-d2be-4ed0-ab2c-d9e7e5fe33be':
             return self.handle_polio_case_table()
 

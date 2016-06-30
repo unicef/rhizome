@@ -119,13 +119,13 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         # self.assertEqual(self.top_lvl_location.id, int(meta['location_ids'][0]))
 
         ## WE SHOULD REMOVE THIS LOGIC FROM FE -- DATES ARE SEPARATE FROM CAMPAIGNS
-        self.assertEqual(set(meta['campaign_ids']),set([2014,2015,2016]))
+        self.assertEqual(set(meta['time_groupings']),set([2014,2015,2016]))
 
         self.assertEqual(3, len(objects)) # one for each year #
 
         case_dict = {}
         for obj in objects:
-            case_dict[obj['campaign_id']] = float(obj['value'])
+            case_dict[obj['time_grouping']] = float(obj['value'])
 
         self.assertEqual(28.00, case_dict[2014])
         self.assertEqual(20.00, case_dict[2015])
@@ -229,7 +229,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         q1_found = False
 
         for indicator in response_data['objects']:
-            campaign = indicator['campaign_id']
+            campaign = indicator['time_grouping']
             if campaign == '20141':
                 value = float(indicator['value'])
                 self.assertEqual(value, total)
@@ -408,7 +408,7 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         data = {
                 # 'document_id': doc_id,
                 'indicator_id': 4324,
-                'campaign_id': 32132123,
+                'time_grouping': 32132123,
                 'location_id': 4321,
                 'value': 10
                 }
