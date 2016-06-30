@@ -44,10 +44,10 @@ class DocTransFormResource(BaseNonModelResource):
 
         ran_campaign_doc_transform = False # if so, we need to run agg_refresh
         document_id = request.GET.get('document_id', None)
-        file_type = 'single_campaign' ## request.GET.get('file_type', None)
+        file_type = request.GET.get('file_type', 'campaign')
 
         file_processor_map = {
-            'single_campaign': CampaignDocTransform,
+            'campaign': CampaignDocTransform,
             'multi_campaign' : CampaignDocTransform,
             'date_file' :  DateDocTransform
         }
