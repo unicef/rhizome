@@ -69,7 +69,7 @@ class DateDatapointResource(BaseModelResource):
         '''
         '''
 
-        self.campaign_id_list = []
+        self.campaign_id_list, self.distinct_time_groupings = [],[]
         super(DateDatapointResource, self).__init__(*args, **kwargs)
 
     def add_default_post_params(self, bundle):
@@ -177,13 +177,11 @@ class DateDatapointResource(BaseModelResource):
 
         ## find the unique possible groupings for this time range and gb param
         ## sketchy -- this wont work for quarter groupingings, only years.
-        distinct_time_groupings = list(dp_df.time_grouping.unique())
-        if not distinct_time_groupings:
+        self.distinct_time_groupings = list(dp_df.time_grouping.unique())
+        if not self.distinct_time_groupings:
             start_yr, end_yr = self.start_date[0:4],\
                 self.end_date[0:4]
-            distinct_time_groupings = range(int(start_yr), int(end_yr))
-
-        self.distinct_time_groupings = distinct_time_groupings
+            self.distinct_time_groupings = range(int(start_yr), int(end_yr))
 
         return dp_df
 
@@ -194,9 +192,9 @@ class DateDatapointResource(BaseModelResource):
 
         dp_df = DataFrame(list(DataPoint.objects.filter(
                 location_id__in = self.location_ids,
-                indicator_id__in = self.indicator__in
-                # data_date__gte = self.start_date,
-                # data_date__lte = self.end_date
+                indicator_id__in = self.indicator__in,
+                data_date__gte = self.start_date,
+                data_date__lte = self.end_date
             ).values(*discret_loc_dp_df_cols)), columns=self.dp_df_columns)
 
         return dp_df
@@ -248,9 +246,9 @@ class DateDatapointResource(BaseModelResource):
 
             dp_df = DataFrame(list(DataPoint.objects.filter(
                     location_id__in = dp_loc_ids,
-                    indicator_id__in = self.indicator__in
-                    # data_date__gte = self.start_date,
-                    # data_date__lte = self.end_date
+                    indicator_id__in = self.indicator__in,
+                    data_date__gte = self.start_date,
+                    data_date__lte = self.end_date
                 ).values(*self.dp_df_columns)), columns=self.dp_df_columns)
 
         if len(dp_df) == 0:
