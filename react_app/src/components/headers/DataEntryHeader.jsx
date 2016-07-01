@@ -154,7 +154,7 @@ const DataEntryHeader = props => {
         </span>
         <span className='right'>
           { formEntry ? campaign_select : date_select }
-          { formEntry ? location_select : location_multi_select }
+          { location_select }
           { formEntry ? lpd_status_filter : null }
         </span>
       </div>

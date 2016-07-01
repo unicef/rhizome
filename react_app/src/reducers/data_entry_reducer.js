@@ -46,13 +46,36 @@ const data_entry = handleActions({
     })
   },
   GET_DATAPOINTS_SUCCESS: (state, action) => {
+    let datapoints = action.payload.data.objects
+    if (state.data_type === 'date' && datapoints.length < 1) {
+      datapoints = [{
+        location_id: state.selected_locations[0].id,
+        indicator_id: state.selected_indicators[0].id,
+        value: null,
+        data_date: moment().format('YYYY-MM-DD')
+      }]
+    }
     return Object.assign({}, state, {
       datapoints: {
         meta: action.payload.data.meta,
-        raw: action.payload.data.objects,
-        flattened: action.payload.data.objects
+        raw: datapoints
       },
       dataParamsChanged: false
+    })
+  },
+  ADD_DATAPOINT: (state, action) => {
+    const new_datapoint = action.payload || {
+      location_id: state.selected_locations[0].id,
+      indicator_id: state.selected_indicators[0].id,
+      value: null,
+      data_date: moment().format('YYYY-MM-DD')
+    }
+    return Object.assign({}, state, {
+      datapoints: {
+        meta: state.datapoints.meta,
+        raw: [...state.datapoints.raw, new_datapoint],
+        flattened: [...state.datapoints.raw, new_datapoint]
+      }
     })
   },
   UPDATE_DATAPOINT_FAILURE: (state, action) => {

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import React from 'react'
+import React, {Component} from 'react'
 import ResourceTable from 'components/molecules/ResourceTable'
 import moment from 'moment'
 import format from 'utilities/format'
@@ -8,85 +8,94 @@ import IntegerCell from 'components/table/IntegerCell'
 import DateCell from 'components/table/DateCell'
 import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 
-const DataEntryTable = (props) => {
-  const datapoints = props.datapoints.flattened
-  const grouped_datapoints = _.groupBy(datapoints, 'location.id')
-  const rows = _getRowData(grouped_datapoints)
-  const columns = _getColumnData(grouped_datapoints, props.updateDatapoint, props.removeDatapoint)
-  return (
-    <div className={'datapoint-table ag-fresh'} style={{height:'64vh'}}>
-      <AgGridReact
-        columnDefs={columns}
-        rowData={rows}
-        enableSorting="true"
-        groupHeaders="true"
-        suppressCellSelection="true"
-        debug="false"
-        gridOptions={{
-          rowHeight: 35,
-          headerHeight: 55,
-          colWidth: 150
-        }}
-      />
-    </div>
-  )
-}
-
-const _getRowData = grouped_datapoints => {
-  const rows = grouped_datapoints ? _.map(grouped_datapoints, datapoint_group => {
-    const first_datapoint = datapoint_group[0]
-    const row = {
-      location: first_datapoint.location.name,
-      location_id: first_datapoint.location.id
+class DataEntryTable extends Component {
+  constructor (props) {
+    super(props)
+    this.state = {
+      new_date: new Date(),
+      new_value: null
     }
-    datapoint_group.forEach(datapoint => row[datapoint.indicator.id] = datapoint)
-    return row
-  }) : []
-
-  return rows
-}
-
-const _getColumnData = (grouped_datapoints, updateDatapoint, removeDatapoint) => {
-  const first_row = _.toArray(grouped_datapoints)[0]
-  const first_row_datapoint = first_row[0]
-
-  const location_column = {
-    colWidth: 200,
-    headerName: '',
-    field: 'location'
   }
 
-  const date_column = {
-    colWidth: 200,
-    field: first_row_datapoint.indicator.id + '.data_date',
-    headerName: 'Date',
-    cellRenderer: reactCellRendererFactory(cell => {
-      const datapoint = cell.params.data[first_row_datapoint.indicator.id]
-      const cellParams = Object.assign({}, cell.params, {datapoint, updateDatapoint, removeDatapoint})
-      return <DateCell cellParams={cellParams}/>
+  _addDatapoint = () => {
+    const new_value = this.refs.new_value.value
+    this.props.addDatapoint({
+      indicator_id: this.props.selected_indicators[0].id,
+      location_id: this.props.selected_locations[0].id,
+      data_date: moment(this.state.new_date).format('YYYY-MM-DD'),
+      value: new_value
     })
+    this.refs.new_value.value = null
   }
 
-  const value_column = {
-    field: first_row_datapoint.indicator.id + '.value',
-    headerName: first_row_datapoint.indicator.name,
-    enableCellChangeFlash: true,
-    cellStyle: {textAlign: 'center'},
-    cellRenderer: reactCellRendererFactory(cell => {
-      const datapoint = cell.params.data[first_row_datapoint.indicator.id]
-      const cellParams = Object.assign({}, cell.params, {datapoint, updateDatapoint, removeDatapoint})
-      if (datapoint.indicator.data_format === 'bool') {
-        return <BoolCell cellParams={cellParams}/>
-      } else if (datapoint.indicator.data_format === 'pct') {
-        return <PercentCell cellParams={cellParams}/>
-      } else {
-        return <IntegerCell cellParams={cellParams}/>
+  render = () => {
+    const props = this.props
+    const datapoints = props.datapoints.flattened
+    const indicator = props.selected_indicators[0]
+    const cell_style = {
+      width: '10rem'
+    }
+    const rows = datapoints.map(datapoint => {
+      const cellParams = {
+        datapoint: datapoint,
+        updateDatapoint: props.updateDatapoint,
+        removeDatapoint: props.removeDatapoint
       }
+      let value_cell = <IntegerCell cellParams={cellParams}/>
+      if (indicator.data_format === 'bool') {
+        value_cell = <BoolCell cellParams={cellParams}/>
+      } else if (indicator.data_format === 'pct') {
+        value_cell = <PercentCell cellParams={cellParams}/>
+      }
+      return (
+        <tr>
+          <td style={cell_style}>{datapoint.data_date}</td>
+          <td style={cell_style}>{value_cell}</td>
+        </tr>
+      )
     })
-  }
 
-  return [location_column, date_column, value_column]
+    const new_datapoint_row = (
+      <tr>
+        <td>
+          <DateTimePicker
+            value={this.state.new_date}
+            time={false}
+            format={'YYYY-MM-DD'}
+            onChange={date => this.setState({new_date: date})}
+          />
+        </td>
+        <td>
+          <input
+            type='text'
+            ref='new_value'
+            defaultValue={this.state.new_value}
+          />
+        </td>
+        <td>
+          <button onClick={this._addDatapoint}>Add Datapoint</button>
+        </td>
+      </tr>
+    )
+
+    return (
+      <table style={{width: '30rem'}}>
+        <thead>
+          <tr>
+            <th style={cell_style}>Date</th>
+            <th style={cell_style}>Value</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+          {new_datapoint_row}
+        </tbody>
+      </table>
+    )
+  }
 }
 
 export default DataEntryTable
