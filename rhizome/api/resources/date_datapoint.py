@@ -91,6 +91,12 @@ class DateDatapointResource(BaseModelResource):
                 data_entry_doc_id, row_number = 0)
 
         bundle.data['source_submission_id'] = source_submission.id
+
+        ## now put the unique index on the bundle ##
+        unique_index = '{}-{}-{}'.format(bundle.data['location_id'],\
+            bundle.data['indicator_id'], bundle.data['data_date'])
+        bundle.data['unique_index'] = unique_index
+
         return bundle
 
     def get_response_meta(self, request, objects):

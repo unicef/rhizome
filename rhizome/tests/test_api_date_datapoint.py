@@ -370,9 +370,9 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         dp_to_patch = DataPoint.objects.get(id=dp_to_patch.id)
         self.assertEqual(dp_to_patch.value, patch_data['value'])
 
-    def test_post_date_datapointatapoint(self):
+    def test_post_date_datapoint(self):
         '''
-        post a record to the campaign datapoint table
+        post a record to the datapoint table
         '''
 
         indicator_id = Indicator.objects.all()[0].id
@@ -391,6 +391,15 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         self.assertHttpCreated(resp)
         response_data = self.deserialize(resp)
         self.assertEqual(response_data['value'], val)
+
+        another_date = '2016-02-02'
+        data['data_date'] = another_date
+
+        resp = self.ts.post(self, '/api/v1/date_datapoint/', data)
+
+        self.assertHttpCreated(resp)
+        response_data = self.deserialize(resp)
+        self.assertEqual(response_data['data_date'], another_date)
 
     def test_post_date_datapoint_missing_data(self):
         '''
