@@ -48,8 +48,13 @@ export const saveDatapoint = function * (action) {
   const datapoint = {
     value: action.payload.value,
     indicator_id: action.payload.indicator.id,
-    location_id: action.payload.location.id,
-    campaign_id: action.payload.campaign.id
+    location_id: action.payload.location.id
+  }
+  if (action.payload.campaign) {
+    datapoint.campaign_id = action.payload.campaign.id
+  }
+  if (action.payload.data_date) {
+    datapoint.data_date = action.payload.data_date
   }
   try {
     let path = datapoint.campaign_id ? '/campaign_datapoint/' : '/date_datapoint/'

@@ -9,6 +9,8 @@ import DateCell from 'components/table/DateCell'
 import BoolCell from 'components/table/BoolCell'
 import PercentCell from 'components/table/PercentCell'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
+import RhizomeAPI from 'utilities/api'
+
 
 class DataEntryTable extends Component {
   constructor (props) {
@@ -21,11 +23,17 @@ class DataEntryTable extends Component {
 
   _addDatapoint = () => {
     const new_value = this.refs.new_value.value
-    this.props.addDatapoint({
+    const datapoint = {
       indicator_id: this.props.selected_indicators[0].id,
       location_id: this.props.selected_locations[0].id,
       data_date: moment(this.state.new_date).format('YYYY-MM-DD'),
       value: new_value
+    }
+    RhizomeAPI.post('/date_datapoint/', datapoint).then(result => {
+      console.log('result', result)
+      if (result.status === 201) {
+        this.props.addDatapoint(result.data)
+      }
     })
     this.refs.new_value.value = null
   }
@@ -51,7 +59,7 @@ class DataEntryTable extends Component {
       }
       return (
         <tr>
-          <td style={cell_style}>{datapoint.data_date}</td>
+          <td style={cell_style}>{moment(datapoint.data_date).format('YYYY-MM-DD')}</td>
           <td style={cell_style}>{value_cell}</td>
         </tr>
       )
@@ -86,7 +94,6 @@ class DataEntryTable extends Component {
           <tr>
             <th style={cell_style}>Date</th>
             <th style={cell_style}>Value</th>
-            <th></th>
           </tr>
         </thead>
         <tbody>

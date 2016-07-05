@@ -47,14 +47,6 @@ const data_entry = handleActions({
   },
   GET_DATAPOINTS_SUCCESS: (state, action) => {
     let datapoints = action.payload.data.objects
-    if (state.data_type === 'date' && datapoints.length < 1) {
-      datapoints = [{
-        location_id: state.selected_locations[0].id,
-        indicator_id: state.selected_indicators[0].id,
-        value: null,
-        data_date: moment().format('YYYY-MM-DD')
-      }]
-    }
     return Object.assign({}, state, {
       datapoints: {
         meta: action.payload.data.meta,
