@@ -43,7 +43,8 @@ class DataEntryTable extends Component {
     const datapoints = props.datapoints.flattened
     const indicator = props.selected_indicators[0]
     const cell_style = {
-      width: '10rem'
+      width: '25rem',
+      textAlign: 'center'
     }
     const rows = datapoints.map(datapoint => {
       const cellParams = {
@@ -51,7 +52,7 @@ class DataEntryTable extends Component {
         updateDatapoint: props.updateDatapoint,
         removeDatapoint: props.removeDatapoint
       }
-      let value_cell = <IntegerCell cellParams={cellParams}/>
+      let value_cell = <IntegerCell cellParams={cellParams} input_style={{textAlign: 'center'}}/>
       if (indicator.data_format === 'bool') {
         value_cell = <BoolCell cellParams={cellParams}/>
       } else if (indicator.data_format === 'pct') {
@@ -69,6 +70,7 @@ class DataEntryTable extends Component {
       <tr>
         <td>
           <DateTimePicker
+            style={{left: '.9rem'}}
             value={this.state.new_date}
             time={false}
             format={'YYYY-MM-DD'}
@@ -76,14 +78,10 @@ class DataEntryTable extends Component {
           />
         </td>
         <td>
-          <input
-            type='text'
-            ref='new_value'
-            defaultValue={this.state.new_value}
-          />
+          <input className='text-center' type='text' ref='new_value' defaultValue={this.state.new_value} />
         </td>
-        <td>
-          <button onClick={this._addDatapoint}>Add Datapoint</button>
+        <td style={{width: '20rem'}}>
+          <button className='small button' onClick={this._addDatapoint}>Add Datapoint</button>
         </td>
       </tr>
     )

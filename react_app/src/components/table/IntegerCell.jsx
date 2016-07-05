@@ -45,6 +45,11 @@ class IntegerCell extends Component {
   }
 
   render = () => {
+    const cell_styles = {
+      width: '100%',
+      height: '1.5rem',
+      padding: this.state.editMode ? 0 : null
+    }
     if (this.state.editMode) {
     	return (
     		<input
@@ -53,11 +58,12 @@ class IntegerCell extends Component {
     			defaultValue={this.state.display_value}
     			onBlur={this._handleInput}
     			onKeyUp={this._handleInput}
+          style={this.props.input_style}
     		/>
     	)
     }
     return (
-    	<div style={{width: '100%', height: '1.5rem'}} onClick={this._toggleEditMode}>
+    	<div style={cell_styles} onClick={this._toggleEditMode}>
     		{this.state.display_value}
     	</div>
     )

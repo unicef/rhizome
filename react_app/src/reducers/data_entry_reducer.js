@@ -3,7 +3,7 @@ import _ from 'lodash'
 import { handleActions } from 'redux-actions'
 
 const data = {
-  start_date: moment().format('YYYY-MM-DD'),
+  start_date: moment().subtract(1, 'month').format('YYYY-MM-DD'),
   end_date: moment().format('YYYY-MM-DD'),
   data_type: 'date', // or campaign
   location_depth: 0,
