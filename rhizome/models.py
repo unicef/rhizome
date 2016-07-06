@@ -554,6 +554,22 @@ class SourceObjectMap(models.Model):
         db_table = 'source_object_map'
         unique_together = (('content_type', 'source_object_code'))
 
+    def save(self, **kwargs):
+
+        if self.content_type == 'indicator':
+            self.master_object_name = Indicator.objects\
+                .get(id=self.master_object_id).short_name
+
+        if self.content_type == 'location':
+            self.master_object_name = Location.objects\
+                .get(id=self.master_object_id).name
+
+        if self.content_type == 'campaign':
+            self.master_object_name = Campaign.objects\
+                .get(id=self.master_object_id).name
+
+        super(SourceObjectMap, self).save(**kwargs)
+
 
 class DocumentSourceObjectMap(models.Model):
 
