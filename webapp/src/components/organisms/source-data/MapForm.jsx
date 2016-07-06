@@ -93,7 +93,8 @@ var MapForm = React.createClass({
           items={this.state.indicators.list}
           sendValue={this.postMetaMap}
           item_plural_name='Indicators'
-          text='Map Indicator'/>
+          text='Map Indicator'
+          searchable/>
     }
     if (content_type === 'campaign') {
       if (!this.state.campaigns.list) {
@@ -106,7 +107,8 @@ var MapForm = React.createClass({
           title_field='name'
           sendValue={this.postMetaMap}
           item_plural_name='Campaigns'
-          text='Map Campaign'/>
+          text='Map Campaign'
+          searchable/>
     }
   },
 

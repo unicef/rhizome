@@ -85,7 +85,7 @@ var SimpleFormStore = Reflux.createStore({
       'source_name': '',
       'bad_bound': '',
       'good_bound': ''
-      },
+    },
       'indicator_tag': {'tag_name': ''}
     }
     var form_settings = {
@@ -133,8 +133,7 @@ var SimpleFormStore = Reflux.createStore({
       self.trigger(self.data)
     })
   },
-  onAddIndicatorToTag: function(indicator_id, tag_id) {
-    //console.log("This has been called");
+  onAddIndicatorToTag: function (indicator_id, tag_id) {
     api.set_indicator_to_tag({ indicator_id: indicator_id, indicator_tag_id: tag_id }).then(function (response) {
       SimpleFormActions.refreshIndicators(tag_id)
     })
@@ -151,11 +150,11 @@ var SimpleFormStore = Reflux.createStore({
     })
   },
 
-  onAddCalculationToIndicator: function (indicator_id, component_id, typeInfo) {
+  onAddCalculationToIndicator: function (indicator_id, component_id, calculation) {
     api.set_calc_to_indicator({
       indicator_id: indicator_id,
-      component_id: component_id,
-      typeInfo: typeInfo
+      indicator_component_id: component_id,
+      calculation: calculation
     }).then(function (response) {
       SimpleFormActions.refreshCalculation(indicator_id)
     })
@@ -211,7 +210,6 @@ var SimpleFormStore = Reflux.createStore({
       })
 
       self.data.componentData['indicator'].componentRows = indicatorTags
-      //self.data.loading = false
       self.trigger(self.data)
     })
   },
@@ -270,11 +268,8 @@ var SimpleFormStore = Reflux.createStore({
       .then(_.spread(function (tags, indicators) {
         var indicatorsData = _(indicators.objects).sortBy('title').value()
         var indicatorTags = _.map(tags.objects, function (row) {
-          //console.log(row)
           return {'id': row.id, displayId: row.id, 'display': row.indicator__short_name}
         })
-
-        //console.log('dropDownData:', indicatorsData)
 
         self.data.componentData['indicator'] = {'componentRows': indicatorTags, 'dropDownData': indicatorsData}
         self.data.loading = false

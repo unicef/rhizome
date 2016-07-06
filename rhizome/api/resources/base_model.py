@@ -253,11 +253,13 @@ class BaseModelResource(ModelResource, BaseResource):
         ## Try to validate / clean the POST before submitting the INSERT ##
         bundle = self.validate_obj_create(bundle, **kwargs)
 
-
         #### FIXME REMOVE BELOW CODE AND USE PROPER PATCH FORMAT ####
-        id_from_post = int(bundle.data.get('id', 0))
-        print 'id_from_post : %s ' % id_from_post
-        if id_from_post > 0: ## this is a PUT or update of an existing resource #
+        id_from_post = bundle.data.get('id', None)
+        if id_from_post == '-1':
+            del bundle.data['id']
+            id_from_post = None
+
+        if id_from_post: ## this is a PUT or update of an existing resource #
             obj = self._meta.object_class.objects.get(id = id_from_post)
             self.update_object(obj, **bundle.data)
         #### REMOVE ABOVE CODE ####

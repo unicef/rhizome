@@ -112,7 +112,8 @@ var SimpleFormComponent = React.createClass({
             sendValue={this.props.onClick}
             item_plural_name='Indicator Tags'
             text='Add Tag'
-            icon='fa-tag'/>
+            icon='fa-tag'
+            searchable/>
         </div>
       )
     } else if (contentType === 'indicator_calc') {
@@ -129,10 +130,10 @@ var SimpleFormComponent = React.createClass({
             items={dropDownData}
             sendValue={this._onClick}
             item_plural_name='Components'
-            text='Add Component'/>
+            text='Add Component'
+            searchable/>
         </form>
       )
-      console.log("dropDownData: ", dropDownData);
     } else if (contentType === 'indicator') {
         componentForm = (
           <div>
@@ -140,7 +141,8 @@ var SimpleFormComponent = React.createClass({
               items={dropDownData}
               sendValue={this.props.onClick}
               item_plural_name='Indicators'
-              text='Add Indicator'/>
+              text='Add Indicator'
+              searchable/>
           </div>
         )
         //console.log("dropDownData: ", dropDownData);
