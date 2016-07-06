@@ -429,7 +429,7 @@ export default {
   submission: endPoint('/source_submission/', 'get', 1, false),
   docDetail: endPoint('/doc_detail/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
-  docResults: endPoint('/computed_datapoint/', 'get', 1, false),
+  docResults: endPoint('/doc_result/', 'get', 1, false),
   docDetailType: endPoint('/doc_detail_type/', 'get', 1, false),
   transformUpload: endPoint('/transform_upload/', 'get', 1, false),
 

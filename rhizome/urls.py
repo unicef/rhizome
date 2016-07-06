@@ -61,6 +61,7 @@ v1_api.register(sync_odk.SyncOdkResource())
 v1_api.register(user_group.UserGroupResource())
 v1_api.register(user.UserResource())
 v1_api.register(all_meta.AllMetaResource())
+v1_api.register(doc_result.DocResultResource())
 
 
 protected_patterns = [
