@@ -25,10 +25,9 @@ class SourceSubmissionResource(BaseModelResource):
         """
 
         ## fix this in the front end to request the resourec in REST style ##
-        id_filter = {'id': request.GET.get('id', None)}
-        if id_filter:
-            return self.get_object_list(request).filter(**id_filter)
-
+        id_param = request.GET.get('id', None)
+        if id_param:
+            return self.get_object_list(request).filter(**{'id': id_param})
 
         doc_filter = {'document_id': request.GET.get('document_id')}
         return self.get_object_list(request).filter(**doc_filter)

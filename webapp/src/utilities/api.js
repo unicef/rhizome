@@ -356,6 +356,26 @@ function tagTree (q) {
   })
 }
 
+function docMapped (q) {
+  var fetch = endPoint('/source_object_map/')
+  q['is_mapped'] = 1
+  return new Promise(function (fulfill, reject) {
+    fetch(q, null, {'cache-control': 'no-cache'}).then(function (data) {
+      fulfill(data)
+    }, reject)
+  })
+}
+
+function docToMap (q) {
+  var fetch = endPoint('/source_object_map/')
+  q['is_mapped'] = 0
+  return new Promise(function (fulfill, reject) {
+    fetch(q, null, {'cache-control': 'no-cache'}).then(function (data) {
+      fulfill(data)
+    }, reject)
+  })
+}
+
 export default {
   endPoint,
   // CUSTOM GET REQUESTS -> MANIPULATED BY JS //
@@ -364,6 +384,8 @@ export default {
   indicatorsTree: indicatorsTree,
   tagTree: tagTree,
   buildIndicatorsTree: buildIndicatorsTree,
+  docMapped: docMapped,
+  docToMap: docToMap,
 
   // BASIC GET REQUESTS //
   campaign: endPoint('/campaign/', 'get', 1),
@@ -406,8 +428,6 @@ export default {
   source_doc: endPoint('/source_doc/', 'get', 1),
   submission: endPoint('/source_submission/', 'get', 1, false),
   docDetail: endPoint('/doc_detail/', 'get', 1, false),
-  docMapped: endPoint('/source_object_map/', 'get', 1, false),
-  docToMap: endPoint('/source_object_to_map/', 'get', 1, false),
   docDatapoint: endPoint('/doc_datapoint/', 'get', 1, false),
   docResults: endPoint('/computed_datapoint/', 'get', 1, false),
   docDetailType: endPoint('/doc_detail_type/', 'get', 1, false),
