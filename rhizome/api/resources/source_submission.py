@@ -15,7 +15,7 @@ class SourceSubmissionResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'source_submission'
         object_class = SourceSubmission
-        GET_params_required = ['document_id']
+        # GET_params_required = ['document_id']
 
     def apply_filters(self, request, applicable_filters):
         """
@@ -23,6 +23,12 @@ class SourceSubmissionResource(BaseModelResource):
         The default simply applies the ``applicable_filters`` as ``**kwargs``,
         but should make it possible to do more advanced things.
         """
+
+        ## fix this in the front end to request the resourec in REST style ##
+        id_filter = {'id': request.GET.get('id', None)}
+        if id_filter:
+            return self.get_object_list(request).filter(**id_filter)
+
 
         doc_filter = {'document_id': request.GET.get('document_id')}
         return self.get_object_list(request).filter(**doc_filter)
