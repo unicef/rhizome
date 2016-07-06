@@ -22,8 +22,9 @@ class SourceObjectMapResource(BaseModelResource):
         '''
         resource_name = 'source_object_map'
         object_class = SourceObjectMap
-        GET_params_required = ['document_id']
-        required_fields_for_post = ['source_object_code', 'content_type']
+        required_fields_for_post = ['id'] #['source_object_code', 'content_type']
+        # bring back when REST resource fetch is handled properly in FE
+        # GET_params_required = ['document_id'] FE
 
     def apply_filters(self, request, applicable_filters):
         """
@@ -33,6 +34,11 @@ class SourceObjectMapResource(BaseModelResource):
         """
 
         filters = request.GET
+
+        ## fix this in the front end to request the resourec in REST style ##
+        id_param = request.GET.get('id', None)
+        if id_param:
+            return self.get_object_list(request).filter(**{'id': id_param})
 
         ## first filter by the meta data relevant to this document ##
         som_ids_for_document = DocumentSourceObjectMap.objects \
