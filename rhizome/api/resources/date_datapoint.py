@@ -314,6 +314,10 @@ class DateDatapointResource(BaseModelResource):
                         indicator_id__in = self.indicator__in
                     ).values(*self.dp_df_columns)),columns=self.dp_df_columns)
 
+        if len(flat_df) == 0:
+            self.location_ids  = []
+            return []
+
         flat_df = self.get_time_group_series(flat_df)
         flat_df['parent_location_id'] = self.location_id
 
