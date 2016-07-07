@@ -140,7 +140,8 @@ class TransformUploadTestCase(TestCase):
 
         locations = self.model_df_to_data(location_df, Location)
         campaigns = self.model_df_to_data(campaign_df, Campaign)
-        self.model_df_to_data(indicator_df, Indicator)
+        indicators = self.model_df_to_data(indicator_df, Indicator)
+
         self.user_id = User.objects.create_user(
             'test', 'test@test.com', 'test').id
         self.mapped_location_id = locations[0].id
@@ -159,7 +160,7 @@ class TransformUploadTestCase(TestCase):
             mapped_by_id=self.user_id,
             master_object_id=self.mapped_campaign_id
         )
-        self.mapped_indicator_id_0 = locations[0].id
+        self.mapped_indicator_id_0 = indicators[0].id
         indicator_map = SourceObjectMap.objects.create(
             source_object_code='Percent missed children_PCA',
             content_type='indicator',
