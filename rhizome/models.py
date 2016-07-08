@@ -556,6 +556,10 @@ class SourceObjectMap(models.Model):
 
     def save(self, **kwargs):
 
+        if self.master_object_id == -1:
+            return super(SourceObjectMap, self).save(**kwargs)
+
+
         if self.content_type == 'indicator':
             self.master_object_name = Indicator.objects\
                 .get(id=self.master_object_id).short_name
@@ -568,7 +572,7 @@ class SourceObjectMap(models.Model):
             self.master_object_name = Campaign.objects\
                 .get(id=self.master_object_id).name
 
-        super(SourceObjectMap, self).save(**kwargs)
+        return super(SourceObjectMap, self).save(**kwargs)
 
 
 class DocumentSourceObjectMap(models.Model):

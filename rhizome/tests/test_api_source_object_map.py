@@ -121,7 +121,8 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         data = self.deserialize(resp)
         self.assertHttpApplicationError(resp)
 
-        expected_error_msg = 'Missing required parameter document_id'
+        # expected_error_msg = 'Missing required parameter document_id'
+        expected_error_msg = "'document_id'"
         self.assertEqual(data['error'], str(expected_error_msg))
 
     def test_som_get_unmapped(self):

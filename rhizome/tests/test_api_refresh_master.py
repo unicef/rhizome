@@ -137,7 +137,7 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
             mapped_by_id=user_id,
             master_object_id=self.mapped_campaign_id
         )
-        self.mapped_indicator_id_0 = self.locations[0].id
+        self.mapped_indicator_id_0 = self.indicators[0].id
         indicator_map = SourceObjectMap.objects.create(
             source_object_code='Percent missed children_PCA',
             content_type='indicator',
