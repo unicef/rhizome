@@ -167,7 +167,7 @@ class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     def get_success_url(self):
         new_user_id = self.object.id
 
-        return reverse_lazy('datapoints:user_update',
+        return reverse_lazy('user_update',
                             kwargs={'pk': new_user_id})
 
 
@@ -181,7 +181,7 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def get_success_url(self):
         requested_user_id = self.get_object().id
-        return reverse_lazy('datapoints:user_update',
+        return reverse_lazy('user_update',
                             kwargs={'pk': requested_user_id})
 
     def get_context_data(self, **kwargs):

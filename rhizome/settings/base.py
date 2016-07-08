@@ -25,7 +25,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'webapp/public/static')
 ]
 
-LOGIN_REDIRECT_URL = '/datapoints'
+LOGIN_REDIRECT_URL = '/'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
