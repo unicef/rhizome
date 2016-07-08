@@ -78,7 +78,7 @@ var DatapointStore = Reflux.createStore({
       const indicator = this.indicators.index[d.indicator_id]
       const datapoint = {
         id: d.computed_id,
-        value: d.value ? this._formatValue(d.value, indicator.data_format) : null,
+        value: d.value !== null ? this._formatValue(d.value, indicator.data_format) : null,
         location: this.locations.index[d.location_id],
         indicator: indicator
       }
