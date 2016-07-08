@@ -15,6 +15,7 @@ class ColumnChart extends HighChart {
     const self = this
     const props = this.props
     const groupedByTime = _.toArray(props.datapoints.grouped).length > 1
+    const groupedByYear = props.groupByTime === 'year'
     const first_indicator = props.selected_indicators[0]
     const last_indicator = props.selected_indicators[props.selected_indicators.length-1]
     this.config = {
@@ -61,7 +62,7 @@ class ColumnChart extends HighChart {
           const data_format = this.series.type === 'spline' ? last_indicator.data_format : first_indicator.data_format
           const value = format.autoFormat(this.y, data_format, 1)
           if (groupedByTime) {
-            const date = format.monthYear(this.category.name)
+            const date = groupedByYear ? this.category.name : format.monthYear(this.category.name)
             const location = this.category.parent.name
             return `${location}: <strong>${value}</strong><br/>${date}`
           }
