@@ -26,7 +26,7 @@ class TableChartRenderer {
     this.y = _.flow(options.seriesName, this.yScale)
     this.transform = (d, i) => `translate(${this.z}, ${this.y(d) + 10})`
     this.targets = this.getTargets(options.headers)
-    this.fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? this.scale(this.targets[d.indicator.id](d.value)) : '#FFFFFF'
+    this.fill = d => !_.isNull(d.value) && _.isFinite(d.value) ? this.scale(this.targets[d.indicator.id](d.value)) : '#ff1493'
     this.svg = d3.select(container)
   }
 
@@ -119,7 +119,11 @@ class TableChartRenderer {
         'font-weight': 'bold'
       })
       .style({'font-size': this.options.cellFontSize})
-      .text(d => d.displayValue)
+      // .text(d => d.displayValue)
+      .text(function (d) {
+        // console.log('d: ', d)
+        return d.displayValue
+      })
       .transition().duration(500)
   }
 

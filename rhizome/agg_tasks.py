@@ -168,10 +168,23 @@ class AggRefresh(object):
             id__in=max_location_lvl_for_indicator_df['indicator_id']
         ).values_list('id', flat=True))
 
+
         ## filter df to keep the data for the highest level per indicator ##
-        prepped_df = joined_location_df\
-            .merge(max_location_lvl_for_indicator_df\
-            , on=['indicator_id', 'lvl'])
+        ## meaning, if there is data at both the district and provicne level ##
+        ## this line ensures that the country does not take the sum of BOTH
+        ## the district and Proivince
+
+        prepped_df = joined_location_df
+        # prepped_df = joined_location_df\
+        #     .merge(max_location_lvl_for_indicator_df\
+        #     , on=['indicator_id', 'lvl'])
+
+        ## FIXME -- need to bring this functioinality back in order to handle
+        ## the above.  The idea is that higher level admin data should override
+        ## lower level.  This is an edge case and there is no data currently
+        ## on production for which this case applies.
+
+
 
         prepped_df['value'] = prepped_df['value'].astype(float)
 

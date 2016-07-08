@@ -37,6 +37,7 @@ class TableChart extends Chart {
     this.data = _.toArray(data).map(datapoint_group => {
       const values = []
       datapoint_group.forEach(datapoint => {
+        console.log('datapoint.value', datapoint.value)
         values.push({
           indicator: datapoint.indicator,
           value: datapoint.value,
