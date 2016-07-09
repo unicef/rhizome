@@ -72,8 +72,8 @@ class CampaignDataPointResource(BaseModelResource):
         # FIXME hack to be fixed when we merge:
         # https://github.com/unicef/rhizome/tree/feature/fe-handle-missing
 
-
-        if filters['chart_type'] == 'ColumnChart':
+        chart_type = filters.get('chart_type', None)
+        if chart_type and chart_type == 'ColumnChart':
             objects = self.add_missing_data(objects_with_data)
         else:
             objects = objects_with_data
