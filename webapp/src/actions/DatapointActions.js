@@ -28,7 +28,8 @@ const _prepDatapointsQuery = (params) => {
     group_by_time: params.group_by_time,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
-    location_type: params.type === 'TableChart' ? 'District' : null
+    location_type: params.type === 'TableChart' ? 'District' : null,
+    chart_type: params.type
   }
   // if (params.group_by_time === 'campaign') {
     query.campaign_start = params.start_date

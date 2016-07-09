@@ -2,6 +2,9 @@ from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models import DataPointComputed, Campaign, Document
 from rhizome.api.serialize import CustomSerializer
 
+from pandas import DataFrame, notnull
+import itertools
+
 class CampaignDataPointResource(BaseModelResource):
     '''
     **GET Request** Returns computed datapoints for a given document
@@ -58,14 +61,62 @@ class CampaignDataPointResource(BaseModelResource):
         ## handle location logic ##
         self.location_id_list = self.get_locations_to_return_from_url(request)
 
-
-        filters = {
+        q_filters = {
             'location_id__in': self.location_id_list,
             'indicator_id__in': self.indicator_id_list,
             'campaign_id__in': self.campaign_id_list
         }
 
-        return self.get_object_list(request).filter(**filters)
+        objects_with_data = self.get_object_list(request).filter(**q_filters)
+        # return self.get_object_list(request).filter(**filters)
+        # FIXME hack to be fixed when we merge:
+        # https://github.com/unicef/rhizome/tree/feature/fe-handle-missing
+
+
+        if filters['chart_type'] == 'ColumnChart':
+            objects = self.add_missing_data(objects_with_data)
+        else:
+            objects = objects_with_data
+
+        return objects
+
+    def add_missing_data(self, objects):
+        '''
+        In high charts ( our front end visualization module ) when we pass
+        data to a stacked / grouped bar chart, everything has to be in order,
+        meaning that if we have missing data, we have to pass the chart
+        an object that contains an object for each peice of missing data.
+
+        We are currently working on impementing the logic you see below into
+        the front end, but in order to get somethign working fo the TAG
+        meeting next week, instead of pushign forward on the front end
+        implmentatino which is in it's early stages.. I have put this piece of
+        code in to the campaign api so that the grouped bar charts
+        will render properly.
+
+        For more informatino on this see: https://trello.com/c/euIwyOh4/9
+        '''
+
+        ## build a data frame from the object list
+        df = DataFrame(list(objects))
+
+        ## create a dataframe with all possible objects based on possble objects
+        list_of_lists = [df['location_id'].unique(), \
+            df['indicator_id'].unique(), df['campaign_id'].unique()]
+        cart_product = list(itertools.product(*list_of_lists))
+        columns_list = ['location_id','indicator_id', 'campaign_id']
+        cart_prod_df = DataFrame(cart_product, columns = columns_list)
+
+        ## merge the two data frames, which will effectively fill in the missing
+        ## data giving obects a Null value if they did not exist in query result
+        df = df.merge(cart_prod_df, how='outer', on=columns_list)
+        non_null_df = df.where((notnull(df)), None)
+
+        ## create a list of dictionaries ( same structure as the input )
+        object_list = [row.to_dict() for ix, row in non_null_df.iterrows()]
+
+        return object_list
+
 
     def get_response_meta(self, request, objects):
 
