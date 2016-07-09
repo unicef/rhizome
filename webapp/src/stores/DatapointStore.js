@@ -20,8 +20,7 @@ var DatapointStore = Reflux.createStore({
     raw: null,
     flattened: null,
     grouped: null,
-    melted: null,
-    including_missing: null
+    melted: null
   },
 
   init: function () {
@@ -44,22 +43,20 @@ var DatapointStore = Reflux.createStore({
 
   // ============================  Fetch  Datapoints  ========================== //
   onFetchDatapoints: function () {
-    this.setState({ raw: null, meta: null, grouped: null, flattened: null, melted: null, including_missing: null })
+    this.setState({ raw: null, meta: null, grouped: null, flattened: null, melted: null })
   },
   onFetchDatapointsCompleted: function (response) {
     const datapoints = {
       meta: response.meta,
       raw: response.objects,
       flattened: this.flatten(response.objects),
-      melted: this.melt(response.objects, response.meta.indicator_ids),
-      including_missing: this.fillMissingDatapoints(response)
+      melted: this.melt(response.objects, response.meta.indicator_ids)
     }
     if (response.meta.time_groupings) {
       datapoints.grouped = _.groupBy(datapoints.flattened, 'time_grouping')
     } else {
       datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
     }
-    console.log('datapoints', datapoints)
     this.setState(datapoints)
   },
   onFetchDatapointsFailed: function (error) {
@@ -93,40 +90,6 @@ var DatapointStore = Reflux.createStore({
       return datapoint
     })
     return flattened
-  },
-
-  fillMissingDatapoints: function (response) {
-    const datapoints = response.objects
-    const meta = response.meta
-    console.log('response', response)
-    if (!datapoints) {
-      return null
-    }
-    const selected_campaigns = meta.campaign_ids.map(id => this.campaigns.index[id])
-    const selected_locations = meta.location_ids.map(id => this.locations.index[id])
-    const selected_indicators = meta.indicator_ids.map(id => this.indicators.index[id])
-    const missing_datapoints = []
-
-    selected_locations.forEach(location => {
-      selected_indicators.forEach(indicator => {
-        selected_campaigns.forEach(campaign => {
-          const datapointExists = datapoints.filter(datapoint => {
-            return datapoint.location_id === location.id && datapoint.indicator_id === indicator.id && datapoint.campaign_id === campaign.id
-          }).length <= 0
-          if (datapointExists) {
-            const placeholder_datapoint = {
-              campaign_id: campaign.id,
-              value: null,
-              location_id: location.id,
-              indicator_id: indicator.id
-            }
-            missing_datapoints.push(placeholder_datapoint)
-          }
-        })
-      })
-    })
-    const all_datapoints = missing_datapoints.concat(datapoints)
-    return this.flatten(all_datapoints)
   },
 
   _formatValue: function (value, data_format) {
