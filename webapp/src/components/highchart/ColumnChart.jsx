@@ -102,22 +102,13 @@ class ColumnChart extends HighChart {
       } else {
         series.push({
           name: groupByIndicator ? first_datapoint.indicator.name : first_datapoint.location.name,
-          data: datapoints, //datapoints.map(datapoint => datapoint.value),
+          data: datapoints.map(datapoint => datapoint.value),
           stacking: this.state.stack_mode,
           color: color
         })
       }
     })
-    return this._fillMissingData(series)
-  }
-
-  _fillMissingData = function (series) {
-    let sereisWithMissingData = []
-    _.forEach(series, indicator_group => {
-      indicator_group.data = indicator_group.data.map(d => d.value)
-      sereisWithMissingData.push(indicator_group)
-    })
-    return sereisWithMissingData
+    return series
   }
 
   setXAxis = function (groupedByTime) {
