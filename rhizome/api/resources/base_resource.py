@@ -178,6 +178,7 @@ class BaseResource(Resource):
         '''
 
         meta = {
+            'get_params': request.GET,
             'top_lvl_location_id': self.top_lvl_location_id,
             'limit': None,  # paginator.get_limit(),
             'offset': None,  # paginator.get_offset(),
