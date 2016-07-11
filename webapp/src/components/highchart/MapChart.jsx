@@ -96,7 +96,8 @@ class MapChart extends HighChart {
   }
 
   getDataClasses = function (current_indicator, palette) {
-    let temp_good, temp_bad
+    let temp_good = current_indicator.good_bound
+    let temp_bad = current_indicator.bad_bound
     if (current_indicator.good_bound < current_indicator.bad_bound) {
       let temp_bound = current_indicator.good_bound
       temp_good = current_indicator.bad_bound
