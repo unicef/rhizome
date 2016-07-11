@@ -11,6 +11,9 @@ export default {
     exporting: {
       buttons: {
         contextButton: {
+          onclick: function () {
+            this.exportChart({type: 'jpeg'})
+          },
           symbol: null,
           text: 'Export',
           x: -20,
