@@ -368,9 +368,14 @@ var DashboardChartsStore = Reflux.createStore({
     this.trigger(this.charts)
   },
   onFetchMapFeaturesCompleted: function (response) {
-    const currently_fetching_charts = _.toArray(this.charts).filter(chart => chart.fetching_map)
+    const location_depth = parseInt(response.meta.get_params.location_depth) || 0
+    const location_id = parseInt(response.meta.get_params.location_id)
+    const currently_fetching_charts = _.toArray(this.charts).filter(chart => {
+      const depth_matches = parseInt(chart.location_depth) === location_depth
+      const location_matches = parseInt(chart.selected_locations[0].id) === location_id
+      return chart.fetching_map && location_matches && depth_matches
+    })
     const uuid = currently_fetching_charts[0].uuid
-    console.log('response: ', response)
     this.charts[uuid].features = response.objects
     this.charts[uuid].loading = true
     this.charts[uuid].fetching_map = false
