@@ -59,7 +59,9 @@ class Dropdown extends Component {
   filterMenu = (items, pattern) => {
     if (_.size(pattern) < 3) return items
 
-    var match = _.partial(findMatches, _, new RegExp(pattern, 'gi'), this)
+    // Escape any characters that might break RegEx
+    const query = pattern.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
+    var match = _.partial(findMatches, _, new RegExp(query, 'gi'), this)
 
     return _(items).map(match).flatten().value()
   }
