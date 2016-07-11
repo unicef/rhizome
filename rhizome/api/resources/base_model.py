@@ -388,13 +388,18 @@ class BaseModelResource(ModelResource, BaseResource):
                 lvl = self.location_depth
             ).values_list('location_id', flat=True)
 
-            # ## this is a hack to deal with this ticket ##
-            # # https://trello.com/c/No82UpGl
+            ## this is a hack to deal with this ticket ##
+            ## https://trello.com/c/No82UpGl
+            ## this says -- if there are no data at this locatin level
+            ## we just find district level data ..  use case - i want districts
+            ## at afghanistan, and south, and kandahar.
             if len(location_ids) == 0:
-                location_ids = Location.objects.filter(
-                    parent_location_id=self.location_id
-                ).values_list('id', flat=True)
-
+                district_location_type_id = LocationType.objects\
+                    .get(name ='District').id
+                location_ids = LocationTree.objects.filter(
+                    parent_location_id=self.location_id,
+                    location__location_type_id = district_location_type_id
+                ).values_list('location_id', flat=True)
 
         else:
             ## this really shouldn't happen -- when this condition hits
