@@ -75,6 +75,7 @@ class ColumnChart extends HighChart {
   setSeries = function () {
     const data = this.props.datapoints.flattened
     const groupByYear = this.props.groupByTime === 'year'
+    const groupedByQuarter = this.props.groupByTime === 'quarter'
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const multipleIndicators = this.props.selected_indicators.length > 1
@@ -84,7 +85,7 @@ class ColumnChart extends HighChart {
     _.forEach(grouped_data, datapoints => {
       const first_datapoint = datapoints[0]
       const color = this.props.indicator_colors[first_datapoint.indicator.id]
-      if (!groupByYear) {
+      if (!groupByYear && !groupedByQuarter) {
         datapoints = _.sortBy(datapoints, datapoint => datapoint.campaign.start_date.getTime())
       } else {
         datapoints = _.sortBy(datapoints, datapoint => datapoint.time_grouping)
@@ -140,12 +141,13 @@ class ColumnChart extends HighChart {
     // But loading the plugin is troublesome.
     // There is no npm package for it + Importing manually doesnt seem to work
     const groupByYear = this.props.groupByTime === 'year'
+    const groupByQuarter = this.props.groupByTime === 'quarter'
     const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
     const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const grouped_categories = []
     _.forEach(grouped_data, (group, key) => {
-      if (groupByYear) {
+      if (groupByYear || groupByQuarter) {
         const subGrouped = _.groupBy(group, 'time_grouping')
         grouped_categories.push({
           name: this.props.locations_index[key].name,
