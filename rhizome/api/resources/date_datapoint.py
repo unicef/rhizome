@@ -111,7 +111,7 @@ class DateDatapointResource(BaseModelResource):
         ind_id_list = request.GET.get('indicator__in', '').split(',')
         meta['location_ids'] = [int(x) for x in self.location_ids]
         meta['indicator_ids'] = [int(x) for x in ind_id_list]
-        meta['time_groupings'] = [int(x) for x in self.distinct_time_groupings]
+        meta['time_groupings'] = [x for x in self.distinct_time_groupings]
 
         return meta
 
@@ -156,6 +156,17 @@ class DateDatapointResource(BaseModelResource):
 
         self.dp_df_columns = \
             ['data_date', 'indicator_id', 'location_id', 'value']
+
+        group_by_param = request.GET.get('group_by_time', 'flat')
+        if group_by_param == 'flat':
+            self.location_ids = self.get_locations_to_return_from_url(request)
+            qs = DataPoint.objects.filter(
+                    location_id__in = self.location_ids,
+                    indicator_id__in = self.indicator__in,
+                    data_date__gte = self.start_date,
+                    data_date__lte = self.end_date
+                ).values(*self.dp_df_columns)
+            return qs
 
         self.base_data_df = self.group_by_time_transform(request)
 
