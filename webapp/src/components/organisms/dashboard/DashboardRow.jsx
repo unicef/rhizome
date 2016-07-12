@@ -36,6 +36,7 @@ const DashboardRow = React.createClass({
   renderChart: function (chart, chart_index) {
     return (
       <MultiChart
+        key={chart.uuid}
         chart={chart}
         readOnlyMode={!this.props.editMode}
         primaryChartClick={value => this.onChartClick(value, chart)}
