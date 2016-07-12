@@ -59,18 +59,22 @@ let DashboardNav = React.createClass({
       <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
     ) : null
 
+    const charts_dropdown = this.state.superuser ? (
+      <li>
+        <a href='/charts'>Charts</a>
+        <ul className='dashboard-menu'>
+          { create_chart_button }
+          { custom_charts }
+          <li className='separator'><hr />
+            <a href='/charts'>See All Charts</a>
+          </li>
+        </ul>
+      </li>
+    ) : null
+
     return (
       <ul className='dashboards-nav'>
-        <li>
-          <a href='/charts'>Charts</a>
-          <ul className='dashboard-menu'>
-            { create_chart_button }
-            { custom_charts }
-            <li className='separator'><hr />
-              <a href='/charts'>See All Charts</a>
-            </li>
-          </ul>
-        </li>
+        { charts_dropdown }
         <li>
           <a href='/dashboards'>Dashboards</a>
           <ul className='dashboard-menu'>
