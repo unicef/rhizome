@@ -61,7 +61,6 @@ const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => 
     return null
   const selected_locations = datapoints.meta.location_ids.map(id => locations.index[id])
   const selected_indicators = datapoints.meta.indicator_ids.map(id => indicators.index[id])
-  const indexDatapoints = _.keyBy(datapoints.location_id)
   const missing_datapoints = []
 
   selected_locations.forEach(location => {
@@ -83,7 +82,6 @@ const fillMissingDatapoints = (datapoints, indicators, locations, campaigns) => 
   const all_datapoints = missing_datapoints.concat(datapoints.raw)
   return _flatten(all_datapoints, indicators, locations, campaigns)
 }
-
 
 const _flatten = (datapoints, indicators, locations, campaigns) => {
   if (!datapoints)
