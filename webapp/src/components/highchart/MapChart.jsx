@@ -22,7 +22,23 @@ class MapChart extends HighChart {
         enableDoubleClickZoom: false,
         enableMouseWheelZoom: false,
         enableButtons: false
-      }
+      },
+      exporting: {
+        buttons: {
+          customButton: {
+            text: 'Labels',
+            onclick: this._toggleLabels,
+            x: -65,
+            y: -30,
+            theme: {
+              style: {
+                color: '#039',
+                textDecoration: 'underline'
+              }
+            }
+          }
+        }
+      },
     }
     const color = this.props.indicator_colors[current_indicator.id]
     if (color) {
@@ -83,6 +99,13 @@ class MapChart extends HighChart {
           color: "rgba(163, 232, 255, 1.0)"
         }
       },
+      dataLabels: {
+        enabled: false,
+        color: '#000',
+        formatter: function () {
+          return props.locations_index[this.point.location_id].name
+        }
+      },
       tooltip: {
         pointFormatter: function() {
           return (
@@ -114,6 +137,13 @@ class MapChart extends HighChart {
                      {from:temp_good, color:palette[2]}]
     }
     return dataClasses
+  }
+
+  _toggleLabels = () => {
+    const self = this
+    var opt = this.chart.series[0].options;
+    opt.dataLabels.enabled = !opt.dataLabels.enabled;
+    this.chart.series[0].update(opt);
   }
 }
 
