@@ -285,6 +285,7 @@ class DateDatapointResource(BaseModelResource):
             })
 
         gb_df = gb_df.rename(columns={'parent_location_id': 'location_id'})
+        gb_df = gb_df.sort(['time_grouping'], ascending=[1])
 
         return gb_df
 
