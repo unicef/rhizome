@@ -16,6 +16,7 @@ class ColumnChart extends HighChart {
     const props = this.props
     const groupedByTime = _.toArray(props.datapoints.grouped).length > 1
     const groupedByYear = props.groupByTime === 'year'
+    const groupedByQuarter = props.groupByTime === 'quarter'
     const first_indicator = props.selected_indicators[0]
     const last_indicator = props.selected_indicators[props.selected_indicators.length-1]
     this.config = {
@@ -62,7 +63,7 @@ class ColumnChart extends HighChart {
           const data_format = this.series.type === 'spline' ? last_indicator.data_format : first_indicator.data_format
           const value = format.autoFormat(this.y, data_format, 1)
           if (groupedByTime) {
-            const date = groupedByYear ? this.category.name : format.monthYear(this.category.name)
+            const date = groupedByYear || groupedByQuarter ? this.category.name : format.monthYear(this.category.name)
             const location = this.category.parent.name
             return `${location}: <strong>${value}</strong><br/>${date}`
           }
@@ -118,7 +119,7 @@ class ColumnChart extends HighChart {
       return {categories: locations.sort()}
     }
     let xAxis = {categories: this._getGroupedCategories()}
-    if (this.props.groupByTime === 'year') {
+    if (this.props.groupByTime === 'year' || this.props.groupByTime === 'quarter') {
       xAxis.labels = {
         style: { fontFamily: 'proxima-bold' }
       }
@@ -136,22 +137,34 @@ class ColumnChart extends HighChart {
     return this.state.stack_mode === 'percent' ? point.value + '%' : formatted_value
   }
 
+  _getQuarterName = function (time_grouping) {
+    const quarter = time_grouping.substr(time_grouping.length - 1)
+    const year = time_grouping.slice(0, -1)
+    return year + ' Q' + quarter
+  }
+
   _getGroupedCategories = function () {
     // This creates the necessary data structure for a Grouped Category chart.
     // But loading the plugin is troublesome.
     // There is no npm package for it + Importing manually doesnt seem to work
     const groupByYear = this.props.groupByTime === 'year'
     const groupByQuarter = this.props.groupByTime === 'quarter'
-    const data = this.props.datapoints.flattened
     const groupByIndicator = this.props.groupBy === 'indicator'
+    const data = this.props.datapoints.flattened
     const grouped_data = !groupByIndicator ? _.groupBy(data, 'indicator.id') : _.groupBy(data, 'location.id')
     const grouped_categories = []
     _.forEach(grouped_data, (group, key) => {
-      if (groupByYear || groupByQuarter) {
+      if (groupByYear) {
         const subGrouped = _.groupBy(group, 'time_grouping')
         grouped_categories.push({
           name: this.props.locations_index[key].name,
           categories: _.map(subGrouped, (group, year) => year)
+        })
+      } else if (groupByQuarter) {
+        const subGrouped = _.groupBy(group, 'time_grouping')
+        grouped_categories.push({
+          name: this.props.locations_index[key].name,
+          categories: _.map(subGrouped, (group, time_grouping) => this._getQuarterName(time_grouping))
         })
       } else {
         const subGrouped = _.groupBy(group, 'campaign.id')
