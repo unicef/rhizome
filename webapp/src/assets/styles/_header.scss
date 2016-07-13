@@ -13,9 +13,6 @@ header {
       text-align: center !important;
       padding: 0 !important;
     }
-    .dashboards-nav, .dashboards-bar, nav > ul > li{
-      padding: 0 !important;
-    }
     ul.dashboards-nav > li > a {
       padding: 27px 10px;
       @media #{$small-only} {

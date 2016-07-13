@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import React, { Component } from 'react'
 import { Link } from 'react-router'
+import ChartSearch from 'components/molecules/ChartSearch'
 
 class MainNavigation extends Component {
   render () {
@@ -32,19 +33,11 @@ class MainNavigation extends Component {
       <li className='cta-menu-item'><a href='/dashboards/create'>Create a Dashboard</a></li>
     ) : null
 
+
   	return (
       <nav className='top-bar'>
         <ul className='dashboards-nav'>
-          <li>
-            <a href='/charts'>Charts</a>
-            <ul className='dashboard-menu'>
-              { create_chart_button }
-              { custom_charts }
-              <li className='separator'><hr />
-                <a href='/charts'>See All Charts</a>
-              </li>
-            </ul>
-          </li>
+          <ChartSearch charts={_.sortBy(this.props.charts.raw, 'title')}/>
           <li>
             <a href='/dashboards'>Dashboards</a>
             <ul className='dashboard-menu'>
@@ -54,12 +47,12 @@ class MainNavigation extends Component {
           </li>
           <li className='log-out'>
             <a href='/accounts/logout?next=/' title='logout'>
-              Log Out &nbsp;<i className='fa fa-lg fa-sign-out'/>
+              Log Out
             </a>
           </li>
         </ul>
       </nav>
-  	)
+    )
   }
 }
 
