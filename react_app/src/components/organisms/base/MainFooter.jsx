@@ -8,19 +8,23 @@ const styles = {
 	background: '#000000'
 }
 
+const active_link = {
+  background: '#6B7A83'
+}
+
 const MainFooter = () => (
   <footer className="row main-footer">
     <nav>
-      <ul className="actions inline-list">
-        <li><Link to="/manage_system/users"><i className="fa fa-cog"></i>Manage System</Link></li>
-        <li><Link to="/react_app/source_data" ><i className="fa fa-plus"></i>Source Data</Link></li>
-        <li><Link to="/react_app/enter_data" ><i className="fa fa-plus"></i>Enter Data</Link></li>
-        <li><Link to="/react_app/charts">Charts</Link></li>
-        <li><Link to="/react_app/dashboards">Dashboards</Link></li>
-        <li><Link to="/react_app/campaigns">Campaigns</Link></li>
-        <li><Link to="/react_app/indicators">Indicators</Link></li>
-        <li><Link to="/react_app/locations">Locations</Link></li>
-        <li><Link to="/react_app/users">Users</Link></li>
+      <ul className="actions left inline-list">
+        <li><Link to="/react_app/source_data" activeStyle={active_link}><i className="fa fa-plus"></i>Upload Data</Link></li>
+        <li><Link to="/react_app/enter_data/campaign" params={{data_type: 'campaign'}} activeStyle={active_link}><i className="fa fa-plus"></i>Form Entry</Link></li>
+        <li><Link to="/react_app/enter_data/date" activeStyle={active_link}><i className="fa fa-plus"></i>Date Entry</Link></li>
+      </ul>
+      <ul className="actions right inline-list">
+        <li><Link to="/react_app/campaigns" activeStyle={active_link}><i className="fa fa-calendar"></i>Campaigns</Link></li>
+        <li><Link to="/react_app/indicators" activeStyle={active_link}><i className="fa fa-tachometer"></i>Indicators</Link></li>
+        <li><Link to="/react_app/locations" activeStyle={active_link}><i className="fa fa-globe"></i>Locations</Link></li>
+        <li><Link to="/react_app/users" activeStyle={active_link}><i className="fa fa-users"></i>Users</Link></li>
       </ul>
     </nav>
   </footer>

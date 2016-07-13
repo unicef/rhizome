@@ -17,6 +17,7 @@ footer.main-footer {
       opacity: 1;
       text-transform: uppercase;
       padding: 15px;
+      transition: color .2s;
       &:hover {
         color: $rhz-background-color;
       }
