@@ -41,12 +41,13 @@ class DataEntryTable extends Component {
   render = () => {
     const props = this.props
     const datapoints = props.datapoints.flattened
+    const sorted_datapoints = _.sortBy(props.datapoints.flattened, 'data_date')
     const indicator = props.selected_indicators[0]
     const cell_style = {
       width: '25rem',
       textAlign: 'center'
     }
-    const rows = datapoints.map(datapoint => {
+    const rows = sorted_datapoints.map(datapoint => {
       const cellParams = {
         datapoint: datapoint,
         updateDatapoint: props.updateDatapoint,
