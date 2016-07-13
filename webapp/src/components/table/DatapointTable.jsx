@@ -9,6 +9,7 @@ class DatapointTable extends Table {
   constructor (props) {
     super(props)
     this.groupByIndicator = this.props.groupBy === 'indicator'
+    this.groupByCampaign = this.props.groupByTime === 'campaign'
     this.rows = this.groupByIndicator ? _.groupBy(this.props.datapoints.flattened, 'indicator.id') : this.props.datapoints.grouped
   }
 
@@ -19,7 +20,7 @@ class DatapointTable extends Table {
   renderHeaderRow = function () {
     const first_row = _.toArray(this.rows)[0]
     const header_cells = first_row.map(datapoint => {
-      const entity = this.groupByIndicator ? datapoint.campaign : datapoint.indicator
+      const entity = this.groupByCampaign ? datapoint.campaign : datapoint.indicator
       return <th>{entity.short_name || entity.name}</th>
     })
     return (
