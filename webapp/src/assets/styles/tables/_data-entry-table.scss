@@ -10,10 +10,10 @@
     overflow: hidden;
     white-space: normal;
 	}
-	.ag-row, .ag-header-row {
+	.ag-row {
 		display: table;
 	}
-	.ag-cell, .ag-header-cell {
+	.ag-cell {
 		display: table-cell;
     position: static;
 		vertical-align: middle;
