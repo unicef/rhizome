@@ -104,16 +104,6 @@ const DataEntryHeader = props => {
     </div>
   )
 
-  const switch_button = (
-    <SwitchButton
-      name='data_type'
-      title='data_type'
-      id='data_type'
-      checked={!formEntry}
-      onChange={props.toggleEntryType}
-    />
-  )
-
   const getChildrenLocations = (parent_location) => {
     let children_locations = props.locations.raw.filter(location => location.parent_location_id === parent_location.id)
     children_locations.unshift(parent_location)
@@ -144,9 +134,7 @@ const DataEntryHeader = props => {
   return (
     <header className='row page-header'>
       <div className='medium-12 columns medium-text-left small-text-center'>
-        <h1>Enter {props.data_type} Data
-          { switch_button }
-        </h1>
+        <h1>Enter {props.data_type} Data</h1>
       </div>
       <div className='medium-12 columns dashboard-actions'>
         <span className='left'>
