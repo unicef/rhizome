@@ -7,7 +7,6 @@ import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 
 import CampaignsPage from 'components/pages/campaigns/CampaignsPage'
 import CampaignPage from 'components/pages/campaigns/CampaignPage'
-import CampaignEditPage from 'components/pages/campaigns/CampaignEditPage'
 
 import ChartsPage from 'components/pages/charts/ChartsPage'
 import ChartPage from 'components/pages/charts/ChartPage'
@@ -43,7 +42,7 @@ const Routes = (
 		//---------------------------------------------------------
 	  <Route path="/react_app/campaigns" component={CampaignsPage}/>
 	  <Route path="/react_app/campaigns/:campaign_id" component={CampaignPage}/>
-	  <Route path="/react_app/campaigns/:campaign_id/edit" component={CampaignEditPage}/>
+	  <Route path="/react_app/campaigns/:campaign_id/edit" component={CampaignPage}/>
 
 	  <Route path="/react_app/charts" component={ChartsPage}/>
 	  <Route path="/react_app/charts/:chart_id" component={ChartPage}/>
