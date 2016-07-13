@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import NProgress from 'react-nprogress'
 
 import MainFooter from 'components/organisms/base/MainFooter'
-import MainHeader from 'components/organisms/base/MainHeader'
+import MainHeader from 'components/headers/MainHeader'
 
 export default class BasePage extends Component {
 
@@ -20,7 +20,7 @@ export default class BasePage extends Component {
 
   render () {
   	return (
-			<div >
+			<div>
 				<MainHeader charts={this.props.charts} dashboards={this.props.dashboards} />
 			  <main role='main' className="row">{this.props.children}</main>
 				<MainFooter />
