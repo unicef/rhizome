@@ -7,6 +7,9 @@ import DateDataEntryTable from 'components/organisms/enter_data/DateDataEntryTab
 class DataEntryPage extends Component {
 
   componentWillReceiveProps (nextProps) {
+    if (nextProps.data_type !== nextProps.params.data_type) {
+      this.props.toggleEntryType()
+    }
     if (nextProps.dataParamsChanged) {
       nextProps.getDatapoints(nextProps)
     }

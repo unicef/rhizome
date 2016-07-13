@@ -74,7 +74,7 @@ const Routes = (
 		// OTHER ROUTES
 		//---------------------------------------------------------
 	  <Route path="/react_app/source_data" component={SourceDataPageContainer}/>
-	  <Route path="/react_app/enter_data" component={DataEntryPageContainer}/>
+	  <Route path="/react_app/enter_data(/:data_type)" component={DataEntryPageContainer}/>
 	  <Route path="/react_app/manage_system" component={ManageSystemPage}/>
 	</Route>
 )
