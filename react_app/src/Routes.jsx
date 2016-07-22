@@ -5,8 +5,8 @@ import BasePageContainer from 'containers/BasePageContainer'
 import SourceDataPageContainer from 'containers/SourceDataPageContainer'
 import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 
-import CampaignsPage from 'components/pages/campaigns/CampaignsPage'
-import CampaignPage from 'components/pages/campaigns/CampaignPage'
+import CampaignContainer from 'containers/CampaignContainer'
+import CampaignsContainer from 'containers/CampaignsContainer'
 
 import ChartsPage from 'components/pages/charts/ChartsPage'
 import ChartPage from 'components/pages/charts/ChartPage'
@@ -40,9 +40,8 @@ const Routes = (
 
 		// RESOURCE ROUTES
 		//---------------------------------------------------------
-	  <Route path="/react_app/campaigns" component={CampaignsPage}/>
-	  <Route path="/react_app/campaigns/:campaign_id" component={CampaignPage}/>
-	  <Route path="/react_app/campaigns/:campaign_id/edit" component={CampaignPage}/>
+	  <Route path="/react_app/campaigns" component={CampaignsContainer}/>
+	  <Route path="/react_app/campaigns/:campaign_id" component={CampaignContainer}/>
 
 	  <Route path="/react_app/charts" component={ChartsPage}/>
 	  <Route path="/react_app/charts/:chart_id" component={ChartPage}/>

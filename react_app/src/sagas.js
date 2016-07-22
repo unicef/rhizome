@@ -1,6 +1,8 @@
 import { watchGetInitialData } from 'actions/global_actions'
 
 import { watchGetAllCampaigns } from 'actions/campaign_actions'
+import { watchUpdateCampaign } from 'actions/campaign_actions'
+import { watchGetAllCampaignTypes } from 'actions/campaign_actions'
 import { watchGetAllIndicators } from 'actions/indicator_actions'
 import { watchGetAllLocations } from 'actions/location_actions'
 import { watchGetAllCharts } from 'actions/chart_actions'
@@ -18,6 +20,8 @@ export const rootSaga = function * () {
     watchRemoveDatapoint(),
     watchGetInitialData(),
     watchGetAllCampaigns(),
+    watchUpdateCampaign(),
+    watchGetAllCampaignTypes(),
     watchGetAllIndicators(),
     watchGetAllLocations(),
     watchGetAllCharts(),

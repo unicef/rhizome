@@ -1,151 +1,155 @@
+import _ from 'lodash'
 import moment from 'moment'
 import React, { Component, PropTypes } from 'react'
 import {AgGridReact} from 'ag-grid-react';
 import Placeholder from 'components/global/Placeholder'
-import DateMultiSelect from 'components/select/DateRangeSelect'
+import DateRangeSelect from 'components/select/DateRangeSelect'
+import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 import DropdownButton from 'components/button/DropdownButton'
-
-  // _setOffice: function (event) {
-  //   CampaignPageActions.setOffice(event.target.value)
-  // },
-  // _setCampaignName: function (event) {
-  //   CampaignPageActions.setCampaignName(event.target.value)
-  // },
-  // _setIndicatorTag: function (tagId) {
-  //   CampaignPageActions.setIndicatorTag(tagId)
-  // },
-  // _setCampaignType: function (event) {
-  //   CampaignPageActions.setCampaignType(event.target.value)
-  // },
-  // _save: function (e) {
-  //   e.preventDefault()
-  //   this.state.postData.name = this.refs.campaignName.getDOMNode().value
-  //   this.state.postData.start_date = moment(this.state.campaign.start).format('YYYY-M-D')
-  //   this.state.postData.end_date = moment(this.state.campaign.end).format('YYYY-M-D')
-  //   CampaignPageActions.saveCampaign(this.state.postData)
-  // },
+import DropdownList from 'react-widgets/lib/DropdownList'
 
 class CampaignDetail extends Component {
 
   constructor (props) {
     super(props)
-    console.log('props', props)
-    this.state = {
-      campaign_name: props.campaign.name,
+    this.state = {}
+  }
+
+  componentDidMount() {
+    if (!this.props.campaign_types.raw) {
+      this.props.getAllCampaignTypes()
     }
   }
 
-  _setCampaignName = (event) => {
-    this.setState({campaign_name: event.target.value})
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.campaign.id !== this.state.id) {
+      const campaign = Object.assign({}, nextProps.campaign)
+      delete campaign.created_at
+      this.setState(campaign)
+    }
   }
-  _setIndicatorTag = (tagId) => {
-    this.setState({indicatorTag: tagId})
-  }
-  _setCampaignType = (event) => {
-    this.setState({campaignType: event.target.value})
+
+  _updateParam = (param, value) => {
+    const campaign = {}
+    campaign[param] = value
+    this.setState(campaign)
   }
 
   render = () => {
+    if (!this.state.id) {
+      return <Placeholder height={300} />
+    }
 
-    const campaign = this.props.campaign
-
-    console.log('campaign', campaign)
-    let nameSet = (
+    const name_input = (
       <div>
         <label htmlFor='name'>Name: </label>
-        <input type='text' defaultValue={campaign.name} onBlur={this._setCampaignName} ref='campaignName'/>
+        <input
+          type='text'
+          defaultValue={this.state.name}
+          onBlur={event => this._updateParam('name', event.target.value)}
+        />
       </div>
     )
 
-    // let topLevelLocationSet = (
-    //   <div>
-    //     <label htmlFor='top_lvl_location'>Top level location: </label>
-    //     <DropdownButton
-    //       items={this.state.locations}
-    //       sendValue={CampaignPageActions.setLocation}
-    //       item_plural_name='Locations'
-    //       text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-    //       icon='fa-globe'
-    //       uniqueOnly/>
-    //   </div>
-    // )
-
-    // let topLevelIndicatorTagSet = (
-    //   <div>
-    //     <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-    //     <DropdownButton
-    //       items={this.state.indicatorToTags}
-    //       sendValue={this._setIndicatorTag}
-    //       item_plural_name='Indicator Tags'
-    //       text={this.state.tagSelected[0] && this.state.tagSelected[0].tag_name || 'Select Tag'}
-    //       icon='fa-tag'/>
-    //   </div>
-    // )
-
-    // let campaignTypeSet = (
-    //   <div>
-    //     <label htmlFor='campaign_type'>Campaign type: </label>
-    //     <select value={this.state.postData.campaign_type_id} onChange={this._setCampaignType}>
-    //       {this.state.campaignTypes.map(d => {
-    //         return d.id === this.state.postData.campaign_type_id
-    //           ? (<option value={d.id} selected>{d.name}</option>)
-    //           : (<option value={d.id}>{d.name}</option>) })}
-    //     </select>
-    //   </div>
-    // )
-
-    // let dateRangePicker = (
-    //   <div>
-    //     <label htmlFor='start_date'>Start date: </label>
-    //     <DateMultiSelect
-    //       start={this.state.campaign.start}
-    //       end={this.state.campaign.end}
-    //       sendValue={CampaignPageActions.updateCampaignRange}
-    //       text='End date: ' />
-    //   </div>
-    // )
-
-    // let submitButton = (
-    //   <div>
-    //     <br />
-    //     <button className='tiny' onClick={this._save}>Save</button>
-    //   </div>
-    // )
-
-    // let message = this.state.displayMsg
-    //   ? (
-    //     <div className={`message${this.state.saveSuccess ? ' success' : ' error'}`}>
-    //       {this.state.message}
-    //     </div>
-    //   )
-    //   : null
-
-    return campaign ? (
+    const selected_location = this.state.top_lvl_location_id ? this.props.locations.index[this.state.top_lvl_location_id] : {name: 'Select Location'}
+    const location_selector = (
       <div>
-        <h2>Campaign ID: {campaign.id}</h2>
+        <label>Top level location: </label>
+        <DropdownButton
+          style='full-width'
+          items={this.props.locations.list || []}
+          sendValue={id => this._updateParam('top_lvl_location_id', id)}
+          item_plural_name='Locations'
+          text={selected_location.name}
+          icon='fa-globe'
+          uniqueOnly/>
+      </div>
+    )
+
+    const selected_indicator_tag = this.state.top_lvl_indicator_tag_id ? this.props.indicators.tag_index[this.state.top_lvl_indicator_tag_id] : {tag_name: 'Select Tag'}
+    const indicator_selector = (
+      <div>
+        <label>Top level indicator tag: </label>
+        <DropdownButton
+          style='full-width'
+          items={_.toArray(this.props.indicators.tag_index)}
+          sendValue={id => this._updateParam('top_lvl_indicator_tag_id', id)}
+          title_field='tag_name'
+          value_field='id'
+          item_plural_name='Indicator Tags'
+          text={selected_indicator_tag.tag_name}
+          icon='fa-tag'/>
+      </div>
+    )
+
+    const selected_campaign_type = this.state.campaign_type_id ? this.props.campaign_types.index[this.state.campaign_type_id] : {name: 'Select Campaign Type'}
+    const campaign_type_selector = (
+      <div>
+        <label>Campaign type: </label>
+        <DropdownButton
+          style='full-width'
+          items={this.props.campaign_types.raw || []}
+          sendValue={id => this._updateParam('campaign_type_id', id)}
+          title_field='name'
+          value_field='id'
+          item_plural_name='Campaign Types'
+          text={selected_campaign_type.name}
+          icon='fa-tag'/>
+      </div>
+    )
+
+    const todays_date = moment().format('YYYY-MM-DD')
+    const start_date = this.state.start_date ? moment(this.state.start_date).toDate() : todays_date
+    const end_date = this.state.end_date ? moment(this.state.end_date).toDate() : todays_date
+    const dateRangePicker = (
+      <div className='date-range-picker'>
+        <label htmlFor='campaign_type'>Dates: </label>
+        <DateTimePicker
+          text='Start date: '
+          value={start_date}
+          time={false}
+          format={'YYYY-MM-DD'}
+          onChange={date => this._updateParam('start_date', moment(date).format('YYYY-MM-DD'))} />
+        <span>to</span>
+        <DateTimePicker
+          text='End date: '
+          value={end_date}
+          time={false}
+          format={'YYYY-MM-DD'}
+          onChange={date => this._updateParam('end_date', moment(date).format('YYYY-MM-DD'))} />
+      </div>
+    )
+
+    const submitButton = (
+      <div>
+        <br />
+        <button
+          className='large primary button expand'
+          style={{margin: '1rem 0'}}
+          onClick={e => {
+            e.preventDefault()
+            this.props.updateCampaign(this.state)
+          }}
+        >
+          Save
+        </button>
+      </div>
+    )
+
+    return (
+      <div className='medium-4 medium-centered columns'>
+        <h2>Campaign ID: {this.state.id}</h2>
         <form>
-          {nameSet}
-          {/*topLevelLocationSet*/}
-          {/*topLevelIndicatorTagSet*/}
-          {/*campaignTypeSet*/}
-          {/*dateRangePicker*/}
-          {/*submitButton*/}
+          {name_input}
+          {location_selector}
+          {indicator_selector}
+          {campaign_type_selector}
+          {dateRangePicker}
+          {submitButton}
         </form>
       </div>
-    ) : <Placeholder />
+    )
   }
 }
-
-// CampaignDetail.defaultProps = {
-//   campaign: null,
-//   columnDefs: [
-//     {headerName: "ID", field: "id"},
-//     {headerName: "Title", field: "title"},
-//   ]
-// }
-
-// CampaignDetail.propTypes = {
-//   campaign: PropTypes.object
-// }
 
 export default CampaignDetail

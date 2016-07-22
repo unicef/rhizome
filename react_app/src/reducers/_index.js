@@ -3,7 +3,7 @@ import { routerReducer } from 'react-router-redux'
 import { handleActions } from 'redux-actions'
 
 import data_entry from 'reducers/data_entry_reducer'
-import campaigns from 'reducers/campaigns_reducer'
+import {campaigns, campaign_types} from 'reducers/campaigns_reducer'
 import dashboards from 'reducers/dashboards_reducer'
 import charts from 'reducers/charts_reducer'
 import indicators from 'reducers/indicators_reducer'
@@ -20,6 +20,7 @@ const reducers = {
   dashboards,
   data_entry,
   campaigns,
+  campaign_types,
   indicators,
   locations,
   users

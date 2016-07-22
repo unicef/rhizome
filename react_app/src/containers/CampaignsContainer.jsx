@@ -5,9 +5,7 @@ import { getAllCampaigns } from 'actions/campaign_actions'
 
 const mapStateToProps = (state) => ({ campaigns: state.campaigns })
 
-const mapDispatchToProps = (dispatch) => {
-	return bindActionCreators({ getAllCampaigns }, dispatch)
-}
+const mapDispatchToProps = (dispatch) => bindActionCreators({ getAllCampaigns }, dispatch)
 
 const CampaignTableContainer = connect(mapStateToProps, mapDispatchToProps)(CampaignTable)
 
