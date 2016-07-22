@@ -45,7 +45,6 @@ export default class ResourceTable extends Component {
     return (
       <span>
         <a href={this.props.resourcePath + '/' + item.id}>Show</a> &nbsp;
-        <a href={this.props.resourcePath + '/' + item.id + '/edit'}>Edit</a>
       </span>
     )
   }
