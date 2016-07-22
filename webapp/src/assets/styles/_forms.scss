@@ -86,3 +86,18 @@ input.title-input {
     color: $rhz-body-color;
   }
 }
+
+.resource-form {
+  button.expand {
+    margin: 1rem 0;
+  }
+  input[type=text], textarea {
+    font-size: 1rem;
+    background: rgba(0, 0, 0, 0.1);
+    &:focus {
+      background-color: rgba(0, 0, 0, 0.05);
+      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.5);
+      color: $rhz-body-color;
+    }
+  }
+}

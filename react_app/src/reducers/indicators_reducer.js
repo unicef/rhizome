@@ -4,7 +4,7 @@ import treeify from 'utilities/transform/treeify'
 
 const initial_state = {raw: null, index: null, tag_index: null}
 
-const indicators = handleActions({
+export const indicators = handleActions({
   GET_ALL_INDICATORS_SUCCESS: (state, action) => ({
     raw: action.payload.indicators,
     index: _.keyBy(action.payload.indicators, 'id'),
@@ -12,6 +12,26 @@ const indicators = handleActions({
     tag_index: processIndicatorsToTags(action.payload.indicator_tags, action.payload.indicators_to_tags)
   })
 }, initial_state)
+
+export const indicator = handleActions({
+  UPDATE_INDICATOR_SUCCESS: (state, action) => {
+    return Object.assign({}, state, action.payload)
+  }
+}, {
+  id: null,
+  bad_bound: 0,
+  good_bound: 1,
+  bound_json: '[]',
+  data_format: 'int',
+  description: '',
+  is_reported: false,
+  name: '',
+  office_id: '[]',
+  resource_name: '',
+  short_name: '',
+  source_name: '',
+  tag_json: '[]'
+})
 
 const processIndicatorsToTags = (indicator_tags, indicators_to_tags) => {
   const grouped_by_tag = _.groupBy(indicators_to_tags, 'indicator_tag_id')
@@ -141,4 +161,3 @@ const buildIndicatorsTree = (indicators, tags, isClone, isRemoveEmpty, indicator
   return _.sortBy(sortTags, 'title')
 }
 
-export default indicators

@@ -71,7 +71,7 @@ class IndicatorMultiSelect extends Component {
               items={available_indicators}
               sendValue={this.props.selectIndicator}
               item_plural_name='Indicators'
-              style='icon-button right pad-right'
+              style='icon-button button right pad-right'
               icon='fa-plus'
               searchable
             />

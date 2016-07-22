@@ -13,11 +13,33 @@ export const getAllIndicatorTagsSuccess = createAction('GET_ALL_INDICATOR_TAGS_S
 export const getAllIndicatorsToTags = createAction('GET_ALL_INDICATORS_TO_TAGS')
 export const getAllIndicatorsToTagsSuccess = createAction('GET_ALL_INDICATORS_TO_TAGS_SUCCESS')
 
+export const updateIndicator = createAction('UPDATE_INDICATOR')
+export const updateIndicatorFailure = createAction('UPDATE_INDICATOR_FAILURE')
+export const updateIndicatorSuccess = createAction('UPDATE_INDICATOR_SUCCESS')
+
 // ===========================================================================//
 // 																	 SAGAS														 			  //
 // ===========================================================================//
 export const watchGetAllIndicators = function * () {
   yield * takeLatest('GET_ALL_INDICATORS', fetchAllIndicators)
+}
+
+export const watchUpdateIndicator = function * () {
+  yield * takeLatest('UPDATE_INDICATOR', patchIndicator)
+}
+
+export const patchIndicator = function * (action) {
+  const indicator = action.payload
+  try {
+    const response = yield call(() => RhizomeAPI.patch('indicator/' + indicator.id, indicator))
+    if (response.status !== 500) {
+      yield put({type: 'UPDATE_INDICATOR_SUCCESS', payload: response.data})
+    } else {
+      throw response
+    }
+  } catch (error) {
+    yield put({type: 'UPDATE_INDICATOR_FAILURE', error})
+  }
 }
 
 export const fetchAllIndicators = function * (action) {

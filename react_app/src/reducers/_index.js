@@ -3,10 +3,10 @@ import { routerReducer } from 'react-router-redux'
 import { handleActions } from 'redux-actions'
 
 import data_entry from 'reducers/data_entry_reducer'
-import {campaigns, campaign_types} from 'reducers/campaigns_reducer'
+import {campaign, campaigns, campaign_types} from 'reducers/campaigns_reducer'
 import dashboards from 'reducers/dashboards_reducer'
 import charts from 'reducers/charts_reducer'
-import indicators from 'reducers/indicators_reducer'
+import {indicator, indicators} from 'reducers/indicators_reducer'
 import locations from 'reducers/locations_reducer'
 import users from 'reducers/users_reducer'
 
@@ -20,8 +20,10 @@ const reducers = {
   dashboards,
   data_entry,
   campaigns,
-  campaign_types,
+  campaign,
   indicators,
+  indicator,
+  campaign_types,
   locations,
   users
 }

@@ -4,6 +4,7 @@ import { watchGetAllCampaigns } from 'actions/campaign_actions'
 import { watchUpdateCampaign } from 'actions/campaign_actions'
 import { watchGetAllCampaignTypes } from 'actions/campaign_actions'
 import { watchGetAllIndicators } from 'actions/indicator_actions'
+import { watchUpdateIndicator } from 'actions/indicator_actions'
 import { watchGetAllLocations } from 'actions/location_actions'
 import { watchGetAllCharts } from 'actions/chart_actions'
 import { watchGetAllDashboards } from 'actions/dashboard_actions'
@@ -23,6 +24,7 @@ export const rootSaga = function * () {
     watchUpdateCampaign(),
     watchGetAllCampaignTypes(),
     watchGetAllIndicators(),
+    watchUpdateIndicator(),
     watchGetAllLocations(),
     watchGetAllCharts(),
     watchGetAllDashboards(),

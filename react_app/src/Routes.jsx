@@ -8,6 +8,9 @@ import DataEntryPageContainer from 'containers/DataEntryPageContainer'
 import CampaignContainer from 'containers/CampaignContainer'
 import CampaignsContainer from 'containers/CampaignsContainer'
 
+import IndicatorsContainer from 'containers/IndicatorsContainer'
+import IndicatorContainer from 'containers/IndicatorContainer'
+
 import ChartsPage from 'components/pages/charts/ChartsPage'
 import ChartPage from 'components/pages/charts/ChartPage'
 import ChartEditPage from 'components/pages/charts/ChartEditPage'
@@ -16,9 +19,6 @@ import DashboardsPage from 'components/pages/dashboards/DashboardsPage'
 import DashboardPage from 'components/pages/dashboards/DashboardPage'
 import DashboardEditPage from 'components/pages/dashboards/DashboardEditPage'
 
-import IndicatorsPage from 'components/pages/indicators/IndicatorsPage'
-import IndicatorPage from 'components/pages/indicators/IndicatorPage'
-import IndicatorEditPage from 'components/pages/indicators/IndicatorEditPage'
 
 import LocationsPage from 'components/pages/locations/LocationsPage'
 import LocationPage from 'components/pages/locations/LocationPage'
@@ -51,9 +51,8 @@ const Routes = (
 	  <Route path="/react_app/dashboards/:dashboard_id" component={DashboardPage}/>
 	  <Route path="/react_app/dashboards/:dashboard_id/edit" component={DashboardEditPage}/>
 
-	  <Route path="/react_app/indicators" component={IndicatorsPage}/>
-	  <Route path="/react_app/indicators/:indicator_id" component={IndicatorPage}/>
-	  <Route path="/react_app/indicators/:indicator_id/edit" component={IndicatorEditPage}/>
+	  <Route path="/react_app/indicators" component={IndicatorsContainer}/>
+	  <Route path="/react_app/indicators/:indicator_id" component={IndicatorContainer}/>
 
 	  <Route path="/react_app/locations" component={LocationsPage}/>
 	  <Route path="/react_app/locations/:location_id" component={LocationPage}/>

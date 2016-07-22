@@ -7,6 +7,6 @@ const mapStateToProps = (state) => ({ indicators: state.indicators })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({getAllIndicators}, dispatch)
 
-const IndicatorTableContainer = connect(mapStateToProps, mapDispatchToProps)(IndicatorTable)
+const IndicatorsContainer = connect(mapStateToProps, mapDispatchToProps)(IndicatorTable)
 
-export default IndicatorTableContainer
+export default IndicatorsContainer
