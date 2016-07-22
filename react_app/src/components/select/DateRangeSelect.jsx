@@ -32,7 +32,7 @@ var DateRangeSelect = React.createClass({
     } else {
       this.setState({end: moment(date).format('YYYY-MM-DD')})
     }
-    this.props.sendValue(Object.assign({}, ))
+    this.props.sendValue(Object.assign({}, date))
   },
 
   render () {
