@@ -46,7 +46,7 @@ let UserAccount = React.createClass({
             sendValue={this._setLocation}
             item_plural_name='Locations'
             text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-            style='databrowser__button'
+            style='full-width'
             icon='fa-globe'
             uniqueOnly/>
          </div>
