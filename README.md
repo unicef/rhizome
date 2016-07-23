@@ -4,7 +4,44 @@ Designed for data visualization to help eradicate polio!
 Built with Python, Django, JavaScript, React, Reflux, HighCharts, and many other libraries.
 
 # Up and Running for Developers
-See our instructions [here](http://unicef.github.io/rhizome/development/initialize.html).
+
+## Setting up the development environment with Docker #
+
+Prerequisites
+
+1. VirtualBox
+
+Install Docker Machine. In Mac OS X you could install via `brew`
+
+```
+$ brew install docker-machine docker-compose
+```
+Initialize Docker environment
+
+```
+$ docker-machine create -d virtualbox dev
+$ docker-machine start dev
+```
+Add `eval "$(docker-machine env dev)"` into .bashrc file
+
+In Mac OS X, forward the port to host
+
+```
+$ VBoxManage controlvm dev natpf1 "django,tcp,127.0.0.1,8000,,8000"
+```
+<!-- Navigate to repository directory, de-comment Line.8 `ENV CHINESE_LOCAL_PIP_CONFIG="--index-url http://pypi.douban.com/simple --trusted-host pypi.douban.com"` to use Chinese pip mirror. -->
+
+Run
+
+```
+$ docker-compose build && docker-compose up
+```
+
+Enter Docker instance
+
+```
+$ docker exec -it rhizome_rhizome bash
+```
 
 # Documentation
 Start here by checking out our [documentation](http://unicef.github.io/rhizome/).
