@@ -10,8 +10,12 @@ Built with Python, Django, JavaScript, React, Reflux, HighCharts, and many other
 Prerequisites
 
 1. VirtualBox
+http://download.virtualbox.org/virtualbox/5.0.26/VirtualBox-5.0.26-108824-OSX.dmg
 
 Install Docker Machine. In Mac OS X you could install via `brew`
+
+2. Docker Toolbox
+https://www.docker.com/products/docker-toolbox
 
 ```
 $ brew install docker-machine docker-compose
