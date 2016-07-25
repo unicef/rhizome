@@ -51,7 +51,7 @@ class LocationDetail extends Component {
     const selected_location = this.state.parent_location_id ? this.props.locations.index[this.state.parent_location_id] : {name: 'Select Location'}
     const selected_location_type = this.state.location_type_id ? this.props.location_types.index[this.state.location_type_id] : {name: 'Select Location Type'}
     return (
-      <form className='medium-6 medium-centered columns resource-form' onSubmit={this._saveLocation}>
+      <form className='medium-5 medium-centered columns resource-form' onSubmit={this._saveLocation}>
         <h2>Location ID: {this.state.id}</h2>
         <label>Type:
           <DropdownButton

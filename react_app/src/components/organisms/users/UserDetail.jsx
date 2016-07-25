@@ -17,6 +17,12 @@ class UserDetail extends Component {
     this.state = {}
   }
 
+  componentDidMount() {
+    if (!this.props.users.raw) {
+      this.props.getAllUsers()
+    }
+  }
+
   componentWillReceiveProps(nextProps) {
     if (nextProps.user.id !== this.state.id) {
       const user = Object.assign({}, nextProps.user)
@@ -36,117 +42,35 @@ class UserDetail extends Component {
     this.props.updateUser(this.state)
   }
 
-  _addUserTag = id => {
-    const tag_array = JSON.parse(this.state.tag_json)
-    tag_array.push(parseInt(id))
-    this._updateParam('tag_json', JSON.stringify(tag_array))
-  }
-
-  _removeUserTag = (event, tag_id) => {
-    event.preventDefault()
-    const tag_array = JSON.parse(this.state.tag_json)
-    const index = tag_array.indexOf(tag_id)
-    tag_array.splice(index, 1)
-    this._updateParam('tag_json', JSON.stringify(tag_array))
-  }
-
   render = () => {
     if (!this.state.id) {
       return <Placeholder height={300} />
     }
 
-    const selected_user_tag = this.state.top_lvl_user_tag_id ? this.props.users.tag_index[this.state.top_lvl_user_tag_id] : {tag_name: 'Add Tag'}
-    const tag_array = JSON.parse(this.state.tag_json)
-    const all_tags = _.toArray(this.props.users.tag_index)
-    const filtered_tags = all_tags.filter(tag => tag_array.indexOf(tag.id) === -1)
-    const user_tag_select = (
-      <div>
-        <h3 style={{marginBottom: '.1rem'}}>Tags:
-          <DropdownButton
-            items={filtered_tags}
-            sendValue={this._addUserTag}
-            title_field='tag_name'
-            value_field='id'
-            item_plural_name='Users'
-            style='icon-button button right pad-right'
-            icon='fa-plus'
-            searchable
-          />
-        </h3>
-        <ul className='multi-select-list'>
-          {tag_array.map(tag_id => (
-            <li key={tag_id}>
-              <IconButton className='clear-btn' icon='fa-times-circle' onClick={e => this._removeUserTag(e, tag_id)} />
-              { this.props.users.tag_index[tag_id].tag_name }
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-
-    const data_formats = [
-      {title: 'Percent', value: 'pct'},
-      {title: 'Integer', value: 'int'},
-      {title: 'True/False', value: 'bool'},
-      {title: 'Date', value: 'date'},
-    ]
-    const data_format_index = _.keyBy(data_formats, 'value')
-    const selected_data_format = data_format_index[this.state.data_format].title
-    const showBounds = this.state.data_format !== 'bool' && this.state.data_format !== 'date'
     return (
-      <form className='medium-8 medium-centered columns resource-form' onSubmit={this._saveUser}>
-        <div className='medium-7 columns'>
-          <h2>User ID: {this.state.id}</h2>
-          <label htmlFor='name'>Name:
-            <input type='text' defaultValue={this.state.name}
-              onBlur={event => this._updateParam('name', event.target.value)}
-            />
-          </label>
-          <label htmlFor='short_name'>Short Name:
-            <input type='text' defaultValue={this.state.short_name}
-              onBlur={event => this._updateParam('short_name', event.target.value)}
-            />
-          </label>
-          <label htmlFor='source_name'>Source Name:
-            <input type='text' defaultValue={this.state.source_name}
-              onBlur={e => this._updateParam('source_name', e.target.value)}
-            />
-          </label>
-          <label htmlFor='description'>Description:
-            <textarea defaultValue={this.state.description}
-              onBlur={e => this._updateParam('description', e.target.value)}
-            />
-          </label>
-          <label>Data Format:
-            <DropdownButton
-              style='full-width'
-              items={data_formats}
-              sendValue={format => this._updateParam('data_format', format)}
-              text={selected_data_format}
-            />
-          </label>
-          {
-            showBounds ? (
-            <div className='row'>
-              <label className='medium-6 columns'>Good Bound:
-                <input type='text' defaultValue={this.state.good_bound}
-                  onBlur={event => this._updateParam('good_bound', event.target.value)}
-                />
-              </label>
-              <label className='medium-6 columns'>Bad Bound:
-                <input type='text' defaultValue={this.state.bad_bound}
-                  onBlur={event => this._updateParam('bad_bound', event.target.value)}
-                />
-              </label>
-            </div>
-            ) : null
-          }
-          <button className='large primary button expand'>Save</button>
-        </div>
-        <div className='medium-5 columns'>
-          <br />
-          {user_tag_select}
-        </div>
+      <form className='medium-5 medium-centered columns resource-form' onSubmit={this._saveUser}>
+        <h2>User ID: {this.state.id}</h2>
+        <label htmlFor='username'>Username:
+          <input type='text' defaultValue={this.state.username}
+            onBlur={event => this._updateParam('username', event.target.value)}
+          />
+        </label>
+        <label htmlFor='first_name'>First Name:
+          <input type='text' defaultValue={this.state.first_name}
+            onBlur={event => this._updateParam('first_name', event.target.value)}
+          />
+        </label>
+        <label htmlFor='last_name'>Last Name:
+          <input type='text' defaultValue={this.state.last_name}
+            onBlur={event => this._updateParam('last_name', event.target.value)}
+          />
+        </label>
+        <label htmlFor='email'>Email:
+          <input type='text' defaultValue={this.state.email}
+            onBlur={e => this._updateParam('email', e.target.value)}
+          />
+        </label>
+        <button className='large primary button expand'>Save</button>
       </form>
     )
   }
