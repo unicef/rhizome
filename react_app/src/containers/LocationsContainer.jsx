@@ -7,6 +7,6 @@ const mapStateToProps = (state) => ({ locations: state.locations })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({getAllLocations}, dispatch)
 
-const LocationTableContainer = connect(mapStateToProps, mapDispatchToProps)(LocationTable)
+const LocationsContainer = connect(mapStateToProps, mapDispatchToProps)(LocationTable)
 
-export default LocationTableContainer
+export default LocationsContainer

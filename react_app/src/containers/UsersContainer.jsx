@@ -7,6 +7,6 @@ const mapStateToProps = (state) => ({ users: state.users })
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({getAllUsers}, dispatch)
 
-const UserTableContainer = connect(mapStateToProps, mapDispatchToProps)(UserTable)
+const UsersContainer = connect(mapStateToProps, mapDispatchToProps)(UserTable)
 
-export default UserTableContainer
+export default UsersContainer
