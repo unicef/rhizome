@@ -4,7 +4,11 @@
 	input[type='radio'] {
 		margin: 0
 	}
-
+	input[type="radio"] + label {
+		margin: 0;
+		padding-left: 0.5rem;
+    padding-right: 1.2rem;
+	}
 	.horizontal {
 		display: inline-block;
 		margin-right: 10px;

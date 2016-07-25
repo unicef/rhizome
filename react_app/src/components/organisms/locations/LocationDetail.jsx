@@ -3,6 +3,7 @@ import moment from 'moment'
 import React, { Component, PropTypes } from 'react'
 import {AgGridReact} from 'ag-grid-react';
 import Placeholder from 'components/global/Placeholder'
+import RadioGroup from 'components/form/RadioGroup'
 import DateRangeSelect from 'components/select/DateRangeSelect'
 import DateTimePicker from 'react-widgets/lib/DateTimePicker'
 import DropdownButton from 'components/button/DropdownButton'
@@ -15,6 +16,12 @@ class LocationDetail extends Component {
   constructor (props) {
     super(props)
     this.state = {}
+  }
+
+  componentDidMount() {
+    if (!this.props.location_types.raw) {
+      this.props.getAllLocationTypes()
+    }
   }
 
   componentWillReceiveProps(nextProps) {
@@ -36,117 +43,76 @@ class LocationDetail extends Component {
     this.props.updateLocation(this.state)
   }
 
-  _addLocationTag = id => {
-    const tag_array = JSON.parse(this.state.tag_json)
-    tag_array.push(parseInt(id))
-    this._updateParam('tag_json', JSON.stringify(tag_array))
-  }
-
-  _removeLocationTag = (event, tag_id) => {
-    event.preventDefault()
-    const tag_array = JSON.parse(this.state.tag_json)
-    const index = tag_array.indexOf(tag_id)
-    tag_array.splice(index, 1)
-    this._updateParam('tag_json', JSON.stringify(tag_array))
-  }
-
   render = () => {
     if (!this.state.id) {
       return <Placeholder height={300} />
     }
 
-    const selected_location_tag = this.state.top_lvl_location_tag_id ? this.props.locations.tag_index[this.state.top_lvl_location_tag_id] : {tag_name: 'Add Tag'}
-    const tag_array = JSON.parse(this.state.tag_json)
-    const all_tags = _.toArray(this.props.locations.tag_index)
-    const filtered_tags = all_tags.filter(tag => tag_array.indexOf(tag.id) === -1)
-    const location_tag_select = (
-      <div>
-        <h3 style={{marginBottom: '.1rem'}}>Tags:
-          <DropdownButton
-            items={filtered_tags}
-            sendValue={this._addLocationTag}
-            title_field='tag_name'
-            value_field='id'
-            item_plural_name='Locations'
-            style='icon-button button right pad-right'
-            icon='fa-plus'
-            searchable
-          />
-        </h3>
-        <ul className='multi-select-list'>
-          {tag_array.map(tag_id => (
-            <li key={tag_id}>
-              <IconButton className='clear-btn' icon='fa-times-circle' onClick={e => this._removeLocationTag(e, tag_id)} />
-              { this.props.locations.tag_index[tag_id].tag_name }
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-
-    const data_formats = [
-      {title: 'Percent', value: 'pct'},
-      {title: 'Integer', value: 'int'},
-      {title: 'True/False', value: 'bool'},
-      {title: 'Date', value: 'date'},
-    ]
-    const data_format_index = _.keyBy(data_formats, 'value')
-    const selected_data_format = data_format_index[this.state.data_format].title
-    const showBounds = this.state.data_format !== 'bool' && this.state.data_format !== 'date'
+    const selected_location = this.state.parent_location_id ? this.props.locations.index[this.state.parent_location_id] : {name: 'Select Location'}
+    const selected_location_type = this.state.location_type_id ? this.props.location_types.index[this.state.location_type_id] : {name: 'Select Location Type'}
     return (
-      <form className='medium-8 medium-centered columns resource-form' onSubmit={this._saveLocation}>
-        <div className='medium-7 columns'>
-          <h2>Location ID: {this.state.id}</h2>
-          <label htmlFor='name'>Name:
-            <input type='text' defaultValue={this.state.name}
-              onBlur={event => this._updateParam('name', event.target.value)}
+      <form className='medium-6 medium-centered columns resource-form' onSubmit={this._saveLocation}>
+        <h2>Location ID: {this.state.id}</h2>
+        <label>Type:
+          <DropdownButton
+            style='full-width'
+            items={this.props.location_types.raw || []}
+            title_field='name'
+            value_field='id'
+            sendValue={id => this._updateParam('location_type_id', id)}
+            text={selected_location_type.name}
+          />
+        </label>
+        {
+          selected_location_type.name !== 'Country' ? (
+            <label>Parent Location:
+              <DropdownButton
+                style='full-width'
+                items={this.props.locations.list || []}
+                sendValue={id => this._updateParam('parent_location_id', id)}
+                text={selected_location.name}
+              />
+            </label>
+          ) : null
+        }
+        <label htmlFor='name'>Name:
+          <input type='text' defaultValue={this.state.name}
+            onBlur={event => this._updateParam('name', event.target.value)}
+          />
+        </label>
+        <label htmlFor='location_code'>Location Code:
+          <input type='text' defaultValue={this.state.location_code}
+            onBlur={event => this._updateParam('location_code', event.target.value)}
+          />
+        </label>
+        <div className='row'>
+          <label className='medium-6 columns'>Latitude:
+            <input type='text' defaultValue={this.state.latitude}
+              onBlur={event => this._updateParam('latitude', event.target.value)}
             />
           </label>
-          <label htmlFor='short_name'>Short Name:
-            <input type='text' defaultValue={this.state.short_name}
-              onBlur={event => this._updateParam('short_name', event.target.value)}
+          <label className='medium-6 columns'>Longitude:
+            <input type='text' defaultValue={this.state.longitude}
+              onBlur={event => this._updateParam('longitude', event.target.value)}
             />
           </label>
-          <label htmlFor='source_name'>Source Name:
-            <input type='text' defaultValue={this.state.source_name}
-              onBlur={e => this._updateParam('source_name', e.target.value)}
-            />
-          </label>
-          <label htmlFor='description'>Description:
-            <textarea defaultValue={this.state.description}
-              onBlur={e => this._updateParam('description', e.target.value)}
-            />
-          </label>
-          <label>Data Format:
-            <DropdownButton
-              style='full-width'
-              items={data_formats}
-              sendValue={format => this._updateParam('data_format', format)}
-              text={selected_data_format}
-            />
-          </label>
-          {
-            showBounds ? (
-            <div className='row'>
-              <label className='medium-6 columns'>Good Bound:
-                <input type='text' defaultValue={this.state.good_bound}
-                  onBlur={event => this._updateParam('good_bound', event.target.value)}
-                />
-              </label>
-              <label className='medium-6 columns'>Bad Bound:
-                <input type='text' defaultValue={this.state.bad_bound}
-                  onBlur={event => this._updateParam('bad_bound', event.target.value)}
-                />
-              </label>
-            </div>
-            ) : null
-          }
-          <button className='large primary button expand'>Save</button>
         </div>
-        <div className='medium-5 columns'>
-          <br />
-          {location_tag_select}
-        </div>
+        <label>LPD Status:
+          <RadioGroup
+            name={'lpd_status'}
+            value={this.state.lpd_status || 0}
+            onChange={id => this._updateParam('lpd_status', parseInt(id))}
+            horizontal
+            prefix='lpd_status'
+            values={[
+              {value: 0, title: 'None'},
+              {value: 1, title: '1'},
+              {value: 2, title: '2'},
+              {value: 3, title: '3'}
+            ]}
+          />
+        </label>
+        <button className='large primary button expand'>Save</button>
       </form>
     )
   }

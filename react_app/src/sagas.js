@@ -6,6 +6,8 @@ import { watchGetAllCampaignTypes } from 'actions/campaign_actions'
 import { watchGetAllIndicators } from 'actions/indicator_actions'
 import { watchUpdateIndicator } from 'actions/indicator_actions'
 import { watchGetAllLocations } from 'actions/location_actions'
+import { watchGetAllLocationTypes } from 'actions/location_actions'
+import { watchUpdateLocation } from 'actions/location_actions'
 import { watchGetAllCharts } from 'actions/chart_actions'
 import { watchGetAllDashboards } from 'actions/dashboard_actions'
 import { watchGetAllUsers } from 'actions/user_actions'
@@ -26,6 +28,8 @@ export const rootSaga = function * () {
     watchGetAllIndicators(),
     watchUpdateIndicator(),
     watchGetAllLocations(),
+    watchGetAllLocationTypes(),
+    watchUpdateLocation(),
     watchGetAllCharts(),
     watchGetAllDashboards(),
     watchGetAllUsers()

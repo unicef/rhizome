@@ -5,13 +5,20 @@ import treeify from 'utilities/transform/treeify'
 
 const initial_state = {raw: null, index: null, list: null}
 
-const locations = handleActions({
+export const locations = handleActions({
   GET_ALL_LOCATIONS_SUCCESS: (state, action) => ({
     raw: action.payload,
     index: _.keyBy(action.payload, 'id'),
     list: createLocationTree(action.payload)
   })
 }, initial_state)
+
+export const location_types = handleActions({
+  GET_ALL_LOCATION_TYPES_SUCCESS: (state, action) => ({
+    raw: action.payload,
+    index: _.keyBy(action.payload, 'id')
+  })
+}, {raw: null, index: null})
 
 const createLocationTree = (raw_locations) => {
   return _(raw_locations).map(location => ({
@@ -25,5 +32,3 @@ const createLocationTree = (raw_locations) => {
   .map(ancestryString)
   .value()
 }
-
-export default locations
