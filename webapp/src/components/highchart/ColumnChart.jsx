@@ -41,11 +41,29 @@ class ColumnChart extends HighChart {
           opposite: true
         },
       ],
+      plotOptions: {
+        column: {
+          dataLabels: {
+            enabled: false,
+            formatter: function () {
+              return format.autoFormat(this.y, first_indicator.data_format, 1)
+            }
+          },
+          enableMouseTracking: true
+        }
+      },
       exporting: {
         buttons: {
           customButton: {
-            text: 'Column Stacking',
-            onclick: this._toggleStackMode,
+            text: 'Options',
+            menuItems: [{
+              text: 'Column Stacking',
+              onclick: this._toggleStackMode,
+            }, {
+              text: 'Labels',
+              onclick: this._toggleLabels,
+              separator: false
+            }],
             x: -65,
             y: -30,
             theme: {
@@ -195,6 +213,15 @@ class ColumnChart extends HighChart {
     this.chart.redraw()
   }
 
+  _toggleLabels = () => {
+    const self = this
+    this.chart.series.forEach(serie => {
+      const opt = serie.options
+      opt.dataLabels.enabled = !opt.dataLabels.enabled
+      opt.enableMouseTracking = !opt.enableMouseTracking
+      serie.update(opt);
+    })
+  }
 }
 
 export default ColumnChart
