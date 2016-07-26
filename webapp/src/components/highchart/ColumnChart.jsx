@@ -45,6 +45,9 @@ class ColumnChart extends HighChart {
         column: {
           dataLabels: {
             enabled: false,
+            style: {
+              textShadow: 'none'
+            },
             formatter: function () {
               return format.autoFormat(this.y, first_indicator.data_format, 1)
             }
