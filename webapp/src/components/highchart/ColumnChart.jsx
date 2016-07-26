@@ -120,6 +120,15 @@ class ColumnChart extends HighChart {
           name: last_indicator.name,
           color: this.props.indicator_colors[last_indicator.id],
           type: 'spline',
+          dataLabels: {
+            enabled: false,
+            style: {
+              textShadow: 'none'
+            },
+            formatter: function () {
+              return format.autoFormat(this.y, last_indicator.data_format, 1)
+            }
+          },
           data: datapoints.map(datapoint => datapoint.value)
         })
       } else {
