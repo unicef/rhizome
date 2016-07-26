@@ -24,11 +24,44 @@ class LineChart extends HighChart {
           }
         }
       },
+      plotOptions: {
+        line: {
+          dataLabels: {
+            enabled: true,
+            backgroundColor: 'rgba(249, 249, 249, 0.85098)',
+            borderRadius: '2',
+            borderWidth: '1',
+            borderColor: 'rgb(124, 181, 236)',
+            padding: 7,
+            y: -6,
+            formatter: function () {
+              return format.autoFormat(this.y, first_indicator.data_format, 1)
+            }
+          },
+          enableMouseTracking: false
+        }
+      },
       tooltip: {
         xDateFormat: '%b %Y',
         pointFormatter: function (point) {
           const value = format.autoFormat(this.y, first_indicator.data_format, 1)
           return `${this.series.name}: <b>${value}</b><br/>`
+        }
+      },
+      exporting: {
+        buttons: {
+          customButton: {
+            text: 'Labels',
+            onclick: this._toggleLabels,
+            x: -65,
+            y: -30,
+            theme: {
+              style: {
+                color: '#039',
+                textDecoration: 'underline'
+              }
+            }
+          }
         }
       },
       legend: {
@@ -56,6 +89,15 @@ class LineChart extends HighChart {
       })
     })
     return series
+  }
+
+  _toggleLabels = () => {
+    const self = this
+    var opt = this.chart.series[0].options;
+    opt.dataLabels.enabled = !opt.dataLabels.enabled
+    opt.enableMouseTracking = !opt.enableMouseTracking
+    opt.animation.duration = 500
+    this.chart.series[0].update(opt);
   }
 }
 
