@@ -1,28 +1,37 @@
-import React from 'react'
+import React, {Component} from 'react'
 import SourceDataHeader from 'components/headers/SourceDataHeader'
 
-const SourceDataPage = ({locations, campaigns, indicators}) => {
+class SourceDataPage extends Component {
 
-  console.log('locations', locations)
-  console.log('campaigns', campaigns)
-  console.log('indicators', indicators)
+  componentDidMount() {
+    if (!this.props.source_docs.raw) {
+      this.props.getAllSourceDocs()
+    }
+  }
 
-	const source_data_table = (
-		<div>
-			{ /* Main content for source data */ }
-		</div>
-	)
+  render = () => {
+    console.log('locations', this.props.locations)
+    console.log('campaigns', this.props.campaigns)
+    console.log('indicators', this.props.indicators)
 
-  return (
-    <div className='data-entry-page'>
-      <SourceDataHeader />
-      <div className='row'>
-        <div className='medium-12 columns'>
-        	{ source_data_table }
+  	const source_data_table = (
+  		<div>
+  			{ /* Main content for source data */ }
+  		</div>
+  	)
+
+    return (
+      <div className='data-entry-page'>
+        <SourceDataHeader />
+        <div className='row'>
+          <div className='medium-12 columns'>
+          	{ source_data_table }
+          </div>
         </div>
       </div>
-    </div>
-  )
+    )
+
+  }
 }
 
 export default SourceDataPage

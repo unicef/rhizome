@@ -11,6 +11,7 @@ import { watchUpdateLocation } from 'actions/location_actions'
 import { watchGetAllCharts } from 'actions/chart_actions'
 import { watchGetAllDashboards } from 'actions/dashboard_actions'
 import { watchGetAllUsers } from 'actions/user_actions'
+import { watchGetAllSourceDocs } from 'actions/source_data_actions'
 
 import { watchGetDatapoints } from 'actions/datapoint_actions'
 import { watchUpdateDatapoint } from 'actions/datapoint_actions'
@@ -29,6 +30,7 @@ export const rootSaga = function * () {
     watchUpdateIndicator(),
     watchGetAllLocations(),
     watchGetAllLocationTypes(),
+    watchGetAllSourceDocs(),
     watchUpdateLocation(),
     watchGetAllCharts(),
     watchGetAllDashboards(),

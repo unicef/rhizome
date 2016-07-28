@@ -3,19 +3,19 @@ import format from 'utilities/format'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import SourceDataPage from 'components/pages/SourceDataPage'
-import { selectGlobalCampaign, selectGlobalLocation } from 'actions/global_actions'
+import { getAllSourceDocs } from 'actions/source_data_actions'
 
 const mapStateToProps = state => {
   return {
     campaigns: state.campaigns,
     indicators: state.indicators,
     locations: state.locations,
+    source_docs: state.source_docs
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({
-  // selectGlobalCampaign,
-  // selectGlobalLocation
+const mapDispatchToProps = dispatch => bindActionCreators({
+  getAllSourceDocs
 }, dispatch)
 
 const SourceDataPageContainer = connect(mapStateToProps, mapDispatchToProps)(SourceDataPage)

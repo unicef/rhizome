@@ -9,6 +9,7 @@ import charts from 'reducers/charts_reducer'
 import {indicator, indicators} from 'reducers/indicators_reducer'
 import {locations, location_types} from 'reducers/locations_reducer'
 import users from 'reducers/users_reducer'
+import {source_docs} from 'reducers/source_data_reducer'
 
 const superuser = handleActions({
   GET_INITIAL_DATA_SUCCESS: (state, action) => action.payload.data.objects[0].is_superuser
@@ -19,6 +20,7 @@ const reducers = {
   charts,
   dashboards,
   data_entry,
+  source_docs,
   campaigns,
   campaign,
   indicators,
