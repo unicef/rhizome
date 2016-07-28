@@ -1,6 +1,9 @@
 import React, {Component} from 'react'
 import SourceDataHeader from 'components/headers/SourceDataHeader'
 
+import ResourceTable from 'components/molecules/ResourceTable'
+import Placeholder from 'components/global/Placeholder'
+
 class SourceDataPage extends Component {
 
   componentDidMount() {
@@ -10,14 +13,20 @@ class SourceDataPage extends Component {
   }
 
   render = () => {
-    console.log('locations', this.props.locations)
-    console.log('campaigns', this.props.campaigns)
-    console.log('indicators', this.props.indicators)
 
-  	const source_data_table = (
-  		<div>
-  			{ /* Main content for source data */ }
-  		</div>
+    const columnDefs = [
+      {headerName: "ID", field: "id"},
+      {headerName: "Document", field: "doc_title", editable: true},
+    ]
+
+    const source_data_table  = (
+        this.props.source_docs.raw ? (
+          <ResourceTable
+            rowData={this.props.source_docs.raw}
+            onRefreshData={() => this.props.getAllSourceDocs()}
+            columnDefs={columnDefs}
+            resourcePath='campaigns' />
+          ) : <Placeholder />
   	)
 
     return (
