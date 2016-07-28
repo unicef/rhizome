@@ -3,19 +3,18 @@ Designed for data visualization to help eradicate polio!
 
 Built with Python, Django, JavaScript, React, Reflux, HighCharts, and many other libraries.
 
-# Up and Running for Developers
-
 ## Setting up the development environment with Docker #
 
 Prerequisites
 
-1. VirtualBox
-http://download.virtualbox.org/virtualbox/5.0.26/VirtualBox-5.0.26-108824-OSX.dmg
+1. [VirtualBox](http://download.virtualbox.org/virtualbox/5.0.26/VirtualBox-5.0.26-108824-OSX.dmg)
 
-Install Docker Machine. In Mac OS X you could install via `brew`
 
-2. Docker Toolbox
-https://www.docker.com/products/docker-toolbox
+2. Docker
+
+Install Docker Machine and docker-compose In Mac OS X you could install via `brew` or using [Docker Toolbox](https://www.docker.com/products/docker-toolbox)
+
+3. Node v4.3.2+ and NPM v3.10.5+
 
 ```
 $ brew install docker-machine docker-compose
@@ -74,13 +73,15 @@ $ npm install
 $ gulp dev
 ```
 
-And in order to get the NEW .js working,  
+And in order to get the NEW .js working
 
 ```
 $ cd react_app
 $ npm install
-$ webpack -d
+$ webpack -d --watch
 ```
+
+If either of these commands do not work, then please ensure you have the proper `node` and `npm` versions installed.
 
 
 # Documentation
