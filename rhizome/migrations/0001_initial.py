@@ -260,6 +260,7 @@ class Migration(migrations.Migration):
                 ('good_bound', models.FloatField(null=True)),
                 ('bad_bound', models.FloatField(null=True)),
                 ('source_name', models.CharField(max_length=55)),
+                ('resource_name', models.CharField(default=1, max_length=10)),
             ],
             options={
                 'ordering': ('name',),

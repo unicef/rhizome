@@ -26,7 +26,7 @@ Initialize Docker environment
 $ docker-machine create -d virtualbox dev
 $ docker-machine start dev
 ```
-Add `eval "$(docker-machine env dev)"` into .bashrc file
+Add `eval "$(docker-machine env dev)"` into .bash_profile
 
 In Mac OS X, forward the port to host
 
@@ -41,10 +41,16 @@ Run
 $ docker-compose build && docker-compose up
 ```
 
-Enter Docker instance
+Enter Docker Web Server Container running Django
 
 ```
-$ docker exec -it rhizome_rhizome bash
+$ docker exec -it rhizome_rhizome_1 bash
+```
+
+Enter Docker DB Container running Postgres
+
+```
+docker exec -it rhizome_db_1 psql -U postgres
 ```
 
 # Documentation

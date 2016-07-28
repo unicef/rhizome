@@ -7,7 +7,7 @@ import django.db.models.deletion
 from django.conf import settings
 
 import pandas as pd
-from rhizome.models import Location, LocationPolygon
+from rhizome.models import Location, LocationPolygon, Document
 from django.db.models import get_app, get_models
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
@@ -19,7 +19,14 @@ def populate_initial_data(apps, schema_editor):
 
     We need to ingest the data itself in the same order as the excel
     sheet otherwise we will have foreign key constraint issues.
+
+    Here we also greate a document for "data entry" so that we source all
+    information entered via data entry to this id.
     '''
+
+    new_doc = Document.objects.create(
+        doc_title='Data Entry'
+    )
 
     process_meta_data()
     process_geo_json()
