@@ -47,11 +47,41 @@ Enter Docker Web Server Container running Django
 $ docker exec -it rhizome_rhizome_1 bash
 ```
 
-Enter Docker DB Container running Postgres
+While inside the docker web instance, create a superuser in order to login
 
 ```
-docker exec -it rhizome_db_1 psql -U postgres
+root@4d3814881439:/rhizome# ./manage.py createsuperuser
 ```
+
+To Enter Docker DB Container running Postgres
+
+```
+$ docker exec -it rhizome_db_1 psql -U postgres
+```
+
+Now that you have the application running, we will need to do a bit more work in
+order to be able to compile the front end assets.  
+
+As a note, we inherited this project that was built on an old version of react that we are working on transitioning.  So, unfortunately for now, there are two front end builds that need to be maintained in order for
+
+In the future, all of the front end logic, assets etc will be handled within the react app, and furthermore, this autoload webpack process we be handled by a 3rd container so that developers will not need to run this separately ( [see here](https://hharnisc.github.io/2015/09/16/developing-inside-docker-containers-with-osx.html) for an idea as to how this might work ).
+
+So in order to get the OLD .js working,  
+
+```
+$ cd webapp
+$ npm install
+$ gulp dev
+```
+
+And in order to get the NEW .js working,  
+
+```
+$ cd react_app
+$ npm install
+$ webpack -d
+```
+
 
 # Documentation
 Start here by checking out our [documentation](http://unicef.github.io/rhizome/).
