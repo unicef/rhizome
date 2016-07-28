@@ -502,7 +502,6 @@ class CustomDashboard(models.Model):
     class Meta:
         db_table = 'custom_dashboard'
 
-
 class ChartToDashboard(models.Model):
 
     chart = models.ForeignKey(CustomChart)

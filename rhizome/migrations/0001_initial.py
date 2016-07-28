@@ -106,6 +106,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
+                ('uuid', models.CharField(unique=True, max_length=255)),
                 ('title', models.CharField(unique=True, max_length=255)),
                 ('chart_json', jsonfield.fields.JSONField()),
             ],
@@ -121,6 +122,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(unique=True, max_length=255)),
                 ('description', models.CharField(max_length=1000)),
                 ('layout', models.IntegerField(default=0, null=True)),
+                ('rows', jsonfield.fields.JSONField(null=True, blank=True)),
             ],
             options={
                 'db_table': 'custom_dashboard',
@@ -538,11 +540,6 @@ class Migration(migrations.Migration):
             model_name='datapoint',
             name='source_submission',
             field=models.ForeignKey(to='rhizome.SourceSubmission'),
-        ),
-        migrations.AddField(
-            model_name='customdashboard',
-            name='default_office',
-            field=models.ForeignKey(to='rhizome.Office', null=True),
         ),
         migrations.AddField(
             model_name='campaigntoindicator',
