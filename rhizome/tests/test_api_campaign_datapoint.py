@@ -215,11 +215,10 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         # 6 create the class indicator mapping
 
-        mapping_1 = IndicatorClassMap.objects.create(
-        indicator = indicator,
-        string_value = "Fail",
-        enum_value = 1,
-        is_display =True)
+        # mapping_1 = IndicatorClassMap.objects.create(
+        # indicator = indicator,
+        # string_value = "Fail",
+        # is_display =True)
 
         # 7 Request To The API
         get_parameter = 'indicator__in={0}&campaign_start={1}&campaign_end={2}&location_id__in={3}'\

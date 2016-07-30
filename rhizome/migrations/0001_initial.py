@@ -161,6 +161,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('data_date', models.DateTimeField()),
+                ('campaign', models.ForeignKey(to='rhizome.Campaign', null=True)),
                 ('value', models.FloatField(null=True)),
                 ('agg_on_location', models.BooleanField()),
             ],
@@ -535,6 +536,11 @@ class Migration(migrations.Migration):
             model_name='datapoint',
             name='location',
             field=models.ForeignKey(to='rhizome.Location'),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='campaign',
+            field=models.ForeignKey(to='rhizome.Campaign', null=True),
         ),
         migrations.AddField(
             model_name='datapoint',

@@ -11,7 +11,7 @@ from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models import DataPointComputed, Campaign, Location, Document,\
-    LocationPermission, LocationTree, IndicatorClassMap, Indicator, DataPoint, \
+    LocationPermission, LocationTree, Indicator, DataPoint, \
     CalculatedIndicatorComponent, LocationType, SourceSubmission
 
 
