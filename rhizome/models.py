@@ -510,6 +510,7 @@ class CustomDashboard(models.Model):
 class Document(models.Model):
 
     docfile = models.FileField(upload_to='documents/%Y/%m/%d', null=True)
+    file_type = models.CharField(max_length=10)
     doc_title = models.TextField(unique=True)
     file_header = JSONField(null=True)
     created_by = models.ForeignKey(User, null=True)

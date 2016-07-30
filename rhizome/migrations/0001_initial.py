@@ -193,7 +193,8 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now=True)),
                 ('created_by', models.ForeignKey(
                     to=settings.AUTH_USER_MODEL, null=True)),
-            ],
+                ('file_type', models.CharField(default='campaign', max_length=10)),
+                ],
             options={
                 'ordering': ('-created_at',),
                 'db_table': 'source_doc',
@@ -546,6 +547,11 @@ class Migration(migrations.Migration):
             model_name='datapoint',
             name='source_submission',
             field=models.ForeignKey(to='rhizome.SourceSubmission'),
+        ),
+        migrations.AddField(
+            model_name='datapoint',
+            name='unique_index',
+            field=models.CharField(default=-1, unique=True, max_length=255),
         ),
         migrations.AddField(
             model_name='campaigntoindicator',
