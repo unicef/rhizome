@@ -55,8 +55,9 @@ class DocumentResource(BaseModelResource):
         # get the basic information needed from the request
         # and add the epoch time to the title of the document
         user_id, GET_data = bundle.request.user.id, bundle.data
-        post_data, doc_title = GET_data['docfile'], GET_data['doc_title'] \
-            + '-' + str(int(time.time()))
+        post_data, doc_title, file_type = \
+            GET_data['docfile'], GET_data['doc_title'] \
+            + '-' + str(int(time.time())), GET_data['file_type']
 
         # this handles the fact that test posts are different from
         # application posts. Need to investigate.
@@ -100,6 +101,7 @@ class DocumentResource(BaseModelResource):
 
         sd = Document.objects.create(**{
              'doc_title': doc_title,
+             'file_type': file_type,
              'created_by_id': user_id,
              'file_header': file_header
              })

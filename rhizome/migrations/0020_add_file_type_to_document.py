@@ -8,7 +8,9 @@ import django.db.models.deletion
 
 def add_file_type_if_not_exists(apps, schema_editor):
     '''
-    THis should run on production, but not when spinning up a new database
+    This should run on production, but not when spinning up a new database
+
+    Next time I deploy prod i will remove this migration.
     '''
 
     try:
