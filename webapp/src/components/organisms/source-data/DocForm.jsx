@@ -35,9 +35,21 @@ var DocForm = React.createClass({
     return str.indexOf(suffix, str.length - suffix.length) !== -1
   },
 
-  onDrop: function (files) {
-    if (files[0].name.endsWith('.csv') || files[0].name.endsWith('.xlsx') || files[0].name.endsWith('.xls')) {
-      this.handleFile(files[0])
+  onDropDateData: function (files){
+      console.log('onDropMultiCampaign')
+      this.setState({'file_type':'date_data'})
+      this.onDrop(files[0])
+  },
+
+  onDropCampaign: function (files){
+      console.log('onDropCampaign')
+      this.setState({'file_type':'campaign'})
+      this.onDrop(files[0])
+  },
+
+  onDrop: function (file) {
+    if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+      this.handleFile(file)
     } else {
       this.setState({
         errorMessage: 'Please upload a .csv, .xls or .xlsx file.'
@@ -85,26 +97,12 @@ var DocForm = React.createClass({
     DocFormActions.setOdkFormName(data)
   },
 
-  buildHeaderList: function (configType) {
-    var stateHeader = this.state.config_options
-
-    return ExpandableMenuItem.fromArray(
-      _.map(stateHeader, d => {
-        return {
-          title: d.replace('"', ''),
-          value: d.replace('"', '')
-        }
-      }),
-      this.setDocConfig.bind('config_type', configType))
-  },
-
   render: function () {
     var fileConfigForm = ''
     var syncUploadButton = <a disabled={this.state.isRefreshing} className='button button-refresh'
        onClick={this.syncDocData}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? ' ' : 'Sync Data'}
     </a>
 
-    console.log('this.state.created_doc_id : ', this.state.created_doc_id)
     let uploadButton = ''
     if (this.state.created_doc_id) {
       let nextLink = '/source-data/viewraw/' + this.state.created_doc_id
@@ -115,10 +113,6 @@ var DocForm = React.createClass({
     var errorMessage = (
         <div className='error'>{this.state.errorMessage}</div>
       )
-
-    var divZoneStyle = {
-      border: '3px solid #426281'
-    }
 
     var dropZoneStyle = {
       padding: '4rem 0',
@@ -134,26 +128,36 @@ var DocForm = React.createClass({
       cursor: 'pointer',
       minWidth: 200,
       fontFamily: 'adelle',
-      fontSize: '1rem'
+      fontSize: '1rem',
+      textAlign: 'center'
     }
 
-    let uploadStyle = {
-      padding: '0 30px'
-    }
+    var borderStyle = {border: '3px solid #426281'}
 
-    // let tableMarginStyle = {
-    //   marginTop: '50px'
-    // }
-
-    let dropZone = (
+    let dropZoneDate = (
       <div>
-        <div style={uploadStyle}>
-          <div style={divZoneStyle} className='medium-12 columns'>
-            <Dropzone onDrop={this.onDrop} style={dropZoneStyle}>
-              <div style={uploadButtonStyle}>Choose to upload</div>
+          <div style={borderStyle} className='medium-12 columns'>
+            <Dropzone onDrop={this.onDropDateData} style={dropZoneStyle}>
+              <div style={uploadButtonStyle}>Date Data</div>
             </Dropzone>
           </div>
         </div>
+    )
+
+    let dropZoneCampaign = (
+      <div>
+          <div style={borderStyle} className='medium-12 columns'>
+            <Dropzone onDrop={this.onDropCampaign} style={dropZoneStyle}>
+              <div style={uploadButtonStyle}>Campaign Data</div>
+            </Dropzone>
+          </div>
+        </div>
+    )
+
+    let dropZone = (
+      <div className='row'>
+        <div className='medium-6 columns'> {dropZoneDate} </div>
+        <div className='medium-6 columns'> {dropZoneCampaign} </div>
       </div>
     )
 
