@@ -24,12 +24,13 @@ var DocFormStore = Reflux.createStore({
     })
   },
 
-  onGetData (file, upload) {
+  onGetData (file, upload, file_type) {
     this.data.data_uri = upload.target.result
 
     api.uploadPost({
       docfile: upload.target.result,
-      doc_title: file.name
+      doc_title: file.name,
+      file_type: file_type
     }).then(response => {
       // this.data.config_options = response.file_header.replace('"', '').split(',')
       this.data.created_doc_id = response.objects.id

@@ -38,18 +38,18 @@ var DocForm = React.createClass({
   onDropDateData: function (files){
       console.log('onDropMultiCampaign')
       this.setState({'file_type':'date_data'})
-      this.onDrop(files[0])
+      this.onDrop(files[0], 'date')
   },
 
   onDropCampaign: function (files){
       console.log('onDropCampaign')
       this.setState({'file_type':'campaign'})
-      this.onDrop(files[0])
+      this.onDrop(files[0], 'campaign')
   },
 
-  onDrop: function (file) {
+  onDrop: function (file, file_type) {
     if (file.name.endsWith('.csv') || file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
-      this.handleFile(file)
+      this.handleFile(file, file_type)
     } else {
       this.setState({
         errorMessage: 'Please upload a .csv, .xls or .xlsx file.'
@@ -63,11 +63,11 @@ var DocForm = React.createClass({
 
   // when a file is passed to the input field, retrieve the contents as a
   // base64-encoded data URI and save it to the component's state
-  handleFile: function (file) {
+  handleFile: function (file, file_type) {
     var reader = new window.FileReader()
 
     reader.onload = function (upload) {
-      DocFormActions.getData(file, upload)
+      DocFormActions.getData(file, upload, file_type)
     }
     reader.readAsDataURL(file)
   },

@@ -43,8 +43,8 @@ var SourceDataStore = Reflux.createStore({
       },
       'doc_index': {
         'data_fn': api.source_doc,
-        'fields': ['id', 'doc_title', 'created_at', 'edit_link'],
-        'header': ['id', 'doc_title', 'created_at', 'edit_link'],
+        'fields': ['id', 'doc_title','file_type', 'created_at', 'edit_link'],
+        'header': ['id', 'doc_title','file_type', 'created_at', 'edit_link'],
         'search_fields': ['id', 'doc_title']
       },
       'mapped': {
