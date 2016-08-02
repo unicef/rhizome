@@ -62,11 +62,11 @@ class DocTransFormResource(BaseNonModelResource):
             raise RhizomeApiException(message=err.message)
 
         if file_type == 'campaign':
-            refresh_master_for_campaigns()
+            self.refresh_master_for_campaigns(document_id)
 
         return Document.objects.filter(id=document_id).values()
 
-    def refresh_master_for_campaigns(self):
+    def refresh_master_for_campaigns(self, document_id):
         '''
         '''
         doc_campaign_ids = set(list(DataPoint.objects
@@ -74,7 +74,7 @@ class DocTransFormResource(BaseNonModelResource):
             .values_list('campaign_id', flat=True)))
 
         for c_id in doc_campaign_ids:
-            
+
             agg_refresh_obj = AggRefresh(c_id)
             # try/except block hack because tests fail otherwise
             try:

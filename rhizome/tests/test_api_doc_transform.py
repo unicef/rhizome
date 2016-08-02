@@ -48,7 +48,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
     def test_doc_transform(self):
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv')
-        get_data = {'document_id': doc.id, 'file_type':'multi_campaign'}
+        get_data = {'document_id': doc.id, 'file_type':'campaign'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
 
         self.assertHttpOK(resp)
@@ -73,7 +73,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
             master_object_id=self.mapped_indicator_with_data
         )
         doc = self.ts.create_arbitrary_document('AfgPolioCases.csv')
-        get_data = {'document_id': doc.id, 'file_type':'date_file'}
+        get_data = {'document_id': doc.id, 'file_type':'date'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
@@ -87,7 +87,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
     def test_doc_transform_with_zeros(self):
         doc = self.ts.create_arbitrary_document(
             document_docfile='zero_val_test.csv')
-        get_data = {'document_id': doc.id, 'file_type':'multi_campaign'}
+        get_data = {'document_id': doc.id, 'file_type':'campaign'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
@@ -102,7 +102,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         # upload document and run transform
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv')
-        get_data = {'document_id': doc.id, 'file_type':'multi_campaign'}
+        get_data = {'document_id': doc.id, 'file_type':'campaign'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(DataPointComputed.objects.all()[0].value, 0.082670906)
@@ -110,7 +110,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         # upload and transform again:
         doc_2 = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign_2.csv', doc_title='eoc_post_campaign_2.csv')
-        get_data_2 = {'document_id': doc_2.id, 'file_type':'multi_campaign'}
+        get_data_2 = {'document_id': doc_2.id, 'file_type':'campaign'}
         resp_2 = self.ts.get(self, '/api/v1/transform_upload/', get_data_2)
         self.assertHttpOK(resp_2)
 
@@ -139,7 +139,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         )
         doc = self.ts.create_arbitrary_document(
             document_docfile='AfgPolioCases.csv', doc_title='AfgPolioCases.csv')
-        get_data = {'document_id': doc.id, 'file_type': 'date_file'}
+        get_data = {'document_id': doc.id, 'file_type': 'date'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         data_date = datetime(2014, 9, 1, 0, 0)
@@ -152,7 +152,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         # do it again
         doc = self.ts.create_arbitrary_document(
             document_docfile='AfgPolioCases_2.csv', doc_title='AfgPolioCases_2.csv')
-        get_data = {'document_id': doc.id, 'file_type': 'date_file'}
+        get_data = {'document_id': doc.id, 'file_type': 'date'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         data_date = datetime(2014, 9, 1, 0, 0)
         dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
@@ -188,7 +188,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
 
         doc = self.ts.create_arbitrary_document(
             document_docfile='lqas_test.csv', doc_title='lqas_test.csv')
-        get_data = {'document_id': doc.id, 'file_type': 'multi_campaign'}
+        get_data = {'document_id': doc.id, 'file_type': 'campaign'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.deserialize(resp)
 
