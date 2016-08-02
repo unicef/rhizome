@@ -124,11 +124,14 @@ class ColumnChart extends HighChart {
           type: 'spline',
           dataLabels: {
             enabled: false,
+            y: -8,
             style: {
               textShadow: 'none'
             },
             formatter: function () {
-              return format.autoFormat(this.y, last_indicator.data_format, 1)
+              if (this.y !== 0 && this.y !== 0.0) {
+                return format.autoFormat(this.y, last_indicator.data_format, 1)
+              }
             }
           },
           data: datapoints.map(datapoint => datapoint.value)
