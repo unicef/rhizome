@@ -40,7 +40,19 @@ Run
 $ docker-compose build && docker-compose up
 ```
 
-Enter Docker Web Server Container running Django
+Now that the app is running, find the IP of the docker machine with:
+
+```
+$ docker-machine ip dev
+-> 192.168.99.100
+```
+
+and visit: http://192.168.99.100:8000/ to use the app.
+
+## Helpful Commands
+
+
+To Enter Docker Web Server Container running Django
 
 ```
 $ docker exec -it rhizome_rhizome_1 bash
@@ -50,6 +62,12 @@ While inside the docker web instance, create a superuser in order to login
 
 ```
 root@4d3814881439:/rhizome# ./manage.py createsuperuser
+```
+
+While inside the docker web instance, to run the Python Tests:
+
+```
+root@4d3814881439:/rhizome# ./manage.py test --settings=rhizome.settings.test
 ```
 
 To Enter Docker DB Container running Postgres
@@ -82,6 +100,22 @@ $ webpack -d --watch
 ```
 
 If either of these commands do not work, then please ensure you have the proper `node` and `npm` versions installed.
+
+# Serving the Django Application with Apache.
+
+Make sure that Apache is configured to use the
+[prefork MPM](https://httpd.apache.org/docs/2.4/mpm.html); the worker and event
+MPMs result in incorrect responses returned for requests when multiple requests
+are made to the server.
+
+```
+sudo apt-get install apache2-mpm-prefork
+```
+
+See more [here](http://codebucket.co.in/apache-prefork-mpm-configuration/)
+
+For more information on deploying [Django][] applications, see the
+[Django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/).
 
 
 # Documentation

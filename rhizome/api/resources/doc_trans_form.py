@@ -46,38 +46,39 @@ class DocTransFormResource(BaseNonModelResource):
         document_id = request.GET.get('document_id', None)
         file_type = request.GET.get('file_type', 'campaign')
 
-        file_processor_map = {
-            'campaign': CampaignDocTransform,
-            'multi_campaign' : CampaignDocTransform,
-            'date_file' :  DateDocTransform
-        }
+        if file_type == 'campaign':
+            transform_obj = CampaignDocTransform(user_id, document_id)
+        elif file_type == 'date':
+            transform_obj = DateDocTransform(user_id, document_id)
+        else:
+            raise RhizomeApiException(message='file_type %s not supported' %\
+                file_type)
 
         try:
-            transform_obj = file_processor_map[file_type](user_id, document_id)
-        except KeyError:
-            msg = 'file_type %s not supported' % file_type
-            raise RhizomeApiException(message=msg)
-
-        try:
-            ## ingest tihe file ##
             transform_obj.main()
             refresh_obj = MasterRefresh(request.user.id, document_id)
             refresh_obj.main()
         except Exception as err:
             raise RhizomeApiException(message=err.message)
 
-        if file_type == 'multi_campaign':
-            doc_campaign_ids = set(list(DataPoint.objects
-                .filter(source_submission__document_id=document_id)
-                .values_list('campaign_id', flat=True)))
-
-            for c_id in doc_campaign_ids:
-                agg_refresh_obj = AggRefresh(c_id)
-                # try/except block hack because tests fail otherwise
-                try:
-                    with transaction.atomic():
-                        agg_refresh_obj.main()
-                except TransactionManagementError as e:
-                    pass
+        if file_type == 'campaign':
+            refresh_master_for_campaigns()
 
         return Document.objects.filter(id=document_id).values()
+
+    def refresh_master_for_campaigns(self):
+        '''
+        '''
+        doc_campaign_ids = set(list(DataPoint.objects
+            .filter(source_submission__document_id=document_id)
+            .values_list('campaign_id', flat=True)))
+
+        for c_id in doc_campaign_ids:
+            
+            agg_refresh_obj = AggRefresh(c_id)
+            # try/except block hack because tests fail otherwise
+            try:
+                with transaction.atomic():
+                    agg_refresh_obj.main()
+            except TransactionManagementError as e:
+                pass

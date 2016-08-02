@@ -31,32 +31,15 @@ class MasterRefresh(object):
         self.submission_data variable with these list of ids.
         '''
 
-        self.ss_location_code_batch_size = 50
-        self.document_id = document_id
+        self.document_object = Document.objects.get(id = document_id)
+        self.document_id = self.document_object.id
         self.user_id = user_id
 
         self.db_doc_deets = self.get_document_config()
         self.source_map_dict = self.get_document_meta_mappings()
-        # self.class_map_dict = self.get_class_indicator_mappings()
-        self.file_header = Document.objects.get(
-            id=self.document_id).file_header
 
-        # self.to_process_ss_ids = SourceSubmission.objects\
-        #         .filter(document_id = self.document_id,\
-        #             process_status='TO_PROCESS')
-
-        # self.location_codes_to_process = SourceSubmission\
-        #     .objects.filter(id__in = self.to_process_ss_ids)\
-        #     .values_list('location_code',flat = True).distinct()\
-        #     [:self.ss_location_code_batch_size]
-
-        # self.ss_ids_to_process, self.all_ss_ids =\
-        #     self.refresh_submission_details()
-        #
-        # self.submission_data = dict(SourceSubmission.objects.filter(id__in = \
-        #     self.ss_ids_to_process).values_list('id','submission_json'))
-
-    ## __init__ HELPER METHOD ##
+        self.file_header = self.document_object.file_header
+        self.file_type = self.document_object.file_type
 
     def get_document_config(self):
         '''
@@ -328,17 +311,17 @@ class MasterRefresh(object):
 
         cleaned_val = None
         # handle string 'class' type indicators
-        if indicator_id in self.class_map_dict:
-            try:
-                cleaned_val = self.class_map_dict[indicator_id][value]
-            except KeyError:
-                return None
+        # if indicator_id in self.class_map_dict:
+        #     try:
+        #         cleaned_val = self.class_map_dict[indicator_id][value]
+        #     except KeyError:
+        #         return None
         # handle numbers
-        else:
-            try:
-                cleaned_val = self.clean_val(value)
-            except ValueError:
-                return None
+        # else:
+        try:
+            cleaned_val = self.clean_val(value)
+        except ValueError:
+            return None
 
         if not cleaned_val == None:
             doc_dp = DocDataPoint(**{
