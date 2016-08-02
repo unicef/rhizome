@@ -49,7 +49,9 @@ class ColumnChart extends HighChart {
               textShadow: 'none'
             },
             formatter: function () {
-              return format.autoFormat(this.y, first_indicator.data_format, 1)
+              if (this.y !== 0) {
+                return format.autoFormat(this.y, first_indicator.data_format, 1)
+              }
             }
           },
           enableMouseTracking: true
