@@ -126,9 +126,7 @@ const DashboardContainer = React.createClass({
           placeholder='Enter Description'/>
       </form>
     ) : (
-      <p onClick={this._toggleTitleEdit} className='dashboard-description'>
-        { dashboard.description }
-      </p>
+      <p className='dashboard-description'>{ dashboard.description }</p>
     )
 
     return (

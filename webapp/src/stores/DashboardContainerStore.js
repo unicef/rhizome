@@ -11,6 +11,7 @@ import DashboardChartsActions from 'actions/DashboardChartsActions'
 class Row {
   constructor () {
     this.layout = null
+    this.description = null
     this.charts = []
   }
 }
@@ -62,6 +63,11 @@ const DashboardContainerStore = Reflux.createStore({
 
   onSetDashboardDescription: function (description) {
     this.dashboard.description = description
+    this.trigger(this.dashboard)
+  },
+
+  onSetRowDescription: function (description, row_index) {
+    this.dashboard.rows[row_index].description = description
     this.trigger(this.dashboard)
   },
 

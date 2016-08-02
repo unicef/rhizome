@@ -11,6 +11,7 @@ const DashboardRow = React.createClass({
   propTypes: {
     all_charts: PropTypes.object,
     charts: PropTypes.array,
+    description: PropTypes.string,
     layout: PropTypes.number,
     editMode: PropTypes.bool,
     rowIndex: PropTypes.number,
@@ -21,6 +22,7 @@ const DashboardRow = React.createClass({
     return {
       rowIndex: null,
       all_charts: null,
+      description: null,
       charts: null,
       layout: null
     }
@@ -92,9 +94,21 @@ const DashboardRow = React.createClass({
       </div>
     ) : null
 
+    const row_description = this.props.editMode ? (
+      <form className={'row-description'}>
+        <textarea
+          rows='2'
+          ref='row_description_input'
+          value={this.props.description}
+          onChange={e => DashboardContainerActions.setRowDescription(e.currentTarget.value, rowIndex)}
+          placeholder='Enter row description'/>
+      </form>
+    ) : <h2>{this.props.description}</h2>
+
     if (layout === 2) {
       return (
         <div className='row animated fadeInDown'>
+          {row_description}
           {row_order_buttons}
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
@@ -103,6 +117,7 @@ const DashboardRow = React.createClass({
     } else if (layout === 3) {
       return (
         <div className='row animated fadeInDown'>
+          {row_description}
           {row_order_buttons}
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-4 columns'>{uuids ? this.renderChart(charts[uuids[1]], 1) : chart_slot}</div>
@@ -112,6 +127,7 @@ const DashboardRow = React.createClass({
     } else if (layout === 4) {
       return (
         <div className='row animated fadeInDown' style={{display: 'flex'}}>
+          {row_description}
           {row_order_buttons}
           <div className='medium-6 columns' style={{display: 'flex'}}>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
           <div className='medium-6 columns'>
@@ -127,6 +143,7 @@ const DashboardRow = React.createClass({
     }
     return (
       <div className='row animated fadeInDown'>
+        {row_description}
         {row_order_buttons}
         <div className='medium-12 columns'>{uuids ? this.renderChart(charts[uuids[0]], 0) : chart_slot}</div>
       </div>

@@ -55,7 +55,8 @@ class BubbleMap extends HighChart {
         enabled: false,
         color: '#000',
         formatter: function () {
-          return props.locations_index[this.point.location_id].name
+          const value = format.autoFormat(this.point.z, current_indicator.data_format, 1)
+          return props.locations_index[this.point.location_id].name + '<br>' + value
         }
       },
       minSize: 4,
