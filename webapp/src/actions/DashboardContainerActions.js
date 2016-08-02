@@ -14,6 +14,7 @@ const DashboardContainerActions = Reflux.createActions({
   'selectRowLayout': 'selectRowLayout',
   'toggleEditMode': 'toggleEditMode',
   'setDashboardTitle': 'setDashboardTitle',
+  'setRowDescription': 'setRowDescription',
   'setDashboardDescription': 'setDashboardDescription',
   'saveDashboard': 'saveDashboard'
 })

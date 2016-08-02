@@ -48,6 +48,11 @@ $total-columns: 7;
 
 .dashboard-page {
 	background: $rhz-footer-bg-color;
+	.row > h2 {
+		margin-top: 1rem;
+		margin-left: 1rem;
+		color: white;
+	}
 	.row-position-buttons {
 		z-index: 301;
 		position: absolute;
@@ -60,11 +65,11 @@ $total-columns: 7;
 }
 
 
-.dashboard-description {
+.dashboard-description, .row-description {
 	margin-left: 1.5rem;
 	color: white;
 	font-size: 1.6em;
-	width: 40rem;
+	width: 100%;
 	textarea {
 		line-height: 1.5;
 		color: white;
