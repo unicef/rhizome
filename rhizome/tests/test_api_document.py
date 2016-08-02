@@ -24,6 +24,7 @@ class DocumentResourceTest(RhizomeApiTestCase):
         file = open(path).read()
         encoded_data = base64.b64encode(file)
         post_data = {'docfile': encoded_data,
+                     'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.csv'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.deserialize(resp)
@@ -35,6 +36,7 @@ class DocumentResourceTest(RhizomeApiTestCase):
         file = open(path).read()
         encoded_data = base64.b64encode(file)
         post_data = {'docfile': encoded_data,
+                     'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.xlsx'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.deserialize(resp)
@@ -46,6 +48,7 @@ class DocumentResourceTest(RhizomeApiTestCase):
         file = open(path).read()
         encoded_data = base64.b64encode(file)
         post_data = {'docfile': encoded_data,
+                     'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.xlsx'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpCreated(resp)
@@ -70,7 +73,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
         path = os.path.join(os.path.dirname(__file__), file_name)
         file = open(path).read()
         encoded_data = base64.b64encode(file)
-        post_data = {'docfile': encoded_data, 'doc_title': 'empty_csv.csv'}
+        post_data = {'docfile': encoded_data, 'file_type': 'campaign', \
+            'doc_title': 'empty_csv.csv'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpApplicationError(resp)
 
@@ -79,7 +83,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
         path = os.path.join(os.path.dirname(__file__), file_name)
         file = open(path).read()
         encoded_data = base64.b64encode(file)
-        post_data = {'docfile': encoded_data, 'doc_title': 'empty_xlsx.xlsx'}
+        post_data = {'docfile': encoded_data,'file_type': 'campaign',\
+            'doc_title': 'empty_xlsx.xlsx'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpApplicationError(resp)
 
@@ -88,7 +93,7 @@ class DocumentResourceTest(RhizomeApiTestCase):
                             '_data/eoc_post_campaign.csv')
         file = open(path).read()
         encoded_data = base64.b64encode(file)
-        post_data = {'docfile': encoded_data}
+        post_data = {'docfile': encoded_data,'file_type': 'campaign'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpApplicationError(resp)
 
