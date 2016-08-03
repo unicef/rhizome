@@ -32,10 +32,8 @@ class DocTransFormResource(BaseNonModelResource):
         ## when you upload a file, step one is getting data into source
             submission
             ## --> DocTransform <-- ##
-
         ## Step two is translating form source_submission into datapoints
             ## --> REfreshMaster <----
-
         ## step three is aggregation
             ## agg refresh ##
         '''
@@ -44,17 +42,23 @@ class DocTransFormResource(BaseNonModelResource):
 
         ran_campaign_doc_transform = False # if so, we need to run agg_refresh
         document_id = request.GET.get('document_id', None)
-        file_type = request.GET.get('file_type', 'campaign')
+        document_object = Document.objects.get(id = document_id)
+        file_type = document_object.file_type
 
-        if file_type == 'campaign':
-            transform_obj = CampaignDocTransform(user_id, document_id)
-        elif file_type == 'date':
-            transform_obj = DateDocTransform(user_id, document_id)
-        else:
-            raise RhizomeApiException(message='file_type %s not supported' %\
-                file_type)
+
+        file_processor_map = {
+            'campaign': CampaignDocTransform,
+            'date' :  DateDocTransform
+        }
 
         try:
+            transform_obj = file_processor_map[file_type](user_id, document_id)
+        except KeyError:
+            msg = 'file_type %s not supported' % file_type
+            raise RhizomeApiException(message=msg)
+
+        try:
+            ## ingest tihe file ##
             transform_obj.main()
             refresh_obj = MasterRefresh(request.user.id, document_id)
             refresh_obj.main()
@@ -62,23 +66,17 @@ class DocTransFormResource(BaseNonModelResource):
             raise RhizomeApiException(message=err.message)
 
         if file_type == 'campaign':
-            self.refresh_master_for_campaigns(document_id)
+            doc_campaign_ids = set(list(DataPoint.objects
+                .filter(source_submission__document_id=document_id)
+                .values_list('campaign_id', flat=True)))
+
+            for c_id in doc_campaign_ids:
+                agg_refresh_obj = AggRefresh(c_id)
+                # try/except block hack because tests fail otherwise
+                try:
+                    with transaction.atomic():
+                        agg_refresh_obj.main()
+                except TransactionManagementError as e:
+                    pass
 
         return Document.objects.filter(id=document_id).values()
-
-    def refresh_master_for_campaigns(self, document_id):
-        '''
-        '''
-        doc_campaign_ids = set(list(DataPoint.objects
-            .filter(source_submission__document_id=document_id)
-            .values_list('campaign_id', flat=True)))
-
-        for c_id in doc_campaign_ids:
-
-            agg_refresh_obj = AggRefresh(c_id)
-            # try/except block hack because tests fail otherwise
-            try:
-                with transaction.atomic():
-                    agg_refresh_obj.main()
-            except TransactionManagementError as e:
-                pass

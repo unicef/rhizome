@@ -357,8 +357,6 @@ class MasterRefresh(object):
                 pass
         ## clean!  i am on a deadline rn :-/  ##
 
-        locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-
         try:
             cleaned_val = locale.atoi(val)  # 100,000 -> 100000.oo
         except AttributeError:

@@ -25,7 +25,7 @@ class RefreshMasterResource(BaseNonModelResource):
         '''
         Run the refresh master task for the document_id passed.
 
-        Also, for any effected campaigns, run the aggrefersh on those in order
+        Also, for any effected campaigns, run the agg_refresh on those in order
         to calculated aggregated and calcualted values.
         '''
 
@@ -33,10 +33,11 @@ class RefreshMasterResource(BaseNonModelResource):
         mr = MasterRefresh(request.user.id, doc_id)
         mr.main()
 
-        doc_campaign_ids = set(list(DataPoint.objects
-                        .filter(source_submission__document_id=doc_id)
-                        .values_list('campaign_id', flat=True)))
-        for c_id in doc_campaign_ids:
-            AggRefresh(c_id)
+        if Document.objects.get(id = doc_id).file_type == 'campaign':
+            doc_campaign_ids = set(list(DataPoint.objects
+                            .filter(source_submission__document_id=doc_id)
+                            .values_list('campaign_id', flat=True)))
+            for c_id in doc_campaign_ids:
+                AggRefresh(c_id)
 
         return Document.objects.filter(id=doc_id).values()

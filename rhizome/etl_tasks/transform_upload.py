@@ -11,7 +11,7 @@ from rhizome.models import Document, SourceSubmission, DocumentDetail, DocDetail
 from sets import Set
 
 from datetime import datetime
-
+from dateutil.parser import parse
 
 class BadFileHeaderException(Exception):
     defaultMessage = "Your Header Has Commas in it, please fix and re-upload"
@@ -300,19 +300,6 @@ class DateDocTransform(DocTransform):
         super(DateDocTransform, self).__init__(
             user_id, document_id, raw_csv_df)
 
-    def clean_date(self, date_string):
-
-        try:
-            date = datetime.strptime(date_string, '%d-%m-%y')
-        except ValueError:
-            date = datetime.strptime(date_string, '%d-%m-%Y')
-        except ValueError:
-            date = datetime.strptime(date_string, '%d/%m/%y')
-        except ValueError:
-            date = None
-
-        return date
-
     def process_raw_source_submission(self, submission):
 
         submission_ix, submission_data = submission[0], submission[1:]
@@ -323,7 +310,7 @@ class DateDocTransform(DocTransform):
         if instance_guid == '' or instance_guid in self.existing_submission_keys:
             return None, None
 
-        cleaned_date = self.clean_date(submission_data['data_date'])
+        cleaned_date = parse(submission_data['data_date'])
         submission_dict = {
             'submission_json': submission_data,
             'document_id': self.document.id,
@@ -337,9 +324,9 @@ class DateDocTransform(DocTransform):
 
 
     def main(self):
-        self.process_file()
+        self.document_to_source_submission()
 
-    def process_file(self):
+    def document_to_source_submission(self):
         '''
         Takes a file and dumps the data into the source submission table.
         Returns a list of source_submission_ids

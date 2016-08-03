@@ -63,8 +63,8 @@ var SourceDataStore = Reflux.createStore({
       },
       'results': {
         'data_fn': api.docResults,
-        'fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
-        'header': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
+        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'data_date', 'value'],
+        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'data_date', 'value'],
         'search_fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name']
       }
       // 'errors': {
