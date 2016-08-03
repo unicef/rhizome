@@ -6,24 +6,6 @@ from django.db.utils import ProgrammingError
 
 import django.db.models.deletion
 
-def add_file_type_if_not_exists(apps, schema_editor):
-    '''
-    This should run on production, but not when spinning up a new database
-
-    Next time I deploy prod i will remove this migration.
-    '''
-
-    try:
-        migrations.AddField(
-            model_name='document',
-            name='file_type',
-            field=models.CharField(default='campaign', max_length=10),
-            preserve_default=False,
-        )
-    except ProgrammingError:
-        pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -31,5 +13,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(add_file_type_if_not_exists)
+        migrations.AddField(
+            model_name='document',
+            name='file_type',
+            field=models.CharField(default='campaign', max_length=10),
+            preserve_default=False,
+        )
     ]
