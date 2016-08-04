@@ -21,7 +21,8 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.location = \
             self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
 
-        self.document = self.test_setup.create_arbitrary_document(id=22)
+        self.document = self\
+            .test_setup.create_arbitrary_document(id=22,file_type ='campaign')
         self.som_0 = SourceObjectMap.objects.create(
             source_object_code='This is not mapped',
             master_object_id = -1,

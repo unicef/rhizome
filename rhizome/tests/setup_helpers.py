@@ -60,17 +60,19 @@ class TestSetupHelpers(RhizomeApiTestCase):
                 master_object_id=-1
             )
 
-    def create_arbitrary_document(self, document_docfile='eoc_post_campaign.csv', doc_title='eoc_post_campaign.csv', id=None):
+    def create_arbitrary_document(self, document_docfile='eoc_post_campaign.csv', doc_title='eoc_post_campaign.csv', id=None, file_type=None):
         document = ""
         if id:
             document = Document.objects.create(
                 doc_title=doc_title,
+                file_type=file_type,
                 created_by_id=self.user.id,
                 guid='test',
                 id=id)
         else:
             document = Document.objects.create(
                 doc_title=doc_title,
+                file_type=file_type,
                 created_by_id=self.user.id,
                 guid='test')
         document.docfile = document_docfile

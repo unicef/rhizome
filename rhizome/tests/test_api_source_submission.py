@@ -43,6 +43,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
 
     def test_get_source_submission_by_doc(self):
         doc = self.ts.create_arbitrary_document(
+            file_type = 'campaign',
             document_docfile='eoc_post_campaign.csv')
         dt = CampaignDocTransform(self.ts.user.id, doc.id)
         dt.main()
@@ -55,7 +56,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
 
     def test_get_source_submission_by_id(self):
         doc = self.ts.create_arbitrary_document(
-            document_docfile='eoc_post_campaign.csv')
+            document_docfile='eoc_post_campaign.csv', file_type='campaign')
         dt = CampaignDocTransform(self.ts.user.id, doc.id)
         dt.main()
         ss_id = SourceSubmission.objects.all()[0].id
