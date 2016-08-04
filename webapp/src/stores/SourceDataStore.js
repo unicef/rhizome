@@ -6,28 +6,35 @@ var SourceDataStore = Reflux.createStore({
 
   init: function () {
     var self = this
+    self.data = {}
 
-    self.data = {
-      docObj: null,
-      docTab: 'doc_index',
-      tableDef: this.getTableDef()
+    let currentPath = window.location.pathname
+    let cleanPath = currentPath.replace('/source-data/', '')
+    let urlParams = cleanPath.split('/')
+    let doc_tab = 'doc_index'
+    let doc_id = null
+
+
+    if (urlParams.length === 2) {
+      doc_tab = urlParams[0],
+      doc_id = urlParams[1],
+      this.getDocObj(doc_id)
     }
     self.trigger(self.data)
   },
 
   getInitialState () {
-    var initialState = {
-      tableDef: this.getTableDef(),
-      doc_id: null,
-      doc_tab: 'doc_index'
+    return {
+      tableDef: this.getTableDef()
     }
     return initialState
   },
 
-  onGetDocObj: function (doc_id) {
+  getDocObj: function (doc_id) {
     var self = this
-    api.source_doc({ id: doc_id }).then(function (response) {
+      api.source_doc({id: doc_id}).then(function (response) {
       self.data.doc_obj = response.objects[0]
+      self.data.file_type = response.objects[0].file_type
       self.trigger(self.data)
     })
   },
@@ -72,8 +79,8 @@ var SourceDataStore = Reflux.createStore({
       },
       'campaign_results': {
         'data_fn': api.campaignDocResults,
-        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'campaign', 'value'],
-        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'campaign', 'value'],
+        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
+        'fields': ['indicator__id', 'indicator__short_name', 'location__name', 'campaign__name', 'value'],
         'search_fields': ['indicator_id', 'indicator__short_name', 'location__name', 'campaign__name']
       }
       // 'errors': {
