@@ -58,7 +58,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
     def test_data_date_transform(self):
         DataPoint.objects.all().delete()
         loc_map = SourceObjectMap.objects.create(
-            source_object_code='AF001047005000000000',
+            source_object_code='AF001054001000000000',
             content_type='location',
             mapped_by_id=self.ts.user.id,
             master_object_id=self.mapped_location_id
@@ -72,18 +72,26 @@ class DocTransformResourceTest(RhizomeApiTestCase):
             mapped_by_id=self.ts.user.id,
             master_object_id=self.mapped_indicator_with_data
         )
-        doc = self.ts.create_arbitrary_document('AfgPolioCases.csv',\
+        doc = self.ts.create_arbitrary_document('AfgPolioCases.csv', \
             file_type='date')
-        get_data = {'document_id': doc.id}
+        get_data = {'document_id': doc.id, 'file_type':'date_file'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
-        data_date = datetime(2014, 9, 1, 0, 0)
-        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
+        ## check out the date format in the test data -- `17-7-2015`
+        data_date = datetime(2015, 07, 17, 0, 0)
+        single_dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
                                       indicator=self.mapped_indicator_with_data,
                                       data_date=data_date)
-        self.assertEqual(len(dp), 1)
-        self.assertEqual(1, dp[0].value)
+        self.assertEqual(len(single_dp), 1)
+        self.assertEqual(1, single_dp[0].value)
+
+        all_achin_dps = DataPoint.objects\
+            .filter(location_id=self.mapped_location_id,
+                    indicator=self.mapped_indicator_with_data,
+                    data_date__gt='2000-01-01', data_date__lt='2020-01-01')
+
+        self.assertEqual(len(all_achin_dps), 6)
 
     def test_doc_transform_with_zeros(self):
         doc = self.ts.create_arbitrary_document(
@@ -125,7 +133,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
     def test_duplicate_datapoint_data_date(self):
         # create required metadata
         loc_map = SourceObjectMap.objects.create(
-            source_object_code='AF001047005000000000',
+            source_object_code='AF001054001000000000',
             content_type='location',
             mapped_by_id=self.ts.user.id,
             master_object_id=self.mapped_location_id
@@ -147,14 +155,13 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
-        data_date = datetime(2014, 9, 1, 0, 0)
-        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
-                                      indicator=self.mapped_indicator_with_data,
-                                      data_date=data_date)
-        self.assertEqual(len(dp), 1)
-        self.assertEqual(1, dp[0].value)
 
-        # do it again
+        cases = DataPoint.objects.filter(location_id=self.mapped_location_id,
+                                      indicator=self.mapped_indicator_with_data)
+
+        self.assertEqual(len(cases), 6)
+
+            # do it again, the case count should be 6 not 12
         doc = self.ts.create_arbitrary_document(
             document_docfile='AfgPolioCases_2.csv',
             doc_title='AfgPolioCases_2.csv',
@@ -162,12 +169,13 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         )
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
-        data_date = datetime(2014, 9, 1, 0, 0)
-        dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
-                                      indicator=self.mapped_indicator_with_data,
-                                      data_date=data_date)
-        self.assertEqual(len(dp), 1)
-        self.assertEqual(2, dp[0].value)
+
+        cases_2 = DataPoint.objects.filter(location_id=self.mapped_location_id,
+                                      indicator=self.mapped_indicator_with_data)
+        self.assertEqual(len(cases_2), 6)
+        sum_of_cases = sum([dp.value for dp in cases_2])
+
+        self.assertEqual(6, sum_of_cases)
 
     def _class_indicator(self):
         # create required metadata
