@@ -7,7 +7,6 @@ from rhizome.models.location_models import Location, LocationType, \
 from rhizome.models.datapoint_models import CacheJob, DataPointComputed
 from rhizome.models.document_models import Document, SourceObjectMap, SourceSubmission
 
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 from rhizome.cache_meta import LocationTreeCache
 
 

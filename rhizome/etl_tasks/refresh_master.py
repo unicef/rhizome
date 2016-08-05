@@ -10,6 +10,10 @@ from bulk_update.helper import bulk_update
 import math
 from datetime import datetime
 
+from rhizome.models.document_models import Document, DocDetailType, \
+    DocumentDetail, SourceObjectMap, SourceSubmission, DocumentSourceObjectMap
+from rhizome.models.datapoint_models import DocDataPoint, DataPoint
+
 class MasterRefresh(object):
     '''
     Take source datapoints from a document_id and upsert into datapoints table

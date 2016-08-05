@@ -466,8 +466,7 @@ class RefreshMasterTestCase(TestCase):
             source_object_code='# Missed children due to inaccessibility (NEPI)'
         )
 
-        dt = CampaignDocTransform(self.user.id, document.id)
-        dt.main()
+        document.transform_upload()
 
         mr = MasterRefresh(self.user.id, document.id)
         mr.main()
