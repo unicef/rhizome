@@ -1,6 +1,10 @@
 from tastypie import fields
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.simple_models import Campaign, CustomChart, CustomDashboard, Indicator, IndicatorTag, IndicatorToTag, Location, Office, User
+from rhizome.models.datapoint_models import * # FIXME
+from rhizome.models.campaign_models import * # FIXME
+from rhizome.models.indicator_models import * # FIXME
+from rhizome.models.location_models import * # FIXME
+from rhizome.models.document_models import * # FIXME
 
 
 class AllMetaResult(object):

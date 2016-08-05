@@ -3,10 +3,9 @@ from django.db.transaction import TransactionManagementError
 
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.simple_models import DataPoint
-from rhizome.simple_models import SourceSubmission
-from rhizome.models.document_models import Document
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform, DateDocTransform
+from rhizome.models.datapoint_models import DataPoint
+from rhizome.models.document_models import Document, DocumentDetail,\
+    SourceSubmission
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
@@ -26,7 +25,6 @@ class DocTransFormResource(BaseNonModelResource):
         resource_name = 'transform_upload'
         queryset = SourceSubmission.objects.all().values()
         GET_params_required = ['document_id']
-        # GET_params_required = ['document_id', 'file_type']
 
     def pre_process_data(self, request):
         '''
@@ -39,32 +37,12 @@ class DocTransFormResource(BaseNonModelResource):
             ## agg refresh ##
         '''
 
-        user_id = request.user.id
+        # user_id = request.user.id
+        document_object = Document.objects\
+            .get(id = request.GET.get('document_id'))
 
-        ran_campaign_doc_transform = False # if so, we need to run agg_refresh
-        document_id = request.GET.get('document_id', None)
-        document_object = Document.objects.get(id = document_id)
-        file_type = document_object.file_type
-
-
-        file_processor_map = {
-            'campaign': CampaignDocTransform,
-            'date' :  DateDocTransform
-        }
-
-        try:
-            transform_obj = file_processor_map[file_type](user_id, document_id)
-        except KeyError:
-            msg = 'file_type %s not supported' % file_type
-            raise RhizomeApiException(message=msg)
-
-        try:
-            ## ingest tihe file ##
-            transform_obj.main()
-            refresh_obj = MasterRefresh(request.user.id, document_id)
-            refresh_obj.main()
-        except Exception as err:
-            raise RhizomeApiException(message=err.message)
+        document_object.transform_upload()
+        document_object.refresh_master()
 
         if file_type == 'campaign':
             doc_campaign_ids = set(list(DataPoint.objects

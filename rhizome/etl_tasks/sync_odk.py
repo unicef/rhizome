@@ -14,8 +14,8 @@ from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist
 from django.conf import settings
 
-from rhizome.models.document_models import Document
-from rhizome.simple_models import DocDetailType, DocumentDetail
+from rhizome.models.document_models import Document, DocDetailType, \
+    DocumentDetail
 from rhizome.etl_tasks.transform_upload import DocTransform
 
 

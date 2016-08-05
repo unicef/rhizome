@@ -1,9 +1,16 @@
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.simple_models import User, Office, CacheJob, LocationType, CampaignType,\
-    Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location,\
-    Indicator, DataPointComputed
-from base_test_case import RhizomeApiTestCase
+
+from django.contrib.auth.models import User
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.datapoint_models import CacheJob, DataPoint
+from rhizome.models.document_models import Document
+
+
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 
 
 class AggRefreshAPITestCase(RhizomeApiTestCase):

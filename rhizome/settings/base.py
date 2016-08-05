@@ -90,11 +90,11 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',  # this is default
 )
 
-CRON_CLASSES = [
-    "rhizome.cron.AggAndComputeDataPoint",
-    "rhizome.cron.MasterRefreshJob",
-    "rhizome.cron.MetaRefreshJob",
-]
+# CRON_CLASSES = [
+#     "rhizome.cron.AggAndComputeDataPoint",
+#     "rhizome.cron.MasterRefreshJob",
+#     "rhizome.cron.MetaRefreshJob",
+# ]
 
 ANONYMOUS_USER_ID = -1
 

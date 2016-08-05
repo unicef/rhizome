@@ -1,11 +1,12 @@
 
-from base_test_case import RhizomeApiTestCase
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-from rhizome.simple_models import Indicator, IndicatorTag, \
-    CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound, \
-    LocationPermission, Location, LocationType, Office
-
+from rhizome.models.indicator_models import Indicator, IndicatorTag, \
+    CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound,
+from rhizome.models.location_models import LocationPermission, Location,\
+    LocationType
+from rhizome.models.office_models import Office
 
 class IndicatorTagResourceTest(RhizomeApiTestCase):
 

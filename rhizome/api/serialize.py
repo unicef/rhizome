@@ -6,8 +6,9 @@ from django.core.serializers import json as djangojson
 from pandas import DataFrame
 from tastypie.serializers import Serializer
 
-from rhizome.simple_models import Campaign, Indicator, Location
-
+from rhizome.models.campaign_models import Campaign
+from rhizome.models.indicator_models import Indicator
+from rhizome.models.location_models import Location
 
 class CustomJSONSerializer(Serializer):
     """Does not allow out of range float values

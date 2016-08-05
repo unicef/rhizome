@@ -4,7 +4,7 @@ from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.simple_models import CustomChart
+from rhizome.models.dashboard_models import CustomChart
 
 
 class CustomChartResource(BaseModelResource):

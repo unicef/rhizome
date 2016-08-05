@@ -3,8 +3,12 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.simple_models import User, Location, DataPointComputed, SourceObjectMap, Document, DocumentSourceObjectMap, IndicatorTag, Office, CacheJob, CampaignType, Campaign, Indicator
-from django.core.exceptions import ObjectDoesNotExist
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.datapoint_models import CacheJob, DataPointComputed
+from rhizome.models.document_models import Document, DocumentSourceObjectMap
 
 
 class TransformUploadTestCase(TestCase):
@@ -111,7 +115,7 @@ class TransformUploadTestCase(TestCase):
                 location_id=self.mapped_location_id
             )
             fail("the value should not have been added due to duplicated indicator id")
-        except ObjectDoesNotExist:
+        except DataPointComputed.DoesNotExist:
             pass
 
     def create_metadata(self):

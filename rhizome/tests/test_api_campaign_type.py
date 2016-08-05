@@ -1,5 +1,5 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import CampaignType
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.models.campaign_models import CampaignType
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 

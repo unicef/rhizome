@@ -1,5 +1,4 @@
-from django.db import db
-
+from django.db import models
 
 
 class UserGroup(models.Model):

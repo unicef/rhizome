@@ -1,7 +1,8 @@
 from pandas import DataFrame, notnull
 from django.test import TestCase
 
-from rhizome.simple_models import LocationTree, Office, LocationType, Location
+from rhizome.models.location_models import LocationTree, LocationType, Location
+from rhizome.models.office_models import Office
 
 from rhizome.cache_meta import LocationTreeCache
 

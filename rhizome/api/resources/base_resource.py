@@ -12,7 +12,7 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.exceptions import RhizomeApiException
 
-from rhizome.simple_models import LocationPermission, Location
+from rhizome.models.location_models import LocationPermission, Location
 
 class BaseResource(Resource):
     '''

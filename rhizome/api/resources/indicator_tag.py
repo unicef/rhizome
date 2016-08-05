@@ -1,7 +1,7 @@
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import IndicatorTag
+from rhizome.models.indicator_models import IndicatorTag
 
 
 class IndicatorTagResource(BaseModelResource):

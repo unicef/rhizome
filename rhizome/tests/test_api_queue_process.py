@@ -1,5 +1,5 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import Document, SourceSubmission
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.models.document_models import Document, SourceSubmission
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 

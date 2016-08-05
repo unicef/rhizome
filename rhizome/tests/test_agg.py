@@ -3,14 +3,20 @@ from pandas import read_csv, notnull, DataFrame
 from numpy import isnan
 from django.test import TestCase
 
-from rhizome.simple_models import Office, CacheJob, LocationType, Campaign, Location,\
-    CampaignType, Document, SourceSubmission, Indicator, IndicatorTag,\
-    IndicatorToTag, CampaignToIndicator, CalculatedIndicatorComponent, \
-    DataPoint, DataPointComputed, AggDataPoint, LocationTree
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    CampaignToIndicator
+from rhizome.models.location_models import Location, LocationType, \
+    LocationTree
+from rhizome.models.indicator_models import Indicator, IndicatorTag, \
+    IndicatorToTag, CalculatedIndicatorComponent
+from rhizome.models.datapoint_models import CacheJob, DataPointComputed, \
+    DataPoint, AggDataPoint
+from rhizome.models.document_models import Document, SourceSubmission
+
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from pprint import pprint
 
 class AggRefreshTestCase(TestCase):
 

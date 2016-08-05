@@ -10,9 +10,14 @@ from django.http import HttpResponse
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.simple_models import DataPointComputed, Campaign, Location, Document,\
-    LocationPermission, LocationTree, Indicator, DataPoint, \
-    CalculatedIndicatorComponent, LocationType, SourceSubmission
+from rhizome.models.datapoint_models import DataPointComputed, DataPoint
+from rhizome.models.location_models import Location, LocationPermission,\
+    LocationTree, LocationType
+from rhizome.models.document_models import Document, SourceSubmission
+from rhizome.models.indicator_models import Indicator, CalculatedIndicatorComponent
+from rhizome.models.campaign_models import Campaign
+
+
 
 
 class DateDatapointResource(BaseModelResource):

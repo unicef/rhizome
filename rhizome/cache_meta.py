@@ -2,9 +2,10 @@ import json
 
 from pandas import read_csv, notnull, DataFrame, concat
 
-from rhizome.simple_models import Location, Indicator, LocationTree, LocationType,\
-    SourceObjectMap, IndicatorToTag, IndicatorBound, LocationPolygon, MinGeo
-
+from rhizome.models.indicator_models import Indicator, IndicatorToTag, \
+    IndicatorBound
+from rhizome.models.location_models import Location, LocationTree, \
+    LocationType, LocationPolygon, MinGeo
 
 class IndicatorCache(object):
     '''

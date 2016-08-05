@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 from tastypie import fields
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import DocDataPoint
+from rhizome.models.datapoint_models import DocDataPoint
 
 class DocDataPointResource(BaseModelResource):
     '''

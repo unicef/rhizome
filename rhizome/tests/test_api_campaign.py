@@ -1,6 +1,11 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import Office, LocationType, Location, \
-    LocationPermission, Campaign, CampaignType, IndicatorTag
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType, \
+    LocationPermission
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
 

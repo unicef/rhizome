@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import CampaignType
+from rhizome.models.campaign_models import CampaignType
 
 
 class CampaignTypeResource(BaseModelResource):

@@ -2,17 +2,20 @@ from tastypie import fields
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import IndicatorToTag
+from rhizome.models.indicator_models import IndicatorToTag
 
 
 class IndicatorToTagResource(BaseModelResource):
     '''
-    **GET Request** returns all indicator_to_tag objects, unless one of the optional parameters below is set
+    **GET Request** returns all indicator_to_tag objects, unless one of the
+    optional parameters below is set
         - *Optional Parameters:*
             'indicator_id' return indicator_to_tags with the given indicator_id
-            'indicator_tag_id' return indicator_to_tags with the given indicator_tag_id
+            'indicator_tag_id' return indicator_to_tags with the given
+            indicator_tag_id
         - *Errors:*
-            if an invalid id is passed, the API returns an empty list of objects
+            if an invalid id is passed, the API returns an empty list of
+            objects
     **POST Request**
         - *Required Parameters:*
             'indicator_id'
@@ -37,6 +40,6 @@ class IndicatorToTagResource(BaseModelResource):
             'indicator_id': ALL,
             'indicator_tag_id': ALL
         }
-        required_fields_for_post = ['indicator_id','indicator_tag_id']
-        GET_fields = ['id', 'indicator_id', 'indicator_tag_id', \
-                    'indicator__short_name', 'indicator_tag__tag_name']
+        required_fields_for_post = ['indicator_id', 'indicator_tag_id']
+        GET_fields = ['id', 'indicator_id', 'indicator_tag_id',
+                      'indicator__short_name', 'indicator_tag__tag_name']

@@ -1,11 +1,15 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.tests.setup_helpers import TestSetupHelpers
+
 from pandas import read_csv
-from rhizome.simple_models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
 from pandas import DataFrame
 from pandas import Series
 from pandas import read_csv
+
+from rhizome.models.location_models import LocationType, Location,\
+    LocationTree, LocationPolygon, LocationPermission
 from rhizome.cache_meta import minify_geo_json
+
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class GeoResourceTest(RhizomeApiTestCase):
     def setUp(self):

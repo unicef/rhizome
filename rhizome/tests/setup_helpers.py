@@ -1,10 +1,15 @@
-from base_test_case import RhizomeApiTestCase
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
-from rhizome.simple_models import Office, LocationType, Location, \
-    LocationPermission, Campaign, CampaignType, IndicatorTag
-from rhizome.simple_models import SourceObjectMap
+from rhizome.models.document_models import Document, SourceObjectMap, \
+    DocumentSourceObjectMap, SourceSubmission
 from pandas import read_csv, notnull, to_datetime
-from rhizome.simple_models import Office, Location, LocationType, SourceObjectMap, DocumentSourceObjectMap, Document, Campaign, Indicator, IndicatorTag, CacheJob, SourceSubmission
+
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign
+from rhizome.models.location_models import Location, LocationType
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.datapoint_models import CacheJob
+
 from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
 

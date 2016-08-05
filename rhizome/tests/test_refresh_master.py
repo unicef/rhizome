@@ -4,10 +4,17 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType
+from rhizome.models.indicator_models import Indicator, IndicatorTag,\
+    CalculatedIndicatorComponent
+from rhizome.models.datapoint_models import CacheJob, DocDataPoint, DataPoint
+from rhizome.models.document_models import Document, DocDetailType, \
+    DocumentDetail, SourceSubmission, SourceObjectMap
+
 from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
-from rhizome.simple_models import Document, Location, IndicatorTag, Office, CacheJob, DocDetailType, CampaignType, Campaign, Indicator, CalculatedIndicatorComponent, DocumentDetail, SourceSubmission, SourceObjectMap, DocDataPoint, DataPoint
-
 
 class RefreshMasterTestCase(TestCase):
 

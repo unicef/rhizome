@@ -7,7 +7,11 @@ from django.contrib.auth.decorators import user_passes_test
 from django.template import Template, context, RequestContext
 from django.conf import settings
 
-from rhizome.simple_models import *
+from rhizome.models.datapoint_models import * # FIXME
+from rhizome.models.campaign_models import * # FIXME
+from rhizome.models.indicator_models import * # FIXME
+from rhizome.models.location_models import * # FIXME
+from rhizome.models.document_models import * # FIXME
 from rhizome.forms import *
 from rhizome.mixins import PermissionRequiredMixin
 

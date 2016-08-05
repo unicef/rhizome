@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from pandas import read_csv, to_datetime
 
 from rhizome.tests.base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import *
+from rhizome.models.campaign_models import Campaign
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
 

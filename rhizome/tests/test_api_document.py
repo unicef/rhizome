@@ -1,15 +1,20 @@
-from base_test_case import RhizomeApiTestCase
-from django.contrib.auth.models import User
-from rhizome.simple_models import CacheJob, Office, Indicator, Location,\
-    LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
-    LocationPermission, Document
-from rhizome.tests.setup_helpers import TestSetupHelpers
-from pandas import read_csv, notnull, to_datetime
 import base64
 import os
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.simple_models import DataPointComputed, IndicatorTag, Office, CacheJob, CampaignType, SourceObjectMap
 
+from pandas import read_csv, notnull, to_datetime
+from django.contrib.auth.models import User
+
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType, LocationPermission
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.datapoint_models import CacheJob, DataPointComputed
+from rhizome.models.document_models import Document, SourceObjectMap
+
+from rhizome.tests.setup_helpers import TestSetupHelpers
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+
+from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 
 class DocumentResourceTest(RhizomeApiTestCase):
 

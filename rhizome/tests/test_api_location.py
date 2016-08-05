@@ -1,6 +1,9 @@
-from base_test_case import RhizomeApiTestCase
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
-from rhizome.simple_models import Office, LocationType, Location, LocationPermission
+from rhizome.models.location_models import LocationType, Location, LocationPermission
+from rhizome.models.office_models import Office
+
+
 
 from rhizome.cache_meta import LocationTreeCache
 

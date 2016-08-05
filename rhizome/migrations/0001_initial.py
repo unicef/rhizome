@@ -300,17 +300,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='IndicatorToOffice',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID',
-                                        serialize=False, auto_created=True, primary_key=True)),
-                ('indicator', models.ForeignKey(to='rhizome.Indicator')),
-            ],
-            options={
-                'db_table': 'indicator_to_office',
-            },
-        ),
-        migrations.CreateModel(
             name='IndicatorToTag',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
@@ -464,11 +453,6 @@ class Migration(migrations.Migration):
             model_name='location',
             name='parent_location',
             field=models.ForeignKey(to='rhizome.Location', null=True),
-        ),
-        migrations.AddField(
-            model_name='indicatortooffice',
-            name='office',
-            field=models.ForeignKey(to='rhizome.Office'),
         ),
         migrations.AddField(
             model_name='historicaldatapointentry',

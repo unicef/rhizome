@@ -1,7 +1,7 @@
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import UserGroup
+from rhizome.models.user_models import UserGroup
 
 
 class UserGroupResource(BaseModelResource):

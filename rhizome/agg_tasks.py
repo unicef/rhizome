@@ -4,13 +4,15 @@ from pandas import concat
 from pandas import DataFrame
 from pandas import notnull
 
-from rhizome.simple_models import DataPoint, Campaign, CacheJob, DataPointComputed, \
-    LocationTree, Indicator, SourceSubmission, CalculatedIndicatorComponent,\
-    AggDataPoint
-from rhizome.cache_meta import IndicatorCache
-from rhizome.simple_models import SourceSubmission
-import numpy as np
+from rhizome.models.datapoint_models import * # FIXME
+from rhizome.models.campaign_models import * # FIXME
+from rhizome.models.indicator_models import * # FIXME
+from rhizome.models.location_models import * # FIXME
+from rhizome.models.document_models import * # FIXME
 
+from rhizome.cache_meta import IndicatorCache
+
+import numpy as np
 
 class AggRefresh(object):
     '''

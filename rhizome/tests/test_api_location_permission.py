@@ -1,5 +1,5 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import LocationPermission
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.models.location_models import LocationPermission
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 

@@ -1,4 +1,4 @@
-from rhizome.simple_models import MinGeo
+from rhizome.models.location_models import MinGeo
 from rhizome.api.resources.base_model import BaseModelResource
 from tastypie import fields
 from tastypie.resources import ALL

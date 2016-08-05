@@ -1,6 +1,6 @@
-from base_test_case import RhizomeApiTestCase
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.simple_models import LocationType
+from rhizome.models.location_models import LocationType
 
 
 class LocationTypeResourceTest(RhizomeApiTestCase):

@@ -1,6 +1,13 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import CustomDashboard, CustomChart, LocationPermission,\
-    Location, LocationType, Office
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+
+from rhizome.models.office_models import Office
+from rhizome.models.location_models import Location, LocationType, \
+    LocationPermission
+from rhizome.models.datapoint_models import CacheJob
+from rhizome.models.dashboard_models import CustomDashboard, CustomChart
+
+
+
 from rhizome.tests.setup_helpers import TestSetupHelpers
 import json
 from django.test import TestCase

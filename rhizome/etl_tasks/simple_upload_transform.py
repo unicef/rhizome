@@ -5,7 +5,9 @@ from pandas import read_csv, DataFrame
 from pandas import notnull
 from django.conf import settings
 
-from rhizome.simple_models import SourceObjectMap, DocumentSourceObjectMap, SourceSubmission, DataPointComputed
+from rhizome.models.document_models import SourceObjectMap,\
+    DocumentSourceObjectMap, SourceSubmission
+from rhizome.models.datapoint_models import DataPointComputed
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.etl_tasks.transform_upload import DocTransform
 from django.db import IntegrityError

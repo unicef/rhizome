@@ -1,9 +1,15 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.simple_models import Office, LocationType, Location, \
-    LocationPermission, Campaign, CampaignType, IndicatorTag, SourceObjectMap,\
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType, LocationPermission
+from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.datapoint_models import CacheJob
+from rhizome.models.document_models import SourceObjectMap, \
     DocumentSourceObjectMap
+
 from pandas import read_csv
-from rhizome.simple_models import Indicator
+from rhizome.models.indicator_models import Indicator
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 

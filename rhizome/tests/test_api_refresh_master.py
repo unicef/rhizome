@@ -1,9 +1,19 @@
-from base_test_case import RhizomeApiTestCase
-from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.simple_models import DataPoint, IndicatorTag, User, Office, CacheJob, LocationType, Document, DocDetailType, CampaignType, CalculatedIndicatorComponent, IndicatorToTag, DocumentDetail, SourceObjectMap, Location, Campaign, Indicator, DataPointComputed
+from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
+from rhizome.tests.base_test_case import RhizomeApiTestCase
+from rhizome.tests.setup_helpers import TestSetupHelpers
+
+from rhizome.models.office_models import Office
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType
+from rhizome.models.indicator_models import Indicator, IndicatorTag, \
+    CalculatedIndicatorComponent
+from rhizome.models.datapoint_models import CacheJob, DataPoint, DataPointComputed
+from rhizome.models.document_models import Document, DocDetailType, \
+    DocumentDetail, SourceObjectMap
+
+from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
 class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
 

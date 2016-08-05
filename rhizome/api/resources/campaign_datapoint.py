@@ -1,5 +1,7 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.simple_models import DataPointComputed, Campaign, Document
+from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.campaign_models import Campaign
+from rhizome.models.document_models import Document
 from rhizome.api.serialize import CustomSerializer
 
 from pandas import DataFrame, notnull
