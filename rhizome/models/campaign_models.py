@@ -66,54 +66,10 @@ class Campaign(models.Model):
     pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
-    def __unicode__(self):
-        return unicode(self.name)
-
-    def get_datapoints(self):
-
-        return DataPointComputed.objects.filter(campaign_id=self.id).values()
-
-    def get_raw_datapoint_ids(self):
-
-        flat_location_id_list = LocationTree.objects.filter(
-            parent_location_id=self.top_lvl_location_id).values_list('location_id', flat=True)
-
-        qs = DataPoint.objects.filter(
-            location_id__in=flat_location_id_list,
-            # indicator_id__in = indicator_id_list,
-            data_date__lt=self.end_date,
-            data_date__gte=self.start_date,
-        ).values_list('id', flat=True)
-
-        return qs
-
-    def save(self, **kwargs):
-
-        super(Campaign, self).save(**kwargs)
-
-        top_lvl_tag_obj = IndicatorTag.objects\
-            .get(id=self.top_lvl_indicator_tag_id)
-        indicator_id_list = top_lvl_tag_obj.get_indicator_ids_for_tag()
-
-        cti_batch = [CampaignToIndicator(**{'campaign_id': self.id,
-                                            'indicator_id': ind_id}) for ind_id in indicator_id_list]
-
-        CampaignToIndicator.objects.filter(campaign_id=self.id).delete()
-        CampaignToIndicator.objects.bulk_create(cti_batch)
-
-        self.mark_datapoints_as_to_process()
-
-    def mark_datapoints_as_to_process(self):
-
-        dp_ids = self.get_raw_datapoint_ids()
-        DataPoint.objects.filter(id__in=dp_ids, cache_job_id=-2
-                                 ).update(cache_job_id=-1)
-
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
         unique_together = ('office', 'start_date')
-
 
 class CampaignToIndicator(models.Model):
 

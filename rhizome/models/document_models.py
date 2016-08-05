@@ -1,5 +1,6 @@
 import hashlib
 import random
+import json
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -14,6 +15,7 @@ from jsonfield import JSONField
 from rhizome.models.location_models import Location
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.indicator_models import Indicator
+
 
 class Document(models.Model):
     # ./manage.py test rhizome.tests.test_api_doc_transform.DocTransformResourceTest.test_doc_transform --settings=rhizome.settings.test
@@ -51,14 +53,14 @@ class Document(models.Model):
         raw_csv_df = read_csv(settings.MEDIA_ROOT + str(self.docfile))
 
         csv_df = raw_csv_df.where((notnull(raw_csv_df)), None)
-        ## if there is no uq id column -- make one ##
-        if not self.uq_id_column in raw_csv_df.columns:
+        # if there is no uq id column -- make one #
+        if self.uq_id_column not in raw_csv_df.columns:
 
             try:
                 csv_df[self.uq_id_column] = csv_df[self.location_column].map(
                     str) + csv_df[self.campaign_column]
             except Exception as err:
-                if not self.date_column in csv_df.columns:
+                if self.date_column not in csv_df.columns:
                     dp_error_message = '%s is a required column.' % err.message
                     raise RhizomeApiException(message=dp_error_message)
 
@@ -80,8 +82,8 @@ class Document(models.Model):
         Returns a list of source_submission_ids
         '''
 
-        ## transform the raw data based on the documents configurations ##
-        doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
+        # transform the raw data based on the documents configurations #
+        # doc_df = self.apply_doc_config_to_csv_df(self.csv_df)
         # doc_df = self.process_date_column(doc_df)
 
         # doc_obj = Document.objects.get(id=self.document.id)
@@ -90,7 +92,7 @@ class Document(models.Model):
 
         batch = {}
 
-        for submission in doc_df.itertuples():
+        for submission in self.csv_df.itertuples():
 
             ss, instance_guid = self.process_raw_source_submission(submission)
 
@@ -109,11 +111,13 @@ class Document(models.Model):
         endpoint: api/v2/doc_mapping/?document=66
         '''
 
-        if DocumentSourceObjectMap.objects.filter(document_id=self.document.id):
+        if DocumentSourceObjectMap.objects\
+            .filter(document_id=self.id):
+
             return
 
         source_dp_json = SourceSubmission.objects.filter(
-            document_id=self.document.id).values_list('submission_json')
+            document_id=self.id).values_list('submission_json')
 
         if len(source_dp_json) == 0:
             return
@@ -169,7 +173,7 @@ class Document(models.Model):
         som_ids_for_doc = list(post_insert_som_df['id'].unique())
 
         dsom_to_insert = [DocumentSourceObjectMap(** {
-            'document_id': self.document.id,
+            'document_id': self.id,
             'source_object_map_id': som_id,
         }) for som_id in som_ids_for_doc]
 
@@ -189,7 +193,7 @@ class Document(models.Model):
 
         submission_dict = {
             'submission_json': submission_data,
-            'document_id': self.document.id,
+            'document_id': self.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
             'campaign_code': submission_data[self.campaign_column],
@@ -198,32 +202,6 @@ class Document(models.Model):
             'process_status': 'TO_PROCESS',
         }
         return submission_dict, instance_guid
-
-    def apply_doc_config_to_csv_df(self, csv_df):
-        '''
-        Currenlty this only applies to the 'Location Code Column Length'
-        configuration which allows us to ingest the ODK data at the one level
-        higher than it is collected.
-        This is a short term solution, but saves us massive ammounts of work
-        in Mapping, and also makes it such that we don't need to create location
-        IDs for the 10k settlements in Nigeria.
-        '''
-
-        try:
-            location_code_column_length = int(DocumentDetail.objects.get(
-                document_id=self.document.id,
-                doc_detail_type_id=DocDetailType.objects.get(
-                    name='Location Code Column Length')
-            ).doc_detail_value)
-
-            ## truncate the location_codes in accordance to the value above ##
-            csv_df[self.location_column] = csv_df[self.location_column]\
-                .apply(lambda x: str(x)[:location_code_column_length])
-
-        except DocumentDetai.DoesNotExist:
-            pass
-
-        return csv_df
 
     def refresh_master(self):
         pass
@@ -238,8 +216,8 @@ class SourceObjectMap(models.Model):
     source_object_code = models.CharField(max_length=255)
     content_type = models.CharField(max_length=20)
     mapped_by = models.ForeignKey(User, null=True)
-    ## mapped_by is only null so that i can initialize the database with ##
-    ## mappings without a user_id created ##
+    # mapped_by is only null so that i can initialize the database with #
+    # mappings without a user_id created #
 
     class Meta:
         db_table = 'source_object_map'
@@ -317,7 +295,7 @@ class SourceSubmission(models.Model):
 
         try:
             l_id = SourceObjectMap.objects.get(content_type='location',
-                                               source_object_code=self.location_code).master_object_id
+                   source_object_code=self.location_code).master_object_id
         except ObjectDoesNotExist:
             l_id = None
 
@@ -333,7 +311,7 @@ class SourceSubmission(models.Model):
 
         return c_id
 
-## Exceptions ##
+# Exceptions #
 class BadFileHeaderException(Exception):
     '''
     If a user uploads a file, and one of the column headers has a comma in it

@@ -37,14 +37,6 @@ class IndicatorTagTest(MasterModelTestCase):
 
         self.assertEqual(ebola_tag.tag_name, self.tag_name)
 
-    def test_get_indicator_ids_for_tag(self):
-
-        self.set_up()
-        test_tag = IndicatorTag.objects.get(tag_name=self.tag_name)
-
-        test_tag.get_indicator_ids_for_tag()
-
-
 class CampaignTest(MasterModelTestCase):
 
     # python manage.py test rhizome.tests.test_models.CampaignTest\

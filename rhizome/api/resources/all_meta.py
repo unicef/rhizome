@@ -1,11 +1,14 @@
 from tastypie import fields
-from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models.datapoint_models import * # FIXME
-from rhizome.models.campaign_models import * # FIXME
-from rhizome.models.indicator_models import * # FIXME
-from rhizome.models.location_models import * # FIXME
-from rhizome.models.document_models import * # FIXME
+from django.contrib.auth.models import User
 
+from rhizome.api.resources.base_non_model import BaseNonModelResource
+from rhizome.models.campaign_models import Campaign
+from rhizome.models.indicator_models import Indicator, IndicatorTag, \
+    IndicatorToTag
+from rhizome.models.location_models import Location
+from rhizome.models.office_models import Office
+# from rhizome.models.document_models import * # FIXME
+from rhizome.models.dashboard_models import CustomChart, CustomDashboard
 
 class AllMetaResult(object):
     campaigns = list()

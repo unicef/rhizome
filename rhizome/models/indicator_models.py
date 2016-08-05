@@ -45,13 +45,13 @@ class CalculatedIndicatorComponent(models.Model):
     A dba can create new calculations by inserting rows here.  The
     cache_refresh job that happens every minute will take these new indicator
     definitions and use these values to calucate data for the new calculated
-    indicators.
+    lintindicators.
 
     Notice however that calculations are multi layered, for instance certain
     percentage calculations, use an indicator that is calculated from the sum
     of a set of other indicators as it's denominator.  This means, that the
-    order in which we calculated datapoints matters.  For more on how this works
-    check out the fn_calc_datapoint() stored procedure.
+    order in which we calculated datapoints matters.  For more on how this
+    works check out the calc_datapoint() method.
     '''
 
     indicator = models.ForeignKey(Indicator, related_name='indicator_master')
@@ -94,8 +94,8 @@ class IndicatorTag(models.Model):
         - WHO independent monitoring
         - Management Dashbaord Indicators
 
-    These are stored in a heirarchy so we can build a tree on the indicator drop
-    down which gives the user a nicer, more organized breakdown of the
+    These are stored in a heirarchy so we can build a tree on the indicator
+    drop down which gives the user a nicer, more organized breakdown of the
     indicators available to the system.
     '''
 
@@ -107,19 +107,6 @@ class IndicatorTag(models.Model):
 
     class Meta:
         db_table = 'indicator_tag'
-
-    def get_indicator_ids_for_tag(self):
-
-        df_cols = ['id', 'parent_tag_id']
-
-        tag_list = list(IndicatorTag.objects.filter(parent_tag_id=self.id)
-                        .values_list(*df_cols))
-
-        tag_list.append((self.id, None))
-
-        ind_df = DataFrame(tag_list, columns=df_cols)
-        return Indicator.objects.all().values_list('id', flat=True)
-
 
 class IndicatorToTag(models.Model):
     '''

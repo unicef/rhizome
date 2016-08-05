@@ -44,9 +44,9 @@ class DocTransFormResource(BaseNonModelResource):
         document_object.transform_upload()
         document_object.refresh_master()
 
-        if file_type == 'campaign':
+        if document_object.file_type == 'campaign':
             doc_campaign_ids = set(list(DataPoint.objects
-                .filter(source_submission__document_id=document_id)
+                .filter(source_submission__document_id=document_object.id)
                 .values_list('campaign_id', flat=True)))
 
             for c_id in doc_campaign_ids:
@@ -58,4 +58,4 @@ class DocTransFormResource(BaseNonModelResource):
                 except TransactionManagementError as e:
                     pass
 
-        return Document.objects.filter(id=document_id).values()
+        return Document.objects.filter(id=document_object.id).values()
