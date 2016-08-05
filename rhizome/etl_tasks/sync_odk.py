@@ -16,8 +16,6 @@ from django.conf import settings
 
 from rhizome.models.document_models import Document, DocDetailType, \
     DocumentDetail
-from rhizome.etl_tasks.transform_upload import DocTransform
-
 
 class OdkJarFileException(Exception):
     # defaultMessage = "Sorry, this request could not be processed."
@@ -125,15 +123,11 @@ class OdkSync(object):
         return doc.id
 
     def refresh_file_data(self, document_id):
+        document_object = Document.ojects.get(id = document_id)
+        document_object.transform_upload()
+        document_object.refresh_master()
 
-        try:
-            dt = DocTransform(self.user_id, document_id)
-            data = dt.main()
-        except ObjectDoesNotExist as err:
-            ## means required configs arent available ##
-            data = {}
-
-        return data
+        return document_object.id
 
     def get_forms_to_process(self):
         '''

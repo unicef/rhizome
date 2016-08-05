@@ -13,7 +13,6 @@ from rhizome.models.datapoint_models import CacheJob, DocDataPoint, DataPoint
 from rhizome.models.document_models import Document, DocDetailType, \
     DocumentDetail, SourceSubmission, SourceObjectMap
 
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
 class RefreshMasterTestCase(TestCase):
@@ -47,8 +46,7 @@ class RefreshMasterTestCase(TestCase):
         self.document.docfile = self.test_file_location
         self.document.save()
 
-        dt = CampaignDocTransform(self.user.id, self.document.id)
-        dt.main()
+        self.document.transform_upload()
 
     def test_refresh_master_init(self):
 

@@ -4,10 +4,18 @@ import json
 from django.contrib.auth.models import User
 from pandas import read_csv, to_datetime
 
-from rhizome.tests.base_test_case import RhizomeApiTestCase
-from rhizome.models.campaign_models import Campaign
+from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.location_models import Location, LocationType,\
+    LocationPermission
+from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.datapoint_models import CacheJob, DataPointComputed
+from rhizome.models.indicator_models import IndicatorTag, Indicator
+from rhizome.models.office_models import Office
+
 from rhizome.cache_meta import LocationTreeCache
+from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
+
 
 
 class CampaignDataPointResourceTest(RhizomeApiTestCase):

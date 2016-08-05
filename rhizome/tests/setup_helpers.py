@@ -10,8 +10,6 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
 from rhizome.models.datapoint_models import CacheJob
 
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform
-
 
 class TestSetupHelpers(RhizomeApiTestCase):
 
@@ -165,8 +163,8 @@ class TestSetupHelpers(RhizomeApiTestCase):
             guid='test')
         document.docfile = file_name
         document.save()
-        sdt = CampaignDocTransform(self.user.id, document.id)
-        sdt.main()
+        document.transform_upload()
+
         return document.id
 
     def create_arbitrary_ss(self, doc_id, data_date='2016-01-01'):

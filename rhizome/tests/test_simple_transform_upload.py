@@ -8,7 +8,8 @@ from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
 from rhizome.models.datapoint_models import CacheJob, DataPointComputed
-from rhizome.models.document_models import Document, DocumentSourceObjectMap
+from rhizome.models.document_models import Document, \
+    DocumentSourceObjectMap, SourceObjectMap
 
 
 class TransformUploadTestCase(TestCase):
@@ -149,6 +150,7 @@ class TransformUploadTestCase(TestCase):
         self.user_id = User.objects.create_user(
             'test', 'test@test.com', 'test').id
         self.mapped_location_id = locations[0].id
+
         loc_map = SourceObjectMap.objects.create(
             source_object_code='AF001039003000000000',
             content_type='location',

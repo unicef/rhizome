@@ -13,7 +13,6 @@ from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models.document_models import Document
 from rhizome.models.location_models import Location, LocationPolygon
 from rhizome.models.document_models import DocumentDetail, DocDetailType
-from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
@@ -55,10 +54,10 @@ def process_source_sheet(source_sheet_df, sheet_name):
     create_doc_details(new_doc.id)
 
     ## document -> source_submissions ##
-    dt = DocTransform(user_id, new_doc.id)
-    dt.main()
+    new_doc.transform_upload()
 
     ## source_submissions -> datapoints ##
+    # new_doc.refresh_master()
     mr = MasterRefresh(user_id, new_doc.id)
     mr.main()
 

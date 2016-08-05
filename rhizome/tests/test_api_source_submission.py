@@ -2,7 +2,7 @@ from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 from rhizome.models.indicator_models import IndicatorTag, Indicator
-from rhizome.models.datapoint_models import Location, LocationType, \
+from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
 from rhizome.models.datapoint_models import CacheJob, DataPointComputed
 from rhizome.models.document_models import Document, SourceObjectMap, SourceSubmission
@@ -47,8 +47,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
         doc = self.ts.create_arbitrary_document(
             file_type = 'campaign',
             document_docfile='eoc_post_campaign.csv')
-        dt = CampaignDocTransform(self.ts.user.id, doc.id)
-        dt.main()
+        doc.transform_upload()
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/source_submission/', get_data)
         self.assertHttpOK(resp)
@@ -59,8 +58,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
     def test_get_source_submission_by_id(self):
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv', file_type='campaign')
-        dt = CampaignDocTransform(self.ts.user.id, doc.id)
-        dt.main()
+        doc.transform_upload()
         ss_id = SourceSubmission.objects.all()[0].id
         resp = self.ts.get(self, '/api/v1/source_submission/%s/' % ss_id)
         self.assertHttpOK(resp)

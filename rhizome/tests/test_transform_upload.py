@@ -6,14 +6,13 @@ from pandas import read_csv, notnull, to_datetime
 from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import CampaignType, Campaign
 from rhizome.models.location_models import Location
-from rhizome.models.indicator_models import Indicator, IndicatorToTag,
+from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.datapoint_models import DataPoint
+from rhizome.models.datapoint_models import DataPoint, CacheJob
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
     SourceObjectMap, DocumentDetail
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
-from rhizome.etl_tasks.transform_upload import CampaignDocTransform
 
 class TransformUploadTestCase(TestCase):
 
