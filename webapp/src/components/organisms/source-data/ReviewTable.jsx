@@ -40,11 +40,6 @@ var ReviewTable = React.createClass({
     }
   },
 
-  validateForm: function (id) {
-    // onclick post to api //
-    return <input type='checkbox' checked/>
-  },
-
   _callApi: function () {
     this.props.getData({
       document_id: this.props.doc_id
@@ -78,9 +73,7 @@ var ReviewTable = React.createClass({
         title: 'Edit',
         key: 'id',
         renderer: (id) => {
-          if (this.props.doc_tab === 'validate') {
-            return this.validateForm(id)
-          } else if (this.props.doc_tab === 'viewraw') {
+          if (this.props.doc_tab === 'viewraw') {
             return <SubmissionModal
               source_submission_id={id}
               key={id}/>

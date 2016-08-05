@@ -41,14 +41,12 @@ var SourceDataStore = Reflux.createStore({
 
   getTableDef: function () {
     var self = this
-    console.log('SourceDataStore - getTableDef: ', self)
 
     return {
       'viewraw': {
-        'meta_fn': api.submissionMeta,
         'data_fn': api.submission,
-        'fields': ['id', 'location_code', 'campaign_code', 'edit_link'],
-        'header': ['id', 'location_code', 'campaign_code', 'edit_link'],
+        'fields': ['id', 'location_code', 'campaign_code', 'data_date', 'edit_link'],
+        'header': ['id', 'location_code', 'campaign_code', 'data_date', 'edit_link'],
         'search_fields': ['id', 'location_code', 'campaign_code']
       },
       'doc_index': {

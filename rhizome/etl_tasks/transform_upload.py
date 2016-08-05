@@ -7,7 +7,8 @@ from rhizome.api.exceptions import RhizomeApiException
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
-from rhizome.models import Document, SourceSubmission, DocumentDetail, DocDetailType, DocumentSourceObjectMap, SourceObjectMap
+from rhizome.models.document_models import Document
+from rhizome.simple_models import SourceSubmission, DocumentDetail, DocDetailType, DocumentSourceObjectMap, SourceObjectMap
 from sets import Set
 
 from datetime import datetime

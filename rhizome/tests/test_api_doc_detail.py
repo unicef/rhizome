@@ -1,7 +1,7 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.models import Document, DocDetailType, DocumentDetail
-
+from rhizome.simple_models import DocDetailType, DocumentDetail
+from rhizmoe.models.document_models import Document
 
 class DocDetailResourceTest(RhizomeApiTestCase):
 

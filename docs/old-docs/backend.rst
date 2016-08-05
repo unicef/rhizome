@@ -151,7 +151,7 @@ Or In the case where you want to refresh the cache for a list of datapoint_ids:
   .. code-block:: python
 
     from rhizome.agg_tasks import AggRefresh
-    from rhizome.models import DataPoint
+    from rhizome.simple_models import DataPoint
 
     ## get a List of DataPoint IDs for the location Arghestan ##
     dp_ids = DataPoint.objects.filter(location_id = 13317).values_list('id',flat=True)

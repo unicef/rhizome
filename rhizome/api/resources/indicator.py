@@ -7,7 +7,7 @@ from tastypie.bundle import Bundle
 from tastypie.exceptions import ImmediateHttpResponse
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Indicator
+from rhizome.simple_models import Indicator
 
 
 class IndicatorResource(BaseModelResource):

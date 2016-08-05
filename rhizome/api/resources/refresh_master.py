@@ -1,6 +1,6 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models import DataPoint
-from rhizome.models import Document
+from rhizome.simple_models import DataPoint
+from rhizome.models.document_models import Document
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.agg_tasks import AggRefresh
 

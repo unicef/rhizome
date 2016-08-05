@@ -1,7 +1,8 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 
-from rhizome.models import DocumentDetail, Document, SourceSubmission
+from rhizome.models.document_models import Document
+from rhizome.simple_models import DocumentDetail, SourceSubmission
 from rhizome.etl_tasks.sync_odk import OdkSync
 from rhizome.etl_tasks.sync_odk import OdkJarFileException
 

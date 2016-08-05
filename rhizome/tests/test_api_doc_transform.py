@@ -1,5 +1,5 @@
 from base_test_case import RhizomeApiTestCase
-from rhizome.models import CacheJob, Office, Indicator, Location,\
+from rhizome.simple_models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, SourceObjectMap, DataPoint
 

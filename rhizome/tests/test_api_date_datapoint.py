@@ -1,7 +1,7 @@
 
 from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
-from rhizome.models import CacheJob, Office, Indicator, Location,\
+from rhizome.simple_models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPoint, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document, SourceSubmission ## , IndicatorClassMap
 from rhizome.cache_meta import LocationTreeCache

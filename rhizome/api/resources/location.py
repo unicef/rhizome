@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Location
+from rhizome.simple_models import Location
 
 
 class LocationResource(BaseModelResource):

@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 from tastypie import fields
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import CalculatedIndicatorComponent
+from rhizome.simple_models import CalculatedIndicatorComponent
 
 class CalculatedIndicatorComponentResource(BaseModelResource):
     '''

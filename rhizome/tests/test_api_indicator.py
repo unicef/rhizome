@@ -2,7 +2,7 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-from rhizome.models import Indicator, IndicatorTag, \
+from rhizome.simple_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound, \
     LocationPermission, Location, LocationType, Office
 

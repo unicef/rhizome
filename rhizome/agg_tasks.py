@@ -4,11 +4,11 @@ from pandas import concat
 from pandas import DataFrame
 from pandas import notnull
 
-from rhizome.models import DataPoint, Campaign, CacheJob, DataPointComputed, \
+from rhizome.simple_models import DataPoint, Campaign, CacheJob, DataPointComputed, \
     LocationTree, Indicator, SourceSubmission, CalculatedIndicatorComponent,\
     AggDataPoint
 from rhizome.cache_meta import IndicatorCache
-from rhizome.models import SourceSubmission
+from rhizome.simple_models import SourceSubmission
 import numpy as np
 
 

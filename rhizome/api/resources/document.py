@@ -8,7 +8,7 @@ from django.core.files.base import ContentFile
 from pandas import read_excel
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Document
+from rhizome.models.document_models import Document
 from django.conf import settings
 from rhizome.api.exceptions import RhizomeApiException
 

@@ -1,6 +1,6 @@
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.models import User, Office, CacheJob, LocationType, CampaignType,\
+from rhizome.simple_models import User, Office, CacheJob, LocationType, CampaignType,\
     Campaign, Document, SourceSubmission, IndicatorTag, DataPoint, Location,\
     Indicator, DataPointComputed
 from base_test_case import RhizomeApiTestCase

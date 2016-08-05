@@ -1,10 +1,10 @@
 from base_test_case import RhizomeApiTestCase
-from rhizome.models import CacheJob, Office, Indicator, Location,\
+from rhizome.simple_models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.etl_tasks.transform_upload import CampaignDocTransform
-from rhizome.models import SourceObjectMap, SourceSubmission
+from rhizome.simple_models import SourceObjectMap, SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
 

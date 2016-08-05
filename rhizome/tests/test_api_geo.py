@@ -1,7 +1,7 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv
-from rhizome.models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
+from rhizome.simple_models import LocationType, Location, LocationTree, LocationPolygon, LocationPermission
 from pandas import DataFrame
 from pandas import Series
 from pandas import read_csv

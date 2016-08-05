@@ -1,6 +1,6 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.models import DocDetailType
+from rhizome.simple_models import DocDetailType
 
 
 class DocDetailTypeResourceTest(RhizomeApiTestCase):

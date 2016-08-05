@@ -2,7 +2,7 @@ import json
 
 from pandas import read_csv, notnull, DataFrame, concat
 
-from rhizome.models import Location, Indicator, LocationTree, LocationType,\
+from rhizome.simple_models import Location, Indicator, LocationTree, LocationType,\
     SourceObjectMap, IndicatorToTag, IndicatorBound, LocationPolygon, MinGeo
 
 

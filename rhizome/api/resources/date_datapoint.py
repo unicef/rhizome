@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.models import DataPointComputed, Campaign, Location, Document,\
+from rhizome.simple_models import DataPointComputed, Campaign, Location, Document,\
     LocationPermission, LocationTree, Indicator, DataPoint, \
     CalculatedIndicatorComponent, LocationType, SourceSubmission
 

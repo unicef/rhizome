@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from rhizome.agg_tasks import AggRefresh
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
-from rhizome.models import SourceSubmission
+from rhizome.simple_models import SourceSubmission
 
 
 class AggAndComputeDataPoint(CronJobBase):

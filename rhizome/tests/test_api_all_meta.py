@@ -1,5 +1,5 @@
 from base_test_case import RhizomeApiTestCase
-from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
+from rhizome.simple_models import CustomDashboard, CustomChart, LocationPermission,\
     Location, LocationType, Office
 from rhizome.tests.setup_helpers import TestSetupHelpers
 import json

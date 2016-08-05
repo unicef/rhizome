@@ -1,6 +1,6 @@
 from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
-from rhizome.models import CustomDashboard, CustomChart, LocationPermission,\
+from rhizome.simple_models import CustomDashboard, CustomChart, LocationPermission,\
     Location, LocationType, Office
 
 import json

@@ -6,7 +6,7 @@ from django.core.serializers import json as djangojson
 from pandas import DataFrame
 from tastypie.serializers import Serializer
 
-from rhizome.models import Campaign, Indicator, Location
+from rhizome.simple_models import Campaign, Indicator, Location
 
 
 class CustomJSONSerializer(Serializer):

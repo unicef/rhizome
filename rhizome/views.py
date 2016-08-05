@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import user_passes_test
 from django.template import Template, context, RequestContext
 from django.conf import settings
 
-from rhizome.models import *
+from rhizome.simple_models import *
 from rhizome.forms import *
 from rhizome.mixins import PermissionRequiredMixin
 

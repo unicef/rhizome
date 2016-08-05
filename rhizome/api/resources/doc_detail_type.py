@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import DocDetailType
+from rhizome.simple_models import DocDetailType
 
 
 class DocDetailTypeResource(BaseModelResource):

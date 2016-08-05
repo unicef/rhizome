@@ -1,6 +1,6 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Document, DataPoint, DataPointComputed
-
+from rhizome.simple_models import DataPoint, DataPointComputed
+from rhizome.models.document_models import Document
 
 class DateDocResultResource(BaseModelResource):
     '''

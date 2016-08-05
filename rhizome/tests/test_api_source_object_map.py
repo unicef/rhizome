@@ -1,9 +1,9 @@
 from base_test_case import RhizomeApiTestCase
-from rhizome.models import Office, LocationType, Location, \
+from rhizome.simple_models import Office, LocationType, Location, \
     LocationPermission, Campaign, CampaignType, IndicatorTag, SourceObjectMap,\
     DocumentSourceObjectMap
 from pandas import read_csv
-from rhizome.models import Indicator
+from rhizome.simple_models import Indicator
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 

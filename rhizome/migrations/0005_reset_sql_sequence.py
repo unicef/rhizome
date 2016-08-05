@@ -16,7 +16,7 @@ from django.db.models.loading import get_app
 from StringIO import StringIO
 from datetime import datetime
 
-from rhizome.models import CacheJob
+from rhizome.simple_models import CacheJob
 
 
 def reset_seq(apps, schema_editor):

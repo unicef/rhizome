@@ -7,7 +7,7 @@ import django.db.models.deletion
 from django.conf import settings
 
 import pandas as pd
-from rhizome.models import Location, LocationPolygon, Document
+from rhizome.simple_models import Location, LocationPolygon, Document
 from django.db.models import get_app, get_models
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 

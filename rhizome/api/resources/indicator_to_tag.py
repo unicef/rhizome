@@ -2,7 +2,7 @@ from tastypie import fields
 from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import IndicatorToTag
+from rhizome.simple_models import IndicatorToTag
 
 
 class IndicatorToTagResource(BaseModelResource):

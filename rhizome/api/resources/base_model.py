@@ -23,7 +23,7 @@ from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
 
 ## import models related to regional level permissioning and aggregation ##
-from rhizome.models import LocationPermission, Location, LocationTree, \
+from rhizome.simple_models import LocationPermission, Location, LocationTree, \
     LocationType, DataPointComputed
 
 class BaseModelResource(ModelResource, BaseResource):

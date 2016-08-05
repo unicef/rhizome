@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models import Office
+from rhizome.simple_models import Office
 
 
 class OfficeResource(BaseModelResource):

@@ -1,7 +1,7 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.models import IndicatorTag
-from rhizome.models import IndicatorToTag
+from rhizome.simple_models import IndicatorTag
+from rhizome.simple_models import IndicatorToTag
 
 
 class IndicatorToTagResourceTest(RhizomeApiTestCase):

@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.models import CustomDashboard, CustomChart
+from rhizome.simple_models import CustomDashboard, CustomChart
 
 import json
 

@@ -1,7 +1,7 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.agg_tasks import AggRefresh
-from rhizome.models import DataPointComputed, Campaign
+from rhizome.simple_models import DataPointComputed, Campaign
 
 
 

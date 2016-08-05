@@ -3,8 +3,9 @@ from django.db.transaction import TransactionManagementError
 
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.models import DataPoint
-from rhizome.models import Document, SourceSubmission
+from rhizome.simple_models import DataPoint
+from rhizome.simple_models import SourceSubmission
+from rhizome.models.document_models import Document
 from rhizome.etl_tasks.transform_upload import CampaignDocTransform, DateDocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh

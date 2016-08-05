@@ -46,6 +46,8 @@ var SubmissionModal = React.createClass({
       })
     }
 
+    var validator = '' // <input type='checkbox' checked/>
+
     return (
       <div>
         <a
@@ -53,6 +55,7 @@ var SubmissionModal = React.createClass({
           onClick={this.openModal} >
           view raw data!
         </a>
+        {validator}
         <Modal
           style={modalStyle}
           isOpen={this.state.modalIsOpen}
@@ -60,6 +63,7 @@ var SubmissionModal = React.createClass({
           <h1> Source_submission_id: {source_submission_id} </h1>
           {submission_data}
         </Modal>
+
       </div>
     )
   }

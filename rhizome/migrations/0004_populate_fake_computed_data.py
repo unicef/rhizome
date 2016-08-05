@@ -11,8 +11,8 @@ from pandas import DataFrame
 from random import randint, random
 
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
-from rhizome.models import Location, Indicator, Campaign, DataPointComputed
-from rhizome.models import Document, DocumentDetail, DocDetailType
+from rhizome.simple_models import Location, Indicator, Campaign, DataPointComputed
+from rhizome.simple_models import Document, DocumentDetail, DocDetailType
 from rhizome.etl_tasks.transform_upload import DocTransform
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh

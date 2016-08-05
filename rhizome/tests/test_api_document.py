@@ -1,6 +1,6 @@
 from base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
-from rhizome.models import CacheJob, Office, Indicator, Location,\
+from rhizome.simple_models import CacheJob, Office, Indicator, Location,\
     LocationType, DataPointComputed, CampaignType, Campaign, IndicatorTag,\
     LocationPermission, Document
 from rhizome.tests.setup_helpers import TestSetupHelpers
@@ -8,7 +8,7 @@ from pandas import read_csv, notnull, to_datetime
 import base64
 import os
 from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
-from rhizome.models import DataPointComputed, IndicatorTag, Office, CacheJob, CampaignType, SourceObjectMap
+from rhizome.simple_models import DataPointComputed, IndicatorTag, Office, CacheJob, CampaignType, SourceObjectMap
 
 
 class DocumentResourceTest(RhizomeApiTestCase):

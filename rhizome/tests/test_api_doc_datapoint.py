@@ -1,10 +1,9 @@
 from base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
-from rhizome.models import CampaignType
-from rhizome.models import DocDataPoint
-from rhizome.models import Document
-from rhizome.models import IndicatorTag
-
+from rhizome.simple_models import CampaignType
+from rhizome.simple_models import DocDataPoint
+from rhizome.simple_models import IndicatorTag
+from rhizome.models.document_models import Document
 
 class DocDataPointResourceTest(RhizomeApiTestCase):
 

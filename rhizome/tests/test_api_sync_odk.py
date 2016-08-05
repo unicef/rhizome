@@ -1,5 +1,5 @@
 from base_test_case import RhizomeApiTestCase
-from rhizome.models import DocDetailType, LocationTree
+from rhizome.simple_models import DocDetailType, LocationTree
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class SyncODKResourceTest(RhizomeApiTestCase):
