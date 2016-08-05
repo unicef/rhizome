@@ -79,14 +79,6 @@ var DocOverview = React.createClass({
 
     if (!doc_deets) return this.renderLoading()
 
-    // var doc_name = this.props.doc_title
-    //
-    // var rows = [
-    //   <div className='large-6 medium-6 small-12 columns csv-upload__tags'>
-    //     <span className='csv-upload__tags--span'>File_name: </span>{doc_name}
-    //   </div>
-    // ]
-
     var rows = []
 
     var odkRefreshBtn = <span>&nbsp;</span>
@@ -110,17 +102,22 @@ var DocOverview = React.createClass({
     }
 
     var button_row = (
-      <div>
-        <DownloadButton
-          onClick={this._download}
-          enable='true'
+      <div className='row'>
+        <div className='medium-3 columns'>
+          <a disabled={this.state.isRefreshing} className='button button-refresh'
+           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
+          </a>
+        </div>
+          <div className='medium-6 columns'>
+        </div>
+        <div className='medium-3 columns'>
+          <DownloadButton
+            onClick={this._download}
+            enable='true'
           text='Download Raw'
           working='Downloading'
           cookieName='dataBrowserCsvDownload' />
-        {odkRefreshBtn}
-        <a disabled={this.state.isRefreshing} className='button button-refresh'
-           onClick={this.refreshMaster}> <i className='fa fa-refresh'></i>{ this.state.isRefreshing ? 'Refreshing' : 'Refresh Master'}
-        </a>
+        </div>
       </div>
     )
 

@@ -54,8 +54,9 @@ var SourceDataContainer = React.createClass({
     var doc_id = this.state.doc_id
     var file_type = this.state.file_type || null
 
-    var docTabsAvailable = file_type === 'date' ? \
-      ['viewraw', 'mapped', 'un-mapped', 'date_results', 'doc_index'] :\
+    var docTabsAvailable = ['viewraw']
+    var docTabsAvailable = file_type === 'date' ?
+      ['viewraw', 'mapped', 'un-mapped', 'date_results', 'doc_index'] :
       ['viewraw', 'mapped', 'un-mapped', 'campaign_results', 'doc_index']
 
     var doc_tabs = CSVMenuItem.fromArray(
