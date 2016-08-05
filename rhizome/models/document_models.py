@@ -59,11 +59,11 @@ class Document(models.Model):
             try:
                 csv_df[self.uq_id_column] = csv_df[self.location_column].map(
                     str) + csv_df[self.campaign_column]
-            except Exception as err:
+            except Exception as err: ## FIXME # clean this
                 if self.date_column not in csv_df.columns:
-                    dp_error_message = '%s is a required column.' % err.message
-                    raise RhizomeApiException(message=dp_error_message)
-
+                    error_message = '%s is a required column.' % err.message
+                    raise Exception(error_message)
+    
         self.csv_df = csv_df
         self.file_header = csv_df.columns
 

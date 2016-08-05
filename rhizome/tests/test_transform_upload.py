@@ -10,7 +10,7 @@ from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
 from rhizome.models.datapoint_models import DataPoint, CacheJob
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
-    SourceObjectMap, DocumentDetail
+    SourceObjectMap, DocumentDetail, SourceSubmission
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
@@ -53,28 +53,30 @@ class TransformUploadTestCase(TestCase):
               those created in other documents)
             4. Inserting one record into submission_detail        '''
 
-        dt = CampaignDocTransform(self.user.id, self.document.id)
-
-        source_submissions = dt.process_file()
+        self.document.transform_upload()
+        source_submission_id_list = SourceSubmission.objects.filter(
+            document_id = self.document.id
+        )
 
         test_file = open(settings.MEDIA_ROOT + self.test_file_location, 'r')
         file_line_count = sum(1 for line in test_file) - 1  # for the header!
 
-        self.assertEqual(len(source_submissions), file_line_count)
+        self.assertEqual(len(source_submission_id_list), file_line_count)
 
     def test_missing_required_column(self):
 
         doc_id = self.ingest_file('missing_campaign.csv')
         try:
-            CampaignDocTransform(self.user.id, doc_id)
+            document_object = Document.objects.get(id = doc_id)
+            document_object.transform_upload()
             fail('This should should raise an exception')
         except Exception as err:
             self.assertEqual('campaign is a required column.', err.message)
 
     def test_duplicate_rows(self):
         doc_id = self.ingest_file('dupe_datapoints.csv')
-        dt = CampaignDocTransform(self.user.id, doc_id)
-        dt.main()
+        document_object = Document.objects.get(id = doc_id)
+        document_object.transform_upload()
         mr = MasterRefresh(self.user.id, doc_id)
         mr.main()
         dps = DataPoint.objects.all()
@@ -86,80 +88,15 @@ class TransformUploadTestCase(TestCase):
     # and make sure that the value has been correctly converted
     def test_percent_vals(self):
         doc_id = self.ingest_file('percent_vals.csv')
-        CampaignDocTransform(self.user.id, doc_id).main()
-        MasterRefresh(self.user.id, doc_id).main()
+        document_object = Document.objects.get(id = doc_id)
+        document_object.transform_upload()
+        document_object.refresh_master()
         dps = DataPoint.objects.all()
         self.assertEqual(len(dps), 2)
         expected_dp_val = 0.8267
         dp = DataPoint.objects.get(
             indicator_id=self.mapped_indicator_with_data)
         self.assertEqual(expected_dp_val, dp.value)
-
-    def _class_indicator_mapping(self):
-
-        lqas_indicator = Indicator.objects.create(
-            name='LQAS',
-            short_name='LQAS',
-            data_format='class'
-        )
-
-        # mapping_1 = IndicatorClassMap.objects.create(
-        #     indicator=lqas_indicator,
-        #     string_value="High Pass",
-        #     enum_value=4,
-        #     is_display=True)
-        #
-        # mapping_2 = IndicatorClassMap.objects.create(
-        #     indicator=lqas_indicator,
-        #     string_value="HP",
-        #     enum_value=4,
-        #     is_display=False)
-
-        lqas_som = SourceObjectMap.objects.create(
-            source_object_code='LQAS',
-            content_type='indicator',
-            mapped_by_id=self.user_id,
-            master_object_id=lqas_indicator.id
-        )
-
-        doc_id = self.ingest_file('class_indicator.csv')
-        CampaignDocTransform(self.user.id, doc_id).main()
-        MasterRefresh(self.user.id, doc_id).main()
-        dps = DataPoint.objects.all()
-        self.assertEqual(len(dps), 1)
-        self.assertEqual(dps[0].value, 4)
-
-    # def test_boolean_transform(self):
-
-    #     location_code_column = 'SettlementCode'
-    #     campaign_code_colum = 'DateOfReport'
-
-    #     input_df = read_csv('/Users/john/Downloads/vcm_birth_tracking_results.csv')
-    #     # input_df = read_csv('/Users/john/Desktop/vcm_bitrth_tracking_sample.csv')
-
-    #     cleaned_df = input_df\
-    #         [[location_code_column,campaign_code_colum,'VCM0Dose','VCMNameCAttended']]
-
-    #     bool_map = {'yes': 1, 'no': 0}
-
-    #     cleaned_df['VCM0Dose'] = cleaned_df['VCM0Dose'].map(bool_map)
-    #     cleaned_df['VCMNameCAttended'] = cleaned_df['VCMNameCAttended'].map(bool_map)
-
-    #     cleaned_df = cleaned_df.where((notnull(cleaned_df)), 0)
-
-    #     grouped_df = DataFrame(cleaned_df\
-    #         .groupby([location_code_column,campaign_code_colum])[['VCMNameCAttended','VCM0Dose']].sum())
-
-    #     print grouped_df
-
-    #     row_count_df = DataFrame(cleaned_df\
-    #         .groupby([location_code_column,campaign_code_colum])\
-    #         .count())[[location_code_column]]
-
-    #     final_df = grouped_df.merge(row_count_df,left_index=True,right_index=True)
-    #     final_df.rename(columns={location_code_column:'location_campaign_code_count'}, inplace=True)
-
-    #     return final_df
 
     def create_metadata(self):
         '''
