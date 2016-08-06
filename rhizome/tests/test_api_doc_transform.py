@@ -7,7 +7,8 @@ from rhizome.models.location_models import Location, LocationType, \
 from rhizome.models.indicator_models import Indicator, IndicatorTag
 from rhizome.models.datapoint_models import CacheJob, DataPoint, \
     DataPointComputed
-from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.document_models import Document, SourceObjectMap, \
+    SourceSubmission
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from datetime import datetime
@@ -57,6 +58,9 @@ class DocTransformResourceTest(RhizomeApiTestCase):
             document_docfile='eoc_post_campaign.csv', file_type='campaign')
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+
+        ss_list = SourceSubmission.objects.filter(document_id = doc.id)\
+            .values_list('id', flat=True)
 
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
