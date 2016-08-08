@@ -22,11 +22,10 @@ from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 from rhizome.api.exceptions import RhizomeApiException
 
-from rhizome.models.datapoint_models import * # FIXME
-from rhizome.models.campaign_models import * # FIXME
-from rhizome.models.indicator_models import * # FIXME
-from rhizome.models.location_models import * # FIXME
-from rhizome.models.document_models import * # FIXME
+from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.location_models import Location, LocationTree, \
+    LocationType
+
 
 class BaseModelResource(ModelResource, BaseResource):
     '''

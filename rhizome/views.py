@@ -7,11 +7,8 @@ from django.contrib.auth.decorators import user_passes_test
 from django.template import Template, context, RequestContext
 from django.conf import settings
 
-from rhizome.models.datapoint_models import * # FIXME
-from rhizome.models.campaign_models import * # FIXME
-from rhizome.models.indicator_models import * # FIXME
-from rhizome.models.location_models import * # FIXME
-from rhizome.models.document_models import * # FIXME
+from rhizome.models.dashboard_models import CustomDashboard
+
 from rhizome.forms import *
 from rhizome.mixins import PermissionRequiredMixin
 
@@ -126,13 +123,13 @@ def chart_edit(request, chart_id=None):
                               context_instance=RequestContext(request))
 
 
-class DashBoardView(generic.ListView):
+class DashBoardView(generic.ListView): #FIXME
     paginate_by = 50
     template_name = 'dashboards/index.html'
     context_object_name = 'user_dashboard'
 
     def get_queryset(self):  # not sure why this works. ##
-        return DataPoint.objects.all()[:1]
+        return CustomDashboard.objects.all()[:1]
 
 # OTHER
 #----------------------------------------------------------------------------

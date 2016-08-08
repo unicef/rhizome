@@ -4,8 +4,7 @@ from simple_history.models import HistoricalRecords
 from rhizome.models.indicator_models import Indicator
 from rhizome.models.location_models import Location
 from rhizome.models.campaign_models import Campaign
-from rhizome.models.document_models import Document, SourceSubmission
-
+import rhizome.models.document_models as dm
 
 class CacheJob(models.Model):
     '''
@@ -47,7 +46,7 @@ class DataPoint(models.Model):
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
-    source_submission = models.ForeignKey(SourceSubmission)
+    source_submission = models.ForeignKey(dm.SourceSubmission)
     cache_job = models.ForeignKey(CacheJob, default=-1)
     unique_index = models.CharField(max_length=255, unique=True, default=-1)
 
@@ -63,13 +62,13 @@ class DocDataPoint(models.Model):
     For Validation of upload rhizome.
     '''
 
-    document = models.ForeignKey(Document)  # redundant
+    document = models.ForeignKey(dm.Document)  # redundant
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign, null=True)
     data_date = models.DateTimeField(null=True)
     value = models.FloatField(null=True)
-    source_submission = models.ForeignKey(SourceSubmission)
+    source_submission = models.ForeignKey(dm.SourceSubmission)
     agg_on_location = models.BooleanField()
 
     class Meta:
@@ -95,7 +94,7 @@ class DataPointComputed(models.Model):
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
-    document = models.ForeignKey(Document)
+    document = models.ForeignKey(dm.Document)
 
     class Meta:
         db_table = 'datapoint_with_computed'
