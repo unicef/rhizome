@@ -17,7 +17,6 @@ from rhizome.models.campaign_models import Campaign
 from rhizome.models.datapoint_models import DataPointComputed
 from rhizome.models.document_models import Document, DocumentDetail, DocDetailType
 
-from rhizome.etl_tasks.refresh_master import MasterRefresh
 from rhizome.agg_tasks import AggRefresh
 
 

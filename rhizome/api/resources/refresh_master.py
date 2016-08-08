@@ -3,8 +3,6 @@ from rhizome.models.document_models import Document, DataPoint
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.agg_tasks import AggRefresh
 
-from rhizome.etl_tasks.refresh_master import MasterRefresh
-
 
 class RefreshMasterResource(BaseNonModelResource):
     '''
@@ -29,8 +27,8 @@ class RefreshMasterResource(BaseNonModelResource):
         '''
 
         doc_id = request.GET.get('document_id', None)
-        mr = MasterRefresh(request.user.id, doc_id)
-        mr.main()
+        document_object = Document.objecst.get(id = doc_id)
+        document_object.refresh_master()
 
         if Document.objects.get(id = doc_id).file_type == 'campaign':
             doc_campaign_ids = set(list(DataPoint.objects

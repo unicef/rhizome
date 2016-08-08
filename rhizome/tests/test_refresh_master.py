@@ -13,8 +13,6 @@ from rhizome.models.document_models import Document, DocDetailType, \
     DocumentDetail, SourceSubmission, SourceObjectMap, CacheJob, DocDataPoint,\
     DataPoint
 
-from rhizome.etl_tasks.refresh_master import MasterRefresh
-
 # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_refresh_master_init --settings=rhizome.settings.test
 
 
@@ -54,24 +52,19 @@ class RefreshMasterTestCase(TestCase):
     def test_refresh_master_init(self):
 
         self.set_up()
-
         self.document.refresh_master()
 
-        # mr = MasterRefresh(self.user.id, self.document.id)
-        # self.assertTrue(isinstance, (mr, MasterRefresh))
-
-        self.assertTrue(True)
+        self.assertTrue(True) # FIXME
 
     def test_submission_detail_refresh(self,):
 
         self.set_up()
-        mr = MasterRefresh(self.user.id, self.document.id)
 
         source_submissions_data = SourceSubmission.objects\
             .filter(document_id=self.document.id)\
             .values_list('id', flat=True)
 
-        mr.refresh_submission_details()
+        self.document.refresh_submission_details()
         submission_details = SourceSubmission.objects\
             .filter(document_id=self.document.id)
 
@@ -214,7 +207,7 @@ class RefreshMasterTestCase(TestCase):
         DocDataPoint.objects.create(**good_doc_dp_dict)
         DocDataPoint.objects.create(**bad_doc_dp_dict)
 
-        mr = MasterRefresh(self.user.id, self.document.id)
+        self.document.sync_datapoint()
 
         mr.sync_datapoint([ss_old.id, ss_new.id])
 
@@ -302,8 +295,7 @@ class RefreshMasterTestCase(TestCase):
         som_id_c.master_object_id = first_campaign
         som_id_c.save()
 
-        mr_with_new_meta = MasterRefresh(self.user.id, self.document.id)
-        mr_with_new_meta.refresh_submission_details()
+        self.document.refresh_submission_details()
 
         first_submission_detail = SourceSubmission.objects\
             .get(id=ss_id)
@@ -335,8 +327,7 @@ class RefreshMasterTestCase(TestCase):
         som_id_i.master_object_id = new_indicator_id
         som_id_i.save()
 
-        mr_after_new_mapping = MasterRefresh(self.user.id, self.document.id)
-        mr_after_new_mapping.main()
+        self.document.refresh_master()
 
         dp_with_new_indicator = DataPoint.objects.filter(
             indicator_id=new_indicator_id)
@@ -475,8 +466,7 @@ class RefreshMasterTestCase(TestCase):
 
         document.transform_upload()
 
-        mr = MasterRefresh(self.user.id, document.id)
-        mr.main()
+        self.document.refresh_master()
 
         ss_id_list = SourceSubmission.objects\
             .filter(document_id=document.id)\
