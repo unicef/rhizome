@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
@@ -26,9 +25,12 @@ class TransformUploadTestCase(TestCase):
 
     def test_simple_transform(self):
 
-        self.ingest_file('eoc_post_campaign.csv')
+        doc_id = self.ingest_file('eoc_post_campaign.csv')
+        doc_obj = Document.objects.get(id = doc_id)
+        doc_obj.transform_upload()
+        doc_obj.refresh_master()
 
-        the_value_from_the_database = DataPointComputed.objects.get(
+        the_value_from_the_database = PointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,
             location_id=self.mapped_location_id
@@ -204,6 +206,8 @@ class TransformUploadTestCase(TestCase):
             guid='test')
         document.docfile = file_name
         document.save()
-        sdt = SimpleDocTransform(self.user.id, document.id)
-        sdt.main()
+
+        document.transform_upload()
+        document.refresh_master()
+
         return document.id

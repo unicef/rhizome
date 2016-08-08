@@ -8,13 +8,13 @@ from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob, DataPointComputed
-from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.document_models import Document, SourceObjectMap,\
+    CacheJob
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.etl_tasks.simple_upload_transform import SimpleDocTransform
 
 class DocumentResourceTest(RhizomeApiTestCase):
 
@@ -58,8 +58,9 @@ class DocumentResourceTest(RhizomeApiTestCase):
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpCreated(resp)
         resp_data = self.deserialize(resp)
-        sdt = SimpleDocTransform(self.ts.user.id, resp_data['id'])
-        sdt.main()
+
+        get_data = {'document_id':resp_data['id']}
+        resp = self.ts.get(self, '/api/v1/transform_upload/', post_data)
         the_value_from_the_database = DataPointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,

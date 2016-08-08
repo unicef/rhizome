@@ -6,8 +6,8 @@ from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob, DataPoint
-from rhizome.models.document_models import Document, SourceSubmission
+from rhizome.models.document_models import Document, SourceSubmission,\
+     CacheJob, DataPoint
 
 from rhizome.cache_meta import LocationTreeCache
 from datetime import date, timedelta

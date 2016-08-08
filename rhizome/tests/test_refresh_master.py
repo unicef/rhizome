@@ -9,9 +9,9 @@ from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     CalculatedIndicatorComponent
-from rhizome.models.datapoint_models import CacheJob, DocDataPoint, DataPoint
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceSubmission, SourceObjectMap
+    DocumentDetail, SourceSubmission, SourceObjectMap, CacheJob, DocDataPoint,\
+    DataPoint
 
 from rhizome.etl_tasks.refresh_master import MasterRefresh
 
@@ -59,7 +59,7 @@ class RefreshMasterTestCase(TestCase):
 
         # mr = MasterRefresh(self.user.id, self.document.id)
         # self.assertTrue(isinstance, (mr, MasterRefresh))
-        
+
         self.assertTrue(True)
 
     def test_submission_detail_refresh(self,):

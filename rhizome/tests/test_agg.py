@@ -10,9 +10,10 @@ from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.datapoint_models import CacheJob, DataPointComputed, \
-    DataPoint, AggDataPoint
-from rhizome.models.document_models import Document, SourceSubmission
+from rhizome.models.datapoint_models import DataPointComputed, \
+    AggDataPoint
+from rhizome.models.document_models import Document, SourceSubmission, \
+    CacheJob, DataPoint
 
 from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
