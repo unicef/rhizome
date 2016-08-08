@@ -23,7 +23,7 @@ def deploy(venv_path=None):
 
     # on local machine
     _build_dependencies()
-    run_tests()
+    # run_tests()
 
     # on target machine
     stop_apache()
