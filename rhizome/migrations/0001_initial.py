@@ -225,29 +225,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='HistoricalDataPointEntry',
-            fields=[
-                ('id', models.IntegerField(verbose_name='ID',
-                                           db_index=True, auto_created=True, blank=True)),
-                ('data_date', models.DateTimeField()),
-                ('value', models.FloatField(null=True)),
-                ('created_at', models.DateTimeField(editable=False, blank=True)),
-                ('history_id', models.AutoField(serialize=False, primary_key=True)),
-                ('history_date', models.DateTimeField()),
-                ('history_type', models.CharField(max_length=1, choices=[
-                 ('+', 'Created'), ('~', 'Changed'), ('-', 'Deleted')])),
-                ('cache_job', models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING,
-                                                db_constraint=False, blank=True, to='rhizome.CacheJob', null=True)),
-                ('history_user', models.ForeignKey(related_name='+',
-                                                   on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL, null=True)),
-            ],
-            options={
-                'ordering': ('-history_date', '-history_id'),
-                'get_latest_by': 'history_date',
-                'verbose_name': 'historical data point entry',
-            },
-        ),
-        migrations.CreateModel(
             name='Indicator',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
@@ -453,24 +430,6 @@ class Migration(migrations.Migration):
             model_name='location',
             name='parent_location',
             field=models.ForeignKey(to='rhizome.Location', null=True),
-        ),
-        migrations.AddField(
-            model_name='historicaldatapointentry',
-            name='indicator',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING,
-                                    db_constraint=False, blank=True, to='rhizome.Indicator', null=True),
-        ),
-        migrations.AddField(
-            model_name='historicaldatapointentry',
-            name='location',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING,
-                                    db_constraint=False, blank=True, to='rhizome.Location', null=True),
-        ),
-        migrations.AddField(
-            model_name='historicaldatapointentry',
-            name='source_submission',
-            field=models.ForeignKey(related_name='+', on_delete=django.db.models.deletion.DO_NOTHING,
-                                    db_constraint=False, blank=True, to='rhizome.SourceSubmission', null=True),
         ),
         migrations.AddField(
             model_name='documentsourceobjectmap',

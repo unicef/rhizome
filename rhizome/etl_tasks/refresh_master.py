@@ -11,8 +11,8 @@ import math
 from datetime import datetime
 
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceObjectMap, SourceSubmission, DocumentSourceObjectMap
-from rhizome.models.datapoint_models import DocDataPoint, DataPoint
+    DocumentDetail, SourceObjectMap, SourceSubmission,\
+    DocumentSourceObjectMap, DocDataPoint, DataPoint
 
 class MasterRefresh(object):
     '''

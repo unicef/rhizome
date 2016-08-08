@@ -8,14 +8,13 @@ from rhizome.models.campaign_models import CampaignType, Campaign
 from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.datapoint_models import DataPoint, CacheJob
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
-    SourceObjectMap, DocumentDetail, SourceSubmission
-
-from rhizome.etl_tasks.refresh_master import MasterRefresh
+    SourceObjectMap, DocumentDetail, SourceSubmission, DataPoint, CacheJob
 
 class TransformUploadTestCase(TestCase):
 
+    # ./manage.py test rhizome.tests.test_transform_upload.TransformUploadTestCase --settings=rhizome.settings.test
+    # ./manage.py test rhizome.tests.test_transform_upload.TransformUploadTestCase.test_doc_to_source_submission --settings=rhizome.settings.test
     def __init__(self, *args, **kwargs):
 
         super(TransformUploadTestCase, self).__init__(*args, **kwargs)
@@ -77,8 +76,8 @@ class TransformUploadTestCase(TestCase):
         doc_id = self.ingest_file('dupe_datapoints.csv')
         document_object = Document.objects.get(id = doc_id)
         document_object.transform_upload()
-        mr = MasterRefresh(self.user.id, doc_id)
-        mr.main()
+        document_object.refresh_master()
+
         dps = DataPoint.objects.all()
         self.assertEqual(len(dps), 1)
         some_cell_value_from_the_file = 0.9029

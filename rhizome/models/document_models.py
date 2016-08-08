@@ -2,6 +2,9 @@ import hashlib
 import random
 import json
 import locale
+import re
+from collections import defaultdict
+import math
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -17,7 +20,23 @@ from rhizome.models.location_models import Location
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.indicator_models import Indicator
 
-from rhizome.models import *  ##import rhizome.models.datapoint_models as dp_m
+
+class CacheJob(models.Model):
+    '''
+    A table that shows the start/end time of each cache job, as well as the
+    response message of the job itself.  This allows a DBA to track what is
+    happening with our cache jobs and how long they are taking.
+    '''
+
+    date_attempted = models.DateTimeField(auto_now=True)
+    date_completed = models.DateTimeField(null=True)
+    is_error = models.BooleanField()
+    response_msg = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'cache_job'
+        ordering = ('-date_attempted',)
+
 
 class Document(models.Model):
     # (D)
@@ -221,8 +240,8 @@ class Document(models.Model):
 
         self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
-        # self.delete_unmapped()
-        # self.sync_datapoint()
+        self.delete_unmapped()
+        self.sync_datapoint()
 
     def get_document_config(self):
         '''
@@ -402,7 +421,7 @@ class Document(models.Model):
             ss_id_list = SourceSubmission.objects\
                 .filter(document_id=self.id).values_list('id', flat=True)
 
-        doc_dp_df = DataFrame(list(dp_m.DocDataPoint.objects.filter(
+        doc_dp_df = DataFrame(list(DocDataPoint.objects.filter(
             document_id=self.id).values()))
 
         if len(doc_dp_df) == 0:
@@ -440,8 +459,8 @@ class Document(models.Model):
                                                                   row.data_date)
             if doc_dp:
                 doc_dp_batch.append(doc_dp)
-        dp_m.DocDataPoint.objects.filter(source_submission_id=row.id).delete()
-        dp_m.DocDataPoint.objects.bulk_create(doc_dp_batch)
+        DocDataPoint.objects.filter(source_submission_id=row.id).delete()
+        DocDataPoint.objects.bulk_create(doc_dp_batch)
 
     # helper function to sync_datapoints
     def add_unique_index(self, x):
@@ -457,7 +476,7 @@ class Document(models.Model):
                                                 value, data_date):
         '''
         This method prepares a batch insert into docdatapoint by creating a list of
-        DocDataPoint objects.  The Database handles all docdatapoitns in a submission
+        docdatapoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
 
@@ -483,7 +502,7 @@ class Document(models.Model):
             return None
 
         if not cleaned_val == None:
-            doc_dp = dp_m.DocDataPoint(**{
+            doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,
                 'location_id': row.location_id,
@@ -599,7 +618,7 @@ class DocumentDetail(models.Model):
     class Meta:
         db_table = 'doc_detail'
         unique_together = (('document', 'doc_detail_type'))
-#
+
 class SourceSubmission(models.Model):
 
     document = models.ForeignKey(Document)
@@ -636,6 +655,59 @@ class SourceSubmission(models.Model):
             c_id = None
 
         return c_id
+
+
+class DocDataPoint(models.Model):
+    '''
+    For Validation of upload rhizome.
+    '''
+
+    document = models.ForeignKey(Document)  # redundant
+    indicator = models.ForeignKey(Indicator)
+    location = models.ForeignKey(Location)
+    campaign = models.ForeignKey(Campaign, null=True)
+    data_date = models.DateTimeField(null=True)
+    value = models.FloatField(null=True)
+    source_submission = models.ForeignKey(SourceSubmission)
+    agg_on_location = models.BooleanField()
+
+    class Meta:
+        db_table = 'doc_datapoint'
+
+
+class DataPoint(models.Model):
+    '''
+    The core table of the application.  This is where the raw data is stored
+    and brought together from data entry, ODK and csv upload.
+
+    Note that this table does not store the aggregated or calculated data, only
+    the raw data that we get from the source.
+
+    The source_submission shows the original source of the data in the
+    source_submission.  The source_submission is -1 in the case of data
+    entry.
+
+    The cache_job_id column allows us to find out when and why a particular
+    datapoint was refreshed.  New datapoints have a cache_job_id = -1 which
+    tells the system that it needs to be refreshed.
+    '''
+
+    indicator = models.ForeignKey(Indicator)
+    location = models.ForeignKey(Location)
+    campaign = models.ForeignKey(Campaign, null=True)
+    data_date = models.DateTimeField(null=True)
+    value = models.FloatField(null=True)
+    created_at = models.DateTimeField(auto_now=True)
+    source_submission = models.ForeignKey(SourceSubmission)
+    cache_job = models.ForeignKey(CacheJob, default=-1)
+    unique_index = models.CharField(max_length=255, unique=True, default=-1)
+
+    def get_val(self):
+        return self.value
+
+    class Meta:
+        db_table = 'datapoint'
+
 
 # Exceptions #
 class BadFileHeaderException(Exception):

@@ -54,6 +54,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         )
 
     def test_doc_transform(self):
+        # ./manage.py test rhizome.tests.test_api_doc_transform.DocTransformResourceTest.test_doc_transform --settings=rhizome.settings.test
         doc = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign.csv', file_type='campaign')
         get_data = {'document_id': doc.id}
