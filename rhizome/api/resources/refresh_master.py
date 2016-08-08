@@ -27,7 +27,7 @@ class RefreshMasterResource(BaseNonModelResource):
         '''
 
         doc_id = request.GET.get('document_id', None)
-        document_object = Document.objecst.get(id = doc_id)
+        document_object = Document.objects.get(id = doc_id)
         document_object.refresh_master()
 
         if Document.objects.get(id = doc_id).file_type == 'campaign':

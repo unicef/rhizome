@@ -245,7 +245,6 @@ class Document(models.Model):
     def refresh_master(self):
 
         self.db_doc_deets = self.get_document_config()
-        self.source_map_dict = self.get_document_meta_mappings()
 
         self.refresh_submission_details()
         self.submissions_to_doc_datapoints()
@@ -385,6 +384,8 @@ class Document(models.Model):
         Send all rows queued for processing to the process_source_submission method.
         '''
 
+        self.source_map_dict = self.get_document_meta_mappings()
+
         # ss_ids_in_batch = self.submission_data.keys()
 
         for row in SourceSubmission.objects.filter(document_id=self.id):
@@ -497,20 +498,13 @@ class Document(models.Model):
             return None
 
         cleaned_val = None
-        # handle string 'class' type indicators
-        # if indicator_id in self.class_map_dict:
-        #     try:
-        #         cleaned_val = self.class_map_dict[indicator_id][value]
-        #     except KeyError:
-        #         return None
-        # handle numbers
-        # else:
+
         try:
             cleaned_val = self.clean_val(value)
         except ValueError:
             return None
 
-        if not cleaned_val == None:
+        if not cleaned_val == None: #FIXME sloppy syntax
             doc_dp = DocDataPoint(**{
                 'indicator_id':  indicator_id,
                 'value': cleaned_val,

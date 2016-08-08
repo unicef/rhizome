@@ -70,80 +70,6 @@ class RefreshMasterTestCase(TestCase):
 
         self.assertEqual(len(source_submissions_data), len(submission_details))
 
-    # def test_data_that_needs_campaign(self):
-    #     '''
-    #     AFter syncing a document, the system needs to ensure that data that
-    #     has no associated campaign, will be marked with a cache_job_id of -2.
-    #
-    #     The aggregation framework searches for datapitns with cache_job_id = -1
-    #     but if one of these datapoitns has no associated campaign, then
-    #     aggregation will break.
-    #
-    #     Thus we must ensure that any data that needs campaign is marked
-    #     accordingly, so we dont break aggregation, and so the user knows that
-    #     there is data in the recent upload that needs to have an associated
-    #     campaign.
-    #
-    #    python manage.py test rhizome.tests.test_refresh_master\
-    #    .RefreshMasterTestCase.test_data_that_needs_campaign \
-    #    --settings=rhizome.settings.test
-    #     '''
-    #
-    #     self.set_up()
-    #
-    #
-    #     office_obj = Office.objects.all()[0]
-    #     tag_obj = IndicatorTag.objects.all()[0]
-    #     location_obj = Location.objects.all()[0]
-    #     indicator_obj = Indicator.objects.all()[0]
-    #     campaign_type_obj = CampaignType.objects.all()[0]
-    #     start_date, end_date, bad_date = '2016-12-01','2016-12-30','2017-01-01'
-    #     source_submission_obj = SourceSubmission.objects.all()[0]
-    #
-    #     my_campaign = Campaign.objects.create(
-    #         start_date = start_date,
-    #         end_date = end_date,
-    #         name = 'my_campaign',
-    #         top_lvl_location = location_obj,
-    #         top_lvl_indicator_tag = tag_obj,
-    #         office = office_obj,
-    #         campaign_type = campaign_type_obj
-    #     )
-    #
-    #     ## skipping over all of the refresH-master methos
-    #     ## and  just testing this particular test case
-    #     base_dp_dict = {
-    #         'location_id': location_obj.id,
-    #         'indicator_id': indicator_obj.id,
-    #         'value': 100,
-    #         'source_submission_id': source_submission_obj.id,
-    #     }
-    #
-    #     ## create dictionaries for the two datapoints ##
-    #     no_campaign_dp_dict = {'data_date' : bad_date}
-    #     has_campaign_dp_dict = {'data_date' : start_date}
-    #
-    #     no_campaign_dp_dict.update(base_dp_dict)
-    #     has_campaign_dp_dict.update(base_dp_dict)
-    #
-    #     ## create the datapoints ##
-    #     dp_without_campaign = DataPoint.objects.create(**no_campaign_dp_dict)
-    #     dp_with_campaign = DataPoint.objects.create(**has_campaign_dp_dict)
-    #
-    #     ## instantiate the MasterRefresh object ##
-    #     mr = MasterRefresh(self.user.id, self.document.id)
-    #     mr.ss_ids_to_process = [source_submission_obj]
-    #
-    #     ## this is the method we are testing ##
-    #     mr.mark_datapoints_with_needs_campaign()
-    #
-    #     ## now fetch the data after updating the cache_job_ids ##
-    #     no_campaign_dp_dict.pop('cache_job_id', None)
-    #     no_campaign = DataPoint.objects.get(**no_campaign_dp_dict)
-    #     has_campaign = DataPoint.objects.get(**has_campaign_dp_dict)
-    #
-    #     self.assertEqual(has_campaign.cache_job_id,-1)
-    #     self.assertEqual(no_campaign.cache_job_id,-2)
 
     def test_latest_data_gets_synced(self):
         '''
@@ -208,8 +134,6 @@ class RefreshMasterTestCase(TestCase):
         DocDataPoint.objects.create(**bad_doc_dp_dict)
 
         self.document.sync_datapoint()
-
-        mr.sync_datapoint([ss_old.id, ss_new.id])
 
         dp_result = DataPoint.objects.filter(
             location_id=test_loc_id,
@@ -307,14 +231,14 @@ class RefreshMasterTestCase(TestCase):
         ## now that we have created the mappign, "refresh_master" ##
         ##         should create the relevant datapoints          ##
 
-        mr_with_new_meta.submissions_to_doc_datapoints()
+        self.document.submissions_to_doc_datapoints()
         doc_dp_ids = DocDataPoint.objects.filter(
             document_id=self.document.id, indicator_id=first_indicator_id).values()
 
         # Test Case #3
         self.assertEqual(1, len(doc_dp_ids))
 
-        mr_with_new_meta.sync_datapoint()
+        self.document.sync_datapoint()
         dps = DataPoint.objects.all()
 
         # Test Case #4
