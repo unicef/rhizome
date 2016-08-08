@@ -5,6 +5,7 @@ import locale
 import re
 from collections import defaultdict
 import math
+from dateutil.parser import parse
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -13,6 +14,8 @@ from django.conf import settings
 from pandas import read_csv
 from pandas import notnull
 from pandas import DataFrame
+from pandas import to_datetime
+
 from bulk_update.helper import bulk_update
 from jsonfield import JSONField
 
@@ -221,11 +224,17 @@ class Document(models.Model):
             'document_id': self.id,
             'row_number': submission_ix,
             'location_code': submission_data[self.location_column],
-            'campaign_code': submission_data[self.campaign_column],
-            # 'data_date': submission_data['data_date'],
             'instance_guid': submission_data[self.uq_id_column],
             'process_status': 'TO_PROCESS',
         }
+
+        if self.file_type == 'date':
+            submission_dict['data_date'] =\
+                parse(submission_data[self.date_column])
+        else:
+            submission_dict['campaign_code'] =\
+                submission_data[self.campaign_column]
+
         return submission_dict, instance_guid
 
 
@@ -397,7 +406,7 @@ class Document(models.Model):
                 x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(int(x['campaign_id']))
         else:
             x['unique_index'] = str(x['location_id']) + '_' + str(
-                x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+                x['indicator_id']) + '_' + str(to_datetime(x['data_date'], utc=True))
         return x
 
     def filter_data_frame_conflicts(self, df):
@@ -469,7 +478,7 @@ class Document(models.Model):
                 x['location_id']) + '_' + str(x['indicator_id']) + '_' + str(x['campaign_id'])
         else:
             x['unique_index'] = str(x['location_id']) + '_' + str(
-                x['indicator_id']) + '_' + str(pd.to_datetime(x['data_date'], utc=True))
+                x['indicator_id']) + '_' + str(to_datetime(x['data_date'], utc=True))
         return x
 
     def source_submission_cell_to_doc_datapoint(self, row, indicator_string,
@@ -641,7 +650,7 @@ class SourceSubmission(models.Model):
         try:
             l_id = SourceObjectMap.objects.get(content_type='location',
                    source_object_code=self.location_code).master_object_id
-        except ObjectDoesNotExist:
+        except SourceObjectMap.DoesNotExist :
             l_id = None
 
         return l_id
@@ -651,7 +660,7 @@ class SourceSubmission(models.Model):
         try:
             c_id = SourceObjectMap.objects.get(content_type='campaign',
                                                source_object_code=self.campaign_code).master_object_id
-        except ObjectDoesNotExist:
+        except SourceObjectMap.DoesNotExist:
             c_id = None
 
         return c_id
