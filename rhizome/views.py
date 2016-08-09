@@ -123,15 +123,6 @@ def chart_edit(request, chart_id=None):
                               context_instance=RequestContext(request))
 
 
-class DashBoardView(generic.ListView): #FIXME
-    paginate_by = 50
-    template_name = 'dashboards/index.html'
-    context_object_name = 'user_dashboard'
-
-    def get_queryset(self):  # not sure why this works. ##
-        return CustomDashboard.objects.all()[:1]
-
-# OTHER
 #----------------------------------------------------------------------------
 @user_passes_test(lambda u: u.groups.filter(name='react_app') or u.is_superuser,
                   login_url='/permissions_needed', redirect_field_name=None)
