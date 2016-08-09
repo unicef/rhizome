@@ -4,7 +4,7 @@ from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
-from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.campaign_models import DataPointComputed
 from rhizome.models.document_models import Document, SourceObjectMap,\
     SourceSubmission, CacheJob
 

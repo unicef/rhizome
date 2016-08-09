@@ -48,6 +48,7 @@ class DocTransFormResource(BaseNonModelResource):
                 .values_list('campaign_id', flat=True)))
 
             for c_id in doc_campaign_ids:
+                print 'C_ID %s' % c_id
                 agg_refresh_obj = AggRefresh(c_id)
                 # try/except block hack because tests fail otherwise
                 try:

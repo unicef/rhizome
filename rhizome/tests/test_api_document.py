@@ -5,10 +5,10 @@ from pandas import read_csv, notnull, to_datetime
 from django.contrib.auth.models import User
 
 from rhizome.models.office_models import Office
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import DataPointComputed
 from rhizome.models.document_models import Document, SourceObjectMap,\
     CacheJob
 
@@ -35,23 +35,11 @@ class DocumentResourceTest(RhizomeApiTestCase):
         self.deserialize(resp)
         self.assertHttpCreated(resp)
 
-    def test_obj_create_xlsx(self):
+    def test_xlsx_transform(self):
         path = os.path.join(os.path.dirname(__file__),
                             '_data/eoc_post_campaign.xlsx')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
-        post_data = {'docfile': encoded_data,
-                     'file_type': 'campaign',
-                     'doc_title': 'eoc_post_campaign.xlsx'}
-        resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
-        self.deserialize(resp)
-        self.assertHttpCreated(resp)
-
-    def test_obj_create_xlsx_transform(self):
-        path = os.path.join(os.path.dirname(__file__),
-                            '_data/eoc_post_campaign.xlsx')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        f = open(path).read()
+        encoded_data = base64.b64encode(f)
         post_data = {'docfile': encoded_data,
                      'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.xlsx'}
@@ -60,7 +48,7 @@ class DocumentResourceTest(RhizomeApiTestCase):
         resp_data = self.deserialize(resp)
 
         get_data = {'document_id':resp_data['id']}
-        resp = self.ts.get(self, '/api/v1/transform_upload/', post_data)
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         the_value_from_the_database = DataPointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,

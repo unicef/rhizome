@@ -138,8 +138,8 @@ class CampaignResourceTest(RhizomeApiTestCase):
     def test_post_campaign_invalid_ids(self):
         data = {
             'name': 'something',
-            'top_lvl_location_id': 0,
-            'top_lvl_indicator_tag_id': 33,
+            'top_lvl_location_id': -123114,
+            'top_lvl_indicator_tag_id': 3322323232323,
             'office_id': self.o.id,
             'campaign_type_id': self.ct.id,
             'start_date': '2016-05-01',

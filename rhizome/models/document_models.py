@@ -20,9 +20,8 @@ from bulk_update.helper import bulk_update
 from jsonfield import JSONField
 
 from rhizome.models.location_models import Location
-from rhizome.models.campaign_models import Campaign
 from rhizome.models.indicator_models import Indicator
-
+from rhizome.models.campaign_models import Campaign
 
 class CacheJob(models.Model):
     '''

@@ -4,11 +4,11 @@ import json
 from django.contrib.auth.models import User
 from pandas import read_csv, to_datetime
 
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType,\
     LocationPermission
 from rhizome.models.document_models import Document, SourceObjectMap, CacheJob
-from rhizome.models.datapoint_models import DataPointComputed
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 from rhizome.models.office_models import Office
 

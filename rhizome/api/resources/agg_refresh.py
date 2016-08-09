@@ -1,8 +1,8 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 # from rhizome.agg_tasks import AggRefresh
-# from rhizome.models.datapoint_models import DataPointComputed
-from rhizome.models.campaign_models import Campaign
+# from rhizome.models.datapoint_models import
+from rhizome.models.campaign_models import Campaign #, DataPointComputed
 
 
 class AggRefreshResource(BaseNonModelResource):
@@ -15,7 +15,7 @@ class AggRefreshResource(BaseNonModelResource):
           - *Errors:*
               if an invalid id is provided, the API returns a 500 error
     '''
-
+    ##FIXME##
     # class Meta(BaseNonModelResource.Meta):
     #     resource_name = 'agg_refresh'
     #     queryset = DataPointComputed.objects.all().values()

@@ -5,13 +5,11 @@ from django.test import TestCase
 
 from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
-    CampaignToIndicator
+    CampaignToIndicator, DataPointComputed
 from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.datapoint_models import DataPointComputed, \
-    AggDataPoint
 from rhizome.models.document_models import Document, SourceSubmission, \
     CacheJob, DataPoint
 

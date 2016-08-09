@@ -13,8 +13,7 @@ from random import randint, random
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator
-from rhizome.models.campaign_models import Campaign
-from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.campaign_models import Campaign, DataPointComputed
 from rhizome.models.document_models import Document, DocumentDetail, DocDetailType
 
 from rhizome.agg_tasks import AggRefresh
