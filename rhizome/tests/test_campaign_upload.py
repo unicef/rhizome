@@ -59,6 +59,9 @@ class TransformUploadTestCase(TestCase):
             document_object.transform_upload()
             document_object.refresh_master()
 
+            campaign_object = Campaign.objects.get(id = self.mapped_campaign_id)
+            campaign_object.aggregate_and_calculate()
+
             the_value_from_the_database = DataPointComputed.objects.get(
                 campaign_id=self.mapped_campaign_id,
                 indicator_id=self.mapped_indicator_with_data,

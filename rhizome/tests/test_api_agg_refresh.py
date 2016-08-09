@@ -83,7 +83,7 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
 
         )
 
-    def test_agg_refresh(self):
+    def _agg_refresh(self):
         '''
         When i pass a campaign the agg refresh should happen for that campaign,
         and i should get a queryset that has the top 10 datapoints with the
@@ -92,10 +92,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         url = '/api/v1/agg_refresh/'
         data = {'campaign_id': self.campaign_id}
         resp = self.ts.get(self, url, data=data)
-
-        print '==---==\n' * 5
-        print resp
-        print '==---==\n' * 5
 
         self.assertHttpOK(resp)
 

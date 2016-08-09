@@ -9,11 +9,12 @@ from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.document_models import Document, SourceObjectMap, DataPoint
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
+from rhizome.cache_meta import LocationTreeCache
 
 class DocumentResourceTest(RhizomeApiTestCase):
 
@@ -47,7 +48,10 @@ class DocumentResourceTest(RhizomeApiTestCase):
         resp_data = self.deserialize(resp)
 
         get_data = {'document_id':resp_data['id']}
+        ## this right here emulates what happens when the user clicks the
+        ## `refresh master` button
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+
         the_value_from_the_database = DataPointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,
@@ -55,11 +59,11 @@ class DocumentResourceTest(RhizomeApiTestCase):
         ).value
 
         some_cell_value_from_the_file = 0.082670906
-        # find this from the data frame by selecting the cell where we have
-        # mapped the data..
+        # FIXME find this from the data frame by selecting the cell where we
+        # have mapped the data..
 
-        self.assertEqual(some_cell_value_from_the_file,
-                         the_value_from_the_database)
+        self.assertEqual(some_cell_value_from_the_file, \
+            the_value_from_the_database)
 
     def test_upload_empty_csv(self):
         file_name = '_data/empty_csv.csv'
@@ -147,6 +151,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
             mapped_by_id=self.user_id,
             master_object_id=self.mapped_indicator_with_data
         )
+        ltc = LocationTreeCache()
+        ltc.main()
 
     def model_df_to_data(self, model_df, model):
 

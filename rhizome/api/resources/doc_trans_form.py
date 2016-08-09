@@ -50,4 +50,5 @@ class DocTransFormResource(BaseNonModelResource):
                 campaign_object = Campaign.objects.get(id = c_id)
                 campaign_object.aggregate_and_calculate()
 
+
         return Document.objects.filter(id=document_object.id).values()
