@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
-    CampaignToIndicator, DataPointComputed
+    CampaignToIndicator, DataPointComputed, AggDataPoint
 from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
@@ -1135,7 +1135,7 @@ class AggRefreshTestCase(TestCase):
 
         campaign_object = Campaign.objects.get(id = self.campaign_id)
         campaign_object.aggregate_and_calculate()
-        
+
         cdp_pct_missed_3 = DataPointComputed.objects.filter(
             indicator_id=pct_missed.id)[0]
         self.assertEqual(cdp_pct_missed_3.value, 0.45)

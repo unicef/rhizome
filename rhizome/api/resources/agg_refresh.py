@@ -16,7 +16,7 @@ class AggRefreshResource(BaseNonModelResource):
 
     class Meta(BaseNonModelResource.Meta):
         resource_name = 'agg_refresh'
-        GET_params_required = 'campaign_id'
+        GET_params_required = ['campaign_id']
 
     def get_object_list(self, request):
 
@@ -26,7 +26,7 @@ class AggRefreshResource(BaseNonModelResource):
     def pre_process_data(self, request):
         '''
         '''
-        campaign_id = request.GET.get('campaign_id')
+        campaign_id = request.GET.get('campaign_id', None)
         try:
             campaign_object = Campaign.objects.get(id = campaign_id)
         except Campaign.DoesNotExist as err:

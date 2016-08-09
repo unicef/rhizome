@@ -93,6 +93,10 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         data = {'campaign_id': self.campaign_id}
         resp = self.ts.get(self, url, data=data)
 
+        print '==---==\n' * 5
+        print resp
+        print '==---==\n' * 5
+
         self.assertHttpOK(resp)
 
         response_data = self.deserialize(resp)
@@ -105,14 +109,7 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         url = '/api/v1/agg_refresh/'
         resp = self.ts.get(self, url)
         response_data = self.deserialize(resp)
-        self.assertHttpOK(resp)
-
-        response_data = self.deserialize(resp)
-        response_objects = response_data['objects']
-        db_objects = DataPointComputed.objects.all()
-
-        all_campaigns = Campaign.objects.all().values()
-        self.assertEqual(len(response_objects), len(db_objects))
+        self.assertHttpApplicationError(resp)
 
     def test_invalid_campaign_id(self):
         url = '/api/v1/agg_refresh/'

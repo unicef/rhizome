@@ -77,7 +77,7 @@ class Campaign(models.Model):
 
     def aggregate_and_calculate(self):
 
-        self.dp_columns = ['location_id', 'indicator_id','campaign_id', 'value']
+        self.dp_columns = ['location_id', 'indicator_id', 'value']
         self.dwc_batch, self.dwc_tuple_dict = [], {}
 
         self.agg_datapoints()
