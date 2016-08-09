@@ -10,7 +10,8 @@ from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.document_models import Document, SourceSubmission, DataPoint
+from rhizome.models.document_models import Document, SourceSubmission
+from rhizome.models.datapoint_models import DataPoint
 
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers

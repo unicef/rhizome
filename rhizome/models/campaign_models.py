@@ -99,7 +99,7 @@ class Campaign(models.Model):
         The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}
         '''
 
-        from rhizome.models.document_models import DataPoint
+        from rhizome.models.datapoint_models import DataPoint
 
         agg_dp_batch, tuple_dict = [], {}
         location_tree_columns = ['location_id', 'parent_location_id', 'lvl']

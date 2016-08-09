@@ -1,5 +1,6 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.models.document_models import Document, DataPoint
+from rhizome.models.document_models import Document
+from rhizome.models.datapoint_models import DataPoint
 from rhizome.api.exceptions import RhizomeApiException
 
 

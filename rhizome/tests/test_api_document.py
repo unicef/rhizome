@@ -9,7 +9,8 @@ from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceObjectMap, DataPoint
+from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.datapoint_models import Document, DataPoint
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase

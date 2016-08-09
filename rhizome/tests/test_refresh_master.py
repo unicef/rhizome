@@ -10,8 +10,8 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceSubmission, SourceObjectMap, DocDataPoint,\
-    DataPoint
+    DocumentDetail, SourceSubmission, SourceObjectMap
+from rhizome.models.datapoint_models import DocDataPoint, DataPoint
 
 # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_refresh_master_init --settings=rhizome.settings.test
 

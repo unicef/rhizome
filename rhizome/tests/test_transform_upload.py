@@ -9,7 +9,9 @@ from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
-    SourceObjectMap, DocumentDetail, SourceSubmission, DataPoint
+    SourceObjectMap, DocumentDetail, SourceSubmission
+
+from rhizome.models.datapoint_models import DataPoint
 
 class TransformUploadTestCase(TestCase):
 

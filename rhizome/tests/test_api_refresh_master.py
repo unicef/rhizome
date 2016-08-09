@@ -11,7 +11,8 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceObjectMap, DataPoint
+    DocumentDetail, SourceObjectMap
+from rhizome.models.datapoint_models import DataPoint
 
 
 class RefreshMasterAPIResourceTest(RhizomeApiTestCase):

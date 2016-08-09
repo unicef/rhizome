@@ -50,6 +50,9 @@ class Document(models.Model):
     ###############################
 
     def transform_upload(self):
+
+        from rhizome.models.datapoint_models import DocDataPoint, DataPoint
+
         self.build_csv_df()
         self.process_file()
         self.upsert_source_object_map()
@@ -301,6 +304,8 @@ class Document(models.Model):
         old data and make way for the new
         '''
 
+        from rhizome.models.datapoint_models import DataPoint
+
         som_data = SourceObjectMap.objects.filter(master_object_id__gt=0,
               id__in=DocumentSourceObjectMap.objects
               .filter(document_id=self.id)
@@ -408,7 +413,11 @@ class Document(models.Model):
 
     def sync_datapoint(self, ss_id_list=None):
 
-        # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_latest_data_gets_synced --settings=rhizome.settings.test
+        ## FIXME should import this once when we run `refresh_master`
+        ## but if i don't do it for each method there i get a NameError
+ 
+        from rhizome.models.datapoint_models import DataPoint, DocDataPoint
+
         dp_batch = []
         if not ss_id_list:
             ss_id_list = SourceSubmission.objects\
@@ -444,6 +453,8 @@ class Document(models.Model):
         DataPoint.objects.bulk_create(dp_batch)
 
     def process_source_submission(self, row):
+        from rhizome.models.datapoint_models import DocDataPoint
+
         doc_dp_batch = []
         submission = row.submission_json
 
@@ -472,6 +483,8 @@ class Document(models.Model):
         docdatapoint objects.  The Database handles all docdatapoitns in a submission
         row at once in process_source_submission.
         '''
+
+        from rhizome.models.datapoint_models import DocDataPoint
 
         ## if no indicator row dont process ##
         try:
@@ -641,55 +654,6 @@ class SourceSubmission(models.Model):
             c_id = None
 
         return c_id
-
-
-class DocDataPoint(models.Model):
-    '''
-    For Validation of upload rhizome.
-    '''
-
-    document = models.ForeignKey(Document)  # redundant
-    indicator = models.ForeignKey(Indicator)
-    location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign, null=True)
-    data_date = models.DateTimeField(null=True)
-    value = models.FloatField(null=True)
-    source_submission = models.ForeignKey(SourceSubmission)
-    agg_on_location = models.BooleanField()
-
-    class Meta:
-        db_table = 'doc_datapoint'
-
-
-class DataPoint(models.Model):
-    '''
-    The core table of the application.  This is where the raw data is stored
-    and brought together from data entry, ODK and csv upload.
-
-    Note that this table does not store the aggregated or calculated data, only
-    the raw data that we get from the source.
-
-    The source_submission shows the original source of the data in the
-    source_submission.  The source_submission is -1 in the case of data
-    entry.
-
-    '''
-
-    indicator = models.ForeignKey(Indicator)
-    location = models.ForeignKey(Location)
-    campaign = models.ForeignKey(Campaign, null=True)
-    data_date = models.DateTimeField(null=True)
-    value = models.FloatField(null=True)
-    created_at = models.DateTimeField(auto_now=True)
-    source_submission = models.ForeignKey(SourceSubmission)
-    unique_index = models.CharField(max_length=255, unique=True, default=-1)
-
-    def get_val(self):
-        return self.value
-
-    class Meta:
-        db_table = 'datapoint'
-
 
 # Exceptions #
 class BadFileHeaderException(Exception):
