@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
-    CampaignToIndicator, DataPointComputed, AggDataPoint
+    DataPointComputed, AggDataPoint
 from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
@@ -364,40 +364,31 @@ class AggRefreshTestCase(TestCase):
             short_name='Number of Avoidable Deaths',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=parent_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name='Number of Deaths due to Conflict',
             short_name='Number of Deaths due to Conflict',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_1.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_2 = Indicator.objects.create(
             name='Number of Deaths due to Malaria',
             short_name='Number of Deaths due to Malaria',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_2.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_3 = Indicator.objects.create(
             name='Number of Deaths due to Hunger',
             short_name='Number of Deaths due to Hunger',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_3.id,
-                                           campaign_id=self.campaign_id)
+
 
         pct_indicator = Indicator.objects.create(
             name='pct of Deaths due to Hunger',
             short_name='pct of Deaths due to Hunger',
             data_format='pct'
         )
-        CampaignToIndicator.objects.create(indicator_id=pct_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -503,24 +494,17 @@ class AggRefreshTestCase(TestCase):
             short_name='Refsual Conversion',
             data_format='pct'
         )
-        CampaignToIndicator.objects.create(indicator_id=parent_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_part = Indicator.objects.create(
             name='Refusals After Revisit',
             short_name='Refusals After Revisit',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_part.id,
-                                           campaign_id=self.campaign_id)
-
         sub_indicator_denom = Indicator.objects.create(
             name='Refusals Before Revisit',
             short_name='Refusals Before Revisit',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_denom.id,
-                                           campaign_id=self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -579,16 +563,12 @@ class AggRefreshTestCase(TestCase):
             short_name='Number of Avoidable Deaths',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=parent_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name='Number Missing Due to Refusal',
             short_name='Number Missing Due to Refusal',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_1.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_2 = Indicator.objects.create(
             name='Number Missing Due to Absence',
@@ -600,8 +580,6 @@ class AggRefreshTestCase(TestCase):
             short_name='Number Missing Due to ??',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_3.id,
-                                           campaign_id=self.campaign_id)
 
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
             indicator_id=parent_indicator.id,
@@ -678,72 +656,54 @@ class AggRefreshTestCase(TestCase):
             short_name='Number of Avoidable Deaths',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=parent_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name='Number of Deaths due to Conflict',
             short_name='Number of Deaths due to Conflict',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_1.id,
-                                           campaign_id=self.campaign_id)
 
         sub_sub_indicator_1 = Indicator.objects.create(
             name='Number Conflict Deaths - Children',
             short_name='Conflict Deaths - Children',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_sub_indicator_1.id,
-                                           campaign_id=self.campaign_id)
 
         sub_sub_indicator_2 = Indicator.objects.create(
             name='Number of Adult Civilian Deaths',
             short_name='Number of Adult Civilian Deaths',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_sub_indicator_2.id,
-                                           campaign_id=self.campaign_id)
 
         sub_sub_indicator_3 = Indicator.objects.create(
             name='Number of Conflict Deaths - Militants',
             short_name='Conflict Deaths - Militants',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_sub_indicator_3.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_2 = Indicator.objects.create(
             name='Number of Deaths due to Malaria',
             short_name='Number of Deaths due to Malaria',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_2.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_2_sub_1 = Indicator.objects.create(
             name='Number of Deaths due to Malaria -- Child had No Net',
             short_name='Number of Deaths due to Malaria -- no net',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_2_sub_1.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_2_sub_2 = Indicator.objects.create(
             name='Number of Deaths due to Malaria -- Child had No Medicine',
             short_name='Number of Deaths due to Malaria -- no Medicie',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_2_sub_2.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_3 = Indicator.objects.create(
             name='Number of Deaths due to Hunger',
             short_name='Number of Deaths due to Hunger',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_3.id,
-                                           campaign_id=self.campaign_id)
 
         ## FOR SUM OF PARTS CALUCLATIONS ##
         indicator_calc_1 = CalculatedIndicatorComponent.objects.create(
@@ -902,24 +862,18 @@ class AggRefreshTestCase(TestCase):
             short_name='Number of Avoidable Deaths',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=parent_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         sub_indicator_1 = Indicator.objects.create(
             name='Number of Deaths due to Conflict',
             short_name='Number of Deaths due to Conflict',
             data_format='int'
         )
-        CampaignToIndicator.objects.create(indicator_id=sub_indicator_1.id,
-                                           campaign_id=self.campaign_id)
 
         pct_indicator = Indicator.objects.create(
             name='pct of Deaths due to Conflict',
             short_name='pct of Deaths due to Conflict',
             data_format='pct'
         )
-        CampaignToIndicator.objects.create(indicator_id=pct_indicator.id,
-                                           campaign_id=self.campaign_id)
 
         ## FOR PART OVER WHOLE CALCULATIONS ##
         indicator_calc_numerator = CalculatedIndicatorComponent.objects.create(

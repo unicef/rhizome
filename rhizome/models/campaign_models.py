@@ -431,14 +431,6 @@ class Campaign(models.Model):
         DataPointComputed.objects.filter(campaign_id=self.id).delete()
         DataPointComputed.objects.bulk_create(self.dwc_batch)
 
-class CampaignToIndicator(models.Model): # FIXME remove this.
-
-    indicator = models.ForeignKey(Indicator)
-    campaign = models.ForeignKey(Campaign)
-
-    class Meta:
-        db_table = 'campaign_to_indicator'
-        unique_together = ('indicator', 'campaign')
 
 class DataPointComputed(models.Model):
 

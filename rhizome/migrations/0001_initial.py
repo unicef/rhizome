@@ -64,17 +64,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='CampaignToIndicator',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID',
-                                        serialize=False, auto_created=True, primary_key=True)),
-                ('campaign', models.ForeignKey(to='rhizome.Campaign')),
-            ],
-            options={
-                'db_table': 'campaign_to_indicator',
-            },
-        ),
-        migrations.CreateModel(
             name='CampaignType',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
@@ -479,11 +468,6 @@ class Migration(migrations.Migration):
             field=models.CharField(default=-1, unique=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='campaigntoindicator',
-            name='indicator',
-            field=models.ForeignKey(to='rhizome.Indicator'),
-        ),
-        migrations.AddField(
             model_name='campaign',
             name='campaign_type',
             field=models.ForeignKey(to='rhizome.CampaignType'),
@@ -556,10 +540,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='datapointcomputed',
             unique_together=set([('location', 'campaign', 'indicator')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='campaigntoindicator',
-            unique_together=set([('indicator', 'campaign')]),
         ),
         migrations.AlterUniqueTogether(
             name='campaign',
