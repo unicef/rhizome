@@ -1,8 +1,9 @@
 from django.db import models
 
-from pandas import DataFrame
+from pandas import DataFrame, notnull, concat
 
-from rhizome.models.location_models import Location
+from rhizome.models.indicator_models import CalculatedIndicatorComponent
+from rhizome.models.location_models import Location, LocationTree
 from rhizome.models.office_models import Office
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 
@@ -103,13 +104,13 @@ class Campaign(models.Model):
         The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}
         '''
 
-        from rhizome.modls.document_modles import DataPoint
+        from rhizome.models.document_models import DataPoint
 
         agg_dp_batch, tuple_dict = [], {}
         location_tree_columns = ['location_id', 'parent_location_id', 'lvl']
 
-        dp_df = DataFrame(list(doc_m.DataPoint.objects
-                   .filter(campaign_id=self.campaign.id)
+        dp_df = DataFrame(list(DataPoint.objects
+                   .filter(campaign_id=self.id)
                    .values_list(*self.dp_columns)), columns=self.dp_columns)
 
         # NaN to None
@@ -203,13 +204,12 @@ class Campaign(models.Model):
 
             dp_dict = dict(zip(('location_id', 'indicator_id'), dp_unique_key))
 
-            dp_dict['campaign_id'] = self.campaign.id
+            dp_dict['campaign_id'] = self.id
             dp_dict['value'] = value
-            dp_dict['cache_job_id'] = -100
 
             agg_dp_batch.append(AggDataPoint(**dp_dict))
 
-        AggDataPoint.objects.filter(campaign_id=self.campaign.id).delete()
+        AggDataPoint.objects.filter(campaign_id=self.id).delete()
         AggDataPoint.objects.bulk_create(agg_dp_batch)
 
     def calc_datapoints(self):
@@ -247,7 +247,7 @@ class Campaign(models.Model):
 
         dp_df = DataFrame(list(AggDataPoint.objects.all()
                             .filter(indicator_id__in=indicator_id_list
-                           .unique(), campaign_id=self.campaign.id)
+                           .unique(), campaign_id=self.id)
                    .values_list(*self.dp_columns)), columns=self.dp_columns)
 
         return dp_df
@@ -300,7 +300,7 @@ class Campaign(models.Model):
         the raw indicator data will always override the calculated.
         '''
 
-        for adp in AggDataPoint.objects.filter(campaign_id=self.campaign.id):
+        for adp in AggDataPoint.objects.filter(campaign_id=self.id):
 
             adp_tuple = (adp.location_id, adp.indicator_id)
             self.dwc_tuple_dict[adp_tuple] = adp.value
@@ -353,7 +353,7 @@ class Campaign(models.Model):
         ## the newly calculated data.  This is necessary because the ##
         ## denominator for the part/whole calculation is often a SUM ##
 
-        dwc_list_of_list = [[k[0], k[1], v, self.cache_job_id] for k, v in
+        dwc_list_of_list = [[k[0], k[1], v] for k, v in
                             self.dwc_tuple_dict.iteritems()]
         dependent_calculation_dp_df = DataFrame(
             dwc_list_of_list, columns=self.dp_columns)
@@ -429,13 +429,11 @@ class Campaign(models.Model):
 
             dwc_dict = {'location_id': uq_tuple[0],
                         'indicator_id': uq_tuple[1],
-                        'campaign_id': self.campaign.id,
-                        'value': val,
-                        'cache_job_id': -100,
-                        'document_id': self.document_id
-                        }
+                        'campaign_id': self.id,
+                        'value': val
+                    }
             self.dwc_batch.append(DataPointComputed(**dwc_dict))
-        DataPointComputed.objects.filter(campaign_id=self.campaign.id).delete()
+        DataPointComputed.objects.filter(campaign_id=self.id).delete()
         DataPointComputed.objects.bulk_create(self.dwc_batch)
 
 class CampaignToIndicator(models.Model): # FIXME remove this.

@@ -2,7 +2,6 @@ from django.utils import timezone
 
 from pandas import concat
 from pandas import DataFrame
-from pandas import notnull
 
 from rhizome.cache_meta import IndicatorCache
 

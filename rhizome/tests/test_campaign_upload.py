@@ -3,10 +3,10 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.models.office_models import Office
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob, DataPointComputed
 from rhizome.models.document_models import Document, \
     DocumentSourceObjectMap, SourceObjectMap, DataPoint
 
@@ -130,9 +130,6 @@ class TransformUploadTestCase(TestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         campaign_type = CampaignType.objects.create(id=1, name="test")
 
