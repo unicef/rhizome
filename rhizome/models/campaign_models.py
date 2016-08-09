@@ -61,8 +61,8 @@ class Campaign(models.Model):
     '''
 
     name = models.CharField(max_length=255)
-    top_lvl_location = models.ForeignKey(Location)
-    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag)
+    top_lvl_location = models.ForeignKey(Location) ##FIXME
+    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag) ##FIXME
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()

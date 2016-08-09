@@ -5,6 +5,7 @@ from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models.document_models import Document, DocumentDetail,\
     SourceSubmission, DataPoint
+from rhizome.models.campaign_models import Campaign
 
 class DocTransFormResource(BaseNonModelResource):
     '''

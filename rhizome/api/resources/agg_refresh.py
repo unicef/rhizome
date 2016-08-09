@@ -1,9 +1,9 @@
-from rhizome.api.resources.base_model import BaseModelResource
+from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models.campaign_models import Campaign, DataPointComputed
 
 
-class AggRefreshResource(BaseModelResource):
+class AggRefreshResource(BaseNonModelResource):
     '''
         **GET Request** Runs agg_refresh on the backend
           - *Optional Parameters:*
@@ -14,15 +14,21 @@ class AggRefreshResource(BaseModelResource):
               if an invalid id is provided, the API returns a 500 error
     '''
 
-    class Meta(BaseModelResource.Meta):
+    class Meta(BaseNonModelResource.Meta):
         resource_name = 'agg_refresh'
-        object_class = DataPointComputed
-        required_GET_params = 'campaign_id'
+        GET_params_required = 'campaign_id'
+
+    def get_object_list(self, request):
+
+        campaign_id = request.GET.get('campaign_id')
+        return Campaign.objects.filter(id = campaign_id)
 
     def pre_process_data(self, request):
         '''
         '''
-
         campaign_id = request.GET.get('campaign_id')
-        campaign_object = Campaign.objects.get(id = campaign_id)
+        try:
+            campaign_object = Campaign.objects.get(id = campaign_id)
+        except Campaign.DoesNotExist as err:
+            raise RhizomeApiException(err)
         campaign_object.aggregate_and_calculate()

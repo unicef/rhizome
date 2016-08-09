@@ -116,6 +116,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
 
     def test_invalid_campaign_id(self):
         url = '/api/v1/agg_refresh/'
-        data = {'campaign_id': 12345}
+        data = {'campaign_id': -1343040302345}
         resp = self.ts.get(self, url, data=data)
         self.assertHttpApplicationError(resp)
