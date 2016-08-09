@@ -16,10 +16,6 @@ from rhizome import views
 
 admin.autodiscover()
 
-# TASTYPIE Endpoints
-#---------------------------------------------------------------------------
-v1_api = Api(api_name='v1')
-
 # import pkgutil
 #
 # # this is the package we are inspecting -- for example 'email' from stdlib
@@ -28,6 +24,12 @@ v1_api = Api(api_name='v1')
 # package = email
 # for importer, modname, ispkg in pkgutil.iter_modules(package.__path__):
 #     print "Found submodule %s (is a package: %s)" % (modname, ispkg)
+
+######################
+# TASTYPIE Endpoints #
+######################
+
+v1_api = Api(api_name='v1')
 
 v1_api.register(agg_refresh.AggRefreshResource())
 v1_api.register(cache_meta.CacheMetaResource())
@@ -72,7 +74,6 @@ protected_patterns = [
     url(r'^permissions_needed$', TemplateView.as_view(
         template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system', views.manage_system, name='manage_system'),
-    url(r'^campaign', views.update_campaign, name='update_campaign'),
     url(r'^export_file?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_create, name='chart_create'),
     url(r'^entry$', views.data_entry, name='datapoint_entry'),
@@ -112,8 +113,6 @@ urlpatterns = patterns(
 
 if settings.DEBUG:
     import debug_toolbar
-    # urlpatterns += patterns('',
-    #     url(r'^debug/', include(debug_toolbar.urls)),
     urlpatterns += patterns(
         '',
         url(r'^api_debug/', api_debug),
