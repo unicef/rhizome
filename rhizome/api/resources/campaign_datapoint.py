@@ -1,6 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models.datapoint_models import DataPointComputed
-from rhizome.models.campaign_models import Campaign
+from rhizome.models.campaign_models import Campaign, DataPointComputed
 from rhizome.models.document_models import Document
 from rhizome.api.serialize import CustomSerializer
 
@@ -134,11 +133,3 @@ class CampaignDataPointResource(BaseModelResource):
         meta['campaign_ids'] = [int(x) for x in self.campaign_id_list]
 
         return meta
-
-    def add_default_post_params(self, bundle):
-        '''
-        Add document_id of data entry to the bundle
-        '''
-        data_entry_doc_id = Document.objects.get(doc_title = 'Data Entry').id
-        bundle.data['document_id'] = data_entry_doc_id
-        return bundle

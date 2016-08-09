@@ -21,8 +21,8 @@ class CampaignResource(BaseModelResource):
     **POST Reguest:** Create a camapaign
         -*Required Parameters:*
             'name','top_lvl_location_id',
-            #'top_lvl_indicator_tag_id', 'office_id','campaign_type_id',
-            #'start_date','end_date','pct_complete'
+            #'office_id','campaign_type_id',
+            #'start_date','end_date',
         -*Errors:*
             If any of the fields are missing, the system returns a 500 error.
 

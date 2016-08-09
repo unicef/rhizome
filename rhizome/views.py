@@ -100,22 +100,12 @@ def chart(request, chart_id=None):
     return render_to_response('charts/show.html', {'chart_id': chart_id},
                               context_instance=RequestContext(request))
 
-# OTHER
-#----------------------------------------------------------------------------
-
-def update_campaign(request):
-    return render_to_response('manage_system.html',
-                              context_instance=RequestContext(request))
-
-
 #############################################################################
 #                                                                           #
 #                              RESTRICTED VIEWS                             #
 #                                                                           #
 #############################################################################
 
-# RESOURCES
-#---------------------------------------------------------------------------
 @user_passes_test(lambda u: u.groups.filter(name='chart_edit') or u.is_superuser,
                   login_url='/permissions_needed', redirect_field_name=None)
 def chart_edit(request, chart_id=None):
@@ -123,15 +113,6 @@ def chart_edit(request, chart_id=None):
                               context_instance=RequestContext(request))
 
 
-class DashBoardView(generic.ListView): #FIXME
-    paginate_by = 50
-    template_name = 'dashboards/index.html'
-    context_object_name = 'user_dashboard'
-
-    def get_queryset(self):  # not sure why this works. ##
-        return CustomDashboard.objects.all()[:1]
-
-# OTHER
 #----------------------------------------------------------------------------
 @user_passes_test(lambda u: u.groups.filter(name='react_app') or u.is_superuser,
                   login_url='/permissions_needed', redirect_field_name=None)
@@ -194,12 +175,6 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
 
     def form_valid(self, form):
         new_user = form.save()
-        # set the user location permission just use the ajax call.
-        # permission_obj = UserAdminLevelPermission.objects.get(user=new_user)
-        # user_location_permission = LocationPermission.objects.get(user=new_user)
-        # location = Location.objects.get(id=user_location_permission.top_lvl_location_id)
-        # permission_obj.location_type = location.location_type
-        # permission_obj.save()
         return HttpResponseRedirect(self.get_success_url())
 
 

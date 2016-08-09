@@ -4,11 +4,11 @@ import json
 from django.contrib.auth.models import User
 from pandas import read_csv, to_datetime
 
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType,\
     LocationPermission
-from rhizome.models.document_models import Document, SourceObjectMap, CacheJob
-from rhizome.models.datapoint_models import DataPointComputed
+from rhizome.models.document_models import SourceObjectMap, Document
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 from rhizome.models.office_models import Office
 
@@ -56,13 +56,9 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         system to aggregate / caclulate.
         '''
 
-        doc_id = Document.objects.create(doc_title='Data Entry').id
-
         self.top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = self.top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -72,9 +68,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         office = Office.objects.create(id=1, name='test')
         office_id = office.id
         self.o = office
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                           date_attempted='2015-01-01', is_error=False)
 
         self.campaign_type = CampaignType.objects.create(id=1, name="test")
 
@@ -114,9 +107,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             campaign_id = 1,
             location_id = 1,
             indicator_id = 1,
-            document_id = 1,
-            value = 0,
-            cache_job_id = -1
+            value = 0
         )
 
         return obj
@@ -130,21 +121,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
     def test_get_list(self):
         # Create the data, need input value to the DataPointComputed model.
 
-        # 1. The CacheJob value
-        cache_job = CacheJob.objects.create(
-            is_error=False,
-            response_msg='SUCCESS'
-        )
-
         campaign = Campaign.objects.all()[0]
         location = Location.objects.all()[0]
         indicator = Indicator.objects.all()[0]
-        document = Document.objects.all()[0]
         value = 1.57
 
         datapoint = DataPointComputed.objects.create(value=value,\
-            cache_job=cache_job,indicator=indicator, location=location,\
-            campaign=campaign, document=document)
+            indicator=indicator, location=location,\
+            campaign=campaign)
 
         # 6 Request To The API
         chart_uuid = 'abc123'
@@ -191,11 +175,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
     def _get_class_datapoint(self):
         # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_class_datapoint --settings=rhizome.settings.test
 
-        cache_job = CacheJob.objects.create(
-            is_error=False,
-            response_msg='SUCCESS'
-        )
-
         # 2. Create The Indicator value
         indicator = Indicator.objects.create(short_name='LQAS', \
                                              name='LQAS', \
@@ -210,16 +189,16 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         start_date = '2016-02-01'
         end_date = '2016-02-01'
         campaign = Campaign.objects.create(office=office,\
-            campaign_type=self.campaign_type,start_date=start_date,end_date=end_date,\
-            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
-            top_lvl_location_id = location.id)
+            campaign_type=self.campaign_type,\
+            start_date=start_date,\
+            end_date=end_date)
 
         # 5. Create Test DataPointComputed
         value = 1
-        document = Document.objects.create(doc_title='uploadddd')
+
         datapoint = DataPointComputed.objects.create(value=value,\
-            cache_job=cache_job,indicator=indicator, location=location,\
-            campaign=campaign, document=document)
+            indicator=indicator, location=location,\
+            campaign=campaign)
 
         # 6 create the class indicator mapping
 
@@ -271,7 +250,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         #  ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_indicator_filter --settings=rhizome.settings.test
 
         campaign_id = 2
-        document = Document.objects.create(doc_title='some doc')
 
         # make a couple different types of indicators, and indicators with
         # different values
@@ -318,8 +296,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                     location_id = prov.id,
                     value = value_to_use,
                     campaign_id = campaign_id,
-                    indicator_id = indicator_id,
-                    document_id = document.id
+                    indicator_id = indicator_id
                 )
                 if indicator_id == indicator_to_filter and value_to_use == indicator_val_to_filter:
                     dps_to_track.append(dp)
@@ -356,23 +333,19 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
     def _get_cumulative(self): ## handling cumulative differntly
         # add a couple different campaigns with different time frames
 
-        document = Document.objects.create(doc_title='uploadddd')
-
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
         campaign_1 = Campaign.objects.create(office=self.o,\
-            campaign_type=self.campaign_type,start_date=start_date_1,end_date=end_date_1,\
-            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+            campaign_type=self.campaign_type,start_date=start_date_1,\
+            end_date=end_date_1)
 
         start_date_2 = '2016-02-01'
         end_date_2 = '2016-02-01'
 
         campaign_2 = Campaign.objects.create(office=self.o,\
-            campaign_type=campaign_type,start_date=start_date_2,end_date=end_date_2,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+            campaign_type=campaign_type,start_date=start_date_2,\
+            end_date=end_date_2)
 
         # create an indicator and location
         indicator = Indicator.objects.create(short_name='number missed children', \
@@ -392,18 +365,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                     location_id = province.id,
                     value = value_1,
                     campaign_id = campaign_1.id,
-                    indicator_id = indicator.id,
-                    document_id = document.id,
+                    indicator_id = indicator.id
                 )
 
         dp_2 = DataPointComputed.objects.create(
                 location_id = province.id,
                 value = value_2,
                 campaign_id = campaign_2.id,
-                indicator_id = indicator.id,
-                document_id = document.id,
-
-            )
+                indicator_id = indicator.id            )
 
         # make sure that that api call returns cumulative values,
         get_parameter = 'indicator__in={0}&start_date=2016-01-01&end_date=2016-02-02&location_id__in={2}&location_depth=1&chart_type=MapChart&cumulative=1'\
@@ -464,8 +433,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             data_format='int',\
             description='some stuff that we want to count', )
 
-        document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
-
         start_date = '2014-01-01'
         end_date = '2014-01-01'
 
@@ -478,16 +445,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             location_id = kandahar.id,
             value = kandahar_value,
             campaign_id = campaign.id,
-            indicator_id = indicator.id,
-            document_id = document.id,
+            indicator_id = indicator.id
         )
 
         dp_hilmand = DataPointComputed.objects.create(
             location_id = hilmand.id,
             value = hilmand_value,
             campaign_id = campaign.id,
-            indicator_id = indicator.id,
-            document_id = document.id
+            indicator_id = indicator.id
         )
 
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id={2}&location_depth=2'\
@@ -529,8 +494,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         campaign_1 = Campaign.objects.create(office=self.o,\
             start_date=start_date_1,end_date=end_date_1,\
-            top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = ind_tag.id,
             campaign_type_id = campaign_type.id)
 
         start_date_2 = '2016-03-01'
@@ -538,18 +501,13 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         campaign_2 = Campaign.objects.create(office=self.o,\
             start_date=start_date_2,end_date=end_date_2,\
-            top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = ind_tag.id,
             campaign_type_id = campaign_type.id)
-
-        document = Document.objects.create(doc_title='I am Every Woman -- Whitney Houston')
 
         dp= DataPointComputed.objects.create(
             location_id = self.top_lvl_location.id,
             value = 21,
             campaign_id = campaign_1.id,
-            indicator_id = indicator_1.id,
-            document_id = document.id
+            indicator_id = indicator_1.id
         )
 
         # create another location
@@ -606,10 +564,12 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         post a record to the campaign datapoint table
         '''
 
+        data_entry_doc = Document.objects.create(doc_title = 'Data Entry')
+
         indicator_id = Indicator.objects.all()[0].id
         campaign_id = Campaign.objects.all()[0].id
         location_id = Location.objects.all()[0].id
-        # value indicator campaign location document_i
+
         data = {
                 'indicator_id': indicator_id,
                 'campaign_id': campaign_id,
@@ -641,7 +601,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         '''
 
         data = {
-                # 'document_id': doc_id,
                 'indicator_id': 4324,
                 'campaign_id': 32132123,
                 'location_id': 4321,

@@ -16,17 +16,7 @@ from django.db.models.loading import get_app
 from StringIO import StringIO
 from datetime import datetime
 
-from rhizome.models.datapoint_models import CacheJob
-
-
 def reset_seq(apps, schema_editor):
-
-    cj_1 = CacheJob.objects.create(
-        id=1,
-        date_attempted=datetime.now(),
-        date_completed=datetime.now(),
-        is_error=False
-    )
 
     os.environ['DJANGO_COLORS'] = 'nocolor'
 

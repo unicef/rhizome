@@ -5,16 +5,17 @@ from pandas import read_csv, notnull, to_datetime
 from django.contrib.auth.models import User
 
 from rhizome.models.office_models import Office
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import DataPointComputed
-from rhizome.models.document_models import Document, SourceObjectMap,\
-    CacheJob
+from rhizome.models.document_models import Document, SourceObjectMap
+from rhizome.models.datapoint_models import Document, DataPoint
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
+from rhizome.cache_meta import LocationTreeCache
 
 class DocumentResourceTest(RhizomeApiTestCase):
 
@@ -35,23 +36,11 @@ class DocumentResourceTest(RhizomeApiTestCase):
         self.deserialize(resp)
         self.assertHttpCreated(resp)
 
-    def test_obj_create_xlsx(self):
+    def test_xlsx_transform(self):
         path = os.path.join(os.path.dirname(__file__),
                             '_data/eoc_post_campaign.xlsx')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
-        post_data = {'docfile': encoded_data,
-                     'file_type': 'campaign',
-                     'doc_title': 'eoc_post_campaign.xlsx'}
-        resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
-        self.deserialize(resp)
-        self.assertHttpCreated(resp)
-
-    def test_obj_create_xlsx_transform(self):
-        path = os.path.join(os.path.dirname(__file__),
-                            '_data/eoc_post_campaign.xlsx')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        f = open(path).read()
+        encoded_data = base64.b64encode(f)
         post_data = {'docfile': encoded_data,
                      'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.xlsx'}
@@ -60,7 +49,10 @@ class DocumentResourceTest(RhizomeApiTestCase):
         resp_data = self.deserialize(resp)
 
         get_data = {'document_id':resp_data['id']}
-        resp = self.ts.get(self, '/api/v1/transform_upload/', post_data)
+        ## this right here emulates what happens when the user clicks the
+        ## `refresh master` button
+        resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
+
         the_value_from_the_database = DataPointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,
@@ -68,11 +60,11 @@ class DocumentResourceTest(RhizomeApiTestCase):
         ).value
 
         some_cell_value_from_the_file = 0.082670906
-        # find this from the data frame by selecting the cell where we have
-        # mapped the data..
+        # FIXME find this from the data frame by selecting the cell where we
+        # have mapped the data..
 
-        self.assertEqual(some_cell_value_from_the_file,
-                         the_value_from_the_database)
+        self.assertEqual(some_cell_value_from_the_file, \
+            the_value_from_the_database)
 
     def test_upload_empty_csv(self):
         file_name = '_data/empty_csv.csv'
@@ -112,8 +104,6 @@ class DocumentResourceTest(RhizomeApiTestCase):
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -121,9 +111,6 @@ class DocumentResourceTest(RhizomeApiTestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         campaign_type = CampaignType.objects.create(id=1, name="test")
 
@@ -163,6 +150,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
             mapped_by_id=self.user_id,
             master_object_id=self.mapped_indicator_with_data
         )
+        ltc = LocationTreeCache()
+        ltc.main()
 
     def model_df_to_data(self, model_df, model):
 

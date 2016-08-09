@@ -9,7 +9,9 @@ from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
-    SourceObjectMap, DocumentDetail, SourceSubmission, DataPoint, CacheJob
+    SourceObjectMap, DocumentDetail, SourceSubmission
+
+from rhizome.models.datapoint_models import DataPoint
 
 class TransformUploadTestCase(TestCase):
 
@@ -106,8 +108,6 @@ class TransformUploadTestCase(TestCase):
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -119,9 +119,6 @@ class TransformUploadTestCase(TestCase):
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         document_id = Document.objects.create(
             doc_title='test',

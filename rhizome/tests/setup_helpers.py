@@ -8,7 +8,6 @@ from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob
 
 
 class TestSetupHelpers(RhizomeApiTestCase):
@@ -145,8 +144,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
             end_date='2016-01-01',
             office_id=office_id,
             campaign_type_id=campaign_type_id,
-            top_lvl_location_id=location_id,
-            top_lvl_indicator_tag_id=indicator_tag_id,
             name=name
         )
 
@@ -178,7 +175,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
     def load_some_metadata(self):
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -186,9 +182,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects\
-            .create(id=-2, date_attempted='2015-01-01', is_error=False)
 
         self.locations = self.model_df_to_data(location_df, Location)
         self.campaigns = self.model_df_to_data(campaign_df, Campaign)

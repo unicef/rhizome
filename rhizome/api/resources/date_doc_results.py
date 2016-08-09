@@ -1,5 +1,5 @@
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models.document_models import DataPoint
+from rhizome.models.datapoint_models import DataPoint
 
 class DateDocResultResource(BaseModelResource):
     '''

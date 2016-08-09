@@ -4,8 +4,9 @@ from django.db.transaction import TransactionManagementError
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models.document_models import Document, DocumentDetail,\
-    SourceSubmission, DataPoint
-from rhizome.agg_tasks import AggRefresh
+    SourceSubmission
+from rhizome.models.datapoint_models import DataPoint
+from rhizome.models.campaign_models import Campaign
 
 class DocTransFormResource(BaseNonModelResource):
     '''
@@ -35,7 +36,6 @@ class DocTransFormResource(BaseNonModelResource):
             ## agg refresh ##
         '''
 
-        # user_id = request.user.id
         document_object = Document.objects\
             .get(id = request.GET.get('document_id'))
 
@@ -48,12 +48,8 @@ class DocTransFormResource(BaseNonModelResource):
                 .values_list('campaign_id', flat=True)))
 
             for c_id in doc_campaign_ids:
-                agg_refresh_obj = AggRefresh(c_id)
-                # try/except block hack because tests fail otherwise
-                try:
-                    with transaction.atomic():
-                        agg_refresh_obj.main()
-                except TransactionManagementError as e:
-                    pass
+                campaign_object = Campaign.objects.get(id = c_id)
+                campaign_object.aggregate_and_calculate()
+
 
         return Document.objects.filter(id=document_object.id).values()

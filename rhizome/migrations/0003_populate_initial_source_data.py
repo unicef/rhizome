@@ -13,8 +13,6 @@ from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models.document_models import Document
 from rhizome.models.location_models import Location, LocationPolygon
 from rhizome.models.document_models import DocumentDetail, DocDetailType
-from rhizome.agg_tasks import AggRefresh
-
 
 def populate_source_data(apps, schema_editor):
     '''
@@ -59,8 +57,8 @@ def process_source_sheet(source_sheet_df, sheet_name):
     new_doc.refresh_master()
 
     ## datapoints -> computed datapoints ##
-    ar = AggRefresh()
-
+    for c in Campaign.objects.all():
+        c.aggregate_and_calculate()
 
 def create_doc_details(doc_id):
 

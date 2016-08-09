@@ -10,8 +10,8 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceSubmission, SourceObjectMap, CacheJob, DocDataPoint,\
-    DataPoint
+    DocumentDetail, SourceSubmission, SourceObjectMap
+from rhizome.models.datapoint_models import DocDataPoint, DataPoint
 
 # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_refresh_master_init --settings=rhizome.settings.test
 
@@ -273,7 +273,6 @@ class RefreshMasterTestCase(TestCase):
 
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
         location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
@@ -282,9 +281,6 @@ class RefreshMasterTestCase(TestCase):
 
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2, date_attempted='2015-01-01',
-                                               is_error=False)
 
         document_id = Document.objects.create(
             doc_title='test',
@@ -364,8 +360,6 @@ class RefreshMasterTestCase(TestCase):
         for i, (c) in enumerate(distinct_campaign_codes):
             c_id = Campaign.objects.create(
                 name=c,
-                top_lvl_location_id=1,
-                top_lvl_indicator_tag_id=1,
                 office_id=1,
                 campaign_type_id=1,
                 start_date='2010-01-0' + str(i + 1),

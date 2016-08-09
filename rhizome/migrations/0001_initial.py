@@ -37,21 +37,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='CacheJob',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID',
-                                        serialize=False, auto_created=True, primary_key=True)),
-                ('date_attempted', models.DateTimeField(auto_now=True)),
-                ('date_completed', models.DateTimeField(null=True)),
-                ('is_error', models.BooleanField()),
-                ('response_msg', models.CharField(max_length=255)),
-            ],
-            options={
-                'ordering': ('-date_attempted',),
-                'db_table': 'cache_job',
-            },
-        ),
-        migrations.CreateModel(
             name='CalculatedIndicatorComponent',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
@@ -71,23 +56,11 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
-                ('pct_complete', models.FloatField(default=0.001)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
                 'ordering': ('-start_date',),
                 'db_table': 'campaign',
-            },
-        ),
-        migrations.CreateModel(
-            name='CampaignToIndicator',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID',
-                                        serialize=False, auto_created=True, primary_key=True)),
-                ('campaign', models.ForeignKey(to='rhizome.Campaign')),
-            ],
-            options={
-                'db_table': 'campaign_to_indicator',
             },
         ),
         migrations.CreateModel(
@@ -136,7 +109,6 @@ class Migration(migrations.Migration):
                 ('data_date', models.DateTimeField()),
                 ('value', models.FloatField(null=True)),
                 ('created_at', models.DateTimeField(auto_now=True)),
-                ('cache_job', models.ForeignKey(default=-1, to='rhizome.CacheJob')),
             ],
             options={
                 'db_table': 'datapoint',
@@ -148,7 +120,6 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID',
                                         serialize=False, auto_created=True, primary_key=True)),
                 ('value', models.FloatField()),
-                ('cache_job', models.ForeignKey(default=-1, to='rhizome.CacheJob')),
                 ('campaign', models.ForeignKey(to='rhizome.Campaign')),
             ],
             options={
@@ -497,11 +468,6 @@ class Migration(migrations.Migration):
             field=models.CharField(default=-1, unique=True, max_length=255),
         ),
         migrations.AddField(
-            model_name='campaigntoindicator',
-            name='indicator',
-            field=models.ForeignKey(to='rhizome.Indicator'),
-        ),
-        migrations.AddField(
             model_name='campaign',
             name='campaign_type',
             field=models.ForeignKey(to='rhizome.CampaignType'),
@@ -510,16 +476,6 @@ class Migration(migrations.Migration):
             model_name='campaign',
             name='office',
             field=models.ForeignKey(to='rhizome.Office'),
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='top_lvl_indicator_tag',
-            field=models.ForeignKey(to='rhizome.IndicatorTag'),
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='top_lvl_location',
-            field=models.ForeignKey(to='rhizome.Location'),
         ),
         migrations.AddField(
             model_name='calculatedindicatorcomponent',
@@ -532,11 +488,6 @@ class Migration(migrations.Migration):
             name='indicator_component',
             field=models.ForeignKey(
                 related_name='indicator_component', to='rhizome.Indicator'),
-        ),
-        migrations.AddField(
-            model_name='aggdatapoint',
-            name='cache_job',
-            field=models.ForeignKey(default=-1, to='rhizome.CacheJob'),
         ),
         migrations.AddField(
             model_name='aggdatapoint',
@@ -589,10 +540,6 @@ class Migration(migrations.Migration):
         migrations.AlterUniqueTogether(
             name='datapointcomputed',
             unique_together=set([('location', 'campaign', 'indicator')]),
-        ),
-        migrations.AlterUniqueTogether(
-            name='campaigntoindicator',
-            unique_together=set([('indicator', 'campaign')]),
         ),
         migrations.AlterUniqueTogether(
             name='campaign',

@@ -5,13 +5,14 @@ from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 from rhizome.models.office_models import Office
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag
-from rhizome.models.datapoint_models import DataPointComputed
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceObjectMap, CacheJob, DataPoint
+    DocumentDetail, SourceObjectMap
+from rhizome.models.datapoint_models import DataPoint
 
 
 class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
@@ -56,8 +57,6 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -69,9 +68,6 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)

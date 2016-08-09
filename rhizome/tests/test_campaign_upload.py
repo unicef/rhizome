@@ -3,13 +3,15 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.models.office_models import Office
-from rhizome.models.campaign_models import Campaign, CampaignType
+from rhizome.models.campaign_models import Campaign, CampaignType, \
+    DataPointComputed
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob, DataPointComputed
 from rhizome.models.document_models import Document, \
     DocumentSourceObjectMap, SourceObjectMap
+from rhizome.models.datapoint_models import DataPoint
 
+from rhizome.cache_meta import LocationTreeCache
 
 class TransformUploadTestCase(TestCase):
 
@@ -23,14 +25,18 @@ class TransformUploadTestCase(TestCase):
         self.user = User.objects.get(username='test')
         self.location_list = Location.objects.all().values_list('name', flat=True)
 
-    def test_simple_transform(self):
+    def test_simple_campaign_upload(self):
 
         doc_id = self.ingest_file('eoc_post_campaign.csv')
         doc_obj = Document.objects.get(id = doc_id)
         doc_obj.transform_upload()
         doc_obj.refresh_master()
 
-        the_value_from_the_database = PointComputed.objects.get(
+        # now take the datapoints to the computed datapoint table #
+        campaign_object = Campaign.objects.get(id = self.mapped_campaign_id)
+        campaign_object.aggregate_and_calculate()
+
+        the_value_from_the_database = DataPointComputed.objects.get(
             campaign_id=self.mapped_campaign_id,
             indicator_id=self.mapped_indicator_with_data,
             location_id=self.mapped_location_id
@@ -48,8 +54,14 @@ class TransformUploadTestCase(TestCase):
         file_and_cell_vals = {
             'eoc_post_campaign.csv': 0.082670906, 'modified_single_cell.csv': 0.0324}
 
-        for file, cell_val_from_file in file_and_cell_vals.iteritems():
-            self.ingest_file(file)
+        for f, cell_val_from_file in file_and_cell_vals.iteritems():
+            doc_id = self.ingest_file(f)
+            document_object = Document.objects.get(id = doc_id)
+            document_object.transform_upload()
+            document_object.refresh_master()
+
+            campaign_object = Campaign.objects.get(id = self.mapped_campaign_id)
+            campaign_object.aggregate_and_calculate()
 
             the_value_from_the_database = DataPointComputed.objects.get(
                 campaign_id=self.mapped_campaign_id,
@@ -80,23 +92,6 @@ class TransformUploadTestCase(TestCase):
             document_id=document_id,
             source_object_map_id=source_map_entry[0].id)
         self.assertEqual(1, len(dsom_entry))
-
-    def test_simple_transform(self):
-
-        self.ingest_file('eoc_post_campaign.csv')
-
-        the_value_from_the_database = DataPointComputed.objects.get(
-            campaign_id=self.mapped_campaign_id,
-            indicator_id=self.mapped_indicator_with_data,
-            location_id=self.mapped_location_id
-        ).value
-
-        some_cell_value_from_the_file = 0.082670906
-        # find this from the data frame by selecting the cell where we have
-        # mapped the data..
-
-        self.assertEqual(some_cell_value_from_the_file,
-                         the_value_from_the_database)
 
     def test_dupe_metadata_mapping(self):
 
@@ -130,8 +125,6 @@ class TransformUploadTestCase(TestCase):
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -139,9 +132,6 @@ class TransformUploadTestCase(TestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         campaign_type = CampaignType.objects.create(id=1, name="test")
 
@@ -183,6 +173,10 @@ class TransformUploadTestCase(TestCase):
             mapped_by_id=self.user_id,
             master_object_id=self.mapped_indicator_with_data
         )
+        ## make sure that the location tree is updated ##
+
+        ltc = LocationTreeCache()
+        ltc.main()
 
     def model_df_to_data(self, model_df, model):
 

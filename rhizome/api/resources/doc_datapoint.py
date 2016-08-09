@@ -2,7 +2,7 @@ from tastypie.resources import ALL
 from tastypie import fields
 
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.models.document_models import DocDataPoint
+from rhizome.models.datapoint_models import DocDataPoint
 
 class DocDataPointResource(BaseModelResource):
     '''
@@ -17,7 +17,7 @@ class DocDataPointResource(BaseModelResource):
     document_id = fields.IntegerField(attribute='document_id')
 
     class Meta(BaseModelResource.Meta):
-        resource_name = 'doc_datapoint'
+        resource_name = 'doc_datapoint' ##FIXME this is not used anywhere
         object_class = DocDataPoint
         GET_params_required = ['document_id']
         filtering = {
