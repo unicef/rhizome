@@ -273,7 +273,6 @@ class RefreshMasterTestCase(TestCase):
 
         top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = top_lvl_tag.id
 
         location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
@@ -361,8 +360,6 @@ class RefreshMasterTestCase(TestCase):
         for i, (c) in enumerate(distinct_campaign_codes):
             c_id = Campaign.objects.create(
                 name=c,
-                top_lvl_location_id=1,
-                top_lvl_indicator_tag_id=1,
                 office_id=1,
                 campaign_type_id=1,
                 start_date='2010-01-0' + str(i + 1),

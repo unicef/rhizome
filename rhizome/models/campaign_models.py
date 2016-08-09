@@ -61,13 +61,10 @@ class Campaign(models.Model):
     '''
 
     name = models.CharField(max_length=255)
-    top_lvl_location = models.ForeignKey(Location) ##FIXME
-    top_lvl_indicator_tag = models.ForeignKey(IndicatorTag) ##FIXME
     office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()
-    pct_complete = models.FloatField(default=.001)
     created_at = models.DateTimeField(auto_now=True)
 
     class Meta:

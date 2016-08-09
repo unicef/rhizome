@@ -69,8 +69,6 @@ class CampaignTest(MasterModelTestCase):
 
         self.c = Campaign.objects.create(
             office_id=o.id,
-            top_lvl_location_id=self.tpl.id,
-            top_lvl_indicator_tag_id=ind_tag.id,
             campaign_type_id=ct.id,
             name='test',
             start_date=st,

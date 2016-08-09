@@ -56,7 +56,6 @@ class Migration(migrations.Migration):
                 ('name', models.CharField(max_length=255)),
                 ('start_date', models.DateField()),
                 ('end_date', models.DateField()),
-                ('pct_complete', models.FloatField(default=0.001)),
                 ('created_at', models.DateTimeField(auto_now=True)),
             ],
             options={
@@ -493,16 +492,6 @@ class Migration(migrations.Migration):
             model_name='campaign',
             name='office',
             field=models.ForeignKey(to='rhizome.Office'),
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='top_lvl_indicator_tag',
-            field=models.ForeignKey(to='rhizome.IndicatorTag'),
-        ),
-        migrations.AddField(
-            model_name='campaign',
-            name='top_lvl_location',
-            field=models.ForeignKey(to='rhizome.Location'),
         ),
         migrations.AddField(
             model_name='calculatedindicatorcomponent',

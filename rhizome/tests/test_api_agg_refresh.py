@@ -42,8 +42,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
             start_date='2016-01-01',
             end_date='2016-01-02',
             campaign_type_id=campaign_type1.id,
-            top_lvl_location_id=12907,
-            top_lvl_indicator_tag_id=ind_tag.id,
             office_id=self.office_id,
         ).id
 

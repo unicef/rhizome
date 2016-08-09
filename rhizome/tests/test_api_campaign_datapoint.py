@@ -59,8 +59,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         self.top_lvl_tag = IndicatorTag.objects.create(id=1, tag_name='Polio')
 
         campaign_df = read_csv('rhizome/tests/_data/campaigns.csv')
-        campaign_df['top_lvl_indicator_tag_id'] = self.top_lvl_tag.id
-
         campaign_df['start_date'] = to_datetime(campaign_df['start_date'])
         campaign_df['end_date'] = to_datetime(campaign_df['end_date'])
 
@@ -191,9 +189,9 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         start_date = '2016-02-01'
         end_date = '2016-02-01'
         campaign = Campaign.objects.create(office=office,\
-            campaign_type=self.campaign_type,start_date=start_date,end_date=end_date,\
-            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
-            top_lvl_location_id = location.id)
+            campaign_type=self.campaign_type,\
+            start_date=start_date,\
+            end_date=end_date)
 
         # 5. Create Test DataPointComputed
         value = 1
@@ -339,17 +337,15 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         end_date_1 = '2016-01-01'
 
         campaign_1 = Campaign.objects.create(office=self.o,\
-            campaign_type=self.campaign_type,start_date=start_date_1,end_date=end_date_1,\
-            top_lvl_indicator_tag_id = self.top_lvl_tag.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+            campaign_type=self.campaign_type,start_date=start_date_1,\
+            end_date=end_date_1)
 
         start_date_2 = '2016-02-01'
         end_date_2 = '2016-02-01'
 
         campaign_2 = Campaign.objects.create(office=self.o,\
-            campaign_type=campaign_type,start_date=start_date_2,end_date=end_date_2,\
-            top_lvl_indicator_tag_id = ind_tag.id,\
-            top_lvl_location_id = self.top_lvl_location.id)
+            campaign_type=campaign_type,start_date=start_date_2,\
+            end_date=end_date_2)
 
         # create an indicator and location
         indicator = Indicator.objects.create(short_name='number missed children', \
@@ -498,8 +494,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         campaign_1 = Campaign.objects.create(office=self.o,\
             start_date=start_date_1,end_date=end_date_1,\
-            top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = ind_tag.id,
             campaign_type_id = campaign_type.id)
 
         start_date_2 = '2016-03-01'
@@ -507,8 +501,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         campaign_2 = Campaign.objects.create(office=self.o,\
             start_date=start_date_2,end_date=end_date_2,\
-            top_lvl_location_id = self.top_lvl_location.id,
-            top_lvl_indicator_tag_id = ind_tag.id,
             campaign_type_id = campaign_type.id)
 
         dp= DataPointComputed.objects.create(
