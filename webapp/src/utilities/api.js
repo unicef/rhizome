@@ -393,7 +393,6 @@ export default {
   locations: endPoint('/location/', 'get', 1),
 
   indicators: endPoint('/indicator/', 'get', 1),
-  office: endPoint('/office/', 'get', 1),
   homepage: endPoint('/homepage/', 'get', 1),
   location_type: endPoint('/location_type/', 'get', 1),
   post_indicator: endPoint('/indicator/', 'post', 1),

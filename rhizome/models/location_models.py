@@ -1,8 +1,6 @@
 from django.db import models
 from jsonfield import JSONField
 
-from rhizome.models.office_models import Office
-
 
 class LocationType(models.Model):
     '''
@@ -37,7 +35,6 @@ class Location(models.Model):
     name = models.CharField(max_length=255, unique=True)
     location_code = models.CharField(max_length=255, unique=True)
     location_type = models.ForeignKey(LocationType)
-    office = models.ForeignKey(Office)
     latitude = models.FloatField(null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     lpd_status = models.IntegerField(null=True, blank=True)

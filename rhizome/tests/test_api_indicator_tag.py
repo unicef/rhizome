@@ -6,7 +6,7 @@ from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound
 from rhizome.models.location_models import LocationPermission, Location,\
     LocationType
-from rhizome.models.office_models import Office
+
 
 class IndicatorTagResourceTest(RhizomeApiTestCase):
 
@@ -16,10 +16,9 @@ class IndicatorTagResourceTest(RhizomeApiTestCase):
         self.ts = TestSetupHelpers()
 
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
 
         self.top_lvl_location = self.ts.create_arbitrary_location(
-            self.lt.id, self.o.id)
+            self.lt.id)
 
     def test_get_indicator_tag_id(self):
         tag_name = 'tag1'

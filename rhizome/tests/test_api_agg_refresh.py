@@ -2,7 +2,6 @@ from rhizome.tests.setup_helpers import TestSetupHelpers
 from pandas import read_csv
 
 from django.contrib.auth.models import User
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType,\
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType
@@ -23,7 +22,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
 
         # create some metadata
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
-        self.office_id = Office.objects.create(id=1, name='test').id
 
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
@@ -42,8 +40,7 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         self.campaign_id = Campaign.objects.create(
             start_date='2016-01-01',
             end_date='2016-01-02',
-            campaign_type_id=campaign_type1.id,
-            office_id=self.office_id,
+            campaign_type_id=campaign_type1.id
         ).id
 
         document = Document.objects.create(

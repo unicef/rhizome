@@ -4,7 +4,6 @@ from pandas import DataFrame, notnull, concat
 
 from rhizome.models.indicator_models import CalculatedIndicatorComponent
 from rhizome.models.location_models import Location, LocationTree
-from rhizome.models.office_models import Office
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 
 class CampaignType(models.Model):
@@ -61,7 +60,6 @@ class Campaign(models.Model):
     '''
 
     name = models.CharField(max_length=255)
-    office = models.ForeignKey(Office)
     campaign_type = models.ForeignKey(CampaignType)
     start_date = models.DateField()
     end_date = models.DateField()

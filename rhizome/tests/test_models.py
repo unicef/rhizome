@@ -2,7 +2,6 @@ from django.test import TestCase
 
 from django.contrib.auth.models import User
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
@@ -50,7 +49,6 @@ class CampaignTest(MasterModelTestCase):
 
         self.u = User.objects.create_user(
             'polio', 'eradicate@polio.com', 'polio')
-        o = Office.objects.create(name='NGA')
         lt = LocationType.objects.create(name='country', admin_level=0)
         ct = CampaignType.objects.create(name='NID')
         self.ind_0 = Indicator.objects.create(
@@ -59,7 +57,7 @@ class CampaignTest(MasterModelTestCase):
             name='number of WPV cases', short_name='W')
         ind_tag = IndicatorTag.objects.create(tag_name='Polio')
         self.tpl = Location.objects.create(name='NGA', location_code='NGA',
-                                           office_id=o.id, location_type_id=lt.id)
+                                           location_type_id=lt.id)
         self.doc = Document.objects.create(
             doc_title='test',
             created_by_id=self.u.id,
@@ -68,7 +66,6 @@ class CampaignTest(MasterModelTestCase):
         ### SET UP CAMPAIGN DEFINITION ###
 
         self.c = Campaign.objects.create(
-            office_id=o.id,
             campaign_type_id=ct.id,
             name='test',
             start_date=st,
@@ -101,12 +98,12 @@ class LocationTest(MasterModelTestCase):
         self.location_type_id = LocationType.objects.create(
             name='test', admin_level=0).id
 
-    def create_location(self, name="test", office_id=1):
+    def create_location(self, name="test"):
 
         self.set_up()
 
         location = Location.objects.create(
-            name=name, office_id=office_id, location_type_id=self.location_type_id)
+            name=name, location_type_id=self.location_type_id)
 
         return location
 

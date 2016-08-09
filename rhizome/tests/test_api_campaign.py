@@ -1,6 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
@@ -19,20 +18,14 @@ class CampaignResourceTest(RhizomeApiTestCase):
 
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
-        # self.not_allowed_to_see_location = self.ts.create_arbitrary_location(
-        #     self.lt.id,
-        #     self.o.id)
 
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
-            self.o.id,
             location_code='Nigeria',
             location_name='Nigeria')
 
         self.sub_location = self.ts.create_arbitrary_location(
             self.lt.id,
-            self.o.id,
             location_name='Kano',
             location_code='Kano',
             parent_location_id=self.top_lvl_location.id)
@@ -41,7 +34,6 @@ class CampaignResourceTest(RhizomeApiTestCase):
 
         self.ct = CampaignType.objects.create(name='NID')
         self.can_see_campaign = self.ts.create_arbitrary_campaign(
-            office_id=self.ts.create_arbitrary_office(name='test1').id,
             campaign_type_id=self.ct.id,
             location_id=self.top_lvl_location.id,
             indicator_tag_id=self.it.id,
@@ -49,7 +41,6 @@ class CampaignResourceTest(RhizomeApiTestCase):
         )
 
         self.can_see_campaign_2 = self.ts.create_arbitrary_campaign(
-            office_id=self.ts.create_arbitrary_office(name='test2').id,
             campaign_type_id=self.ct.id,
             location_id=self.top_lvl_location.id,
             indicator_tag_id=self.it.id,
@@ -57,7 +48,6 @@ class CampaignResourceTest(RhizomeApiTestCase):
         )
 
         # self.can_not_see_campaign = self.ts.create_arbitrary_campaign(
-        #     office_id=self.o.id,
         #     campaign_type_id=self.ct.id,
         #     location_id=self.not_allowed_to_see_location.id,
         #     indicator_tag_id=self.it.id,
@@ -110,7 +100,6 @@ class CampaignResourceTest(RhizomeApiTestCase):
     def test_post_campaign(self):
         data = {
             'name': 'something',
-            'office_id': self.o.id,
             'campaign_type_id': self.ct.id,
             'start_date': '2016-05-01',
             'end_date': '2016-05-01'
@@ -122,17 +111,15 @@ class CampaignResourceTest(RhizomeApiTestCase):
 
     def test_post_campaign_missing_field(self):
         data = {
-            'office_id': self.o.id,
             'start_date': '2016-05-01',
             'end_date': '2016-05-01'
         }
         resp = self.ts.post(self, '/api/v1/campaign/', data=data)
         self.assertHttpApplicationError(resp)
 
-    def _post_campaign_invalid_ids(self):
+    def _post_campaign_invalid_id(self):
         data = {
             'name': 'something',
-            'office_id': -20202020,
             'campaign_type_id': -1232323231,
             'start_date': '2016-05-01',
             'end_date': '2016-05-01'

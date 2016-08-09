@@ -1,6 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, DataPointComputed
 from rhizome.models.location_models import Location, LocationType, \
     LocationPermission

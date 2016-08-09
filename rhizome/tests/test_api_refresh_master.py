@@ -4,7 +4,6 @@ from pandas import read_csv, notnull, to_datetime
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType
@@ -67,7 +66,6 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
 
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
-        office_id = Office.objects.create(id=1, name='test').id
 
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)

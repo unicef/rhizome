@@ -22,6 +22,7 @@ class Migration(migrations.Migration):
             DROP top_lvl_indicator_tag_id;
 
         '''),
+
         ## remove old cache_job_id references ##
         migrations.RunSQL('''
             ALTER TABLE datapoint
@@ -35,10 +36,27 @@ class Migration(migrations.Migration):
 
             DROP TABLE cache_job;
         '''),
+
         ## remove old document references from datapoint with computed ##
         migrations.RunSQL('''
             ALTER TABLE datapoint_with_computed
             DROP document_id;
+        '''),
+
+        ## remove old office table and FKs ##
+        migrations.RunSQL('''
+            ALTER TABLE indicator
+            DROP office_id;
+
+            ALTER TABLE campaign
+            DROP office_id;
+
+            ALTER TABLE location
+            DROP office_id;
+
+            DROP TABLE indicator_to_office;
+
+            DROP TABLE office;
         '''),
 
         migrations.RunSQL('''

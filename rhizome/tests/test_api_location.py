@@ -1,9 +1,6 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 from rhizome.models.location_models import LocationType, Location, LocationPermission
-from rhizome.models.office_models import Office
-
-
 
 from rhizome.cache_meta import LocationTreeCache
 
@@ -20,25 +17,22 @@ class LocationResourceTest(RhizomeApiTestCase):
         self.user = User.objects\
             .create_user(self.username, 'test@test.com', self.password)
         self.lt = LocationType.objects.create(name='test', admin_level=0)
-        self.o = Office.objects.create(name='Earth')
+
         self.not_allowed_to_see_location = Location.objects.create(
             name='Somalia',
             location_code='Somalia',
-            location_type_id=self.lt.id,
-            office_id=self.o.id,
+            location_type_id=self.lt.id
         )
         self.top_lvl_location = Location.objects.create(
             name='Nigeria',
             location_code='Nigeria',
-            location_type_id=self.lt.id,
-            office_id=self.o.id,
+            location_type_id=self.lt.id
         )
 
         self.sub_location = Location.objects.create(
             name='Kano',
             location_code='Kano',
             location_type_id=self.lt.id,
-            office_id=self.o.id,
             parent_location_id=self.top_lvl_location.id
         )
 

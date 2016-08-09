@@ -1,6 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
@@ -8,7 +7,6 @@ from rhizome.models.document_models import SourceObjectMap, \
     DocumentSourceObjectMap
 
 from pandas import read_csv
-from rhizome.models.indicator_models import Indicator
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 
@@ -22,9 +20,8 @@ class SourceObjectMapResourceTest(RhizomeApiTestCase):
         self.test_setup = TestSetupHelpers()
         self.user = self.test_setup.user
         self.lt = self.test_setup.create_arbitrary_location_type()
-        self.o = self.test_setup.create_arbitrary_office()
         self.location = \
-            self.test_setup.create_arbitrary_location(self.lt.id, self.o.id)
+            self.test_setup.create_arbitrary_location(self.lt.id)
 
         self.document = self\
             .test_setup.create_arbitrary_document(id=22,file_type ='campaign')

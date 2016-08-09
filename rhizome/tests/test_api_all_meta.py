@@ -1,6 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.office_models import Office
 from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
 from rhizome.models.dashboard_models import CustomDashboard, CustomChart
@@ -18,10 +17,8 @@ class AllMetaResourceTest(RhizomeApiTestCase):
 
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
         self.not_allowed_to_see_location = self.ts.create_arbitrary_location(
-            self.lt.id,
-            self.o.id)
+            self.lt.id)
 
     def test_all_meta_get(self):
         resp = self.ts.get(self, '/api/v1/all_meta/')

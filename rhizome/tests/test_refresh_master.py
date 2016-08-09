@@ -4,7 +4,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
@@ -280,7 +279,6 @@ class RefreshMasterTestCase(TestCase):
             ('rhizome/tests/_data/calculated_indicator_component.csv')
 
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
-        office_id = Office.objects.create(id=1, name='test').id
 
         document_id = Document.objects.create(
             doc_title='test',
@@ -346,8 +344,7 @@ class RefreshMasterTestCase(TestCase):
             l_id = Location.objects.create(
                 name=l,
                 location_code=l,
-                location_type_id=1,
-                office_id=1
+                location_type_id=1
             ).id
             l_som = SourceObjectMap.objects.create(
                 master_object_id=l_id,
@@ -360,7 +357,6 @@ class RefreshMasterTestCase(TestCase):
         for i, (c) in enumerate(distinct_campaign_codes):
             c_id = Campaign.objects.create(
                 name=c,
-                office_id=1,
                 campaign_type_id=1,
                 start_date='2010-01-0' + str(i + 1),
                 end_date='2010-01-0' + str(i + 1)

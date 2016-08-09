@@ -2,7 +2,6 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 from django.contrib.auth.models import User
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
@@ -35,8 +34,6 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
         self.district_lt = LocationType.objects.create(name='District'\
             ,admin_level = 2)
 
-
-        self.o = Office.objects.create(name = 'Earth')
         self.ind = Indicator.objects.create(
             name = 'Polio Cases',
             short_name = 'Polio Cases',
@@ -48,23 +45,20 @@ class DateDataPointResourceTest(RhizomeApiTestCase):
                 location_code = 'Afghanistan',
                 id=1234,
                 location_type_id = self.lt.id,
-                office_id = self.o.id,
             )
         self.some_province = Location.objects.create(
                 name = 'Province',
                 location_code = 'Province',
                 id=432,
                 parent_location_id = self.top_lvl_location.id,
-                location_type_id = self.province_lt.id,
-                office_id = self.o.id,
+                location_type_id = self.province_lt.id
             )
         self.some_district = Location.objects.create(
                 name = 'Achin',
                 location_code = 'Achin',
                 id=4321,
                 parent_location_id = self.some_province.id,
-                location_type_id = self.district_lt.id,
-                office_id = self.o.id,
+                location_type_id = self.district_lt.id
             )
 
         ltc = LocationTreeCache()

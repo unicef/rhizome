@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType
@@ -130,8 +129,6 @@ class TransformUploadTestCase(TestCase):
 
         location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
-
-        office_id = Office.objects.create(id=1, name='test').id
 
         campaign_type = CampaignType.objects.create(id=1, name="test")
 

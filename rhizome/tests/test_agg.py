@@ -3,7 +3,6 @@ from pandas import read_csv, notnull, DataFrame
 from numpy import isnan
 from django.test import TestCase
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed, AggDataPoint
 from rhizome.models.location_models import Location, LocationType, \
@@ -51,8 +50,6 @@ class AggRefreshTestCase(TestCase):
 
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
 
-        self.office_id = Office.objects.create(id=1, name='test').id
-
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
         self.location_type2 = LocationType.objects.create(admin_level=1,
@@ -73,8 +70,7 @@ class AggRefreshTestCase(TestCase):
         self.campaign_id = Campaign.objects.create(
             start_date='2016-01-01',
             end_date='2016-01-02',
-            campaign_type_id=campaign_type1.id,
-            office_id=self.office_id,
+            campaign_type_id=campaign_type1.id
         ).id
 
         document = Document.objects.create(

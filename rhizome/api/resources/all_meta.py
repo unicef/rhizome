@@ -6,7 +6,6 @@ from rhizome.models.campaign_models import Campaign
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     IndicatorToTag
 from rhizome.models.location_models import Location
-from rhizome.models.office_models import Office
 # from rhizome.models.document_models import * # FIXME
 from rhizome.models.dashboard_models import CustomChart, CustomDashboard
 
@@ -59,8 +58,6 @@ class AllMetaResource(BaseNonModelResource):
             list(IndicatorToTag.objects.all().values())
 
         am_result.locations = list(Location.objects.all().values())
-        am_result.offices = \
-            [o for o in Office.objects.all().values()]
         am_result.is_superuser = User.objects.get(
             id=request.user.id).is_superuser
         qs.append(am_result)

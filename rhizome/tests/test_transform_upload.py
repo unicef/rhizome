@@ -3,7 +3,6 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import CampaignType, Campaign
 from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
@@ -118,7 +117,6 @@ class TransformUploadTestCase(TestCase):
 
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
-        office_id = Office.objects.create(id=1, name='test').id
 
         document_id = Document.objects.create(
             doc_title='test',

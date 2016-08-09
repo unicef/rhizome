@@ -50,7 +50,6 @@ class IndicatorCache(object):
     def build_related_objects(self):
         tag_cols = ['indicator_id', 'indicator_tag_id']
         bound_cols = ['indicator_id', 'bound_name', 'mn_val', 'mx_val']
-        ind_to_office_cols = ['indicator_id', 'office_id']
 
         tag_df = DataFrame(list(IndicatorToTag.objects.filter(
             indicator_id__in=self.indicator_id_list).values_list(*tag_cols)), columns=tag_cols)

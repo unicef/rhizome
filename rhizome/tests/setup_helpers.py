@@ -4,7 +4,6 @@ from rhizome.models.document_models import Document, SourceObjectMap, \
     DocumentSourceObjectMap, SourceSubmission
 from pandas import read_csv, notnull, to_datetime
 
-from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
@@ -23,19 +22,15 @@ class TestSetupHelpers(RhizomeApiTestCase):
             username=self.username, password=self.password)
         return result
 
-    def create_arbitrary_office(self, name='Earth'):
-        return Office.objects.create(name=name)
-
     def create_arbitrary_location_type(self):
         return LocationType.objects.create(name='test', admin_level=0)
 
-    def create_arbitrary_location(self, location_type_id, office_id, location_name='Somalia', location_code='Somalia', parent_location_id=None):
+    def create_arbitrary_location(self, location_type_id, location_name='Somalia', location_code='Somalia', parent_location_id=None):
         if parent_location_id:
             return Location.objects.create(
                 name=location_name,
                 location_code=location_code,
                 location_type_id=location_type_id,
-                office_id=office_id,
                 parent_location_id=parent_location_id
             )
         else:
@@ -43,7 +38,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
                 name=location_name,
                 location_code=location_code,
                 location_type_id=location_type_id,
-                office_id=office_id
             )
 
     def create_arbitrary_som(self, source_object_code='Percent missed children_PCA', id=None, content_type='indicator'):
@@ -137,12 +131,11 @@ class TestSetupHelpers(RhizomeApiTestCase):
             meta_ids.append(row_id)
         return meta_ids
 
-    def create_arbitrary_campaign(self, office_id, campaign_type_id, \
+    def create_arbitrary_campaign(self, campaign_type_id, \
         location_id, indicator_tag_id, name="test"):
         return Campaign.objects.create(
             start_date='2016-01-01',
             end_date='2016-01-01',
-            office_id=office_id,
             campaign_type_id=campaign_type_id,
             name=name
         )
@@ -180,8 +173,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
 
         location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
-
-        office_id = Office.objects.create(id=1, name='test').id
 
         self.locations = self.model_df_to_data(location_df, Location)
         self.campaigns = self.model_df_to_data(campaign_df, Campaign)

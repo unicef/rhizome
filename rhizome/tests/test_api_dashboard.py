@@ -7,8 +7,6 @@ from django.db import transaction
 from rhizome.models.dashboard_models import CustomDashboard, CustomChart
 from rhizome.models.location_models import LocationPermission,Location, \
     LocationType
-from rhizome.models.office_models import Office
-
 
 import json
 
@@ -25,13 +23,11 @@ class DashboardResourceTest(RhizomeApiTestCase):
                                              'john@john.com', self.password)
 
         self.lt = LocationType.objects.create(name='test', admin_level=0)
-        self.o = Office.objects.create(name='Earth')
 
         self.top_lvl_location = Location.objects.create(
             name='Nigeria',
             location_code='Nigeria',
-            location_type_id=self.lt.id,
-            office_id=self.o.id,
+            location_type_id=self.lt.id
         )
 
         LocationPermission.objects.create(user_id=self.user.id,

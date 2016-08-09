@@ -10,7 +10,6 @@ from rhizome.models.location_models import Location, LocationType,\
     LocationPermission
 from rhizome.models.document_models import SourceObjectMap, Document
 from rhizome.models.indicator_models import IndicatorTag, Indicator
-from rhizome.models.office_models import Office
 
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.base_test_case import RhizomeApiTestCase
@@ -64,10 +63,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
 
         location_df = read_csv('rhizome/tests/_data/locations.csv')
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
-
-        office = Office.objects.create(id=1, name='test')
-        office_id = office.id
-        self.o = office
 
         self.campaign_type = CampaignType.objects.create(id=1, name="test")
 
@@ -182,13 +177,12 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                                              description='LQAS', )
 
         # 3. Create The Location
-        office = Office.objects.create(name='Nigeria')
         location = self.top_lvl_location
 
         # 4. Create The Campaign
         start_date = '2016-02-01'
         end_date = '2016-02-01'
-        campaign = Campaign.objects.create(office=office,\
+        campaign = Campaign.objects.create(\
             campaign_type=self.campaign_type,\
             start_date=start_date,\
             end_date=end_date)
@@ -284,7 +278,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                 name = province,
                 location_code = province,
                 location_type_id = self.province_lt.id,
-                office_id = self.o.id,
                 parent_location_id = self.top_lvl_location.id
             )
 
@@ -336,14 +329,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         start_date_1 = '2016-01-01'
         end_date_1 = '2016-01-01'
 
-        campaign_1 = Campaign.objects.create(office=self.o,\
+        campaign_1 = Campaign.objects.create(\
             campaign_type=self.campaign_type,start_date=start_date_1,\
             end_date=end_date_1)
 
         start_date_2 = '2016-02-01'
         end_date_2 = '2016-02-01'
 
-        campaign_2 = Campaign.objects.create(office=self.o,\
+        campaign_2 = Campaign.objects.create(\
             campaign_type=campaign_type,start_date=start_date_2,\
             end_date=end_date_2)
 
@@ -355,7 +348,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                 name = 'Kandahar',
                 location_code = 'Kandahar',
                 location_type_id = self.province_lt,
-                office_id = 1,
                 parent_location_id = self.top_lvl_location.id
             )
         # add datapoints for these different campaigns
@@ -397,15 +389,13 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         afghanistan = Location.objects.create(
             name='Afghanistan',
             location_code ='Afghanistan',
-            location_type_id = self.country_lt.id,
-            office_id = 1
+            location_type_id = self.country_lt.id
         )
 
         south = Location.objects.create(
             name='South',
             location_code = 'South',
             location_type_id=self.region_lt.id,
-            office_id = self.o.id,
             parent_location_id = afghanistan.id
             )
 
@@ -413,7 +403,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             name='Kandahar',
             location_code = 'Kandahar',
             location_type_id = self.province_lt.id,
-            office_id = 1,
             parent_location_id = south.id
             )
 
@@ -421,7 +410,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             name='Hilmand',
             location_code = 'Hilmand',
             location_type_id = self.province_lt.id,
-            office_id = 1,
             parent_location_id = south.id
             )
 
@@ -436,7 +424,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         start_date = '2014-01-01'
         end_date = '2014-01-01'
 
-        campaign = Campaign.objects.get(office=self.o, start_date=start_date)
+        campaign = Campaign.objects.get(start_date=start_date)
 
         kandahar_value =27
         hilmand_value =31
@@ -492,14 +480,14 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         campaign_type = CampaignType.objects\
             .create(name='National Immunization Days (NID)')
 
-        campaign_1 = Campaign.objects.create(office=self.o,\
+        campaign_1 = Campaign.objects.create(\
             start_date=start_date_1,end_date=end_date_1,\
             campaign_type_id = campaign_type.id)
 
         start_date_2 = '2016-03-01'
         end_date_2 = '2016-03-01'
 
-        campaign_2 = Campaign.objects.create(office=self.o,\
+        campaign_2 = Campaign.objects.create(\
             start_date=start_date_2,end_date=end_date_2,\
             campaign_type_id = campaign_type.id)
 
@@ -516,7 +504,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
                 name = 'Afghanistan',
                 location_code = 'Afghanistan',
                 location_type_id = 1,
-                office_id = 1,
             )
 
         get_parameter = 'indicator__in={0}&campaign__in={1}&location_id__in={2}&show_missing_data=1'\

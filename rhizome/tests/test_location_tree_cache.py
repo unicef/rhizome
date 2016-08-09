@@ -2,7 +2,6 @@ from pandas import DataFrame, notnull
 from django.test import TestCase
 
 from rhizome.models.location_models import LocationTree, LocationType, Location
-from rhizome.models.office_models import Office
 
 from rhizome.cache_meta import LocationTreeCache
 
@@ -66,8 +65,6 @@ class LocationTreeCacheTest(TestCase):
         '''
 
         location_batch = []
-
-        office = Office.objects.create(name='not important')
         location_type_country = LocationType.objects\
             .create(name='Country', admin_level=0, id=1)
         location_type_state = LocationType.objects\
@@ -94,7 +91,6 @@ class LocationTreeCacheTest(TestCase):
                 'id': loc.id,
                 'name': loc.name,
                 'location_code': unicode(loc.name).replace(' ', ''),
-                'office_id': office.id,
                 'location_type_id': loc.location_type_id,
                 'parent_location_id': loc.parent_location_id
             }))

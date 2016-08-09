@@ -13,10 +13,8 @@ class DocDataPointResourceTest(RhizomeApiTestCase):
 
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
-            self.o.id,
             location_code='Nigeria',
             location_name='Nigeria')
 
@@ -25,7 +23,7 @@ class DocDataPointResourceTest(RhizomeApiTestCase):
         camp_type = CampaignType.objects.create(name="test")
         ind_tag = IndicatorTag.objects.create(tag_name="tag")
         campaign = self.ts.create_arbitrary_campaign(
-            self.o.id, camp_type.id, self.top_lvl_location.id, ind_tag.id)
+            camp_type.id, self.top_lvl_location.id, ind_tag.id)
         ind = self.ts.create_arbitrary_indicator()
         value = 1123
         doc_dp = DocDataPoint.objects.create(document_id=doc.id,

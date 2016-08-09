@@ -23,7 +23,6 @@ class Indicator(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     bound_json = JSONField(default=[])
     tag_json = JSONField(default=[])
-    office_id = JSONField(default=[])
     good_bound = models.FloatField(null=True)
     bad_bound = models.FloatField(null=True)
     source_name = models.CharField(max_length=55)  # to do: make this a FK

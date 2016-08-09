@@ -21,7 +21,6 @@ class GeoResourceTest(RhizomeApiTestCase):
         self.distr, created = \
             LocationType.objects.get_or_create(name='District',admin_level = 2)
 
-        self.o = self.ts.create_arbitrary_office()
         self.planet_location_type = LocationType.objects\
             .create(name = 'Planet', admin_level = 0)
 
@@ -29,7 +28,6 @@ class GeoResourceTest(RhizomeApiTestCase):
             id = 1,
             name = 'Earth',
             location_code = 'Earth',
-            office_id = self.o.id,
             location_type_id = self.planet_location_type.id
         )
 

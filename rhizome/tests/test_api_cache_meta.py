@@ -10,16 +10,13 @@ class CacheMetaResourceTest(RhizomeApiTestCase):
 
         self.ts = TestSetupHelpers()
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
         self.top_lvl_location = self.ts.create_arbitrary_location(
             self.lt.id,
-            self.o.id,
             location_code='The Solar System',
             location_name='The Solar System'
         )
         self.leaf_location = self.ts.create_arbitrary_location(
             self.lt.id,
-            self.o.id,
             location_code='Mars',
             location_name='Mars',
             parent_location_id = self.top_lvl_location.id

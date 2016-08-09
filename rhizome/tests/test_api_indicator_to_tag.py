@@ -12,10 +12,8 @@ class IndicatorToTagResourceTest(RhizomeApiTestCase):
         self.ts = TestSetupHelpers()
 
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
-
         self.top_lvl_location = self.ts.create_arbitrary_location(
-            self.lt.id, self.o.id)
+            self.lt.id)
         self.ind_tag = IndicatorTag.objects.create(tag_name='a tag')
         self.ind = self.ts.create_arbitrary_indicator()
 

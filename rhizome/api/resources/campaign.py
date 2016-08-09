@@ -21,7 +21,7 @@ class CampaignResource(BaseModelResource):
     **POST Reguest:** Create a camapaign
         -*Required Parameters:*
             'name','top_lvl_location_id',
-            #'office_id','campaign_type_id',
+            'campaign_type_id',
             #'start_date','end_date',
         -*Errors:*
             If any of the fields are missing, the system returns a 500 error.
@@ -30,4 +30,4 @@ class CampaignResource(BaseModelResource):
     class Meta(BaseModelResource.Meta):
         resource_name = 'campaign'
         object_class = Campaign
-        required_fields_for_post = ['office_id', 'start_date', 'end_date']
+        required_fields_for_post = ['start_date', 'end_date']

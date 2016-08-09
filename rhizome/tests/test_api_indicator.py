@@ -5,7 +5,6 @@ from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound
 from rhizome.models.location_models import LocationPermission, Location,\
     LocationType
-from rhizome.models.office_models import Office
 
 from rhizome.cache_meta import IndicatorCache
 
@@ -18,10 +17,8 @@ class IndicatorResourceTest(RhizomeApiTestCase):
         self.ts = TestSetupHelpers()
 
         self.lt = self.ts.create_arbitrary_location_type()
-        self.o = self.ts.create_arbitrary_office()
-
         self.top_lvl_location = self.ts.create_arbitrary_location(
-            self.lt.id, self.o.id)
+            self.lt.id)
 
         LocationPermission.objects.create(user_id=self.ts.user.id,
                                           top_lvl_location_id=self.top_lvl_location.id)
