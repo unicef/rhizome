@@ -11,7 +11,7 @@ class DocDataPoint(models.Model):
     For Validation of upload rhizome.
     '''
 
-    document = models.ForeignKey(Document)  # redundant ( see source submission )
+    document = models.ForeignKey(Document)  # FIXME redundant ( source submission )
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign, null=True)

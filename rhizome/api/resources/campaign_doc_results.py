@@ -57,6 +57,7 @@ class CampaignDocResultResource(BaseModelResource):
         indicator_id_list.extend(calc_indicator_id_list)
 
         ## FIXME need some sort of unique_ix here like we have in datapoints #
+        ## FIXME this needs test coverage
         kwargs = {
             'indicator_id__in': indicator_id_list,
             'campaign_id__in': campaign_id_list,
