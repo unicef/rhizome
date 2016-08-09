@@ -313,6 +313,10 @@ var DashboardChartsStore = Reflux.createStore({
     this.toggleLoading(uuid)
     this.charts[uuid].type = type
     this.charts[uuid].selectTypeMode = false
+    if (type === 'RawData') {
+      this.charts[uuid].groupBy = 'location'
+      // this.charts[uuid].groupByTime = null
+    }
     const campaign_ids = this.selected_campaigns ? this.selected_campaigns.map(campaign => campaign.id) : this.campaigns.list[0]
     this._assignCampaigns(campaign_ids, uuid)
     this.updateChart(uuid)

@@ -18,15 +18,16 @@ class DatapointTable extends Table {
   }
 
   renderHeaderRow = function () {
-    const first_row = _.toArray(this.rows)[0]
-    const header_cells = first_row.map(datapoint => {
-      const entity = this.groupByCampaign ? datapoint.campaign : datapoint.indicator
+    const first_complete_row = _.toArray(this.rows).sort((a,b) => b.length - a.length)[0]
+    const header_cells = first_complete_row.map(datapoint => {
+      // const entity = this.groupByCampaign ? datapoint.campaign : datapoint.indicator
+      const entity = datapoint.indicator
       return <th>{entity.short_name || entity.name}</th>
     })
     return (
       <tr>
         <th></th>
-        { !this.groupByIndicator ? <th>{_.capitalize(this.props.groupByTime)}</th> : null}
+        { !this.groupByIndicator ? <th>{_.capitalize(this.props.groupByTime)}</th> : null }
         { header_cells }
       </tr>
     )

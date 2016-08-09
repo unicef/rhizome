@@ -58,7 +58,23 @@ const MultiChartControls = React.createClass({
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = (groupedChart && chart.groupBy === 'indicator') || type === 'MapChart'
 
-    const chartShowsOneCampaign = chart.groupByTime === 'campaign'
+    const group_by_time_selector = (
+      <div className='medium-12 columns radio-group'>
+        <h3>Time Grouping</h3>
+        <RadioGroup
+          name={'groupByTime' + chart.uuid}
+          value={chart.groupByTime}
+          onChange={props.setGroupByTime}
+          horizontal
+          values={[
+            {value: 'campaign', title: 'Campaign'},
+            {value: 'quarter', title: 'Quarter'},
+            {value: 'year', title: 'Year'}
+          ]}/>
+      </div>
+    )
+
+    const chartShowsOneCampaign = chart.groupByTime === 'campaign' && type !== 'RawData'
     // the date range picker handles date range and campaign selection //
     // if the user selects "campaign" in time groupings, they see a campaign
     // selector, otherwise they see a date range filter
@@ -85,22 +101,6 @@ const MultiChartControls = React.createClass({
         classes='medium-12 columns'
         linked={chart.linkedCampaigns}
       />
-    )
-
-    const group_by_time_selector = (
-      <div className='medium-12 columns radio-group'>
-        <h3>Time Grouping</h3>
-        <RadioGroup
-          name={'groupByTime' + chart.uuid}
-          value={chart.groupByTime}
-          onChange={props.setGroupByTime}
-          horizontal
-          values={[
-            {value: 'campaign', title: 'Campaign'},
-            {value: 'quarter', title: 'Quarter'},
-            {value: 'year', title: 'Year'}
-          ]}/>
-      </div>
     )
 
     const group_by_selector = groupedChart ? (
@@ -196,9 +196,9 @@ const MultiChartControls = React.createClass({
     return (
       <div className={this.props.className}>
         <IconButton onClick={props.toggleEditMode} icon='fa-angle-double-right' className='chart-options-button' />
-        { group_by_time_selector }
+        { type !== 'RawData' ? group_by_time_selector : null }
         { date_range_picker }
-        { group_by_selector }
+        { type !== 'RawData' ?  group_by_selector : null }
         { location_depth_selector }
         { location_selector }
         { indicator_selector }

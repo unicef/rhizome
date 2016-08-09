@@ -49,13 +49,14 @@ var DatapointStore = Reflux.createStore({
     const datapoints = {
       meta: response.meta,
       raw: response.objects,
-      flattened: this.flatten(response.objects),
+      flattened: this.flatten(response.objects, response.meta),
       melted: this.melt(response.objects, response.meta.indicator_ids)
     }
     if (response.meta.time_groupings) {
       datapoints.grouped = _.groupBy(datapoints.flattened, 'time_grouping')
     } else {
       datapoints.grouped = _.groupBy(datapoints.flattened, 'campaign.id')
+      datapoints.grouped = _.sortBy(datapoints.grouped, group => group[0].campaign.start_date).reverse()
     }
     this.setState(datapoints)
   },
@@ -73,7 +74,7 @@ var DatapointStore = Reflux.createStore({
   // =========================================================================== //
   //                                  UTILITIES                                  //
   // =========================================================================== //
-  flatten: function (datapoints) {
+  flatten: function (datapoints, meta) {
     const flattened = datapoints.map(d => {
       const indicator = this.indicators.index[d.indicator_id]
       const datapoint = {
@@ -89,6 +90,9 @@ var DatapointStore = Reflux.createStore({
       }
       return datapoint
     })
+    if (meta.get_params.group_by_time === 'campaign') {
+      return _.sortBy(flattened, d => d.campaign.start_date)
+    }
     return flattened
   },
 
