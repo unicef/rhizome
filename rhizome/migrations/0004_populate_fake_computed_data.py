@@ -16,8 +16,6 @@ from rhizome.models.indicator_models import Indicator
 from rhizome.models.campaign_models import Campaign, DataPointComputed
 from rhizome.models.document_models import Document, DocumentDetail, DocDetailType
 
-from rhizome.agg_tasks import AggRefresh
-
 
 def pass_fn(apps, schema_editor):
     pass
@@ -82,7 +80,6 @@ def upsert_df_data(df, document_id):
             'indicator_id': row.indicator_id,
             'campaign_id': row.campaign_id,
             'location_id': row.location_id,
-            'cache_job_id': -1,
             'document_id': document_id,
             'value': rand_val
         })

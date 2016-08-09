@@ -8,7 +8,6 @@ from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.datapoint_models import CacheJob
 
 
 class TestSetupHelpers(RhizomeApiTestCase):
@@ -186,9 +185,6 @@ class TestSetupHelpers(RhizomeApiTestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects\
-            .create(id=-2, date_attempted='2015-01-01', is_error=False)
 
         self.locations = self.model_df_to_data(location_df, Location)
         self.campaigns = self.model_df_to_data(campaign_df, Campaign)

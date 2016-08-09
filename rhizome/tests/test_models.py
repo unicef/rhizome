@@ -6,8 +6,8 @@ from rhizome.models.office_models import Office
 from rhizome.models.campaign_models import Campaign, CampaignType
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceSubmission,\
-     CacheJob, DataPoint
+from rhizome.models.document_models import Document, SourceSubmission, \
+    DataPoint
 
 from rhizome.cache_meta import LocationTreeCache
 from datetime import date, timedelta
@@ -79,72 +79,6 @@ class CampaignTest(MasterModelTestCase):
 
         ltc = LocationTreeCache()
         ltc.main()
-
-    # def test_campaign_create_sets_cache_job_of_datapoints(self):
-    #
-    #     self.set_up()
-    #
-    #     start_date, data_date, end_date = '2018-01-01', '2018-01-10', '2018-01-31'
-    #
-    #     ss = SourceSubmission.objects.create(
-    #         document_id = self.doc.id,
-    #         submission_json = '',
-    #         row_number = 0,
-    #         data_date = self.d
-    #     )
-    #     dp = DataPoint.objects.create(
-    #         id = 999999,
-    #         location_id = self.tpl.id,\
-    #         indicator_id = self.ind_0.id,\
-    #         value=2,
-    #         data_date = data_date,
-    #         source_submission_id = ss.id,
-    #         cache_job_id=-2
-    #     )
-    #
-    #     self.c.start_date = start_date
-    #     self.c.end_date = end_date
-    #     self.c.save() ## this should set the datapoint above to "to_process"
-    #
-    #     dp_after_campaign_save = DataPoint.objects.get(id = dp.id)
-    #     self.assertEqual(dp_after_campaign_save.cache_job_id, -1)
-
-    # def test_campaign_create(self):
-    #
-    #     ###### ADD DATA TO CAMPAIGN #####
-    #
-    #     self.set_up()
-    #
-    #     ss = SourceSubmission.objects.create(
-    #         document_id = self.doc.id,
-    #         submission_json = '',
-    #         row_number = 0,
-    #         data_date = self.d
-    #     )
-    #     dp_0 = DataPoint.objects.create(
-    #         location_id = self.tpl.id,\
-    #         indicator_id = self.ind_0.id,\
-    #         value=2,
-    #         data_date = self.d,
-    #         source_submission_id = ss.id,
-    #         cache_job_id=-1
-    #     )
-    #     dp_1 = DataPoint.objects.create(\
-    #         location_id = self.tpl.id,\
-    #         indicator_id = self.ind_1.id,\
-    #         value = 3,\
-    #         data_date = self.d, \
-    #         source_submission_id = ss.id,\
-    #         cache_job_id = -1
-    #     )
-    #
-    #     agr = AggRefresh(campaign_id = self.c.id)
-    #
-    #     dp_ids = self.c.get_datapoints()
-    #
-    #     self.assertEqual(len(dp_ids),2)
-    #     self.assertTrue(isinstance,(self.c,Campaign))
-    #     # self.assertEqual(dpi.__unicode__(),dpi.name)
 
 
 class IndicatorTest(MasterModelTestCase):

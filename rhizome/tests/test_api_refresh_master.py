@@ -11,7 +11,7 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     CalculatedIndicatorComponent, IndicatorToTag
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceObjectMap, CacheJob, DataPoint
+    DocumentDetail, SourceObjectMap, DataPoint
 
 
 class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
@@ -69,10 +69,7 @@ class RefreshMasterAPIResourceTest(RhizomeApiTestCase):
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
-
+        
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
         self.location_type2 = LocationType.objects.create(admin_level=1,

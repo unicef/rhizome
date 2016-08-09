@@ -7,8 +7,7 @@ from rhizome.models.campaign_models import Campaign, CampaignType,\
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceSubmission, \
-    CacheJob, DataPoint
+from rhizome.models.document_models import Document, SourceSubmission, DataPoint
 
 
 from rhizome.tests.base_test_case import RhizomeApiTestCase
@@ -24,8 +23,7 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
         # create some metadata
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
         self.office_id = Office.objects.create(id=1, name='test').id
-        cache_job_id = CacheJob.objects.create(
-            id=-1, date_completed='2015-01-01', date_attempted='2015-01-01', is_error=False)
+
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
         self.location_type2 = LocationType.objects.create(admin_level=1,
@@ -69,7 +67,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
             campaign_id=self.campaign_id,
             value=1,
             data_date='2016-01-01',
-            cache_job_id=-1,
             source_submission_id=self.ss_1,
             unique_index=1
 
@@ -81,7 +78,6 @@ class AggRefreshAPITestCase(RhizomeApiTestCase):
             campaign_id=self.campaign_id,
             value=1,
             data_date='2016-01-01',
-            cache_job_id=-1,
             source_submission_id=self.ss_1,
             unique_index=2
 

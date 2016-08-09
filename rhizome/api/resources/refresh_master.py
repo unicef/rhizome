@@ -1,7 +1,6 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models.document_models import Document, DataPoint
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.agg_tasks import AggRefresh
 
 
 class RefreshMasterResource(BaseNonModelResource):
@@ -31,10 +30,14 @@ class RefreshMasterResource(BaseNonModelResource):
         document_object.refresh_master()
 
         if Document.objects.get(id = doc_id).file_type == 'campaign':
+            ## check document object map first to make query faster ##
+            # DocumentObjectMap.objects.filter(document_id = doc_id,\
+            # content_type = 'document').values_list('master_object_id,flat=True')
             doc_campaign_ids = set(list(DataPoint.objects
                             .filter(source_submission__document_id=doc_id)
                             .values_list('campaign_id', flat=True)))
             for c_id in doc_campaign_ids:
-                AggRefresh(c_id)
+                campaign_object = Campaign.objects.get(id = c_id)
+                campaign_object.aggregate_and_calculate()
 
         return Document.objects.filter(id=doc_id).values()

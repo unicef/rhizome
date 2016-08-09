@@ -10,7 +10,7 @@ from rhizome.models.location_models import Location, LocationType
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, \
-    DocumentDetail, SourceSubmission, SourceObjectMap, CacheJob, DocDataPoint,\
+    DocumentDetail, SourceSubmission, SourceObjectMap, DocDataPoint,\
     DataPoint
 
 # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_refresh_master_init --settings=rhizome.settings.test
@@ -282,9 +282,6 @@ class RefreshMasterTestCase(TestCase):
 
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2, date_attempted='2015-01-01',
-                                               is_error=False)
 
         document_id = Document.objects.create(
             doc_title='test',

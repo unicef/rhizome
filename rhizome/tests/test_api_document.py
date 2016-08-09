@@ -9,8 +9,7 @@ from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType, LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceObjectMap,\
-    CacheJob
+from rhizome.models.document_models import Document, SourceObjectMap
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase
@@ -109,9 +108,6 @@ class DocumentResourceTest(RhizomeApiTestCase):
         indicator_df = read_csv('rhizome/tests/_data/indicators.csv')
 
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         campaign_type = CampaignType.objects.create(id=1, name="test")
 

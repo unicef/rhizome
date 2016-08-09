@@ -9,7 +9,7 @@ from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     IndicatorToTag, CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, DocumentDetail,\
-    SourceObjectMap, DocumentDetail, SourceSubmission, DataPoint, CacheJob
+    SourceObjectMap, DocumentDetail, SourceSubmission, DataPoint
 
 class TransformUploadTestCase(TestCase):
 
@@ -119,9 +119,6 @@ class TransformUploadTestCase(TestCase):
         user_id = User.objects.create_user('test', 'test@test.com', 'test').id
         self.user_id = user_id
         office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(id=-2,
-                                               date_attempted='2015-01-01', is_error=False)
 
         document_id = Document.objects.create(
             doc_title='test',

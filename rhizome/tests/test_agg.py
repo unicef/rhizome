@@ -10,18 +10,14 @@ from rhizome.models.location_models import Location, LocationType, \
     LocationTree
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
     IndicatorToTag, CalculatedIndicatorComponent
-from rhizome.models.document_models import Document, SourceSubmission, \
-    CacheJob, DataPoint
+from rhizome.models.document_models import Document, SourceSubmission, DataPoint
 
-from rhizome.agg_tasks import AggRefresh
 from rhizome.cache_meta import LocationTreeCache
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class AggRefreshTestCase(TestCase):
 
     '''
-    from rhizome.agg_tasks import AggRefresh
-    mr = AggRefresh()
     '''
 
     def __init__(self, *args, **kwargs):
@@ -55,9 +51,6 @@ class AggRefreshTestCase(TestCase):
         user_id = User.objects.create_user('test', 'john@john.com', 'test').id
 
         self.office_id = Office.objects.create(id=1, name='test').id
-
-        cache_job_id = CacheJob.objects.create(
-            id=-1, date_completed='2015-01-01', date_attempted='2015-01-01', is_error=False)
 
         self.location_type1 = LocationType.objects.create(admin_level=0,
                                                           name="country", id=1)
@@ -134,7 +127,6 @@ class AggRefreshTestCase(TestCase):
             indicator_id=indicator_id,
             campaign_id=self.campaign_id,
             value=value,
-            cache_job_id=-1,
             source_submission_id=ss_id,
             unique_index=str(location_id) + str(data_date) +
             str(self.campaign_id) + str(indicator_id)
@@ -187,7 +179,9 @@ class AggRefreshTestCase(TestCase):
 
         sum_dp_value = sum([y for x, y in dps if not isnan(y)])
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
+
 
         #################################################
         ## ensure that raw data gets into AggDataPoint ##
@@ -235,7 +229,11 @@ class AggRefreshTestCase(TestCase):
         agg_override_dp = self.create_datapoint(agg_location_id, data_date,
                                                 indicator_id, override_value)
 
-        AggRefresh(self.campaign_id)
+
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
+
+
 
         override_value_in_agg = AggDataPoint.objects.get(
             campaign_id=self.campaign_id,
@@ -278,7 +276,8 @@ class AggRefreshTestCase(TestCase):
 
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         try:
             agg_dp_qs = AggDataPoint.objects.get(
@@ -314,9 +313,9 @@ class AggRefreshTestCase(TestCase):
             location_id__in=location_ids
         ).values_list('value', flat=True)
 
-        sum(dp_values)
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         ############################################################
         ## ensure that raw data gets into datapoint_with_computed ##
@@ -439,7 +438,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_1,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=1
         )
         dp_2 = DataPoint.objects.create(
@@ -449,7 +447,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_2,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=2
 
         )
@@ -460,12 +457,12 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_3,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=3
 
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id=parent_indicator.id,
@@ -547,7 +544,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=x,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=1
 
         )
@@ -558,12 +554,12 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=y,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=2
 
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         calc_value = DataPointComputed.objects.get(
             indicator_id=parent_indicator.id,
@@ -634,7 +630,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_1,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=1
 
         )
@@ -645,11 +640,12 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_2,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=2
 
         )
-        AggRefresh(self.campaign_id)
+
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         calc_value_sum = DataPointComputed.objects.get(
             indicator_id=parent_indicator.id,
@@ -811,7 +807,8 @@ class AggRefreshTestCase(TestCase):
         for k, v in values_to_insert.iteritems():
             self.create_datapoint(location_id, data_date, k, v)
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         parent_indicator_target_value = sum(values_to_insert.values())
         parent_indicator_1_actual_value = DataPointComputed.objects.get(
@@ -876,7 +873,9 @@ class AggRefreshTestCase(TestCase):
 
         # run the agg refresh ( this is the code that will actually transofrm
         # the booleans to numerics. )
-        AggRefresh(self.campaign_id)
+
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         # now get the expected aggrgated data and compare it with the percentage
         # value that we expect given how we split up the locations above.
@@ -950,7 +949,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_1,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=1
 
         )
@@ -962,7 +960,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_2,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=2
 
         )
@@ -974,7 +971,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_1_loc_2,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=3
 
         )
@@ -986,12 +982,12 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=val_2_loc_2,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=4
 
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         calc_value_pct = DataPointComputed.objects.get(
             indicator_id=pct_indicator.id,
@@ -1094,7 +1090,6 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=num_missed_val,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=3
         )
 
@@ -1104,11 +1099,11 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=num_seen_val,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=4
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
 
         # check that numerator and denominator option work
         cdp_pct_missed_1 = DataPointComputed.objects.filter(
@@ -1122,11 +1117,12 @@ class AggRefreshTestCase(TestCase):
             campaign_id=self.campaign_id,
             value=num_vacc_val,
             source_submission_id=ss_id,
-            cache_job_id=-1,
             unique_index=5
         )
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
+
         # check that this works when we can do whole/part of difference
         cdp_pct_missed_2 = DataPointComputed.objects.filter(
             indicator_id=pct_missed.id)[0]
@@ -1137,7 +1133,9 @@ class AggRefreshTestCase(TestCase):
         # check that this works when we can only do whole/part of difference
         DataPoint.objects.filter(indicator_id=num_missed.id).delete()
 
-        AggRefresh(self.campaign_id)
+        campaign_object = Campaign.objects.get(id = self.campaign_id)
+        campaign_object.aggregate_and_calculate()
+        
         cdp_pct_missed_3 = DataPointComputed.objects.filter(
             indicator_id=pct_missed.id)[0]
         self.assertEqual(cdp_pct_missed_3.value, 0.45)

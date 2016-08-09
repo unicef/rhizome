@@ -23,26 +23,10 @@ from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator
 from rhizome.models.campaign_models import Campaign
 
-class CacheJob(models.Model):
-    '''
-    A table that shows the start/end time of each cache job, as well as the
-    response message of the job itself.  This allows a DBA to track what is
-    happening with our cache jobs and how long they are taking.
-    '''
-
-    date_attempted = models.DateTimeField(auto_now=True)
-    date_completed = models.DateTimeField(null=True)
-    is_error = models.BooleanField()
-    response_msg = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'cache_job'
-        ordering = ('-date_attempted',)
-
 
 class Document(models.Model):
-    # (D)
-
+    '''
+    '''
     docfile = models.FileField(upload_to='documents/%Y/%m/%d', null=True)
     file_type = models.CharField(max_length=10)
     doc_title = models.TextField(unique=True)
@@ -689,9 +673,6 @@ class DataPoint(models.Model):
     source_submission.  The source_submission is -1 in the case of data
     entry.
 
-    The cache_job_id column allows us to find out when and why a particular
-    datapoint was refreshed.  New datapoints have a cache_job_id = -1 which
-    tells the system that it needs to be refreshed.
     '''
 
     indicator = models.ForeignKey(Indicator)
@@ -701,7 +682,6 @@ class DataPoint(models.Model):
     value = models.FloatField(null=True)
     created_at = models.DateTimeField(auto_now=True)
     source_submission = models.ForeignKey(SourceSubmission)
-    cache_job = models.ForeignKey(CacheJob, default=-1)
     unique_index = models.CharField(max_length=255, unique=True, default=-1)
 
     def get_val(self):

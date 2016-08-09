@@ -77,8 +77,6 @@ class Campaign(models.Model):
 
     def aggregate_and_calculate(self):
 
-        self.cache_job_id = -100 # remove.
-
         self.dp_columns = ['location_id', 'indicator_id','campaign_id', 'value']
         self.dwc_batch, self.dwc_tuple_dict = [], {}
 
@@ -448,11 +446,9 @@ class CampaignToIndicator(models.Model): # FIXME remove this.
 class DataPointComputed(models.Model):
 
     value = models.FloatField()
-    # cache_job = models.ForeignKey(CacheJob, default=-1)
     indicator = models.ForeignKey(Indicator)
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
-    # document = models.ForeignKey(Document)
 
     class Meta:
         db_table = 'datapoint_with_computed'
@@ -464,7 +460,6 @@ class AggDataPoint(models.Model):
     location = models.ForeignKey(Location)
     campaign = models.ForeignKey(Campaign)
     value = models.FloatField()
-    # cache_job = models.ForeignKey(CacheJob, default=-1)
 
     class Meta:
         db_table = 'agg_datapoint'

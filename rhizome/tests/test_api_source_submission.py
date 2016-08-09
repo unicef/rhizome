@@ -6,7 +6,7 @@ from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
 from rhizome.models.campaign_models import DataPointComputed
 from rhizome.models.document_models import Document, SourceObjectMap,\
-    SourceSubmission, CacheJob
+    SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
 

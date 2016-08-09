@@ -8,7 +8,7 @@ from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
 from rhizome.models.location_models import Location, LocationType,\
     LocationPermission
-from rhizome.models.document_models import Document, SourceObjectMap, CacheJob
+from rhizome.models.document_models import Document, SourceObjectMap
 from rhizome.models.indicator_models import IndicatorTag, Indicator
 from rhizome.models.office_models import Office
 
@@ -73,9 +73,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         office_id = office.id
         self.o = office
 
-        cache_job_id = CacheJob.objects.create(id=-2,
-                           date_attempted='2015-01-01', is_error=False)
-
         self.campaign_type = CampaignType.objects.create(id=1, name="test")
 
         locations = self.ts.model_df_to_data(location_df, Location)
@@ -115,8 +112,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
             location_id = 1,
             indicator_id = 1,
             document_id = 1,
-            value = 0,
-            cache_job_id = -1
+            value = 0
         )
 
         return obj
@@ -130,12 +126,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
     def test_get_list(self):
         # Create the data, need input value to the DataPointComputed model.
 
-        # 1. The CacheJob value
-        cache_job = CacheJob.objects.create(
-            is_error=False,
-            response_msg='SUCCESS'
-        )
-
         campaign = Campaign.objects.all()[0]
         location = Location.objects.all()[0]
         indicator = Indicator.objects.all()[0]
@@ -143,7 +133,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         value = 1.57
 
         datapoint = DataPointComputed.objects.create(value=value,\
-            cache_job=cache_job,indicator=indicator, location=location,\
+            indicator=indicator, location=location,\
             campaign=campaign, document=document)
 
         # 6 Request To The API
@@ -191,11 +181,6 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
     def _get_class_datapoint(self):
         # ./manage.py test rhizome.tests.test_api_datapoint.DataPointResourceTest.test_get_class_datapoint --settings=rhizome.settings.test
 
-        cache_job = CacheJob.objects.create(
-            is_error=False,
-            response_msg='SUCCESS'
-        )
-
         # 2. Create The Indicator value
         indicator = Indicator.objects.create(short_name='LQAS', \
                                              name='LQAS', \
@@ -218,7 +203,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         value = 1
         document = Document.objects.create(doc_title='uploadddd')
         datapoint = DataPointComputed.objects.create(value=value,\
-            cache_job=cache_job,indicator=indicator, location=location,\
+            indicator=indicator, location=location,\
             campaign=campaign, document=document)
 
         # 6 create the class indicator mapping

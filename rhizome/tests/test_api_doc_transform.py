@@ -6,7 +6,7 @@ from rhizome.models.location_models import Location, LocationType, \
     LocationPermission
 from rhizome.models.indicator_models import Indicator, IndicatorTag
 from rhizome.models.document_models import Document, SourceObjectMap, \
-    SourceSubmission, CacheJob, DataPoint
+    SourceSubmission, DataPoint
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from datetime import datetime
