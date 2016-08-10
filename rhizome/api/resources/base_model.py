@@ -412,8 +412,8 @@ class BaseModelResource(ModelResource, BaseResource):
         ## to wok for charts that show informatino above district level, we
         ## would need to aggregate to province, regino and conutry on the fly
         ## as opposed to in the agg_refresh process
-        chart_type = request.GET.get('chart_type', 'raw_data')
-        if chart_type != 'TableChart':
+        location_type = request.GET.get('location_type', None)
+        if location_type != 'District':
             return location_ids
 
         try:
