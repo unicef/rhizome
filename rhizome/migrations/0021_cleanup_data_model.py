@@ -21,6 +21,8 @@ class Migration(migrations.Migration):
             ALTER TABLE campaign
             DROP top_lvl_indicator_tag_id;
 
+            DROP TABLE campaign_to_indicator;
+
         '''),
 
         ## remove old cache_job_id references ##
@@ -56,8 +58,8 @@ class Migration(migrations.Migration):
 
             DROP TABLE indicator_to_office;
 
-            -- change unique index for campaign
-            -- was start_date / office -> start_date / campaign_type 
+            -- FIXME change unique index for campaign
+            -- was start_date / office -> start_date / campaign_type
             DROP TABLE office;
         '''),
 
