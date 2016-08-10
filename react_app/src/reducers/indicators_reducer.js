@@ -26,7 +26,6 @@ export const indicator = handleActions({
   description: '',
   is_reported: false,
   name: '',
-  office_id: '[]',
   resource_name: '',
   short_name: '',
   source_name: '',
@@ -160,4 +159,3 @@ const buildIndicatorsTree = (indicators, tags, isClone, isRemoveEmpty, indicator
 
   return _.sortBy(sortTags, 'title')
 }
-

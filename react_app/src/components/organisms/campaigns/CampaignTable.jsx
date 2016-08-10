@@ -8,7 +8,6 @@ const columnDefs = [
   {headerName: 'Name', field: 'name'},
   {headerName: 'Start_date', field: 'start_date'},
   {headerName: 'End_date', field: 'end_date'},
-  {headerName: 'Office_id', field: 'office_id', hide: true},
   {headerName: 'Campaign_type_id', field: 'campaign_type_id', hide: true},
   {headerName: 'Pct_complete', field: 'pct_complete', hide: true},
   {headerName: 'Top_lvl_location_id', field: 'top_lvl_location_id', hide: true}
