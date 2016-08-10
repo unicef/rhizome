@@ -406,16 +406,6 @@ class BaseModelResource(ModelResource, BaseResource):
             #     locations, or both `location_id and `location_depth` for a\
             #     recursive result')
 
-
-        ## currently the LPD status filter only works for table charts because
-        ## those explictly check for district data... in order to get this
-        ## to wok for charts that show informatino above district level, we
-        ## would need to aggregate to province, regino and conutry on the fly
-        ## as opposed to in the agg_refresh process
-        location_type = request.GET.get('location_type', None)
-        if location_type != 'District':
-            return location_ids
-
         try:
             ## this allows us to filter locations based on the result of a
             ## particular indicator / value.  So for instance.. think of the query
