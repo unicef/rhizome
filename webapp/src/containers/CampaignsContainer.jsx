@@ -26,9 +26,6 @@ var CampaignsContainer = React.createClass({
     this.setState({'campaignId': id})
     CampaignPageActions.initialize(id)
   },
-  _setOffice: function (event) {
-    CampaignPageActions.setOffice(event.target.value)
-  },
   _setCampaignName: function (event) {
     CampaignPageActions.setCampaignName(event.target.value)
   },
@@ -55,19 +52,6 @@ var CampaignsContainer = React.createClass({
           </div>
         </div>)
     }
-
-    let officeSet = (
-      <div>
-        <label htmlFor='office'>Office: </label>
-        <select value={this.state.postData.office_id} onChange={this._setOffice}>
-          {this.state.offices.map(d => {
-            return d.id === this.state.postData.office_id
-              ? (<option value={d.id} selected>{d.name}</option>)
-              : (<option value={d.id}>{d.name}</option>)
-          })}
-        </select>
-      </div>
-    )
 
     let nameSet = (
       <div>
@@ -145,7 +129,6 @@ var CampaignsContainer = React.createClass({
           <h2>Manage Campaign Page</h2>
           {message}
           <form>
-            {officeSet}
             {nameSet}
             {topLevelLocationSet}
             {topLevelIndicatorTagSet}

@@ -5,7 +5,6 @@ import RootActions from 'actions/RootActions'
 import IndicatorActions from 'actions/IndicatorActions'
 import LocationActions from 'actions/LocationActions'
 import CampaignActions from 'actions/CampaignActions'
-import OfficeActions from 'actions/OfficeActions'
 import DashboardActions from 'actions/DashboardActions'
 import ChartActions from 'actions/ChartActions'
 
@@ -21,7 +20,6 @@ var RootStore = Reflux.createStore({
     dashboards: [],
     indicators: [],
     locations: [],
-    offices: [],
     loading: false
   },
 
@@ -52,7 +50,6 @@ var RootStore = Reflux.createStore({
     this.data.dashboards = response.objects[0].dashboards
     this.data.indicators = response.objects[0].indicators
     this.data.locations = response.objects[0].locations
-    this.data.offices = response.objects[0].offices
     CampaignActions.fetchCampaigns.completed(response)
     ChartActions.fetchCharts.completed(response)
     DashboardActions.fetchDashboards.completed(response)
@@ -60,7 +57,6 @@ var RootStore = Reflux.createStore({
     IndicatorActions.fetchIndicatorTags.completed(response)
     IndicatorActions.fetchIndicatorsToTags.completed(response)
     LocationActions.fetchLocations.completed(response)
-    OfficeActions.fetchOffices.completed(response)
     this.trigger(this.data)
   },
   onFetchAllMetaFailed (error) {

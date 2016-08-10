@@ -30,7 +30,6 @@ const _prepDatapointsQuery = (params) => {
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
     location_type: params.type === 'TableChart' ? 'District' : null
   }
-  console.log('params', params)
   if (params.type === 'RawData' && params.group_by_time !== 'year') {
     query.start_date = params.start_date
     query.end_date = params.end_date

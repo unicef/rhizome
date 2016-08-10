@@ -3,7 +3,6 @@ import moment from 'moment'
 import Reflux from 'reflux'
 import StateMixin from'reflux-state-mixin'
 import CampaignActions from 'actions/CampaignActions'
-import OfficeStore from 'stores/OfficeStore'
 
 var CampaignStore = Reflux.createStore({
 
@@ -11,18 +10,12 @@ var CampaignStore = Reflux.createStore({
 
   listenables: CampaignActions,
 
-  offices_index: null,
-
   campaigns: {
     meta: null,
     raw: null,
     index: null,
     filtered: [],
     list: []
-  },
-
-  init () {
-    this.listenTo(OfficeStore, this.onOfficeStore)
   },
 
   getInitialState () {
@@ -47,23 +40,14 @@ var CampaignStore = Reflux.createStore({
   },
 
   // =========================================================================== //
-  //                            OTHER STORE DEPENDECIES                          //
-  // =========================================================================== //
-  onOfficeStore (offices) {
-    this.offices_index = offices.index
-    this.processCampaigns()
-  },
-
-  // =========================================================================== //
   //                                  UTILITIES                                  //
   // =========================================================================== //
   processCampaigns () {
-    if (this.campaigns.raw && this.offices_index) {
+    if (this.campaigns.raw) {
       this.campaigns.list = _(this.campaigns.raw).map(campaign => {
         return _.assign({}, campaign, {
           'start_date': moment(campaign.start_date, 'YYYY-MM-DD').toDate(),
           'end_date': moment(campaign.end_date, 'YYYY-MM-DD').toDate(),
-          'office': this.offices_index[campaign.office_id]
         })
       })
       .sortBy(_.method('start_date.getTime'))
