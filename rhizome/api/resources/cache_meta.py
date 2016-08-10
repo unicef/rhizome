@@ -1,5 +1,6 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.cache_meta import cache_all_meta
+from rhizome.models.campaign_models import Campaign
 
 
 class CacheMetaResource(BaseNonModelResource):
