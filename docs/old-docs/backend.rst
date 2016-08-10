@@ -98,12 +98,6 @@ When ingesting a spreadsheet, here are the rules as to how datapoints are mapped
       ''<province><district><sub-district><settlement>''
   - Bo created existing sub-districts with this convention so i was able to map a large part of the ODK data using this convention.
 
-*AFGHANISTAN*
-  - I am not sure we need to ask Bo
-
-*PAKISTAN*
-  - I am not sure we need to ask Bo
-
 Needs Documentation
 -------------------
 - Shape File ingestion
@@ -119,7 +113,7 @@ Future Topics Regarding locations
   - Storing Health Camp Data
 
 
-Caching
+Aggregation
 =======
 
 Datapoints are stored at four levels.  Each represent a database table as well

@@ -33,9 +33,3 @@ There are two major directions that we can go with this:
 
 * Implement Process that constant checks the App Engine Instance for new data, transforms it and loads into our backend system.
 * Directly hookup our backend system with the ODK Collect application
-
-BOTH OF THESE ARE DEPENDENT ON APP ENGINE SERVER DETAILS FROM NIGERIA
-
-**What we need from Nigeria to Move forward**
-
-* App Engine Credentials!
