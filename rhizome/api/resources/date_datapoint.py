@@ -4,7 +4,6 @@ from tastypie import fields
 from tastypie.utils.mime import build_content_type
 from tastypie.resources import ALL
 from pandas import DataFrame, concat, notnull
-from numpy import int64
 from django.http import HttpResponse
 
 from rhizome.api.serialize import CustomSerializer
