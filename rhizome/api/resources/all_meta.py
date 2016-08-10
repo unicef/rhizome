@@ -17,7 +17,6 @@ class AllMetaResult(object):
     indicator_tags = list()
     indicators_to_tags = list()
     locations = list()
-    offices = list()
     is_superuser = bool()
 
 

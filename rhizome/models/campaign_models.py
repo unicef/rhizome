@@ -68,7 +68,7 @@ class Campaign(models.Model):
     class Meta:
         db_table = 'campaign'
         ordering = ('-start_date',)
-        unique_together = ('office', 'start_date')
+        unique_together = ('campaign_type', 'start_date')
 
     def aggregate_and_calculate(self):
 

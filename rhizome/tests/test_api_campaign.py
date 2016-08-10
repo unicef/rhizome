@@ -33,6 +33,7 @@ class CampaignResourceTest(RhizomeApiTestCase):
         self.it = IndicatorTag.objects.create(tag_name='Polio')
 
         self.ct = CampaignType.objects.create(name='NID')
+        self.ct_2 = CampaignType.objects.create(name='SNID')
         self.can_see_campaign = self.ts.create_arbitrary_campaign(
             campaign_type_id=self.ct.id,
             location_id=self.top_lvl_location.id,
@@ -41,7 +42,7 @@ class CampaignResourceTest(RhizomeApiTestCase):
         )
 
         self.can_see_campaign_2 = self.ts.create_arbitrary_campaign(
-            campaign_type_id=self.ct.id,
+            campaign_type_id=self.ct_2.id,
             location_id=self.top_lvl_location.id,
             indicator_tag_id=self.it.id,
             name="can_see2"

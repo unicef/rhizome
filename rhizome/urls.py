@@ -32,6 +32,7 @@ admin.autodiscover()
 v1_api = Api(api_name='v1')
 
 v1_api.register(agg_refresh.AggRefreshResource())
+v1_api.register(cache_meta.CacheMetaResource())
 v1_api.register(
     calculated_indicator_component.CalculatedIndicatorComponentResource())
 v1_api.register(campaign.CampaignResource())

@@ -1,1 +1,7 @@
-id,office_id,latitude,longitude,created_at,location_code,name,parent_location_id,location_type_id,lpd_status6,1,,,09:18.2,AF001055000000000000,Nimroz,1,2,441,1,,,09:18.2,AF001055004000000000,Khashrod,6,3,434,1,,,09:18.2,AF001055001000000000,Chakhansur,6,3,423,1,,,09:18.2,AF001055003000000000,Kang,6,3,417,1,,,09:18.2,AF001055005000000000,Zaranj,6,3,416,1,,,09:18.2,AF001055002000000000,Charburjak,6,3,
+id,latitude,longitude,created_at,location_code,name,parent_location_id,location_type_id,lpd_status
+6,,,09:18.2,AF001055000000000000,Nimroz,1,2,
+441,,,09:18.2,AF001055004000000000,Khashrod,6,3,
+434,,,09:18.2,AF001055001000000000,Chakhansur,6,3,
+423,,,09:18.2,AF001055003000000000,Kang,6,3,
+417,,,09:18.2,AF001055005000000000,Zaranj,6,3,
+416,,,09:18.2,AF001055002000000000,Charburjak,6,3,

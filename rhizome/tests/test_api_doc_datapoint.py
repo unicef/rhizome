@@ -45,7 +45,7 @@ class DocDataPointResourceTest(RhizomeApiTestCase):
         camp_type = CampaignType.objects.create(name="test")
         ind_tag = IndicatorTag.objects.create(tag_name="tag")
         campaign = self.ts.create_arbitrary_campaign(
-            self.o.id, camp_type.id, self.top_lvl_location.id, ind_tag.id)
+            camp_type.id, self.top_lvl_location.id, ind_tag.id)
         ind = self.ts.create_arbitrary_indicator()
         value = 1123
         doc_dp = DocDataPoint.objects.create(document_id=doc.id,
@@ -69,7 +69,7 @@ class DocDataPointResourceTest(RhizomeApiTestCase):
         camp_type = CampaignType.objects.create(name="test")
         ind_tag = IndicatorTag.objects.create(tag_name="tag")
         campaign = self.ts.create_arbitrary_campaign(
-            self.o.id, camp_type.id, self.top_lvl_location.id, ind_tag.id)
+            camp_type.id, self.top_lvl_location.id, ind_tag.id)
         ind = self.ts.create_arbitrary_indicator()
         value = 1123
         doc_dp = DocDataPoint.objects.create(document_id=doc.id,

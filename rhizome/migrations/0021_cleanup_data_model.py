@@ -56,6 +56,8 @@ class Migration(migrations.Migration):
 
             DROP TABLE indicator_to_office;
 
+            # change unique index for campaign #
+            # was start_date / office -> start_date / campaign_type 
             DROP TABLE office;
         '''),
 
