@@ -140,6 +140,13 @@ def manage_system(request):
     return render_to_response('manage_system.html',
                               context_instance=RequestContext(request))
 
+@user_passes_test(lambda u: u.groups.filter(name='manage-system') or u.is_superuser,
+                  login_url='/permissions_needed', redirect_field_name=None)
+def update_campaign(request):
+    return render_to_response('manage_system.html',
+        context_instance=RequestContext(request))
+
+
 
 class UserCreateView(PermissionRequiredMixin, generic.CreateView):
     model = User

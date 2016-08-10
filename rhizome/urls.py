@@ -73,6 +73,7 @@ protected_patterns = [
     url(r'^permissions_needed$', TemplateView.as_view(
         template_name='permissions_needed.html'), name='permissions_needed'),
     url(r'^manage_system', views.manage_system, name='manage_system'),
+    url(r'^campaign', views.update_campaign, name='update_campaign'),
     url(r'^export_file?$', views.export_file, name='export_file'),
     url(r'^explore$', views.chart_create, name='chart_create'),
     url(r'^entry$', views.data_entry, name='datapoint_entry'),

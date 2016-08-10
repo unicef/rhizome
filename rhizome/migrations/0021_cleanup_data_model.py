@@ -21,6 +21,9 @@ class Migration(migrations.Migration):
             ALTER TABLE campaign
             DROP top_lvl_indicator_tag_id;
 
+            ALTER TABLE campaign
+            DROP pct_complete;
+
             DROP TABLE campaign_to_indicator;
 
         '''),

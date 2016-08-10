@@ -60,31 +60,6 @@ var CampaignsContainer = React.createClass({
       </div>
     )
 
-    let topLevelLocationSet = (
-      <div>
-        <label htmlFor='top_lvl_location'>Top level location: </label>
-        <DropdownButton
-          items={this.state.locations}
-          sendValue={CampaignPageActions.setLocation}
-          item_plural_name='Locations'
-          text={this.state.locationSelected[0] && this.state.locationSelected[0].name || 'Select Location'}
-          icon='fa-globe'
-          uniqueOnly/>
-      </div>
-    )
-
-    let topLevelIndicatorTagSet = (
-      <div>
-        <label htmlFor='top_lvl_indicator_tag'>Top level indicator tag: </label>
-        <DropdownButton
-          items={this.state.indicatorToTags}
-          sendValue={this._setIndicatorTag}
-          item_plural_name='Indicator Tags'
-          text={this.state.tagSelected[0] && this.state.tagSelected[0].tag_name || 'Select Tag'}
-          icon='fa-tag'/>
-      </div>
-    )
-
     let campaignTypeSet = (
       <div>
         <label htmlFor='campaign_type'>Campaign type: </label>
@@ -130,8 +105,6 @@ var CampaignsContainer = React.createClass({
           {message}
           <form>
             {nameSet}
-            {topLevelLocationSet}
-            {topLevelIndicatorTagSet}
             {campaignTypeSet}
             {dateRangePicker}
             {submitButton}
