@@ -298,7 +298,7 @@ class CampaignDataPointResourceTest(RhizomeApiTestCase):
         ltc.main()
 
         indicator_name_to_filter = Indicator.objects.get(id=indicator_to_filter);
-        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id={2}&location_depth=1&filter_indicator={3}&filter_value={4}&chart_type=TableChart'\
+        get_parameter = 'indicator__in={0}&campaign__in={1}&location_id={2}&location_depth=1&filter_indicator={3}&filter_value={4}'\
             .format(indicator_to_query, campaign_id, self.top_lvl_location.id, indicator_name_to_filter, indicator_val_to_filter)
 
         resp = self.api_client.get('/api/v1/campaign_datapoint/?' + get_parameter, \
