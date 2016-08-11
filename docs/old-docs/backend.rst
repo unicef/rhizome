@@ -93,10 +93,7 @@ When ingesting a spreadsheet, here are the rules as to how datapoints are mapped
 
 **location Codes**
 
-*NIGERIA*
-  - WHO has a the following naming convention for Settlements in Nigeria:
-      ''<province><district><sub-district><settlement>''
-  - Bo created existing sub-districts with this convention so i was able to map a large part of the ODK data using this convention.
+ed existing sub-districts with this convention so i was able to map a large part of the ODK data using this convention.
 
 Needs Documentation
 -------------------

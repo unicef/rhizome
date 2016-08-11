@@ -1,4 +1,4 @@
-Application User Guide
+CSV / Excel File Uploader
 ======================
 
 Uploading Data
@@ -9,7 +9,7 @@ Requirements for Uploading Documents
 The application supports data upload from documents with .csv, .xls, and .xlsx file extensions. In order to ensure proper ingestion of data, the following document formatting criteria must be met:
 	- All data must be arranged in a strict table format, with column header names on the first row, and column in each subsequent row. See example below:
 	- In addition, a document must contain the following column headers: 'geocode', 'location', and 'campaign'. Each row of data must contain a value for these required fields. If one of these header columns is not included in the document (or mislabeled), the document will fail to upload and an error message will be displayed.
-	- Values for all fields must be properly formatted based on the indicator data type. If not, the value will be ignored upon aggregation. For example, a numeric indicator with a string value will fail. Percent indicator will accept percent values in the following formats: 0.95 or 95%. Classification indicators will accept string values following very strict guidelines that are determined when the indicator is created. 
+	- Values for all fields must be properly formatted based on the indicator data type. If not, the value will be ignored upon aggregation. For example, a numeric indicator with a string value will fail. Percent indicator will accept percent values in the following formats: 0.95 or 95%. Classification indicators will accept string values following very strict guidelines that are determined when the indicator is created.
 
 
 Procedure for Uploading Documents
@@ -33,5 +33,3 @@ Mapping Content
 5. Once you've mapped all the indicators that you'd like to include, click the "Refresh Master" button. This will run the aggregation engine.
 
 Your data has now been added to the system, and can be included in data tables and charts.
-	
-

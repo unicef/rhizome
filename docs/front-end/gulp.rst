@@ -1,3 +1,9 @@
+Building the front end with Gulp
+================================
+
+
+
+
 ---
 label: Gulp Document
 id: rhizome_front_end_gulp_doc
@@ -34,7 +40,7 @@ gulp.task('default', ['build'])
 
 ## Tasks
 
-We have sevaral gulp tasks, `clean, copy, sass, standard, browserify and revision`. 
+We have sevaral gulp tasks, `clean, copy, sass, standard, browserify and revision`.
 
 All the tasks are defined seperately in `/webapp/tasks` folder.
 
@@ -135,28 +141,28 @@ var manifestFile = (process.env.NODE_ENV === 'production') ? proManifest : devMa
 
 So `base.html` in **development env** will not use revisional files.
 
-		
+
 		//This is base.html in development env
 		//static css files
 		<link rel="stylesheet" href="{% static "css/screen.css" %}">
     	<link rel="stylesheet" href="{% static "css/print-redesign.css" %}" media="print">
-		
+
 		//static js files
 		<script src="{% static "js/vendor.js" %}"></script>
 		<script src="{% static "js/main.js" %}"></script>
-		
+
 And `base.html` in **production env** will use revisional files.
 
 		//This is base.html in production env
 		//static css files
 		<link rel="stylesheet" href="{% static "css/screen-ddff506646.css" %}">
     	<link rel="stylesheet" href="{% static "css/print-redesign-27445033fc.css" %}" media="print">
-    	
+
 		//static js files
 		<script src="{% static "js/vendor-0a1c002fc5.js" %}"></script>
 		<script src="{% static "js/main-efc4d25176.js" %}"></script>
-		
-		
+
+
 ### Lint
 
 **Lint** task is used to identify and report on patterns found in ECMAScript/JavaScript code.
@@ -190,4 +196,3 @@ export default {
 ### Package
 
 **Package** task is used to compress frontend code into a zip package.
-

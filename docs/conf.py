@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# polio documentation build configuration file, created by
+# rhizome documentation build configuration file, created by
 # sphinx-quickstart on Mon Jul 28 14:42:24 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -18,9 +18,7 @@ import django
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-# sys.path.insert(0, os.path.abspath('/Users/johndingee_seed/code/polio/datapoints'))
-
-# sys.path.append('/Users/johndingee_seed/code/UF04/polio')
+# sys.path.insert(0, os.path.abspath('/Users/john/code/rhizome'))
 
 print os.path.dirname(__file__) + "/../rhizome"
 sys.path.append(os.path.dirname(__file__) + "/../")
@@ -42,7 +40,6 @@ extensions = [
     'sphinx.ext.viewcode',
 ]
 
-# DJANGO_SETTINGS_MODULE = '/Users/johndingee_seed/code/polio/polio/settings.py'
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "rhizome.settings.test")
 django.setup()
@@ -59,7 +56,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'polio'
+project = u'rhizome'
 # copyright = u'2014, John Dingee'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -194,7 +191,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'poliodoc'
+htmlhelp_basename = 'rhizomedoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
