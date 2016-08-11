@@ -8,4 +8,3 @@ Contents:
 
    ../testing/back_end
    ../testing/front_end
-   ../testing/test_plan

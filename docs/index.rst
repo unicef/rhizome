@@ -6,11 +6,6 @@
 Rhizome Documentation
 *********************
 
-Note to JD:
-https://docs.google.com/document/d/12jSCWa4p6jHUYzNbvGuhXqcmAT_o2cSJ4SKOR-HvSwg/edit
-
-Contents:
-
 .. toctree::
    :hidden:
    :maxdepth: 2
@@ -19,7 +14,7 @@ Contents:
    user-guide/index
    back-end/index
    front-end/index
-   testing
+   testing/index
    api/api
 
 About
@@ -65,10 +60,6 @@ API
 .. Individual Resource Descriptions
 
 
-
 What we don’t have and Next Steps
 ---------------------------------
 - :doc:`next-steps/full_app_spec`
-
-
-* :ref:`search`

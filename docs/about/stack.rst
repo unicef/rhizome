@@ -1,5 +1,5 @@
-Rhizome Software Stack
-======================
+Software Stack
+==============
 
 #### Overview
 
