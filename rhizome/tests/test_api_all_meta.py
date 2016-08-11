@@ -1,12 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
-
-from rhizome.models.location_models import Location, LocationType, \
-    LocationPermission
-from rhizome.models.dashboard_models import CustomDashboard, CustomChart
-
 from rhizome.tests.setup_helpers import TestSetupHelpers
-import json
-from django.test import TestCase
 
 
 class AllMetaResourceTest(RhizomeApiTestCase):

@@ -6,6 +6,7 @@ from rhizome.api.custom_session_authentication import CustomSessionAuthenticatio
 from rhizome.api.custom_cache import CustomCache
 from rhizome.api.resources.base_resource import BaseResource
 
+
 class BaseNonModelResource(BaseResource):
     '''
     Needs Documentation
@@ -65,8 +66,8 @@ class BaseNonModelResource(BaseResource):
         a GET request is handled in the `QuerySet` attribute of the Meta class.
         """
 
-        ## first make sure that we have all of the required parameters for teh
-        ## request as defined by the Meta class of the resource
+        # first make sure that we have all of the required parameters for teh
+        # request as defined by the Meta class of the resource
         filters = self.validate_filters(request)
 
         if hasattr(self, "pre_process_data"):

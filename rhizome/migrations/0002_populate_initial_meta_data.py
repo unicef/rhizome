@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db import models, migrations
-import jsonfield.fields
-import django.db.models.deletion
-from django.conf import settings
-
 import pandas as pd
 from rhizome.models.location_models import Location, LocationPolygon
 from rhizome.models.document_models import Document

@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from pandas import read_csv, notnull, to_datetime
 
 from rhizome.models.campaign_models import Campaign, CampaignType
-from rhizome.models.location_models import Location, LocationType
+from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag,\
     CalculatedIndicatorComponent
 from rhizome.models.document_models import Document, DocDetailType, \
@@ -13,7 +13,6 @@ from rhizome.models.document_models import Document, DocDetailType, \
 from rhizome.models.datapoint_models import DocDataPoint, DataPoint
 
 # ./manage.py test rhizome.tests.test_refresh_master.RefreshMasterTestCase.test_refresh_master_init --settings=rhizome.settings.test
-
 
 class RefreshMasterTestCase(TestCase):
 
@@ -53,7 +52,7 @@ class RefreshMasterTestCase(TestCase):
         self.set_up()
         self.document.refresh_master()
 
-        self.assertTrue(True) # FIXME
+        self.assertTrue(True) # FIXME ..
 
     def test_submission_detail_refresh(self,):
 

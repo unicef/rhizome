@@ -1,20 +1,13 @@
-import itertools
-
 from tastypie import fields
-from tastypie.utils.mime import build_content_type
 from tastypie.resources import ALL
-from pandas import DataFrame, concat, notnull
-from django.http import HttpResponse
+from pandas import DataFrame
 
 from rhizome.api.serialize import CustomSerializer
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.api.exceptions import RhizomeApiException
-from rhizome.models.location_models import Location, LocationPermission,\
-    LocationTree, LocationType
+from rhizome.models.location_models import Location, LocationTree
 from rhizome.models.document_models import Document, SourceSubmission
 from rhizome.models.datapoint_models import DataPoint
-from rhizome.models.indicator_models import Indicator, CalculatedIndicatorComponent
-from rhizome.models.campaign_models import Campaign, DataPointComputed
 
 from rhizome.api import custom_logic
 
@@ -139,8 +132,6 @@ class DateDatapointResource(BaseModelResource):
         response.
         '''
 
-
-        self.chart_uuid = request.GET.get('chart_uuid', None)
         self.time_gb = request.GET.get('group_by_time', None)
         self.start_date = request.GET.get('start_date', None) or \
             request.GET.get('campaign_start', None)
@@ -263,7 +254,7 @@ class DateDatapointResource(BaseModelResource):
 
             dp_loc_ids = [self.location_id]
             if self.location_depth > 0:
-                 dp_loc_ids = list(loc_tree_df['location_id'].unique())
+                    dp_loc_ids = list(loc_tree_df['location_id'].unique())
 
             dp_df = DataFrame(list(DataPoint.objects.filter(
                     location_id__in = dp_loc_ids,

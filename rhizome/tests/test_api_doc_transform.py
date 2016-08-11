@@ -1,11 +1,7 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.campaign_models import Campaign, DataPointComputed
-from rhizome.models.location_models import Location, LocationType, \
-    LocationPermission
-from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceObjectMap, \
-    SourceSubmission
+from rhizome.models.campaign_models import DataPointComputed
+from rhizome.models.document_models import SourceObjectMap, SourceSubmission
 from rhizome.models.datapoint_models import DataPoint
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
@@ -58,7 +54,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
 
-        ss_list = SourceSubmission.objects.filter(document_id = doc.id)\
+        ss_list = SourceSubmission.objects.filter(document_id=doc.id)\
             .values_list('id', flat=True)
 
         self.assertHttpOK(resp)
@@ -82,17 +78,17 @@ class DocTransformResourceTest(RhizomeApiTestCase):
             mapped_by_id=self.ts.user.id,
             master_object_id=self.mapped_indicator_with_data
         )
-        doc = self.ts.create_arbitrary_document('AfgPolioCases.csv', \
-            file_type='date')
-        get_data = {'document_id': doc.id, 'file_type':'date_file'}
+        doc = self.ts.create_arbitrary_document('AfgPolioCases.csv',
+                                                file_type='date')
+        get_data = {'document_id': doc.id, 'file_type': 'date_file'}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
         self.assertHttpOK(resp)
         self.assertEqual(len(self.deserialize(resp)['objects']), 1)
-        ## check out the date format in the test data -- `17-7-2015`
+        # check out the date format in the test data -- `17-7-2015`
         data_date = datetime(2015, 07, 17, 0, 0)
         single_dp = DataPoint.objects.filter(location_id=self.mapped_location_id,
-                                      indicator=self.mapped_indicator_with_data,
-                                      data_date=data_date)
+                                             indicator=self.mapped_indicator_with_data,
+                                             data_date=data_date)
         self.assertEqual(len(single_dp), 1)
         self.assertEqual(1, single_dp[0].value)
 
@@ -129,7 +125,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         # upload and transform again:
         doc_2 = self.ts.create_arbitrary_document(
             document_docfile='eoc_post_campaign_2.csv',
-            doc_title='eoc_post_campaign_2.csv',file_type='campaign')
+            doc_title='eoc_post_campaign_2.csv', file_type='campaign')
         get_data_2 = {'document_id': doc_2.id}
         resp_2 = self.ts.get(self, '/api/v1/transform_upload/', get_data_2)
         self.assertHttpOK(resp_2)
@@ -167,21 +163,21 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         self.assertHttpOK(resp)
 
         cases = DataPoint.objects.filter(location_id=self.mapped_location_id,
-                                      indicator=self.mapped_indicator_with_data)
+                                         indicator=self.mapped_indicator_with_data)
 
         self.assertEqual(len(cases), 6)
 
-            # do it again, the case count should be 6 not 12
+        # do it again, the case count should be 6 not 12
         doc = self.ts.create_arbitrary_document(
             document_docfile='AfgPolioCases_2.csv',
             doc_title='AfgPolioCases_2.csv',
-            file_type = 'date'
+            file_type='date'
         )
         get_data = {'document_id': doc.id}
         resp = self.ts.get(self, '/api/v1/transform_upload/', get_data)
 
         cases_2 = DataPoint.objects.filter(location_id=self.mapped_location_id,
-                                      indicator=self.mapped_indicator_with_data)
+                                           indicator=self.mapped_indicator_with_data)
         self.assertEqual(len(cases_2), 6)
         sum_of_cases = sum([dp.value for dp in cases_2])
 
@@ -213,7 +209,7 @@ class DocTransformResourceTest(RhizomeApiTestCase):
         # )
 
         doc = self.ts.create_arbitrary_document(
-            file_type = 'campaign',
+            file_type='campaign',
             document_docfile='lqas_test.csv',
             doc_title='lqas_test.csv'
         )

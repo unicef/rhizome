@@ -6,10 +6,9 @@ from django.contrib.auth.models import User
 
 from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
-from rhizome.models.location_models import Location, LocationType, LocationPermission
+from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag
-from rhizome.models.document_models import Document, SourceObjectMap
-from rhizome.models.datapoint_models import Document, DataPoint
+from rhizome.models.document_models import SourceObjectMap
 
 from rhizome.tests.setup_helpers import TestSetupHelpers
 from rhizome.tests.base_test_case import RhizomeApiTestCase
@@ -26,8 +25,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
     def test_obj_create(self):
         path = os.path.join(os.path.dirname(__file__),
                             '_data/eoc_post_campaign.csv')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        file_obj = open(path).read()
+        encoded_data = base64.b64encode(file_obj)
         post_data = {'docfile': encoded_data,
                      'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.csv'}
@@ -38,8 +37,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
     def test_xlsx_transform(self):
         path = os.path.join(os.path.dirname(__file__),
                             '_data/eoc_post_campaign.xlsx')
-        f = open(path).read()
-        encoded_data = base64.b64encode(f)
+        file_obj = open(path).read()
+        encoded_data = base64.b64encode(file_obj)
         post_data = {'docfile': encoded_data,
                      'file_type': 'campaign',
                      'doc_title': 'eoc_post_campaign.xlsx'}
@@ -68,8 +67,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
     def test_upload_empty_csv(self):
         file_name = '_data/empty_csv.csv'
         path = os.path.join(os.path.dirname(__file__), file_name)
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        file_obj = open(path).read()
+        encoded_data = base64.b64encode(file_obj)
         post_data = {'docfile': encoded_data, 'file_type': 'campaign', \
             'doc_title': 'empty_csv.csv'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
@@ -78,8 +77,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
     def test_upload_empty_excel(self):
         file_name = '_data/empty_xlsx.xlsx'
         path = os.path.join(os.path.dirname(__file__), file_name)
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        file_obj = open(path).read()
+        encoded_data = base64.b64encode(file_obj)
         post_data = {'docfile': encoded_data,'file_type': 'campaign',\
             'doc_title': 'empty_xlsx.xlsx'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
@@ -88,8 +87,8 @@ class DocumentResourceTest(RhizomeApiTestCase):
     def test_post_no_doc_title(self):
         path = os.path.join(os.path.dirname(__file__),
                             '_data/eoc_post_campaign.csv')
-        file = open(path).read()
-        encoded_data = base64.b64encode(file)
+        file_obj = open(path).read()
+        encoded_data = base64.b64encode(file_obj)
         post_data = {'docfile': encoded_data,'file_type': 'campaign'}
         resp = self.ts.post(self, '/api/v1/source_doc/', post_data)
         self.assertHttpApplicationError(resp)

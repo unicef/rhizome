@@ -1,11 +1,7 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
-from rhizome.models.indicator_models import IndicatorTag, Indicator
-from rhizome.models.location_models import Location, LocationType, \
-    LocationPermission
-from rhizome.models.campaign_models import DataPointComputed
-from rhizome.models.document_models import Document, SourceObjectMap,\
+from rhizome.models.document_models import SourceObjectMap,\
     SourceSubmission
 
 from rhizome.cache_meta import LocationTreeCache
@@ -45,7 +41,7 @@ class SourceSubmissionResourceTest(RhizomeApiTestCase):
 
     def test_get_source_submission_by_doc(self):
         doc = self.ts.create_arbitrary_document(
-            file_type = 'campaign',
+            file_type='campaign',
             document_docfile='eoc_post_campaign.csv')
         doc.transform_upload()
         get_data = {'document_id': doc.id}

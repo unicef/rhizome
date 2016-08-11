@@ -1,6 +1,5 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.models.location_models import LocationTree
-from rhizome.models.document_models import DocDetailType
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class CacheMetaResourceTest(RhizomeApiTestCase):
@@ -33,7 +32,6 @@ class CacheMetaResourceTest(RhizomeApiTestCase):
         LocationTree.objects.all().delete()
 
         resp = self.ts.get(self, '/api/v1/cache_meta/')
-        response_data = self.deserialize(resp)
         self.assertHttpOK(resp)
 
         leaf_location_tree_data = LocationTree.objects\

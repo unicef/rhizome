@@ -1,8 +1,6 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
 
-from rhizome.models.campaign_models import Campaign, CampaignType
-from rhizome.models.location_models import Location, LocationType, LocationPermission
-from rhizome.models.indicator_models import Indicator, IndicatorTag
+from rhizome.models.indicator_models import Indicator
 from rhizome.models.document_models import SourceObjectMap, \
     DocumentSourceObjectMap
 

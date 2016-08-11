@@ -4,7 +4,7 @@ from pandas import DataFrame, notnull, concat
 
 from rhizome.models.indicator_models import CalculatedIndicatorComponent
 from rhizome.models.location_models import Location, LocationTree
-from rhizome.models.indicator_models import IndicatorTag, Indicator
+from rhizome.models.indicator_models import Indicator
 
 class CampaignType(models.Model):
     '''
@@ -310,11 +310,6 @@ class Campaign(models.Model):
 
         ## handle recursive calculations ( see spec.rst link above ) ##
         calc_df = self.build_recursive_sum_calc_df(initial_calc_df)
-
-        self_join_calc_df = calc_df.merge(calc_df,\
-            left_on='indicator_component_id',\
-            right_on='calc_indicator_id',\
-            how='left')
 
         ## get the datapoints for the above indicator_ids ##
         dp_df = self.build_dp_df(calc_df['indicator_component_id'])

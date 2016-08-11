@@ -1,6 +1,6 @@
 import json
 
-from pandas import read_csv, notnull, DataFrame, concat
+from pandas import notnull, DataFrame, concat
 
 from rhizome.models.indicator_models import Indicator, IndicatorToTag, \
     IndicatorBound

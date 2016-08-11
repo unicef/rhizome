@@ -1,6 +1,4 @@
-from datetime import datetime
 from rhizome.api.resources.base_model import BaseModelResource
-from rhizome.api.exceptions import RhizomeApiException
 from rhizome.models.campaign_models import Campaign
 
 
@@ -14,7 +12,8 @@ class CampaignResource(BaseModelResource):
             if an invalid id is provided, the API returns a 200 code with
             an empty list of campaigns.
 
-    **GET Request: Request Detail** Another way to query for campaigns using the format: /api/v1/campaign/<campaign_id>/
+    **GET Request: Request Detail** Another way to query for campaigns using
+    the format: /api/v1/campaign/<campaign_id>/
         - *Errors:*
             if an id is invalid, the API returns a 500 error code.
 

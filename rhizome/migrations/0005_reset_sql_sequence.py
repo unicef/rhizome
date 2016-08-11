@@ -1,20 +1,11 @@
 # -*- coding: utf-8 -*-
 # from __future__ import unicode_literals
 import os
-
-import jsonfield.fields
-import django.db.models.deletion
-from django.db import models, migrations
-from django.conf import settings
-from django.db.models import get_app, get_models
-from django.core.exceptions import ImproperlyConfigured
+from StringIO import StringIO
 
 from django.core.management import call_command
-from django.conf import settings
 from django.db import connection
 from django.db.models.loading import get_app
-from StringIO import StringIO
-from datetime import datetime
 
 def reset_seq(apps, schema_editor):
 

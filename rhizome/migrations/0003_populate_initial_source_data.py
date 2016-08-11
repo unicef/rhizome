@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import jsonfield.fields
-import django.db.models.deletion
-from django.db import models, migrations
+from django.db import migrations
 from django.conf import settings
-from django.db.models import get_app, get_models
+# import pandas as pd
 
-import pandas as pd
-
-from rhizome.cache_meta import minify_geo_json, LocationTreeCache
-from rhizome.models.document_models import Document
-from rhizome.models.location_models import Location, LocationPolygon
-from rhizome.models.document_models import DocumentDetail, DocDetailType
+# from rhizome.cache_meta import minify_geo_json, LocationTreeCache
+from rhizome.models.campaign_models import Campaign
+from rhizome.models.document_models import Document, DocumentDetail,\
+    DocDetailType
 
 def populate_source_data(apps, schema_editor):
     '''
@@ -34,9 +30,6 @@ def populate_source_data(apps, schema_editor):
 
 
 def process_source_sheet(source_sheet_df, sheet_name):
-
-    user_id = -1
-
     # file_loc = settings.MEDIA_ROOT + sheet_name
     saved_csv_file_location = settings.MEDIA_ROOT + sheet_name + '.csv'
     source_sheet_df.to_csv(saved_csv_file_location)

@@ -2,7 +2,7 @@ from pandas import DataFrame
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models.campaign_models import DataPointComputed
-from rhizome.models.document_models import Document, SourceObjectMap, \
+from rhizome.models.document_models import SourceObjectMap, \
     DocumentSourceObjectMap
 from rhizome.models.location_models import LocationTree
 from rhizome.models.indicator_models import CalculatedIndicatorComponent

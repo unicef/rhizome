@@ -1,14 +1,13 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
-from rhizome.api.exceptions import RhizomeApiException
 
-from rhizome.models.document_models import Document
-from rhizome.models.document_models import DocumentDetail, SourceSubmission
-from rhizome.etl_tasks.sync_odk import OdkSync
-from rhizome.etl_tasks.sync_odk import OdkJarFileException
+from rhizome.models.document_models import SourceSubmission
+# from rhizome.etl_tasks.sync_odk import OdkSync
+# from rhizome.etl_tasks.sync_odk import OdkJarFileException
 
 
 class SyncOdkResource(BaseNonModelResource):
-
+    '''
+    '''
     class Meta(BaseNonModelResource.Meta):
         resource_name = 'sync_odk'
         queryset = SourceSubmission.objects.all().values()

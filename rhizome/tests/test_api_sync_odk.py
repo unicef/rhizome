@@ -1,6 +1,4 @@
 from rhizome.tests.base_test_case import RhizomeApiTestCase
-from rhizome.models.document_models import DocDetailType
-from rhizome.models.location_models import LocationTree
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 class SyncODKResourceTest(RhizomeApiTestCase):

@@ -4,11 +4,10 @@ from pandas import read_csv, notnull, to_datetime
 
 from rhizome.models.campaign_models import Campaign, CampaignType, \
     DataPointComputed
-from rhizome.models.location_models import Location, LocationType
+from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator, IndicatorTag
 from rhizome.models.document_models import Document, \
     DocumentSourceObjectMap, SourceObjectMap
-from rhizome.models.datapoint_models import DataPoint
 
 from rhizome.cache_meta import LocationTreeCache
 

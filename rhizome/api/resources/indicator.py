@@ -1,10 +1,4 @@
-import json
-
-from django.http import HttpResponse
-
 from tastypie.resources import ALL
-from tastypie.bundle import Bundle
-from tastypie.exceptions import ImmediateHttpResponse
 
 from rhizome.api.resources.base_model import BaseModelResource
 from rhizome.models.indicator_models import Indicator

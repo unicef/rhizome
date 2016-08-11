@@ -3,7 +3,6 @@ from rhizome.api.resources.base_model import BaseModelResource
 from tastypie import fields
 from tastypie.resources import ALL
 
-import json
 
 class GeoResource(BaseModelResource):
     '''

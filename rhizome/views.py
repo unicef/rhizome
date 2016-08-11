@@ -1,21 +1,19 @@
-from django.shortcuts import render_to_response, get_object_or_404, redirect
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
-from django.core.urlresolvers import reverse_lazy, reverse, resolve
+from django.shortcuts import render_to_response
+from django.http import HttpResponse, HttpResponseRedirect
+from django.core.urlresolvers import reverse_lazy, resolve
 from django.views import generic
-from django.contrib.auth.models import User, Group
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import user_passes_test
-from django.template import Template, context, RequestContext
+from django.template import RequestContext
 from django.conf import settings
 
 from rhizome.models.dashboard_models import CustomDashboard
 
-from rhizome.forms import *
+from rhizome.forms import UserCreateForm, UserEditForm
 from rhizome.mixins import PermissionRequiredMixin
 
 from rhizome.pdf_utils import print_pdf
-from waffle.decorators import waffle_switch
 from rhizome.settings.base import STATICFILES_DIRS
-
 
 
 def about(request):
@@ -70,7 +68,7 @@ def dashboards(request):
                               context_instance=RequestContext(request))
 
 
-def dashboard_create(request, dashboard_id=None):
+def dashboard_create(request):
     return render_to_response('dashboards/create.html',
                               context_instance=RequestContext(request))
 
@@ -174,11 +172,11 @@ class UserEditView(PermissionRequiredMixin, generic.UpdateView):
                             kwargs={'pk': requested_user_id})
 
     def get_context_data(self, **kwargs):
-        context = super(UserEditView, self).get_context_data(**kwargs)
+        view_context = super(UserEditView, self).get_context_data(**kwargs)
         user_obj = self.get_object()
-        context['user_id'] = user_obj.id
+        view_context['user_id'] = user_obj.id
 
-        return context
+        return view_context
 
     def form_valid(self, form):
         new_user = form.save()
@@ -217,5 +215,5 @@ def debug(request):
     accept += ",application/json"
     request.META["HTTP_ACCEPT"] = accept
 
-    res = view.func(request, **view.kwargs)
-    return HttpResponse(res._container)
+    response = view.func(request, **view.kwargs)
+    return HttpResponse(response_container)

@@ -1,14 +1,7 @@
 #!/usr/bin/env python
-import csv
-import json
-import urllib2
-import urllib
-import httplib
+
 from subprocess import Popen, PIPE
 import base64
-from datetime import datetime
-from urllib2 import Request, urlopen
-from urllib import urlencode
 
 from django.core.files.base import ContentFile
 from django.core.exceptions import ObjectDoesNotExist

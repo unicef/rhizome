@@ -2,10 +2,8 @@ from rhizome.tests.base_test_case import RhizomeApiTestCase
 from rhizome.tests.setup_helpers import TestSetupHelpers
 
 from rhizome.models.indicator_models import Indicator, IndicatorTag, \
-    CalculatedIndicatorComponent, IndicatorToTag, IndicatorBound
-from rhizome.models.location_models import LocationPermission, Location,\
-    LocationType
-
+    IndicatorToTag, IndicatorBound
+from rhizome.models.location_models import LocationPermission
 from rhizome.cache_meta import IndicatorCache
 
 

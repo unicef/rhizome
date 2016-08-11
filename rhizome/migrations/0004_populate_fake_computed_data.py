@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-import jsonfield.fields
-import django.db.models.deletion
-from django.db import models, migrations
-from django.conf import settings
-from django.db.models import get_app, get_models
-
 from pandas import DataFrame
 from random import randint, random
 
-from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator
 from rhizome.models.campaign_models import Campaign, DataPointComputed
-from rhizome.models.document_models import Document, DocumentDetail, DocDetailType
+from rhizome.models.document_models import Document
 
 
 def pass_fn(apps, schema_editor):
@@ -97,5 +90,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_fake_dwc_data),
+        migrations.RunPython(pass_fn),
+        # migrations.RunPython(populate_fake_dwc_data),
     ]

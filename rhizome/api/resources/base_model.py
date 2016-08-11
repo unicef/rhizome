@@ -1,7 +1,5 @@
 import json
 
-from django.db.models.constants import LOOKUP_SEP
-from django.db.models.sql.constants import QUERY_TERMS
 from django.db import IntegrityError
 from django.core.exceptions import (
     ObjectDoesNotExist, MultipleObjectsReturned
@@ -9,8 +7,6 @@ from django.core.exceptions import (
 
 from jsonfield import JSONField
 from tastypie.authorization import Authorization
-from tastypie.utils import dict_strip_unicode_keys
-from tastypie.exceptions import InvalidFilterError
 from tastypie.authentication import ApiKeyAuthentication, MultiAuthentication
 from tastypie.resources import ModelResource, ALL
 from tastypie import http
@@ -110,7 +106,7 @@ class BaseModelResource(ModelResource, BaseResource):
             query_felds = self._meta.GET_fields
             qs = self._meta.object_class.objects.all().values(*query_felds)
         except AttributeError:
-            qs =  self._meta.object_class.objects.all().values()
+            qs = self._meta.object_class.objects.all().values()
 
         return qs
 
@@ -212,7 +208,7 @@ class BaseModelResource(ModelResource, BaseResource):
         location = self.get_resource_uri(updated_bundle)
 
         return self.create_response(request, updated_bundle,
-                            response_class=http.HttpCreated, location=location)
+                                    response_class=http.HttpCreated, location=location)
 
     def update_object(self, obj, **kwargs):
         """
@@ -241,8 +237,8 @@ class BaseModelResource(ModelResource, BaseResource):
         relevant data items.
         """
 
-        ## add any additional data needed for post, for instance datapoitns
-        ## that are inserted via a POST request should have a document
+        # add any additional data needed for post, for instance datapoitns
+        # that are inserted via a POST request should have a document
         bundle = self.add_default_post_params(bundle, **kwargs)
 
         ## Try to validate / clean the POST before submitting the INSERT ##
@@ -254,16 +250,16 @@ class BaseModelResource(ModelResource, BaseResource):
             del bundle.data['id']
             id_from_post = None
 
-        if id_from_post: ## this is a PUT or update of an existing resource #
-            obj = self._meta.object_class.objects.get(id = id_from_post)
+        if id_from_post:  # this is a PUT or update of an existing resource #
+            obj = self._meta.object_class.objects.get(id=id_from_post)
             self.update_object(obj, **bundle.data)
         #### REMOVE ABOVE CODE ####
 
-        else: ## create the object with the data from the request #
+        else:  # create the object with the data from the request #
             try:
                 obj = self._meta.object_class.objects.create(**bundle.data)
             except IntegrityError as err:
-                raise RhizomeApiException(message = err.message, code = 497)
+                raise RhizomeApiException(message=err.message, code=497)
 
         bundle.obj = obj
         bundle.data['id'] = bundle.obj.id
@@ -335,7 +331,6 @@ class BaseModelResource(ModelResource, BaseResource):
         return super(BaseResource, self)\
             .obj_delete_list(bundle, **kwargs)
 
-
     def get_locations_to_return_from_url(self, request):
         '''
         This method is used in both the /geo and /datapoint endpoints.  Based
@@ -346,60 +341,59 @@ class BaseModelResource(ModelResource, BaseResource):
         What they are permissioned to.
         '''
 
-        ## if location_id__in requested.. we return exactly those ids
-        ## for instance if you were doing data entry for 5 specific districts
-        ## you would use the location_id__in param to fetch just those ids
+        # if location_id__in requested.. we return exactly those ids
+        # for instance if you were doing data entry for 5 specific districts
+        # you would use the location_id__in param to fetch just those ids
 
         self.location_id = request.GET.get('location_id', None)
         self.location_id_list = request.GET.get('location_id__in', None)
         self.location_type = request.GET.get('location_type', None)
         self.location_depth = int(request.GET.get('location_depth', 0))
 
-
         if self.location_id_list:
             location_ids = self.location_id_list.split(',')
 
         elif self.location_id:
 
-            ## woul be nice to put the location_type as a string for each
-            ## row in the locatino tree table that we don't have to
-            ## make these three queries
+            # woul be nice to put the location_type as a string for each
+            # row in the locatino tree table that we don't have to
+            # make these three queries
 
-            if self.location_type: # figure out the depth level #
+            if self.location_type:  # figure out the depth level #
                 parent_location_location_type_id = Location.objects.\
-                    get(id = self.location_id).location_type_id
+                    get(id=self.location_id).location_type_id
 
                 parent_location_admin_level = LocationType.objects.\
-                    get(id = parent_location_location_type_id).admin_level
+                    get(id=parent_location_location_type_id).admin_level
 
                 location_type_location_admin_level = LocationType.objects.\
-                    get(name = self.location_type).admin_level
+                    get(name=self.location_type).admin_level
 
                 self.location_depth = location_type_location_admin_level - \
                     parent_location_admin_level
 
             location_ids = LocationTree.objects.filter(
                 parent_location_id=self.location_id,
-                lvl = self.location_depth
+                lvl=self.location_depth
             ).values_list('location_id', flat=True)
 
             ## this is a hack to deal with this ticket ##
-            ## https://trello.com/c/No82UpGl
-            ## this says -- if there are no data at this locatin level
-            ## we just find district level data ..  use case - i want districts
-            ## at afghanistan, and south, and kandahar.
+            # https://trello.com/c/No82UpGl
+            # this says -- if there are no data at this locatin level
+            # we just find district level data ..  use case - i want districts
+            # at afghanistan, and south, and kandahar.
             if len(location_ids) == 0:
                 district_location_type_id = LocationType.objects\
-                    .get(name ='District').id
+                    .get(name='District').id
                 location_ids = LocationTree.objects.filter(
                     parent_location_id=self.location_id,
-                    location__location_type_id = district_location_type_id
+                    location__location_type_id=district_location_type_id
                 ).values_list('location_id', flat=True)
 
         else:
-            ## this really shouldn't happen -- when this condition hits
-            ## the app slows down.  Need to enforce on the FE that we
-            ## pass a `location_id` and also when possible a `depth_level`
+            # this really shouldn't happen -- when this condition hits
+            # the app slows down.  Need to enforce on the FE that we
+            # pass a `location_id` and also when possible a `depth_level`
             location_ids = Location.objects.all().values_list('id', flat=True)
             # raise RhizomeApiException\
             #     ('Please pass either `location_id__in` to get specific\
@@ -407,29 +401,29 @@ class BaseModelResource(ModelResource, BaseResource):
             #     recursive result')
 
         try:
-            ## this allows us to filter locations based on the result of a
-            ## particular indicator / value.  So for instance.. think of the query
-            ## `show me the population of all areas controlled by insurgents in
-            ## location x.  We sould first get the locations based on the logic.
-            ## above, say all of the districts in Iraq, but then this code below
-            ## would further result that data to locations that meet a particular
-            ## filter i.e. {filterer_indicator = "is controlled" : value = 1 }
-            ## currently in our implementation with the Afghanistan EOC, this
-            ## filter is cotolred via a drop down for "LPD Status", values are
-            ## 1,2,3 based on their priority in the eradication initiative.
+            # this allows us to filter locations based on the result of a
+            # particular indicator / value.  So for instance.. think of the query
+            # `show me the population of all areas controlled by insurgents in
+            # location x.  We sould first get the locations based on the logic.
+            # above, say all of the districts in Iraq, but then this code below
+            # would further result that data to locations that meet a particular
+            # filter i.e. {filterer_indicator = "is controlled" : value = 1 }
+            # currently in our implementation with the Afghanistan EOC, this
+            # filter is cotolred via a drop down for "LPD Status", values are
+            # 1,2,3 based on their priority in the eradication initiative.
             indicator_to_filter = request.GET['filter_indicator']
             value_to_filter = request.GET['filter_value']
 
-            location_ids = self.get_locations_from_filter_param(location_ids,\
-                 indicator_to_filter, value_to_filter)
+            location_ids = self.get_locations_from_filter_param(location_ids,
+                                        indicator_to_filter, value_to_filter)
 
         except KeyError:
             pass
 
         return location_ids
 
-    def get_locations_from_filter_param(self, location_ids,\
-            indicator_to_filter, value_to_filter):
+    def get_locations_from_filter_param(self, location_ids,
+                                        indicator_to_filter, value_to_filter):
         '''
         futher filter locations that have the indicator / value filter
         in the computed datapoint table.
@@ -444,9 +438,9 @@ class BaseModelResource(ModelResource, BaseResource):
         '''
 
         location_ids = DataPointComputed.objects.filter(
-            campaign__in = self.campaign_id_list,
+            campaign__in=self.campaign_id_list,
             location__in=location_ids,
-            indicator__short_name = indicator_to_filter,
+            indicator__short_name=indicator_to_filter,
             value__in=value_to_filter.split(','))\
             .values_list('location_id', flat=True)
 
