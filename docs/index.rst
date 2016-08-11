@@ -15,14 +15,12 @@ Contents:
    :hidden:
    :maxdepth: 2
 
-   user-guide/build_docs
-   user-guide/userGuide
-   development/initialize
-   development/tests
-   deploy/initialize
-   back-end/backendComponents
-   back-end/aggregationDetail
-   back-end/api
+   about/index
+   user-guide/index
+   back-end/index
+   front-end/index
+   testing
+   api/api
 
 About
 ------
@@ -41,6 +39,7 @@ Back End Code
 - :doc:`back-end/data_model`
 - :doc:`back-end/model_methods`
 - :doc:`back-end/migrations`
+- :doc:`back-end/build_docs`
 
 Front End Code
 --------------
@@ -59,7 +58,7 @@ Testing
 
 API
 ---
-- :doc:`back-end/api`
+- :doc:`api/api`
 .. Tastypie and Base Resources
 .. Model Resources
 .. Non Model Resources
