@@ -337,19 +337,6 @@ class Migration(migrations.Migration):
             },
         ),
         migrations.CreateModel(
-            name='Office',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID',
-                                        serialize=False, auto_created=True, primary_key=True)),
-                ('name', models.CharField(max_length=55)),
-                ('created_at', models.DateTimeField(auto_now=True)),
-            ],
-            options={
-                'db_table': 'office',
-                'permissions': (('view_office', 'View office'),),
-            },
-        ),
-        migrations.CreateModel(
             name='SourceObjectMap',
             fields=[
                 ('id', models.AutoField(verbose_name='ID',
@@ -389,11 +376,6 @@ class Migration(migrations.Migration):
             model_name='location',
             name='location_type',
             field=models.ForeignKey(to='rhizome.LocationType'),
-        ),
-        migrations.AddField(
-            model_name='location',
-            name='office',
-            field=models.ForeignKey(to='rhizome.Office'),
         ),
         migrations.AddField(
             model_name='location',
@@ -471,11 +453,6 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='rhizome.CampaignType'),
         ),
         migrations.AddField(
-            model_name='campaign',
-            name='office',
-            field=models.ForeignKey(to='rhizome.Office'),
-        ),
-        migrations.AddField(
             model_name='calculatedindicatorcomponent',
             name='indicator',
             field=models.ForeignKey(
@@ -541,7 +518,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AlterUniqueTogether(
             name='campaign',
-            unique_together=set([('office', 'start_date')]),
+            unique_together=set([('campaign_type', 'start_date')]),
         ),
         migrations.AlterUniqueTogether(
             name='aggdatapoint',

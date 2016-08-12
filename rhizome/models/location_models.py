@@ -26,7 +26,7 @@ class LocationType(models.Model):
 
 class Location(models.Model):
     '''
-    A point in space with a name, location_code, office_id, lat/lon, and parent
+    A point in space with a name, location_code, lat/lon, and parent
     location id.  The parent location id is used to create the tree used to
     create aggregate statistics based on the information stored at the leaf
     level.
