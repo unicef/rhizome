@@ -1,6 +1,9 @@
 Front End
 ========
 
+Running Tests
+-------------
+
 ::
 
   cd webapp && gulp mocha
