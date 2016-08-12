@@ -1,5 +1,6 @@
 # example invocation
 # $ fab -H ubuntu@xx.x.xxx.xx deploy -i ~/.ssh/some.key
+# $ fab -H my_server deploy ## if my_server is in ~/.ssh/config
 import time
 from fabric.api import local, run, cd, put, env
 
@@ -23,7 +24,7 @@ def deploy(venv_path=None):
 
     # on local machine
     _build_dependencies()
-    # run_tests()
+    run_tests()
 
     # on target machine
     stop_apache()
@@ -42,8 +43,6 @@ def run_tests():
     local("coverage run manage.py test --settings=rhizome.settings.test")
     local("coverage html --omit='*venv/*,*migrations/*,*admin*,*manage*,*wsgi*,*__init__*,*test*,*settings*,*url*' -i")
 
-
-# build dependencies
 def _build_dependencies():
     ### on build machine ###
 
@@ -106,9 +105,6 @@ def _push_to_remote():
         # remove both compiled files
         run('sudo rm -rf `find . -name "*.pyc*"`')
 
-        # install python dependencies
-        # run("pip install -r requirements.txt")
-
         # echo "== SYNCDB / MIGRATE =="
         run("python manage.py syncdb --settings=settings")
         run("python manage.py migrate --settings=settings")
@@ -118,13 +114,3 @@ def _push_to_remote():
 
         # echo "== COLLECT STATIC =="
         run("python manage.py collectstatic --noinput --settings=settings")
-
-        # add waffle_switch pdf for exporting pdf
-        # run("./manage.py waffle_switch pdf on --create --settings=settings")
-        # run("./manage.py waffle_switch image on --create --settings=settings")
-
-        ## building documentation ##
-        # run("cd docs/ && make clean && make html")
-
-        # echo "== RUNNING TESTS =="
-        # run("python manage.py test rhizome.tests.test_api --settings=rhizome.settings.test")
