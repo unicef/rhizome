@@ -328,8 +328,13 @@ class BaseModelResource(ModelResource, BaseResource):
         """
         A ORM-specific implementation of ``obj_delete_list``.
         """
-        return super(BaseResource, self)\
-            .obj_delete_list(bundle, **kwargs)
+
+        try:
+            id_param = bundle.request.GET['id']
+        except KeyError:
+            raise RhizomeApiException('Must Delete by ID only')
+
+        self._meta.object_class.objects.get(id=id_param).delete()
 
     def get_locations_to_return_from_url(self, request):
         '''
