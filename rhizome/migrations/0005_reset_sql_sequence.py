@@ -6,6 +6,7 @@ from StringIO import StringIO
 from django.core.management import call_command
 from django.db import connection
 from django.db.models.loading import get_app
+from django.db import migrations
 
 def reset_seq(apps, schema_editor):
 

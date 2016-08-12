@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from pandas import DataFrame
 from random import randint, random
+
+from django.db import models, migrations
 
 from rhizome.models.location_models import Location
 from rhizome.models.indicator_models import Indicator

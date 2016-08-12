@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import get_app, get_models
+from django.db import models, migrations
 import pandas as pd
+
 from rhizome.models.location_models import Location, LocationPolygon
 from rhizome.models.document_models import Document
-from django.db.models import get_app, get_models
 from rhizome.cache_meta import minify_geo_json, LocationTreeCache
 
 
