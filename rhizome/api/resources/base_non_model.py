@@ -9,14 +9,29 @@ from rhizome.api.resources.base_resource import BaseResource
 
 class BaseNonModelResource(BaseResource):
     '''
-    Needs Documentation
-    http://django-tastypie.readthedocs.org/en/latest/resources.html?highlight=modelresource
+    This class only accepts GET requests, which are reouted through the
+    `get_list` method.
+
+    The get list mehtod first checks to see if the class that is being executed
+    has a method called `pre_process_data`.  If it does have that method, then,
+    it executes it.
+
+    After the method is executed, it returns a set of objects that come back
+    from the `get_object_list` method.
+
+    This resource class is used for data manipulation and unlike the
+    BaseModelResource is not meant to be a fully functioning CRUD interface.
+
+    So, if you want to create a resource in which you need to manipulate some
+    data then return it to the application, override the `pre_process_data`
+    method, do what you need to do, then return the results, or whatever you
+    need to via `get_object_list`.
     '''
 
     class Meta:
         authentication = MultiAuthentication(
             CustomSessionAuthentication(), ApiKeyAuthentication())
-        allowed_methods = ['get', 'post', 'patch']
+        allowed_methods = ['get', 'post', 'patch'] # FIXME - should read ['get']
         authorization = Authorization()
         always_return_data = True
         cache = CustomCache()

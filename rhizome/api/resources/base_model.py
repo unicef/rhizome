@@ -25,8 +25,7 @@ from rhizome.models.location_models import Location, LocationTree, \
 
 class BaseModelResource(ModelResource, BaseResource):
     '''
-    This applies to only the V1 API.  This method inherits from Tastypie's
-    model resource.
+    This class inherits from Tastypie's model resource.
 
     This resource strips down almost all of the tastypie functions which
     drastically slow down the API performance.
@@ -61,7 +60,8 @@ class BaseModelResource(ModelResource, BaseResource):
 
         Currently used to find one object from the url api/v1/resource/<pk>/
 
-        Try to find an object using the pk
+        Try to find an object using the pk, if the resource is not found,
+        or more than one object is found, throw an error, then throw an erro
         """
 
         try:
@@ -98,8 +98,16 @@ class BaseModelResource(ModelResource, BaseResource):
 
     def get_object_list(self, request):
         """
-        An ORM-specific implementation of ``get_object_list``.
-        Returns a queryset that may have been limited by other overrides.
+        Take the query fields from the ``request`` and return the relevant
+        objects.  By setting up the query fields using the Django join
+        syntax, we can access related models, for instance, if we are searching
+        a `blog` table, which has an author_id in it, we can use the
+        query_fields atribute to get the authors name, by adding
+
+        query_fields = ['title', 'author__name']`` to the meta class.
+
+        That way, we can use the functionality of the ORM to keep our code
+        simple even when we need for the database to execute one or more joins.
         """
 
         try:
@@ -120,8 +128,14 @@ class BaseModelResource(ModelResource, BaseResource):
 
     def obj_get_list(self, bundle, **kwargs):
         """
-        A ORM-specific implementation of ``obj_get_list``.
-        ``GET`` dictionary of bundle.request can be used to narrow the query.
+        Get the filters from the request
+
+        Query the database using the get_object_list method
+
+        Use the ``query_fields`` meta aatribtue to tell the database what fields we want
+
+        Use the cleaned filters from the request to filter the relevant object.s
+
         """
 
         ## validate the filters ##
@@ -148,6 +162,7 @@ class BaseModelResource(ModelResource, BaseResource):
             bundle=base_bundle, **self.remove_api_resource_names(kwargs))
         bundles = []
 
+        ## FIXME pretty sure this is handled with self.clean_json_fields():
         if len(objects) > 0:
             # find json_fields ( should be explicit here and check data type )
             # i.e. find the field datatypes from the model definition
@@ -303,6 +318,11 @@ class BaseModelResource(ModelResource, BaseResource):
 
     def obj_update(self, bundle, skip_errors=False, **kwargs):
         """
+        Get an object ID via the ``obj_get``method
+
+        Query the database using the object_class specified.
+
+        Update the object in the database].
         """
 
         obj = self.obj_get(bundle=bundle, **kwargs)
@@ -315,10 +335,22 @@ class BaseModelResource(ModelResource, BaseResource):
     def obj_delete(self, bundle, **kwargs):
         """
         A ORM-specific implementation of ``obj_delete``.
-        Takes optional ``kwargs``, which are used to narrow the query to find
-        the instance.
 
-        To Do -- Check 'is_superuser' flag
+        Get an object ID via the ``obj_get``method
+
+        Delete the object from the database using the django ORM
+
+
+        Note -- the only place currenlty we ``DELETE`` is with charts and
+        dashbaords.  For other resources, for example indicators, we will need
+        to be delete any data associated to that ID via a foreign key data.
+
+        That means, that if you want to delete an indicator, you will have to
+        override this method in the IndicatorResource and make sure that
+        all foreign keys are deleted as well.
+
+        It would alsobe a good idea to check here to see if the user is a
+        superuser before executing that type of query.
         """
 
         obj = self.obj_get(bundle=bundle, **kwargs)
@@ -342,13 +374,14 @@ class BaseModelResource(ModelResource, BaseResource):
         on the values parsed from the URL parameters find the locations needed
         to fulfill the request based on the four rules below.
 
+        If location_id__in requested.. we return exactly those ids
+        for instance if you were doing data entry for 5 specific districts
+        you would use the location_id__in param to fetch just those ids
+
+
         TO DO -- Check Location Permission so that the user can only see
         What they are permissioned to.
         '''
-
-        # if location_id__in requested.. we return exactly those ids
-        # for instance if you were doing data entry for 5 specific districts
-        # you would use the location_id__in param to fetch just those ids
 
         self.location_id = request.GET.get('location_id', None)
         self.location_id_list = request.GET.get('location_id__in', None)

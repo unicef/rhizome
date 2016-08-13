@@ -105,7 +105,12 @@ class BaseResource(Resource):
 
     def validate_filters(self, request):
         '''
-        Make sure that all required filters have been passed in
+        For a GET request, make sure that all required filters have been passed
+        and throw an exceptin if there are any filters missing.
+
+        In order to control which parameters are requried in a GET request,
+        simply add the `GET_params_required` attribute to the Meta class of
+        a given resource.
         '''
 
         filters = {}
@@ -126,9 +131,18 @@ class BaseResource(Resource):
 
     def dispatch(self, request_type, request, **kwargs):
         """
-        Overrides Tastypie and calls get_list for GET, obj_create for POST,
-        get_detail and obj_delete when fetching or delete an object with
-        primary key requested
+        Overrides Tastypie and calls `get_list` for GET, `obj_create` for POST,
+        an `obj_delete` for DELETE, `obj_update` for PATCH and
+        `get_detail` when fetching an object when a primary key is requested
+        (i.e. GET /<my_resource>/pk).
+
+        This method also gets the top_level_location_id for a user which
+        will allow later on for the API to filter the locations that they
+        can see based on what has been set for them in the user admin scren.
+
+        This location filtering is not used right now, but all of the ground
+        work has been put into place for a developer to set up regional,
+        provincial or country level access for specific users.
         """
 
         try:

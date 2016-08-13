@@ -22,13 +22,12 @@ class DocTransFormResource(BaseNonModelResource):
 
     def pre_process_data(self, request):
         '''
-        ## when you upload a file, step one is getting data into source
-            submission
-            ## --> DocTransform <-- ##
+        ## when you upload a file, step one is getting data into source_submission
+         `document.doc_transform()`
         ## Step two is translating form source_submission into datapoints
-            ## --> REfreshMaster <----
-        ## step three is aggregation
-            ## agg refresh ##
+          `document.refresh_master()`
+        ## step three, if the file is of type `campaign`, is aggregation
+           for each campaign in the document `campaign.aggregate_and_calculate()`
         '''
 
         document_object = Document.objects\
