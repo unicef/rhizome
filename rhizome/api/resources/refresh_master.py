@@ -1,6 +1,7 @@
 from rhizome.api.resources.base_non_model import BaseNonModelResource
 from rhizome.models.document_models import Document
 from rhizome.models.datapoint_models import DataPoint
+from rhizome.models.campaign_models import Campaign
 
 class RefreshMasterResource(BaseNonModelResource):
     '''
