@@ -29,10 +29,6 @@ class CampaignDocResultResource(BaseModelResource):
             .filter(document_id = document_id)\
             .values_list('source_object_map_id', flat=True)
 
-        print '==-source_object_map_id_list-===\n' * 5
-        print source_object_map_id_list
-
-
         q_columns = ['master_object_id', 'content_type']
         som_df = DataFrame(list(SourceObjectMap.objects\
             .filter(id__in = source_object_map_id_list, master_object_id__gt=0)\
