@@ -1,6 +1,5 @@
 Background
-===========
-
+==========
 
 The Rhizome platform was funded by UNICEF Headquarters to assist in the Polio Eradication Intiative.
 

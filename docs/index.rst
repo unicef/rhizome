@@ -11,11 +11,11 @@ Rhizome Documentation
    :maxdepth: 2
 
    about/index
-   user-guide/index
    back-end/index
    front-end/index
    testing/index
-   api/api
+   user-guide/index
+   api/index
 
 About
 ------
@@ -23,16 +23,9 @@ About
 - :doc:`about/functionality`
 - :doc:`about/stack`
 
-User Guide
-----------
-- :doc:`user-guide/uploader`
-- :doc:`user-guide/chart_builder`
-- :doc:`user-guide/dashboard_builder`
-
 Back End Code
 --------------
 - :doc:`back-end/data_model`
-- :doc:`back-end/model_methods`
 - :doc:`back-end/migrations`
 - :doc:`back-end/build_docs`
 
@@ -46,18 +39,24 @@ Front End Code
 
 Testing
 ----------
-.. Running Tests and Building Coverage
 - :doc:`testing/back_end`
 - :doc:`testing/front_end`
 - :doc:`testing/test_plan`
 
+User Guide
+----------
+- :doc:`user-guide/uploader`
+- :doc:`user-guide/chart_builder`
+- :doc:`user-guide/dashboard_builder`
+
 API
 ---
-- :doc:`api/api`
-.. Tastypie and Base Resources
-.. Model Resources
-.. Non Model Resources
-.. Individual Resource Descriptions
+- :doc:`api/base_methods`
+- :doc:`api/meta_resource_list`
+- :doc:`api/datapoint_api`
+- :doc:`api/debugging`
+
+
 
 
 What we don’t have and Next Steps

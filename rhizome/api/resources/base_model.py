@@ -132,7 +132,7 @@ class BaseModelResource(ModelResource, BaseResource):
 
         Query the database using the get_object_list method
 
-        Use the ``query_fields`` meta aatribtue to tell the database what fields we want
+        Use the ``query_fields`` meta atribtue to tell the database what fields we want
 
         Use the cleaned filters from the request to filter the relevant object.s
 
@@ -463,7 +463,7 @@ class BaseModelResource(ModelResource, BaseResource):
     def get_locations_from_filter_param(self, location_ids,
                                         indicator_to_filter, value_to_filter):
         '''
-        futher filter locations that have the indicator / value filter
+        Futher filter locations that have the indicator / value filter
         in the computed datapoint table.
 
         This is where for instance, we would take care of the filter that says

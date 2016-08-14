@@ -71,6 +71,12 @@ class Campaign(models.Model):
         unique_together = ('campaign_type', 'start_date')
 
     def aggregate_and_calculate(self):
+        '''
+        Calls ``agg_datapoints`` and ``agg_datapoints`` for a particular
+        campaign.  Campaign data is taken from the datapoint table and via
+        these two methods upserted into the ``DataPointComputed`` model.
+
+        '''
 
         self.dp_columns = ['location_id', 'indicator_id', 'value']
         self.dwc_batch, self.dwc_tuple_dict = [], {}

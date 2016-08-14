@@ -1,5 +1,10 @@
-Next Steps 
+Next Steps
 **********
+
+What we don't have
+
+  - Email password reset / set up
+  - 
 
 Contents:
 

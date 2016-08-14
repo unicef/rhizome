@@ -415,7 +415,7 @@ class Document(models.Model):
 
         ## FIXME should import this once when we run `refresh_master`
         ## but if i don't do it for each method there i get a NameError
- 
+
         from rhizome.models.datapoint_models import DataPoint, DocDataPoint
 
         dp_batch = []

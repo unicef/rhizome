@@ -3,7 +3,12 @@ Designed for data visualization to help eradicate polio!
 
 Built with Python, Django, JavaScript, React, Reflux, HighCharts, and many other libraries.
 
-## Setting up the development environment with Docker #
+
+# Documentation
+Start here by checking out our [documentation](http://unicef.github.io/rhizome/).
+
+
+## Setting up the development environment with Docker
 
 Prerequisites
 
@@ -47,7 +52,7 @@ $ docker-machine ip dev
 -> 192.168.99.100
 ```
 
-and visit: http://192.168.99.100:8000/ to use the app.
+and visit: http://192.168.99.100:8000/ ( i.e. what is returned from the above command ) to use the app.
 
 ## Helpful Commands
 
@@ -117,9 +122,6 @@ See more [here](http://codebucket.co.in/apache-prefork-mpm-configuration/)
 For more information on deploying [Django][] applications, see the
 [Django documentation](https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/).
 
-
-# Documentation
-Start here by checking out our [documentation](http://unicef.github.io/rhizome/).
 
 # Style
 For python style guide and instructions on how to configure your editor in alignment with our linter config see the [plylintrc file](https://github.com/unicef/rhizome/blob/dev/rhizome/pylintrc)

@@ -1,4 +1,4 @@
-Front Documentation
+Front End Documentation
 **********
 
 Contents:
