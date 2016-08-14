@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Test Plan &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Test Plan</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/testing/test_plan.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="test-plan">
+<h1>Test Plan<a class="headerlink" href="#test-plan" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="data-entry">
+<h2>Data Entry<a class="headerlink" href="#data-entry" title="Permalink to this headline">¶</a></h2>
+<p># Quality Assurance Procedure for Data Entry</p>
+<p>### High Level Functionality</p>
+<blockquote>
+<div><ul class="simple">
+<li>Click campaign dropdown and check if all campaigns are available.</li>
+<li>Click dashboard dropdown(below dashboard navigation) and check if all dashboards are available.</li>
+<li>Click location dropdown and check if all locations are available. Type &#8216;Kabul&#8217; in the search drop down for locations to find Kabul.</li>
+<li>Type &#8216;Uru&#8217; and it should not show any search suggestions. (3 letters does not trigger search until 4th is typed in.)</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>##### Load table</dt>
+<dd><ul class="first last simple">
+<li>Below the these drop down selections there should be an empty area designated for data entry to load.(unless a table for data entry was already loaded)</li>
+<li>Click on add location and input &#8216;Hilmand&#8217; and click on the location in the drop down menu. The other dropdowns to the left of this should be something along the lines of January 2016 and Pre Campaign. I state it as something along the lines because this data is subject to change.</li>
+<li>A table with 2 rows should have loaded. First row is the &#8216;table header&#8217; row, with multiple indicators, one for each column. Second row is the table data row. The very left, beginning, of the table data row should indicate &#8216;Hilmand&#8217;. In each column, in the Hilmand data row, there should be a value, or potentionally no value. If there is a value the editable cell, which is a cross section of this table row and header, should be white in color and indicate a value. If any indicator has &#8216;No Data&#8217; or is empty it should be greyed out.</li>
+<li>This value may be numeric or a word. For example, some indicators will be a percentage(ex: 11%) or an integer(ex: 325), while some are boolean and indicate true or false(ex:&#8217;Yes&#8217;). If the indicator is &#8216;Event meeting conducted&#8217; the value should be &#8216;Yes&#8217;, &#8216;No&#8217;, or &#8216;No Data&#8217;, if data was not collected. &#8216;Percentage children missed&#8217; indicator should state a percentage, for example, &#8216;12%&#8217;. &#8216;LQAS&#8217; indicator is an integer, and should have a basic number value, for example, &#8216;235&#8217;.</li>
+<li>Verify all columns and values in cell follow the rules stated above in this section.</li>
+</ul>
+</dd>
+</dl>
+<p>### Low Level Functionality</p>
+<dl class="docutils">
+<dt>##### Update cell value</dt>
+<dd><ul class="first last simple">
+<li>Click into the cell for a percentage indicator, there should now be a keyboard cursor in the cell. It should allow you to edit the number that is already there or if it is blank you can input a new number.</li>
+<li>Input &#8216;99&#8217;. Now either click outside of the data table or press enter. This should show a small loading icon in the cell and then save. You may or may not see the loading icon depending how fast it saves. It should display &#8216;99%&#8217; for this cell.</li>
+<li>Click outside the table or press enter to save.</li>
+<li>Make note of this indicator name and value.</li>
+<li>Let&#8217;s edit a couple other cells and we will test if the database has saved these changes. Find one of the boolean indicators. These are cells which allow you to enter 1 of the 3, &#8216;Yes&#8217;, &#8216;No&#8217; or &#8216;No Data&#8217;.</li>
+<li>Input either data if it is &#8216;No Data&#8217; or the opposite answer(&#8216;Yes&#8217; if &#8216;No&#8217; etc.).</li>
+<li>Click outside the table or press enter to save. It should now display the value you have selected. Make note of which indicator name this is and it&#8217;s value.</li>
+<li>Next, update an indicator with an integer value. This may be an indicator of &#8216;LPD Status&#8217; or &#8216;Number of children missed&#8217;, for example. Let&#8217;s input &#8216;777&#8217;. Click outside the table or press enter to save. This should have the same saving behavior as the percentage indicator. It should display &#8216;777&#8217; now in the cell.</li>
+<li>Again, make note of this indicator name and value. If the values are showing after having changed the 3 indicators, let us test one more thing for this.</li>
+<li>Refresh your browser. Select the same dropdowns we originally clicked to return to this state(Jan 2016, Pre Campaign, Hilmand, etc.)</li>
+<li>Double check the 3 indicators and their values. The corresponding indicators should still have the new values which you entered.</li>
+</ul>
+</dd>
+<dt>##### Remove cell value</dt>
+<dd><ul class="first last simple">
+<li>Let&#8217;s use the same indicators we used to update the values. For each of those change the values, one by one, to &#8216;&#8217;(empty cell). For the boolean select &#8216;No Data&#8217;.</li>
+<li>Click outside the table or press enter to save. This should result in the value being removed, a blank cell, or &#8216;No Data&#8217; for boolean and the cells should also have turned grey in color.</li>
+<li>Refresh the browser and load the Hilmand data table again(Jan 2016, Pre Campaign, Hilmand, etc.)</li>
+<li>Verify the values are still removed and that the cells are grey.</li>
+</ul>
+</dd>
+<dt>##### Remove cell value and then input a value</dt>
+<dd><ul class="first last simple">
+<li>Choose a percentage indicator and remove it&#8217;s value and update the table(press enter). It should now display &#8216;&#8217;(empty). Now let&#8217;s add a value back into this same cell. Input &#8216;77&#8217; it should display &#8216;77%&#8217;.</li>
+<li>Let&#8217;s refresh the browser and return to this state again(Jan 2016, Pre Campaign, Hilmand, etc.) The cell should display &#8216;77%&#8217;.</li>
+</ul>
+</dd>
+<dt>##### Remove cell value, after browser refresh update value</dt>
+<dd><ul class="first last simple">
+<li>Let&#8217;s use the same indicators we used to update the values. For each of those change the values, one by one, to &#8216;&#8217;(empty cell). For the boolean select &#8216;No Data&#8217;. This should result in the value being removed, a blank cell, or &#8216;No Data&#8217; for boolean and the cells should also have turned grey in color.</li>
+<li>Refresh the browser and load the Hilmand data table again(Jan 2016, Pre Campaign, Hilmand, etc.) Now let&#8217;s update this cell with a valid value, it should display your value. Refresh the browser and return.</li>
+<li>It should have the value you had input into the cell.</li>
+</ul>
+</dd>
+<dt>##### Add values to row and remove row</dt>
+<dd><ul class="first last simple">
+<li>Add locations Bagrami, Kabul, Uruzgan.</li>
+<li>In the middle of the 3 locations(generally Kabul) row input valid values for each indicator possible.</li>
+<li>Let&#8217;s input all variations of valid data for each cell. So for percentage that is anything greater than 0 to 100, also a blank percentage cell should be at least one indicator in the row. Same for boolean, mostly &#8216;Yes&#8217; or &#8216;No&#8217; and one &#8216;No Data&#8217;. Integers can be any range, 0 to infinity(stick to 200,000 being maximum). Also one indicator with blank data.</li>
+<li>Now simply remove the location by clicking the little X at the beginning of the table row. The values in the other two rows should not change, and they definitely should not inherit any information from the middle row that was just removed.</li>
+<li>Find the middle row location(Kabul if it was Kabul) from the Add Location dropdown and add it again. It should have all of the new changed values which you had just input.</li>
+<li>Verify each cell value to indicator name.</li>
+</ul>
+</dd>
+<dt>##### Add values to row and change campaign</dt>
+<dd><ul class="first simple">
+<li>Add locations Bagrami, Kabul, Uruzgan.</li>
+<li>Keep note of which campaign selected.</li>
+<li>For Uruzgan row put input valid values for each indicator possible.</li>
+<li>Let&#8217;s input all variations of valid data for each cell. So for percentage that is anything greater than 0 to 100, also a blank percentage cell should be at least one indicator in the row. Same for boolean, mostly &#8216;Yes&#8217; or &#8216;No&#8217; and one &#8216;No Data&#8217;. Integers can be any range, 0 to infinity(stick to 200,000 being maximum). Also one indicator with blank data.</li>
+<li>Now switch campaign to a different campaign.</li>
+<li>Click on Uruzgan location.</li>
+<li>The data should not reflect what you have entered.</li>
+<li>Return to the original campaign which was selected.</li>
+<li>Select the locations again, Bagrami, Kabul, and Uruzgan.</li>
+<li>Verify each cell value to indicator name for Uruzgan contain your updated values.</li>
+</ul>
+<p class="last">// more test cases should be added to verify dashboard configurations and combinations</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="situational-dashboard">
+<h2>Situational Dashboard<a class="headerlink" href="#situational-dashboard" title="Permalink to this headline">¶</a></h2>
+<p># Quality Assurance Procedure for Dashboard
+## High Level Functionality
+### Options</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unless the user is a &#8216;super user&#8217;, the edit dashboard functionality should not be available.</li>
+<li>If you are able to click edit, it should change the button to a &#8216;Save Dashboard&#8217; button. To the right of this is an option to cancel the edit, indicated by a small &#8216;x&#8217; icon.</li>
+<li>Changing the name of the dashboard name and clicking save should save. Let&#8217;s do that and refresh the browser and see if the new updated name exists. Once loaded you should see the new dashboard name.</li>
+<li>Lets do the same thing, but not save. Click edit, type in a new dashboard name. Press cancel(before saving). This should not save the name. Lets refresh the browser to confirm this.</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>### Dropdown Navigation</dt>
+<dd><ul class="first last simple">
+<li>Campaigns drop down should exist. Clicking this will show campaign options to click on.</li>
+<li>Locations drop down should exist. Clicking this will show location options to click on.</li>
+<li>Districts drop down should exist. Clicking this will show district options to click on.</li>
+<li>When selecting a campaign from this drop down, it should update any charts with a campaign display. See in &#8216;Layout&#8217; for which rows may contain charts with campaign information visible to the user. These charts should each reflect the current selection for campaign name.</li>
+<li>When selecting a location from this drop down, it should update any charts with a location display. See in &#8216;Layout&#8217; for which rows may contain charts with location information visible to the user. These charts should each reflect the current selection for location name.</li>
+<li>When selecting a district from this drop down, it should update any charts with a district display. See in &#8216;Layout&#8217; for which rows may contain charts with district information visible to the user. These charts should each reflect the current selection for district name.</li>
+</ul>
+</dd>
+<dt>### Layout</dt>
+<dd><ul class="first last simple">
+<li>All of the elements should exist:</li>
+<li>Row 1
+* On the left side of the row there is a section for a bubble map showing with a title of &#8216;Polio Cases - 2014 to Present&#8217; with a map and bubbles indicating the intensity.
+* On the right side of this row, there are two charts stacked on top of each other. &#8216;Annual Cast Table&#8217; this is a basic data table chart with Afghanistan and recent campaigns displaying their indicator data.
+* Below &#8216;Annual Case Table&#8217; is the Immunity Profile stacked column chart. The X Axis should reflect years, grouped into regions, &#8216;central, &#8216;central highlands&#8217;, &#8216;east&#8217;, &#8216;north&#8217;, &#8216;north east&#8217;, &#8216;south&#8217;, &#8216;south east&#8217; and &#8216;west&#8217;. Y axis should show percent, 0%-100%. The indicators shown are &#8216;Number of Unvaccinated Non Polio AFP Cases&#8217;, &#8216;Number of Non Polio AFP cases vaccinated 1-3 doses&#8217;, &#8216;Number of Non Polio AFP cases vaccinated 4-6 doses&#8217;, &#8216;Number of Non Polio AFP cases vaccinated 7+ doses&#8217;. The chart itself should display the proportion of the value of each indicator listed in the legend as a vertical column. The bar size should make sense. What this means is if &#8216;percent missed due to refusal&#8217; has a value of 0.9% and &#8216;percent children missed due to not available&#8217; value is 0.1%, &#8216;percent missed due to refusal should be 90% of the column and &#8216;percent children missed due to not available&#8217; should color 10% of the column. Each indicator should be displayed by the assigned legend color. The values, when mouse hovers on the column, should display as a small modal tooltip. Clicking the button next to the &#8216;export&#8217; button will toggle the view of the chart. There are two other views than the side-by-side column chart. One is the stacked columns by proportion based on their exact values. The other view is based on the values as well however the visualization will stretch the column to 100%. The values in this second view will be shown in proportion to their value.</li>
+<li>Row 2
+* One stacked column chart &#8216;Missed Children By Reason&#8217; displaying percent childrens missed by specific reasons, &#8216;Percent children missed due to refusal - PCA&#8217;, &#8216;Percent children missed due to not available - PCA&#8217;, &#8216;Percent children missed due to no team visit - PCA&#8217;, &#8216;Percent children missed due to other reasons - PCA&#8217;. X axis should indicate campaign (month and year) grouped by region. Regions should be &#8216;central, &#8216;central highlands&#8217;, &#8216;east&#8217;, &#8216;north&#8217;, &#8216;north east&#8217;, &#8216;south&#8217;, &#8216;south east&#8217; and &#8216;west&#8217;. Y axis should default to percentage(0%-100%). The chart itself should display the proportion of the value of each indicator listed in the legend as a vertical column. The bar size should make sense. What this means is if &#8216;percent missed due to refusal&#8217; has a value of 0.9% and &#8216;percent children missed due to not available&#8217; value is 0.1%, &#8216;percent missed due to refusal should be 90% of the column and &#8216;percent children missed due to not available&#8217; should color 10% of the column. Each indicator should be displayed by the assigned legend color. The values, when mouse hovers on the column, should display as a small modal tooltip.
+* Clicking the button next to the &#8216;export&#8217; button will toggle the view of the chart. There are two other views than the side-by-side column chart. One is the stacked columns by proportion based on their exact values. The other view is based on the values as well however the visualization will stretch the column to 100%. The values in this second view will be shown in proportion to their value.</li>
+<li>Row 3
+* Here we have a stacked column chart displaying &#8216;LQAS&#8217;. The indicators for this are &#8216;# of Accepted Lots by 90%&#8217;, &#8216;# of Accepted Lots by 80%&#8217;, &#8216;# of Rejected Lots by 80%&#8217;. This should show an integer value on the Y axis and the X axis displays campaign month and year grouped by region. Regions should be &#8216;central, &#8216;central highlands&#8217;, &#8216;east&#8217;, &#8216;north&#8217;, &#8216;north east&#8217;, &#8216;south&#8217;, &#8216;south east&#8217; and &#8216;west&#8217;. The indicators should show data in each grouping, unless there is no value or the value is 0, as a column.
+* Clicking the button next to the &#8216;export&#8217; button will toggle the view of the chart. There are two other views than the side-by-side column chart. One is the stacked columns by proportion based on their exact values. The other view is based on the values as well however the visualization will stretch the column to 100%. The values in this second view will be shown in proportion to their value.</li>
+<li>Row 4
+* Here we have a stacked column chart displaying &#8216;Environmental Results&#8217;. The indicators for this are &#8216;Number of Environmental Samples with Negative result&#8217; and &#8216;Number of Environmental Samples with Positive result&#8217;. This should show an integer value on the Y axis and the X axis displays campaign month and year grouped by region. Regions should be &#8216;central, &#8216;central highlands&#8217;, &#8216;east&#8217;, &#8216;north&#8217;, &#8216;north east&#8217;, &#8216;south&#8217;, &#8216;south east&#8217; and &#8216;west&#8217;. The indicators should show data in each grouping, unless there is no value or the value is 0, as a column.
+* Clicking the button next to the &#8216;export&#8217; button will toggle the view of the chart. There are two other views than the side-by-side column chart. One is the stacked columns by proportion based on their exact values. The other view is based on the values as well however the visualization will stretch the column to 100%. The values in this second view will be shown in proportion to their value.</li>
+<li>Row 5
+* Here we have a stacked column chart displaying &#8216;Missed Children: PCA vs. Out of House Survey&#8217;. The indicators for this are &#8216;Percent Missed Children - Out of House Survey&#8217; and &#8216;Percent Missed Children - PCA&#8217;. This should show an integer value on the Y axis and the X axis displays campaign month and year grouped by region. Regions should be &#8216;central, &#8216;central highlands&#8217;, &#8216;east&#8217;, &#8216;north&#8217;, &#8216;north east&#8217;, &#8216;south&#8217;, &#8216;south east&#8217; and &#8216;west&#8217;. The indicators should show data in each grouping, unless there is no value or the value is 0, as a column.
+* Clicking the button next to the &#8216;export&#8217; button will toggle the view of the chart. There are two other views than the side-by-side column chart. One is the stacked columns by proportion based on their exact values. The other view is based on the values as well however the visualization will stretch the column to 100%. The values in this second view will be shown in proportion to their value.</li>
+<li>Row 6
+* This row has 2 charts. The left column has a bubble map. The right column contains a column chart.
+* The bubble map shows Afghanistan with the title of &#8216;Inaccessible Children (Map View)&#8217;. This map shows the data by displaying a grey circle. The size of the circle is proportionate to the value of the indicator for that area.
+* The column chart title is &#8216;Inaccessible Children&#8217;. The X axis should display the campaign month and year. The Y axis displays the scale of indicator value by integer. The columns are proportionate in size to the value of the indicator for the campaign.</li>
+<li>Row 7
+* There is one chart for this row, it has two indicators in it. The title of the chart is &#8216;Non Polio AFP Rate and Adequate Specimens&#8217;. The indicators are &#8216;Non Polio AFP Rate&#8217; which is display as a column chart. The other indicator, &#8216;Percentage of Adequate Specimen&#8217;, which is displayed as a line chart. The X axis indicates the campaign month and year. The Y axis will reflect the indicator value range as a percentage.</li>
+</ul>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

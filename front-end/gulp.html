@@ -1,0 +1,521 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Building the front end with Gulp &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Building the front end with Gulp</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/front-end/gulp.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="building-the-front-end-with-gulp">
+<h1>Building the front end with Gulp<a class="headerlink" href="#building-the-front-end-with-gulp" title="Permalink to this headline">¶</a></h1>
+<p>&#8212;
+label: Gulp Document
+id: rhizome_front_end_gulp_doc
+categorySlug: front_end
+categoryLabel: Front End Document
+categoryRank: 1
+documentRank: 4</p>
+<p># GULP Documentation</p>
+<p>## Environment</p>
+<p>In this project, we use gulp to build frontend system.</p>
+<p>Gulp: use <cite>npm install -g gulp</cite> to install gulp.</p>
+<p>Gulp src directory: <cite>/webapp/src</cite></p>
+<p>Gulp destination directory: <cite>/webapp/public</cite></p>
+<p>We have two basic <strong>GULP TASKS</strong>, <cite>gulp</cite> and <cite>gulp dev</cite>, they are defined in <cite>gulpfile.babel.js</cite>.</p>
+<p><a href="#id1"><span class="problematic" id="id2">``</span></a>`
+gulp.task(&#8216;dev&#8217;, () =&gt; {</p>
+<blockquote>
+<div>gulp.config(gulp.DEV_MODE, true)
+gulp.start([&#8216;build&#8217;])</div></blockquote>
+<p>})</p>
+<p>gulp.task(&#8216;default&#8217;, [&#8216;build&#8217;])
+<a href="#id3"><span class="problematic" id="id4">``</span></a><a href="#id5"><span class="problematic" id="id6">`</span></a></p>
+<ul class="simple">
+<li>Use <cite>gulp dev</cite> in local development environment to build and watch frontend change.</li>
+<li>Use <cite>gulp build</cite> in production environment for deployment.</li>
+</ul>
+<p>## Tasks</p>
+<p>We have sevaral gulp tasks, <cite>clean, copy, sass, standard, browserify and revision</cite>.</p>
+<p>All the tasks are defined seperately in <cite>/webapp/tasks</cite> folder.</p>
+<p>### Clean</p>
+<p><strong>Clean</strong> task is used to remove the whole gulp destination directory <cite>/webapp/public</cite>  to prepare for next step.</p>
+<p>### Copy</p>
+<p><strong>Copy</strong> task is used to copy all static assets from gulp src directory to gulp dest directory.</p>
+<p>### Sass</p>
+<p><strong>Sass</strong> task is used to compile all sass files to css files.</p>
+<p>### Standard</p>
+<p><strong>Standard</strong> task is used to check JavaScript code with the standard syntax.</p>
+<p>We&#8217;re using [standard](<a class="reference external" href="https://github.com/feross/standard">https://github.com/feross/standard</a>) with [babel-eslint](<a class="reference external" href="https://github.com/babel/babel-eslint">https://github.com/babel/babel-eslint</a>) to format our Javascript code. Make sure run standard before committing any Javascript code.</p>
+<p>Install <cite>standard</cite> and <cite>babel-eslint</cite> by <cite>npm install -g standard</cite> and <cite>npm install -g babel-eslint</cite>. They must be installed globally. Run <cite>standard</cite> in <cite>/webapp</cite> folder to check Javascript format. Fix any format error before you commit.</p>
+<p>Standard will be added to CI pipeline to ensure the code format is strictly followed.</p>
+<p>Here&#8217;s a quick view of standard rules. For more details, visit standard homepage or check standard error output.</p>
+<ul class="simple">
+<li>2 spaces for indentation. No tab is allowed.</li>
+<li>Single quotes for strings.</li>
+<li>No unused variables.</li>
+<li>No semicolons.</li>
+<li>Always use === instead of == except for <cite>null</cite>.</li>
+<li>Space after keywords as <cite>if</cite> and function name.</li>
+<li>React props must be defined by <cite>propTypes</cite>.</li>
+</ul>
+<p>### Browserify and Watchify</p>
+<p><strong>Browserify</strong> task is used to build a bundle which can be served up to browser in a single <cite>&lt;script&gt;</cite> tag.</p>
+<p><strong>Watchify</strong> task will update any source file and the browserify bundle will be recompiled on the spot.</p>
+<p>### Revision</p>
+<p>[<strong>RevCompile</strong>](<a class="reference external" href="https://github.com/sindresorhus/gulp-rev">https://github.com/sindresorhus/gulp-rev</a>) task will revision static asset by appending content hash to filenames, such as <cite>unicorn.css =&gt; unicorn-d41d8cd98f.css</cite>.</p>
+<p>This task will generation a <cite>rev-manifest.json</cite> file in <cite>/webapp/public/static</cite> folder to map the original paths to the revisioned paths.</p>
+<p>To use the generated revisioning file, we defined a  <cite>base.hbs</cite> file with <cite>&lt;script&gt;</cite> tag like below:</p>
+<blockquote>
+<div><p>//This is base.hbs
+//static css files
+&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;{{ assetPath &#8220;css/screen.css&#8221; }}&#8221; %}&#8221;&gt;
+&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;{{ assetPath &#8220;css/print-redesign.css&#8221; }}&#8221; %}&#8221; media=&#8221;print&#8221;&gt;</p>
+<p>//static js files
+&lt;script src=&#8221;{% static &#8220;{{ assetPath &#8220;js/vendor.js&#8221; }}&#8221; %}&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;{% static &#8220;{{ assetPath &#8220;js/main.js&#8221; }}&#8221; %}&#8221;&gt;&lt;/script&gt;</p>
+</div></blockquote>
+<p>[<strong>RevReplace</strong>](<a class="reference external" href="https://github.com/sindresorhus/gulp-rev/blob/master/integration.md">https://github.com/sindresorhus/gulp-rev/blob/master/integration.md</a>) task will replace the <cite>&lt;script&gt;</cite> tag in <cite>base.hbs</cite> based on <cite>rev-manifest.json</cite>, then will generate a <cite>base.html</cite> file.</p>
+<p>Since we need to have a watchify task to reload static files in development env, so we have another <cite>rev-manifest.json</cite> file in <cite>/webapp</cite> folder to use in development env.</p>
+<p>These two <cite>rev-manifest.json</cite> looks different:</p>
+<p><a href="#id7"><span class="problematic" id="id8">``</span></a>`
+//This is rev-manifest.json in deveopment env
+{</p>
+<blockquote>
+<div>&#8220;css/pdf.css&#8221;: &#8220;css/pdf.css&#8221;,
+&#8220;css/print-redesign.css&#8221;: &#8220;css/print-redesign.css&#8221;,
+&#8220;css/screen.css&#8221;: &#8220;css/screen.css&#8221;,
+&#8220;js/main.js&#8221;: &#8220;js/main.js&#8221;,
+&#8220;js/vendor.js&#8221;: &#8220;js/vendor.js&#8221;</div></blockquote>
+<div class="section" id="id9">
+<h2>}<a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h2>
+<p><a href="#id10"><span class="problematic" id="id11">``</span></a>`
+//This is rev-manifest.json in production env
+{</p>
+<blockquote>
+<div>&#8220;css/pdf.css&#8221;: &#8220;css/pdf-1ceeaff80e.css&#8221;,
+&#8220;css/print-redesign.css&#8221;: &#8220;css/print-redesign-27445033fc.css&#8221;,
+&#8220;css/screen.css&#8221;: &#8220;css/screen-ddff506646.css&#8221;,
+&#8220;js/main.js&#8221;: &#8220;js/main-ea7844e656.js&#8221;,
+&#8220;js/vendor.js&#8221;: &#8220;js/vendor-24f5548b98.js&#8221;</div></blockquote>
+</div>
+<div class="section" id="id12">
+<h2>}<a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h2>
+<p>In this way, we can use revisional static files in production env, and will not influence our development env.</p>
+<p>How to use these two manifest file in different env are defined in <cite>/tasks/config/revReplace.js</cite>:</p>
+<p><code class="docutils literal"><span class="pre">`</span>
+<span class="pre">var</span> <span class="pre">proManifest</span> <span class="pre">=</span>&nbsp; <span class="pre">jsDestFolder</span> <span class="pre">+</span> <span class="pre">'/rev-manifest.json'</span>
+<span class="pre">var</span> <span class="pre">devManifest</span> <span class="pre">=</span> <span class="pre">'./rev-manifest.json'</span>
+<span class="pre">var</span> <span class="pre">manifestFile</span> <span class="pre">=</span> <span class="pre">(process.env.NODE_ENV</span> <span class="pre">===</span> <span class="pre">'production')</span> <span class="pre">?</span> <span class="pre">proManifest</span> <span class="pre">:</span> <span class="pre">devManifest</span>
+<span class="pre">`</span></code></p>
+<p>So <cite>base.html</cite> in <strong>development env</strong> will not use revisional files.</p>
+<blockquote>
+<div><blockquote>
+<div>//This is base.html in development env
+//static css files
+&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;css/screen.css&#8221; %}&#8221;&gt;</div></blockquote>
+<p>&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;css/print-redesign.css&#8221; %}&#8221; media=&#8221;print&#8221;&gt;</p>
+<blockquote>
+<div>//static js files
+&lt;script src=&#8221;{% static &#8220;js/vendor.js&#8221; %}&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;{% static &#8220;js/main.js&#8221; %}&#8221;&gt;&lt;/script&gt;</div></blockquote>
+</div></blockquote>
+<p>And <cite>base.html</cite> in <strong>production env</strong> will use revisional files.</p>
+<blockquote>
+<div><blockquote>
+<div>//This is base.html in production env
+//static css files
+&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;css/screen-ddff506646.css&#8221; %}&#8221;&gt;</div></blockquote>
+<p>&lt;link rel=&#8221;stylesheet&#8221; href=&#8221;{% static &#8220;css/print-redesign-27445033fc.css&#8221; %}&#8221; media=&#8221;print&#8221;&gt;</p>
+<blockquote>
+<div>//static js files
+&lt;script src=&#8221;{% static &#8220;js/vendor-0a1c002fc5.js&#8221; %}&#8221;&gt;&lt;/script&gt;
+&lt;script src=&#8221;{% static &#8220;js/main-efc4d25176.js&#8221; %}&#8221;&gt;&lt;/script&gt;</div></blockquote>
+</div></blockquote>
+<p>### Lint</p>
+<p><strong>Lint</strong> task is used to identify and report on patterns found in ECMAScript/JavaScript code.</p>
+<p>### Mocha</p>
+<p>[<strong>Mocha</strong>](<a class="reference external" href="https://github.com/knpwrs/gulp-spawn-mocha">https://github.com/knpwrs/gulp-spawn-mocha</a>) task is used to run Mocha tests in a separate process from the gulp process.</p>
+<p>We can use <cite>gulp mocha</cite> to run the tests separately from other tasks.</p>
+<p>And <cite>gulp mocha</cite> will also generate a coverage report for frontend code. The report is in <cite>/webapp/coverage/lcov-report/</cite> folder and you can view the report through <cite>/webapp/coverage/lcov-report/index.html</cite> file.</p>
+<p>If you do not want to test the coverage, you can change the config in <cite>/tasks/config/mocha.js</cite>:</p>
+<p><a href="#id13"><span class="problematic" id="id14">``</span></a>`
+export default {</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>src: [</dt>
+<dd><cite>${gulp.config(&#8216;base.src&#8217;)}/**/__tests__/*.spec.js{,x}</cite></dd>
+</dl>
+<p>],
+options: {</p>
+<blockquote>
+<div>r: &#8216;src/helpers/jsdom.js&#8217;,
+R: &#8216;dot&#8217;,
+compilers: &#8216;.:babel/register&#8217;,
+istanbul: true  // Will test coverage and generate report.
+istanbul: false  // Will not test coverage and generate report.</div></blockquote>
+<p>}</p>
+</div></blockquote>
+<p>}</p>
+<p><a href="#id15"><span class="problematic" id="id16">``</span></a><a href="#id17"><span class="problematic" id="id18">`</span></a></p>
+<p>### Package</p>
+<p><strong>Package</strong> task is used to compress frontend code into a zip package.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Backend Source Code &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Backend Source Code</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/back-end/old-backend.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="backend-source-code">
+<h1><a class="toc-backref" href="#id3">Backend Source Code</a><a class="headerlink" href="#backend-source-code" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="table-of-contents">
+<p class="topic-title first">Table of Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#backend-source-code" id="id3">Backend Source Code</a><ul>
+<li><a class="reference internal" href="#standardization-and-validation-of-information" id="id4">Standardization and Validation of Information</a></li>
+<li><a class="reference internal" href="#data-entry-form-see-dataentryresource" id="id5">Data Entry Form  (see DataEntryResource)</a></li>
+<li><a class="reference internal" href="#etl-process" id="id6">ETL Process</a><ul>
+<li><a class="reference internal" href="#refreshmaster" id="id7">RefreshMaster</a></li>
+<li><a class="reference internal" href="#mapping" id="id8">Mapping</a></li>
+<li><a class="reference internal" href="#needs-documentation" id="id9">Needs Documentation</a></li>
+<li><a class="reference internal" href="#future-topics-regarding-locations" id="id10">Future Topics Regarding locations</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aggregation" id="id11">Aggregation</a><ul>
+<li><a class="reference internal" href="#the-cache-refresh-class" id="id12">The Cache Refresh Class</a></li>
+<li><a class="reference internal" href="#the-set-up-method" id="id13">the set_up() method</a></li>
+<li><a class="reference internal" href="#the-main-method" id="id14">the main() method</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#permissions" id="id15">Permissions</a></li>
+<li><a class="reference internal" href="#qa-calculation-and-aggregation" id="id16">QA Calculation and Aggregation</a></li>
+<li><a class="reference internal" href="#reference-sheet" id="id17">Reference Sheet</a><ul>
+<li><a class="reference internal" href="#aggregation-by-location" id="id18">Aggregation by location</a><ul>
+<li><a class="reference internal" href="#conflicts-with-sub-locations" id="id19">Conflicts with Sub-locations</a></li>
+<li><a class="reference internal" href="#partial-missing-values" id="id20">Partial Missing Values</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#aggregation-by-calculation" id="id21">Aggregation by calculation</a><ul>
+<li><a class="reference internal" href="#conflicts-with-calculation-aggregation-and-partial-missing-values" id="id22">Conflicts with calculation aggregation and partial missing values</a></li>
+<li><a class="reference internal" href="#controlling-aggregation-behavior" id="id23">Controlling Aggregation Behavior</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="standardization-and-validation-of-information">
+<h2><a class="toc-backref" href="#id4">Standardization and Validation of Information</a><a class="headerlink" href="#standardization-and-validation-of-information" title="Permalink to this headline">¶</a></h2>
+<p>The polio backend is based around the <strong>datapoint</strong> table which has a key for location, indicator and campaign.  The datapoint table gathers and consolidates information from Data Entry, CSV upload, ETL of 3rd party APIs and Data Sources and makes this information available to a REST api.  This api powers the dashboards, as well as the data explorer.</p>
+<p>The system differentiates between conflicts and information from different sources via the <strong>source_datapoint</strong> table which holds information uploaded directly from spreadsheets.</p>
+<p>In addition the system maintains <strong>source_indicators</strong> , <strong>source_locations</strong>, and <strong>source_campaigns</strong> all of which have cooresponding mapping tables.  Each of the source tables have a cooresponding <strong>document_id</strong> which gives a link to the source of the raw data.</p>
+<p>When a source_datapoint has mappings for location, campaign, and indicator, by using the <strong>refresh_master</strong> method for that document_id will create, or update ( if a conflicting datapoint exists ) the datapoint table.</p>
+<p>There are two ways that information gets into the system.</p>
+<p><strong>Data Entry Form</strong>
+<strong>ETL Process</strong></p>
+</div>
+<div class="section" id="data-entry-form-see-dataentryresource">
+<h2><a class="toc-backref" href="#id5">Data Entry Form  (see DataEntryResource)</a><a class="headerlink" href="#data-entry-form-see-dataentryresource" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Accepts POST request that perform inserts and updates on the datpaoint table</li>
+<li>Unlike source_datapoints ( as you&#8217;ll learn more about below ) information
+that comes through the Data Entry Api is stored in the audit_table.</li>
+<li><strong>An Important Point</strong> - Information from the Data Entry form always takes
+precedence over information flowing in from source_datapoints.  A Human
+should always have the ability to override what has been automatically
+generated by the system.</li>
+</ul>
+</div>
+<div class="section" id="etl-process">
+<h2><a class="toc-backref" href="#id6">ETL Process</a><a class="headerlink" href="#etl-process" title="Permalink to this headline">¶</a></h2>
+<p>The flow of data in the ETL Process is as follows:</p>
+<ul class="simple">
+<li>Each file, or incoming data stream has a corresponding <em>document_id</em></li>
+<li>Each fact in a document is then translated to a <em>source_datapoint</em> which
+contains principally a <em>campaign_string</em>, <em>location_string</em>,
+<em>indicator_string</em> and <em>value</em>.</li>
+</ul>
+<div class="section" id="refreshmaster">
+<h3><a class="toc-backref" href="#id7">RefreshMaster</a><a class="headerlink" href="#refreshmaster" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">The RefreshMaster class is instantiated for a document_id which in turn:</p>
+</li>
+<li><p class="first">Creates an necessary meta_data rows (ex. source_indicator) from the
+raw data.</p>
+</li>
+<li><p class="first"><strong>INSERT</strong> a datapoint for each source_datapoint that has a corresponding
+mapping for the location, campaign, and indicator.</p>
+</li>
+<li><p class="first"><strong>UPDATE</strong> datapoints only in the case when that original datapoint was
+the result of another source_datapoint. That is, this method will NOT
+override data that was inserted via the data_entry form (a datapoint that
+has been inserted from the data_entry form will have the
+source_datapoint_id =-1).</p>
+</li>
+<li><dl class="first docutils">
+<dt><strong>DELETE</strong> datapoints for which a mapping has expired.  If the mappings</dt>
+<dd><dl class="first last docutils">
+<dt>that were the result of that document_id</dt>
+<dd><ul class="first last simple">
+<li>so if you load a csv with 10 source_datapoints, map everything,
+then refresh master you should see 10 datapoints.</li>
+<li>if then you delete the mapping for a location in this document that
+has attached to it 2 datapoints, and refreshed master, you would
+then see that the document_id has 8 datapoints instead of 10.</li>
+</ul>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="mapping">
+<h3><a class="toc-backref" href="#id8">Mapping</a><a class="headerlink" href="#mapping" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>The general principal is that, the system creates a source_metadata record
+only when the system has never seen that string before.</li>
+<li>If the source_meta_data_id has been mapped by a user on a previous document
+then the data should flow for that particular meta data item without the user
+having to map that meta data.</li>
+<li>For a document_id, if a source_metadata row is created, or has been created
+from another document_id but not mapped, the user will be prompted to map
+this metadata when visiting the document_review page
+&#8216;&#8217;/source_data/document_review/&lt;document_id&gt;&#8217;&#8216;</li>
+</ul>
+<p>Regarding POLIO-205 - How are we to determine the semantic identities of locations in a complex locational heirarchy.</p>
+<p>Consider the following wikipedia page:</p>
+<p><a class="reference external" href="http://en.wikipedia.org/wiki/Killa_Abdullah_District">http://en.wikipedia.org/wiki/Killa_Abdullah_District</a></p>
+<blockquote>
+<div><em>&#8220;Killa Abdullah or Qilla Abdullah or Abdullah Qilla (Pashto: قلعہ عبد الله‎)&#8221;...</em></div></blockquote>
+<p>In our system we map data from each source, to semantic identites in our system.  For instance, &#8220;# vaccinated&#8221; is the same as &#8220;num vaccinated,&#8221; and &#8220;NG JUN 2014&#8221; is the same as &#8220;Nigeria June 2014.&#8221;</p>
+<dl class="docutils">
+<dt>When ingesting a spreadsheet, here are the rules as to how datapoints are mapped and validated.</dt>
+<dd><ul class="first last simple">
+<li>each souce_datapoint must have a record explicilty mapping the indicator_string, campaign_string and location_code to their respective IDs.</li>
+<li>locations are not Auto mapped on their Name, but rather their location code.</li>
+</ul>
+</dd>
+</dl>
+<p><strong>location Codes</strong></p>
+<p>ed existing sub-districts with this convention so i was able to map a large part of the ODK data using this convention.</p>
+</div>
+<div class="section" id="needs-documentation">
+<h3><a class="toc-backref" href="#id9">Needs Documentation</a><a class="headerlink" href="#needs-documentation" title="Permalink to this headline">¶</a></h3>
+<ul>
+<li><p class="first">Shape File ingestion</p>
+</li>
+<li><dl class="first docutils">
+<dt>transforming data into source_datapoints</dt>
+<dd><p class="first last">-&gt;CSV pivoted
+-&gt;CSV Non Pivoted
+-&gt;ODK</p>
+</dd>
+</dl>
+</li>
+</ul>
+</div>
+<div class="section" id="future-topics-regarding-locations">
+<h3><a class="toc-backref" href="#id10">Future Topics Regarding locations</a><a class="headerlink" href="#future-topics-regarding-locations" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>when boundaries change over time</li>
+<li>outbreak countries and new office_ids</li>
+<li>Storing Health Camp Data</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="aggregation">
+<h2><a class="toc-backref" href="#id11">Aggregation</a><a class="headerlink" href="#aggregation" title="Permalink to this headline">¶</a></h2>
+<p>Datapoints are stored at four levels.  Each represent a database table as well
+as a stage in the cache process.  The data from each step of the aggregation /
+calculation cycle are available to you for debugging missing and incorrect
+information</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">datapoint</span></code> - the level at which raw data is stored</li>
+<li><code class="docutils literal"><span class="pre">agg_datapoint</span></code> - raw data aggregated locationally.</li>
+<li><code class="docutils literal"><span class="pre">datapoint_with_computed</span></code> - both raw and aggregated data stored including
+data for calculated indicators.</li>
+<li><code class="docutils literal"><span class="pre">datapoint_abstracted</span></code> - the aggregated and calculated data stored in a
+format that mimics the response format of the <code class="docutils literal"><span class="pre">api/v1/datapoint</span></code> API.</li>
+</ul>
+<p>The Cache is refresh by instatiating the AggRefresh Object.</p>
+<dl class="docutils">
+<dt>For example:</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rhizome.agg_tasks</span> <span class="kn">import</span> <span class="n">AggRefresh</span>
+
+<span class="c">## refresh the cache with the default behavior</span>
+<span class="n">cr</span> <span class="o">=</span> <span class="n">AggRefresh</span><span class="p">()</span>
+<span class="k">print</span> <span class="n">cr</span><span class="o">.</span><span class="n">status</span>
+
+<span class="o">&gt;&gt;</span> <span class="s">&#39;SUCCESS&#39;</span>
+</pre></div>
+</div>
+</dd>
+<dt>Or In the case where you want to refresh the cache for a list of datapoint_ids:</dt>
+<dd><div class="first last highlight-python"><div class="highlight"><pre><span class="kn">from</span> <span class="nn">rhizome.agg_tasks</span> <span class="kn">import</span> <span class="n">AggRefresh</span>
+<span class="kn">from</span> <span class="nn">rhizome.models.datapoint_models</span> <span class="kn">import</span> <span class="n">DataPoint</span>
+
+<span class="c">## get a List of DataPoint IDs for the location Arghestan ##</span>
+<span class="n">dp_ids</span> <span class="o">=</span> <span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id</span> <span class="o">=</span> <span class="mi">13317</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span><span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="c">## refresh the cache for the datapoint_ids retrieved above ##</span>
+<span class="n">cr</span> <span class="o">=</span> <span class="n">AggRefresh</span><span class="p">(</span><span class="n">datapoint_id_list</span> <span class="o">=</span> <span class="n">dp_ids</span><span class="p">)</span>
+<span class="k">print</span> <span class="n">cr</span><span class="o">.</span><span class="n">status</span>
+
+<span class="o">&gt;&gt;</span> <span class="s">&#39;SUCCESS&#39;</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<div class="section" id="the-cache-refresh-class">
+<h3><a class="toc-backref" href="#id12">The Cache Refresh Class</a><a class="headerlink" href="#the-cache-refresh-class" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div></div></blockquote>
+<p><strong>When the __init__() method is called two subsequent methods are called:</strong></p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">set_up()</span></code> - get all metadata required to refresh cache</li>
+<li><code class="docutils literal"><span class="pre">main()</span></code> - aggregate, calculatd and save new information</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="the-set-up-method">
+<h3><a class="toc-backref" href="#id13">the set_up() method</a><a class="headerlink" href="#the-set-up-method" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div></div></blockquote>
+</div>
+<div class="section" id="the-main-method">
+<h3><a class="toc-backref" href="#id14">the main() method</a><a class="headerlink" href="#the-main-method" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div></div></blockquote>
+</div>
+</div>
+<div class="section" id="permissions">
+<h2><a class="toc-backref" href="#id15">Permissions</a><a class="headerlink" href="#permissions" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>The permissioning system is based mainly on django&#8217;s authentication
+system with an extension using django-gaurdian that allows for object
+level permissions.</li>
+<li>Django has no built in resources for creating &#8220;view&#8221; permissions,
+currently &#8220;view&#8221; permissions are handled by django gaurdian.</li>
+</ul>
+<dl class="docutils">
+<dt>PERMISSIONS SCHEMA</dt>
+<dd><ul class="first last simple">
+<li>auth_permissions</li>
+<li>auth_user</li>
+<li>auth_group</li>
+<li>auth_user_permission</li>
+<li>auth_group_permission</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="qa-calculation-and-aggregation">
+<h2><a class="toc-backref" href="#id16">QA Calculation and Aggregation</a><a class="headerlink" href="#qa-calculation-and-aggregation" title="Permalink to this headline">¶</a></h2>
+<p>Google Doc
+Testing Expected Data</p>
+</div>
+<div class="section" id="reference-sheet">
+<h2><a class="toc-backref" href="#id17">Reference Sheet</a><a class="headerlink" href="#reference-sheet" title="Permalink to this headline">¶</a></h2>
+<p>Here are some terms you should get familiar with when working in this
+application.</p>
+<ul class="simple">
+<li>document_id</li>
+<li>source_datapoint</li>
+<li>datapoint</li>
+<li>location
+locations have a parent, lon / lat, location type
+<strong>uniqueness for location is defined by location_name, location_type, country</strong>
+Prior we had an issue in which two locations with the same name ( HRA Level ) and in our ingestion we collapsed both locations into one, causing locational aggregation to break and display conflicting data.
+We also had an issue in which a location in the same country has the same name but with a different location type ( sokoto settlement vs. sokoto state).
+We will also be storing a location_geo_json table that will hold location_id, geo_json ( as a blob )</li>
+<li>indicator</li>
+<li>campaign</li>
+<li>map</li>
+<li>agg_datapoint</li>
+<li>datapoint_with_computed</li>
+<li>calculated_indicator_component</li>
+<li>etl_job</li>
+<li>audit_table</li>
+</ul>
+<div class="section" id="aggregation-by-location">
+<h3><a class="toc-backref" href="#id18">Aggregation by location</a><a class="headerlink" href="#aggregation-by-location" title="Permalink to this headline">¶</a></h3>
+<p>If you request a location for which there is no data, the system will traverse the
+hierarchy of locations down and aggregate certain data that it finds at those levels by
+adding them together. For example, if you request the &#8220;Number of Missed
+Children&#8221; for Nigeria, but that indicator is not stored in the database for
+Nigeria, the system will iterate over the states that comprise Nigeria and add
+the values it finds for that indicator together. For each state that does not
+have a value, it will check its constituent locations, and so on until it finds a
+location with a value for that indicator or it runs out of sub-locations to check.</p>
+<img alt="back-end/img/geo_agg.png" src="back-end/img/geo_agg.png" />
+<dl class="docutils">
+<dt>Note that the aggregation behavior varies depending on the indicator datatype.</dt>
+<dd><ul class="first last simple">
+<li>Integer type indicators will have data aggregated by location as above.</li>
+<li>Percent type indicators will not be aggregated</li>
+<li>Boolean type indicators for lower level locations, such as districts, will be aggregated as percents when propagated to upper level locations. For example, a province with 5 districts with evening meetings and and 5 without evening meetings, would have a 50% value overall for evening meetings.</li>
+</ul>
+</dd>
+</dl>
+<p>If the value of an indicator was generated by aggregating data from sub-locations,
+the indicator object will have an <code class="docutils literal"><span class="pre">is_agg</span></code> property:</p>
+<div class="highlight-json"><div class="highlight"><pre>...
+location: 23,
+indicators: [{
+  indicator: 1,
+  value: ...
+}, {
+  indicator: 2,
+  value: ...,
+  is_agg: true
+}]
+...
+</pre></div>
+</div>
+<p>In the above example, a value for indicator 1 was found for location 23. No value
+for indicator 2 was found for location 23, so the system calculated that value by
+aggregating the values of it sub-locations.</p>
+<div class="section" id="conflicts-with-sub-locations">
+<h4><a class="toc-backref" href="#id19">Conflicts with Sub-locations</a><a class="headerlink" href="#conflicts-with-sub-locations" title="Permalink to this headline">¶</a></h4>
+<p>If a value is stored for a given location, that is the value returned regardless
+of whether or not the location&#8217;s sub-locations also have values. Because there is
+nothing preventing a value being stored for a location and its sub-locations, it is
+possible that the stored values at differing levels may conflict.</p>
+<img alt="back-end/img/geo_agg_conflict.png" src="back-end/img/geo_agg_conflict.png" />
+<p>In the above example one of the locations has a stored value of 7, and its three
+sub-locations have values of 1, 1, and 3. This could be indicative of an error in
+the data and should be flagged. Regardless of whether this is an error or
+intentional, the value returned for that location (and the value used in
+aggregation for any of its parent locations) is the value stored for the location;
+the values in the sub-locations are ignored except when they are explicitly
+requested.</p>
+</div>
+<div class="section" id="partial-missing-values">
+<h4><a class="toc-backref" href="#id20">Partial Missing Values</a><a class="headerlink" href="#partial-missing-values" title="Permalink to this headline">¶</a></h4>
+<p>When aggregating data geographically, it is possible to calculate the value for
+a location even if not all of its sub-locations have data.</p>
+<img alt="back-end/img/geo_agg_partial.png" src="back-end/img/geo_agg_partial.png" />
+<p>These situations should be flagged so that users are aware of them when they
+occur. It&#8217;s important to know that the value for the country you are seeing is
+actually only representative of some portion of its sub-locations and not the
+entire country.</p>
+</div>
+</div>
+<div class="section" id="aggregation-by-calculation">
+<h3><a class="toc-backref" href="#id21">Aggregation by calculation</a><a class="headerlink" href="#aggregation-by-calculation" title="Permalink to this headline">¶</a></h3>
+<p>Certain indicators are calculated from other indicators. For example, &#8220;total missed children&#8221; is the sum of &#8220;missed due to absence&#8221; and &#8220;missed due to refusal&#8221;. Though &#8220;total missed children&#8221; may not exist in a source submission, an agg task can calculate its value based on its child indicators. Calculated indicators can be generated by designating child indicators in CalculatedIndicatorComponent objects. Calculation types of CalculatedIndicatorComponents include &#8216;PART_TO_BE_SUMMED&#8217; for calculated indicators that are generated as a sum, and &#8216;NUMERATOR&#8217; and &#8216;DENOMINATOR&#8217; CalculatedIndicatorComponents for generating percent indicators. Similarly components can be designated as &#8216;PART_OF_DIFFERENCE&#8217; and &#8216;WHOLE_OF_DIFFERENCE&#8217; for the percentage calculation:</p>
+<blockquote>
+<div><blockquote>
+<div>WHOLE_OF_DIFFERENCE(x)</div></blockquote>
+</div></blockquote>
+<div class="section" id="conflicts-with-calculation-aggregation-and-partial-missing-values">
+<h4><a class="toc-backref" href="#id22">Conflicts with calculation aggregation and partial missing values</a><a class="headerlink" href="#conflicts-with-calculation-aggregation-and-partial-missing-values" title="Permalink to this headline">¶</a></h4>
+<p>Similar to location aggregation, an aggregated indicator value will be overridden if the indicator value has been set explicitly. Also, for calculated indicators that are computed as a sum, if any &#8216;PART_TO_BE_SUMMED&#8217; component is missing a datapoint, the sum skips over this component. For example, if a datapoint value exists for the indicator &#8216;missed due to absence&#8217;, but not for &#8216;missed due to refusal&#8217;, the &#8216;total missed childen&#8217; indicator sum will be the value of &#8216;missed due to absence&#8217;.</p>
+</div>
+<div class="section" id="controlling-aggregation-behavior">
+<h4><a class="toc-backref" href="#id23">Controlling Aggregation Behavior</a><a class="headerlink" href="#controlling-aggregation-behavior" title="Permalink to this headline">¶</a></h4>
+<p>You can control the behavior of the aggregation using the <a href="#id1"><span class="problematic" id="id2">``</span></a>`` parameter.</p>
+<dl class="docutils">
+<dt><code class="docutils literal"><span class="pre">mixed</span></code></dt>
+<dd><p class="first">default</p>
+<p class="last">If the requested location has stored data, use that, otherwise travers the sub-
+locations to aggregate the indicators found there</p>
+</dd>
+<dt><code class="docutils literal"><span class="pre">agg-only</span></code></dt>
+<dd>Only return data aggregated from sub-locations. If the location you requested
+actually has data stored on it, it will be ignored</dd>
+<dt><code class="docutils literal"><span class="pre">no-agg</span></code></dt>
+<dd>Do not travers the sub-locations to aggregate data if the requested location does
+not have a value stored</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

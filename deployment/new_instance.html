@@ -1,0 +1,584 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>New Install &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/>
+        <link rel="up" title="Deployment" href="index.html"/>
+        <link rel="next" title="Pushing Code" href="push_code.html"/>
+        <link rel="prev" title="Deployment" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Deployment</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Deployment</a> &raquo;</li>
+      
+    <li>New Install</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/deployment/new_instance.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="new-install">
+<h1>New Install<a class="headerlink" href="#new-install" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="base-system-packages">
+<h1>Base System Packages<a class="headerlink" href="#base-system-packages" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="basic-linux-packages">
+<h2>Basic Linux Packages<a class="headerlink" href="#basic-linux-packages" title="Permalink to this headline">¶</a></h2>
+<p>unzip &#8211; <cite>sudo apt-get install unzip</cite>
+pip &#8211; <cite>sudo apt-get install python-pip</cite>
+python-dev &#8211; sudo apt-get install python-dev</p>
+<blockquote>
+<div>-&gt; used by pandas installer</div></blockquote>
+<div class="section" id="apache">
+<h3>Apache<a class="headerlink" href="#apache" title="Permalink to this headline">¶</a></h3>
+<ol class="arabic simple">
+<li>ssh into your machine and run:</li>
+</ol>
+<blockquote>
+<div><cite>sudo apt-get install apache2</cite></div></blockquote>
+<p>We will know that this task is complete, by hitting the server URL ( elastic IP for AWS ) in our brower and seeing the apache startup page.</p>
+</div>
+<div class="section" id="postgres">
+<h3>Postgres<a class="headerlink" href="#postgres" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="installing">
+<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
+<p><cite>sudo apt-get update</cite>
+<cite>sudo apt-get install postgresql postgresql-contrib</cite></p>
+<p>you should see something like this:</p>
+<dl class="docutils">
+<dt>Removing obsolete dictionary files:</dt>
+<dd><ul class="first last simple">
+<li>No PostgreSQL clusters exist; see &#8220;man pg_createcluster&#8221;</li>
+</ul>
+</dd>
+</dl>
+<p>Processing triggers for ureadahead (0.100.0-16) ...
+Setting up postgresql-9.3 (9.3.11-0ubuntu0.14.04) ...
+Creating new cluster 9.3/main ...</p>
+<blockquote>
+<div>config /etc/postgresql/9.3/main
+data   /var/lib/postgresql/9.3/main
+locale en_US.UTF-8
+port   5432</div></blockquote>
+<p>Now login to the postgres user with this command:</p>
+<p><cite>sudo -i -u postgres</cite></p>
+<p>then enter the psql shell by running:</p>
+<p><cite>psql postgres</cite></p>
+<p>now you should be able to create datases and roles.</p>
+</div>
+<div class="section" id="adding-additional-linux-helper-packages">
+<h2>Adding additional Linux Helper Packages<a class="headerlink" href="#adding-additional-linux-helper-packages" title="Permalink to this headline">¶</a></h2>
+<p><cite>sudo apt-get install python-psycopg2</cite>
+<cite>sudo apt-get install libpq-dev</cite></p>
+</div>
+<div class="section" id="setting-up-users-and-creating-the-db">
+<h2>Setting up Users and Creating the DB<a class="headerlink" href="#setting-up-users-and-creating-the-db" title="Permalink to this headline">¶</a></h2>
+<p>In the settings.py file that will be used by the application to handle sensitive information, branding and the management of packages, we will have a database host and user cofiguration.  So whatever you decide to call your database here, will be the information that is used by the application to access the Database.</p>
+<ol class="arabic simple">
+<li>Create a User:</li>
+</ol>
+<blockquote>
+<div><p>WHile in the postgres shell run:</p>
+<p><cite>CREATE ROLE djangoapp WITH PASSWORD &#8216;mySecurePassword&#8217; LOGIN SUPERUSER;</cite></p>
+</div></blockquote>
+<p>Make sure your password is secure and uses numbers, letters and special characaters</p>
+<p>after exiting the psql shell with postgres user, Make sure this user was created by logging in like so :</p>
+<p><cite>pql postgres -U djangoapp</cite></p>
+<p>and follow the prompt for password.</p>
+<dl class="docutils">
+<dt>If you see this error:</dt>
+<dd>-&gt; psql: FATAL:  Peer authentication failed for user &#8220;djangoapp&#8221;</dd>
+</dl>
+<p>You likely will have to go to your pg_hba.conf file and make sure  local requests are handled with &#8220;md5&#8221; and NOT peer authentication.</p>
+<p>see more here:
+<a class="reference external" href="http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge">http://stackoverflow.com/questions/18664074/getting-error-peer-authentication-failed-for-user-postgres-when-trying-to-ge</a></p>
+<dl class="docutils">
+<dt>you will want to reload postgres by running:</dt>
+<dd>&#8211;&gt; sudo /etc/init.d/postgresql reload</dd>
+</dl>
+<p>For more on postgres, installing and debugging see here:
+<a class="reference external" href="https://help.ubuntu.com/community/PostgreSQL">https://help.ubuntu.com/community/PostgreSQL</a></p>
+<ol class="arabic simple" start="2">
+<li>Create the database</li>
+</ol>
+<p>CREATE DATABASE afg_eoc WITH OWNER djangoapp;</p>
+<p>now make sure you can login to the database with:</p>
+<p>psql afg_eoc -U djangoapp</p>
+<p>NOTE:
+- the config for postgres is /etc/postgresql/9.3/main
+- the data for postgres is /var/lib/postgresql/9.3/main</p>
+<p>3. create all of the necessary application files and diretories.
+Create App Directory and File System
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</p>
+<p>If you look at fabfile.py at the root of the directory, it relies on a few directories to be in place in order to deploy and serve up the applicaion.</p>
+<p>remote_work_path = &#8216;~/deploy/rhizome-work&#8217;
+remote_backend_path = &#8216;/var/www/apps/rhizome/&#8217;
+remote_frontend_path = &#8216;/var/www/apps/rhizome/webapp/public/static/&#8217;</p>
+<p>Give ownership to the user that deploys your system.. so if your ssh config for the new remote server is</p>
+<p>myUser</p>
+<p>execute on your machine:</p>
+<p><cite>sudo chown -R myUser /var/www/apps/rhizome/</cite></p>
+<p>To make sure that you are able to create and access the above directores.</p>
+<p>Finally create the &#8220;venv&#8221; path which is where we store all of the packages of application.</p>
+<p><cite>mkdir /var/www/apps/rhizome/venv</cite></p>
+<ol class="arabic simple" start="4">
+<li>push up the code using the fabfile.</li>
+</ol>
+<p>If you have the .ssh/config set up like above you can deploy by</p>
+<ol class="arabic simple">
+<li>entering the virtualenv with:</li>
+</ol>
+<blockquote>
+<div>source/venv/bin/activate</div></blockquote>
+<ol class="arabic simple" start="2">
+<li>fab -H mySshConfig deploy</li>
+</ol>
+<p>Check for failiures.. the execution should tell you at the bottom exactly what line failed.. so ssh into the server, run that command and see if you can track down the issue.</p>
+<p>When spinning up a new ubuntu instance nstall the following dependencies:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo apt-get update
+sudo apt-get install apache2 --fix-missing
+sudo apt-get install unzip --fix-missing
+sudo apt-get install python-pip --fix-missing
+sudo apt-get install python-pandas --fix-missing
+sudo apt-get install python-dev
+sudo apt-get install libpq-dev
+sudo apt-get install postgresql-9.3
+sudo apt-get install python-psycopg2
+sudo apt-get install libapache2-mod-wsgi
+sudo apt-get install apache2 apache2 apache2-mpm-prefork apache2-utils libexpat1 ssl-cert
+</pre></div>
+</div>
+<p>To set up the database:</p>
+<div class="highlight-python"><div class="highlight"><pre>CREATE USER djangoapp WITH PASSWORD &#39;somepassword&#39; SUPERUSER LOGIN;
+</pre></div>
+</div>
+<p>Then create the directory for the rhizome django app, and static files:</p>
+<div class="highlight-python"><div class="highlight"><pre>sudo mkdir /var/www/apps/
+sudo mkdir /var/www/apps/rhizome/
+</pre></div>
+</div>
+<p>You&#8217;ll need to configure Apache and WSGI on whatever server you&#8217;re deploying to, and set up a PostgreSQL database for the application first. Make sure that Apache is configured to use the <a class="reference external" href="https://httpd.apache.org/docs/2.4/mpm.html">prefork MPM</a>; the worker and event MPMs result in incorrect responses returned for requests when multiple requests are made to the server.</p>
+<p>For more information on deploying applications, see the <a class="reference external" href="https://docs.djangoproject.com/en/1.8/howto/deployment/wsgi/">Django documentation</a>.</p>
+<p>You will also want to set up apache to server the files in the /static and /media directories.</p>
+</div>
+<div class="section" id="serving-static-files">
+<h2>Serving Static files<a class="headerlink" href="#serving-static-files" title="Permalink to this headline">¶</a></h2>
+<p>The frontend files can be served statically by any webserver. Make sure that
+the <cite>STATIC_URL</cite> setting in the backend&#8217;s <cite>settings.py</cite> is set to wherever you
+deploy the static files. ([Read more about static files in Django.][static-files])</p>
+<p><a class="reference external" href="https://docs.djangoproject.com/en/1.7/howto/static-files/">static-files</a></p>
+<p>We now gather all the files required for the apache server to send out to the users:</p>
+<div class="highlight-python"><div class="highlight"><pre>cd webapp
+npm run package
+</pre></div>
+</div>
+<p>This will create a new file under the dist/ folder <cite>rhizome.zip</cite>. Now we move this file to the server and unzip. into the /var/www/apps/rhizome/ folder. To install all of the required dependencies we run:</p>
+<div class="highlight-python"><div class="highlight"><pre>pip install -r requirements.txt
+
+
+Creating a New Server on AWS UNICEF Account
+-------------------------------------------
+
+  - Go to AWS -- Click &quot;Ec2&quot;
+  - Launch Instance
+      -&gt; Ubuntu Server 14.04 LTS (HVM), SSD Volume Type
+      -&gt; type m4.large
+    click &quot;Configure Instance Details&quot; -- NOT review and launch
+    use the default selected here.. and click add storage
+  - Storage Screen - Select 64-g, only one volumne needed, next click &quot;tag Instance&quot;
+  - Tag Instance * whatever you want *
+  - Configure Security Group
+      -&gt; Choose &quot;Rhizome Prod Secuity Group&quot;
+  - Click &quot;review and launch&quot;
+
+At this point your server should spin up .. now lets set up an Elastic IP
+
+Elastic I.P.
+^^^^^^^^^^^
+
+the point of an elastic I.P. is that you can assign mutliple machines to this address so that if you have to swap out the server, or spin up a new one, and it has a different i.p. you can simply associate the old instance to the elastic IP.
+
+Once the server is &quot;running&quot; * ( see console.aws.amazon.com/ec2  ) go to &quot;elastic IPS&quot;
+  - Allocate New Address -&gt; this creates a publc I.P. that can be used via a domain name router like go datddy or network solutions.
+  - Select the new instance by clicking the check box at the left
+  - click actions &gt;&gt; asscoiate addres
+      - choose the instance that you just created and click &quot;associate&quot;
+  - For conveninve you will want to add the new &quot;public IP&quot; along wiht your ssh information to your ~/.ssh/config
+
+  for instance
+
+Host myServer
+    User john
+    HostName my.ip.adr.01
+    IdentityFile ~/.ssh/some_key.pem
+
+Once that it set up, you should be able to .ssh into the machine simply by running:
+
+ssh myServer
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="push_code.html" class="btn btn-neutral float-right" title="Pushing Code" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Deployment" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

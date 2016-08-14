@@ -1,0 +1,402 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Core Functionality &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/>
+        <link rel="up" title="About" href="index.html"/>
+        <link rel="next" title="Software Stack" href="stack.html"/>
+        <link rel="prev" title="Background" href="background.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">About</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="background.html">Background</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">About</a> &raquo;</li>
+      
+    <li>Core Functionality</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/about/functionality.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="core-functionality">
+<h1>Core Functionality<a class="headerlink" href="#core-functionality" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="uploader">
+<h2>Uploader<a class="headerlink" href="#uploader" title="Permalink to this headline">¶</a></h2>
+<p>The Source Data module allows a user to upload .csv or .xls files to the system and map any meta data necessary to ingest the data in the system.</p>
+<p>After uploading a file, the use can see mapped and un-mapped metadata, as well as the results of the upload.  Each upload can be downloaded by clikcing the &#8220;download raw&#8221; link.</p>
+<p>Each upload has a cooresponding URL that can be shared so that it makes it easy for colleauges to share information without emailing files back and fordth.</p>
+</div>
+<div class="section" id="manage-system">
+<h2>Manage System<a class="headerlink" href="#manage-system" title="Permalink to this headline">¶</a></h2>
+<p>The manage system link represents a basiec CRUD ( Create Read Update Delete ) application around the application&#8217;s core metadata.  A permissioned users can create indicators, campaigns, users, indicator tags as well as create calculations for campaign indicators.</p>
+<p>At this time we do not have the ability to delete metadata itemsin the manage system, but please see the section on the React App enhancements for more on this.  Also, while we can create Campaigns, Indicators, Users, Groups and Tags but we ** Can Not Create Locations <a href="#id1"><span class="problematic" id="id2">**</span></a>.</p>
+</div>
+<div class="section" id="chart-builder">
+<h2>Chart Builder<a class="headerlink" href="#chart-builder" title="Permalink to this headline">¶</a></h2>
+<p>The Chart builder&nbsp;allows a user to explore data at various aggregation levels and save this data to one of a number of Chart Types.  With this fucntionality a user can create maps, tables, and trend charts according to the necessary analysis.</p>
+</div>
+<div class="section" id="dashboard-builder">
+<h2>Dashboard Builder<a class="headerlink" href="#dashboard-builder" title="Permalink to this headline">¶</a></h2>
+<p>The dashbaord builder allows for a user to create a dashboard which is in essence a collection of charts.  A dashbaord is comprised of Rows, and rows are comprised of charts.  When adding a chart to a row, the user can either create a new chart in line in the dashbaord builder itself, or search for and add an existing chart to the dashboard.</p>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="stack.html" class="btn btn-neutral float-right" title="Software Stack" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="background.html" class="btn btn-neutral" title="Background" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Data Model &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/>
+        <link rel="up" title="Backend Documentation" href="index.html"/>
+        <link rel="next" title="Migrations" href="migrations.html"/>
+        <link rel="prev" title="Backend Documentation" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Backend Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">Backend Documentation</a> &raquo;</li>
+      
+    <li>Data Model</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/back-end/data_model.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="data-model">
+<h1>Data Model<a class="headerlink" href="#data-model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="datapoint-models">
+<h2>Datapoint Models<a class="headerlink" href="#datapoint-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="datapoint">
+<h3><code class="docutils literal"><span class="pre">DataPoint</span></code><a class="headerlink" href="#datapoint" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.datapoint_models.DataPoint">
+<em class="property">class </em><code class="descclassname">rhizome.models.datapoint_models.</code><code class="descname">DataPoint</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/datapoint_models.html#DataPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.datapoint_models.DataPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>The core table of the application.  This is where the raw data is stored
+and brought together from data entry, ODK and csv upload.</p>
+<p>Note that this table does not store the aggregated or calculated data, only
+the raw data that we get from the source.</p>
+<p>The source_submission shows the original source of the data in the
+source_submission.  The source_submission is -1 in the case of data
+entry.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="docdatapoint">
+<h3><code class="docutils literal"><span class="pre">DocDataPoint</span></code><a class="headerlink" href="#docdatapoint" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.datapoint_models.DocDataPoint">
+<em class="property">class </em><code class="descclassname">rhizome.models.datapoint_models.</code><code class="descname">DocDataPoint</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/datapoint_models.html#DocDataPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.datapoint_models.DocDataPoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>For Validation of upload rhizome.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="document-models">
+<h2>Document Models<a class="headerlink" href="#document-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="document">
+<h3><code class="docutils literal"><span class="pre">Document</span></code><a class="headerlink" href="#document" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.document_models.Document">
+<em class="property">class </em><code class="descclassname">rhizome.models.document_models.</code><code class="descname">Document</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/document_models.html#Document"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.document_models.Document" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<div class="section" id="document-transform-upload">
+<h4>document.transform_upload()<a class="headerlink" href="#document-transform-upload" title="Permalink to this headline">¶</a></h4>
+<p>This method takes a file and moves the file data into the <code class="docutils literal"><span class="pre">source_submission</span></code> table which stores one row in the table for one row in the CSV.</p>
+<dl class="method">
+<dt id="rhizome.models.document_models.Document.transform_upload">
+<code class="descclassname">Document.</code><code class="descname">transform_upload</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/document_models.html#Document.transform_upload"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.document_models.Document.transform_upload" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="document-refresh-master">
+<h4>document.refresh_master()<a class="headerlink" href="#document-refresh-master" title="Permalink to this headline">¶</a></h4>
+<p>This method takes the data for a document, and takes the source submissions ( rows in a csv ), maps them and syncs them to the DataPoint Table.</p>
+<dl class="method">
+<dt id="rhizome.models.document_models.Document.refresh_master">
+<code class="descclassname">Document.</code><code class="descname">refresh_master</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/document_models.html#Document.refresh_master"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.document_models.Document.refresh_master" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="sourcesubmission">
+<h3><code class="docutils literal"><span class="pre">SourceSubmission</span></code><a class="headerlink" href="#sourcesubmission" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.document_models.SourceSubmission">
+<em class="property">class </em><code class="descclassname">rhizome.models.document_models.</code><code class="descname">SourceSubmission</code><span class="sig-paren">(</span><em>id</em>, <em>document</em>, <em>instance_guid</em>, <em>row_number</em>, <em>data_date</em>, <em>location_code</em>, <em>campaign_code</em>, <em>location_display</em>, <em>submission_json</em>, <em>created_at</em>, <em>process_status</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/document_models.html#SourceSubmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.document_models.SourceSubmission" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="sourceobjectmap">
+<h3><code class="docutils literal"><span class="pre">SourceObjectMap</span></code><a class="headerlink" href="#sourceobjectmap" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.document_models.SourceObjectMap">
+<em class="property">class </em><code class="descclassname">rhizome.models.document_models.</code><code class="descname">SourceObjectMap</code><span class="sig-paren">(</span><em>id</em>, <em>master_object_id</em>, <em>master_object_name</em>, <em>source_object_code</em>, <em>content_type</em>, <em>mapped_by</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/document_models.html#SourceObjectMap"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.document_models.SourceObjectMap" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="indicator-models">
+<h2>Indicator Models<a class="headerlink" href="#indicator-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="indicator">
+<h3><code class="docutils literal"><span class="pre">Indicator</span></code><a class="headerlink" href="#indicator" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.indicator_models.Indicator">
+<em class="property">class </em><code class="descclassname">rhizome.models.indicator_models.</code><code class="descname">Indicator</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/indicator_models.html#Indicator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.indicator_models.Indicator" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>The type of data that we are tracing, for instance</dt>
+<dd><ul class="first last simple">
+<li>Number of children missed due to religious locations</li>
+<li>Number of vaccinators paid on time</li>
+<li>Number of iVDPV cases</li>
+<li>Percentage of children missed due to religious locations.</li>
+</ul>
+</dd>
+</dl>
+<p>Note that both calculated and raw indicators are stored in this table.  For
+more information on how indicicators are used to calculated data for more
+indicators take a look at the CalculatedIndicatorComponent model.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="location-models">
+<h2>Location Models<a class="headerlink" href="#location-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="location">
+<h3><code class="docutils literal"><span class="pre">Location</span></code><a class="headerlink" href="#location" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.location_models.Location">
+<em class="property">class </em><code class="descclassname">rhizome.models.location_models.</code><code class="descname">Location</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/location_models.html#Location"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.location_models.Location" title="Permalink to this definition">¶</a></dt>
+<dd><p>A point in space with a name, location_code, lat/lon, and parent
+location id.  The parent location id is used to create the tree used to
+create aggregate statistics based on the information stored at the leaf
+level.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="locationpolygon">
+<h3><code class="docutils literal"><span class="pre">LocationPolygon</span></code><a class="headerlink" href="#locationpolygon" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.location_models.LocationPolygon">
+<em class="property">class </em><code class="descclassname">rhizome.models.location_models.</code><code class="descname">LocationPolygon</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/location_models.html#LocationPolygon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.location_models.LocationPolygon" title="Permalink to this definition">¶</a></dt>
+<dd><p>A shape file when avaiable for a location.</p>
+</dd></dl>
+
+</div>
+</div>
+<div class="section" id="campaign-models">
+<h2>Campaign Models<a class="headerlink" href="#campaign-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="campaign">
+<h3><code class="docutils literal"><span class="pre">Campaign</span></code><a class="headerlink" href="#campaign" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.campaign_models.Campaign">
+<em class="property">class </em><code class="descclassname">rhizome.models.campaign_models.</code><code class="descname">Campaign</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#Campaign"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.Campaign" title="Permalink to this definition">¶</a></dt>
+<dd><p>A grouping of rhizome.  For polio, for we have a &#8220;campaign type&#8221; of
+&#8220;National Immunization Day&#8221; or &#8220;Mop Up&#8221; which means an immeiate response
+to a case by conncentrated vaccination campaigns in that area.</p>
+<p>The campaign thus allows you to model these two things with the model in
+these two instances:</p>
+<p>1. NID - Happens monthly for the Endemics.  We have a certain type of
+Inticators that we want to collect for this.. see &#8220;Management Dashboard.&#8221;</p>
+<blockquote>
+<div><ul class="simple">
+<li>indicator_list = Management Dashboard Indicators</li>
+<li>top_lvl_location = Afghanistan</li>
+</ul>
+</div></blockquote>
+<ol class="arabic" start="2">
+<li><p class="first">Mop Up - Could happen anywhere where low immunity, for instance Ukraine.</p>
+<blockquote>
+<div><ul class="simple">
+<li>indicator_list = A few select Indicators related to the &#8220;mop up&#8221;</li>
+</ul>
+<p>effort.  These will be different, put potentially overlapping from the
+NID indicator list.
+- top_lvl_location = Ukraine</p>
+</div></blockquote>
+</li>
+</ol>
+<p>For other efforts, this model can be useful.. For Routine Immunization
+one could imagine a similar setup.</p>
+<p>The campaign model has a method called &#8220;get_datapoints&#8221;, which gets the
+relevant raw and aggregated datapoints for a given campaign.  The data
+is aggregated from the date, indicator_list and location in the AggRefresh.</p>
+<p>The indicator_list, is determined by taking the flatened top lvl indicator
+tree that is for the campaign.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.models.campaign_models.Campaign.aggregate_and_calculate">
+<code class="descclassname">Campaign.</code><code class="descname">aggregate_and_calculate</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#Campaign.aggregate_and_calculate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.Campaign.aggregate_and_calculate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calls <code class="docutils literal"><span class="pre">agg_datapoints</span></code> and <code class="docutils literal"><span class="pre">agg_datapoints</span></code> for a particular
+campaign.  Campaign data is taken from the datapoint table and via
+these two methods upserted into the <code class="docutils literal"><span class="pre">DataPointComputed</span></code> model.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.models.campaign_models.Campaign.agg_datapoints">
+<code class="descclassname">Campaign.</code><code class="descname">agg_datapoints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#Campaign.agg_datapoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.Campaign.agg_datapoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>Regional Aggregation based on the adjacency list built on top of the
+parent_location_id column.</p>
+<p>Data stored in the DataPoint table for a location with the same
+indicator, campaign will always override the aggregated values, that is
+if the indicator is an integer ( summing percents and booleans
+regionally doesnt make sense.)</p>
+<p>Here, we create a tuple_dict in which the unique key of (locaiton,
+indicator, campaign) represents the key, and the cooresponding value
+is the value.  This way we add to the dict the aggregated values, then
+iterrate through the raw values, adding or updating the data in the
+tuple dict before bulk inserting the data.</p>
+<p>The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.models.campaign_models.Campaign.calc_datapoints">
+<code class="descclassname">Campaign.</code><code class="descname">calc_datapoints</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#Campaign.calc_datapoints"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.Campaign.calc_datapoints" title="Permalink to this definition">¶</a></dt>
+<dd><p>When the agg_datapoint method runs, it will leave the agg_datapoint table
+in a state that all of the rows that were altered, and need to be cached
+thats is the <code class="docutils literal"><span class="pre">calc_refreshed</span></code> column will = &#8216;f&#8217; for all of the rows
+that this task effected.</p>
+<p>To find out more about how calculation works, take a look at the
+fn_calc_datapoint stored procedures</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="rhizome.models.campaign_models.AggDataPoint">
+<em class="property">class </em><code class="descclassname">rhizome.models.campaign_models.</code><code class="descname">AggDataPoint</code><span class="sig-paren">(</span><em>id</em>, <em>indicator</em>, <em>location</em>, <em>campaign</em>, <em>value</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#AggDataPoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.AggDataPoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="rhizome.models.campaign_models.DataPointComputed">
+<em class="property">class </em><code class="descclassname">rhizome.models.campaign_models.</code><code class="descname">DataPointComputed</code><span class="sig-paren">(</span><em>id</em>, <em>value</em>, <em>indicator</em>, <em>location</em>, <em>campaign</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/campaign_models.html#DataPointComputed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.campaign_models.DataPointComputed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+</div>
+<div class="section" id="dashboard-models">
+<h2>Dashboard Models<a class="headerlink" href="#dashboard-models" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="custom-chart">
+<h3><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code><a class="headerlink" href="#custom-chart" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.dashboard_models.CustomChart">
+<em class="property">class </em><code class="descclassname">rhizome.models.dashboard_models.</code><code class="descname">CustomChart</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/dashboard_models.html#CustomChart"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.dashboard_models.CustomChart" title="Permalink to this definition">¶</a></dt>
+<dd><p>A table containing a configuration used by the front end to construct a
+chart for a particular set of data.  Charts, have titles and UUIDs, as well
+as a <code class="docutils literal"><span class="pre">chart_json</span></code> field in which the chart configuration is stored.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="custom-dashboard">
+<h3><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code><a class="headerlink" href="#custom-dashboard" title="Permalink to this headline">¶</a></h3>
+<dl class="class">
+<dt id="rhizome.models.dashboard_models.CustomDashboard">
+<em class="property">class </em><code class="descclassname">rhizome.models.dashboard_models.</code><code class="descname">CustomDashboard</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/models/dashboard_models.html#CustomDashboard"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.models.dashboard_models.CustomDashboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>A table containing all of the custom dashboards in the system.  The data
+in teh dashboard_json field is how the FE is able to draw and render the
+specific vizulaizations.  If inserted via POST the application will
+validate the json, but if you insert directly in the table it will not.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="migrations.html" class="btn btn-neutral float-right" title="Migrations" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="Backend Documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

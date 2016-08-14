@@ -1,0 +1,674 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Base Methods &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../index.html"/>
+        <link rel="up" title="API" href="index.html"/>
+        <link rel="next" title="DataPoint API" href="datapoint_api.html"/>
+        <link rel="prev" title="API" href="index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">API</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="index.html">API</a> &raquo;</li>
+      
+    <li>Base Methods</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/api/base_resources.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="base-methods">
+<h1>Base Methods<a class="headerlink" href="#base-methods" title="Permalink to this headline">¶</a></h1>
+<p>We use the <a class="reference external" href="https://django-tastypie.readthedocs.io/en/latest/">Tastypie</a>. package as a baseline for our API, and have modeled our API around the idea of Model Resource, and Non Model Resources.</p>
+<p>Model Resources provide basic CRUD functionality for our models.  This means that the format that you use to POST, GET, or DELETE from one resource will be for the most part the same as any other.</p>
+<p>Non Model Resources are in essence API calls that trigger the application to do something in the background.  For instance, we call have a NonModelResource that triggers an aggregation refresh for a particular campaign.</p>
+<p>Both the Model and the Non Model Resource have a number of options that you can put on the Meta class for instance to say which parameters are needed for at GET or a POST method.  This means that the resources themselves are very lightweight, and that the majority of the logic and code that we have for the API is written in the BaseResources.</p>
+<p>The Tastpie package is great for getting started on a CRUD api, but there is alot that happens in the background that makes debugging really difficult, so what we have done is overriden all of the methods that are executed when a request comes in so that we have control and insight into what happens when a request is happening.</p>
+<img alt="../_images/api_inheritence.png" src="../_images/api_inheritence.png" />
+<div class="section" id="baseresource">
+<h2>BaseResource<a class="headerlink" href="#baseresource" title="Permalink to this headline">¶</a></h2>
+<p>The BaseResource inherits from the <a class="reference external" href="https://github.com/django-tastypie/django-tastypie/blob/master/tastypie/resources.py">Tastypie Resource Class</a>.` and in this method we do two things.</p>
+<ol class="arabic simple">
+<li>Override the Dispatch method, which controls what happens when a request of any kind comes in.</li>
+<li>Create a method called validate_filters, which makes sure that a GET request has the correct parameters.</li>
+</ol>
+<dl class="method">
+<dt id="rhizome.api.resources.base_resource.BaseResource.dispatch">
+<code class="descclassname">BaseResource.</code><code class="descname">dispatch</code><span class="sig-paren">(</span><em>request_type</em>, <em>request</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_resource.html#BaseResource.dispatch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_resource.BaseResource.dispatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Overrides Tastypie and calls <cite>get_list</cite> for GET, <cite>obj_create</cite> for POST,
+an <cite>obj_delete</cite> for DELETE, <cite>obj_update</cite> for PATCH and
+<cite>get_detail</cite> when fetching an object when a primary key is requested
+(i.e. GET /&lt;my_resource&gt;/pk).</p>
+<p>This method also gets the top_level_location_id for a user which
+will allow later on for the API to filter the locations that they
+can see based on what has been set for them in the user admin scren.</p>
+<p>This location filtering is not used right now, but all of the ground
+work has been put into place for a developer to set up regional,
+provincial or country level access for specific users.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.api.resources.base_resource.BaseResource.validate_filters">
+<code class="descclassname">BaseResource.</code><code class="descname">validate_filters</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_resource.html#BaseResource.validate_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_resource.BaseResource.validate_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>For a GET request, make sure that all required filters have been passed
+and throw an exceptin if there are any filters missing.</p>
+<p>In order to control which parameters are requried in a GET request,
+simply add the <cite>GET_params_required</cite> attribute to the Meta class of
+a given resource.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="basenonmodelresource">
+<h2>BaseNonModelResource<a class="headerlink" href="#basenonmodelresource" title="Permalink to this headline">¶</a></h2>
+<p>This class is all about using the API to trigger the backend to do something.</p>
+<p>This isn&#8217;t something you would use, but rather something you might hit from cron, in order to process some data on a schedule.</p>
+<p>There is only one method here that matters and it is <cite>pre_process_data</cite>.  If you want to create an api resource that does something in the backend, you can simply extend this class, then override the method below to do whatever you want.</p>
+<p>After running this method, the api will return whatever is in the <cite>queryset</cite> atttribute of the meta class.</p>
+<dl class="class">
+<dt id="rhizome.api.resources.base_non_model.BaseNonModelResource">
+<em class="property">class </em><code class="descclassname">rhizome.api.resources.base_non_model.</code><code class="descname">BaseNonModelResource</code><span class="sig-paren">(</span><em>api_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_non_model.html#BaseNonModelResource"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_non_model.BaseNonModelResource" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class only accepts GET requests, which are reouted through the
+<cite>get_list</cite> method.</p>
+<p>The get list mehtod first checks to see if the class that is being executed
+has a method called <cite>pre_process_data</cite>.  If it does have that method, then,
+it executes it.</p>
+<p>After the method is executed, it returns a set of objects that come back
+from the <cite>get_object_list</cite> method.</p>
+<p>This resource class is used for data manipulation and unlike the
+BaseModelResource is not meant to be a fully functioning CRUD interface.</p>
+<p>So, if you want to create a resource in which you need to manipulate some
+data then return it to the application, override the <cite>pre_process_data</cite>
+method, do what you need to do, then return the results, or whatever you
+need to via <cite>get_object_list</cite>.</p>
+</dd></dl>
+
+<p>As an example, check out what happens when we hit the <cite>transform_upload</cite> api for a particular document</p>
+<dl class="method">
+<dt id="rhizome.api.resources.doc_trans_form.DocTransFormResource.pre_process_data">
+<code class="descclassname">DocTransFormResource.</code><code class="descname">pre_process_data</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/doc_trans_form.html#DocTransFormResource.pre_process_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.doc_trans_form.DocTransFormResource.pre_process_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>## when you upload a file, step one is getting data into source_submission</dt>
+<dd><cite>document.doc_transform()</cite></dd>
+<dt>## Step two is translating form source_submission into datapoints</dt>
+<dd><cite>document.refresh_master()</cite></dd>
+<dt>## step three, if the file is of type <cite>campaign</cite>, is aggregation</dt>
+<dd>for each campaign in the document <cite>campaign.aggregate_and_calculate()</cite></dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="basemodelresource">
+<h2>BaseModelResource<a class="headerlink" href="#basemodelresource" title="Permalink to this headline">¶</a></h2>
+<p>The BaseModelResource offers a full CRUD interface for the resources that extend it.  The idea is that, with very lttle work you can create an interface for a django model by setting a few attributes in the Meta class.</p>
+<dl class="docutils">
+<dt>In order to set up a model resource, you must at most set up two attributes in the meta class</dt>
+<dd><ul class="first last simple">
+<li><strong>resource_name</strong> : This is the namespace that we access when we interface with a resource, i.e. /api/v1/&lt;resource_name&gt;</li>
+<li><strong>object_class</strong> : This refers to the Model that you want to interface with.  All of the CRUD applications for a resource will be executed against this model.</li>
+</ul>
+</dd>
+</dl>
+<div class="section" id="get-by-pk">
+<h3>GET (by PK)<a class="headerlink" href="#get-by-pk" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-python"><div class="highlight"><pre>GET : /api/v1/campaign/1/
+</pre></div>
+</div>
+<p>returns to us a single object.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+  <span class="n">campaign_type_id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">created_at</span><span class="p">:</span> <span class="s">&quot;2016-05-04T02:31:29.227679&quot;</span><span class="p">,</span>
+  <span class="n">end_date</span><span class="p">:</span> <span class="s">&quot;2016-02-29&quot;</span><span class="p">,</span>
+  <span class="nb">id</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="n">name</span><span class="p">:</span> <span class="s">&quot;February 2016 - SNID - OPV &quot;</span><span class="p">,</span>
+  <span class="n">start_date</span><span class="p">:</span> <span class="s">&quot;2016-02-02&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>A GET request in which a primary key is passed is routed via the <code class="docutils literal"><span class="pre">dispatch</span></code> method to the <code class="docutils literal"><span class="pre">obj_get</span></code> method.</p>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_get">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_get</code><span class="sig-paren">(</span><em>bundle</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes optional <code class="docutils literal"><span class="pre">kwargs</span></code>, which are used to narrow the query to find
+the instance.</p>
+<p>Currently used to find one object from the url api/v1/resource/&lt;pk&gt;/</p>
+<p>Try to find an object using the pk, if the resource is not found,
+or more than one object is found, throw an error, then throw an erro</p>
+</dd></dl>
+
+</div>
+<div class="section" id="get-with-query-filters">
+<h3>GET (with query filters)<a class="headerlink" href="#get-with-query-filters" title="Permalink to this headline">¶</a></h3>
+<p>A get requests can be used to access an object via primary key, but it is also possible to send query filters and get in the response the objects that match.</p>
+<p>For instance a query like:</p>
+<div class="highlight-python"><div class="highlight"><pre>GET : /api/v1/indicator/
+PARAMS: {name&quot;Polio Cases&quot;}
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre>GET: /api/v1/indicator/
+PARAMS: {id__gt: 130}
+</pre></div>
+</div>
+<p>Filters the indicator resource in accordance to the filters passed.</p>
+<p>These filters are based directly off of the <a class="reference external" href="https://docs.djangoproject.com/en/1.10/ref/models/querysets/#field-lookups">Django ORM Filters</a>.`.</p>
+<p>This is a bit of an over simplification of what happens when we filter, but it should give a good idea of how we take advantage of the djano ORM to return relevant data to the application.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">query_filters</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span>
+<span class="n">model_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_class</span>
+<span class="n">fields_to_return</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_meta</span><span class="o">.</span><span class="n">object_class</span>
+
+<span class="n">queryset</span> <span class="o">=</span> <span class="n">model_class</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">query_filters</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">(</span><span class="n">fields_to_return</span><span class="p">)</span>
+<span class="c"># queryset = Location.objects.filter({name:&#39;NYC&#39;}).values([&#39;id&#39;,&#39;name&#39;,&#39;parent_location__name&#39;])</span>
+<span class="k">return</span> <span class="n">queryset</span>
+</pre></div>
+</div>
+<p>this type of filtering is handled via the <code class="docutils literal"><span class="pre">obj_get_list</span></code> method</p>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_get_list">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_get_list</code><span class="sig-paren">(</span><em>bundle</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_get_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_get_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the filters from the request</p>
+<p>Query the database using the get_object_list method</p>
+<p>Use the <code class="docutils literal"><span class="pre">query_fields</span></code> meta atribtue to tell the database what fields we want</p>
+<p>Use the cleaned filters from the request to filter the relevant object.s</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.apply_filters">
+<code class="descclassname">BaseModelResource.</code><code class="descname">apply_filters</code><span class="sig-paren">(</span><em>request</em>, <em>applicable_filters</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.apply_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.apply_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>An ORM-specific implementation of <code class="docutils literal"><span class="pre">apply_filters</span></code>.
+The default simply applies the <code class="docutils literal"><span class="pre">applicable_filters</span></code> as <code class="docutils literal"><span class="pre">**kwargs</span></code>,
+but should make it possible to do more advanced things.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.get_object_list">
+<code class="descclassname">BaseModelResource.</code><code class="descname">get_object_list</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.get_object_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.get_object_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Take the query fields from the <code class="docutils literal"><span class="pre">request</span></code> and return the relevant
+objects.  By setting up the query fields using the Django join
+syntax, we can access related models, for instance, if we are searching
+a <cite>blog</cite> table, which has an author_id in it, we can use the
+query_fields atribute to get the authors name, by adding</p>
+<p>query_fields = [&#8216;title&#8217;, &#8216;author__name&#8217;]`` to the meta class.</p>
+<p>That way, we can use the functionality of the ORM to keep our code
+simple even when we need for the database to execute one or more joins.</p>
+</dd></dl>
+
+<p><strong>Note</strong>:  Django queryset are <cite>lazy</cite> which means that we can pass them around and alter them with the <code class="docutils literal"><span class="pre">filter</span></code> syntax, see <cite>here &lt;https://docs.djangoproject.com/en/1.10/topics/db/queries/#querysets-are-lazy&gt;`_</cite></p>
+</div>
+<div class="section" id="post">
+<h3>POST<a class="headerlink" href="#post" title="Permalink to this headline">¶</a></h3>
+<p>Certain models have non nullable fields, which means that you need to set up the <cite>required_fields_for_post</cite> parameter in the meta class, so that if the API does not receive this in the request, it can formulate a sensible error message, as opposed to returning the integrity error message from the database.</p>
+<p>The POST requests are handled in the <code class="docutils literal"><span class="pre">obj_create</span></code> method and while you have the freedom to override this ( see api/v1/document ) to handle a particular use case, the obj_create uses the Meta attributes defined in the resource to validate and Create objects.</p>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_create">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_create</code><span class="sig-paren">(</span><em>bundle</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ORM-specific implementation of <code class="docutils literal"><span class="pre">obj_create</span></code>.</p>
+<p>This also handles updates ( PUT ) requests by looking if the
+request has the ID in there, and if so, updating the resorce with the
+relevant data items.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="patch">
+<h3>PATCH<a class="headerlink" href="#patch" title="Permalink to this headline">¶</a></h3>
+<p>When updating a resource, submit a PATCH request with the fields you want to update as parameters.</p>
+<div class="highlight-python"><div class="highlight"><pre>PATCH /api/v1/indicator/123/
+PARAMS {&#39;name&#39;: &#39;a new name for indicator 123&#39;}
+</pre></div>
+</div>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_update">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_update</code><span class="sig-paren">(</span><em>bundle</em>, <em>skip_errors=False</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_update"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get an object ID via the <a href="#id1"><span class="problematic" id="id2">``</span></a>obj_get``method</p>
+<p>Query the database using the object_class specified.</p>
+<p>Update the object in the database].</p>
+</dd></dl>
+
+</div>
+<div class="section" id="delete">
+<h3>DELETE<a class="headerlink" href="#delete" title="Permalink to this headline">¶</a></h3>
+<p>The API allows for traditional REST deletion protocol</p>
+<div class="highlight-python"><div class="highlight"><pre>DELETE /api/v1/custom_chart/123/
+</pre></div>
+</div>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_delete">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_delete</code><span class="sig-paren">(</span><em>bundle</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_delete" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ORM-specific implementation of <code class="docutils literal"><span class="pre">obj_delete</span></code>.</p>
+<p>Get an object ID via the <a href="#id3"><span class="problematic" id="id4">``</span></a>obj_get``method</p>
+<p>Delete the object from the database using the django ORM</p>
+<p>Note &#8211; the only place currenlty we <code class="docutils literal"><span class="pre">DELETE</span></code> is with charts and
+dashbaords.  For other resources, for example indicators, we will need
+to be delete any data associated to that ID via a foreign key data.</p>
+<p>That means, that if you want to delete an indicator, you will have to
+override this method in the IndicatorResource and make sure that
+all foreign keys are deleted as well.</p>
+<p>It would alsobe a good idea to check here to see if the user is a
+superuser before executing that type of query.</p>
+</dd></dl>
+
+<p>We can also delete by using query parameters but only by using the ID. This is because we have some legacy code ( in manage system when we delete <code class="docutils literal"><span class="pre">calculated_indicator_compoents</span></code> and <code class="docutils literal"><span class="pre">indicator_to_tag</span></code> relations ) that deletes w</p>
+<p>Moving forward, please use the <code class="docutils literal"><span class="pre">DELETE</span> <span class="pre">/api/v1/resource/&lt;pk&gt;/</span></code> request format in deleteing resources.</p>
+<p>Note, if you try to delete a list of objects with the <code class="docutils literal"><span class="pre">obj_delete_list</span></code> method, you will get an error saying that you</p>
+<p>It is reasonable however to want to delete a list of resources all at once with a particular query filter, for instance you want to delete all tags from an indicator.  If so, then the <code class="docutils literal"><span class="pre">obj_delete_list</span></code> method is where that would happen.</p>
+<div class="highlight-python"><div class="highlight"><pre>DELETE /api/v1/custom_chart/?id=123
+</pre></div>
+</div>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.obj_delete_list">
+<code class="descclassname">BaseModelResource.</code><code class="descname">obj_delete_list</code><span class="sig-paren">(</span><em>bundle</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.obj_delete_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.obj_delete_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>A ORM-specific implementation of <code class="docutils literal"><span class="pre">obj_delete_list</span></code>.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="get-schema">
+<h3>GET Schema<a class="headerlink" href="#get-schema" title="Permalink to this headline">¶</a></h3>
+<p>Since we override Tastypie&#8217;s model resource In order to get the schema</p>
+<p>For instance</p>
+<div class="highlight-python"><div class="highlight"><pre>/api/v1/indicator/schema
+</pre></div>
+</div>
+<p>will return to you the information needed about each field of the resource as well as which methods can be applied</p>
+<p>For more information on this, research <a class="reference external" href="http://django-tastypie.readthedocs.io/en/latest/interacting.html#inspecting-the-resource-s-schema">Inspecting the Resource Schema</a>.`</p>
+</div>
+<div class="section" id="get-locations-from-url">
+<h3>Get Locations From URL<a class="headerlink" href="#get-locations-from-url" title="Permalink to this headline">¶</a></h3>
+<p>The most important model used in the Base Model Resource is the <code class="docutils literal"><span class="pre">get_locations_to_return_from_url</span></code> method.</p>
+<p>There are four main resources for which this method applies:</p>
+<blockquote>
+<div><ul class="simple">
+<li>/api/v1/location</li>
+<li>/api/v1/geo</li>
+<li>/api/v1/date_datapoint</li>
+<li>/api/v1/campaign_datapoint</li>
+</ul>
+</div></blockquote>
+<p>These API methods all need to get locations in some way and thus all use this method to take particular query parameters in order to return the appropriate locations to the application.</p>
+<p>The following parameters are available and filter locations as described.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">location_id__in</span></code> : If this parameter is passed, then these are the exact locations that will be received in the response.  This type of filter is sent when you now that you want a specific list of location with no aggregation.</li>
+<li><code class="docutils literal"><span class="pre">location_id</span></code> &amp;  <code class="docutils literal"><span class="pre">location_type</span></code> : This means that you want all of the locations of a particular type, underneath the location given.  So for instance, if you wanted to say, <cite>show me all districts in Afghanistan</cite> you would use these two parameters.</li>
+<li><code class="docutils literal"><span class="pre">location_id</span></code> &amp;  <code class="docutils literal"><span class="pre">location_depth</span></code> : This means that you want data underneath a particular location, at a particular level of depth.</li>
+</ul>
+<p>If you pass <code class="docutils literal"><span class="pre">location_id=&lt;Afghanistan&gt;&amp;location_depth=0</span></code> that will give you Afghanistan only, but <code class="docutils literal"><span class="pre">location_id=&lt;Afghanistan&gt;&amp;location_depth=1</span></code> will give you the direct children ( Regions ) of Afghanistan and <code class="docutils literal"><span class="pre">location_id=&lt;Afghanistan&gt;&amp;location_depth=2</span></code> will give you the grandchildren ( provinces ).  This is used in the &#8220;drill down&#8221; functionality so that if for instance you are looking at a map of a particular Indicator at Afghanistan level and the data is rendering for the Regions, when you drill down to a particular region, using this filter, the application will return the Provinces underneath the region you select. The custom chart functionality relies heavily on the location_depth parameter which gives sensible charts at all location levels</p>
+<p>In addition to the functionality above which is used widely throughout the application, we also allow for an additional filter of locations based on particular indicator values.  This could be used for instance, to filter a list of locations to those that are not under government control.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">filter_indicator</span></code> &amp;&amp; <code class="docutils literal"><span class="pre">filter_value</span></code></li>
+</ul>
+<p>for more on this, take a look at: <code class="docutils literal"><span class="pre">get_locations_from_filter_param</span></code></p>
+<dl class="method">
+<dt id="rhizome.api.resources.base_model.BaseModelResource.get_locations_to_return_from_url">
+<code class="descclassname">BaseModelResource.</code><code class="descname">get_locations_to_return_from_url</code><span class="sig-paren">(</span><em>request</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rhizome/api/resources/base_model.html#BaseModelResource.get_locations_to_return_from_url"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#rhizome.api.resources.base_model.BaseModelResource.get_locations_to_return_from_url" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method is used in both the /geo and /datapoint endpoints.  Based
+on the values parsed from the URL parameters find the locations needed
+to fulfill the request based on the four rules below.</p>
+<p>If location_id__in requested.. we return exactly those ids
+for instance if you were doing data entry for 5 specific districts
+you would use the location_id__in param to fetch just those ids</p>
+<p>TO DO &#8211; Check Location Permission so that the user can only see
+What they are permissioned to.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="datapoint_api.html" class="btn btn-neutral float-right" title="DataPoint API" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="API" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

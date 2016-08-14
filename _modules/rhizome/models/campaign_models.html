@@ -1,0 +1,822 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>rhizome.models.campaign_models &mdash; rhizome  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="rhizome  documentation" href="../../../index.html"/>
+        <link rel="up" title="Module code" href="../../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../../../index.html" class="icon icon-home"> rhizome
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../about/index.html">About</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../about/background.html">Background</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../about/functionality.html">Core Functionality</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/functionality.html#uploader">Uploader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/functionality.html#manage-system">Manage System</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/functionality.html#chart-builder">Chart Builder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/functionality.html#dashboard-builder">Dashboard Builder</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../about/stack.html">Software Stack</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/stack.html#overview">Overview</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/stack.html#deployment-environment">Deployment Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/stack.html#development-environment">Development Environment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../about/stack.html#testing-and-continuous-integration">Testing and Continuous Integration</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../back-end/index.html">Backend Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../back-end/data_model.html">Data Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#datapoint-models">Datapoint Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#datapoint"><code class="docutils literal"><span class="pre">DataPoint</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#docdatapoint"><code class="docutils literal"><span class="pre">DocDataPoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#document-models">Document Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#document"><code class="docutils literal"><span class="pre">Document</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#sourcesubmission"><code class="docutils literal"><span class="pre">SourceSubmission</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#sourceobjectmap"><code class="docutils literal"><span class="pre">SourceObjectMap</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#indicator-models">Indicator Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#indicator"><code class="docutils literal"><span class="pre">Indicator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#location-models">Location Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#location"><code class="docutils literal"><span class="pre">Location</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#locationpolygon"><code class="docutils literal"><span class="pre">LocationPolygon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#campaign-models">Campaign Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#campaign"><code class="docutils literal"><span class="pre">Campaign</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/data_model.html#dashboard-models">Dashboard Models</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#custom-chart"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Chart</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../back-end/data_model.html#custom-dashboard"><code class="docutils literal"><span class="pre">Custom</span> <span class="pre">Dashboard</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../back-end/migrations.html">Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../back-end/build_docs.html">Creating the Documentation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/build_docs.html#building-back-end-documentation">Building back-end documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../back-end/build_docs.html#building-front-end-documentation">Building front-end documentation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../front-end/index.html">Front End Documentation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../front-end/source_data.html">Source Data ( Technical )</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../front-end/manage_system.html">Manage System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../front-end/react_app.html">React App</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../testing/index.html">Unit Tests</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing/back_end.html">Backend Testing</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../testing/back_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../testing/back_end.html#writing-tests">Writing Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../testing/back_end.html#module-rhizome.tests">Backend Test Source Code</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../testing/front_end.html">Front End</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../testing/front_end.html#running-tests">Running Tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../testing/front_end.html#writing-tests">Writing Tests</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../testing/front_end.html#dont-s">Dont&#8217;s:</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../deployment/index.html">Deployment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../deployment/new_instance.html">New Install</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../deployment/new_instance.html#base-system-packages">Base System Packages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/new_instance.html#basic-linux-packages">Basic Linux Packages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../deployment/new_instance.html#apache">Apache</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../deployment/new_instance.html#postgres">Postgres</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/new_instance.html#installing">Installing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/new_instance.html#adding-additional-linux-helper-packages">Adding additional Linux Helper Packages</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/new_instance.html#setting-up-users-and-creating-the-db">Setting up Users and Creating the DB</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/new_instance.html#serving-static-files">Serving Static files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../deployment/push_code.html">Pushing Code</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/push_code.html#deploying">Deploying</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/push_code.html#releasing-to-master">Releasing to Master</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../deployment/restore_backup_db.html">Restoring and backing up a database</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/restore_backup_db.html#copying-a-database-from-prod-to-your-local">Copying a database from prod to your local</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../deployment/restore_backup_db.html#backup-db-script">backup db script</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../user-guide/index.html">User Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/uploader.html">CSV / Excel File Uploader</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user-guide/uploader.html#uploading-data">Uploading Data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user-guide/uploader.html#requirements-for-uploading-documents">Requirements for Uploading Documents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user-guide/uploader.html#procedure-for-uploading-documents">Procedure for Uploading Documents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/manage_system.html">Manage System</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../user-guide/manage_system.html#indicators">Indicators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../user-guide/manage_system.html#adding-tags">Adding Tags</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../user-guide/manage_system.html#adding-calculations">Adding Calculations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/chart_builder.html">Chart Builder User Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../user-guide/dashboard_builder.html">Dashboard Builder User Guide</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/base_resources.html">Base Methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/base_resources.html#baseresource">BaseResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/base_resources.html#basenonmodelresource">BaseNonModelResource</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/base_resources.html#basemodelresource">BaseModelResource</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#get-by-pk">GET (by PK)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#get-with-query-filters">GET (with query filters)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#post">POST</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#patch">PATCH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#delete">DELETE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#get-schema">GET Schema</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/base_resources.html#get-locations-from-url">Get Locations From URL</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/datapoint_api.html">DataPoint API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/datapoint_api.html#api-v1-date-datapoint"><code class="docutils literal"><span class="pre">/api/v1/date_datapoint/</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/datapoint_api.html#api-v1-campaign-datapoint"><code class="docutils literal"><span class="pre">/api/v1/campaign_datapoint/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/datapoint_api.html#response-format">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/meta_resource_list.html">Core Application Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-all-meta"><code class="docutils literal"><span class="pre">/api/v1/all_meta/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#response-format">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-geo"><code class="docutils literal"><span class="pre">/api/v1/geo/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id1">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-campaign"><code class="docutils literal"><span class="pre">/api/v1/campaign/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id2">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-custom-chart"><code class="docutils literal"><span class="pre">/api/v1/custom_chart/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id3">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-custom-dashboard"><code class="docutils literal"><span class="pre">/api/v1/custom_dashboard/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id4">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-location"><code class="docutils literal"><span class="pre">/api/v1/location/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id5">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-refresh-master"><code class="docutils literal"><span class="pre">/api/v1/refresh_master/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id6">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-source-doc"><code class="docutils literal"><span class="pre">/api/v1/source_doc/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id7">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-source-submission"><code class="docutils literal"><span class="pre">/api/v1/source_submission/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id8">Response Format</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../../../api/meta_resource_list.html#api-v1-transform-upload"><code class="docutils literal"><span class="pre">/api/v1/transform_upload/</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../api/meta_resource_list.html#id9">Response Format</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/debugging.html">Debugging the API</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../../index.html">rhizome</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+      
+    <li>rhizome.models.campaign_models</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <h1>Source code for rhizome.models.campaign_models</h1><div class="highlight"><pre>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span><span class="p">,</span> <span class="n">notnull</span><span class="p">,</span> <span class="n">concat</span>
+
+<span class="kn">from</span> <span class="nn">rhizome.models.indicator_models</span> <span class="kn">import</span> <span class="n">CalculatedIndicatorComponent</span>
+<span class="kn">from</span> <span class="nn">rhizome.models.location_models</span> <span class="kn">import</span> <span class="n">Location</span><span class="p">,</span> <span class="n">LocationTree</span>
+<span class="kn">from</span> <span class="nn">rhizome.models.indicator_models</span> <span class="kn">import</span> <span class="n">Indicator</span>
+
+<span class="k">class</span> <span class="nc">CampaignType</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Each campaign must have a campaign_type_id.</span>
+
+<span class="sd">    LPD ( low performing district )</span>
+<span class="sd">    SNID ( Sub National Immunization Day )</span>
+<span class="sd">    NID ( National Immunization Day )</span>
+<span class="sd">    Mop Up ( Damage control after a case is found )</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">55</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__unicode__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">unicode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s">&#39;campaign_type&#39;</span>
+
+
+<div class="viewcode-block" id="Campaign"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.Campaign">[docs]</a><span class="k">class</span> <span class="nc">Campaign</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A grouping of rhizome.  For polio, for we have a &quot;campaign type&quot; of</span>
+<span class="sd">    &quot;National Immunization Day&quot; or &quot;Mop Up&quot; which means an immeiate response</span>
+<span class="sd">    to a case by conncentrated vaccination campaigns in that area.</span>
+
+<span class="sd">    The campaign thus allows you to model these two things with the model in</span>
+<span class="sd">    these two instances:</span>
+
+<span class="sd">    1. NID - Happens monthly for the Endemics.  We have a certain type of</span>
+<span class="sd">    Inticators that we want to collect for this.. see &quot;Management Dashboard.&quot;</span>
+
+<span class="sd">        - indicator_list = Management Dashboard Indicators</span>
+<span class="sd">        - top_lvl_location = Afghanistan</span>
+
+<span class="sd">    2. Mop Up - Could happen anywhere where low immunity, for instance Ukraine.</span>
+
+<span class="sd">        - indicator_list = A few select Indicators related to the &quot;mop up&quot;</span>
+<span class="sd">        effort.  These will be different, put potentially overlapping from the</span>
+<span class="sd">        NID indicator list.</span>
+<span class="sd">        - top_lvl_location = Ukraine</span>
+
+<span class="sd">    For other efforts, this model can be useful.. For Routine Immunization</span>
+<span class="sd">    one could imagine a similar setup.</span>
+
+<span class="sd">    The campaign model has a method called &quot;get_datapoints&quot;, which gets the</span>
+<span class="sd">    relevant raw and aggregated datapoints for a given campaign.  The data</span>
+<span class="sd">    is aggregated from the date, indicator_list and location in the AggRefresh.</span>
+
+<span class="sd">    The indicator_list, is determined by taking the flatened top lvl indicator</span>
+<span class="sd">    tree that is for the campaign.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)</span>
+    <span class="n">campaign_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">CampaignType</span><span class="p">)</span>
+    <span class="n">start_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">end_date</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">created_at</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateTimeField</span><span class="p">(</span><span class="n">auto_now</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s">&#39;campaign&#39;</span>
+        <span class="n">ordering</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;-start_date&#39;</span><span class="p">,)</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;campaign_type&#39;</span><span class="p">,</span> <span class="s">&#39;start_date&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Campaign.aggregate_and_calculate"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.Campaign.aggregate_and_calculate">[docs]</a>    <span class="k">def</span> <span class="nf">aggregate_and_calculate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Calls ``agg_datapoints`` and ``agg_datapoints`` for a particular</span>
+<span class="sd">        campaign.  Campaign data is taken from the datapoint table and via</span>
+<span class="sd">        these two methods upserted into the ``DataPointComputed`` model.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;value&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">agg_datapoints</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc_datapoints</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="Campaign.agg_datapoints"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.Campaign.agg_datapoints">[docs]</a>    <span class="k">def</span> <span class="nf">agg_datapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Regional Aggregation based on the adjacency list built on top of the</span>
+<span class="sd">        parent_location_id column.</span>
+
+<span class="sd">        Data stored in the DataPoint table for a location with the same</span>
+<span class="sd">        indicator, campaign will always override the aggregated values, that is</span>
+<span class="sd">        if the indicator is an integer ( summing percents and booleans</span>
+<span class="sd">        regionally doesnt make sense.)</span>
+
+<span class="sd">        Here, we create a tuple_dict in which the unique key of (locaiton,</span>
+<span class="sd">        indicator, campaign) represents the key, and the cooresponding value</span>
+<span class="sd">        is the value.  This way we add to the dict the aggregated values, then</span>
+<span class="sd">        iterrate through the raw values, adding or updating the data in the</span>
+<span class="sd">        tuple dict before bulk inserting the data.</span>
+
+<span class="sd">        The tuple looks like:  {(1, 201, 164): 12, (2, 101, 168): .24}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="kn">from</span> <span class="nn">rhizome.models.datapoint_models</span> <span class="kn">import</span> <span class="n">DataPoint</span>
+
+        <span class="n">agg_dp_batch</span><span class="p">,</span> <span class="n">tuple_dict</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">{}</span>
+        <span class="n">location_tree_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span> <span class="s">&#39;lvl&#39;</span><span class="p">]</span>
+
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">DataPoint</span><span class="o">.</span><span class="n">objects</span>
+                   <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+
+        <span class="c"># NaN to None</span>
+        <span class="n">no_nan_dp_df</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">notnull</span><span class="p">(</span><span class="n">dp_df</span><span class="p">)),</span> <span class="bp">None</span><span class="p">)</span>
+
+        <span class="c"># find the location ids who&#39;s parent&#39;s i need to query for</span>
+        <span class="n">location_id_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">dp_df</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+
+        <span class="c"># represents the location heirarchy as a cache from the location table</span>
+        <span class="n">location_tree_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">LocationTree</span><span class="o">.</span><span class="n">objects</span>
+          <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">location_id__in</span><span class="o">=</span><span class="n">location_id_list</span><span class="p">)</span>
+          <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="n">location_tree_columns</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="n">location_tree_columns</span><span class="p">)</span>
+
+        <span class="c"># join the location tree to the datapoints</span>
+        <span class="n">joined_location_df</span> <span class="o">=</span> <span class="n">no_nan_dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">location_tree_df</span><span class="p">)</span>
+
+        <span class="c"># filter the joined dataframe so that we aggregate at the highest</span>
+        <span class="c"># level for which there is stored data.  If we do not do this, then</span>
+        <span class="c"># if we ingest both, district and province level data, the national</span>
+        <span class="c"># will be double the value that it should be.</span>
+
+        <span class="c"># Make sure that the level is not zero, that is that we don&#39;t</span>
+        <span class="c"># include a row here for the location itself.  Without this filter in</span>
+        <span class="c"># the below operation, we wouldn&#39;t aggregate anything all.</span>
+
+        <span class="n">max_location_lvl_for_indicator_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span>\
+            <span class="n">joined_location_df</span><span class="p">[</span><span class="n">joined_location_df</span><span class="p">[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>\
+          <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;indicator_id&#39;</span><span class="p">])[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>  <span class="c"># highest lvl per indicator</span>
+        <span class="n">max_location_lvl_for_indicator_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+        <span class="n">integer_indicators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Indicator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_format</span><span class="o">=</span><span class="s">&#39;int&#39;</span><span class="p">,</span>
+            <span class="n">id__in</span><span class="o">=</span><span class="n">max_location_lvl_for_indicator_df</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+        <span class="n">boolean_indicators</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Indicator</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">data_format</span><span class="o">=</span><span class="s">&#39;bool&#39;</span><span class="p">,</span>
+            <span class="n">id__in</span><span class="o">=</span><span class="n">max_location_lvl_for_indicator_df</span><span class="p">[</span><span class="s">&#39;indicator_id&#39;</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;id&#39;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="bp">True</span><span class="p">))</span>
+
+
+        <span class="c">## filter df to keep the data for the highest level per indicator ##</span>
+        <span class="c">## meaning, if there is data at both the district and provicne level ##</span>
+        <span class="c">## this line ensures that the country does not take the sum of BOTH</span>
+        <span class="c">## the district and Proivince</span>
+
+        <span class="n">prepped_df</span> <span class="o">=</span> <span class="n">joined_location_df</span>
+        <span class="c"># prepped_df = joined_location_df\</span>
+        <span class="c">#     .merge(max_location_lvl_for_indicator_df\</span>
+        <span class="c">#     , on=[&#39;indicator_id&#39;, &#39;lvl&#39;])</span>
+
+        <span class="c">## FIXME -- need to bring this functioinality back in order to handle</span>
+        <span class="c">## the above.  The idea is that higher level admin data should override</span>
+        <span class="c">## lower level.  This is an edge case and there is no data currently</span>
+        <span class="c">## on production for which this case applies.</span>
+
+
+
+        <span class="n">prepped_df</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">prepped_df</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c">## group by parent_location_id and take the sum ##</span>
+        <span class="n">grouped_df_sum</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">prepped_df</span>
+           <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+        <span class="n">grouped_df_mean</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">prepped_df</span>
+            <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;parent_location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">])[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">grouped_df_sum</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c"># only aggregate integers ( not boolean or pct )</span>
+            <span class="k">if</span> <span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">integer_indicators</span><span class="p">:</span>
+                <span class="n">tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">grouped_df_mean</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c"># get the avg for boolean indicators</span>
+            <span class="k">if</span> <span class="n">ix</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">in</span> <span class="n">boolean_indicators</span><span class="p">:</span>
+                <span class="n">tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c"># now add the raw data to the dict ( overriding agregate if exists )</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">dp</span> <span class="ow">in</span> <span class="n">no_nan_dp_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="ow">and</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s">&#39;NaN&#39;</span><span class="p">:</span>
+                <span class="c"># dont override null value from parent if sum exists for</span>
+                <span class="c"># children</span>
+                <span class="n">tuple_dict</span><span class="p">[(</span><span class="n">dp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+            <span class="k">if</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="c"># pandas treats NaN as zero it seems so do this explicity</span>
+                <span class="n">tuple_dict</span><span class="p">[(</span><span class="n">dp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">dp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)]</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c">## now prep the batch for the bulk insert ##</span>
+        <span class="k">for</span> <span class="n">dp_unique_key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+            <span class="n">dp_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">((</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_id&#39;</span><span class="p">),</span> <span class="n">dp_unique_key</span><span class="p">))</span>
+
+            <span class="n">dp_dict</span><span class="p">[</span><span class="s">&#39;campaign_id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+            <span class="n">dp_dict</span><span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+
+            <span class="n">agg_dp_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">AggDataPoint</span><span class="p">(</span><span class="o">**</span><span class="n">dp_dict</span><span class="p">))</span>
+
+        <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="n">agg_dp_batch</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Campaign.calc_datapoints"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.Campaign.calc_datapoints">[docs]</a>    <span class="k">def</span> <span class="nf">calc_datapoints</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        When the agg_datapoint method runs, it will leave the agg_datapoint table</span>
+<span class="sd">        in a state that all of the rows that were altered, and need to be cached</span>
+<span class="sd">        thats is the ``calc_refreshed`` column will = &#39;f&#39; for all of the rows</span>
+<span class="sd">        that this task effected.</span>
+
+<span class="sd">        To find out more about how calculation works, take a look at the</span>
+<span class="sd">        fn_calc_datapoint stored procedures</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c"># the order of these calculations defines their priority, meaning</span>
+        <span class="c"># since raw data is the last calculation, this will override all else</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sum_of_parts</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_over_whole</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">part_of_difference</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">raw_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsert_computed</span><span class="p">()</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</div>
+    <span class="k">def</span> <span class="nf">build_calc_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_list</span><span class="p">):</span>
+
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">CalculatedIndicatorComponent</span><span class="o">.</span><span class="n">objects</span>
+                                 <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">calculation__in</span><span class="o">=</span><span class="n">calc_list</span><span class="p">)</span>
+                                 <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> \
+            <span class="s">&#39;indicator_component_id&#39;</span><span class="p">,</span> <span class="s">&#39;calculation&#39;</span><span class="p">)),</span> \
+            <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_component_id&#39;</span><span class="p">,</span> <span class="s">&#39;calc&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">calc_df</span>
+
+    <span class="k">def</span> <span class="nf">build_dp_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indicator_id_list</span><span class="p">):</span>
+
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+                            <span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">indicator_id__in</span><span class="o">=</span><span class="n">indicator_id_list</span>
+                           <span class="o">.</span><span class="n">unique</span><span class="p">(),</span> <span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+                   <span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)),</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dp_df</span>
+
+    <span class="k">def</span> <span class="nf">join_dp_to_calc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c">## join the above two dataframes in order to determine ##</span>
+        <span class="c">## which indicators require which caluclations ##</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="n">dp_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span>
+            <span class="n">calc_df</span><span class="p">,</span> <span class="n">left_on</span><span class="o">=</span><span class="s">&#39;indicator_id&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">dp_df_with_calc</span>
+
+    <span class="k">def</span> <span class="nf">build_recursive_sum_calc_df</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">initial_calc_df</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        TO DO -- handle test_recursive_sum test case</span>
+<span class="sd">        This only handles one level of recursion.. i.e. the following calc will</span>
+<span class="sd">        roll up properly.</span>
+
+<span class="sd">        &quot;odk missed due to refusal&quot; &gt;&gt; &quot;odk missed total&quot;</span>
+
+<span class="sd">        but this one below.. will not:</span>
+
+<span class="sd">        &quot;odk missed due to refusal -- male&quot; &gt;&gt; &quot;odk missed due to refusal&quot; &gt;&gt;</span>
+<span class="sd">        &quot;odk missed total&quot;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">lvl_1_calc_df</span> <span class="o">=</span> <span class="n">initial_calc_df</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">initial_calc_df</span><span class="p">,</span>
+          <span class="n">left_on</span><span class="o">=</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">)</span>
+
+        <span class="n">lvl_1_df</span> <span class="o">=</span> <span class="n">lvl_1_calc_df</span><span class="p">[[</span><span class="s">&#39;calc_indicator_id_y&#39;</span><span class="p">,</span>
+                                  <span class="s">&#39;indicator_component_id_x&#39;</span><span class="p">]]</span>
+
+        <span class="n">lvl_1_df</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;calc_indicator_id&#39;</span><span class="p">,</span> <span class="s">&#39;indicator_component_id&#39;</span><span class="p">]</span>
+
+        <span class="n">lvl_1_df</span><span class="p">[</span><span class="s">&#39;calc&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&#39;PART_TO_BE_SUMMED&#39;</span>
+        <span class="n">lvl_1_df</span><span class="p">[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">initial_calc_df</span><span class="p">[</span><span class="s">&#39;lvl&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="n">final_df</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">initial_calc_df</span><span class="p">,</span> <span class="n">lvl_1_df</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">final_df</span>
+
+    <span class="k">def</span> <span class="nf">raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Add the raw indicator data to the tuple dict.  This happens last so</span>
+<span class="sd">        the raw indicator data will always override the calculated.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">for</span> <span class="n">adp</span> <span class="ow">in</span> <span class="n">AggDataPoint</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">):</span>
+
+            <span class="n">adp_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">adp</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">adp</span><span class="o">.</span><span class="n">indicator_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">adp_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">adp</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">sum_of_parts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        For more info on this see:</span>
+<span class="sd">        https://github.com/unicef/rhizome/blob/master/docs/spec.rst#aggregation-and-calculation</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c">## get the indicator_ids we need to make the calculation ##</span>
+        <span class="n">initial_calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">([</span><span class="s">&#39;PART_TO_BE_SUMMED&#39;</span><span class="p">])</span>
+
+        <span class="c">## handle recursive calculations ( see spec.rst link above ) ##</span>
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_recursive_sum_calc_df</span><span class="p">(</span><span class="n">initial_calc_df</span><span class="p">)</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">)</span>
+
+        <span class="c">## take the sum of all of the component indicators ##</span>
+        <span class="n">grouped_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">)</span>
+                       <span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>
+                       <span class="p">[</span><span class="s">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">grouped_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">def</span> <span class="nf">part_over_whole</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        This calculation is dependent on the &quot;sum_of_parts&quot; calculation, so in</span>
+<span class="sd">        addition to the datapoint_df, we need to get the newly computed</span>
+<span class="sd">        datapoints from the previous calculation ( dependent_calculation_dp_df )</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">([</span><span class="s">&#39;NUMERATOR&#39;</span><span class="p">,</span> <span class="s">&#39;DENOMINATOR&#39;</span><span class="p">])</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+
+        <span class="c">## now get a dataframe (dependent_calculation_dp_df) that represents ##</span>
+        <span class="c">## the newly calculated data.  This is necessary because the ##</span>
+        <span class="c">## denominator for the part/whole calculation is often a SUM ##</span>
+
+        <span class="n">dwc_list_of_list</span> <span class="o">=</span> <span class="p">[[</span><span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">k</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">()]</span>
+        <span class="n">dependent_calculation_dp_df</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">dwc_list_of_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">dp_columns</span><span class="p">)</span>
+        <span class="n">unioned_dp_df</span> <span class="o">=</span> <span class="n">concat</span><span class="p">([</span><span class="n">dp_df</span><span class="p">,</span> <span class="n">dependent_calculation_dp_df</span><span class="p">])</span>
+
+        <span class="c"># add the calculation metadata to the df</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">unioned_dp_df</span><span class="p">)</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">prepped_for_calc_df</span> <span class="o">=</span> <span class="n">dp_df_with_calc</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">,</span>
+                                <span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>
+
+        <span class="c"># iterate through the dataframe, perform the calculation and add</span>
+        <span class="c"># to the dwc_tuple_dict.  ( this could use some clean up )</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">prepped_for_calc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_x</span> <span class="o">==</span> <span class="s">&#39;NUMERATOR&#39;</span> \
+                    <span class="ow">and</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_y</span> <span class="o">==</span> <span class="s">&#39;DENOMINATOR&#39;</span><span class="p">:</span>
+
+                <span class="n">row_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_indicator_id</span><span class="p">)</span>
+
+                <span class="c">## this one line is where the calculation happens ##</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span> <span class="o">/</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value_y</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">row_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_value</span>
+
+    <span class="k">def</span> <span class="nf">part_of_difference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        (x - y) / x</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">calc_list</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;WHOLE_OF_DIFFERENCE&#39;</span><span class="p">,</span> <span class="s">&#39;PART_OF_DIFFERENCE&#39;</span><span class="p">]</span>
+
+        <span class="c">## get the indicator_ids we need to make the calculation ##</span>
+        <span class="n">calc_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_calc_df</span><span class="p">(</span><span class="n">calc_list</span><span class="p">)</span>
+
+        <span class="c">## get the datapoints for the above indicator_ids and join with dps ##</span>
+        <span class="n">dp_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_dp_df</span><span class="p">(</span><span class="n">calc_df</span><span class="p">[</span><span class="s">&#39;indicator_component_id&#39;</span><span class="p">])</span>
+        <span class="n">dp_df_with_calc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">join_dp_to_calc</span><span class="p">(</span><span class="n">calc_df</span><span class="p">,</span> <span class="n">dp_df</span><span class="p">)</span>
+
+        <span class="c">## now join the above dataframe on itself to set up the calculation ##</span>
+        <span class="n">prepped_for_calc_df</span> <span class="o">=</span> <span class="n">dp_df_with_calc</span>\
+            <span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">dp_df_with_calc</span><span class="p">,</span><span class="n">on</span><span class="o">=</span><span class="p">[</span><span class="s">&#39;location_id&#39;</span><span class="p">,</span> <span class="s">&#39;calc_indicator_id&#39;</span><span class="p">])</span>
+
+        <span class="c"># iterrate through the dataframe above, determine the calculated value</span>
+        <span class="c"># and finally, create the tuple dict calue for the - calculated data</span>
+        <span class="k">for</span> <span class="n">ix</span><span class="p">,</span> <span class="n">row_data</span> <span class="ow">in</span> <span class="n">prepped_for_calc_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_x</span> <span class="o">==</span> <span class="s">&#39;WHOLE_OF_DIFFERENCE&#39;</span> \
+                    <span class="ow">and</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_y</span> <span class="o">==</span> <span class="s">&#39;PART_OF_DIFFERENCE&#39;</span><span class="p">:</span>
+
+                <span class="n">row_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">location_id</span><span class="p">,</span> <span class="n">row_data</span><span class="o">.</span><span class="n">calc_indicator_id</span><span class="p">)</span>
+
+                <span class="c">## this one line is where the calculation happens ##</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="p">(</span><span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span> <span class="o">-</span> <span class="n">row_data</span><span class="o">.</span><span class="n">value_y</span><span class="p">)</span> <span class="o">/</span> \
+                        <span class="n">row_data</span><span class="o">.</span><span class="n">value_x</span>
+                <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                    <span class="n">calculated_value</span> <span class="o">=</span> <span class="mi">0</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="p">[</span><span class="n">row_tuple</span><span class="p">]</span> <span class="o">=</span> <span class="n">calculated_value</span>
+
+    <span class="k">def</span> <span class="nf">upsert_computed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Using the tuple dict that defined the unique key and associated value</span>
+<span class="sd">        for the various calculations, prepare this bulk insert, delete the</span>
+<span class="sd">        existing campaign data then perform the bulk insert.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">for</span> <span class="n">uq_tuple</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dwc_tuple_dict</span><span class="o">.</span><span class="n">iteritems</span><span class="p">():</span>
+
+            <span class="n">dwc_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">&#39;location_id&#39;</span><span class="p">:</span> <span class="n">uq_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                        <span class="s">&#39;indicator_id&#39;</span><span class="p">:</span> <span class="n">uq_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                        <span class="s">&#39;campaign_id&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+                        <span class="s">&#39;value&#39;</span><span class="p">:</span> <span class="n">val</span>
+                    <span class="p">}</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">DataPointComputed</span><span class="p">(</span><span class="o">**</span><span class="n">dwc_dict</span><span class="p">))</span>
+        <span class="n">DataPointComputed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">campaign_id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+        <span class="n">DataPointComputed</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">bulk_create</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dwc_batch</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="DataPointComputed"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.DataPointComputed">[docs]</a><span class="k">class</span> <span class="nc">DataPointComputed</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">value</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FloatField</span><span class="p">()</span>
+    <span class="n">indicator</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Indicator</span><span class="p">)</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Location</span><span class="p">)</span>
+    <span class="n">campaign</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Campaign</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s">&#39;datapoint_with_computed&#39;</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;location&#39;</span><span class="p">,</span> <span class="s">&#39;campaign&#39;</span><span class="p">,</span> <span class="s">&#39;indicator&#39;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AggDataPoint"><a class="viewcode-back" href="../../../back-end/data_model.html#rhizome.models.campaign_models.AggDataPoint">[docs]</a><span class="k">class</span> <span class="nc">AggDataPoint</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">indicator</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Indicator</span><span class="p">)</span>
+    <span class="n">location</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Location</span><span class="p">)</span>
+    <span class="n">campaign</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Campaign</span><span class="p">)</span>
+    <span class="n">value</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FloatField</span><span class="p">()</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">db_table</span> <span class="o">=</span> <span class="s">&#39;agg_datapoint&#39;</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;location&#39;</span><span class="p">,</span> <span class="s">&#39;campaign&#39;</span><span class="p">,</span> <span class="s">&#39;indicator&#39;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
