@@ -14,6 +14,7 @@ Rhizome Documentation
    back-end/index
    front-end/index
    testing/index
+   deployment/index
    user-guide/index
    api/index
 
@@ -42,6 +43,13 @@ Testing
 - :doc:`testing/back_end`
 - :doc:`testing/front_end`
 - :doc:`testing/test_plan`
+
+Deployment
+----------
+- :doc:`api/push_code`
+- :doc:`api/new_instance`
+- :doc:`api/restore_backup_db`
+
 
 User Guide
 ----------

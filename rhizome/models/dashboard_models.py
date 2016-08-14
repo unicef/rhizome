@@ -4,6 +4,9 @@ from jsonfield import JSONField
 
 class CustomChart(models.Model):
     '''
+    A table containing a configuration used by the front end to construct a
+    chart for a particular set of data.  Charts, have titles and UUIDs, as well
+    as a ``chart_json`` field in which the chart configuration is stored.
     '''
 
     uuid = models.CharField(max_length=255, unique=True)
