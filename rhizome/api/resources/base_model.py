@@ -451,8 +451,8 @@ class BaseModelResource(ModelResource, BaseResource):
             # 1,2,3 based on their priority in the eradication initiative.
             indicator_to_filter = request.GET['filter_indicator']
             value_to_filter = request.GET['filter_value']
-
-            location_ids = self.get_locations_from_filter_param(location_ids,
+            if indicator_to_filter:
+                location_ids = self.get_locations_from_filter_param(location_ids,
                                         indicator_to_filter, value_to_filter)
 
         except KeyError:
