@@ -386,7 +386,12 @@ class BaseModelResource(ModelResource, BaseResource):
         self.location_id = request.GET.get('location_id', None)
         self.location_id_list = request.GET.get('location_id__in', None)
         self.location_type = request.GET.get('location_type', None)
-        self.location_depth = int(request.GET.get('location_depth', 0))
+
+        location_depth = request.GET.get('location_depth', 0)
+        if not location_depth:
+                location_depth = 0
+        self.location_depth = int(location_depth)
+
 
         if self.location_id_list:
             location_ids = self.location_id_list.split(',')
