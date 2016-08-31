@@ -236,6 +236,8 @@ class DateDatapointResource(BaseModelResource):
 
         else:
             loc_tree_df_columns = ['parent_location_id','location_id']
+            if not self.location_depth:
+                self.location_depth = 0
             self.location_ids = LocationTree.objects.filter(
                 parent_location_id = self.location_id,
                 lvl = self.location_depth
