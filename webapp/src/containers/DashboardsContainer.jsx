@@ -2,6 +2,7 @@ import _ from 'lodash'
 import React from 'react'
 import Reflux from 'reflux'
 
+import RootStore from 'stores/RootStore'
 import DashboardStore from 'stores/DashboardStore'
 import DashboardActions from 'actions/DashboardActions'
 
@@ -9,6 +10,7 @@ export default React.createClass({
 
   mixins: [
     Reflux.connect(DashboardStore, 'dashboards'),
+    Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 
   deleteDashboard (id) {
@@ -23,6 +25,11 @@ export default React.createClass({
     if (_.isNull(dashboards)) {
       rows = <tr><td><i className='fa fa-spinner fa-spin'></i> Loading&hellip;</td></tr>
     } else if (dashboards.length > 0) {
+      const delete_link = (
+        <a onClick={() => this.deleteDashboard(dashboard.id) }>
+          <i className='fa fa-trash'></i> Delete
+        </a>
+      )
       rows = dashboards.map(dashboard => {
         return (
           <tr>
@@ -30,9 +37,7 @@ export default React.createClass({
               <a href={'/dashboards/' + dashboard.id + '/'}>{dashboard.title} </a>
             </td>
             <td>
-              <a onClick={() => this.deleteDashboard(dashboard.id) }>
-                <i className='fa fa-trash'></i> Delete
-              </a>
+              { this.state.superuser ? delete_link : null }
             </td>
           </tr>
         )

@@ -5,12 +5,14 @@ import React from 'react'
 import Reflux from 'reflux'
 
 import ChartActions from 'actions/ChartActions'
+import RootStore from 'stores/RootStore'
 import ChartStore from 'stores/ChartStore'
 
 var ChartsContainer = React.createClass({
 
   mixins: [
-    Reflux.connect(ChartStore, 'charts')
+    Reflux.connect(ChartStore, 'charts'),
+    Reflux.connectFilter(RootStore, 'superuser', store => store.superuser)
   ],
 
   getInitialState () {
@@ -68,6 +70,16 @@ var ChartsContainer = React.createClass({
     } else if (this.state.charts.list.length > 0) {
       const order = this.state.sort_desc ? 'desc' : 'asc'
       const chart_list = orderBy(this.state.charts.list, this.state.sort_column, order)
+      const actions_cell = (
+        <td>
+          <a onClick={() => this.duplicateChart(chart)}>
+            <i className='fa fa-clone'></i> Duplicate
+          </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <a onClick={() => this.deleteChart(chart.id) }>
+            <i className='fa fa-trash'></i> Delete
+          </a>
+        </td>
+      )
       rows = chart_list.map(chart => {
         return (
           <tr>
@@ -78,14 +90,7 @@ var ChartsContainer = React.createClass({
             <td>{chart.chart_json.type}</td>
             <td>{chart.chart_json.start_date}</td>
             <td>{chart.chart_json.end_date}</td>
-            <td>
-              <a onClick={() => this.duplicateChart(chart)}>
-                <i className='fa fa-clone'></i> Duplicate
-              </a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <a onClick={() => this.deleteChart(chart.id) }>
-                <i className='fa fa-trash'></i> Delete
-              </a>
-            </td>
+            { this.state.superuser ? actions_cell : null }
           </tr>
         )
       })
