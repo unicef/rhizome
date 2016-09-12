@@ -16,6 +16,9 @@ class MapChart extends HighChart {
         min: 0,
         minColor: '#FFFFFF'
       },
+      legend: {
+        enabled: false
+      },
       mapNavigation: {
         enabled: false,
         enableTouchZoom: false,
@@ -47,8 +50,10 @@ class MapChart extends HighChart {
     if (!integerWithBounds) {
       this.config.colorAxis = {
         dataClasses: this.getDataClasses(current_indicator, palette),
+        labels: false
       }
       this.config.legend = {
+        enabled: false,
         layout: 'vertical',
         align: 'right',
         itemStyle: {
