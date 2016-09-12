@@ -50,7 +50,7 @@ class LocationMultiSelect extends Component {
               items={this.getAvailableLocations() || []}
               sendValue={this.props.selectLocation}
               item_plural_name='Locations'
-              style='icon-button right pad-right'
+              style='button icon-button right pad-right'
               icon='fa-plus'
               searchable
             />
