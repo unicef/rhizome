@@ -135,7 +135,7 @@ const MultiChartControls = React.createClass({
         depth_options.splice(1, 1) // Hide region option if BubbleMap since no Geo Data exists for regions
       }
       const toggleAggregation = () => chart.location_depth >= 0 ? props.setLocationDepth(-1) : props.setLocationDepth(0)
-      location_depth_selector = depth_titles && chart.groupBy !== 'location' ? (
+      location_depth_selector = (
         <div className='medium-12 columns radio-group'>
           <h3>Aggregation
             <SwitchButton
@@ -158,7 +158,7 @@ const MultiChartControls = React.createClass({
             ) : <br/>
           }
         </div>
-      ) : null
+      )
     }
 
     const location_selector = (
