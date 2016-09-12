@@ -71,6 +71,7 @@ class HighChart extends Component {
       ...this.config,
       chart: {
         ...chartConfig,
+        className: 'overflow-hidden',
         renderTo: this.refs.chart.getDOMNode()
       }
     })

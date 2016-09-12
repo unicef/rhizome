@@ -70,7 +70,7 @@ class ColumnChart extends HighChart {
               separator: false
             }],
             x: -65,
-            y: -30,
+            y: -15,
             theme: {
               style: {
                 color: '#039',

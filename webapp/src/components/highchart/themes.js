@@ -17,7 +17,7 @@ export default {
           symbol: null,
           text: 'Export',
           x: -20,
-          y: -30,
+          y: -15,
           theme: {
             style: {
               color: '#039',

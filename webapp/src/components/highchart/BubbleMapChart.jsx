@@ -16,7 +16,7 @@ class BubbleMap extends HighChart {
             text: 'Labels',
             onclick: this._toggleLabels,
             x: -65,
-            y: -30,
+            y: -15,
             theme: {
               style: {
                 color: '#039',
