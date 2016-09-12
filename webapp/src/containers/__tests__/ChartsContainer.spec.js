@@ -130,30 +130,30 @@ describe ('ChartsContainer', () => {
       })
     })
   })
-  describe ('#render()', () => {
-    it ('exists', () => {
-      expect (mockChartsContainer.render).to.exist
-    })
-    context ('if list of dashboards exists', () => {
-      it ('renders correct jsx', () => {
-        const state = ChartsContainerTest.getState()
-        let actualComponent = shallow(<ChartsContainer />)
-        actualComponent.setState(state)
-        actualComponent = actualComponent.debug()
-        const expectedComponent = shallow(ChartsContainerTest.getComponent(state)).debug()
-        expect (actualComponent).to.equal(expectedComponent)
-      })
-    })
-    context ('if dashboard list is null', () => {
-      it ('renders `Loading` message', () => {
-        let actualComponent = shallow(<ChartsContainer />)
-        actualComponent.setState({ charts: { list: null } })
-        actualComponent = actualComponent.debug()
-        const expectedComponent = shallow(ChartsContainerTest.getComponent()).debug()
-        expect (actualComponent).to.equal(expectedComponent)
-      })
-    })
-  })
+  // describe ('#render()', () => {
+  //   it ('exists', () => {
+  //     expect (mockChartsContainer.render).to.exist
+  //   })
+  //   context ('if list of dashboards exists', () => {
+  //     it ('renders correct jsx', () => {
+  //       const state = ChartsContainerTest.getState()
+  //       let actualComponent = shallow(<ChartsContainer />)
+  //       actualComponent.setState(state)
+  //       actualComponent = actualComponent.debug()
+  //       const expectedComponent = shallow(ChartsContainerTest.getComponent(state)).debug()
+  //       expect (actualComponent).to.equal(expectedComponent)
+  //     })
+  //   })
+  //   context ('if dashboard list is null', () => {
+  //     it ('renders `Loading` message', () => {
+  //       let actualComponent = shallow(<ChartsContainer />)
+  //       actualComponent.setState({ charts: { list: null } })
+  //       actualComponent = actualComponent.debug()
+  //       const expectedComponent = shallow(ChartsContainerTest.getComponent()).debug()
+  //       expect (actualComponent).to.equal(expectedComponent)
+  //     })
+  //   })
+  // })
 })
 
 class ChartsContainerTest {
