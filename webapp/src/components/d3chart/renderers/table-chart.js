@@ -148,7 +148,7 @@ class TableChartRenderer {
       .call(d3.svg.axis().scale(this.yScale).orient('left').outerTickSize(0))
     this.svg.selectAll('.y.axis text')
       .style('font-size', this.options.fontSize + 2)
-      .on('click', (d, i) => this.options.onRowClick(d, i, this))
+      .on('click', (d, i) => this.onSetSort('y', i))
   }
 
   // // Z AXIS
@@ -164,7 +164,7 @@ class TableChartRenderer {
         .outerTickSize(0))
     this.svg.selectAll('.z.axis text')
       .style('font-size', this.options.fontSize)
-      .on('click', (d, i) => this.options.onRowClick(this.options.parent_location_map[d].parent_location_name, i, this))
+      .on('click', (d, i) => this.onSetSort('z', i))
   }
 
   // FOOTER
@@ -269,6 +269,14 @@ class TableChartRenderer {
     if (this.sortCol) {
       let sortValue = _.partial(this.getSortValue.bind(this), _, this.sortCol)
       var domain = _(data).sortBy(sortValue, this).map(options.seriesName).value()
+      if (this.sortCol === 'y') {
+        domain = domain.sort()
+      } else if (this.sortCol === 'z') {
+        domain = _.sortBy(data, location => {
+          const parent_location = options.locations_index[location.parent_location_id]
+          return parent_location.name
+        }).map(options.seriesName)
+      }
     } else {
       // if not, show default.  This also applies to the third click of a header
       domain = options.default_sort_order
