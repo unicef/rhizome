@@ -28,9 +28,10 @@ const _prepDatapointsQuery = (params) => {
     group_by_time: params.group_by_time,
     filter_indicator: params.indicator_filter ? params.indicator_filter.type : null,
     filter_value: params.indicator_filter ? params.indicator_filter.value : null,
-    location_type: params.type === 'TableChart' ? 'District' : null
+    location_type: null
   }
-  if (params.type === 'RawData' && params.group_by_time !== 'year') {
+  const needs_aggregated_data = params.type === 'TableChart' && params.location_depth <= 0
+  if ((params.type === 'RawData' || needs_aggregated_data) && params.group_by_time !== 'year') {
     query.start_date = params.start_date
     query.end_date = params.end_date
     query.location_id__in = params.location_ids.join()
