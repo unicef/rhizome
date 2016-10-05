@@ -22,9 +22,14 @@ class TableChart extends Chart {
   }
 
   setData = function () {
-    const selected_campaign_id = this.props.selected_campaigns[0].id
-    const filtered_datapoints = this.props.datapoints.flattened.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
-    const data = _.groupBy(filtered_datapoints, 'location.id')
+    let data
+    if (this.props.selected_campaigns.length > 0) {
+      const selected_campaign_id = this.props.selected_campaigns[0].id
+      const filtered_datapoints = this.props.datapoints.flattened.filter(datapoint => datapoint.campaign.id === selected_campaign_id)
+      data = _.groupBy(filtered_datapoints, 'location.id')
+    } else {
+      data = _.groupBy(this.props.datapoints.flattened, 'location.id')
+    }
     this.options.default_sort_order = _.map(data, datapoint_group => datapoint_group[0].location.name)
     this.options.parent_location_map = _.map(data, datapoint_group => {
       const parent_location = this.props.locations_index[datapoint_group[0].location.parent_location_id]
@@ -37,7 +42,6 @@ class TableChart extends Chart {
     this.data = _.toArray(data).map(datapoint_group => {
       const values = []
       datapoint_group.forEach(datapoint => {
-        console.log('datapoint.value', datapoint.value)
         values.push({
           indicator: datapoint.indicator,
           value: datapoint.value,

@@ -4,6 +4,7 @@ import Reflux from 'reflux'
 import ReorderableList from 'components/list/ReorderableList'
 import DropdownButton from 'components/button/DropdownButton'
 import CampaignSelect from 'components/select/CampaignSelect'
+import SwitchButton from 'components/form/SwitchButton'
 
 import CampaignStore from 'stores/CampaignStore'
 
@@ -52,20 +53,35 @@ class CampaignMultiSelect extends Component {
         </form>
       )
     } else {
+      const filtered_by_campaign = props.selected_campaigns.length > 0
+      const toggleFilterByCampaign = () => filtered_by_campaign ? this.props.setCampaigns([]) : this.props.setCampaigns(raw_campaigns[0])
       return (
         <div className={props.classes}>
           <h3>
-            Campaign <a onClick={this.props.linkCampaigns}><i className={'fa ' + (this.props.linked ? 'fa-chain ' : 'fa-chain-broken') }/></a>
+            Campaign Filter <a onClick={this.props.linkCampaigns}><i className={'fa ' + (this.props.linked ? 'fa-chain ' : 'fa-chain-broken') }/></a>
+            <SwitchButton
+              name='filterByCampaign'
+              title='filterByCampaign'
+              id='filterByCampaign'
+              checked={filtered_by_campaign}
+              onChange={toggleFilterByCampaign}
+            />
           </h3>
-          <CampaignSelect
-            campaigns={raw_campaigns}
-            selected={selected_campaigns[0]}
-            sendValue={this.props.setCampaigns}/>
+          {
+            filtered_by_campaign ? (
+              <CampaignSelect
+                campaigns={raw_campaigns}
+                selected={selected_campaigns[0]}
+                sendValue={this.props.setCampaigns}/>
+            ) : null
+          }
           <br/>
         </div>
       )
     }
   }
 }
+
+
 
 export default CampaignMultiSelect

@@ -57,20 +57,32 @@ const MultiChartControls = React.createClass({
     const multiLocation = chart.location_depth < 0
     const groupByIndicator = groupedChart && chart.groupBy === 'location'
     const groupByLocation = (groupedChart && chart.groupBy === 'indicator') || type === 'MapChart'
-
+    const toggleTimeGrouping = () => chart.groupByTime ? props.setGroupByTime(null) : props.setGroupByTime('campaign')
     const group_by_time_selector = (
       <div className='medium-12 columns radio-group'>
-        <h3>Time Grouping</h3>
-        <RadioGroup
-          name={'groupByTime' + chart.uuid}
-          value={chart.groupByTime}
-          onChange={props.setGroupByTime}
-          horizontal
-          values={[
-            {value: 'campaign', title: 'Campaign'},
-            {value: 'quarter', title: 'Quarter'},
-            {value: 'year', title: 'Year'}
-          ]}/>
+        <h3>Time Grouping
+          <SwitchButton
+            name='groupByTime'
+            title='groupByTime'
+            id='groupByTime'
+            checked={chart.groupByTime}
+            onChange={toggleTimeGrouping}
+          />
+        </h3>
+        {
+          chart.groupByTime ? (
+            <RadioGroup
+              name={'groupByTime' + chart.uuid}
+              value={chart.groupByTime}
+              onChange={props.setGroupByTime}
+              horizontal
+              values={[
+                {value: 'campaign', title: 'Campaign'},
+                {value: 'quarter', title: 'Quarter'},
+                {value: 'year', title: 'Year'}
+              ]}/>
+          ) : null
+        }
       </div>
     )
 

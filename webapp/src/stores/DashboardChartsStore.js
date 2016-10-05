@@ -285,13 +285,15 @@ var DashboardChartsStore = Reflux.createStore({
     _.toArray(this.charts).forEach(chart => DashboardChartsActions.setCampaigns(current_chart.selected_campaigns, chart.uuid))
   },
   _assignCampaigns: function (campaigns, uuid) {
-    if (_.isArray(campaigns)) {
+    if (!campaigns) {
+      this.charts[uuid].selected_campaigns = []
+    } else if (_.isArray(campaigns)) {
       this.charts[uuid].selected_campaigns = campaigns.map(campaign => this.couldBeId(campaign) ? this.campaigns.index[campaign] : campaign)
     } else {
       this.charts[uuid].selected_campaigns = this.couldBeId(campaigns) ? [this.campaigns.index[campaigns]] : [campaigns]
     }
     const chartShowsOneCampaign = _.indexOf(builderDefinitions.single_campaign_charts, this.charts[uuid].type) !== -1
-    if (chartShowsOneCampaign) {
+    if (chartShowsOneCampaign && this.charts[uuid].selected_campaigns.length > 0) {
       const campaign_start_date = this.charts[uuid].selected_campaigns[0].start_date
       const campaign_end_date = this.charts[uuid].selected_campaigns[0].end_date
       this.charts[uuid].start_date = moment(campaign_start_date).format('YYYY-MM-DD')
@@ -317,7 +319,8 @@ var DashboardChartsStore = Reflux.createStore({
       this.charts[uuid].groupBy = 'location'
       // this.charts[uuid].groupByTime = null
     }
-    const campaign_ids = this.selected_campaigns ? this.selected_campaigns.map(campaign => campaign.id) : this.campaigns.list[0]
+    const selected_campaigns = this.charts[uuid].selected_campaigns
+    const campaign_ids = selected_campaigns ? selected_campaigns.map(campaign => campaign.id) : []
     this._assignCampaigns(campaign_ids, uuid)
     this.updateChart(uuid)
   },
